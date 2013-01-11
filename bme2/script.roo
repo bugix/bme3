@@ -1,0 +1,120 @@
+jpa setup --provider HIBERNATE --database MYSQL --databaseName McApp2 --userName root --password root
+entity jpa --class ~.server.domain.RedactionalBase --abstract --mappedSuperclass
+entity jpa --class ~.server.domain.Person --testAutomatically 
+entity jpa --class ~.server.domain.Question --testAutomatically --inheritanceType TABLE_PER_CLASS --extends ~.server.domain.RedactionalBase
+entity jpa --class ~.server.domain.Keyword --testAutomatically 
+entity jpa --class ~.server.domain.Institution --testAutomatically
+entity jpa --class ~.server.domain.QuestionEvent --testAutomatically
+entity jpa --class ~.server.domain.QuestionAccess --testAutomatically
+entity jpa --class ~.server.domain.Comment --testAutomatically
+entity jpa --class ~.server.domain.QuestionType --testAutomatically
+entity jpa --class ~.server.domain.Answer --testAutomatically --inheritanceType TABLE_PER_CLASS --extends ~.server.domain.RedactionalBase
+entity jpa --class ~.server.domain.AssesmentQuestion --testAutomatically --inheritanceType TABLE_PER_CLASS --extends ~.server.domain.RedactionalBase
+entity jpa --class ~.server.domain.Mc --testAutomatically
+entity jpa --class ~.server.domain.AnswerToAssQuestion --testAutomatically
+entity jpa --class ~.server.domain.Assesment --testAutomatically
+entity jpa --class ~.server.domain.StaticToAssesment --testAutomatically
+entity jpa --class ~.server.domain.StaticContent --testAutomatically
+entity jpa --class ~.server.domain.QuestionSumPerPerson --testAutomatically
+entity jpa --class ~.server.domain.QuestionTypeCountPerExam --testAutomatically
+enum type --class ~.client.shared.AccessRights
+enum constant --name AccRead
+enum constant --name AccWrite
+enum constant --name AccAddAnswers
+enum constant --name AccAddQuestions
+enum type --class ~.client.shared.Validity
+enum constant --name Wahr
+enum constant --name Falsch
+enum constant --name Weil
+field date --fieldName dateAdded --type java.util.Date  --notNull  --class ~.server.domain.RedactionalBase 
+field date --fieldName dateChanged --type java.util.Date
+field reference --type Person --fieldName rewiewer --notNull 
+field reference --type Person --fieldName autor  --notNull
+field string --fieldName name --sizeMin 3 --sizeMax 45 --notNull --unique --class ~.server.domain.Keyword 
+field string --fieldName institutionName --sizeMin 3 --sizeMax 60 --notNull --unique --class ~.server.domain.Institution
+field string --fieldName eventName --sizeMin 3 --sizeMax 60 --notNull --unique --class ~.server.domain.QuestionEvent
+field reference --type Institution --fieldName institution --notNull
+field enum --fieldName accRights --type ~.client.shared.AccessRights --notNull  --class ~.server.domain.QuestionAccess
+field reference --type Person --fieldName person --notNull
+field reference --type Question --fieldName question
+field reference --type QuestionEvent --fieldName questionEvent
+field string --fieldName comment --sizeMin 3 --sizeMax 9000 --notNull  --class ~.server.domain.Comment
+field string --fieldName questionTypeName --sizeMin 1 --sizeMax 20 --notNull --unique --class ~.server.domain.QuestionType
+field boolean --fieldName isWeil --value false
+field number --type java.lang.Integer --fieldName trueAnswers --notNull --min 0 --max 99
+field number --type java.lang.Integer --fieldName falseAnswers --notNull --min 0 --max 99
+field number --type java.lang.Integer --fieldName sumAnswers --notNull --min 0 ---max 99
+field number --type java.lang.Integer --fieldName maxLetters --notNull --min 0 --max 999
+field string --fieldName answerText --sizeMin 1 --sizeMax 999 --class ~.server.domain.Answer
+field boolean --fieldName isAnswerActive  --notNull
+field boolean --fieldName isPicture  --notNull --value false
+field boolean --fieldName isAnswerAcceptedAutor --notNull --value false
+field boolean --fieldName isAnswerAcceptedAdmin  --notNull --value false
+field enum --fieldName validity --type ~.client.shared.Validity  --notNull 
+field string --fieldName picturePath --sizeMin 3 --sizeMax 255
+field reference --fieldName question --type  ~.server.domain.Question --cardinality MANY_TO_ONE
+field string --fieldName questionText --sizeMin 10 --sizeMax 600 --class ~.server.domain.Question
+field string --fieldName picturePath --sizeMin 2 --sizeMax 255
+field number --type java.lang.Double --fieldName questionVersion --notNull
+field boolean --fieldName isAcceptedRewiever  --notNull --value false
+field boolean --fieldName isAcceptedAdmin  --notNull --value false
+field boolean --fieldName isActive  --notNull --value false
+field reference --fieldName previousVersion --type Question --cardinality ONE_TO_ONE
+field set --fieldName keywords --type ~.server.domain.Keyword --cardinality MANY_TO_MANY
+field reference --type QuestionEvent --fieldName questEvent --notNull
+field reference --type Comment --fieldName comment --cardinality ONE_TO_ONE 
+field reference --type QuestionType --fieldName questionType --notNull
+field set --fieldName mcs --type ~.server.domain.Mc --cardinality MANY_TO_MANY  --notNull
+field set --mappedBy question --type ~.server.domain.Answer --fieldName answers  --cardinality ONE_TO_MANY
+field number --type java.lang.Integer --fieldName sortOrder --notNull --class ~.server.domain.AnswerToAssQuestion
+field reference --fieldName answers --type Answer --notNull
+field reference --fieldName assesmentQuestion --type AssesmentQuestion --notNull
+field number --type java.lang.Integer --fieldName orderAversion --value 0  --class ~.server.domain.AssesmentQuestion
+field number --type java.lang.Integer --fieldName orderBversion --value 0
+field number --type java.lang.Double --fieldName trenschaerfe
+field number --type java.lang.Double --fieldName schwierigkeit
+field boolean --fieldName isAssQuestionAcceptedRewiever --value false  --notNull
+field boolean --fieldName isAssQuestionAcceptedAdmin --value false --notNull
+field boolean --fieldName isAssQuestionAdminProposal --value false --notNull
+field boolean --fieldName isAssQuestionAcceptedAutor
+field reference --type Question --fieldName question --notNull
+field reference --type Assesment --fieldName assesment
+field set --mappedBy assesmentQuestion --type ~.server.domain.AnswerToAssQuestion --fieldName answersToAssQuestion  --cardinality ONE_TO_MANY
+field string --fieldName mcName --sizeMin 2 --sizeMax 50 --notNull --unique  --class ~.server.domain.Mc
+field string --fieldName name --sizeMin 5 --sizeMax 255 --notNull --class ~.server.domain.Assesment
+field date --fieldName dateOfAssesment --type java.util.Date --notNull
+field date --fieldName dateOpen --type java.util.Date --notNull
+field date --fieldName dateClosed --type java.util.Date --notNull
+field string --fieldName place --sizeMin 5 --sizeMax 100 --notNull
+field string --fieldName logo --sizeMin 5 --sizeMax 255 --notNull
+field boolean --fieldName isClosed --value false --notNull
+field number --type java.lang.Integer --fieldName assesmentVersion --value 1 --notNull
+field reference --type Mc --fieldName mc --notNull
+field reference --type Assesment --fieldName repeFor --cardinality ONE_TO_ONE
+field number --type java.lang.Integer --fieldName percentSameQuestion
+field string --fieldName name --notNull --sizeMax 50 --class ~.server.domain.Person
+field string --fieldName prename --notNull --sizeMax 50
+field string --fieldName email --notNull --sizeMin 7 --sizeMax 50 --unique
+field string --fieldName alternativEmail --notNull --sizeMin 7 --sizeMax 50 --unique
+field string --fieldName phoneNumber --sizeMin 5 --sizeMax 50
+field boolean --fieldName isAdmin --notNull  --value false
+field boolean --fieldName isAccepted --notNull  --value false
+field set --mappedBy person --type ~.server.domain.QuestionAccess --fieldName questionAccesses  --cardinality ONE_TO_MANY
+field number --type java.lang.Integer --fieldName sortOrder --notNull --min 0 --class ~.server.domain.StaticToAssesment
+field reference --fieldName staticContent --type ~.server.domain.StaticContent --notNull
+field reference --type  ~.server.domain.Assesment --fieldName assesment --notNull
+field string --fieldName staticText --sizeMin 1 --sizeMax 9999 --notNull --class ~.server.domain.StaticContent
+field reference --type ~.server.domain.Person --fieldName responsiblePerson  --notNull --class ~.server.domain.QuestionSumPerPerson
+field reference --type ~.server.domain.QuestionEvent --fieldName questionEvent  --notNull
+field reference --type ~.server.domain.Assesment --fieldName assesment  --notNull
+field number --type java.lang.Integer --fieldName questionSum  --notNull
+field set --fieldName questionTypesAssigned --type ~.server.domain.QuestionType --cardinality MANY_TO_MANY --class ~.server.domain.QuestionTypeCountPerExam
+field reference --type ~.server.domain.Assesment --fieldName assesment  --notNull
+field number --type java.lang.Integer --fieldName questionTypeCount --notNull
+finder add findQuestionEventsByInstitution
+finder list --class ~.server.domain.QuestionEvent
+finder add findQuestionEventsByInstitution
+logging setup --level INFO
+web gwt setup
+web gwt proxy all --package ~.client.proxy
+web gwt request all --package ~.client.request
