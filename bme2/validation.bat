@@ -3,7 +3,7 @@
 cls
 
 :: set project path. 
-cd D:\prj\extra1\workspace\bme2
+cd D:\prj\bme6\src\bme3\bme2
 
 set TARGET=.\target
 set BASE=%TARGET%\bme2-0.1.0.BUILD-SNAPSHOT\WEB-INF
