@@ -38,6 +38,7 @@
 			<g:Anchor ui:field="user"></g:Anchor>
 		</g:VerticalPanel>
 	</g:DisclosurePanel>
+	
 	<g:DisclosurePanel ui:field="questionPanel" width="100%" open="false" addStyleNames='{style.mainNavPanel}'>
 		<g:header></g:header>
 		<g:VerticalPanel addStyleNames='{style.mainNavPanelContent}' width="100%">

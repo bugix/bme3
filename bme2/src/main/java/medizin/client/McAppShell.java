@@ -1,5 +1,8 @@
 package medizin.client;
 
+
+
+
 import medizin.client.ui.McAppNav;
 import medizin.client.ui.TopPanel;
 
@@ -8,9 +11,12 @@ import com.google.gwt.dom.client.StyleInjector;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HorizontalSplitPanel;
 import com.google.gwt.user.client.ui.NotificationMole;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.ValueListBox;
 import com.google.gwt.user.client.ui.Widget;
 /**
  * The applications basic layout.
@@ -45,7 +51,7 @@ public class McAppShell extends Composite {
 	public McAppShell() {
 
 		initWidget(uiBinder.createAndBindUi(this));
-		init();
+	//	init();
 
 	}
 

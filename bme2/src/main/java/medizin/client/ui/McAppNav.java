@@ -103,7 +103,9 @@ public class McAppNav extends Composite {
 	Anchor bookAssesment;
 	@UiField
 	Anchor staticContent;
-		
+	
+	
+	
 	@UiHandler("systemOverview")
 		void systemOverviewClicked(ClickEvent event) {
 			placeController.goTo(new PlaceSystemOverview("PlaceSystemOverview"));
@@ -163,6 +165,7 @@ public class McAppNav extends Composite {
 	}
 	
 
+
 	public McAppNav() {
 		initWidget(uiBinderUser.createAndBindUi(this));
 		
@@ -180,7 +183,7 @@ public class McAppNav extends Composite {
 
         
 
-        requests.personRequest().myGetLoggedPerson().fire(new Receiver<PersonProxy>(){
+        	requests.personRequest().myGetLoggedPerson().fire(new Receiver<PersonProxy>(){
 
 			
 
@@ -194,19 +197,19 @@ public class McAppNav extends Composite {
 				 displayMenue();
 			}});
         
-        requests.institutionRequest().myGetInstitutionToWorkWith().fire(new Receiver<InstitutionProxy>(){
+        	 requests.institutionRequest().myGetInstitutionToWorkWith().fire(new Receiver<InstitutionProxy>(){
 
-			
+     			
 
-			@Override
-			public void onSuccess(InstitutionProxy response) {
-				if (response == null){
-					Window.alert("a Institution selectbox will be shown. You should select the institution from the Institution-Pulldown and reload the Page. The institution is storen in Session");
-					return;
-				}
-				//loggedUser = response;
-				 displayMenue();
-			}});
+     			@Override
+     			public void onSuccess(InstitutionProxy response) {
+     				if (response == null){
+     					Window.alert("a Institution selectbox will be shown. You should select the institution from the Institution-Pulldown and reload the Page. The institution is storen in Session");
+     					return;
+     				}
+     				//loggedUser = response;
+     				 displayMenue();
+     			}});
         
         
     }
@@ -387,7 +390,6 @@ public class McAppNav extends Composite {
             questionPanel.setOpen(false);	
          //   staticContent.addStyleName("gwt-AnchorSelected");
         }
-        
 	}
 		
 	public void setConstantText()

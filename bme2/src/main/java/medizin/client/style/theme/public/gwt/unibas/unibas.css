@@ -12,6 +12,7 @@
  *    }
  */
  
+ 
 body,table td,select {
 	font-family: Verdana, Arial, sans-serif;
 }
@@ -3505,14 +3506,806 @@ color: #f1b532;
 	background-repeat:no-repeat;
 	width: 14px;
 	height: 23px;
-}
-
-
-
-.gwt-AnchorSelected {
+}.gwt-AnchorSelected {
 	
 			  display: block;
 		  border-top: 1px solid #FF0000;
 		  border-bottom: 1px solid #FF0000;
 		  background: #f9f9f9 url(css/smoothness/images/ui-bg_glass_95_fef1ec_1x400.png) 50% 50% repeat-x;
+}
+
+.demo{
+	
+background: url("images/colorpicker.png");
+	/* background-image: url("images/colorpicker.png"); */ 
+	background-color: red;
+	 
+}
+
+
+
+
+
+
+
+/*   advance cpntrol data*/
+
+.advanced-GridPanel {
+    background-color: white;
+}
+.advanced-GridPanel td {
+    padding: 0;
+}
+.advanced-GridPanel .top-panel, .advanced-GridPanel .bottom-panel {
+    width: 100%;
+}
+.advanced-GridPanel .top-panel td, .advanced-GridPanel .bottom-panel td {
+    border-left: 1px solid #808080;
+    border-right: 1px solid #808080;
+    border-top: 1px solid #808080;
+    padding-left: 1px;
+    padding-top: 1px;
+}
+.advanced-GridPanel .bottom-panel {
+    border-bottom: 1px solid #808080;
+}
+.advanced-FocusPanel {
+    margin: 0;
+    padding: 0;
+}
+.advanced-FocusPanel .header-table-cell {
+    border-left: 1px solid #808080;
+    border-top: 1px solid #808080;
+    margin: 0;
+    padding: 0;
+}
+.advanced-FocusPanel .body-table-cell {
+    margin: 0;
+    padding: 0;
+}
+.advanced-FocusPanel .advanced-Grid {
+    border: 0 none;
+    padding: 0;
+}
+.advanced-Pager {
+    background: none repeat scroll 0 0 #D4D0C8;
+    cursor: default;
+    height: 27px;
+}
+.advanced-Pager a {
+    color: white;
+    text-decoration: none;
+}
+.advanced-Pager table {
+    border: 0 none;
+    border-collapse: collapse;
+    font-family: sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 1px;
+    margin-top: 1px;
+}
+.advanced-Pager td {
+    padding: 0 4px;
+}
+.advanced-GridPanel .top-panel .advanced-Pager td, .advanced-GridPanel .bottom-panel .advanced-Pager td {
+    border-left: 0 none;
+    border-right: 0 none;
+    border-top: 0 none;
+}
+.advanced-Pager img {
+    border: 0 none;
+    display: block;
+    height: 20px;
+    margin: 1px;
+    width: 20px;
+}
+.advanced-Pager input {
+    border: 0 none;
+    font-family: sans-serif;
+    font-size: 12px;
+    font-weight: normal;
+    height: 18px;
+    margin: 2px 1px 0;
+    padding: 0;
+    width: 50px;
+}
+.advanced-Pager .button {
+    background-color: #D4D0C8;
+    border: 1px solid #D4D0C8;
+    cursor: pointer;
+    height: 22px;
+    padding: 0;
+}
+.advanced-Pager .page-number {
+    background-color: white;
+    border: 1px solid #8B8A8A;
+    cursor: pointer;
+    height: 22px;
+    padding: 0;
+}
+.advanced-Pager .button-down, .advanced-Pager .button-down-hovering {
+    background-color: #D4D0C8;
+    border: 1px solid #D4D0C8;
+}
+.advanced-Pager .button-up-hovering {
+    background-color: #B6BED3;
+    border: 1px solid #0A246A;
+}
+.advanced-Pager .label {
+    border: 0 none;
+    font-family: sans-serif;
+    font-size: 12px;
+    font-weight: normal;
+    height: 100%;
+    margin: 1px 1px 1px 10px;
+    padding: 3px 0 0;
+    white-space: nowrap;
+}
+.advanced-GridToolbar {
+    background: none repeat scroll 0 0 #D4D0C8;
+    border: 0 none;
+    height: 26px;
+}
+.advanced-GridToolbar-button {
+    background-color: #D4D0C8;
+    border: 1px solid #D4D0C8;
+    cursor: pointer;
+    display: inline;
+    float: left;
+    margin-left: 4px;
+    margin-top: 1px;
+}
+.advanced-GridToolbar-button-down, .advanced-GridToolbar-button-down-hovering {
+    background-color: #D4D0C8;
+    border: 1px solid #D4D0C8;
+}
+.advanced-GridToolbar-button-up-hovering {
+    background-color: #B6BED3;
+    border: 1px solid #0A246A;
+}
+.advanced-GridToolbar-button img {
+    border: 0 none;
+    display: block;
+    height: 20px;
+    margin: 1px;
+    width: 20px;
+}
+.advanced-Grid {
+    color: black;
+    font-family: sans-serif;
+    font-size: 12px;
+    font-weight: normal;
+    padding: 2px;
+}
+.advanced-Grid td, .advanced-Grid .subgrid-row .advanced-FocusPanel td {
+}
+.advanced-Grid thead {
+    background: none repeat scroll 0 0 white;
+}
+.advanced-Grid th {
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background: none repeat scroll 0 0 #D4D0C8;
+    border-color: white #808080 #808080 white;
+    border-image: none;
+    border-style: solid;
+    border-width: 1px;
+    font-family: sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 0;
+}
+.advanced-Grid th .gwt-Label {
+    height: 19px;
+    padding: 3px 0;
+}
+.advanced-Grid .editable-cell {
+    cursor: pointer;
+}
+.advanced-Grid .readonly-cell {
+    cursor: default;
+}
+.advanced-Grid .header-cell {
+    border: 0 none;
+    text-align: center;
+    vertical-align: middle;
+}
+.advanced-Grid .header-cell table {
+    color: black;
+    display: inline;
+    font-family: sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+}
+.advanced-Grid .header-cell td {
+    border-bottom: 0 none;
+    height: 100%;
+    text-align: center;
+}
+.advanced-Grid .header-cell div {
+    white-space: nowrap;
+}
+.advanced-Grid .header-cell img {
+    height: 5px;
+    margin-bottom: 3px;
+    margin-left: 3px;
+    width: 9px;
+}
+.advanced-Grid .sortable-header table {
+    cursor: pointer;
+}
+.advanced-Grid .non-sortable-header, .advanced-Grid .sortable-header {
+    cursor: default;
+}
+.advanced-Grid .selected-row, .advanced-Grid .selected-row .expandable-cell table {
+    background-color: #0A246A;
+    color: white;
+}
+.advanced-Grid .selected-column {
+}
+.advanced-Grid .selected-cell {
+    border: 1px dotted white;
+}
+.advanced-Grid .grid-column {
+}
+.advanced-Grid .data-cell {
+    font-family: sans-serif;
+    font-size: 12px;
+    font-weight: normal;
+    padding-left: 1px;
+}
+.advanced-Grid .active-cell {
+    background-color: white;
+    padding: 0;
+}
+.advanced-Grid .active-cell input, .advanced-Grid .active-cell textarea {
+    background-color: white;
+    border: 0 none;
+    font-family: sans-serif;
+    font-size: 12px;
+    font-weight: normal;
+    padding: 0;
+    width: 100%;
+}
+.advanced-Grid .active-cell input {
+    height: 13px;
+}
+.advanced-Grid .active-cell select {
+    background-color: transparent;
+    border: 0 none;
+    font-family: sans-serif;
+    font-size: 12px;
+    font-weight: normal;
+    padding: 0;
+    width: 100%;
+}
+.advanced-Grid .passive-cell {
+    background-color: transparent;
+    border: 0 none;
+    padding: 1px;
+}
+.advanced-Grid .text-cell {
+    text-align: left;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+.advanced-Grid .text-cell div {
+    vertical-align: middle;
+    white-space: nowrap;
+}
+.advanced-Grid .numeric-cell {
+    text-align: right;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+.advanced-Grid .numeric-cell div {
+    vertical-align: middle;
+    white-space: nowrap;
+}
+.advanced-Grid .list-cell {
+    text-align: left;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+.advanced-Grid .list-cell div {
+    vertical-align: middle;
+    white-space: nowrap;
+}
+.advanced-Grid .image-cell {
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+.advanced-Grid .boolean-cell {
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+.advanced-Grid .date-cell {
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+.advanced-Grid .date-cell div {
+    vertical-align: middle;
+    white-space: nowrap;
+}
+.advanced-Grid .subtree-pager .arrow-left {
+    background: none repeat scroll 0 0 transparent;
+}
+.advanced-Grid .subtree-pager .arrow-right {
+    background: none repeat scroll 0 0 transparent;
+}
+.advanced-Grid .subtree-pager .gwt-Image {
+    height: 0;
+    width: 0;
+}
+.advanced-Grid .subtree-pager td {
+    cursor: pointer;
+    height: 7px;
+    width: 7px;
+}
+.advanced-Grid .expandable-cell table {
+    width: 100%;
+}
+.advanced-Grid .expandable-cell td {
+    border: 0 none;
+    padding-left: 3px;
+}
+.advanced-Grid .selected-row .expandable-cell .gwt-Label {
+    color: white;
+}
+.advanced-Grid .expandable-cell img {
+    background-color: white;
+}
+.advanced-Grid .subgrid-row td {
+}
+.advanced-Grid .subgrid-cell .advanced-GridPanel {
+    margin-left: 15px;
+}
+.footer-table-cell .advanced-Grid td {
+    font-weight: bold;
+}
+.advanced-LockingPanel {
+    background-color: white;
+    opacity: 0.65;
+}
+.advanced-Calendar {
+    background-color: white;
+}
+.advanced-Calendar .layout-table {
+    border: 1px solid #808080;
+    border-collapse: collapse;
+    cursor: default;
+    font-family: sans-serif;
+    font-size: 10px;
+    padding: 1px;
+    width: 200px;
+}
+.advanced-Calendar .layout-table td {
+    padding: 0;
+    vertical-align: middle;
+}
+.advanced-Calendar .switch-cell {
+    text-align: center;
+    width: 18px;
+}
+.advanced-Calendar .today-button-cell {
+    text-align: center;
+    width: 126px;
+}
+.advanced-Calendar .header-cell {
+    background: none repeat scroll 0 0 #0A246A;
+    border: 0 none;
+    color: white;
+    font-weight: bold;
+    padding: 1px;
+    text-align: center;
+}
+.advanced-Calendar .switch-button {
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background-color: #D4D0C8;
+    border-color: white #808080 #808080 white;
+    border-image: none;
+    border-style: solid;
+    border-width: 1px;
+    color: black;
+    cursor: pointer;
+    font-weight: bold;
+    padding: 1px;
+    text-align: center;
+    vertical-align: middle;
+    width: 18px;
+}
+.advanced-Calendar .today-button {
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background-color: #D4D0C8;
+    border-color: white #808080 #808080 white;
+    border-image: none;
+    border-style: solid;
+    border-width: 1px;
+    color: black;
+    cursor: pointer;
+    font-weight: bold;
+    padding: 1px;
+    text-align: center;
+    vertical-align: middle;
+    width: 126px;
+}
+.advanced-Calendar .days-table {
+    border-collapse: collapse;
+    font-family: sans-serif;
+    font-size: 10px;
+    padding: 1px;
+    width: 100%;
+}
+.advanced-Calendar .week-day-cell {
+    background-color: #D4D0C8;
+    text-align: center;
+    vertical-align: middle;
+    width: 14%;
+}
+.advanced-Calendar .week-number-cell {
+    background-color: #D4D0C8;
+    text-align: right;
+    vertical-align: middle;
+    width: 0;
+}
+.advanced-Calendar .day-cell {
+    color: black;
+    cursor: pointer;
+    text-align: right;
+    vertical-align: middle;
+}
+.advanced-Calendar .today-cell {
+    background-color: #D4D0C8;
+}
+.advanced-Calendar .selected-day-cell {
+    background-color: #0A246A;
+    color: white;
+    cursor: default;
+    font-weight: bold;
+}
+.advanced-Calendar .holiday-cell {
+    color: red;
+}
+.advanced-Calendar .disabled-day-cell {
+    color: darkgray;
+    text-align: right;
+    vertical-align: middle;
+}
+.advanced-Calendar .time-cell {
+    border-collapse: collapse;
+    text-align: center;
+}
+.advanced-Calendar .time-table {
+    border-collapse: collapse;
+    display: inline;
+    font-family: sans-serif;
+    font-size: 10px;
+    padding: 0;
+}
+.advanced-Calendar select {
+    border: 1px solid darkgray;
+    font-family: sans-serif;
+    font-size: 10px;
+    width: 45px;
+}
+.advanced-DatePicker {
+}
+.advanced-masterDetailPanel {
+    border: 0 none;
+    padding: 0;
+    width: 100%;
+}
+.advanced-masterDetailPanel .gridPanel-cell {
+    padding: 0;
+    width: 100%;
+}
+.advanced-masterDetailPanel .grid-panel-layout {
+    border: 0 none;
+    padding: 0;
+    width: 100%;
+}
+.advanced-masterDetailPanel .grid-panel-layout .layout-caption {
+    border-left: 1px solid #808080;
+    border-top: 1px solid #808080;
+    width: 100%;
+}
+.advanced-masterDetailPanel .grid-panel-layout .layout-caption div {
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background-color: #D4D0C8;
+    border-color: white #808080 #808080 white;
+    border-image: none;
+    border-style: solid;
+    border-width: 1px;
+    color: #003366;
+    cursor: default;
+    font-family: sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 1px;
+}
+.advanced-masterDetailPanel .grid-panel-layout .layout-body {
+    padding: 0;
+    width: 100%;
+}
+.advanced-TextButtonPanel {
+    border: 1px none;
+    padding: 0;
+}
+.advanced-Grid .advanced-TextButtonPanel {
+    border: 0 none;
+    padding: 0;
+}
+.advanced-TextButtonPanel table {
+    border: 0 none;
+    border-collapse: collapse;
+    height: 18px;
+    padding: 0;
+}
+.advanced-Grid .advanced-TextButtonPanel table {
+    height: 13px;
+}
+.advanced-TextButtonPanel td {
+    border: 1px solid #808080;
+    padding: 0;
+    vertical-align: middle;
+}
+.advanced-Grid .advanced-TextButtonPanel td, .advanced-Grid .subgrid-row .advanced-FocusPanel .advanced-TextButtonPanel td {
+    border: 0 none;
+    padding: 0;
+    vertical-align: middle;
+}
+.advanced-TextButtonPanel .selected-value {
+    border: 1px solid white;
+    color: black;
+    font-family: sans-serif;
+    font-size: 12px;
+    height: 16px;
+    margin: 0;
+    padding: 0;
+}
+.advanced-Grid .selected-value {
+    border: 0 none;
+    height: 13px;
+}
+.advanced-TextButtonPanel .selected-row {
+    background-color: #D7E9FF;
+}
+.advanced-TextButtonPanel .choice-button {
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background-color: #D4D0C8;
+    border-color: white #808080 #808080 white;
+    border-image: none;
+    border-style: solid;
+    border-width: 1px;
+    height: 16px;
+    padding: 0;
+    width: 16px;
+}
+.advanced-Grid .choice-button {
+    height: 13px;
+    margin-right: 5px;
+    overflow: hidden;
+    width: 16px;
+}
+.advanced-TextButtonPanel .choice-button-up-hovering {
+    cursor: pointer;
+}
+.advanced-TextButtonPanel .choice-button-down {
+    background-color: #D4D0C8;
+    border: 1px solid darkgray;
+}
+.advanced-TextButtonPanel .choice-button-down-hovering {
+    background-color: #D4D0C8;
+    border: 1px solid darkgray;
+    cursor: default;
+}
+.advanced-TextButtonPanel img {
+    border: 0 none;
+    display: inline;
+}
+.advanced-Grid .advanced-TextButtonPanel img {
+    position: relative;
+    top: -3px;
+}
+.advanced-ListPopupPanel {
+    background-color: white;
+    border: 1px solid darkgray;
+    padding: 0;
+}
+.advanced-ListPopupPanel .list {
+    border-collapse: collapse;
+    cursor: pointer;
+    padding: 0;
+}
+.advanced-ListPopupPanel .list .selected-row {
+    background-color: #0A246A;
+    color: white;
+}
+.advanced-ListPopupPanel .list .item {
+    font-family: sans-serif;
+    font-size: 10px;
+    font-weight: normal;
+    padding: 1px;
+}
+.advanced-ListPopupPanel .list .icon-item img {
+    border: 0 none;
+    padding: 1px;
+}
+.advanced-ListPopupPanel .list .icon-item div {
+    font-family: sans-serif;
+    font-size: 10px;
+    font-weight: normal;
+    padding: 1px;
+}
+.advanced-ListPopupPanel .list .selected-row .icon-item div {
+    color: white;
+}
+.advanced-RoundCornerBorder .line {
+    border-style: solid;
+}
+.advanced-RoundCornerBorder .round-container {
+    border-style: solid;
+}
+.advanced-RoundCornerBorder div {
+    background-color: #D4D0C8;
+}
+.advanced-RoundCornerBorder .shadow1 {
+    border-color: #B8B6B8;
+}
+.advanced-RoundCornerBorder .shadow2 {
+    border-color: #DBDADB;
+}
+.advanced-RoundCornerBorder .shadow3 {
+    border-color: #F1F0F1;
+}
+.advanced-SingleBorder .single-container {
+    border: 1px solid black;
+    margin: 0;
+    padding: 1px;
+}
+.advanced-SingleBorder .shadow1 {
+    background-color: #B8B6B8;
+}
+.advanced-SingleBorder .shadow2 {
+    background-color: #DBDADB;
+}
+.advanced-SingleBorder .shadow3 {
+    background-color: #F1F0F1;
+}
+.advanced-TabPanel, .advanced-TabPanel .layout {
+    border-collapse: collapse;
+    height: 100%;
+    width: 100%;
+}
+.advanced-TabPanel .layout td {
+    padding: 0;
+}
+.advanced-TabPanel .disabled-tab {
+    color: #777777;
+    cursor: default;
+}
+.advanced-TabPanel .selected .round-container {
+    height: 15px;
+}
+.advanced-TabPanel .unselected .round-container {
+    height: 14px;
+}
+.advanced-TabPanel .tabs-top .separator {
+    border-bottom: 1px solid black;
+}
+.advanced-TabPanel .tabs-top .separator img {
+    width: 3px;
+}
+.advanced-TabPanel .tabs-top .last-empty {
+    border-bottom: 1px solid black;
+    width: 100%;
+}
+.advanced-TabPanel .tabs-top .unselected {
+    border-bottom: 1px solid black;
+    cursor: pointer;
+}
+.advanced-TabPanel .tabs-top .round-container, .advanced-TabPanel .tabs-bottom .round-container {
+    padding-left: 5px;
+    padding-right: 5px;
+    width: 137px;
+}
+.advanced-TabPanel .tabs-bottom .separator {
+    border-top: 1px solid black;
+}
+.advanced-TabPanel .tabs-bottom .separator img {
+    width: 3px;
+}
+.advanced-TabPanel .tabs-bottom .last-empty {
+    border-top: 1px solid black;
+    width: 100%;
+}
+.advanced-TabPanel .tabs-bottom .unselected {
+    border-top: 1px solid black;
+    cursor: pointer;
+}
+.advanced-TabPanel .tabs-left .separator {
+    border-right: 1px solid black;
+    height: 3px;
+}
+.advanced-TabPanel .tabs-left .separator img {
+    width: 3px;
+}
+.advanced-TabPanel .tabs-left .last-empty {
+    border-right: 1px solid black;
+    height: 100%;
+}
+.advanced-TabPanel .tabs-left .unselected {
+    border-right: 1px solid black;
+    cursor: pointer;
+}
+.advanced-TabPanel .tabs-left, .advanced-TabPanel .tabs-right {
+    height: 100%;
+}
+.advanced-TabPanel .tabs-left .selected .round-container, .advanced-TabPanel .tabs-right .selected .round-container {
+    padding-left: 5px;
+    padding-right: 5px;
+    width: 137px;
+}
+.advanced-TabPanel .tabs-left .unselected .round-container, .advanced-TabPanel .tabs-right .unselected .round-container {
+    padding-left: 5px;
+    padding-right: 5px;
+    width: 136px;
+}
+.advanced-TabPanel .tabs-right .separator {
+    border-left: 1px solid black;
+    height: 3px;
+}
+.advanced-TabPanel .tabs-right .separator img {
+    width: 3px;
+}
+.advanced-TabPanel .tabs-right .last-empty {
+    border-left: 1px solid black;
+    height: 100%;
+}
+.advanced-TabPanel .tabs-right .unselected {
+    border-left: 1px solid black;
+    cursor: pointer;
+}
+.advanced-TabPanel .selected .advanced-RoundCornerBorder div {
+    background-color: #D4D0C8;
+    font-weight: bold;
+}
+.advanced-TabPanel .unselected .advanced-RoundCornerBorder div {
+    background-color: #D4D0C8;
+}
+.advanced-TabPanel .single-container, .advanced-TabPanel .round-container {
+    color: black;
+    font-family: sans-serif;
+    font-size: 12px;
+    vertical-align: top;
+}
+.advanced-TabPanel .outer-border .single-container, .advanced-TabPanel .inner-border .single-container .outer-border .single-container {
+    background-color: #D4D0C8;
+    border: 1px solid black;
+    margin: 0;
+    padding: 3px;
+}
+.advanced-TabPanel .inner-border .single-container, .advanced-TabPanel .inner-border .single-container .outer-border .single-container .inner-border .single-container {
+    background-color: white;
+    border: 1px solid black;
+    margin: 0;
+    padding: 1px;
 }

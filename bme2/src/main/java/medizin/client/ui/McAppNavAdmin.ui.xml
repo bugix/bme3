@@ -45,6 +45,7 @@
 			<g:Anchor ui:field="institution"></g:Anchor>
 		</g:VerticalPanel>
 	</g:DisclosurePanel>
+	
 	<g:DisclosurePanel ui:field="assementPanel" width="100%"  open="true" addStyleNames='{style.mainNavPanel}'>
 		<g:header></g:header>
 		<g:VerticalPanel addStyleNames='{style.mainNavPanelContent}' width="100%">
