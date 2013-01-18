@@ -241,11 +241,11 @@ SimplePanel toolbarPanel;*/
 	public void setValue(QuestionProxy question){
 		//questionTextArea.setHTML(html);
 		questionType.setValue(question.getQuestionType());
-		questionTextArea.setHTML(question.getQuestionText());
+		questionTextArea.setHTML(question.getQuestionText()==null?"":question.getQuestionText());
 		autor.setValue(question.getAutor());
 		rewiewer.setValue(question.getRewiewer());
 		questEvent.setValue(question.getQuestEvent());
-		questionComment.setHTML(question.getComment().getComment());
+		questionComment.setHTML(question.getComment()==null?"":question.getComment().getComment());
 		
 	}
 	

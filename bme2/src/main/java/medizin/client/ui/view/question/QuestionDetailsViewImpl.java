@@ -192,12 +192,12 @@ public class QuestionDetailsViewImpl extends Composite implements
 		this.proxy = proxy;
 		
 		displayRenderer.setInnerText(proxy.getId().toString());
-		lblQuestionTypeValue.setText(proxy.getQuestionType().getShortName());
-		lblQuestionTextValue.setText(proxy.getQuestionText());
-		lblAutherValue.setText(proxy.getAutor().getName());
-		lblReviewerValue.setText(proxy.getRewiewer().getName());
-		lblQuestionEventValue.setText(proxy.getQuestEvent().getEventName());
-		lblCommentValue.setText(proxy.getComment().getComment());
+		lblQuestionTypeValue.setText(proxy.getQuestionType()==null?"":proxy.getQuestionType().getShortName());
+		lblQuestionTextValue.setText(proxy.getQuestionText()==null?"":proxy.getQuestionText());
+		lblAutherValue.setText(proxy.getAutor()==null?"":proxy.getAutor().getName());
+		lblReviewerValue.setText(proxy.getRewiewer()==null?"":proxy.getRewiewer().getName());
+		lblQuestionEventValue.setText(proxy.getQuestEvent()==null?"":proxy.getQuestEvent().getEventName());
+		lblCommentValue.setText(proxy.getComment()==null?"":proxy.getComment().getComment());
     	
     	    
 /*		// id.setInnerText(proxy.getId() == null ? "" :

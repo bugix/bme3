@@ -40,18 +40,18 @@ public class Question {
     @Size(min = 2, max = 255)
     private String picturePath;
 
-    @NotNull
+   // @NotNull
     private Double questionVersion;
 
-    @NotNull
+    //@NotNull
     @Value("false")
     private Boolean isAcceptedRewiever;
 
-    @NotNull
+    //@NotNull
     @Value("false")
     private Boolean isAcceptedAdmin;
 
-    @NotNull
+    //@NotNull
     @Value("false")
     private Boolean isActive;
 
@@ -61,18 +61,18 @@ public class Question {
     @ManyToMany(cascade = CascadeType.ALL)
     private Set<Keyword> keywords = new HashSet<Keyword>();
 
-    @NotNull
+    //@NotNull
     @ManyToOne
     private QuestionEvent questEvent;
 
     @OneToOne
     private Comment comment;
 
-    @NotNull
+    //@NotNull
     @ManyToOne
     private QuestionType questionType;
 
-    @NotNull
+    //@NotNull
     @ManyToMany(cascade = CascadeType.ALL)
     private Set<Mc> mcs = new HashSet<Mc>();
 
@@ -80,7 +80,7 @@ public class Question {
     private Set<Answer> answers = new HashSet<Answer>();
     
   //RedactionalBase code
-    @NotNull
+   // @NotNull
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(style = "M-")
     private Date dateAdded;
@@ -89,11 +89,11 @@ public class Question {
     @DateTimeFormat(style = "M-")
     private Date dateChanged;
 
-    @NotNull
+    //@NotNull
     @ManyToOne
     private Person rewiewer;
 
-    @NotNull
+    //@NotNull
     @ManyToOne
     private Person autor;
     
