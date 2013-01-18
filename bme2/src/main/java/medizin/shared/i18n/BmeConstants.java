@@ -151,4 +151,9 @@ public interface BmeConstants extends Constants {
 	
 	public String searchField();
 	
+	public String questionText();
+	public String auther();
+	public String reviewer();
+	public String comment();
+	public String manageQuestion();
 }

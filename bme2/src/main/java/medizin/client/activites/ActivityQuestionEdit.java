@@ -19,6 +19,7 @@ import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.proxy.QuestionTypeProxy;
+import medizin.client.request.CommentRequest;
 import medizin.client.request.QuestionRequest;
 import medizin.client.ui.ErrorPanel;
 import medizin.client.ui.McAppConstant;
@@ -52,7 +53,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 
 	protected QuestionProxy question;
 
-	private RequestFactoryEditorDriver<QuestionProxy, QuestionEditViewImpl> editorDriver;
+	//private RequestFactoryEditorDriver<QuestionProxy, QuestionEditViewImpl> editorDriver;
 
 	protected PersonProxy loggedUser;
 
@@ -110,7 +111,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		questionEditView.setPresenter(this);
 		this.widget = widget;
 		this.view = questionEditView;
-		editorDriver = view.createEditorDriver();
+	//	editorDriver = view.createEditorDriver();
 		view.setDelegate(this);
 		
 
@@ -261,12 +262,14 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 	}
 	
 	QuestionRequest request;
+	CommentRequest commentRequest;
 	QuestionProxy question2;
 
 	private boolean save;
 	private void init() {
 		
 		request = requests.questionRequest();
+		commentRequest=requests.commentRequest();
 		
 		if(question==null){
 			QuestionProxy question = request.create(QuestionProxy.class);
@@ -275,7 +278,8 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		}
 		else{
 			Log.info(question.getQuestionText());
-			view.setRichPanelHTML(question.getQuestionText());
+			//view.setRichPanelHTML(question.getQuestionText());
+			view.setValue(question);
 			view.setEditTitle(true);
 		}
 		
@@ -285,12 +289,12 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 	      
 	       Log.info("persist");
 	        request.persist().using(question2);
-		editorDriver.edit(question2, request);
+	//	editorDriver.edit(question2, request);
 		
 
 
 		Log.info("flush");
-		editorDriver.flush();
+	//	editorDriver.flush();
 //		this.question = question;
 		Log.debug("Create für: "+question2.getQuestionText());
 //		view.setValue(person);
@@ -340,18 +344,43 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 	
 		
 		//QuestionRequest req = requests.questionRequest();
-		editorDriver.flush();
+		//editorDriver.flush();
 		
 		
 		
 		
 		if(generateNewQuestion)
 		{
+			/*QuestionProxy questionProxy=standardizedRole.getCheckList();
+			CheckListRequest checklsitRequest=requests.checkListRequest();
+			checklistProxy=checklsitRequest.edit(checklistProxy);
+			checklistProxy.setTitle(((RoleEditCheckListSubViewImpl)checkListView).title.getText
+			*/		
+			QuestionProxy questionNew=request.edit(question);
 			
-			QuestionProxy questionNew = request.create(QuestionProxy.class);
+			//QuestionProxy questionNew = request.create(QuestionProxy.class);
 			
+			questionNew.setQuestionType(view.getQuestionType().getValue());
 			questionNew.setQuestionText(view.getRichtTextHTML());
-			Iterator<AnswerProxy> iter = question2.getAnswers().iterator();
+			Log.info("auther "+ view.getAuther().getValue().getName());
+			
+			questionNew.setAutor(view.getAuther().getValue());
+			Log.info("reviewer "+ view.getReviewer().getValue().getName());
+			
+			questionNew.setRewiewer(view.getReviewer().getValue());
+			CommentProxy comment=commentRequest.edit(questionNew.getComment());
+			comment.setComment(view.getQuestionComment().getHTML());
+			
+			questionNew.setComment(comment);
+			
+			/*CommentProxy comment=commentRequest.create(CommentProxy.class);
+			comment.setComment(view.getQuestionComment().getHTML());*/
+			
+			//questionNew.setComment(comment);
+			
+			
+			
+			/*Iterator<AnswerProxy> iter = question2.getAnswers().iterator();
 			Set<AnswerProxy> answers = new HashSet<AnswerProxy>();
 			while (iter.hasNext()) {
 				AnswerProxy answer = (AnswerProxy) iter.next();
@@ -405,7 +434,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 			
 			
 			questionNew.setQuestionVersion(question2.getQuestionVersion()+1);
-			
+	*/		
 			request.generateNewVersion().using(questionNew).fire(new Receiver<Void>() {
 				
 		          @Override
@@ -439,8 +468,81 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		}
 		else{
 			//editorDriver.edit(question, req);
+			QuestionProxy questionNew = request.create(QuestionProxy.class);
 			
-			Log.debug(view.getRichtTextHTML());
+			questionNew.setQuestionType(view.getQuestionType().getValue());
+			questionNew.setQuestionText(view.getRichtTextHTML());
+			Log.info("auther "+ view.getAuther().getValue().getName());
+			
+			questionNew.setAutor(view.getAuther().getValue());
+			Log.info("reviewer "+ view.getReviewer().getValue().getName());
+			
+			questionNew.setRewiewer(view.getReviewer().getValue());
+			questionNew.setQuestEvent(view.getQuestionEvent().getValue());
+			CommentProxy comment=commentRequest.create(CommentProxy.class);
+			comment.setComment(view.getQuestionComment().getHTML());
+			
+			questionNew.setComment(comment);
+			final QuestionProxy newQuestion=questionNew;
+			
+			commentRequest.persist().using(comment).fire(new Receiver<Void>() {
+				
+		          @Override
+		          public void onSuccess(Void response) {
+		        	  Log.info("PersonSucesfullSaved");
+		        	  
+		        	  request.persist().using(newQuestion).fire(new Receiver<Void>() {
+		  				
+		    	          @Override
+		    	          public void onSuccess(Void response) {
+		    	        	  Log.info("PersonSucesfullSaved");
+		    	        	  
+		    	        		placeController.goTo(new PlaceQuestionDetails(newQuestion.stableId(), PlaceQuestionDetails.Operation.DETAILS));
+		    	          //	goTo(new PlaceQuestion(person.stableId()));
+		    	          }
+		    	          
+		    	          public void onFailure(ServerFailure error){
+		    					Log.error(error.getMessage());
+		    				}
+		    	          @Override
+		    				public void onViolation(Set<Violation> errors) {
+		    					Iterator<Violation> iter = errors.iterator();
+		    					String message = "";
+		    					while(iter.hasNext()){
+		    						message += iter.next().getMessage() + "<br>";
+		    					}
+		    					Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Event -" + message);
+		    					
+		    					ErrorPanel erorPanel = new ErrorPanel();
+		    			        	  erorPanel.setWarnMessage(message);
+		    	
+		    					
+		    				}
+		    	      }); 
+		        		
+		          //	goTo(new PlaceQuestion(person.stableId()));
+		          }
+		          
+		          public void onFailure(ServerFailure error){
+						Log.error(error.getMessage());
+					}
+		          @Override
+					public void onViolation(Set<Violation> errors) {
+						Iterator<Violation> iter = errors.iterator();
+						String message = "";
+						while(iter.hasNext()){
+							message += iter.next().getMessage() + "<br>";
+						}
+						Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Event -" + message);
+						
+						ErrorPanel erorPanel = new ErrorPanel();
+				        	  erorPanel.setWarnMessage(message);
+		
+						
+					}
+		      }); 
+			
+			/*Log.debug(view.getRichtTextHTML());
 			question2.setQuestionText(view.getRichtTextHTML());
 			Log.debug(question2.toString());
 			if(question2.getId()==null){
@@ -460,35 +562,9 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 				question2.setDateChanged(new Date());
 				question2.setIsAcceptedAdmin(false);
 				question2.setQuestionVersion(calculateSubversion(question2.getQuestionVersion()));
-			}
-			/*editorDriver.flush()*/request.persist().using(question2).fire(new Receiver<Void>() {
-				
-	          @Override
-	          public void onSuccess(Void response) {
-	        	  Log.info("PersonSucesfullSaved");
-	        	  
-	        		placeController.goTo(new PlaceQuestionDetails(question.stableId(), PlaceQuestionDetails.Operation.DETAILS));
-	          //	goTo(new PlaceQuestion(person.stableId()));
-	          }
-	          
-	          public void onFailure(ServerFailure error){
-					Log.error(error.getMessage());
-				}
-	          @Override
-				public void onViolation(Set<Violation> errors) {
-					Iterator<Violation> iter = errors.iterator();
-					String message = "";
-					while(iter.hasNext()){
-						message += iter.next().getMessage() + "<br>";
-					}
-					Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Event -" + message);
-					
-					ErrorPanel erorPanel = new ErrorPanel();
-			        	  erorPanel.setWarnMessage(message);
-	
-					
-				}
-	      }); 
+			}*/
+			/*editorDriver.flush()*/
+			
 		}
 		
 	}

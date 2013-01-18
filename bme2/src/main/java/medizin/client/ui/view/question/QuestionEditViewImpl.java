@@ -21,11 +21,16 @@ import medizin.client.ui.view.roo.AnswerSetEditor;
 import medizin.client.ui.view.roo.KeywordSetEditor;
 import medizin.client.ui.view.roo.McSetEditor;
 import medizin.client.ui.view.roo.QuestionAccessSetEditor;
+import medizin.client.ui.view.roo.QuestionTypeProxyRenderer;
+import medizin.client.ui.widget.IconButton;
+import medizin.shared.i18n.BmeConstants;
 
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -42,15 +47,17 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DoubleBox;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.IntegerBox;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RichTextArea;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.ValueListBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
 
-public class QuestionEditViewImpl extends Composite implements QuestionEditView, Editor<QuestionProxy>  {
+public class QuestionEditViewImpl extends Composite implements QuestionEditView/*, Editor<QuestionProxy>*/  {
 
 	private static QuestionEditViewImplUiBinder uiBinder = GWT
 			.create(QuestionEditViewImplUiBinder.class);
@@ -59,7 +66,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView,
 			UiBinder<Widget, QuestionEditViewImpl> {
 	}
 	
-	interface EditorDriver extends RequestFactoryEditorDriver<QuestionProxy, QuestionEditViewImpl> {}
+	/*interface EditorDriver extends RequestFactoryEditorDriver<QuestionProxy, QuestionEditViewImpl> {}
 	// private final EditorDriver editorDriver = GWT.create(EditorDriver.class);
 	
     @Override
@@ -67,28 +74,104 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView,
         RequestFactoryEditorDriver<QuestionProxy, QuestionEditViewImpl> driver = GWT.create(EditorDriver.class);
         driver.initialize(this);
         return driver;
-    }
+    }*/
 
 	private Presenter presenter;
-
-	
-    @UiField
-    Button cancel;
-
-    @UiField
-    Button save;
-
     private Delegate delegate;
-	
-   
-
-   
-    
-
 	private QuestionProxy proxy;
-
 	private McAppRequestFactory requests;
+	public BmeConstants constants = GWT.create(BmeConstants.class);
+	
+	@UiField
+    public IconButton cancel;
 
+    @UiField
+    public IconButton save;
+
+    @UiField
+	TabPanel questionTypePanel;
+    
+    @UiField
+	SpanElement title;
+    
+	@UiField
+	public Label lblQuestionType;
+	
+	@UiField(provided = true)
+    public ValueListBox<QuestionTypeProxy> questionType = new ValueListBox<QuestionTypeProxy>(QuestionTypeProxyRenderer.instance(), new EntityProxyKeyProvider<medizin.client.proxy.QuestionTypeProxy>());
+
+	@UiField
+	public Label lblQuestionText;
+	
+	@UiField(provided=true)
+	public RichTextToolbar toolbar;
+	
+	@UiField
+	public DivElement descriptionValue;
+	
+	@UiField(provided=true)
+	public RichTextArea questionTextArea;
+	
+	
+	
+	@UiField
+	public Label lblAuther;
+	
+	@UiField(provided = true)
+	public ValueListBox<PersonProxy> autor = new ValueListBox<PersonProxy>(medizin.client.ui.view.roo.PersonProxyRenderer.instance(), new EntityProxyKeyProvider<medizin.client.proxy.PersonProxy>());	
+	
+	
+	
+	@UiField
+	public Label lblReviewer;
+	
+	@UiField(provided = true)
+    public ValueListBox<PersonProxy> rewiewer = new ValueListBox<PersonProxy>(medizin.client.ui.view.roo.PersonProxyRenderer.instance(), new EntityProxyKeyProvider<medizin.client.proxy.PersonProxy>());
+	
+	@UiField
+	public Label lblQuestionEvent;
+	  
+	@UiField(provided = true)
+	public ValueListBox<QuestionEventProxy> questEvent = new ValueListBox<QuestionEventProxy>(medizin.client.ui.view.roo.QuestionEventProxyRenderer.instance(), new EntityProxyKeyProvider<medizin.client.proxy.QuestionEventProxy>());
+	
+	
+	
+	@UiField
+	public Label lblQuestionComment;
+	
+	@UiField(provided=true)
+	public RichTextToolbar commentToolbar;
+	
+	@UiField
+	public DivElement commentValue;
+	
+	@UiField(provided=true)
+	public RichTextArea questionComment;
+	
+	
+//	  @UiField
+//	    DateBox dateAdded;
+//
+//	    @UiField
+//	    DateBox dateChanged;
+
+	    
+
+	   
+//
+//	    @UiField  
+//	    RichTextArea questionText;
+
+	   /* @UiField  
+	    RichTextArea questionTextArea;
+*/
+
+	  
+
+	    
+
+	  /*  @UiField
+	    McSetEditor mcs;*/
 
     @UiHandler("cancel")
     void onCancel(ClickEvent event) {
@@ -114,17 +197,37 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView,
 
     
 
-@UiField 
-SimplePanel toolbarPanel;
+/*@UiField 
+SimplePanel toolbarPanel;*/
 
 	public QuestionEditViewImpl() {
+		
+		questionTextArea = new RichTextArea();
+		questionTextArea.setSize("100%", "14em");
+		toolbar = new RichTextToolbar(questionTextArea);
+		toolbar.setWidth("100%");
+		
+		questionComment = new RichTextArea();
+		questionComment.setSize("100%", "14em");
+		commentToolbar = new RichTextToolbar(questionComment);
+		commentToolbar.setWidth("100%");
+		
+		
 		initWidget(uiBinder.createAndBindUi(this));
-		RichTextToolbar toolbar=new RichTextToolbar(questionTextArea);
+		questionTypePanel.selectTab(0);
+		save.setText(constants.save());
+		cancel.setText(constants.cancel());
 		
-		toolbarPanel.add(toolbar);
-
-
+		questionTypePanel.getTabBar().setTabText(0, constants.manageQuestion());
 		
+		lblQuestionType.setText(constants.questionType());
+		lblQuestionText.setText(constants.questionText());
+		lblAuther.setText(constants.auther()); 
+		lblReviewer.setText(constants.reviewer());
+		lblQuestionComment.setText(constants.comment());
+		lblQuestionEvent.setText("Question Event");
+		//RichTextToolbar toolbar=new RichTextToolbar(questionTextArea);
+		//toolbarPanel.add(toolbar);
 
 	}
 	
@@ -134,6 +237,18 @@ SimplePanel toolbarPanel;
 		questionTextArea.setHTML(html);
 	}
 
+	@Override
+	public void setValue(QuestionProxy question){
+		//questionTextArea.setHTML(html);
+		questionType.setValue(question.getQuestionType());
+		questionTextArea.setHTML(question.getQuestionText());
+		autor.setValue(question.getAutor());
+		rewiewer.setValue(question.getRewiewer());
+		questEvent.setValue(question.getQuestEvent());
+		questionComment.setHTML(question.getComment().getComment());
+		
+	}
+	
 	@Override
 	public String getRichtTextHTML(){
 //		Log.info(questionTextArea.getHTML());
@@ -164,40 +279,6 @@ SimplePanel toolbarPanel;
 		
 	}
 
-//	  @UiField
-//	    DateBox dateAdded;
-//
-//	    @UiField
-//	    DateBox dateChanged;
-
-	    @UiField(provided = true)
-	    ValueListBox<PersonProxy> rewiewer = new ValueListBox<PersonProxy>(medizin.client.ui.view.roo.PersonProxyRenderer.instance(), new EntityProxyKeyProvider<medizin.client.proxy.PersonProxy>());
-
-	    @UiField(provided = true)
-	    ValueListBox<PersonProxy> autor = new ValueListBox<PersonProxy>(medizin.client.ui.view.roo.PersonProxyRenderer.instance(), new EntityProxyKeyProvider<medizin.client.proxy.PersonProxy>());
-//
-//	    @UiField  
-//	    RichTextArea questionText;
-
-	    @UiField  
-	    RichTextArea questionTextArea;
-
-
-	    @UiField(provided = true)
-	    ValueListBox<QuestionEventProxy> questEvent = new ValueListBox<QuestionEventProxy>(medizin.client.ui.view.roo.QuestionEventProxyRenderer.instance(), new EntityProxyKeyProvider<medizin.client.proxy.QuestionEventProxy>());
-
-
-	    @UiField(provided = true)
-	    ValueListBox<QuestionTypeProxy> questionType = new ValueListBox<QuestionTypeProxy>(medizin.client.ui.view.roo.QuestionTypeProxyRenderer.instance(), new EntityProxyKeyProvider<medizin.client.proxy.QuestionTypeProxy>());
-
-	    @UiField
-	    McSetEditor mcs;
-
-
-
-
-
-
 	    
 	    @Override
 	    public void setRewiewerPickerValues(Collection<PersonProxy> values) {
@@ -220,12 +301,14 @@ SimplePanel toolbarPanel;
 
 	    @Override
 	    public void setMcsPickerValues(Collection<McProxy> values) {
-	        mcs.setAcceptableValues(values);
+	        //mcs.setAcceptableValues(values);
 	    }
-		@UiField
+	    
+	    
+		/*@UiField
 		Element  editTitle;
 		@UiField
-		Element  createTitle;
+		Element  createTitle;*/
 
 
 		private boolean edit;
@@ -236,19 +319,58 @@ SimplePanel toolbarPanel;
 		public void setEditTitle(boolean edit) {
 			this.edit = edit;
 		      if (edit) {
-		            editTitle.getStyle().clearDisplay();
-		            createTitle.getStyle().setDisplay(Display.NONE);
+		    	  title.setInnerText("Edit");
+		    	 // questionTypePanel.getTabBar().setTabText(0, "Edit Question");
+		            //editTitle.getStyle().clearDisplay();
+		            //createTitle.getStyle().setDisplay(Display.NONE);
 		        } else {
-		        	
-		            editTitle.getStyle().setDisplay(Display.NONE);
-		            createTitle.getStyle().clearDisplay();
+		        	title.setInnerText("Create");
+		        //	questionTypePanel.getTabBar().setTabText(0, "New Question");
+		            //editTitle.getStyle().setDisplay(Display.NONE);
+		            //createTitle.getStyle().clearDisplay();
 		        }
 			
 		}
 		
 
-
-
-
+		@Override
+		public ValueListBox<QuestionTypeProxy> getQuestionType()
+		{
+			return questionType;
+		}
+		
+		@Override
+		public RichTextArea getQuestionTextArea()
+		{
+			return questionTextArea;
+		}
+		
+		@Override
+		public ValueListBox<PersonProxy> getAuther()
+		{
+			return autor;
+		}
+		
+		@Override
+		public ValueListBox<PersonProxy> getReviewer()
+		{
+			return rewiewer;
+		}
+		
+		@Override
+		public ValueListBox<QuestionEventProxy> getQuestionEvent()
+		{
+			return questEvent;
+		}
+		
+		
+		@Override
+		public RichTextArea getQuestionComment()
+		{
+			return questionComment;
+		}
+		
+		
+	
 
 }

@@ -15,6 +15,8 @@ import com.google.gwt.place.shared.Place;
 import com.google.web.bindery.requestfactory.gwt.client.RequestFactoryEditorDriver;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.RichTextArea;
+import com.google.gwt.user.client.ui.ValueListBox;
 
 public interface QuestionEditView extends IsWidget {
     void setName(String helloName);
@@ -36,7 +38,7 @@ public interface QuestionEditView extends IsWidget {
 		
 	}
 
-	RequestFactoryEditorDriver<QuestionProxy, QuestionEditViewImpl> createEditorDriver();
+	//RequestFactoryEditorDriver<QuestionProxy, QuestionEditViewImpl> createEditorDriver();
 
 	void setRewiewerPickerValues(Collection<PersonProxy> values);
 
@@ -59,6 +61,20 @@ public interface QuestionEditView extends IsWidget {
 	String getRichtTextHTML();
 
 	void setEditTitle(boolean edit);
+
+	ValueListBox<QuestionTypeProxy> getQuestionType();
+
+	RichTextArea getQuestionTextArea();
+
+	ValueListBox<PersonProxy> getAuther();
+
+	ValueListBox<PersonProxy> getReviewer();
+
+	RichTextArea getQuestionComment();
+
+	ValueListBox<QuestionEventProxy> getQuestionEvent();
+
+	void setValue(QuestionProxy question);
 
 
 

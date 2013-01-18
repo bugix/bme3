@@ -128,9 +128,9 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		
 		view.setDelegate(this);
 		
-		this.answerListView = view.getAnswerListViewImpl();
+		/*this.answerListView = view.getAnswerListViewImpl();
 		answerListView.setDelegate(this);
-		this.answerTable = answerListView.getTable();
+		this.answerTable = answerListView.getTable();*/
 		
 		requests.personRequest().myGetLoggedPerson()
 				.fire(new Receiver<PersonProxy>() {
@@ -209,7 +209,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			answerRangeChangeHandler=null;
 		}
 		
-		requests.answerRequest().contAnswersByQuestion(question.getId()).fire( new Receiver<Long>(){
+		/*requests.answerRequest().contAnswersByQuestion(question.getId()).fire( new Receiver<Long>(){
 
 
 				@Override
@@ -247,7 +247,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			public void onRangeChange(RangeChangeEvent event) {
 				ActivityQuestionDetails.this.onAnswerTableRangeChanged();
 			}
-		});
+		});*/
 		
 		
 		
