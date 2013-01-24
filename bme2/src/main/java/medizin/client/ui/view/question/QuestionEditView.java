@@ -10,12 +10,18 @@ import medizin.client.proxy.QuestionProxy;
 import medizin.client.proxy.McProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionTypeProxy;
+import medizin.client.ui.view.roo.McSetEditor;
+import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.EventHandlingValueHolderItem;
+import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
 
 import com.google.gwt.place.shared.Place;
 import com.google.web.bindery.requestfactory.gwt.client.RequestFactoryEditorDriver;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.RichTextArea;
+import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.ValueListBox;
 
 public interface QuestionEditView extends IsWidget {
@@ -70,11 +76,21 @@ public interface QuestionEditView extends IsWidget {
 
 	ValueListBox<PersonProxy> getReviewer();
 
-	RichTextArea getQuestionComment();
+	TextArea getQuestionComment();
 
 	ValueListBox<QuestionEventProxy> getQuestionEvent();
 
 	void setValue(QuestionProxy question);
+
+	McSetEditor getMCS();
+
+	DefaultSuggestBox<PersonProxy,  EventHandlingValueHolderItem<PersonProxy>> getAutherListBox();
+
+	DefaultSuggestBox<PersonProxy, EventHandlingValueHolderItem<PersonProxy>> getReviewerListBox();
+
+	TextBox getShortName();
+
+	CheckBox getSubmitToReviewComitee();
 
 
 

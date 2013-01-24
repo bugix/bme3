@@ -18,6 +18,8 @@ import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import medizin.shared.Status;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -34,7 +36,10 @@ public class Question {
 
 	private static Logger log = Logger.getLogger(Question.class);
 
-    @Size(min = 10, max = 600)
+	@Size(max = 255)
+    private String questionShortName;
+	
+	@Size(min = 10, max = 600)
     private String questionText;
 
     @Size(min = 2, max = 255)
@@ -43,15 +48,20 @@ public class Question {
    // @NotNull
     private Double questionVersion;
 
-    //@NotNull
+    @NotNull
     @Value("false")
     private Boolean isAcceptedRewiever;
 
-    //@NotNull
+    @NotNull
+    @Value("false")
+    private Boolean submitToReviewComitee;
+
+    
+    @NotNull
     @Value("false")
     private Boolean isAcceptedAdmin;
 
-    //@NotNull
+    @NotNull
     @Value("false")
     private Boolean isActive;
 
@@ -61,16 +71,18 @@ public class Question {
     @ManyToMany(cascade = CascadeType.ALL)
     private Set<Keyword> keywords = new HashSet<Keyword>();
 
-    //@NotNull
+    @NotNull
     @ManyToOne
     private QuestionEvent questEvent;
 
     @OneToOne
     private Comment comment;
 
-    //@NotNull
+    @NotNull
     @ManyToOne
     private QuestionType questionType;
+    
+    private Status status;
 
     //@NotNull
     @ManyToMany(cascade = CascadeType.ALL)
@@ -80,7 +92,7 @@ public class Question {
     private Set<Answer> answers = new HashSet<Answer>();
     
   //RedactionalBase code
-   // @NotNull
+ //   @NotNull
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(style = "M-")
     private Date dateAdded;
@@ -89,11 +101,11 @@ public class Question {
     @DateTimeFormat(style = "M-")
     private Date dateChanged;
 
-    //@NotNull
+    @NotNull
     @ManyToOne
     private Person rewiewer;
 
-    //@NotNull
+    @NotNull
     @ManyToOne
     private Person autor;
     

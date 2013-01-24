@@ -37,6 +37,14 @@
 								<td colspan="2">
 									<table class="{style.fields}" id="boundElementHolder">
 
+										<tr id="questionShortName">
+											<td>
+												<g:Label styleName="{style.label}" ui:field="lblQuestionShortName"></g:Label>
+											</td>
+											<td>
+												<g:Label ui:field="lblQuestionShortNameValue"></g:Label>
+											</td>
+										</tr>
 										<tr id="questionType">
 											<td>
 												<g:Label styleName="{style.label}" ui:field="lblQuestionType"></g:Label>
@@ -85,6 +93,15 @@
 												<g:Label ui:field="lblCommentValue"></g:Label>
 											</td>
 										</tr>
+										<tr id="mcs">
+											<td>
+												<g:Label styleName="{style.label}" ui:field="lblMcs"></g:Label>
+											</td>
+											<td>
+												<g:Label ui:field="lblMcsValue"></g:Label>
+											</td>
+										</tr>
+
 									</table>
 								</td>
 							</tr>

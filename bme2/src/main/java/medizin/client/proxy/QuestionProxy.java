@@ -6,6 +6,7 @@ import com.google.web.bindery.requestfactory.shared.EntityProxy;
 import com.google.web.bindery.requestfactory.shared.ProxyForName;
 import java.util.Date;
 import java.util.Set;
+import medizin.shared.Status;
 import org.springframework.roo.addon.gwt.RooGwtProxy;
 
 @ProxyForName(value = "medizin.server.domain.Question", locator = "medizin.server.locator.QuestionLocator")
@@ -13,6 +14,10 @@ import org.springframework.roo.addon.gwt.RooGwtProxy;
 public interface QuestionProxy extends EntityProxy {
 
     abstract Long getId();
+
+    abstract String getQuestionShortName();
+
+    abstract void setQuestionShortName(String questionShortName);
 
     abstract String getQuestionText();
 
@@ -29,6 +34,10 @@ public interface QuestionProxy extends EntityProxy {
     abstract Boolean getIsAcceptedRewiever();
 
     abstract void setIsAcceptedRewiever(Boolean isAcceptedRewiever);
+
+    abstract Boolean getSubmitToReviewComitee();
+
+    abstract void setSubmitToReviewComitee(Boolean submitToReviewComitee);
 
     abstract Boolean getIsAcceptedAdmin();
 
@@ -57,6 +66,10 @@ public interface QuestionProxy extends EntityProxy {
     abstract QuestionTypeProxy getQuestionType();
 
     abstract void setQuestionType(QuestionTypeProxy questionType);
+
+    abstract Status getStatus();
+
+    abstract void setStatus(Status status);
 
     abstract Set<medizin.client.proxy.McProxy> getMcs();
 

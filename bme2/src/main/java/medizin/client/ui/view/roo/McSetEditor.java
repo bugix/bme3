@@ -136,6 +136,22 @@ public class McSetEditor extends McSetEditor_Roo_Gwt {
         }
         viewLabel.setText(makeFlatList(values));
     }
+    
+    public void setNewValue(Set<medizin.client.proxy.McProxy> values) {
+        this.values = values;
+        
+        if (displayedList != null) {
+            displayedList.clear();
+            table.clear();
+            if (values != null) {
+                for (McProxy e : values) {
+                    displayedList.add(e);
+                    addToTable(e);
+                }
+            }
+        }
+        viewLabel.setText(makeFlatList(values));
+    }
 
     private void addToTable(McProxy value) {
         addToTable(value, displayedList.size() - 1);
@@ -151,7 +167,10 @@ public class McSetEditor extends McSetEditor_Roo_Gwt {
                 public void onClick(final ClickEvent event) {
                     displayedList.remove(finalIndex);
                     table.removeRow(finalIndex);
+                    table.clear();
                     viewLabel.setText(makeFlatList(displayedList));
+                    Set<McProxy> s=new HashSet<McProxy>(displayedList);
+                    setNewValue(s);
                 }
             });
             table.setWidget(finalIndex, 1, removeEntryButton);

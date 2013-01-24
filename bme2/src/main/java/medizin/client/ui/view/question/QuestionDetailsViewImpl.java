@@ -61,6 +61,13 @@ public class QuestionDetailsViewImpl extends Composite implements
 	
 	@UiField
 	Label lblQuestionTypeValue;
+	
+	@UiField
+	Label lblQuestionShortName;
+	
+	@UiField
+	Label lblQuestionShortNameValue;
+
 
 	@UiField
 	Label lblQuestionText;
@@ -91,6 +98,12 @@ public class QuestionDetailsViewImpl extends Composite implements
 
 	@UiField
 	Label lblCommentValue;
+
+	@UiField
+	Label lblMcs;
+
+	@UiField
+	Label lblMcsValue;
 
 	
 	
@@ -193,13 +206,18 @@ public class QuestionDetailsViewImpl extends Composite implements
 		
 		displayRenderer.setInnerText(proxy.getId().toString());
 		lblQuestionTypeValue.setText(proxy.getQuestionType()==null?"":proxy.getQuestionType().getShortName());
+		lblQuestionShortNameValue.setText(proxy.getQuestionShortName()==null?"":proxy.getQuestionShortName());
 		lblQuestionTextValue.setText(proxy.getQuestionText()==null?"":proxy.getQuestionText());
 		lblAutherValue.setText(proxy.getAutor()==null?"":proxy.getAutor().getName());
 		lblReviewerValue.setText(proxy.getRewiewer()==null?"":proxy.getRewiewer().getName());
 		lblQuestionEventValue.setText(proxy.getQuestEvent()==null?"":proxy.getQuestEvent().getEventName());
 		lblCommentValue.setText(proxy.getComment()==null?"":proxy.getComment().getComment());
-    	
-    	    
+		lblMcsValue.setText(proxy.getMcs() == null ? "": medizin.client.ui.view.roo.CollectionRenderer.of(medizin.client.ui.view.roo.McProxyRenderer.instance()).render(proxy.getMcs()));
+		/*mcs.setInnerText(proxy.getMcs() == null ? ""
+				: medizin.client.ui.view.roo.CollectionRenderer.of(
+						medizin.client.ui.view.roo.McProxyRenderer.instance())
+						.render(proxy.getMcs()));
+    	*/    
 /*		// id.setInnerText(proxy.getId() == null ? "" :
 		// String.valueOf(proxy.getId()));
 		// version.setInnerText(proxy.getVersion() == null ? "" :
@@ -276,14 +294,14 @@ public class QuestionDetailsViewImpl extends Composite implements
 		questionTypeDetailPanel.selectTab(0);
 		questionTypeDetailPanel.getTabBar().setTabText(0, constants.manageQuestion());
 		TabPanelHelper.moveTabBarToBottom(questionTypeDetailPanel);
-		
+		lblQuestionShortName.setText("Question Short Name");
 		lblQuestionType.setText(constants.questionType());
 		lblQuestionText.setText(constants.questionText());
 		lblAuther.setText(constants.auther()); 
 		lblReviewer.setText(constants.reviewer());
 		lblComment.setText(constants.comment());
 		lblQuestionEvent.setText("Question Event");
-		
+		lblMcs.setText("MCS");
 		     
 		
 

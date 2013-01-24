@@ -25,6 +25,7 @@ import medizin.client.ui.ErrorPanel;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.question.QuestionEditView;
 import medizin.client.ui.view.question.QuestionEditViewImpl;
+import medizin.shared.Status;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.shared.EventBus;
@@ -182,7 +183,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		
 //		view.initialiseDriver(requests);
         widget.setWidget(questionEditView.asWidget());
-		//setTable(view.getTable());
+	//	setTable(view.getTable());
         
 		eventBus.addHandler(PlaceChangeEvent.TYPE, new PlaceChangeEvent.Handler() {
 			public void onPlaceChange(PlaceChangeEvent event) {
@@ -362,14 +363,21 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 			
 			questionNew.setQuestionType(view.getQuestionType().getValue());
 			questionNew.setQuestionText(view.getRichtTextHTML());
-			Log.info("auther "+ view.getAuther().getValue().getName());
-			
-			questionNew.setAutor(view.getAuther().getValue());
+		
+			Log.info("auther "+ view.getAutherListBox().getSelected().getName());
+			questionNew.setAutor(view.getAutherListBox().getSelected());
 			Log.info("reviewer "+ view.getReviewer().getValue().getName());
+			//questionNew.setRewiewer(view.getReviewer().getValue());
+			questionNew.setRewiewer(view.getReviewerListBox().getSelected());
+			questionNew.setDateAdded(new Date());
+			questionNew.setMcs(view.getMCS().getValue());
+			questionNew.setSubmitToReviewComitee(view.getSubmitToReviewComitee().getValue());
+			questionNew.setStatus(Status.NEW);
 			
-			questionNew.setRewiewer(view.getReviewer().getValue());
 			CommentProxy comment=commentRequest.edit(questionNew.getComment());
-			comment.setComment(view.getQuestionComment().getHTML());
+			//comment.setComment(view.getQuestionComment().getHTML());
+			comment.setComment(view.getQuestionComment().getValue());
+			
 			
 			questionNew.setComment(comment);
 			
@@ -468,19 +476,27 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		}
 		else{
 			//editorDriver.edit(question, req);
+			final QuestionRequest request=requests.questionRequest();
+			CommentRequest commentRequest=requests.commentRequest();
+			
 			QuestionProxy questionNew = request.create(QuestionProxy.class);
 			
 			questionNew.setQuestionType(view.getQuestionType().getValue());
 			questionNew.setQuestionText(view.getRichtTextHTML());
-			Log.info("auther "+ view.getAuther().getValue().getName());
+/*			Log.info("auther "+ view.getAuther().getValue().getName());*/
 			
-			questionNew.setAutor(view.getAuther().getValue());
-			Log.info("reviewer "+ view.getReviewer().getValue().getName());
-			
-			questionNew.setRewiewer(view.getReviewer().getValue());
+		//	questionNew.setAutor(view.getAuther().getValue());
+			questionNew.setAutor(view.getAutherListBox().getSelected());
+			/*Log.info("reviewer "+ view.getReviewer().getValue().getName());*/
+			questionNew.setRewiewer(view.getReviewerListBox().getSelected());
+			//questionNew.setRewiewer(view.getReviewer().getValue());
 			questionNew.setQuestEvent(view.getQuestionEvent().getValue());
+			questionNew.setMcs(view.getMCS().getValue());
+			questionNew.setDateChanged(new Date());
+			questionNew.setSubmitToReviewComitee(view.getSubmitToReviewComitee().getValue());
 			CommentProxy comment=commentRequest.create(CommentProxy.class);
-			comment.setComment(view.getQuestionComment().getHTML());
+			//comment.setComment(view.getQuestionComment().getHTML());
+			comment.setComment(view.getQuestionComment().getValue());
 			
 			questionNew.setComment(comment);
 			final QuestionProxy newQuestion=questionNew;
@@ -503,6 +519,8 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		    	          
 		    	          public void onFailure(ServerFailure error){
 		    					Log.error(error.getMessage());
+		    					Log.error(error.getExceptionType());
+		    					Log.error(error.getStackTraceString());
 		    				}
 		    	          @Override
 		    				public void onViolation(Set<Violation> errors) {

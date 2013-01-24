@@ -1,0 +1,111 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:b="urn:import:com.google.gwt.user.cellview.client"
+	xmlns:m="urn:import:medizin.client.ui.widget">
+	<ui:style src="../../styles.css">
+		.standardTable input {
+			width: 100%;
+			opacity: 0.8;
+		}
+		
+		.popupPanel {
+			margin: 6px 6px;
+		}
+		
+		.popupCheckboxes {
+			width: 135px;
+		}
+		
+		.noOutline {
+			outline-style: none;
+			overflow: hidden;
+		}
+		
+		.floatRight {
+			float: right;
+		}
+		
+		.complexity {
+			padding-right: 10px;
+		}
+		
+		.text {
+			padding-right: 10px;
+		}
+		
+		.Author {
+			padding-right: 37px;
+		}
+		
+		.Reviewer {
+			padding-right: 23px;
+		}
+		
+		.Specification {
+			padding-right: 6px;
+		}
+		
+		.StudyYear {
+			padding-right: 65px;
+		}
+		
+		.Keywordlbl {
+			padding-right: 28px;
+		}
+		
+		.startDatelbl {
+			padding-right: 20px;
+		}
+		
+		.endDateLbl {
+			padding-right: 27px;
+		}
+	</ui:style>
+	<g:FocusPanel ui:field="filterPanelRoot" addStyleNames="{style.noOutline}">
+		<g:HTMLPanel addStyleNames="{style.popupPanel}">
+			<span class="ui-icon ui-icon-wrench" style="margin: 0 10px 6px 0; float:left"></span>
+			<span style="margin-left: 0px">
+				<strong ui:field="labelSearch">Suche nach...</strong>
+			</span>
+			<m:IconButton icon="arrowreturnthick-1-w" ui:field="resetButton"
+				addStyleNames="{style.floatRight}"></m:IconButton>
+
+			<div style="clear:both">
+				<g:HorizontalPanel>
+					<g:VerticalPanel addStyleNames="{style.popupCheckboxes}">
+						<g:HTMLPanel>
+							<table>
+								<tr>
+									<td>
+										<g:Label>Auther</g:Label>
+									</td>
+									<td>
+										<g:CheckBox ui:field="auther">Auther</g:CheckBox>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<g:Label>Reviwer</g:Label>
+									</td>
+									<td>
+										<g:CheckBox ui:field="reviewer">Reviewer</g:CheckBox>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<g:Label>Status</g:Label>
+									</td>
+									<td>
+									<g:ValueListBox ui:field="status" />		
+										<!-- <g:ListBox ui:field="status"></g:ListBox> -->
+										<!-- <td><d:DateBox ui:field="dateTextBox" ></d:DateBox></td>  -->
+									</td>
+								</tr>
+							</table>
+						</g:HTMLPanel>
+					</g:VerticalPanel>
+				</g:HorizontalPanel>
+			</div>
+		</g:HTMLPanel>
+	</g:FocusPanel>
+</ui:UiBinder> 

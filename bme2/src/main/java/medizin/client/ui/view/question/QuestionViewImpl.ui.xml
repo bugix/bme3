@@ -1,33 +1,37 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:n="urn:import:medizin.client.ui"
-	xmlns:b="urn:import:com.google.gwt.user.cellview.client">
+	xmlns:b="urn:import:com.google.gwt.user.cellview.client" xmlns:m="urn:import:medizin.client.ui.widget" xmlns:i="urn:import:medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl">
 
 	<ui:style src="../../styles.css" />
 		
-
 	<g:SplitLayoutPanel styleName="{style.panelHTML}"
 		ui:field="splitLayoutPanel">
 		<g:west size="600">
-		<g:ScrollPanel>
+			<g:ScrollPanel>
 				<g:HTMLPanel styleName="{style.listView}">
+					<div class="{style.controls} {style.controlsleft}">
 
-					<div style="height:3em;" />
-					<b:CellTable pageSize="8" ui:field="table" width="100%" />
-					<div class="{style.controls}">
-						<div>
-							<g:Button ui:field="newButton" addStyleNames="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"><span class="ui-icon ui-icon-plusthick" style="float: left; margin-right: 0.3em;"></span>neuer frage erstellen</g:Button>
-						</div>
-						<b:SimplePager display="{table}" location="RIGHT" />
+						<m:QuickSearchBox ui:field="searchBox"></m:QuickSearchBox>
+						<m:IconButton ui:field="filterButton" icon="wrench"></m:IconButton>
 					</div>
-
+					<b:CellTable ui:field="table" addStyleNames="{style.standardTable}"
+						width="500" />
+					<div class="{style.controls} {style.controlsleft}">
+						<m:IconButton ui:field="newQuestion" icon="plusthick">New
+							Question
+						</m:IconButton>
+						<b:SimplePager ui:field="pager" display="{table}" />
+						
+						 <!-- <i:DefaultSuggestBox ui:field="copiedOsce"></i:DefaultSuggestBox> --> 
+					</div>
 				</g:HTMLPanel>
-				</g:ScrollPanel>
+			</g:ScrollPanel>
 
 		</g:west>
 		<g:center>
-		<g:ScrollPanel>
-			<g:SimplePanel ui:field="detailsPanel"></g:SimplePanel>
+			<g:ScrollPanel>
+				<g:SimplePanel ui:field="detailsPanel"></g:SimplePanel>
 			</g:ScrollPanel>
 		</g:center>
 	</g:SplitLayoutPanel>

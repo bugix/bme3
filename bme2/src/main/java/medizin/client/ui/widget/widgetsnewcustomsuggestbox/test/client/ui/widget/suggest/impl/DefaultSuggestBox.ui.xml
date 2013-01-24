@@ -1,0 +1,25 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"   xmlns:suggest="urn:import:medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest">
+	<g:HTMLPanel>
+		<table cellspacing="0" cellpadding="0" >
+			<tbody>
+				<tr>
+					
+					<td>					
+						<div>
+						
+						<suggest:SuggestTextBoxWidgetImpl ui:field="textField"></suggest:SuggestTextBoxWidgetImpl>
+						
+						</div>
+					</td>
+					
+					<td class="eu-nextstreet-SuggestFieldPanel-right">
+						
+						<div class="eu-nextstreet-SuggestFieldPanel-rightInner">&nbsp;</div>
+					</td> 
+				</tr>
+			</tbody>
+		</table>
+	</g:HTMLPanel>
+</ui:UiBinder> 
