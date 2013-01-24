@@ -368,6 +368,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 			questionNew.setAutor(view.getAutherListBox().getSelected());
 			Log.info("reviewer "+ view.getReviewer().getValue().getName());
 			//questionNew.setRewiewer(view.getReviewer().getValue());
+			questionNew.setQuestionShortName(view.getShortName().getValue());
 			questionNew.setRewiewer(view.getReviewerListBox().getSelected());
 			questionNew.setDateAdded(new Date());
 			questionNew.setMcs(view.getMCS().getValue());
@@ -484,7 +485,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 			questionNew.setQuestionType(view.getQuestionType().getValue());
 			questionNew.setQuestionText(view.getRichtTextHTML());
 /*			Log.info("auther "+ view.getAuther().getValue().getName());*/
-			
+			questionNew.setQuestionShortName(view.getShortName().getValue());
 		//	questionNew.setAutor(view.getAuther().getValue());
 			questionNew.setAutor(view.getAutherListBox().getSelected());
 			/*Log.info("reviewer "+ view.getReviewer().getValue().getName());*/
