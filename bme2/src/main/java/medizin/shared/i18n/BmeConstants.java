@@ -170,7 +170,8 @@ public interface BmeConstants extends Constants {
 	public String submitToReviewComitee();
 
 	public String confirmText();
-	
+	public String major();
+	public String minor();
 
 	
 }
