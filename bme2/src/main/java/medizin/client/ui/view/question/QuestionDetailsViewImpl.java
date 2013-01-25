@@ -294,14 +294,14 @@ public class QuestionDetailsViewImpl extends Composite implements
 		questionTypeDetailPanel.selectTab(0);
 		questionTypeDetailPanel.getTabBar().setTabText(0, constants.manageQuestion());
 		TabPanelHelper.moveTabBarToBottom(questionTypeDetailPanel);
-		lblQuestionShortName.setText("Question Short Name");
+		lblQuestionShortName.setText(constants.questionShortName());
 		lblQuestionType.setText(constants.questionType());
 		lblQuestionText.setText(constants.questionText());
 		lblAuther.setText(constants.auther()); 
 		lblReviewer.setText(constants.reviewer());
 		lblComment.setText(constants.comment());
-		lblQuestionEvent.setText("Question Event");
-		lblMcs.setText("MCS");
+		lblQuestionEvent.setText(constants.questionEvent());
+		lblMcs.setText(constants.mcs());
 		     
 		
 

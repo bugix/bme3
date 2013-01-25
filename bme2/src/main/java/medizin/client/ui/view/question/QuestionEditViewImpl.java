@@ -259,15 +259,15 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 		cancel.setText(constants.cancel());
 
 		questionTypePanel.getTabBar().setTabText(0, constants.manageQuestion());
-		lblQuestionShortName.setText("Question Short Name");
+		lblQuestionShortName.setText(constants.questionShortName());
 		lblQuestionType.setText(constants.questionType());
 		lblQuestionText.setText(constants.questionText());
 		lblAuther.setText(constants.auther());
 		lblReviewer.setText(constants.reviewer());
 		lblQuestionComment.setText(constants.comment());
-		lblQuestionEvent.setText("Question Event");
-		lblMCS.setText("MCS");
-		lblQuestionSubmitToReviewComitee.setText("Submit To Review Comitee");
+		lblQuestionEvent.setText(constants.questionEvent());
+		lblMCS.setText(constants.mcs());
+		lblQuestionSubmitToReviewComitee.setText(constants.submitToReviewComitee());
 		// RichTextToolbar toolbar=new RichTextToolbar(questionTextArea);
 		// toolbarPanel.add(toolbar);
 		

@@ -30,6 +30,7 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.ValueListBox;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.datepicker.client.DateBox;
 
 public class QuestionFilterViewImpl extends PopupPanel implements QuestionView {
 
@@ -85,6 +86,13 @@ public class QuestionFilterViewImpl extends PopupPanel implements QuestionView {
 			return object==null ?" ": String.valueOf(object);
 		}
 	});
+	
+	@UiField
+	public DateBox createStartDate;
+	
+	@UiField
+	public DateBox createEndDate;
+	
 	
 	/*@UiField
 	public DateBox dateTextBox;

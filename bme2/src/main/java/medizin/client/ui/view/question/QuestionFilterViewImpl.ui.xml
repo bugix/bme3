@@ -1,7 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:b="urn:import:com.google.gwt.user.cellview.client"
-	xmlns:m="urn:import:medizin.client.ui.widget">
+	xmlns:m="urn:import:medizin.client.ui.widget" xmlns:d="urn:import:com.google.gwt.user.datepicker.client">
 	<ui:style src="../../styles.css">
 		.standardTable input {
 			width: 100%;
@@ -60,6 +60,11 @@
 		.endDateLbl {
 			padding-right: 27px;
 		}
+		
+		.labelSize{
+		width: 115px;
+
+		}
 	</ui:style>
 	<g:FocusPanel ui:field="filterPanelRoot" addStyleNames="{style.noOutline}">
 		<g:HTMLPanel addStyleNames="{style.popupPanel}">
@@ -77,26 +82,50 @@
 							<table>
 								<tr>
 									<td>
-										<g:Label>Auther</g:Label>
+										<g:Label addStyleNames="{style.labelSize}">Auther</g:Label>
 									</td>
-									<td>
-										<g:CheckBox ui:field="auther">Auther</g:CheckBox>
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<g:Label>Reviwer</g:Label>
-									</td>
-									<td>
-										<g:CheckBox ui:field="reviewer">Reviewer</g:CheckBox>
+									<td >
+										<g:CheckBox ui:field="auther"></g:CheckBox>
 									</td>
 								</tr>
 								<tr>
 									<td>
-										<g:Label>Status</g:Label>
+										<g:Label addStyleNames="{style.labelSize}">Reviwer</g:Label>
+									</td>
+									<td>
+										<g:CheckBox ui:field="reviewer"></g:CheckBox>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<g:Label addStyleNames="{style.labelSize}">Status</g:Label>
 									</td>
 									<td>
 									<g:ValueListBox ui:field="status" />		
+										<!-- <g:ListBox ui:field="status"></g:ListBox> -->
+										<!-- <td><d:DateBox ui:field="dateTextBox" ></d:DateBox></td>  -->
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<g:Label addStyleNames="{style.labelSize}">Create Date From</g:Label>
+									</td>
+									<td>
+									
+										<d:DateBox ui:field="createStartDate"></d:DateBox> 
+									
+										<!-- <g:ListBox ui:field="status"></g:ListBox> -->
+										<!-- <td><d:DateBox ui:field="dateTextBox" ></d:DateBox></td>  -->
+									</td>
+								</tr>
+									<tr>
+									<td>
+									<g:Label addStyleNames="{style.labelSize}">Create Date To</g:Label>
+									</td>
+									<td>
+									
+										<d:DateBox ui:field="createEndDate"></d:DateBox>
+									
 										<!-- <g:ListBox ui:field="status"></g:ListBox> -->
 										<!-- <td><d:DateBox ui:field="dateTextBox" ></d:DateBox></td>  -->
 									</td>

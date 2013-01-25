@@ -10,6 +10,8 @@ import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.QuickSearchBox;
+import medizin.shared.Status;
+import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.cell.client.AbstractCell;
@@ -48,7 +50,8 @@ public class QuestionViewImpl extends Composite implements QuestionView {
 	private Delegate delegate;
 	private McAppRequestFactory requests;
 	private PlaceController placeController;
-
+	private BmeConstants constants = GWT.create(BmeConstants.class);
+	
 	/*
 	 * @UiField
 	@Ignore
@@ -197,7 +200,7 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 
 		filterPanel.setPopupPosition(x, y);
 		filterPanel.show();
-		filterPanel.setSize("280px", "150px");
+		filterPanel.setSize("350px", "210px");
 		// Log.info(filterPanel.getSpecialisationBox().getValue());
 
 	}
@@ -218,7 +221,41 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 			public String getValue(QuestionProxy object) {
 				return renderer.render(object.getId());
 			}
-		}, "Id");
+		}, constants.id());
+		
+		
+		
+		/*
+		 * 
+		 * table.addColumn(new TextColumn<OsceProxy>() {
+			{ this.setSortable(true); }
+
+			Renderer<java.lang.String> renderer = new AbstractRenderer<java.lang.String>() {
+
+				public String render(java.lang.String obj) {
+					return obj == null ? "" : String.valueOf(obj);
+				}
+			};
+
+			@Override
+			public String getValue(OsceProxy object) {
+				if(object.getStudyYear()==null)
+				{
+					return " ";
+				}
+				else
+				{
+					String s=" "+object.getStudyYear()+"."+OsceEditActivity.semester.getSemester();
+					if(object.getIsRepeOsce()==true)
+					{
+						s=s+" rape";
+					}
+				//String s=""+object.getStudyYear().ordinal();
+				return renderer.render(s);
+				}
+			}
+		}, constants.osce());
+		 */
 
 		// paths.add("dateAdded");
 		// table.addColumn(new TextColumn<QuestionProxy>() {
@@ -444,7 +481,7 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 			public QuestionProxy getValue(QuestionProxy object) {
 				return object;
 			}
-		}, McAppConstant.QUESTION_TEXT);
+		}, constants.questionText());
 
 		paths.add("questionType");
 		table.addColumn(new TextColumn<QuestionProxy>() {
@@ -460,7 +497,23 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 			public String getValue(QuestionProxy object) {
 				return renderer.render(object.getQuestionType()==null?"":object.getQuestionType().getShortName());
 			}
-		}, "Question Type");
+		},constants.questionType() );
+		
+		table.addColumn(new TextColumn<QuestionProxy>() {
+
+			Renderer<java.lang.String> renderer = new AbstractRenderer<java.lang.String>() {
+
+				public String render(java.lang.String obj) {
+					return obj == null ? "" : String.valueOf(obj);
+				}
+			};
+			
+			@Override
+			public String getValue(QuestionProxy object) {
+				// TODO Auto-generated method stub
+				return  (object.getStatus()==null ?"":object.getStatus().toString());
+			}
+		},constants.status());
 		
 	}
 

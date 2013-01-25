@@ -352,12 +352,15 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		
 		if(generateNewQuestion)
 		{
+			// edit question 
+			
 			/*QuestionProxy questionProxy=standardizedRole.getCheckList();
 			CheckListRequest checklsitRequest=requests.checkListRequest();
 			checklistProxy=checklsitRequest.edit(checklistProxy);
 			checklistProxy.setTitle(((RoleEditCheckListSubViewImpl)checkListView).title.getText
 			*/		
-			QuestionProxy questionNew=request.edit(question);
+			QuestionRequest req=requests.questionRequest();
+			QuestionProxy questionNew=req.edit(question);
 			
 			//QuestionProxy questionNew = request.create(QuestionProxy.class);
 			
@@ -366,7 +369,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		
 			Log.info("auther "+ view.getAutherListBox().getSelected().getName());
 			questionNew.setAutor(view.getAutherListBox().getSelected());
-			Log.info("reviewer "+ view.getReviewer().getValue().getName());
+		
 			//questionNew.setRewiewer(view.getReviewer().getValue());
 			questionNew.setQuestionShortName(view.getShortName().getValue());
 			questionNew.setRewiewer(view.getReviewerListBox().getSelected());
@@ -374,9 +377,9 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 			questionNew.setDateChanged(new Date());
 			questionNew.setMcs(view.getMCS().getValue());
 			questionNew.setSubmitToReviewComitee(view.getSubmitToReviewComitee().getValue());
-			questionNew.setStatus(Status.NEW);
+//			questionNew.setStatus(Status.NEW);
 			
-			CommentProxy comment=commentRequest.edit(questionNew.getComment());
+			CommentProxy comment=req.edit(questionNew.getComment());
 			//comment.setComment(view.getQuestionComment().getHTML());
 			comment.setComment(view.getQuestionComment().getValue());
 			
@@ -449,7 +452,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 			
 			questionNew.setQuestionVersion(question2.getQuestionVersion()+1);
 	*/		
-			request.generateNewVersion().using(questionNew).fire(new Receiver<Void>() {
+			req.generateNewVersion().using(questionNew).fire(new Receiver<Void>() {
 				
 		          @Override
 		          public void onSuccess(Void response) {
@@ -481,6 +484,8 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 			
 		}
 		else{
+			
+			// New question
 			//editorDriver.edit(question, req);
 			final QuestionRequest request=requests.questionRequest();
 			CommentRequest commentRequest=requests.commentRequest();
@@ -504,7 +509,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 			CommentProxy comment=commentRequest.create(CommentProxy.class);
 			//comment.setComment(view.getQuestionComment().getHTML());
 			comment.setComment(view.getQuestionComment().getValue());
-			
+			questionNew.setStatus(Status.NEW);
 			questionNew.setComment(comment);
 		
 			if(view.getImageViewer() != null && view.getImageViewer().getImageRelativeUrl() != null) {

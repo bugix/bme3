@@ -160,6 +160,17 @@ public interface BmeConstants extends Constants {
 	public String uploadResource();
 	public String currentSize();
 	public String changeToSize();
+	
+	public String id();
+	public String status();
+	
+	public String questionShortName();
+	public String questionEvent();
+	public String mcs();
+	public String submitToReviewComitee();
+
+	public String confirmText();
+	
 
 	
 }
