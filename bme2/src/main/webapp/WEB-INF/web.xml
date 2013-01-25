@@ -104,5 +104,13 @@
 	  <url-pattern>/application/junithost/*</url-pattern>
 	</servlet-mapping>
     
+     <servlet>
+        <servlet-name>fileUpload</servlet-name>
+        <servlet-class>medizin.server.upload.FileUploadServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>fileUpload</servlet-name>
+        <url-pattern>/fileUploadServlet</url-pattern>
+    </servlet-mapping>
     
 </web-app>

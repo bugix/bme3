@@ -370,7 +370,8 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 			//questionNew.setRewiewer(view.getReviewer().getValue());
 			questionNew.setQuestionShortName(view.getShortName().getValue());
 			questionNew.setRewiewer(view.getReviewerListBox().getSelected());
-			questionNew.setDateAdded(new Date());
+//			questionNew.setDateAdded(new Date());
+			questionNew.setDateChanged(new Date());
 			questionNew.setMcs(view.getMCS().getValue());
 			questionNew.setSubmitToReviewComitee(view.getSubmitToReviewComitee().getValue());
 			questionNew.setStatus(Status.NEW);
@@ -381,6 +382,10 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 			
 			
 			questionNew.setComment(comment);
+			
+			if(view.getImageViewer() != null && view.getImageViewer().getImageRelativeUrl() != null) {
+				questionNew.setPicturePath(view.getImageViewer().getImageRelativeUrl());
+			}
 			
 			/*CommentProxy comment=commentRequest.create(CommentProxy.class);
 			comment.setComment(view.getQuestionComment().getHTML());*/
@@ -493,13 +498,19 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 			//questionNew.setRewiewer(view.getReviewer().getValue());
 			questionNew.setQuestEvent(view.getQuestionEvent().getValue());
 			questionNew.setMcs(view.getMCS().getValue());
-			questionNew.setDateChanged(new Date());
+//			questionNew.setDateChanged(new Date());
+			questionNew.setDateAdded(new Date());
 			questionNew.setSubmitToReviewComitee(view.getSubmitToReviewComitee().getValue());
 			CommentProxy comment=commentRequest.create(CommentProxy.class);
 			//comment.setComment(view.getQuestionComment().getHTML());
 			comment.setComment(view.getQuestionComment().getValue());
 			
 			questionNew.setComment(comment);
+		
+			if(view.getImageViewer() != null && view.getImageViewer().getImageRelativeUrl() != null) {
+				questionNew.setPicturePath(view.getImageViewer().getImageRelativeUrl());
+			}
+				
 			final QuestionProxy newQuestion=questionNew;
 			
 			commentRequest.persist().using(comment).fire(new Receiver<Void>() {

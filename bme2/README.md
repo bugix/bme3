@@ -10,8 +10,7 @@ Required Spring Roo commands
 
 When you create new domain class then execute following two commands : 
 
-web gwt proxy all --package ~.client.proxy
-
+web gwt proxy all --package ~.client.proxy<br/>
 web gwt request all --package ~.client.request
 
 

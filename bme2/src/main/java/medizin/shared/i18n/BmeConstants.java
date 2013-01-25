@@ -156,4 +156,10 @@ public interface BmeConstants extends Constants {
 	public String reviewer();
 	public String comment();
 	public String manageQuestion();
+
+	public String uploadResource();
+	public String currentSize();
+	public String changeToSize();
+
+	
 }

@@ -2,22 +2,18 @@ package medizin.client.ui.view.question;
 
 import java.util.Collection;
 
-
-import medizin.client.factory.request.McAppRequestFactory;
-import medizin.client.proxy.KeywordProxy;
-import medizin.client.proxy.QuestionEventProxy;
-import medizin.client.proxy.QuestionProxy;
 import medizin.client.proxy.McProxy;
 import medizin.client.proxy.PersonProxy;
+import medizin.client.proxy.QuestionEventProxy;
+import medizin.client.proxy.QuestionProxy;
 import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.ui.view.roo.McSetEditor;
+import medizin.client.ui.widget.image.ImageViewer;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.EventHandlingValueHolderItem;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
 
 import com.google.gwt.place.shared.Place;
-import com.google.web.bindery.requestfactory.gwt.client.RequestFactoryEditorDriver;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.RichTextArea;
 import com.google.gwt.user.client.ui.TextArea;
@@ -91,6 +87,8 @@ public interface QuestionEditView extends IsWidget {
 	TextBox getShortName();
 
 	CheckBox getSubmitToReviewComitee();
+
+	ImageViewer getImageViewer();
 
 
 

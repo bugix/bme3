@@ -2,7 +2,8 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:n="urn:import:medizin.client.ui"
 	xmlns:d="urn:import:com.google.gwt.user.datepicker.client" xmlns:t="urn:import:medizin.client.ui.richtext"
-	xmlns:r="urn:import:medizin.client.ui.view.roo" xmlns:m="urn:import:medizin.client.ui.widget" xmlns:i="urn:import:medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl">
+	xmlns:r="urn:import:medizin.client.ui.view.roo" xmlns:m="urn:import:medizin.client.ui.widget"
+	xmlns:i="urn:import:medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl">
 	<ui:style src="../../styles.css" />
 		
 	<g:VerticalPanel addStyleNames="{style.tabStyle}">
@@ -30,17 +31,17 @@
 
 					<g:HTMLPanel>
 						<table>
-						<tr id="questionShortName">
+							<tr id="questionShortName">
 								<td>
 									<g:Label styleName="{style.label}" ui:field="lblQuestionShortName"></g:Label>
 								</td>
 								<td>
-									<g:TextBox ui:field="questionShortName" ></g:TextBox>
-									
+									<g:TextBox ui:field="questionShortName"></g:TextBox>
+
 
 								</td>
 							</tr>
-							
+
 							<tr id="questionType">
 								<td>
 									<g:Label styleName="{style.label}" ui:field="lblQuestionType"></g:Label>
@@ -55,24 +56,44 @@
 									<g:Label styleName="{style.label}" ui:field="lblQuestionText"></g:Label>
 								</td>
 								<td>
-									
+
 									<t:RichTextToolbar ui:field="toolbar" />
-									<div style="-moz-border-radius-bottomleft: 8px; -moz-border-radius-bottomright: 8px; border: 1px solid #AAA; border-top: 0; padding: 4px">
+									<div
+										style="-moz-border-radius-bottomleft: 8px; -moz-border-radius-bottomright: 8px; border: 1px solid #AAA; border-top: 0; padding: 4px">
 										<div ui:field="descriptionValue">
-									</div>
-										<g:RichTextArea ui:field='questionTextArea' enabled="false" />
+										</div>
+										<g:RichTextArea ui:field='questionTextArea'
+											enabled="false" />
 									</div>
 
 								</td>
 							</tr>
+							<tr id="uploadResource">
+								<td>
+									<g:Label styleName="{style.label}" ui:field="lblUploadText"></g:Label>
+								</td>
+								<td>
+									<g:HTMLPanel ui:field="uploaderContainer">
+									</g:HTMLPanel>
+								</td>
+							</tr>
+							<tr id="viewer">
+								<td>
+								</td>
+								<td>
+									<g:HTMLPanel ui:field="viewerContainer">
+									</g:HTMLPanel>
+								</td>
+							</tr>
+
 							<tr id="auther">
 								<td>
 									<g:Label styleName="{style.label}" ui:field="lblAuther"></g:Label>
 								</td>
 								<td>
 									<!-- <g:ValueListBox ui:field="autor" /> -->
-									 
-									 <i:DefaultSuggestBox ui:field="auther"></i:DefaultSuggestBox> 
+
+									<i:DefaultSuggestBox ui:field="auther"></i:DefaultSuggestBox>
 
 								</td>
 							</tr>
@@ -83,7 +104,7 @@
 								</td>
 								<td>
 									<!-- <g:ValueListBox ui:field="rewiewer" /> -->
-									 <i:DefaultSuggestBox ui:field="rewiewer"></i:DefaultSuggestBox>
+									<i:DefaultSuggestBox ui:field="rewiewer"></i:DefaultSuggestBox>
 
 								</td>
 							</tr>
@@ -93,7 +114,7 @@
 								</td>
 								<td>
 									<g:ValueListBox ui:field="questEvent" />
-									
+
 								</td>
 							</tr>
 
@@ -103,26 +124,26 @@
 								</td>
 								<td>
 									<g:CheckBox ui:field="submitToReviewComitee" />
-									
+
 								</td>
 							</tr>
-							<tr >
+							<tr>
 								<td></td>
-								<td><g:VerticalPanel ui:field="containPanel"></g:VerticalPanel> </td>
+								<td>
+									<g:VerticalPanel ui:field="containPanel"></g:VerticalPanel>
+								</td>
 							</tr>
 							<tr id="questionComment">
 								<td>
 									<g:Label styleName="{style.label}" ui:field="lblQuestionComment"></g:Label>
 								</td>
 								<td>
-								<g:TextArea ui:field='questionComment'></g:TextArea>
-									
-									<!-- <t:RichTextToolbar ui:field="commentToolbar" />
-									<div style="-moz-border-radius-bottomleft: 8px; -moz-border-radius-bottomright: 8px; border: 1px solid #AAA; border-top: 0; padding: 4px">
-										<div ui:field="commentValue">
-									</div>
-										<g:RichTextArea ui:field='questionComment' enabled="false" />
-									</div> -->
+									<g:TextArea ui:field='questionComment'></g:TextArea>
+
+									<!-- <t:RichTextToolbar ui:field="commentToolbar" /> <div style="-moz-border-radius-bottomleft: 
+										8px; -moz-border-radius-bottomright: 8px; border: 1px solid #AAA; border-top: 
+										0; padding: 4px"> <div ui:field="commentValue"> </div> <g:RichTextArea ui:field='questionComment' 
+										enabled="false" /> </div> -->
 
 								</td>
 							</tr>
@@ -131,17 +152,16 @@
 									<g:Label styleName="{style.label}" ui:field="lblMCS"></g:Label>
 								</td>
 								<td>
-									<r:McSetEditor ui:field="mcs"></r:McSetEditor>	
-										
+									<r:McSetEditor ui:field="mcs"></r:McSetEditor>
+
 								</td>
 							</tr>
-							
-							
+
+
 							<!-- <tr id="questionText"> <td colspan="2"> <div class="{style.label}">Text 
 								der Frage:</div> </td> </tr> <tr> <td colspan="2"> <g:SimplePanel ui:field="toolbarPanel" 
 								addStyleNames="{style.nav}"></g:SimplePanel> <t:RichTextToolbar ui:field="toolbar"></t:RichTextToolbar> 
-								<g:RichTextArea ui:field="questionTextArea" addStyleNames="{style.textarea}"></g:RichTextArea>
-								 
+								<g:RichTextArea ui:field="questionTextArea" addStyleNames="{style.textarea}"></g:RichTextArea> 
 								</td> </tr> <tr id="rewiewer"> <td> <div class="{style.label}">Reviewer:</div> 
 								</td> <td> <g:ValueListBox ui:field="rewiewer" /> </td> </tr> <tr id="picturePath"> 
 								<td> <div class="{style.label}">Picture Path:</div> </td> <td> <g:TextBox 

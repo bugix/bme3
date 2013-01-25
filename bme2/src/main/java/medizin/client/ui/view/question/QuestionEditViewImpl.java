@@ -13,9 +13,12 @@ import medizin.client.ui.richtext.RichTextToolbar;
 import medizin.client.ui.view.roo.McSetEditor;
 import medizin.client.ui.view.roo.QuestionTypeProxyRenderer;
 import medizin.client.ui.widget.IconButton;
+import medizin.client.ui.widget.image.ImageViewer;
+import medizin.client.ui.widget.upload.ResourceUpload;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.EventHandlingValueHolderItem;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.simple.DefaultSuggestOracle;
+import medizin.shared.QuestionTypes;
 import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
@@ -24,12 +27,15 @@ import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.editor.client.Editor.Ignore;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RichTextArea;
@@ -181,8 +187,18 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 	@UiField
 	public VerticalPanel containPanel;
 	
+	@UiField
+	Label lblUploadText;
 	
+	@UiField
+	HTMLPanel uploaderContainer;
 	
+	@UiField
+	HTMLPanel viewerContainer;
+	
+	private ImageViewer viewer;
+	
+	private QuestionProxy question = null;
 	// @UiField
 	// DateBox dateAdded;
 	//
@@ -254,6 +270,15 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 		lblQuestionSubmitToReviewComitee.setText("Submit To Review Comitee");
 		// RichTextToolbar toolbar=new RichTextToolbar(questionTextArea);
 		// toolbarPanel.add(toolbar);
+		
+		questionType.addValueChangeHandler(new ValueChangeHandler<QuestionTypeProxy>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<QuestionTypeProxy> event) {
+				//Note: question is null in create mode 
+				setResourceUploadAndImageViewer(event.getValue(),question);
+			}
+		});
 
 	}
 
@@ -280,6 +305,13 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 				.getComment().getComment());*/
 		submitToReviewComitee.setValue(question.getSubmitToReviewComitee());
 		mcs.setValue(question.getMcs());
+		
+		this.question = question;
+		
+		if(question.getPicturePath() != null) {
+			
+			setResourceUploadAndImageViewer(question.getQuestionType(), question);
+		}
 
 	}
 
@@ -467,6 +499,41 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 		return mcs;
 	}
 	
+	private void setResourceUploadAndImageViewer(
+			QuestionTypeProxy questionType, QuestionProxy question) {	
 	
+		//remove extra part
+		lblUploadText.setText("");
+		uploaderContainer.clear();
+		viewerContainer.clear();
+		
+		if(questionType != null &&  questionType.getQuestionType() != null ) {
+		
+			//for image question
+			if(QuestionTypes.Imgkey.equals(questionType.getQuestionType())) {
+
+				lblUploadText.setText(constants.uploadResource());
+				viewer = new ImageViewer();
+				ResourceUpload resourceUpload = new ResourceUpload();
+				resourceUpload.setResouceViewer(viewer);
+				resourceUpload.setQuestionType(questionType);	
+				uploaderContainer.add(resourceUpload);
+				viewerContainer.add(viewer);
+				
+				if(question != null && question.getPicturePath() != null && question.getPicturePath().length() > 0) {
+					
+					viewer.setUrl(GWT.getHostPageBaseURL() + question.getPicturePath());
+				}
+			}
+			
+			//TODO for other type question
+			
+		}
+	}
+
+	@Override
+	public ImageViewer getImageViewer() {
+		return viewer;
+	}
 
 }
