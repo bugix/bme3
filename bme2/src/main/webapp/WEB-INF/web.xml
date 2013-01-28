@@ -113,4 +113,12 @@
         <url-pattern>/fileUploadServlet</url-pattern>
     </servlet-mapping>
     
+    <filter>
+        <filter-name>fileDownload</filter-name>
+        <filter-class>medizin.server.download.FileDownloadFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>fileDownload</filter-name>
+        <url-pattern>/download/*</url-pattern>
+    </filter-mapping>
 </web-app>
