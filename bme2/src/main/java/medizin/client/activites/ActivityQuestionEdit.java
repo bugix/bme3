@@ -25,7 +25,9 @@ import medizin.client.ui.ErrorPanel;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.question.QuestionEditView;
 import medizin.client.ui.view.question.QuestionEditViewImpl;
+import medizin.client.util.ClientUtility;
 import medizin.shared.Status;
+import medizin.shared.UserType;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.shared.EventBus;
@@ -75,7 +77,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		this.questionPlace = place;
         this.requests = requests;
         this.placeController = placeController;
-        this.operation=edit;
+        this.operation=edit;       
 	}
 
 	@Override
@@ -115,6 +117,8 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 	//	editorDriver = view.createEditorDriver();
 		view.setDelegate(this);
 		
+		ClientUtility.setUserAccess(view.getAutherListBox(),userLoggedIn,UserType.ADMIN,true);
+		ClientUtility.setUserAccess(view.getAutherLbl(),userLoggedIn,UserType.ADMIN,true);
 
 //        view.setRepeForPickerValues(Collections.<QuestionProxy>emptyList());
 //        requests.questionRequest().findQuestionEntries(0, 50).with(medizin.client.ui.view.roo.QuestionProxyRenderer.instance().getPaths()).fire(new Receiver<List<QuestionProxy>>() {
