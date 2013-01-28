@@ -1,6 +1,7 @@
 package medizin.client.ui.widget.image;
 
 import medizin.client.ui.widget.upload.ResourceViewer;
+import medizin.shared.QuestionTypes;
 import medizin.shared.i18n.BmeConstants;
 
 import org.vaadin.gwtgraphics.client.DrawingArea;
@@ -194,10 +195,36 @@ public class ImageViewer extends Composite implements ResourceViewer{
 
 
 	@Override
-	public void setUrl(String url) {
+	public void setUrl(String url,QuestionTypes questionType) {
 		Log.info("Set url : " + url);
 		this.url = url;
-		renderImage();
+		
+		if(questionType != null && QuestionTypes.Textual.equals(questionType)) {
+			renderTextualImage();
+		}else {
+			renderImage();	
+		}
+	}
+
+
+	private void renderTextualImage() {
+		
+		Log.info("Init method called ");
+		Log.info("Image path : " + url);
+		
+		originalWidth = 480;
+		originalHeight = 480;
+		
+//		lblCurrentSize.setText(setWidthHeight(constants.currentSize(),originalWidth,originalHeight));
+		
+		drawingArea.setHeight(originalHeight);
+		drawingArea.setWidth(originalWidth);
+		
+		image = new org.vaadin.gwtgraphics.client.Image(
+				0, 0, originalWidth ,originalHeight, url);
+		
+		drawingArea.add(image);
+		
 	}
 
 

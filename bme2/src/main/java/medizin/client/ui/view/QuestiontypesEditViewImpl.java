@@ -2,40 +2,28 @@ package medizin.client.ui.view;
 
 import java.util.Arrays;
 
-import medizin.client.ui.view.question.QuestionEditViewImpl;
-import medizin.client.ui.widget.IconButton;
-
 import medizin.client.proxy.InstitutionProxy;
-import medizin.client.proxy.QuestionProxy;
 import medizin.client.proxy.QuestionTypeProxy;
-import medizin.shared.Locale;
+import medizin.client.ui.widget.IconButton;
 import medizin.shared.MultimediaType;
 import medizin.shared.QuestionTypes;
 import medizin.shared.SelectionType;
 import medizin.shared.i18n.BmeConstants;
 
-import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
-import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.SpanElement;
-import com.google.gwt.dom.client.Style.Clear;
 import com.google.gwt.dom.client.Style.Display;
-import com.google.gwt.dom.client.Style.Visibility;
-import com.google.gwt.editor.client.Editor;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.web.bindery.requestfactory.gwt.client.RequestFactoryEditorDriver;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.IntegerBox;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -436,7 +424,75 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
     	
     //	delegate.saveClicked();
     	
-    	delegate.saveClicked(proxy);
+    	boolean flag = false;
+    	
+    	if (shortNameTxtbox.getText().equals("") || longNameTxtbox.getText().equals("") || descriptionTxtbox.getText().equals(""))
+    	{
+    		flag = true;
+    		Window.alert("Enter all Value.");
+    		return;
+    	}
+    	
+    	if (questionTypeListBox.getValue().equals(QuestionTypes.Textual))
+        {
+     	   if (sumAnswerTxtbox.getText().equals("") || sumTrueAnswerTxtbox.getText().equals("") || sumFalseAnswerTxtbox.getText().equals("") ||
+     			   questionLengthTxtbox.getText().equals("") || answerLengthTxtbox.getText().equals("") || answerDiffTxtbox.getText().equals(""))
+     	   {
+     		  flag = true;
+     		  Window.alert("Enter all textual Value.");
+     	   }
+        }
+        if (questionTypeListBox.getValue().equals(QuestionTypes.Imgkey))
+        {
+        	if(keywordCountTxtbox.getText().equals("") || minLetterForAutoCompTxtbox.getText().equals("") || answerLengthTxtbox.getText().equals("") ||
+        			shortAnswerLengthTxtbox.getText().equals("") || imageWidthTxtbox.getText().equals("") ||
+        			imageLengthTxtbox.getText().equals("") || imageProportionTxtbox.getText().equals(""))
+        	{
+        		flag = true;
+        		Window.alert("Enter all Image Key Value.");
+        	}
+     	   
+        }
+        if (questionTypeListBox.getValue().equals(QuestionTypes.Area))
+        {
+        	if (imageWidthTxtbox.getText().equals("") || imageLengthTxtbox.getText().equals("") || imageProportionTxtbox.getText().equals("") ||
+        			linearPercentageTxtbox.getText().equals(""))
+        	{
+        		flag = true;
+        		Window.alert("Enter all Area Value.");
+        	}
+        }
+        if (questionTypeListBox.getValue().equals(QuestionTypes.LongText))
+        {
+        	if(minLengthTxtbox.getText().equals("") || maxLengthTxtbox.getText().equals("") || minWordCountTxtbox.getText().equals("") || maxWordCountTxtbox.getText().equals(""))
+        	{
+        		flag = true;
+        		Window.alert("Enter all LongText Value.");
+        	}
+        }
+        if (questionTypeListBox.getValue().equals(QuestionTypes.Matrix))
+        {
+     	   if (maxLengthTxtbox.getText().equals(""))
+     	   {
+     		  flag = true;
+     		  Window.alert("Enter all Matrix Value.");
+     	   }
+        }
+        if (questionTypeListBox.getValue().equals(QuestionTypes.MCQ))
+        {
+     	   if (imageWidthTxtbox.getText().equals("") || imageLengthTxtbox.getText().equals("") || imageProportionTxtbox.getText().equals("") ||
+     			 multimediaTypeListBox.getValue().equals(null) || selectionTypeListBox.getValue().equals(null) || columnTxtbox.getText().equals("") ||
+     			 thumbWidthTxtbox.getText().equals("") || thumbHeightTxtbox.getText().equals("") || maxBytesTxtbox.getText().equals(""))
+     	   {
+     		  flag = true;
+     		  Window.alert("Enter all MCQ Value.");
+     	   }
+        }
+        
+        if(flag == false)
+    	{
+    		delegate.saveClicked(proxy);
+    	}
     
     }
 
@@ -907,7 +963,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 	    	   richTextChkBox.setValue(false);
 	    	   allowZoomOutChkBox.setValue(false);
 	    	   allowZoomInChkBox.setValue(false);
-	    	   maxBytesTxtbox.setValue(proxy.getMaxBytes().toString());
+	    	   maxBytesTxtbox.setValue("");
 	       }
 	}
 

@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import medizin.server.utils.FilePathConstant;
+import medizin.shared.utils.FilePathConstant;
 import medizin.shared.BMEFileUploadConstant;
 
 import org.apache.commons.fileupload.FileItem;
@@ -27,7 +27,7 @@ public class FileUploadServlet extends HttpServlet {
 
 	private static Logger log = Logger.getLogger(FileUploadServlet.class);
 
-	private static String appUploadDirectory = FilePathConstant.UPLOAD_DIR_PATH;// DEFAULT_IMAGE_PATH;
+	private static String appUploadDirectory = FilePathConstant.UPLOAD_QUESTION_IMAGES_PATH;// DEFAULT_IMAGE_PATH;
 
 	private static final long serialVersionUID = 1L;
 

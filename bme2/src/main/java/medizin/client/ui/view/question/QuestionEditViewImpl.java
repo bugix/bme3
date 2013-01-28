@@ -18,6 +18,7 @@ import medizin.client.ui.widget.upload.ResourceUpload;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.EventHandlingValueHolderItem;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.simple.DefaultSuggestOracle;
+import medizin.shared.MultimediaType;
 import medizin.shared.QuestionTypes;
 import medizin.shared.i18n.BmeConstants;
 
@@ -509,8 +510,8 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 		
 		if(questionType != null &&  questionType.getQuestionType() != null ) {
 		
-			//for image question
-			if(QuestionTypes.Imgkey.equals(questionType.getQuestionType())) {
+			
+			if(allowedQuestionTypeForImage(questionType)) {
 
 				lblUploadText.setText(constants.uploadResource());
 				viewer = new ImageViewer();
@@ -522,13 +523,37 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 				
 				if(question != null && question.getPicturePath() != null && question.getPicturePath().length() > 0) {
 					
-					viewer.setUrl(GWT.getHostPageBaseURL() + question.getPicturePath());
+					viewer.setUrl(GWT.getHostPageBaseURL() + question.getPicturePath(),questionType.getQuestionType());
 				}
 			}
 			
-			//TODO for other type question
+			
 			
 		}
+	}
+
+	private boolean allowedQuestionTypeForImage(QuestionTypeProxy questionType) {
+		boolean flag = false;
+		
+		
+		// for image key question
+		if(QuestionTypes.Imgkey.equals(questionType.getQuestionType())){
+			flag = true;
+		}
+		//for textual question having images
+		else if(QuestionTypes.Textual.equals(questionType.getQuestionType()) && questionType.getQueHaveImage() != null && questionType.getQueHaveImage().equals(true)) {
+			flag = true;
+		}
+		//for area question having height and width
+		else if(QuestionTypes.Area.equals(questionType.getQuestionType()) && questionType.getImageWidth() != null && questionType.getImageHeight() != null) {
+			flag = true;
+		}
+		//MCQ question having type as image and height and width
+		else if(QuestionTypes.MCQ.equals(questionType.getQuestionType()) && MultimediaType.Image.equals(questionType.getMultimediaType()) && questionType.getImageWidth() != null && questionType.getImageHeight() != null) {
+			flag = true;
+		}
+		
+		return flag;
 	}
 
 	@Override

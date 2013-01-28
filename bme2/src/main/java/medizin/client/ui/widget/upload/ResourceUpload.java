@@ -2,7 +2,9 @@ package medizin.client.ui.widget.upload;
 
 import medizin.client.proxy.QuestionTypeProxy;
 import medizin.shared.BMEFileUploadConstant;
+import medizin.shared.QuestionTypes;
 import medizin.shared.i18n.BmeConstants;
+import medizin.shared.utils.FilePathConstant;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.base.Strings;
@@ -98,13 +100,14 @@ public class ResourceUpload extends Composite {
 						
 						if(flag == true) {
 							
-							String url = new String(GWT.getHostPageBaseURL() + "public/images/" + fileName);
+							
+							String url = new String(GWT.getHostPageBaseURL() + FilePathConstant.UPLOAD_QUESTION_IMAGES_PATH + fileName);
 							
 							if(checkImageSize(url,questionType)) {
 							
 								if (viewer != null) {
-									Log.info(GWT.getHostPageBaseURL() + "public/images/" + fileName);
-									viewer.setUrl(GWT.getHostPageBaseURL() + "public/images/" + fileName);
+									Log.info(GWT.getHostPageBaseURL() + FilePathConstant.UPLOAD_QUESTION_IMAGES_PATH + fileName);
+									viewer.setUrl(GWT.getHostPageBaseURL() + FilePathConstant.UPLOAD_QUESTION_IMAGES_PATH + fileName,questionType.getQuestionType());
 								}
 							}else {
 							
@@ -152,7 +155,10 @@ public class ResourceUpload extends Composite {
 						
 						
 						Log.info("Image width * height : " + image.getWidth() + "*" + image.getHeight());
-						if(questionType.getImageWidth() != null && questionType.getImageWidth().equals(image.getWidth()) && questionType.getImageHeight() != null && questionType.getImageHeight().equals(image.getHeight())) {
+						if(QuestionTypes.Textual.equals(questionType.getQuestionType())) {
+							flag = true;
+						}
+						else if(questionType.getImageWidth() != null && questionType.getImageWidth().equals(image.getWidth()) && questionType.getImageHeight() != null && questionType.getImageHeight().equals(image.getHeight())) {
 							flag = true;
 						}
 						
@@ -196,9 +202,15 @@ public class ResourceUpload extends Composite {
 	
 	public void setQuestionType(QuestionTypeProxy questionType) {
 		
+		// for image key , MCQ ,area question types 
 		if(questionType.getImageWidth() != null && questionType.getImageHeight() != null) {
 			this.questionType = questionType;
-		}else {
+		}
+		// for textual question types
+		else if(QuestionTypes.Textual.equals(questionType.getQuestionType())) {
+			this.questionType = questionType;
+		}
+		else {
 			Window.alert("Specify Question type width and height");
 		}
 	}
