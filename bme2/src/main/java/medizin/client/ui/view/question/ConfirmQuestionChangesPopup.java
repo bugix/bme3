@@ -1,6 +1,7 @@
 package medizin.client.ui.view.question;
 
 import medizin.client.ui.view.question.QuestionEditView.Delegate;
+import medizin.client.ui.widget.IconButton;
 import medizin.shared.i18n.BmeConstants;
 
 import com.google.gwt.core.client.GWT;
@@ -34,15 +35,17 @@ public class ConfirmQuestionChangesPopup extends DialogBox {
 		center();
 		setGlassEnabled(true);
 		setModal(true);
-		setTitle(constants.confirmText());
+		//setTitle(constants.confirmText());
 		setText(constants.confirmText());
+		
 	}
 
 
 @UiField
-Button saveChange;
+IconButton saveChange;
+
 @UiField
-Button saveNew;
+IconButton saveNew;
 
 
 @UiHandler ("saveNew")

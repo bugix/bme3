@@ -6,6 +6,7 @@ import medizin.client.ui.richtext.RichTextToolbar;
 import medizin.client.proxy.AnswerProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.ui.view.roo.PersonProxyRenderer;
+import medizin.client.ui.widget.IconButton;
 import medizin.client.shared.Validity;
 
 import com.google.gwt.core.client.GWT;
@@ -37,7 +38,10 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox, E
 	private Presenter presenter;
 	
 	@UiField
-	Button closeButton;
+    IconButton save;
+    
+	@UiField
+	IconButton closeButton;
 	
 	@UiHandler ("closeButton")
 	public void onCloseButtonClick(ClickEvent event) {
@@ -53,6 +57,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox, E
         RequestFactoryEditorDriver<AnswerProxy, AnswerDialogboxImpl> driver = GWT.create(EditorDriver.class);
         driver.initialize(this);
         return driver;
+        
     }
 	
     
@@ -138,8 +143,6 @@ RichTextToolbar toolbar=new RichTextToolbar(answerTextArea);
 
 
   
-    @UiField
-    Button save;
     
     @UiHandler("save")
     void onSave(ClickEvent event) {

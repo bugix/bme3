@@ -7,7 +7,10 @@ import java.util.List;
 import java.util.Set;
 
 
+import medizin.client.style.resources.MyCellTableResources;
+import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
+import medizin.client.ui.widget.IconButton;
 import medizin.client.proxy.AnswerProxy;
 import medizin.client.proxy.QuestionProxy;
 
@@ -33,6 +36,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
@@ -53,6 +57,16 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 	}
 
 	public AnswerListViewImpl() {
+		CellTable.Resources tableResources = GWT
+				.create(MyCellTableResources.class);
+		tableAnswer = new CellTable<AnswerProxy>(McAppConstant.TABLE_PAGE_SIZE,
+				tableResources);
+
+		SimplePager.Resources pagerResources = GWT
+				.create(MySimplePagerResources.class);
+		pager = new SimplePager(SimplePager.TextLocation.RIGHT, pagerResources,
+				true, McAppConstant.TABLE_JUMP_SIZE, true);
+
 		initWidget(uiBinder.createAndBindUi(this));
 		init();
 	}
@@ -62,8 +76,16 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
     
 
 	@UiField
-    Button newAnswer;
+    IconButton newAnswer;
 
+
+	@UiField(provided = true)
+	CellTable<AnswerProxy> tableAnswer;
+
+	@UiField(provided = true)
+	public SimplePager pager;
+
+	
 	
 	@UiHandler("newAnswer")
 	void addEventClicked(ClickEvent event) {
@@ -73,12 +95,6 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 
 
 	private String name;
-
-
-	
-    @UiField
-    CellTable<AnswerProxy> tableAnswer;
-    
     protected Set<String> paths = new HashSet<String>();
 
     public void init() {

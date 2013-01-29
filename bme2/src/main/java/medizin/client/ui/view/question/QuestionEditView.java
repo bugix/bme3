@@ -15,6 +15,7 @@ import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RichTextArea;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
@@ -68,9 +69,9 @@ public interface QuestionEditView extends IsWidget {
 
 	RichTextArea getQuestionTextArea();
 
-	ValueListBox<PersonProxy> getAuther();
-
-	ValueListBox<PersonProxy> getReviewer();
+//	ValueListBox<PersonProxy> getAuther();
+//
+//	ValueListBox<PersonProxy> getReviewer();
 
 	TextArea getQuestionComment();
 
@@ -89,6 +90,8 @@ public interface QuestionEditView extends IsWidget {
 	CheckBox getSubmitToReviewComitee();
 
 	ImageViewer getImageViewer();
+
+	Label getAutherLbl();
 
 
 

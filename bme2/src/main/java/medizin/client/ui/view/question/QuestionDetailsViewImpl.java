@@ -166,9 +166,9 @@ public class QuestionDetailsViewImpl extends Composite implements
 	// SpanElement answers;
 
 	
-/*
+
 	@UiField
-	AnswerListViewImpl answerListViewImpl;*/
+	AnswerListViewImpl answerListViewImpl;
 
 	// @UiField
 	// EventAccessViewImpl eventAccessView;
@@ -183,8 +183,8 @@ public class QuestionDetailsViewImpl extends Composite implements
 
 	@Override
 	public AnswerListViewImpl getAnswerListViewImpl() {
-		//return answerListViewImpl;
-		return null;
+		return answerListViewImpl;
+		
 	}
 
 	@UiHandler("delete")

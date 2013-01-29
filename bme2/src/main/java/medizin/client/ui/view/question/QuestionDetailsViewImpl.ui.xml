@@ -111,7 +111,7 @@
 					</g:HTMLPanel>
 				</g:Tab>
 			</g:TabPanel>
-
+		<m:AnswerListViewImpl ui:field="answerListViewImpl"></m:AnswerListViewImpl> 
 		</g:VerticalPanel>
 	</g:HTMLPanel>
 </ui:UiBinder>

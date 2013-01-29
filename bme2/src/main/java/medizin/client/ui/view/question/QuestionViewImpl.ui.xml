@@ -18,9 +18,7 @@
 					<b:CellTable ui:field="table" addStyleNames="{style.standardTable}"
 						width="500" />
 					<div class="{style.controls} {style.controlsleft}">
-						<m:IconButton ui:field="newQuestion" icon="plusthick">New
-							Question
-						</m:IconButton>
+						<m:IconButton ui:field="newQuestion" icon="plusthick">New Question</m:IconButton>
 						<b:SimplePager ui:field="pager" display="{table}" />
 						
 						 <!-- <i:DefaultSuggestBox ui:field="copiedOsce"></i:DefaultSuggestBox> --> 

@@ -162,6 +162,10 @@ a:hover, .gwt-Anchor:hover {
 	overflow: hidden;
 }
 
+.gwt-DialogBox
+{
+	z-index: 10;
+}
 .gwt-DialogBox .Caption {
 	background: #ebebeb url(images/hborder.png) repeat-x 0px -2003px;
 	padding: 4px 4px 4px 8px;

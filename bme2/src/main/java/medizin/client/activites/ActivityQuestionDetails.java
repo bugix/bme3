@@ -128,9 +128,9 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		
 		view.setDelegate(this);
 		
-		/*this.answerListView = view.getAnswerListViewImpl();
+		this.answerListView = view.getAnswerListViewImpl();
 		answerListView.setDelegate(this);
-		this.answerTable = answerListView.getTable();*/
+		this.answerTable = answerListView.getTable();
 		
 		requests.personRequest().myGetLoggedPerson()
 				.fire(new Receiver<PersonProxy>() {
@@ -209,7 +209,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			answerRangeChangeHandler=null;
 		}
 		
-		/*requests.answerRequest().contAnswersByQuestion(question.getId()).fire( new Receiver<Long>(){
+		requests.answerRequest().contAnswersByQuestion(question.getId()).fire( new Receiver<Long>(){
 
 
 				@Override
@@ -247,7 +247,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			public void onRangeChange(RangeChangeEvent event) {
 				ActivityQuestionDetails.this.onAnswerTableRangeChanged();
 			}
-		});*/
+		});
 		
 		
 		
@@ -358,13 +358,17 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		answerDialogbox.setDelegate(this);
 		answerDriver = answerDialogbox.createEditorDriver();
 		
-		AnswerRequest request = requests.answerRequest();
-
-			this.answerProxy = request.create(AnswerProxy.class);
-
+		AnswerRequest ansRequest = requests.answerRequest();
+		
+			AnswerProxy ansProxy=ansRequest.create(AnswerProxy.class);
+			
+			//this.answerProxy = request.create(AnswerProxy.class);
+			this.answerProxy = ansProxy;
+			
+			
 			
 
-	        request.persist().using(answerProxy);
+			ansRequest.persist().using(answerProxy);
 	        answerProxy.setQuestion(question);
 	        answerProxy.setDateAdded(new Date());
 	        answerProxy.setAutor(loggedUser);
@@ -381,7 +385,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	        answerDialogbox.setRichPanelHTML(answerProxy.getAnswerText());
 	        
 	        answerProxy.setIsAnswerActive(false);
-	        answerDriver.edit(answerProxy, request);
+	        answerDriver.edit(answerProxy, ansRequest);
 
 	        answerDriver.flush();
 		

@@ -454,11 +454,11 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 		
 	}
 	
-	@Override
-	public ValueListBox<PersonProxy> getAuther() {
-		//return autor;
-		return null;
-	}
+//	@Override
+//	public ValueListBox<PersonProxy> getAuther() {
+//		//return autor;
+//		return null;
+//	}
 	
 	@Override
 	public DefaultSuggestBox<PersonProxy, EventHandlingValueHolderItem<PersonProxy>> getAutherListBox() {
@@ -479,11 +479,11 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 		return questionShortName;
 	}
 
-	@Override
-	public ValueListBox<PersonProxy> getReviewer() {
-		//return rewiewer;
-		return null;
-	}
+//	@Override
+//	public ValueListBox<PersonProxy> getReviewer() {
+//		//return rewiewer;
+//		return null;
+//	}
 
 	@Override
 	public ValueListBox<QuestionEventProxy> getQuestionEvent() {
@@ -559,6 +559,11 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 	@Override
 	public ImageViewer getImageViewer() {
 		return viewer;
+	}
+
+	@Override
+	public Label getAutherLbl() {
+		return lblAuther;
 	}
 
 }
