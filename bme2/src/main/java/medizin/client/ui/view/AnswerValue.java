@@ -19,7 +19,7 @@ public class AnswerValue {
 		}
 		if(object.getQuestionType()!=null)
 		{
-			if(object.getQuestionType()==QuestionTypes.Textual)
+			if(object.getQuestionType()==QuestionTypes.Textual || object.getQuestionType()==QuestionTypes.Sort)
 				return constants.sum()+"("+object.getSumAnswer()+ ")"+"/"+constants.trueAns()+"("+object.getSumTrueAnswer()+ ")"+"/"+constants.falseAns()+"("+object.getSumFalseAnswer()+ ")";
 			
 			if(object.getQuestionType()==QuestionTypes.Imgkey)

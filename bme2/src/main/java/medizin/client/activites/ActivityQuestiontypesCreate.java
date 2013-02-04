@@ -493,7 +493,7 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 				questionTypeProxy.setQuestionType(selectedQuestionType);
 				questionTypeProxy.setInstitution(response);
 				
-				if (selectedQuestionType.equals(QuestionTypes.Textual))
+				if (selectedQuestionType.equals(QuestionTypes.Textual) || selectedQuestionType.equals(QuestionTypes.Sort))
 				{
 					questionTypeProxy.setSumAnswer(Integer.parseInt(view.getSumAnswerTxtbox().getValue()));
 					questionTypeProxy.setSumTrueAnswer(Integer.parseInt(view.getSumTrueAnswerTxtbox().getValue()));

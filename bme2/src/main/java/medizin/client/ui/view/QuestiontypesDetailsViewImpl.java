@@ -345,7 +345,7 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 	    	questionTypeValLbl.setText(proxy.getQuestionType().toString());
 	    	instituteValLbl.setText(proxy.getInstitution().getInstitutionName());
 	    	
-	       if (proxy.getQuestionType().equals(QuestionTypes.Textual))
+	       if (proxy.getQuestionType().equals(QuestionTypes.Textual) || proxy.getQuestionType().equals(QuestionTypes.Sort))
 	       {
 	    	   sumAnswerValLbl.setText(proxy.getSumAnswer().toString());
 	    	   sumTrueAnswerValLbl.setText(proxy.getSumTrueAnswer().toString());
@@ -491,7 +491,7 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 
 		public void disableField(QuestionTypes questionTypes)
 		{
-			if (questionTypes.equals(QuestionTypes.Textual))
+			if (questionTypes.equals(QuestionTypes.Textual) || questionTypes.equals(QuestionTypes.Sort))
 			{
 				disableImgKeyField();
 				disableAreaField();

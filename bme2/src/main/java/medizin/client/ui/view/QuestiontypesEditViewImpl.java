@@ -433,13 +433,13 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
     		return;
     	}
     	
-    	if (questionTypeListBox.getValue().equals(QuestionTypes.Textual))
+    	if (questionTypeListBox.getValue().equals(QuestionTypes.Textual) || questionTypeListBox.getValue().equals(QuestionTypes.Sort))
         {
      	   if (sumAnswerTxtbox.getText().equals("") || sumTrueAnswerTxtbox.getText().equals("") || sumFalseAnswerTxtbox.getText().equals("") ||
      			   questionLengthTxtbox.getText().equals("") || answerLengthTxtbox.getText().equals("") || answerDiffTxtbox.getText().equals(""))
      	   {
      		  flag = true;
-     		  Window.alert("Enter all textual Value.");
+     		  Window.alert("Enter all Value.");
      	   }
         }
         if (questionTypeListBox.getValue().equals(QuestionTypes.Imgkey))
@@ -508,7 +508,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
        longNameTxtbox.setValue(proxy.getLongName());
        descriptionTxtbox.setValue(proxy.getDescription());
        
-       if (proxy.getQuestionType().equals(QuestionTypes.Textual))
+       if (proxy.getQuestionType().equals(QuestionTypes.Textual) || proxy.getQuestionType().equals(QuestionTypes.Sort))
        {
     	   sumAnswerTxtbox.setValue(proxy.getSumAnswer().toString());
     	   sumTrueAnswerTxtbox.setValue(proxy.getSumTrueAnswer().toString());
@@ -830,7 +830,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 
 	public void disableField(QuestionTypes questionTypes)
 	{
-		if (questionTypes.equals(QuestionTypes.Textual))
+		if (questionTypes.equals(QuestionTypes.Textual) || questionTypes.equals(QuestionTypes.Sort))
 		{
 			disableImgKeyField();
 			disableAreaField();
@@ -902,7 +902,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		longNameTxtbox.setValue("");
 		descriptionTxtbox.setValue("");
 		
-		if (questionTypes.equals(QuestionTypes.Textual))
+		if (questionTypes.equals(QuestionTypes.Textual) || questionTypes.equals(QuestionTypes.Sort))
 	       {
 	    	   sumAnswerTxtbox.setValue("");
 	    	   sumTrueAnswerTxtbox.setValue("");
