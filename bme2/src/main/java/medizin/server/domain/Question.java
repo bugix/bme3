@@ -91,6 +91,9 @@ public class Question {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "question")
     private Set<Answer> answers = new HashSet<Answer>();
     
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "question")
+    private Set<QuestionResource> questionResources = new HashSet<QuestionResource>();
+    
   //RedactionalBase code
  //   @NotNull
     @Temporal(TemporalType.TIMESTAMP)

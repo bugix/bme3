@@ -1,0 +1,31 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+		.dragScrollPanel {
+			height: 300px;
+			width: 400px;
+			overflow: scroll;
+			padding: 0 0 0 10px;
+		}
+		
+		.hPanel {
+			border: 2px solid #afc2c7;
+			border-radius: 5px;
+			padding: 5px;
+		}
+	</ui:style>
+	<g:HorizontalPanel addStyleNames="{style.hPanel}">
+
+		<g:VerticalPanel>
+			<g:ScrollPanel addStyleNames="{style.dragScrollPanel}">
+				<g:VerticalPanel ui:field="customContentPanel"
+					spacing="10">
+					<g:AbsolutePanel ui:field="absPanel"></g:AbsolutePanel>
+				</g:VerticalPanel>
+			</g:ScrollPanel>
+		</g:VerticalPanel>
+
+	</g:HorizontalPanel>
+
+</ui:UiBinder> 

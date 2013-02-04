@@ -173,5 +173,10 @@ public interface BmeConstants extends Constants {
 	public String major();
 	public String minor();
 
+	public String yes();
+	public String no();
+	public String okBtn();
+	public String success();
+
 	
 }

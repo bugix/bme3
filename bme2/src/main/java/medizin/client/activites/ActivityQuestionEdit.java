@@ -8,6 +8,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import javax.validation.ConstraintViolation;
+
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.PlaceQuestion;
 import medizin.client.place.PlaceQuestionDetails;
@@ -18,14 +20,19 @@ import medizin.client.proxy.McProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
+import medizin.client.proxy.QuestionResourceProxy;
 import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.request.CommentRequest;
 import medizin.client.request.QuestionRequest;
+import medizin.client.request.QuestionResourceRequest;
 import medizin.client.ui.ErrorPanel;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.question.QuestionEditView;
 import medizin.client.ui.view.question.QuestionEditViewImpl;
+import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
+import medizin.client.ui.widget.resource.dndview.vo.State;
 import medizin.client.util.ClientUtility;
+import medizin.shared.MultimediaType;
 import medizin.shared.Status;
 import medizin.shared.UserType;
 
@@ -116,6 +123,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		this.view = questionEditView;
 	//	editorDriver = view.createEditorDriver();
 		view.setDelegate(this);
+		view.setEventBus(eventBus);
 		
 		ClientUtility.setUserAccess(view.getAutherListBox(),userLoggedIn,UserType.ADMIN,true);
 		ClientUtility.setUserAccess(view.getAutherLbl(),userLoggedIn,UserType.ADMIN,true);
@@ -240,7 +248,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 	private void start2(){
 		if(this.operation==PlaceQuestionDetails.Operation.EDIT){
 			Log.info("edit");
-		requests.find(questionPlace.getProxyId()).with("previousVersion","keywords","questEvent","comment","questionType","mcs", "rewiewer", "autor", "answers", "answers.autor", "answers.rewiewer").fire(new Receiver<Object>() {
+		requests.find(questionPlace.getProxyId()).with("previousVersion","keywords","questEvent","comment","questionType","mcs", "rewiewer", "autor", "answers", "answers.autor", "answers.rewiewer","questionResources").fire(new Receiver<Object>() {
 
 			public void onFailure(ServerFailure error){
 				Log.error(error.getMessage());
@@ -351,9 +359,6 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		//QuestionRequest req = requests.questionRequest();
 		//editorDriver.flush();
 		
-		
-		
-		
 		if(generateNewQuestion)
 		{
 			// edit question 
@@ -387,19 +392,19 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 			//comment.setComment(view.getQuestionComment().getHTML());
 			comment.setComment(view.getQuestionComment().getValue());
 			
-			
 			questionNew.setComment(comment);
 			
-			if(view.getImageViewer() != null && view.getImageViewer().getImageRelativeUrl() != null) {
-				questionNew.setPicturePath(view.getImageViewer().getImageRelativeUrl());
-			}
+			
+			
+			//TODO change this
+//			if(view.getImageViewer() != null && view.getImageViewer().getImageRelativeUrl() != null) {
+//				questionNew.setPicturePath(view.getImageViewer().getImageRelativeUrl());
+//			}
 			
 			/*CommentProxy comment=commentRequest.create(CommentProxy.class);
 			comment.setComment(view.getQuestionComment().getHTML());*/
 			
 			//questionNew.setComment(comment);
-			
-			
 			
 			/*Iterator<AnswerProxy> iter = question2.getAnswers().iterator();
 			Set<AnswerProxy> answers = new HashSet<AnswerProxy>();
@@ -456,13 +461,73 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 			
 			questionNew.setQuestionVersion(question2.getQuestionVersion()+1);
 	*/		
+			final QuestionProxy qpoxy = questionNew; 
 			req.generateNewVersion().using(questionNew).fire(new Receiver<Void>() {
 				
 		          @Override
 		          public void onSuccess(Void response) {
 		        	  Log.info("PersonSucesfullSaved");
 		        	  
-		        		placeController.goTo(new PlaceQuestionDetails(question.stableId(), PlaceQuestionDetails.Operation.DETAILS));
+		        	  // persist questionResources 
+		        	  
+		        	  
+		        	/*  for (QuestionResourceProxy proxy : view.getQuestionResources()) {
+		        		  requests.questionResourceRequest().persist().using(proxy);
+		        	  }
+		        	  
+		        	  requests.questionResourceRequest().fire(new Receiver<Void>() {
+						
+						@Override
+						public void onSuccess(Void response) {
+							placeController.goTo(new PlaceQuestionDetails(question.stableId(), PlaceQuestionDetails.Operation.DETAILS));
+						}
+		        	  });*/
+		        	  
+		        	  
+		        	  		  // persist questionResources 
+						        	 
+						        	  QuestionResourceRequest questionResourceRequest = requests.questionResourceRequest();
+						        	  Set<QuestionResourceProxy> proxies = new HashSet<QuestionResourceProxy>();
+						        	  
+						        	  for (QuestionResourceClient questionResource : view.getQuestionResources()) 
+						        	  {
+						        		  
+						        		  if(questionResource.getState().equals(State.NEW)) {
+							        		  QuestionResourceProxy proxy = questionResourceRequest.create(QuestionResourceProxy.class);
+							        		  
+							        		  proxy.setPath(questionResource.getPath());
+							        		  proxy.setSequenceNumber(questionResource.getSequenceNumber());
+							        		  proxy.setType(questionResource.getType());
+							        		  proxy.setQuestion(qpoxy);
+							        		  proxies.add(proxy);
+						        		  }
+						        	  }
+						        	  
+									 questionResourceRequest.persistSet(proxies).fire(new Receiver<Void>() {
+
+											@Override
+											public void onSuccess(Void response) {
+												placeController.goTo(new PlaceQuestionDetails(question.stableId(), PlaceQuestionDetails.Operation.DETAILS));
+											}
+											
+											@Override
+											public void onConstraintViolation(
+													Set<ConstraintViolation<?>> violations) {
+												Log.error("constraint violation in Question Resourc");
+												super.onConstraintViolation(violations);
+											}
+											
+											@Override
+											public void onFailure(ServerFailure error) {
+												Log.error("Failure in Question Resourc " + error);
+												super.onFailure(error);
+											}
+							        	  
+							        	  
+							        	  });
+							        	  
+							
+		        		//placeController.goTo(new PlaceQuestionDetails(question.stableId(), PlaceQuestionDetails.Operation.DETAILS));
 		          //	goTo(new PlaceQuestion(person.stableId()));
 		          }
 		          
@@ -481,7 +546,6 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 						
 						ErrorPanel erorPanel = new ErrorPanel();
 			        	  erorPanel.setWarnMessage(message);
-		
 						
 					}
 		      }); 
@@ -515,10 +579,11 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 			comment.setComment(view.getQuestionComment().getValue());
 			questionNew.setStatus(Status.NEW);
 			questionNew.setComment(comment);
-		
-			if(view.getImageViewer() != null && view.getImageViewer().getImageRelativeUrl() != null) {
-				questionNew.setPicturePath(view.getImageViewer().getImageRelativeUrl());
-			}
+			//questionNew.setQuestionResources(view.getQuestionResources());
+			//TODO change this
+//			if(view.getImageViewer() != null && view.getImageViewer().getImageRelativeUrl() != null) {
+//				questionNew.setPicturePath(view.getImageViewer().getImageRelativeUrl());
+//			}
 				
 			final QuestionProxy newQuestion=questionNew;
 			
@@ -527,14 +592,79 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		          @Override
 		          public void onSuccess(Void response) {
 		        	  Log.info("PersonSucesfullSaved");
-		        	  
+		        	  		        	  
 		        	  request.persist().using(newQuestion).fire(new Receiver<Void>() {
 		  				
 		    	          @Override
 		    	          public void onSuccess(Void response) {
 		    	        	  Log.info("PersonSucesfullSaved");
-		    	        	  
-		    	        		placeController.goTo(new PlaceQuestionDetails(newQuestion.stableId(), PlaceQuestionDetails.Operation.DETAILS));
+				        	  
+				        	  requests.find(newQuestion.stableId()).fire(new Receiver<Object>() 
+				        	  {
+								@Override
+								public void onSuccess(Object response) 
+								{
+									 Log.info("Question id" + ((QuestionProxy)response).getId());
+									  // persist questionResources 
+						        	  final QuestionProxy qproxy = ((QuestionProxy)response);
+						        	  QuestionResourceRequest questionResourceRequest = requests.questionResourceRequest();
+						        	  Set<QuestionResourceProxy> proxies = new HashSet<QuestionResourceProxy>();
+						        	  
+						        	  for (QuestionResourceClient questionResource : view.getQuestionResources()) 
+						        	  {
+						        		  QuestionResourceProxy proxy = questionResourceRequest.create(QuestionResourceProxy.class);
+						       
+						        		  proxy.setPath(questionResource.getPath());
+						        		  proxy.setSequenceNumber(questionResource.getSequenceNumber());
+						        		  proxy.setType(questionResource.getType());
+						        		  proxy.setQuestion(qproxy);
+						        		  proxies.add(proxy);
+						        	  }
+						        	  
+									 questionResourceRequest.persistSet(proxies).fire(new Receiver<Void>() {
+
+											@Override
+											public void onSuccess(Void response) {
+												placeController.goTo(new PlaceQuestionDetails(newQuestion.stableId(), PlaceQuestionDetails.Operation.DETAILS));
+											}
+											
+											@Override
+											public void onConstraintViolation(
+													Set<ConstraintViolation<?>> violations) {
+												Log.error("constraint violation in Question Resourc");
+												super.onConstraintViolation(violations);
+											}
+											
+											@Override
+											public void onFailure(ServerFailure error) {
+												Log.error("Failure in Question Resourc " + error);
+												super.onFailure(error);
+											}
+							        	  
+							        	  
+							        	  });
+							        	  
+									
+								}
+							});
+				        	  
+				        	 
+				        	  
+				        	  /*for (QuestionResourceProxy proxy : view.getQuestionResources()) {
+				        		  QuestionResourceProxy newProxy = questionResourceRequest.create(QuestionResourceProxy.class);
+				        			
+				        		  newProxy.setPath(proxy.getPath());
+				        		  newProxy.setSequenceNumber(proxy.getSequenceNumber());
+				        		  newProxy.setType(proxy.getType());
+				        		  newProxy.setQuestion(newQuestion);
+	
+				        		  questionResourceRequest.persist().using(newProxy);
+				        		  Log.info("Done..." + newProxy.getPath() );
+				        	  }
+				        	  Log.info("For Done...");
+				        	  questionResourceRequest.fire();
+	*/			        	  
+		    	        		
 		    	          //	goTo(new PlaceQuestion(person.stableId()));
 		    	          }
 		    	          
@@ -645,6 +775,18 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 			return (subversion*10-subversion*10%1)/10 + incrementSubversion(Math.round(subversion*10%1*10000)/10000.0, false)/10;
 		}
 		
+	}
+
+	@Override
+	public QuestionResourceProxy createQuestionResource(String url,
+			int sequenceNumber, MultimediaType type) {
+		QuestionResourceProxy proxy = requests.questionResourceRequest().create(QuestionResourceProxy.class);
+		
+		proxy.setPath(url);
+		proxy.setQuestion(question);
+		proxy.setSequenceNumber(sequenceNumber);
+		proxy.setType(type);
+		return proxy;
 	}
 
 }

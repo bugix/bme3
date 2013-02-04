@@ -13,7 +13,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import medizin.shared.utils.FilePathConstant;
+import medizin.server.utils.BMEUtils;
+import medizin.shared.utils.SharedConstant;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -33,27 +34,35 @@ public class FileDownloadFilter implements Filter {
 			ServletResponse servletResponse, FilterChain chain)
 			throws IOException, ServletException {
 
-		boolean flag = true;
+		boolean flag = false;
 
 		log.info("Inside doFilter");
 		HttpServletRequest request = (HttpServletRequest) servletRequest;
 		HttpServletResponse response = (HttpServletResponse) servletResponse;
-		String copyTo = fetchRealPath(request, request.getServletPath());
-		String copyFrom = FilePathConstant.getUploadBaseDIRPath() + request.getServletPath();
-		log.info("copy to : " + copyTo);
-		log.info("Copy from :" + copyFrom);
-		
-		File f = new File(copyTo);
+		File copyTo = new File(BMEUtils.getRealPath(request, request.getServletPath()));
+		File copyFrom = new File(SharedConstant.getUploadBaseDIRPath() + request.getServletPath());
+		log.info("copy to : " + copyTo.getAbsolutePath());
+		log.info("Copy from :" + copyFrom.getAbsolutePath());
 
 		// check at download location
-		if (f.exists() == false) {
-			// get from external path
-			copyFile(copyFrom, copyTo);
-			flag = true;
+		if (copyTo.exists() == false) {
+			if(copyFrom.exists() == true) {
+			
+				// get from external path
+				FileUtils.copyFile(copyFrom,copyTo);
+				flag = true;
 
-			// sendFile(request,response,FileUtils.readFileToByteArray(new
-			// File(FilePathConstant.getUploadBaseDIRPath() +
-			// request.getServletPath())) , f.getName());
+				// sendFile(request,response,FileUtils.readFileToByteArray(new
+				// File(FilePathConstant.getUploadBaseDIRPath() +
+				// request.getServletPath())) , f.getName());
+
+			}else {
+				flag = false;
+			}
+			
+		}else {
+			flag = true;
+			log.info("Resource exists");
 		}
 
 		if (flag == true) {
@@ -91,25 +100,5 @@ public class FileDownloadFilter implements Filter {
 		stream.close();
 	}
 
-	public static String fetchRealPath(HttpServletRequest request, String path) {
-
-		String fileSeparator = System.getProperty("file.separator");
-		return request.getSession().getServletContext()
-				.getRealPath(fileSeparator)
-				+ path;
-	}
-
-	private String fetchContextPath(HttpServletRequest request, String path) {
-		String contextFileSeparator = "/";
-		return request.getSession().getServletContext().getContextPath()
-				+ contextFileSeparator + path;
-	}
-
-	private void copyFile(String realPath, String contextPath)
-			throws IOException {
-
-		FileUtils.copyFile(new File(realPath), new File(contextPath));
-
-	}
-
+	
 }

@@ -1,26 +1,38 @@
 package medizin.client.ui.view.question;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.proxy.McProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
+import medizin.client.proxy.QuestionResourceProxy;
 import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.ui.richtext.RichTextToolbar;
 import medizin.client.ui.view.roo.McSetEditor;
 import medizin.client.ui.view.roo.QuestionTypeProxyRenderer;
 import medizin.client.ui.widget.IconButton;
-import medizin.client.ui.widget.image.ImageViewer;
-import medizin.client.ui.widget.upload.ResourceUpload;
+import medizin.client.ui.widget.resource.dndview.ResourceView;
+import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
+import medizin.client.ui.widget.resource.dndview.vo.State;
+import medizin.client.ui.widget.resource.upload.ResourceUpload;
+import medizin.client.ui.widget.resource.upload.event.ResourceUploadEvent;
+import medizin.client.ui.widget.resource.upload.event.ResourceUploadEventHandler;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.EventHandlingValueHolderItem;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.simple.DefaultSuggestOracle;
 import medizin.shared.MultimediaType;
 import medizin.shared.QuestionTypes;
 import medizin.shared.i18n.BmeConstants;
+import medizin.shared.utils.SharedConstant;
+import medizin.shared.utils.SharedUtility;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
@@ -30,14 +42,17 @@ import com.google.gwt.editor.client.Editor.Ignore;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.safehtml.shared.SafeUri;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RichTextArea;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -197,7 +212,8 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 	@UiField
 	HTMLPanel viewerContainer;
 	
-	private ImageViewer viewer;
+	//private ImageViewer viewer;
+	private ResourceView viewer;
 	
 	private QuestionProxy question = null;
 	// @UiField
@@ -277,7 +293,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 			@Override
 			public void onValueChange(ValueChangeEvent<QuestionTypeProxy> event) {
 				//Note: question is null in create mode 
-				setResourceUploadAndImageViewer(event.getValue(),question);
+				setResourceUploadAndResourceViewer(event.getValue(),question);
 			}
 		});
 
@@ -298,7 +314,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 				: question.getQuestionText());
 		//autor.setValue(question.getAutor());
 		auther.setSelected(question.getAutor());
-		rewiewer.setSelected(question.getAutor());
+		rewiewer.setSelected(question.getRewiewer());
 		//rewiewer.setValue(question.getRewiewer());
 		questEvent.setValue(question.getQuestEvent());
 		questionComment.setValue(question.getComment() == null ? "" : question.getComment().getComment());
@@ -309,9 +325,9 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 		
 		this.question = question;
 		
-		if(question.getPicturePath() != null) {
+		if(question != null) {
 			
-			setResourceUploadAndImageViewer(question.getQuestionType(), question);
+			setResourceUploadAndResourceViewer(question.getQuestionType(), question);
 		}
 
 	}
@@ -419,6 +435,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 	 */
 
 	private boolean edit;
+	private EventBus eventBus;
 
 	@Override
 	public void setEditTitle(boolean edit) {
@@ -500,7 +517,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 		return mcs;
 	}
 	
-	private void setResourceUploadAndImageViewer(
+	private void setResourceUploadAndResourceViewer(
 			QuestionTypeProxy questionType, QuestionProxy question) {	
 	
 		//remove extra part
@@ -511,28 +528,184 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 		if(questionType != null &&  questionType.getQuestionType() != null ) {
 		
 			
-			if(allowedQuestionTypeForImage(questionType)) {
+			if(allowedQuestionTypeForResouce(questionType)) {
 
 				lblUploadText.setText(constants.uploadResource());
-				viewer = new ImageViewer();
-				ResourceUpload resourceUpload = new ResourceUpload();
-				resourceUpload.setResouceViewer(viewer);
-				resourceUpload.setQuestionType(questionType);	
+				
+				// added viewer
+				List<QuestionResourceProxy> questionResources = new ArrayList<QuestionResourceProxy>();
+				if(question != null && question.getQuestionResources() != null) {
+					
+					questionResources.addAll(question.getQuestionResources());
+					Collections.sort(questionResources, new Comparator<QuestionResourceProxy>() {
+
+						@Override
+						public int compare(QuestionResourceProxy o1, QuestionResourceProxy o2) {
+					
+							return o1.getSequenceNumber().compareTo(o2.getSequenceNumber());
+						}
+					});
+				}
+				viewer = new ResourceView(getQuestionResourceClient(questionResources),questionType.getQuestionType());
+				
+				// allowed extension
+				ArrayList<String> allowedExt = new ArrayList<String>();
+				
+				if(QuestionTypes.Textual.equals(questionType.getQuestionType()) || QuestionTypes.Imgkey.equals(questionType.getQuestionType()) || QuestionTypes.Area.equals(questionType.getQuestionType()) || QuestionTypes.MCQ.equals(questionType.getQuestionType())) {
+					allowedExt.addAll(Arrays.asList(SharedConstant.IMAGE_EXTENSIONS));
+				}
+				
+				if(QuestionTypes.Textual.equals(questionType.getQuestionType())) {
+					allowedExt.addAll(Arrays.asList(SharedConstant.VIDEO_EXTENSIONS));
+					allowedExt.addAll(Arrays.asList(SharedConstant.SOUND_EXTENSIONS));
+				}
+				
+				// added resourceUpload
+				
+				for (String string : allowedExt) {
+					
+					Log.info(string);
+				}
+				ResourceUpload resourceUpload = new ResourceUpload(allowedExt,eventBus);
+				
+				final QuestionTypeProxy tempQuestionTypeProxy = questionType; 
+				resourceUpload.addResourceUploadedHandler(new ResourceUploadEventHandler() {
+					
+					@Override
+					public void onResourceUploaded(ResourceUploadEvent event) {
+						String fileName = event.getFileName();
+						
+						if(event.isResourceUploaded() == true) {
+							Log.info("fileName is " + fileName);
+							
+							MultimediaType type = SharedUtility.getFileMultimediaType(SharedUtility.getFileExtension(fileName));
+							
+							switch (type) {
+							case Image:
+							{
+								// for image
+								String url = new String(GWT.getHostPageBaseURL() + SharedConstant.UPLOAD_QUESTION_IMAGES_PATH + fileName);
+								
+								if(checkImageSize(url,tempQuestionTypeProxy)) {
+								
+									if (viewer != null) {
+										Log.info(SharedConstant.UPLOAD_QUESTION_IMAGES_PATH + fileName);
+										
+										viewer.addImageUrl(SharedConstant.UPLOAD_QUESTION_IMAGES_PATH + fileName);
+									}
+								}else {
+								
+									Window.alert("Only Upload image of size" + tempQuestionTypeProxy.getImageWidth() + "*" + tempQuestionTypeProxy.getImageHeight());
+									
+									//deleteImage(url.replaceAll(GWT.getHostPageBaseURL(), ""));
+								}
+	
+								break;
+							}	
+							case Sound:
+							{	
+								if (viewer != null) {
+									Log.info(SharedConstant.UPLOAD_QUESTION_SOUND_PATH + fileName);
+									
+									viewer.addSoundUrl(SharedConstant.UPLOAD_QUESTION_SOUND_PATH + fileName);
+								}
+								
+								break;
+							}
+							case Video :
+							{	
+								if (viewer != null) {
+									Log.info(SharedConstant.UPLOAD_QUESTION_VIDEO_PATH + fileName);
+									
+									viewer.addVideoUrl(SharedConstant.UPLOAD_QUESTION_VIDEO_PATH + fileName);
+								}
+								break;
+							}
+							default:
+							{
+								Window.alert("Error in ResourceUploadEventHandler");
+								break;
+							}
+							}
+							
+						}else {
+							Log.error("Upload fail.");
+						}
+					}
+					
+//					private boolean checkImgFileExtension() {
+//						boolean flag = false;
+//
+//						String extension = ClientUtility.getFileExtension(fileName);
+//						Log.info("Current extension : " + extension);
+//						for (String ext : BMEFileUploadConstant.IMAGE_EXTENSIONS) {
+//					
+//							if(ext.equalsIgnoreCase(extension)) {
+//								flag = true;
+//								break;
+//				}
+//			}
+//						return flag;
+//		}
+					
+					private boolean checkImageSize(final String url,
+							QuestionTypeProxy questionType) {
+						boolean flag = false;
+						
+						Image image = new Image(new SafeUri() {
+							
+							@Override
+							public String asString() {
+								return url;
+							}
+						});
+						
+						
+						Log.info("Image width * height : " + image.getWidth() + "*" + image.getHeight());
+						if(QuestionTypes.Textual.equals(questionType.getQuestionType())) {
+							flag = true;
+						}
+						else if(questionType.getImageWidth() != null && questionType.getImageWidth().equals(image.getWidth()) && questionType.getImageHeight() != null && questionType.getImageHeight().equals(image.getHeight())) {
+							flag = true;
+						}
+						
+						return flag;
+					}
+				});
+				
+				// added to container
 				uploaderContainer.add(resourceUpload);
 				viewerContainer.add(viewer);
 				
-				if(question != null && question.getPicturePath() != null && question.getPicturePath().length() > 0) {
-					
-					viewer.setUrl(GWT.getHostPageBaseURL() + question.getPicturePath(),questionType.getQuestionType());
-				}
-			}
-			
+//				if(question != null && questionType != null /*&& question.getPicturePath() != null && question.getPicturePath().length() > 0*/) {
+//					
+//					viewer.setup(question, questionType.getQuestionType());
+//					//viewer.setUrl(GWT.getHostPageBaseURL() + question.getPicturePath(),questionType.getQuestionType());
+//				}
+	}
+
 			
 			
 		}
 	}
 
-	private boolean allowedQuestionTypeForImage(QuestionTypeProxy questionType) {
+	private List<QuestionResourceClient> getQuestionResourceClient(
+			List<QuestionResourceProxy> questionResources) {
+		List<QuestionResourceClient> clients = new ArrayList<QuestionResourceClient>();
+			
+		for (QuestionResourceProxy proxy : questionResources) {
+		
+			QuestionResourceClient client = new QuestionResourceClient();
+			client.setPath(proxy.getPath());
+			client.setSequenceNumber(proxy.getSequenceNumber());
+			client.setType(proxy.getType());
+			client.setState(State.CREATED);
+			clients.add(client);
+		}
+		return clients;
+	}
+
+	private boolean allowedQuestionTypeForResouce(QuestionTypeProxy questionType) {
 		boolean flag = false;
 		
 		
@@ -540,30 +713,45 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 		if(QuestionTypes.Imgkey.equals(questionType.getQuestionType())){
 			flag = true;
 		}
-		//for textual question having images
-		else if(QuestionTypes.Textual.equals(questionType.getQuestionType()) && questionType.getQueHaveImage() != null && questionType.getQueHaveImage().equals(true)) {
+		//for textual question having images, sound or video
+		else if(QuestionTypes.Textual.equals(questionType.getQuestionType()) && ((questionType.getQueHaveImage() != null && questionType.getQueHaveImage().equals(true)) || (questionType.getQueHaveSound() != null && questionType.getQueHaveSound().equals(true)) || (questionType.getQueHaveVideo() != null && questionType.getQueHaveVideo().equals(true)))) {
 			flag = true;
 		}
 		//for area question having height and width
 		else if(QuestionTypes.Area.equals(questionType.getQuestionType()) && questionType.getImageWidth() != null && questionType.getImageHeight() != null) {
 			flag = true;
 		}
-		//MCQ question having type as image and height and width
-		else if(QuestionTypes.MCQ.equals(questionType.getQuestionType()) && MultimediaType.Image.equals(questionType.getMultimediaType()) && questionType.getImageWidth() != null && questionType.getImageHeight() != null) {
+		//MCQ question having type as image and height and width or type as sound or type as video
+		else if(QuestionTypes.MCQ.equals(questionType.getQuestionType()) && ( (MultimediaType.Image.equals(questionType.getMultimediaType()) && questionType.getImageWidth() != null && questionType.getImageHeight() != null) || (MultimediaType.Sound.equals(questionType.getMultimediaType()) ) || (MultimediaType.Video.equals(questionType.getMultimediaType()) ))) {
 			flag = true;
 		}
 		
 		return flag;
 	}
 
+//	@Override
+//	public ImageViewer getImageViewer() {
+//		return viewer;
+//	}
+
 	@Override
-	public ImageViewer getImageViewer() {
+	public ResourceView getResourceView() {
 		return viewer;
 	}
 
 	@Override
 	public Label getAutherLbl() {
 		return lblAuther;
+	}
+
+	@Override
+	public void setEventBus(EventBus eventBus) {
+		this.eventBus = eventBus;
+	}
+
+	@Override
+	public Set<QuestionResourceClient> getQuestionResources() {
+		return viewer.getQuestionResources();
 	}
 
 }

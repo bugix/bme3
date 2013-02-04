@@ -1,4 +1,4 @@
-package medizin.client.ui.widget.upload;
+package medizin.client.ui.widget.resource.upload;
 
 import medizin.shared.QuestionTypes;
 

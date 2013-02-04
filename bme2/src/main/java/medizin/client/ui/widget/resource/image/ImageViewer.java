@@ -1,6 +1,5 @@
-package medizin.client.ui.widget.image;
+package medizin.client.ui.widget.resource.image;
 
-import medizin.client.ui.widget.upload.ResourceViewer;
 import medizin.shared.QuestionTypes;
 import medizin.shared.i18n.BmeConstants;
 
@@ -14,7 +13,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ImageViewer extends Composite implements ResourceViewer{
+public class ImageViewer extends Composite{
 
 	private static ImageViewerUiBinder uiBinder = GWT
 			.create(ImageViewerUiBinder.class);
@@ -194,7 +193,7 @@ public class ImageViewer extends Composite implements ResourceViewer{
 	}*/
 
 
-	@Override
+//	@Override
 	public void setUrl(String url,QuestionTypes questionType) {
 		Log.info("Set url : " + url);
 		this.url = url;

@@ -1,17 +1,22 @@
 package medizin.client.ui.view.question;
 
 import java.util.Collection;
+import java.util.Set;
 
 import medizin.client.proxy.McProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
+import medizin.client.proxy.QuestionResourceProxy;
 import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.ui.view.roo.McSetEditor;
-import medizin.client.ui.widget.image.ImageViewer;
+import medizin.client.ui.widget.resource.dndview.ResourceView;
+import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.EventHandlingValueHolderItem;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
+import medizin.shared.MultimediaType;
 
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -38,6 +43,9 @@ public interface QuestionEditView extends IsWidget {
 
 
 		void saveClicked(boolean generateNewQuestion);
+
+		QuestionResourceProxy createQuestionResource(String url,
+				int sequenceNumber, MultimediaType type);
 		
 	}
 
@@ -89,9 +97,15 @@ public interface QuestionEditView extends IsWidget {
 
 	CheckBox getSubmitToReviewComitee();
 
-	ImageViewer getImageViewer();
+//	ImageViewer getImageViewer();
 
 	Label getAutherLbl();
+
+	ResourceView getResourceView();
+
+	void setEventBus(EventBus eventBus);
+
+	Set<QuestionResourceClient> getQuestionResources();
 
 
 

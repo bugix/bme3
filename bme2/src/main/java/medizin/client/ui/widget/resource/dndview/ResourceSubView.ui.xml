@@ -1,0 +1,48 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:m="urn:import:medizin.client.ui.widget">
+	<ui:style>
+		.vPanelStyle {
+			border: 1px solid #afc2c7;
+			background: #eceded;
+			border-radius: 5px;
+			margin-top: 10px;
+		}
+		
+		.widthView {
+			width: 375px;
+		}
+		
+		fontColor {
+			color: #166174;
+		}
+		
+		.wordWrap {
+			word-wrap: break-word !important;
+		}
+	</ui:style>
+	<g:AbsolutePanel ui:field="absPanel">
+		<g:VerticalPanel addStyleNames="{style.widthView}">
+		<g:HorizontalPanel addStyleNames="{style.vPanelStyle}"
+				spacing="1">
+				<g:HTMLPanel ui:field="hPanel">
+					<table cellspacing="10" align="center">
+						<tr border="10">
+							<td>
+								<!-- <g:HTML visible="false" wordWrap="true" ui:field="htmlText"
+									width="" addStyleNames="{style.wordWrap}"></g:HTML> -->
+									<g:Label ui:field="htmlText"></g:Label>
+							</td>
+							<td align="right">
+								<m:IconButton ui:field="viewButton"  ></m:IconButton>
+							</td>
+							<td align="right">
+								<m:IconButton ui:field="deleteButton" icon="trash" ></m:IconButton>
+							</td>
+						</tr>
+					</table>
+				</g:HTMLPanel>
+			</g:HorizontalPanel>
+		</g:VerticalPanel>
+	</g:AbsolutePanel>	
+</ui:UiBinder> 

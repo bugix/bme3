@@ -10,8 +10,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import medizin.shared.utils.FilePathConstant;
-import medizin.shared.BMEFileUploadConstant;
+import medizin.shared.MultimediaType;
+import medizin.shared.utils.SharedConstant;
+import medizin.shared.utils.SharedUtility;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
@@ -20,15 +21,11 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.log4j.Logger;
 
 public class FileUploadServlet extends HttpServlet {
 
 	private static Logger log = Logger.getLogger(FileUploadServlet.class);
-
-	private static String appUploadDirectory = FilePathConstant.UPLOAD_QUESTION_IMAGES_PATH;// DEFAULT_IMAGE_PATH;
-
 	private static final long serialVersionUID = 1L;
 
 	@Override
@@ -104,7 +101,7 @@ public class FileUploadServlet extends HttpServlet {
 					// Upload File to Application Directory
 					// appUploadDirectory=session.getServletContext().getRealPath(".")
 					// + appUploadDirectory;
-					File appUploadedFile = new File(appUploadDirectory, fileName);
+					File appUploadedFile = new File(getAppUploadDirectory(fileName), fileName);
 
 					FileUtils.touch(appUploadedFile);
 					appUploadedFile.createNewFile();
@@ -148,19 +145,49 @@ public class FileUploadServlet extends HttpServlet {
 
 	}
 
-	private void filterResource(HttpServletRequest request,
-			HttpServletResponse response, File appUploadedFile) {
+	private String getAppUploadDirectory(String fileName) {
+		String appUploadDirectory = null;
+		MultimediaType type = SharedUtility.getFileMultimediaType(SharedUtility.getFileExtension(fileName));
 		
-		
-		String extension = FilenameUtils.getExtension(appUploadDirectory);
-		
-		//for image 
-		if(ArrayUtils.contains(BMEFileUploadConstant.imageExtension, extension)) {
-			// positive response 
-			response.setStatus(HttpServletResponse.SC_CREATED);
-		}else {
-			// negative response
-			response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
+		switch (type) {
+		case Image:
+		{
+			appUploadDirectory = SharedConstant.UPLOAD_QUESTION_IMAGES_PATH;
+			break;
 		}
+		case Sound:
+		{
+			appUploadDirectory = SharedConstant.UPLOAD_QUESTION_SOUND_PATH;
+			break;
+		}
+		case Video:
+		{
+			appUploadDirectory = SharedConstant.UPLOAD_QUESTION_VIDEO_PATH;
+			break;
+		}
+		default:
+		{
+			log.error("invalid MultimediaType. Type is " + type);
+			break;
+		}
+		}
+		
+		return appUploadDirectory;
 	}
+
+//	private void filterResource(HttpServletRequest request,
+//			HttpServletResponse response, File appUploadedFile) {
+//		
+//		
+//		String extension = FilenameUtils.getExtension(appUploadDirectory);
+//		
+//		//for image 
+//		if(ArrayUtils.contains(BMEFileUploadConstant.IMAGE_EXTENSIONS, extension)) {
+//			// positive response 
+//			response.setStatus(HttpServletResponse.SC_CREATED);
+//		}else {
+//			// negative response
+//			response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
+//		}
+//	}
 }

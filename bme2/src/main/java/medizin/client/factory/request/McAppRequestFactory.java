@@ -11,6 +11,7 @@ import medizin.client.request.PersonRequest;
 import medizin.client.request.QuestionAccessRequest;
 import medizin.client.request.QuestionEventRequest;
 import medizin.client.request.QuestionRequest;
+import medizin.client.request.QuestionResourceRequest;
 import medizin.client.request.QuestionSumPerPersonRequest;
 import medizin.client.request.QuestionTypeCountPerExamRequest;
 import medizin.client.request.QuestionTypeRequest;
@@ -60,6 +61,8 @@ public interface McAppRequestFactory extends RequestFactory {
     QuestionEventRequest questionEventRequest();
 
     QuestionRequest questionRequest();
+    
+    QuestionResourceRequest questionResourceRequest(); 
 
     QuestionSumPerPersonRequest questionSumPerPersonRequest();
 

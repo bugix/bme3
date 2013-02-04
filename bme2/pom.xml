@@ -40,6 +40,12 @@
 		   <id>vaadin-addons</id>
 		   <url>http://maven.vaadin.com/vaadin-addons</url>
 		</repository>
+		<repository>
+           <id>local-project-libraries</id>
+           <name>Local project libraries</name>
+           <url>file://${project.basedir}/lib</url>
+           <layout>default</layout>
+      	</repository>
     </repositories>
     <pluginRepositories>
         <pluginRepository>
@@ -85,12 +91,25 @@
 		   <version>1.0.0</version>
 		</dependency>
 		
+		<!-- Video player -->
+		<dependency>
+			<groupId>fr.hd3d.html5.video</groupId>
+			<artifactId>video</artifactId>
+			<version>1.0</version>
+		</dependency>
+		
 		<dependency>
 		    <groupId>com.google.guava</groupId>
 		    <artifactId>guava-gwt</artifactId>
 		    <version>13.0.1</version>
 		</dependency>
     
+		<dependency>
+		    <groupId>org.apache.directory.studio</groupId>
+		    <artifactId>org.apache.commons.io</artifactId>
+		    <version>2.1</version>
+		</dependency>
+		
         <!-- General dependencies for standard applications -->
         <dependency>
             <groupId>junit</groupId>
