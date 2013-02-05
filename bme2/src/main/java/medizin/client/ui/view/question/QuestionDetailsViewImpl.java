@@ -1,32 +1,41 @@
 package medizin.client.ui.view.question;
 
-import medizin.client.ui.view.assesment.AssesmentDetailsView;
-import medizin.client.ui.view.assesment.QuestionSumPerPersonViewImpl;
-import medizin.client.ui.view.assesment.QuestionTypeCountViewImpl;
-import medizin.client.ui.view.assesment.AssesmentDetailsView.Delegate;
-import medizin.client.ui.view.assesment.AssesmentDetailsView.Presenter;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import medizin.client.proxy.QuestionProxy;
+import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.TabPanelHelper;
-import medizin.client.factory.request.McAppRequestFactory;
-import medizin.client.proxy.AssesmentProxy;
-import medizin.client.proxy.PersonProxy;
-import medizin.client.proxy.QuestionProxy;
+import medizin.client.ui.widget.resource.dndview.ResourceView;
+import medizin.client.ui.widget.resource.event.ResourceAddedEvent;
+import medizin.client.ui.widget.resource.event.ResourceAddedEventHandler;
+import medizin.client.ui.widget.resource.event.ResourceDeletedEvent;
+import medizin.client.ui.widget.resource.event.ResourceDeletedEventHandler;
+import medizin.client.ui.widget.resource.upload.ResourceUpload;
+import medizin.client.ui.widget.resource.upload.event.ResourceUploadEvent;
+import medizin.client.ui.widget.resource.upload.event.ResourceUploadEventHandler;
+import medizin.client.util.ClientUtility;
+import medizin.shared.MultimediaType;
+import medizin.shared.QuestionTypes;
 import medizin.shared.i18n.BmeConstants;
+import medizin.shared.utils.SharedConstant;
+import medizin.shared.utils.SharedUtility;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.SpanElement;
-import com.google.gwt.editor.client.Editor;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.web.bindery.requestfactory.gwt.client.RequestFactoryEditorDriver;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class QuestionDetailsViewImpl extends Composite implements
@@ -169,6 +178,7 @@ public class QuestionDetailsViewImpl extends Composite implements
 
 	@UiField
 	AnswerListViewImpl answerListViewImpl;
+	private EventBus eventBus;
 
 	// @UiField
 	// EventAccessViewImpl eventAccessView;
@@ -213,6 +223,13 @@ public class QuestionDetailsViewImpl extends Composite implements
 		lblQuestionEventValue.setText(proxy.getQuestEvent()==null?"":proxy.getQuestEvent().getEventName());
 		lblCommentValue.setText(proxy.getComment()==null?"":proxy.getComment().getComment());
 		lblMcsValue.setText(proxy.getMcs() == null ? "": medizin.client.ui.view.roo.CollectionRenderer.of(medizin.client.ui.view.roo.McProxyRenderer.instance()).render(proxy.getMcs()));
+		
+		addSecondTabForQuestionResource(proxy);
+		
+		
+		
+		
+		
 		/*mcs.setInnerText(proxy.getMcs() == null ? ""
 				: medizin.client.ui.view.roo.CollectionRenderer.of(
 						medizin.client.ui.view.roo.McProxyRenderer.instance())
@@ -288,8 +305,163 @@ public class QuestionDetailsViewImpl extends Composite implements
 
 	}
 
-	public QuestionDetailsViewImpl() {
+	private void addSecondTabForQuestionResource(QuestionProxy proxy) {
+	
+		if(proxy != null && proxy.getQuestionType() != null  && proxy.getQuestionType().getQuestionType() != null) {
+			
+			QuestionTypes questionType = proxy.getQuestionType().getQuestionType();
+			switch (questionType) {
+			
+			case Textual:
+			{
+		
+				final ResourceView resourceView = new ResourceView(eventBus,ClientUtility.getQuestionResourceClient(proxy.getQuestionResources()), proxy.getQuestionType().getQuestionType());
+				
+				resourceView.addResourceDeletedHandler(new ResourceDeletedEventHandler() {
+
+						@Override
+						public void onResourceDeleted(ResourceDeletedEvent event) {
+							Log.info("QuestionResourceClient : " + event.getQuestionResourceClient().getPath());
+							
+							delegate.deleteSelectedQuestionResource(event.getQuestionResourceClient().getId());
+						}
+					
+				});
+				
+				resourceView.addResourceAddedHandler(new ResourceAddedEventHandler(){
+
+					@Override
+					public void onResourceAdded(ResourceAddedEvent event) {
+						
+						delegate.addNewQuestionResource(event.getQuestionResourceClient());
+					}
+				});	
+				
+				Label lblUploadText = new Label(); 
+				lblUploadText.setText(constants.uploadResource());
+				lblUploadText.addStyleName("lblUploadPadding");
+				ArrayList<String> allowedExt = new ArrayList<String>();
+				allowedExt.addAll(Arrays.asList(SharedConstant.IMAGE_EXTENSIONS));
+				allowedExt.addAll(Arrays.asList(SharedConstant.VIDEO_EXTENSIONS));
+				allowedExt.addAll(Arrays.asList(SharedConstant.SOUND_EXTENSIONS));
+				
+				
+				ResourceUpload resourceUpload = new ResourceUpload(allowedExt,this.eventBus);
+				
+				final QuestionTypeProxy tempQuestionTypeProxy = proxy.getQuestionType(); 
+				
+				resourceUpload.addResourceUploadedHandler(new ResourceUploadEventHandler() {
+					
+					@Override
+					public void onResourceUploaded(ResourceUploadEvent event) {
+
+						String fileName = event.getFileName();
+						
+						if(event.isResourceUploaded() == true) {
+							Log.info("fileName is " + fileName);
+							
+							MultimediaType type = SharedUtility.getFileMultimediaType(SharedUtility.getFileExtension(fileName));
+							
+							switch (type) {
+							case Image:
+							{
+								// for image
+								String url = new String(GWT.getHostPageBaseURL() + SharedConstant.UPLOAD_QUESTION_IMAGES_PATH + fileName);
+								
+								if(ClientUtility.checkImageSize(url,tempQuestionTypeProxy)) {
+								
+									if (resourceView != null) {
+										Log.info(SharedConstant.UPLOAD_QUESTION_IMAGES_PATH + fileName);
+										resourceView.addImageUrl(SharedConstant.UPLOAD_QUESTION_IMAGES_PATH + fileName);
+									}
+								}else {
+								
+									Window.alert("Only Upload image of size" + tempQuestionTypeProxy.getImageWidth() + "*" + tempQuestionTypeProxy.getImageHeight());
+									
+									//deleteImage(url.replaceAll(GWT.getHostPageBaseURL(), ""));
+								}
+	
+								break;
+							}	
+							case Sound:
+							{	
+								if (resourceView != null) {
+									Log.info(SharedConstant.UPLOAD_QUESTION_SOUND_PATH + fileName);
+									resourceView.addSoundUrl(SharedConstant.UPLOAD_QUESTION_SOUND_PATH + fileName);
+								}
+								
+								break;
+							}
+							case Video :
+							{	
+								if (resourceView != null) {
+									Log.info(SharedConstant.UPLOAD_QUESTION_VIDEO_PATH + fileName);
+									
+									resourceView.addVideoUrl(SharedConstant.UPLOAD_QUESTION_VIDEO_PATH + fileName);
+								}
+								break;
+							}
+							default:
+							{
+								Window.alert("Error in ResourceUploadEventHandler");
+								break;
+							}
+							}
+							
+						}else {
+							Log.error("Upload fail.");
+						}
+					}
+				});
+				
+				
+				VerticalPanel panel = new VerticalPanel();
+				panel.setWidth("100%");
+				HorizontalPanel h1 =  new HorizontalPanel();
+				HorizontalPanel h2 = new HorizontalPanel();
+				h2.setWidth("100%");
+				h1.add(lblUploadText);
+				h1.add(resourceUpload);
+				h2.add(resourceView);
+				panel.add(h1);
+				panel.add(h2);
+				
+				questionTypeDetailPanel.add(panel, constants.resources());
+				break;
+			}	
+				
+			case Imgkey:
+			{
+				
+				break;
+			}
+				
+			case Area:
+			{
+				break;
+			}
+				
+			default:
+			{
+				Log.info("Error");
+				break;	
+			}
+			
+			}
+			
+			
+		}
+		
+		
+		
+		
+		
+	}
+
+	public QuestionDetailsViewImpl(EventBus eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
+		
+		this.eventBus = eventBus;
 		
 		questionTypeDetailPanel.selectTab(0);
 		questionTypeDetailPanel.getTabBar().setTabText(0, constants.manageQuestion());
@@ -302,9 +474,7 @@ public class QuestionDetailsViewImpl extends Composite implements
 		lblComment.setText(constants.comment());
 		lblQuestionEvent.setText(constants.questionEvent());
 		lblMcs.setText(constants.mcs());
-		     
 		
-
 	}
 
 	@Override

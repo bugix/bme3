@@ -2,6 +2,8 @@ package medizin.client.ui.widget.resource.dndview;
 
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
+import medizin.client.ui.widget.resource.dndview.vo.State;
+import medizin.client.ui.widget.resource.event.ResourceDeletedEvent;
 import medizin.client.ui.widget.resource.image.ImageViewer;
 import medizin.client.ui.widget.resource.video.VideoViewer;
 import medizin.shared.MultimediaType;
@@ -12,6 +14,7 @@ import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -42,8 +45,8 @@ public class ResourceSubView extends Composite {
 	@UiField
 	Label htmlText;
 
-	@UiField
-	HTMLPanel hPanel;
+	/*@UiField
+	HTMLPanel hPanel;*/
 
 	@UiField
 	IconButton deleteButton;
@@ -52,24 +55,37 @@ public class ResourceSubView extends Composite {
 	IconButton viewButton;
 
 	private String imageDim = "12px";
-	private String textDim = "275px";
+	//private String textDim = "275px";
+	private String textDim = "80%";
 
 	private QuestionTypes questionType;
+
+	private final EventBus eventBus;
 
 	interface ResourceSubViewUiBinder extends UiBinder<Widget, ResourceSubView> {
 	}
 
-	public ResourceSubView() {
+	public ResourceSubView(EventBus eventBus) {
 		initWidget(uiBinder.createAndBindUi(this));
 		resourceSubView = this;
+		this.eventBus = eventBus;
 	}
 
-	public void setDetails(QuestionResourceClient questionResource,QuestionTypes questionType,
+	public void setDetails(final QuestionResourceClient questionResource,QuestionTypes questionType,
 			ResourceView resourceView) {
 		this.questionResource = questionResource;
 		this.resourceView = resourceView;
 		this.questionType = questionType;
 		init();
+		deleteButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				questionResource.setState(State.DELETED);
+				resourceSubView.removeFromParent();
+				eventBus.fireEvent(new ResourceDeletedEvent(questionResource));
+			}
+		});
 	}
 
 	public void init() {
@@ -241,9 +257,9 @@ public class ResourceSubView extends Composite {
 		return resourceView;
 	}
 
-	public HTMLPanel getPanel() {
+	/*private HTMLPanel getPanel() {
 		return hPanel;
-	}
+	}*/
 
 	public Label getText() {
 		return htmlText;

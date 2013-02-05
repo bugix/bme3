@@ -426,8 +426,8 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 					case Falsch: validityIcon += "<span class=\"ui-icon ui-icon-minus\"></span>";
 							     break;
 							     
-					case Weil:	 validityIcon += "<span class=\"ui-icon ui-icon-refresh\"></span>";	
-								break;
+					/*case Weil:	 validityIcon += "<span class=\"ui-icon ui-icon-refresh\"></span>";	
+								break;*/
 							     
 					default:	  validityIcon += "<span class=\"ui-icon ui-icon-help\"></span>";	
 							     break;

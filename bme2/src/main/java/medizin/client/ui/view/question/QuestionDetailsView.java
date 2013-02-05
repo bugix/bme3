@@ -2,6 +2,7 @@ package medizin.client.ui.view.question;
 
 import medizin.client.ui.view.assesment.QuestionSumPerPersonViewImpl;
 import medizin.client.ui.view.assesment.QuestionTypeCountViewImpl;
+import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.proxy.AssesmentProxy;
 import medizin.client.proxy.PersonProxy;
@@ -30,6 +31,10 @@ public interface QuestionDetailsView extends IsWidget {
 		
 
 		void newClicked();
+
+		void deleteSelectedQuestionResource(Long qestionResourceId);
+
+		void addNewQuestionResource(QuestionResourceClient questionResourceClient);
 	}
 
 	AnswerListViewImpl getAnswerListViewImpl();

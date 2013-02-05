@@ -41,6 +41,14 @@ public class QuestionResource {
 			questionResource.persist();
 		}
 	}
+	
+	public static void removeSelectedQuestionResource(Long qestionResourceId) {
+		
+		log.info("to delete the selected resource");
+		
+		QuestionResource questionResource = QuestionResource.findQuestionResource(qestionResourceId);
+		questionResource.remove();
+	}
 			
 
 }

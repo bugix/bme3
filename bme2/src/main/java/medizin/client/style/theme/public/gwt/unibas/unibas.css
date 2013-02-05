@@ -4313,3 +4313,7 @@ background: url("images/colorpicker.png");
     margin: 0;
     padding: 1px;
 }
+
+.lblUploadPadding {
+	padding-top: 15px;
+}

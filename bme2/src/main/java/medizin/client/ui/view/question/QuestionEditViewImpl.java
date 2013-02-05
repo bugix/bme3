@@ -22,12 +22,15 @@ import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.resource.dndview.ResourceView;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.ui.widget.resource.dndview.vo.State;
+import medizin.client.ui.widget.resource.event.ResourceDeletedEvent;
+import medizin.client.ui.widget.resource.event.ResourceDeletedEventHandler;
 import medizin.client.ui.widget.resource.upload.ResourceUpload;
 import medizin.client.ui.widget.resource.upload.event.ResourceUploadEvent;
 import medizin.client.ui.widget.resource.upload.event.ResourceUploadEventHandler;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.EventHandlingValueHolderItem;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.simple.DefaultSuggestOracle;
+import medizin.client.util.ClientUtility;
 import medizin.shared.MultimediaType;
 import medizin.shared.QuestionTypes;
 import medizin.shared.i18n.BmeConstants;
@@ -546,8 +549,18 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 						}
 					});
 				}
-				viewer = new ResourceView(getQuestionResourceClient(questionResources),questionType.getQuestionType());
+				viewer = new ResourceView(eventBus,ClientUtility.getQuestionResourceClient(questionResources),questionType.getQuestionType());
 				
+				viewer.addResourceDeletedHandler(new ResourceDeletedEventHandler() {
+
+					@Override
+					public void onResourceDeleted(ResourceDeletedEvent event) {
+						Log.info("QuestionResourceClient : " + event.getQuestionResourceClient().getPath());
+						
+						delegate.deleteSelectedQuestionResource(event.getQuestionResourceClient().getId());
+					}
+				
+				});
 				// allowed extension
 				ArrayList<String> allowedExt = new ArrayList<String>();
 				
@@ -689,21 +702,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 		}
 	}
 
-	private List<QuestionResourceClient> getQuestionResourceClient(
-			List<QuestionResourceProxy> questionResources) {
-		List<QuestionResourceClient> clients = new ArrayList<QuestionResourceClient>();
-			
-		for (QuestionResourceProxy proxy : questionResources) {
-		
-			QuestionResourceClient client = new QuestionResourceClient();
-			client.setPath(proxy.getPath());
-			client.setSequenceNumber(proxy.getSequenceNumber());
-			client.setType(proxy.getType());
-			client.setState(State.CREATED);
-			clients.add(client);
-		}
-		return clients;
-	}
+	
 
 	private boolean allowedQuestionTypeForResouce(QuestionTypeProxy questionType) {
 		boolean flag = false;

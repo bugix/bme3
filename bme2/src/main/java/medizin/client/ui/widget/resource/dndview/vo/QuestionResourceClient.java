@@ -11,6 +11,8 @@ public class QuestionResourceClient {
 	private MultimediaType type;
 	
 	private State state;
+	
+	private Long id;
 
 	public String getPath() {
 		return path;
@@ -42,8 +44,15 @@ public class QuestionResourceClient {
 
 	public void setState(State state) {
 		this.state = state;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	} 
 	
+	public Long getId() {
+		return this.id;
+	}
 	
 
 }

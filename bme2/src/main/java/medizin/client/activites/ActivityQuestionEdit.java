@@ -789,4 +789,16 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		return proxy;
 	}
 
+	@Override
+	public void deleteSelectedQuestionResource(Long qestionResourceId) {
+		requests.questionResourceRequest().removeSelectedQuestionResource(qestionResourceId).fire(new Receiver<Void>() {
+
+			@Override
+			public void onSuccess(Void response) {
+				Log.info("selected question resource deleted successfully");
+			}
+		});
+		
+	}
+
 }

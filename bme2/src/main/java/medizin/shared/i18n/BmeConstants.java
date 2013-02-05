@@ -178,5 +178,7 @@ public interface BmeConstants extends Constants {
 	public String okBtn();
 	public String success();
 
+	public String resources();
+
 	
 }

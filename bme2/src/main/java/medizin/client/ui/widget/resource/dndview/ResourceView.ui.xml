@@ -4,7 +4,7 @@
 	<ui:style>
 		.dragScrollPanel {
 			height: 300px;
-			width: 400px;
+			width: 100%;
 			overflow: scroll;
 			padding: 0 0 0 10px;
 		}
@@ -13,15 +13,16 @@
 			border: 2px solid #afc2c7;
 			border-radius: 5px;
 			padding: 5px;
+			width: 100%;
 		}
 	</ui:style>
 	<g:HorizontalPanel addStyleNames="{style.hPanel}">
 
-		<g:VerticalPanel>
+		<g:VerticalPanel width="100%">
 			<g:ScrollPanel addStyleNames="{style.dragScrollPanel}">
 				<g:VerticalPanel ui:field="customContentPanel"
-					spacing="10">
-					<g:AbsolutePanel ui:field="absPanel"></g:AbsolutePanel>
+					spacing="10" width="100%">
+					<g:AbsolutePanel ui:field="absPanel" width="100%"></g:AbsolutePanel>
 				</g:VerticalPanel>
 			</g:ScrollPanel>
 		</g:VerticalPanel>

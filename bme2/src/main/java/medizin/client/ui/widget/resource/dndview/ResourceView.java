@@ -7,6 +7,10 @@ import java.util.Set;
 
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.ui.widget.resource.dndview.vo.State;
+import medizin.client.ui.widget.resource.event.ResourceAddedEvent;
+import medizin.client.ui.widget.resource.event.ResourceAddedEventHandler;
+import medizin.client.ui.widget.resource.event.ResourceDeletedEvent;
+import medizin.client.ui.widget.resource.event.ResourceDeletedEventHandler;
 import medizin.shared.MultimediaType;
 import medizin.shared.QuestionTypes;
 
@@ -18,6 +22,7 @@ import com.allen_sauer.gwt.dnd.client.VetoDragException;
 import com.allen_sauer.gwt.dnd.client.drop.VerticalPanelDropController;
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.AbsolutePanel;
@@ -51,12 +56,15 @@ public class ResourceView extends Composite implements DragHandler {
 
 	VerticalPanelDropController dropController1;
 	private QuestionTypes questionType;
+
+	private final EventBus eventBus;
 	
 	public VerticalPanelDropController getDropController2() {
 		return dropController1;
 	}
 	
-	public ResourceView(List<QuestionResourceClient> questionResources,QuestionTypes questionType) {
+	public ResourceView(EventBus eventBus, List<QuestionResourceClient> questionResources,QuestionTypes questionType) {
+		this.eventBus = eventBus;
 		this.questionResources = questionResources;
 		this.questionType = questionType;
 		initWidget(uiBinder.createAndBindUi(this));
@@ -90,10 +98,11 @@ public class ResourceView extends Composite implements DragHandler {
 		dragController.setBehaviorDragProxy(true);
 		dragController.addDragHandler(this);
 		dragController.makeDraggable(resourceSubView.asWidget(), resourceSubView.getText());
-
+		
 		
 		VerticalPanelDropController dropController = new VerticalPanelDropController(customContentPanel);
 		dragController.registerDropController(dropController);
+		
 
 		Log.info("Count : " + customContentPanel.getWidgetCount());
 		
@@ -124,10 +133,12 @@ public class ResourceView extends Composite implements DragHandler {
 		
 		createResourceSubView(proxy);
 		
+		eventBus.fireEvent(new ResourceAddedEvent(proxy));
+	
 	}
 
 	private void createResourceSubView(QuestionResourceClient proxy) {
-		ResourceSubView subView = new ResourceSubView();
+		ResourceSubView subView = new ResourceSubView(eventBus);
 		subView.setDetails(proxy, questionType, impl);
 		addResourceView(subView,true);
 	}
@@ -208,6 +219,16 @@ public class ResourceView extends Composite implements DragHandler {
 
 	public Set<QuestionResourceClient> getQuestionResources() {
 		return new HashSet<QuestionResourceClient>(questionResources);
+	}
+
+	public void addResourceDeletedHandler(
+			ResourceDeletedEventHandler handler) {
+		eventBus.addHandler(ResourceDeletedEvent.TYPE, handler);
+	}
+
+	public void addResourceAddedHandler(
+			ResourceAddedEventHandler handler) {
+		eventBus.addHandler(ResourceAddedEvent.TYPE, handler);
 	}
 	
 }

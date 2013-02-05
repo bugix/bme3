@@ -103,8 +103,8 @@ public class AnswerViewImpl extends HorizontalPanel implements AnswerView {
 		case Falsch: lblIcon.setStyleName("ui-icon ui-icon-minus");
 				     break;
 				     
-		case Weil:	lblIcon.setStyleName("ui-icon ui-icon-arrowthick-1-e");
-					break;
+		/*case Weil:	lblIcon.setStyleName("ui-icon ui-icon-arrowthick-1-e");
+					break;*/
 				     
 		default:	 lblIcon.setStyleName("ui-icon ui-icon-help");
 				     break;

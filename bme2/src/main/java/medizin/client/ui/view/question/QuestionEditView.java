@@ -46,6 +46,10 @@ public interface QuestionEditView extends IsWidget {
 
 		QuestionResourceProxy createQuestionResource(String url,
 				int sequenceNumber, MultimediaType type);
+
+
+
+		void deleteSelectedQuestionResource(Long id);
 		
 	}
 

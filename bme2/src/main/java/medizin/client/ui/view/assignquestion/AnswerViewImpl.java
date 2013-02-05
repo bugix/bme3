@@ -125,8 +125,8 @@ public class AnswerViewImpl extends Composite implements AnswerView {
 		case Falsch: lblIcon.addStyleName("ui-icon-minus");
 				     break;
 				     
-		case Weil:	lblIcon.addStyleName("ui-icon-refresh");
-					break;
+		/*case Weil:	lblIcon.addStyleName("ui-icon-refresh");
+					break;*/
 				     
 		default:	 lblIcon.addStyleName("ui-icon-help");
 				     break;

@@ -19,6 +19,7 @@ import medizin.client.ui.view.question.QuestionDetailsViewImpl;
 import medizin.client.ui.view.question.QuestionDetailsView;
 import medizin.client.ui.view.question.QuestionView;
 import medizin.client.ui.view.user.EventAccessDialogbox;
+import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.place.PlaceAssesment;
 import medizin.client.place.PlaceAssesmentDetails;
 import medizin.client.place.PlaceQuestion;
@@ -26,10 +27,12 @@ import medizin.client.place.PlaceQuestionDetails;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.proxy.AnswerProxy;
 import medizin.client.request.AnswerRequest;
+import medizin.client.request.QuestionResourceRequest;
 import medizin.client.proxy.AssesmentProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.proxy.QuestionProxy;
+import medizin.client.proxy.QuestionResourceProxy;
 import medizin.client.proxy.QuestionTypeCountPerExamProxy;
 import medizin.client.request.QuestionTypeCountPerExamRequest;
 import medizin.client.shared.Validity;
@@ -110,7 +113,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	@Override
 	public void start2(AcceptsOneWidget panel, EventBus eventBus) {
 		
-		questionDetailsView = new QuestionDetailsViewImpl();
+		questionDetailsView = new QuestionDetailsViewImpl(eventBus);
 		questionDetailsView.setName("hallo");
 		questionDetailsView.setPresenter(this);
 		this.widget = panel;
@@ -171,7 +174,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	private void start2(){
 		if(loggedUser==null) return;
 		
-		requests.find(questionPlace.getProxyId()).with("previousVersion","keywords","questEvent","comment","questionType","mcs", "rewiewer", "autor").fire(new Receiver<Object>() {
+		requests.find(questionPlace.getProxyId()).with("previousVersion","keywords","questEvent","comment","questionType","mcs", "rewiewer", "autor","questionResources").fire(new Receiver<Object>() {
 
 			public void onFailure(ServerFailure error){
 				Log.error(error.getMessage());
@@ -492,6 +495,41 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 				}
 		});
 		
+	}
+
+	@Override
+	public void deleteSelectedQuestionResource(final Long qestionResourceId) {
+		requests.questionResourceRequest().removeSelectedQuestionResource(qestionResourceId).fire(new Receiver<Void>() {
+
+			@Override
+			public void onSuccess(Void response) {
+			
+				
+			}
+		});
+		
+	}
+
+	@Override
+	public void addNewQuestionResource(
+			QuestionResourceClient questionResourceClient) {
+
+		QuestionResourceRequest request  = requests.questionResourceRequest();
+		
+		QuestionResourceProxy proxy = request.create(QuestionResourceProxy.class);
+		
+		proxy.setPath(questionResourceClient.getPath());
+		proxy.setQuestion(question);
+		proxy.setSequenceNumber(questionResourceClient.getSequenceNumber());
+		proxy.setType(questionResourceClient.getType());
+		
+		request.persist().using(proxy).fire(new Receiver<Void>() {
+
+			@Override
+			public void onSuccess(Void response) {
+				Log.info("Added new Question Resource");
+			}
+		});
 	}
 
 }
