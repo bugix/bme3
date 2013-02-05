@@ -27,8 +27,10 @@ import medizin.client.place.PlaceQuestionDetails;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.proxy.AnswerProxy;
 import medizin.client.request.AnswerRequest;
+import medizin.client.request.CommentRequest;
 import medizin.client.request.QuestionResourceRequest;
 import medizin.client.proxy.AssesmentProxy;
+import medizin.client.proxy.CommentProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.proxy.QuestionProxy;
@@ -351,22 +353,28 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	}
 	
 	private AnswerDialogbox answerDialogbox;
-	private RequestFactoryEditorDriver<AnswerProxy, AnswerDialogboxImpl> answerDriver;
+	/*private RequestFactoryEditorDriver<AnswerProxy, AnswerDialogboxImpl> answerDriver;*/
 	private AnswerProxy answerProxy;
+	private CommentProxy commentProxy;
 
 	@Override
 	public void addNewAnswerClicked() {
 		
 		answerDialogbox = new AnswerDialogboxImpl();
 		answerDialogbox.setDelegate(this);
-		answerDriver = answerDialogbox.createEditorDriver();
+		/*answerDriver = answerDialogbox.createEditorDriver();*/
 		
-		AnswerRequest ansRequest = requests.answerRequest();
 		
-			AnswerProxy ansProxy=ansRequest.create(AnswerProxy.class);
+		
+			
 			
 			//this.answerProxy = request.create(AnswerProxy.class);
+			/*AnswerRequest ansRequest = requests.answerRequest();
+			CommentRequest commnetRequest=requests.commentRequest();
+			AnswerProxy ansProxy=ansRequest.create(AnswerProxy.class);
+			CommentProxy comProxy=ansRequest.create(CommentProxy.class);
 			this.answerProxy = ansProxy;
+			this.commentProxy=comProxy;
 			
 			
 			
@@ -391,7 +399,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	        answerDriver.edit(answerProxy, ansRequest);
 
 	        answerDriver.flush();
-		
+*/		
 		answerDialogbox.setValidityPickerValues(Arrays.asList(Validity.values()));
 		answerDialogbox.setRewiewerPickerValues(Collections.<PersonProxy>emptyList());
 	        requests.personRequest().findPersonEntries(0, 50).with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).fire(new Receiver<List<PersonProxy>>() {
@@ -421,8 +429,104 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	
 	@Override
 	public void addAnswerClicked() {
+		
+		final AnswerRequest ansRequest = requests.answerRequest();
+		CommentRequest commnetRequest=requests.commentRequest();
+		
+		final AnswerProxy answerProxy=ansRequest.create(AnswerProxy.class);
+		CommentProxy commentProxy=commnetRequest.create(CommentProxy.class);
+		
+		/*this.answerProxy = ansProxy;
+		this.commentProxy=comProxy;*/
+		
+		
+        answerProxy.setQuestion(question);
+        answerProxy.setDateAdded(new Date());
+        answerProxy.setAutor(loggedUser);
+        if(loggedUser.getIsAdmin()){
+	        answerProxy.setIsAnswerAcceptedAdmin(true);
+	        answerProxy.setIsAnswerAcceptedAutor(false);
+	        answerProxy.setRewiewer(question.getAutor());
+        } else {
+	        answerProxy.setIsAnswerAcceptedAdmin(false);
+	        answerProxy.setIsAnswerAcceptedAutor(true);
+        }
+
+        answerProxy.setIsAnswerAcceptedReviewWahrer(false);
+        //answerDialogbox.setRichPanelHTML(answerProxy.getAnswerText());
+        
+        answerProxy.setIsAnswerActive(false);
+        
 		answerProxy.setAnswerText(answerDialogbox.getRichtTextHTML());
-		answerDriver.flush().fire(new Receiver<Void>() {
+		answerProxy.setValidity(answerDialogbox.getValidity().getValue());
+		commentProxy.setComment(answerDialogbox.getComment().getValue());
+		answerProxy.setComment(commentProxy);
+		answerProxy.setSubmitToReviewComitee(answerDialogbox.getSubmitToReviewerComitee().getValue());
+		Log.info("before save");
+		
+		commnetRequest.persist().using(commentProxy).fire(new Receiver<Void>() {
+
+			public void onFailure(ServerFailure error){
+				Log.info("on failure");
+				ErrorPanel erorPanel = new ErrorPanel();
+	        	  erorPanel.setErrorMessage(error.getMessage());
+					Log.error(error.getMessage());
+				}
+	          @Override
+				public void onViolation(Set<Violation> errors) {
+	        	  Log.info("on violate");
+					Iterator<Violation> iter = errors.iterator();
+					String message = "";
+					while(iter.hasNext()){
+						message += iter.next().getPath() + "<br>";
+					}
+					Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Antworten auflisten -" + message);
+					
+		        	  
+					ErrorPanel erorPanel = new ErrorPanel();
+		        	  erorPanel.setErrorMessage(message);
+
+				}
+	          
+			@Override
+			public void onSuccess(Void response) {
+				// TODO Auto-generated method stub
+				ansRequest.persist().using(answerProxy).fire(new Receiver<Void>() {
+
+					@Override
+					public void onSuccess(Void response) {
+						// TODO Auto-generated method stub
+						Log.info("fullSaved");
+			        	  
+		        		initAnswerView();
+		        		answerDialogbox.close();
+					}
+					public void onFailure(ServerFailure error){
+						Log.info("on failure");
+						ErrorPanel erorPanel = new ErrorPanel();
+			        	  erorPanel.setErrorMessage(error.getMessage());
+							Log.error(error.getMessage());
+						}
+			          @Override
+						public void onViolation(Set<Violation> errors) {
+			        	  Log.info("on violate");
+							Iterator<Violation> iter = errors.iterator();
+							String message = "";
+							while(iter.hasNext()){
+								message += iter.next().getPath() + "<br>";
+							}
+							Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Antworten auflisten -" + message);
+							
+				        	  
+							ErrorPanel erorPanel = new ErrorPanel();
+				        	  erorPanel.setErrorMessage(message);
+
+						}
+				});
+		
+			}
+		});
+				/*answerDriver.flush().fire(new Receiver<Void>() {
 			
 	          @Override
 	          public void onSuccess(Void response) {
@@ -451,7 +555,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		        	  erorPanel.setErrorMessage(message);
 
 				}
-	      }); 
+	      }); */
 	}
 	
 

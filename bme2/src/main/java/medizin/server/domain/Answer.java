@@ -7,6 +7,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Enumerated;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
@@ -81,6 +82,14 @@ public class Answer {
     @NotNull
     @ManyToOne
     private Person autor;
+    
+    @OneToOne
+    private Comment comment;
+    
+    @NotNull
+    @Value("false")
+    private Boolean submitToReviewComitee;
+    
     
 	public static List<Answer> findAnswersEntriesByQuestion(Long id, int start, int max){
         Question question = Question.findQuestion(id);

@@ -1,21 +1,33 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:b="urn:import:com.google.gwt.user.cellview.client"
-	xmlns:d="urn:import:com.google.gwt.user.datepicker.client" xmlns:m="urn:import:medizin.client.ui.widget">
+	xmlns:d="urn:import:com.google.gwt.user.datepicker.client" xmlns:m="urn:import:medizin.client.ui.widget"
+	xmlns:r="urn:import:medizin.client.ui.richtext">
 
 	<ui:style src="../../styles.css" />
 		
-	<g:HTMLPanel>
+	<g:HTMLPanel width="100%">
 
 
-		<table class="{style.fields}" id="boundElementHolder">
+		<table id="boundElementHolder">
 			<tr id="text">
+
 				<td colspan="2">
-					<g:SimplePanel ui:field="toolbarPanel" addStyleNames="{style.nav}"></g:SimplePanel>
-					<!-- <t:RichTextToolbar ui:field="toolbar" ></t:RichTextToolbar> -->
-					<g:RichTextArea ui:field="answerTextArea"
-						addStyleNames="{style.textarea}"></g:RichTextArea>
+
+					<r:RichTextToolbar ui:field="toolbar" />
+					<div
+						style="-moz-border-radius-bottomleft: 8px; -moz-border-radius-bottomright: 8px; border: 1px solid #AAA; border-top: 0; padding: 4px">
+
+						<div ui:field="descriptionValue">
+						</div>
+						<g:RichTextArea ui:field='answerTextArea' enabled="false" />
+					</div>
+
 				</td>
+				<!-- <td colspan="2"> <g:SimplePanel ui:field="toolbarPanel" addStyleNames="{style.nav}"></g:SimplePanel> 
+					<g:SimplePanel ui:field="toolbarPanel"></g:SimplePanel> <t:RichTextToolbar 
+					ui:field="toolbar" ></t:RichTextToolbar> <g:RichTextArea ui:field="answerTextArea" 
+					addStyleNames="{style.textarea}"></g:RichTextArea> </td> -->
 			</tr>
 			<tr id="rewiewer">
 				<td>
@@ -36,28 +48,40 @@
 					<g:ValueListBox ui:field="validity" />
 				</td>
 			</tr>
+			<tr id="questionSubmitToReviewComitee">
+				<td>
+					<div class="{style.label}">Question Submit To Review Comitee:</div>
+				</td>
+
+				<td>
+					<g:CheckBox ui:field="submitToReviewComitee" />
+
+				</td>
+			</tr>
+			<tr id="questionComment">
+				<td>
+					<div class="{style.label}">Comment:</div>
+				</td>
+
+				<td>
+					<g:TextArea ui:field='comment' width="450px"></g:TextArea>
+				</td>
+			</tr>
 			<!-- <tr id="question"> <td> <div class="{style.label}">Question:</div> 
 				</td> <td> <g:ValueListBox ui:field="question"/> </td> </tr> -->
 		</table>
 
-		<div class="{style.barPopup}">
+		<!-- <div class="{style.barPopup}"> -->
+		<div>
 			<m:IconButton ui:field="save" icon="disk">Speichern</m:IconButton>
 			<m:IconButton ui:field="closeButton" icon="closethick">Abbrechen</m:IconButton>
-			
-			
-			
-	<!-- 	 <g:Button
-		
-				ui:field="save">Speichern</g:Button>
-			<g:Button
-		
-				ui:field="closeButton">Abbrechen</g:Button> 
-	 -->		<!-- <g:Button
-				addStyleNames="ui-button  ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary  {style.right}"
-				ui:field="save">Speichern</g:Button>
-			<g:Button
-				addStyleNames="ui-button  ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary {style.right}"
-				ui:field="closeButton">Abbrechen</g:Button> -->
+
+
+
+			<!-- <g:Button ui:field="save">Speichern</g:Button> <g:Button ui:field="closeButton">Abbrechen</g:Button> -->		<!-- <g:Button addStyleNames="ui-button ui-widget ui-state-default ui-corner-all 
+				ui-button-text-icon-primary {style.right}" ui:field="save">Speichern</g:Button> 
+				<g:Button addStyleNames="ui-button ui-widget ui-state-default ui-corner-all 
+				ui-button-text-icon-primary {style.right}" ui:field="closeButton">Abbrechen</g:Button> -->
 		</div>
 	</g:HTMLPanel>
 </ui:UiBinder> 

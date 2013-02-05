@@ -15,7 +15,11 @@ import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.cell.client.AbstractCell;
+import com.google.gwt.cell.client.Cell;
+import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.place.shared.PlaceController;
@@ -33,6 +37,8 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.Tree;
+import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
@@ -483,6 +489,15 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 			}
 		}, constants.questionText());
 
+		/*table.addColumn(new Column<QuestionProxy, QuestionProxy>(
+				new GridTreeCell()) {
+			@Override
+			public QuestionProxy getValue(QuestionProxy object) {
+				return object;
+			}
+		}, "Grid");*/
+
+		
 		paths.add("questionType");
 		table.addColumn(new TextColumn<QuestionProxy>() {
 
@@ -499,21 +514,29 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 			}
 		},constants.questionType() );
 		
-		table.addColumn(new TextColumn<QuestionProxy>() {
+		
+		/*
+		table.addColumn(new Column<QuestionProxy, TreeItem>(null) {
 
-			Renderer<java.lang.String> renderer = new AbstractRenderer<java.lang.String>() {
-
-				public String render(java.lang.String obj) {
-					return obj == null ? "" : String.valueOf(obj);
-				}
-			};
-			
 			@Override
-			public String getValue(QuestionProxy object) {
+			public TreeItem getValue(QuestionProxy object) {
 				// TODO Auto-generated method stub
-				return  (object.getStatus()==null ?"":object.getStatus().toString());
+				
+				TreeItem department = new TreeItem("Department");
+				
+				TreeItem employee1 = new TreeItem("Robert");
+			      TreeItem employee2 = new TreeItem("Joe");
+			      TreeItem employee3 = new TreeItem("Chris");
+			      department.addItem(employee1);
+			      department.addItem(employee2);
+			      department.addItem(employee3);
+			      
+			      return department;
 			}
-		},constants.status());
+		}, "check");
+		*/
+		
+		
 		
 	}
 
@@ -576,6 +599,8 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 			// to cells
 			// if the underlying data contains a null, or if the data arrives
 			// out of order.
+			
+
 			if (value == null) {
 				return;
 			}
@@ -598,5 +623,53 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 
 		}
 	}
+	
+	private static class GridTreeCell extends AbstractCell<QuestionProxy> {
+
+		@Override
+		public void render(com.google.gwt.cell.client.Cell.Context context,
+				QuestionProxy value,  SafeHtmlBuilder sb) {
+			// Always do a null check on the value. Cell widgets can pass null
+			// to cells
+			// if the underlying data contains a null, or if the data arrives
+			// out of order.
+			
+			TreeItem department = new TreeItem("Department");
+			
+			TreeItem employee1 = new TreeItem("Robert");
+		      TreeItem employee2 = new TreeItem("Joe");
+		      TreeItem employee3 = new TreeItem("Chris");
+		      
+		      department.addItem(employee1);
+		      department.addItem(employee2);
+		      department.addItem(employee3);
+		      
+		      
+			if (value == null) {
+				return;
+			}
+			String beginn = "<div style=\"";
+			String end = "</div>";
+			if (!value.getIsAcceptedAdmin()) {
+				beginn += "color:red; ";
+			}
+			if (!value.getIsAcceptedRewiever()) {
+				beginn += "font-style:italic; ";
+			}
+			if (!value.getIsActive()) {
+				beginn += "text-decoration: line-through; ";
+			}
+
+			beginn += "\">";
+			
+			sb.appendHtmlConstant(department.getElement().getInnerHTML());
+			Log.info("html value--"+department.getElement().getInnerHTML());
+			/*sb.appendHtmlConstant(beginn);
+			sb.appendHtmlConstant(value.getQuestionText());
+			sb.appendHtmlConstant(end);*/
+
+		}
+	}
+
 
 }

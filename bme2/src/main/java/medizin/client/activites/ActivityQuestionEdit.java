@@ -606,44 +606,48 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 								{
 									 Log.info("Question id" + ((QuestionProxy)response).getId());
 									  // persist questionResources 
-						        	  final QuestionProxy qproxy = ((QuestionProxy)response);
-						        	  QuestionResourceRequest questionResourceRequest = requests.questionResourceRequest();
-						        	  Set<QuestionResourceProxy> proxies = new HashSet<QuestionResourceProxy>();
-						        	  
-						        	  for (QuestionResourceClient questionResource : view.getQuestionResources()) 
-						        	  {
-						        		  QuestionResourceProxy proxy = questionResourceRequest.create(QuestionResourceProxy.class);
-						       
-						        		  proxy.setPath(questionResource.getPath());
-						        		  proxy.setSequenceNumber(questionResource.getSequenceNumber());
-						        		  proxy.setType(questionResource.getType());
-						        		  proxy.setQuestion(qproxy);
-						        		  proxies.add(proxy);
-						        	  }
-						        	  
-									 questionResourceRequest.persistSet(proxies).fire(new Receiver<Void>() {
+									 
+									 if(view !=null) {
+										 final QuestionProxy qproxy = ((QuestionProxy)response);
+							        	  QuestionResourceRequest questionResourceRequest = requests.questionResourceRequest();
+							        	  Set<QuestionResourceProxy> proxies = new HashSet<QuestionResourceProxy>();
+							        	  
+							        	  for (QuestionResourceClient questionResource : view.getQuestionResources()) 
+							        	  {
+							        		  QuestionResourceProxy proxy = questionResourceRequest.create(QuestionResourceProxy.class);
+							       
+							        		  proxy.setPath(questionResource.getPath());
+							        		  proxy.setSequenceNumber(questionResource.getSequenceNumber());
+							        		  proxy.setType(questionResource.getType());
+							        		  proxy.setQuestion(qproxy);
+							        		  proxies.add(proxy);
+							        	  }
+							        	  
+										 questionResourceRequest.persistSet(proxies).fire(new Receiver<Void>() {
 
-											@Override
-											public void onSuccess(Void response) {
-												placeController.goTo(new PlaceQuestionDetails(newQuestion.stableId(), PlaceQuestionDetails.Operation.DETAILS));
-											}
-											
-											@Override
-											public void onConstraintViolation(
-													Set<ConstraintViolation<?>> violations) {
-												Log.error("constraint violation in Question Resourc");
-												super.onConstraintViolation(violations);
-											}
-											
-											@Override
-											public void onFailure(ServerFailure error) {
-												Log.error("Failure in Question Resourc " + error);
-												super.onFailure(error);
-											}
-							        	  
-							        	  
-							        	  });
-							        	  
+												@Override
+												public void onSuccess(Void response) {
+													placeController.goTo(new PlaceQuestionDetails(newQuestion.stableId(), PlaceQuestionDetails.Operation.DETAILS));
+												}
+												
+												@Override
+												public void onConstraintViolation(
+														Set<ConstraintViolation<?>> violations) {
+													Log.error("constraint violation in Question Resourc");
+													super.onConstraintViolation(violations);
+												}
+												
+												@Override
+												public void onFailure(ServerFailure error) {
+													Log.error("Failure in Question Resourc " + error);
+													super.onFailure(error);
+												}
+								        	  
+								        	  
+								        	  });
+								        	  
+									 }
+						        	  
 									
 								}
 							});
