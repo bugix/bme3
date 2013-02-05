@@ -180,5 +180,5 @@ public interface BmeConstants extends Constants {
 
 	public String resources();
 
-	
+	public String questionTypeSaveMsg();
 }

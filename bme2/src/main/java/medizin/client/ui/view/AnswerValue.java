@@ -28,7 +28,7 @@ public class AnswerValue {
 			if(object.getQuestionType()==QuestionTypes.Matrix)
 				return constants.single()+"("+object.getAllowOneToOneAss()+ ")"+"/"+constants.maxLen()+"("+object.getMaxLength()+ ")";
 			
-			if(object.getQuestionType()==QuestionTypes.Area)
+			if(object.getQuestionType()==QuestionTypes.ShowInImage)
 				return "";
 			
 			if(object.getQuestionType()==QuestionTypes.LongText)

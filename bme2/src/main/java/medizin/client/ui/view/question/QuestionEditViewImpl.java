@@ -564,7 +564,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 				// allowed extension
 				ArrayList<String> allowedExt = new ArrayList<String>();
 				
-				if(QuestionTypes.Textual.equals(questionType.getQuestionType()) || QuestionTypes.Imgkey.equals(questionType.getQuestionType()) || QuestionTypes.Area.equals(questionType.getQuestionType()) || QuestionTypes.MCQ.equals(questionType.getQuestionType())) {
+				if(QuestionTypes.Textual.equals(questionType.getQuestionType()) || QuestionTypes.Imgkey.equals(questionType.getQuestionType()) || QuestionTypes.ShowInImage.equals(questionType.getQuestionType()) || QuestionTypes.MCQ.equals(questionType.getQuestionType())) {
 					allowedExt.addAll(Arrays.asList(SharedConstant.IMAGE_EXTENSIONS));
 				}
 				
@@ -717,7 +717,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 			flag = true;
 		}
 		//for area question having height and width
-		else if(QuestionTypes.Area.equals(questionType.getQuestionType()) && questionType.getImageWidth() != null && questionType.getImageHeight() != null) {
+		else if(QuestionTypes.ShowInImage.equals(questionType.getQuestionType()) && questionType.getImageWidth() != null && questionType.getImageHeight() != null) {
 			flag = true;
 		}
 		//MCQ question having type as image and height and width or type as sound or type as video

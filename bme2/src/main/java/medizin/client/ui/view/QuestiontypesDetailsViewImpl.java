@@ -371,8 +371,9 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 	    	   imageLengthValLbl.setText(proxy.getImageHeight().toString());
 	    	   imageProportionValLbl.setText(proxy.getImageProportion().toString());
 	       }
-	       else if (proxy.getQuestionType().equals(QuestionTypes.Area))
+	       else if (proxy.getQuestionType().equals(QuestionTypes.ShowInImage))
 	       {
+	    	   questionLengthValLbl.setText(proxy.getQuestionLength().toString());
 	    	   imageWidthValLbl.setText(proxy.getImageWidth().toString());
 	    	   imageLengthValLbl.setText(proxy.getImageHeight().toString());
 	    	   imageProportionValLbl.setText(proxy.getImageProportion().toString());
@@ -494,7 +495,7 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 			if (questionTypes.equals(QuestionTypes.Textual) || questionTypes.equals(QuestionTypes.Sort))
 			{
 				disableImgKeyField();
-				disableAreaField();
+				disableShowInImageField();
 				disableLongtextField();
 				disableMatrixFied();
 				disableMCQField();
@@ -503,26 +504,26 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 			else if (questionTypes.equals(QuestionTypes.Imgkey))
 			{
 				disableTextualField();
-				disableAreaField();
+				disableShowInImageField();
 				disableLongtextField();
 				disableMatrixFied();
 				disableMCQField();
 				showImgKeyField();					
 			}
-			else if (questionTypes.equals(QuestionTypes.Area))
+			else if (questionTypes.equals(QuestionTypes.ShowInImage))
 			{
 				disableTextualField();
 				disableImgKeyField();
 				disableLongtextField();
 				disableMatrixFied();
 				disableMCQField();
-				showAreaField();
+				showShowInImageField();
 			}
 			else if (questionTypes.equals(QuestionTypes.LongText))
 			{
 				disableTextualField();
 				disableImgKeyField();
-				disableAreaField();
+				disableShowInImageField();
 				disableMatrixFied();
 				disableMCQField();
 				showLongtextField();
@@ -531,7 +532,7 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 			{
 				disableTextualField();
 				disableImgKeyField();
-				disableAreaField();
+				disableShowInImageField();
 				disableLongtextField();
 				disableMCQField();
 				showMatrixField();
@@ -540,7 +541,7 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 			{
 				disableTextualField();
 				disableImgKeyField();
-				disableAreaField();
+				disableShowInImageField();
 				disableLongtextField();
 				disableMatrixFied();
 				showMCQField();
@@ -549,7 +550,7 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 			{
 				disableTextualField();
 				disableImgKeyField();
-				disableAreaField();
+				disableShowInImageField();
 				disableLongtextField();
 				disableMatrixFied();
 				disableMCQField();
@@ -613,8 +614,9 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 			Document.get().getElementById("imageProportion").getStyle().setDisplay(Display.NONE);
 		}
 		
-		public void showAreaField()
+		public void showShowInImageField()
 		{
+			Document.get().getElementById("questionLength").getStyle().clearDisplay();
 			Document.get().getElementById("imageWidth").getStyle().clearDisplay();
 			Document.get().getElementById("imageLength").getStyle().clearDisplay();
 			Document.get().getElementById("imageProportion").getStyle().clearDisplay();
@@ -622,8 +624,9 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 			Document.get().getElementById("linearPercentage").getStyle().clearDisplay();
 		}
 		
-		public void disableAreaField()
+		public void disableShowInImageField()
 		{
+			Document.get().getElementById("questionLength").getStyle().setDisplay(Display.NONE);
 			Document.get().getElementById("imageWidth").getStyle().setDisplay(Display.NONE);
 			Document.get().getElementById("imageLength").getStyle().setDisplay(Display.NONE);
 			Document.get().getElementById("imageProportion").getStyle().setDisplay(Display.NONE);

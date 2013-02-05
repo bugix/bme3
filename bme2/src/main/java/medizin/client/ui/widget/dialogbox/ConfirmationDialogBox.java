@@ -122,7 +122,6 @@ public class ConfirmationDialogBox extends DialogBox {
 	}
 
 	private void showConfirmationDialog(final ConfirmationDialogBox dialogBox, String caption, String msg, final ConfirmDialogBoxOkButtonEventHandler handler) {
-		dialogBox.setWidth("100px");
 		this.getYesBtn().setVisible(false);
 		this.getNoBtnl().setVisible(false);
 		this.okBtnl.setVisible(true);

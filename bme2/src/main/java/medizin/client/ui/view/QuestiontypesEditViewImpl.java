@@ -453,7 +453,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
         	}
      	   
         }
-        if (questionTypeListBox.getValue().equals(QuestionTypes.Area))
+        if (questionTypeListBox.getValue().equals(QuestionTypes.ShowInImage))
         {
         	if (imageWidthTxtbox.getText().equals("") || imageLengthTxtbox.getText().equals("") || imageProportionTxtbox.getText().equals("") ||
         			linearPercentageTxtbox.getText().equals(""))
@@ -534,8 +534,9 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
     	   imageLengthTxtbox.setValue(proxy.getImageHeight().toString());
     	   imageProportionTxtbox.setValue(proxy.getImageProportion().toString());
        }
-       else if (proxy.getQuestionType().equals(QuestionTypes.Area))
+       else if (proxy.getQuestionType().equals(QuestionTypes.ShowInImage))
        {
+    	   questionLengthTxtbox.setValue(proxy.getQuestionLength().toString());
     	   imageWidthTxtbox.setValue(proxy.getImageWidth().toString());
     	   imageLengthTxtbox.setValue(proxy.getImageHeight().toString());
     	   imageProportionTxtbox.setValue(proxy.getImageProportion().toString());
@@ -708,8 +709,9 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		Document.get().getElementById("imageProportion").getStyle().setDisplay(Display.NONE);
 	}
 	
-	public void showAreaField()
+	public void showShowInImageField()
 	{
+		Document.get().getElementById("questionLength").getStyle().clearDisplay();
 		Document.get().getElementById("imageWidth").getStyle().clearDisplay();
 		Document.get().getElementById("imageLength").getStyle().clearDisplay();
 		Document.get().getElementById("imageProportion").getStyle().clearDisplay();
@@ -717,8 +719,9 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		Document.get().getElementById("linearPercentage").getStyle().clearDisplay();
 	}
 	
-	public void disableAreaField()
+	public void disableShowInImageField()
 	{
+		Document.get().getElementById("questionLength").getStyle().setDisplay(Display.NONE);
 		Document.get().getElementById("imageWidth").getStyle().setDisplay(Display.NONE);
 		Document.get().getElementById("imageLength").getStyle().setDisplay(Display.NONE);
 		Document.get().getElementById("imageProportion").getStyle().setDisplay(Display.NONE);
@@ -833,7 +836,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		if (questionTypes.equals(QuestionTypes.Textual) || questionTypes.equals(QuestionTypes.Sort))
 		{
 			disableImgKeyField();
-			disableAreaField();
+			disableShowInImageField();
 			disableLongtextField();
 			disableMatrixFied();
 			disableMCQField();
@@ -842,26 +845,26 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		else if (questionTypes.equals(QuestionTypes.Imgkey))
 		{
 			disableTextualField();
-			disableAreaField();
+			disableShowInImageField();
 			disableLongtextField();
 			disableMatrixFied();
 			disableMCQField();
 			showImgKeyField();					
 		}
-		else if (questionTypes.equals(QuestionTypes.Area))
+		else if (questionTypes.equals(QuestionTypes.ShowInImage))
 		{
 			disableTextualField();
 			disableImgKeyField();
 			disableLongtextField();
 			disableMatrixFied();
 			disableMCQField();
-			showAreaField();
+			showShowInImageField();
 		}
 		else if (questionTypes.equals(QuestionTypes.LongText))
 		{
 			disableTextualField();
 			disableImgKeyField();
-			disableAreaField();
+			disableShowInImageField();
 			disableMatrixFied();
 			disableMCQField();
 			showLongtextField();
@@ -870,7 +873,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		{
 			disableTextualField();
 			disableImgKeyField();
-			disableAreaField();
+			disableShowInImageField();
 			disableLongtextField();
 			disableMCQField();
 			showMatrixField();
@@ -879,7 +882,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		{
 			disableTextualField();
 			disableImgKeyField();
-			disableAreaField();
+			disableShowInImageField();
 			disableLongtextField();
 			disableMatrixFied();
 			showMCQField();
@@ -888,7 +891,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		{
 			disableTextualField();
 			disableImgKeyField();
-			disableAreaField();
+			disableShowInImageField();
 			disableLongtextField();
 			disableMatrixFied();
 			disableMCQField();
@@ -928,8 +931,9 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 	    	   imageLengthTxtbox.setValue("");
 	    	   imageProportionTxtbox.setValue("");
 	       }
-	       else if (questionTypes.equals(QuestionTypes.Area))
+	       else if (questionTypes.equals(QuestionTypes.ShowInImage))
 	       {
+	    	   questionLengthTxtbox.setValue("");
 	    	   imageWidthTxtbox.setValue("");
 	    	   imageLengthTxtbox.setValue("");
 	    	   imageProportionTxtbox.setValue("");

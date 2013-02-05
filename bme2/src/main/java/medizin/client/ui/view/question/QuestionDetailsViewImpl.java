@@ -436,7 +436,7 @@ public class QuestionDetailsViewImpl extends Composite implements
 				break;
 			}
 				
-			case Area:
+			case ShowInImage:
 			{
 				break;
 			}

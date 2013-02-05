@@ -7,6 +7,9 @@ import medizin.client.ui.ErrorPanel;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.QuestiontypesEditView;
 import medizin.client.ui.view.QuestiontypesEditViewImpl;
+import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
+import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxOkButtonEvent;
+import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxOkButtonEventHandler;
 import medizin.client.place.PlaceQuestion;
 import medizin.client.place.PlaceQuestionDetails;
 import medizin.client.place.PlaceQuestiontypes;
@@ -17,9 +20,11 @@ import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.request.QuestionTypeRequest;
 import medizin.shared.QuestionTypes;
+import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.activity.shared.AbstractActivity;
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.place.shared.Place;
@@ -57,6 +62,7 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 	private McAppRequestFactory requests;
 	private PlaceController placeController;
 
+	public BmeConstants constants = GWT.create(BmeConstants.class);
 	//private RequestFactoryEditorDriver<QuestionTypeProxy, QuestiontypesEditViewImpl> editorDriver;
 
 	@Inject
@@ -519,8 +525,9 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 					questionTypeProxy.setImageHeight(Integer.parseInt(view.getImageLengthTxtbox().getValue()));
 					questionTypeProxy.setImageProportion(view.getImageProportionTxtbox().getValue());
 				}
-				else if (selectedQuestionType.equals(QuestionTypes.Area))
+				else if (selectedQuestionType.equals(QuestionTypes.ShowInImage))
 				{
+					questionTypeProxy.setQuestionLength(Integer.parseInt(view.getQuestionLengthTxtbox().getValue()));
 					questionTypeProxy.setImageWidth(Integer.parseInt(view.getImageWidthTxtbox().getValue()));
 					questionTypeProxy.setImageHeight(Integer.parseInt(view.getImageLengthTxtbox().getValue()));
 					questionTypeProxy.setImageProportion(view.getImageProportionTxtbox().getValue());
@@ -564,9 +571,13 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 					public void onSuccess(Void response) {
 						view.setNullValue(selectedQuestionType);
 						//Window.alert("Record Inserted Successfully...");
-						placeController.goTo(new PlaceQuestiontypesDetails(finalQuestionTypeProxy.stableId(),PlaceQuestiontypesDetails.Operation.DETAILS));
-						
-						//placeController.goTo(new PlaceQuestiontypes(finalQuestionTypeProxy.stableId()));
+						ConfirmationDialogBox.showOkDialogBox(constants.success(), constants.questionTypeSaveMsg(), new ConfirmDialogBoxOkButtonEventHandler() {
+							
+							@Override
+							public void onOkButtonClicked(ConfirmDialogBoxOkButtonEvent event) {
+								placeController.goTo(new PlaceQuestiontypesDetails(finalQuestionTypeProxy.stableId(),PlaceQuestiontypesDetails.Operation.DETAILS));
+							}
+						});
 					}
 				});
 			}
