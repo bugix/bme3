@@ -30,11 +30,9 @@ import medizin.client.ui.view.question.QuestionEditView;
 import medizin.client.ui.view.question.QuestionEditViewImpl;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.ui.widget.resource.dndview.vo.State;
-import medizin.client.util.ClientUtility;
 import medizin.shared.MultimediaType;
 import medizin.shared.QuestionTypes;
 import medizin.shared.Status;
-import medizin.shared.UserType;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.base.Objects;
@@ -231,12 +229,14 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 				onStop();
 			}
 
+			
 			@Override
-			public void onViolation(Set<Violation> errors) {
-				Iterator<Violation> iter = errors.iterator();
+			public void onConstraintViolation(
+					Set<ConstraintViolation<?>> violations) {
+				Iterator<ConstraintViolation<?>> iter = violations.iterator();
 				String message = "";
 				while (iter.hasNext()) {
-					message += iter.next().getMessage() + "<br>";
+					message += iter.next().getPropertyPath() + "<br>";
 				}
 				Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION
 						+ " in Antwort löschen -" + message);
@@ -428,7 +428,18 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		
 			//questionNew.setRewiewer(view.getReviewer().getValue());
 			questionNew.setQuestionShortName(view.getShortName().getValue());
+			if(view.getSubmitToReviewComitee().isChecked())
+			{
+				
+				
+				questionNew.setRewiewer(null);
+					
+			}
+			else
+			{
+				
 			questionNew.setRewiewer(view.getReviewerListBox().getSelected());
+			}
 //			questionNew.setDateAdded(new Date());
 			questionNew.setDateChanged(new Date());
 			questionNew.setMcs(view.getMCS().getValue());
@@ -562,20 +573,22 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		          public void onFailure(ServerFailure error){
 						Log.error(error.getMessage());
 					}
+		          
 		          @Override
-					public void onViolation(Set<Violation> errors) {
-						Iterator<Violation> iter = errors.iterator();
-						String message = "";
-						while(iter.hasNext()){
-							
-							message += iter.next().getMessage() + "<br>";
-						}
-						Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Event -" + message);
-						
-						ErrorPanel erorPanel = new ErrorPanel();
-			        	  erorPanel.setWarnMessage(message);
-						
+		        public void onConstraintViolation(
+		        		Set<ConstraintViolation<?>> violations) {
+		      		Iterator<ConstraintViolation<?>> iter = violations.iterator();
+					String message = "";
+					while(iter.hasNext()){
+						ConstraintViolation<?> v = iter.next();
+						message += v.getPropertyPath() + " : " + v.getMessage() + "<br>";
 					}
+					Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Event -" + message);
+					
+					ErrorPanel erorPanel = new ErrorPanel();
+		        	  erorPanel.setWarnMessage(message);
+
+		        }
 		      }); 
 			
 		}
@@ -595,7 +608,16 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		//	questionNew.setAutor(view.getAuther().getValue());
 			questionNew.setAutor(view.getAutherListBox().getSelected());
 			/*Log.info("reviewer "+ view.getReviewer().getValue().getName());*/
+			if(view.getSubmitToReviewComitee().isChecked())
+			{
+				questionNew.setRewiewer(null);
+					
+			}
+			else
+			{
 			questionNew.setRewiewer(view.getReviewerListBox().getSelected());
+			}
+			//questionNew.setRewiewer(view.getReviewerListBox().getSelected());
 			//questionNew.setRewiewer(view.getReviewer().getValue());
 			questionNew.setQuestEvent(view.getQuestionEvent().getValue());
 			questionNew.setMcs(view.getMCS().getValue());
@@ -691,7 +713,24 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		    					Log.error(error.getExceptionType());
 		    					Log.error(error.getStackTraceString());
 		    				}
+		    	          
 		    	          @Override
+		  		        public void onConstraintViolation(
+		  		        		Set<ConstraintViolation<?>> violations) {
+		  		      		Iterator<ConstraintViolation<?>> iter = violations.iterator();
+		  					String message = "";
+		  					while(iter.hasNext()){
+		  						ConstraintViolation<?> v = iter.next();
+		  						message += v.getPropertyPath() + " : " + v.getMessage() + "<br>";
+		  					}
+		  					Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Event -" + message);
+		  					
+		  					ErrorPanel erorPanel = new ErrorPanel();
+		  		        	  erorPanel.setWarnMessage(message);
+
+		  		        }
+		    	          
+		    	          /*@Override
 		    				public void onViolation(Set<Violation> errors) {
 		    					Iterator<Violation> iter = errors.iterator();
 		    					String message = "";
@@ -704,7 +743,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		    			        	  erorPanel.setWarnMessage(message);
 		    	
 		    					
-		    				}
+		    				}*/
 		    	      }); 
 		        		
 		          //	goTo(new PlaceQuestion(person.stableId()));

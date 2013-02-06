@@ -229,6 +229,21 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 			}
 		}, constants.id());
 		
+		paths.add("shortName");
+		table.addColumn(new TextColumn<QuestionProxy>() {
+
+			Renderer<java.lang.String> renderer = new AbstractRenderer<java.lang.String>() {
+
+				public String render(java.lang.String obj) {
+					return obj == null ? "" : String.valueOf(obj);
+				}
+			};
+
+			@Override
+			public String getValue(QuestionProxy object) {
+				return renderer.render(object.getQuestionShortName()==null?"":object.getQuestionShortName());
+			}
+		},constants.questionShortName() );
 		
 		
 		/*
@@ -513,7 +528,21 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 				return renderer.render(object.getQuestionType()==null?"":object.getQuestionType().getShortName());
 			}
 		},constants.questionType() );
-		
+		paths.add("status");
+		table.addColumn(new TextColumn<QuestionProxy>() {
+
+			Renderer<java.lang.String> renderer = new AbstractRenderer<java.lang.String>() {
+
+				public String render(java.lang.String obj) {
+					return obj == null ? "" : String.valueOf(obj);
+				}
+			};
+
+			@Override
+			public String getValue(QuestionProxy object) {
+				return renderer.render(object.getStatus()==null?"":object.getStatus().toString());
+			}
+		},constants.status() );
 		
 		/*
 		table.addColumn(new Column<QuestionProxy, TreeItem>(null) {

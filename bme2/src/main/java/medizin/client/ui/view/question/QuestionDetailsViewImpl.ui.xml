@@ -58,7 +58,8 @@
 												<g:Label styleName="{style.label}" ui:field="lblQuestionText"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="lblQuestionTextValue"></g:Label>
+											<g:HTML ui:field="lblQuestionTextValue"></g:HTML>
+												<!-- <g:Label ui:field="lblQuestionTextValue"></g:Label> -->
 											</td>
 										</tr>
 										<tr id="auther">

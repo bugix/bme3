@@ -48,6 +48,7 @@ import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.editor.client.Editor.Ignore;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
@@ -281,7 +282,22 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 		questionTypePanel.selectTab(0);
 		save.setText(constants.save());
 		cancel.setText(constants.cancel());
+		submitToReviewComitee.addClickHandler(new ClickHandler() {
 
+			@Override
+			public void onClick(ClickEvent event) {
+				// TODO Auto-generated method stub
+				
+				if(submitToReviewComitee.isChecked())
+				{
+					rewiewer.setEnabled(false);
+				}
+				else
+				{
+					rewiewer.setEnabled(true);
+				}
+			}
+		});
 		questionTypePanel.getTabBar().setTabText(0, constants.manageQuestion());
 		lblQuestionShortName.setText(constants.questionShortName());
 		lblQuestionType.setText(constants.questionType());
@@ -334,7 +350,14 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 				.getComment().getComment());*/
 		submitToReviewComitee.setValue(question.getSubmitToReviewComitee());
 		mcs.setValue(question.getMcs());
-		
+		if(question.getSubmitToReviewComitee()==true)
+		{
+			rewiewer.setEnabled(false);
+		}
+		else
+		{
+			rewiewer.setEnabled(true);
+		}
 		this.question = question;
 		
 		setMediaView(question.getQuestionType(), question);

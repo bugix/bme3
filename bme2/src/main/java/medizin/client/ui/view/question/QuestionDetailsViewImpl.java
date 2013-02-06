@@ -35,6 +35,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -84,8 +85,11 @@ public class QuestionDetailsViewImpl extends Composite implements
 	@UiField
 	Label lblQuestionText;
 
+	/*@UiField
+	Label lblQuestionTextValue;*/
+	
 	@UiField
-	Label lblQuestionTextValue;
+	HTML lblQuestionTextValue;
 	
 	@UiField
 	Label lblAuther;
@@ -220,13 +224,17 @@ public class QuestionDetailsViewImpl extends Composite implements
 		displayRenderer.setInnerText(proxy.getQuestionShortName()==null?proxy.getId().toString():proxy.getQuestionShortName());
 		lblQuestionTypeValue.setText(proxy.getQuestionType()==null?"":proxy.getQuestionType().getShortName());
 		lblQuestionShortNameValue.setText(proxy.getQuestionShortName()==null?"":proxy.getQuestionShortName());
-		lblQuestionTextValue.setText(proxy.getQuestionText()==null?"":proxy.getQuestionText());
+		//lblQuestionTextValue.setText(proxy.getQuestionText()==null?"":proxy.getQuestionText());
+		lblQuestionTextValue.setHTML(proxy.getQuestionText()==null?"":proxy.getQuestionText());
 		lblAutherValue.setText(proxy.getAutor()==null?"":proxy.getAutor().getName());
 		lblReviewerValue.setText(proxy.getRewiewer()==null?"":proxy.getRewiewer().getName());
 		lblQuestionEventValue.setText(proxy.getQuestEvent()==null?"":proxy.getQuestEvent().getEventName());
 		lblCommentValue.setText(proxy.getComment()==null?"":proxy.getComment().getComment());
 		lblMcsValue.setText(proxy.getMcs() == null ? "": medizin.client.ui.view.roo.CollectionRenderer.of(medizin.client.ui.view.roo.McProxyRenderer.instance()).render(proxy.getMcs()));
-		
+		if(proxy.getSubmitToReviewComitee()==true)
+		{
+			lblReviewerValue.setText(constants.submitToReviewerCommitte());
+		}
 		addSecondTabForQuestionResource(proxy);
 		
 		

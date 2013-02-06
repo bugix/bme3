@@ -107,7 +107,7 @@ public class Question {
     @DateTimeFormat(style = "M-")
     private Date dateChanged;
 
-    @NotNull
+   // @NotNull
     @ManyToOne
     private Person rewiewer;
 
