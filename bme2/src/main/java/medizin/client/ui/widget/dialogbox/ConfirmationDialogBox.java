@@ -7,19 +7,16 @@ import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEvent
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEventHandler;
 import medizin.shared.i18n.BmeConstants;
 
-import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.inject.Inject;
 
 public class ConfirmationDialogBox extends DialogBox {
 
@@ -141,6 +138,25 @@ public class ConfirmationDialogBox extends DialogBox {
 		});
 	}
 	
+	private void showConfirmationDialog(final ConfirmationDialogBox dialogBox,
+			String caption, String message) {
+		this.getYesBtn().setVisible(false);
+		this.getNoBtnl().setVisible(false);
+		this.okBtnl.setVisible(true);
+		msgLbl.setText(message);
+
+		this.showBaseDialog(caption);
+		
+		this.okBtnl.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent arg0) {
+		
+				dialogBox.hide();
+			}
+		});
+	}
+	
 	public static void showYesNoDialogBox(String caption, String message, ConfirmDialogBoxYesNoButtonEventHandler handler)
 	{
 	    ConfirmationDialogBox dialogBox = new ConfirmationDialogBox();
@@ -152,4 +168,10 @@ public class ConfirmationDialogBox extends DialogBox {
 		ConfirmationDialogBox dialogBox = new ConfirmationDialogBox();
 		dialogBox.showConfirmationDialog(dialogBox, caption, message, handler);
 	}
+
+	public static void showOkDialogBox(String caption, String message) {
+		ConfirmationDialogBox dialogBox = new ConfirmationDialogBox();
+		dialogBox.showConfirmationDialog(dialogBox, caption, message);
+	}
+
 }
