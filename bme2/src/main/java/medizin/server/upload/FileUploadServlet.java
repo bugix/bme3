@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import medizin.server.utils.BMEUtils;
 import medizin.shared.MultimediaType;
 import medizin.shared.utils.SharedConstant;
 import medizin.shared.utils.SharedUtility;
@@ -22,6 +23,7 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 public class FileUploadServlet extends HttpServlet {
@@ -109,6 +111,15 @@ public class FileUploadServlet extends HttpServlet {
 					appUploadedFile.createNewFile();
 					// save
 					item.write(appUploadedFile);
+					
+					// copy file
+					log.info("Base dir :" + SharedConstant.getUploadBaseDIRPath());
+					String relativepath = StringUtils.substring(appUploadedFile.getAbsolutePath(), SharedConstant.getUploadBaseDIRPath().length()+1);
+					log.info("relative path " + relativepath);
+					
+					String realpath = BMEUtils.getRealPath(request,relativepath);
+					log.info("realpath " + realpath);
+					FileUtils.copyFile(appUploadedFile, new File(realpath));
 					
 					log.info("file name " + uuidFileName);
 

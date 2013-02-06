@@ -395,6 +395,8 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 			
 			if(QuestionTypes.Imgkey.equals(questionNew.getQuestionType().getQuestionType()) && view.getImageViewer() != null && view.getImageViewer().getImageRelativeUrl() != null) {
 				questionNew.setPicturePath(view.getImageViewer().getImageRelativeUrl());
+			}else if(QuestionTypes.ShowInImage.equals(questionNew.getQuestionType().getQuestionType()) && view.getImageViewer() != null && view.getImageViewer().getImageRelativeUrl() != null) {
+				questionNew.setPicturePath(view.getImageViewer().getImageRelativeUrl());
 			}
 			
 			/*CommentProxy comment=commentRequest.create(CommentProxy.class);
@@ -559,6 +561,8 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 			questionNew.setComment(comment);
 			//questionNew.setQuestionResources(view.getQuestionResources());
 			if(QuestionTypes.Imgkey.equals(questionNew.getQuestionType().getQuestionType()) && view.getImageViewer() != null && view.getImageViewer().getImageRelativeUrl() != null) {
+				questionNew.setPicturePath(view.getImageViewer().getImageRelativeUrl());
+			}else if(QuestionTypes.ShowInImage.equals(questionNew.getQuestionType().getQuestionType()) && view.getImageViewer() != null && view.getImageViewer().getImageRelativeUrl() != null) {
 				questionNew.setPicturePath(view.getImageViewer().getImageRelativeUrl());
 			}
 				

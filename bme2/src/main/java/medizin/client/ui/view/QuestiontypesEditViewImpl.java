@@ -21,6 +21,7 @@ import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
@@ -503,6 +504,8 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
     public void setValue(QuestionTypeProxy proxy) {
        this.proxy = proxy;
        disableField(proxy.getQuestionType());
+       DOM.setElementPropertyBoolean(questionTypeListBox.getElement(), "disabled", true);
+
        questionTypeListBox.setValue(proxy.getQuestionType());
        shortNameTxtbox.setValue(proxy.getShortName());
        longNameTxtbox.setValue(proxy.getLongName());

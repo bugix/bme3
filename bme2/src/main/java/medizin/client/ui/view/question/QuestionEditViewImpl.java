@@ -55,6 +55,7 @@ import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
@@ -316,6 +317,9 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 	@Override
 	public void setValue(QuestionProxy question) {
 		// questionTextArea.setHTML(html);
+		
+		DOM.setElementPropertyBoolean(questionType.getElement(), "disabled", true);
+		
 		questionShortName.setValue(question.getQuestionShortName()==null ?" ": question.getQuestionShortName());
 		questionType.setValue(question.getQuestionType());
 		questionTextArea.setHTML(question.getQuestionText() == null ? ""
@@ -333,10 +337,8 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 		
 		this.question = question;
 		
-		if(question != null) {
-			setMediaView(question.getQuestionType(), question);
+		setMediaView(question.getQuestionType(), question);
 //			setResourceUploadAndResourceViewer(question.getQuestionType(), question);
-		}
 
 	}
 
@@ -548,11 +550,13 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 			
 		case ShowInImage:
 		{
+			setImageViewer(questionTypeProxy, question,QuestionTypes.ShowInImage);
 			break;
 		}
 			
 		default:
 		{
+			clearMediaContainer();
 			Log.info("Error");
 			break;	
 		}
@@ -787,7 +791,13 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 			
 		}
 	}
-
+	
+	private void clearMediaContainer() {
+		//remove extra part
+		lblUploadText.setText("");
+		uploaderContainer.clear();
+		viewerContainer.clear();		
+	}
 	
 
 	private boolean allowedQuestionTypeForResouce(QuestionTypeProxy questionType) {

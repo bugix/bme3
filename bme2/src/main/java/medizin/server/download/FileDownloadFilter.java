@@ -51,12 +51,13 @@ public class FileDownloadFilter implements Filter {
 				// get from external path
 				FileUtils.copyFile(copyFrom,copyTo);
 				flag = true;
-
+				log.info("Copy done");
 				// sendFile(request,response,FileUtils.readFileToByteArray(new
 				// File(FilePathConstant.getUploadBaseDIRPath() +
 				// request.getServletPath())) , f.getName());
 
 			}else {
+				log.info("copyFrom.exists() " + copyFrom.exists());
 				flag = false;
 			}
 			

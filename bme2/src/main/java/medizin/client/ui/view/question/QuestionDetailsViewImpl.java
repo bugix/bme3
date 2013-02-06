@@ -326,91 +326,19 @@ public class QuestionDetailsViewImpl extends Composite implements
 				
 			case Imgkey:
 			{
-				final ImageViewer imageViewer = new ImageViewer();
-				if(proxy.getPicturePath() != null && proxy.getPicturePath().length() > 0) {
-					imageViewer.setUrl(proxy.getPicturePath(), questionType);
+				if(proxy != null && proxy.getQuestionType()!= null && proxy.getQuestionType().getQuestionType() != null) {
+					imageViewer(proxy.getQuestionType(),proxy,QuestionTypes.Imgkey);
 				}
-					
-					
-				Label lblUploadText = new Label(); 
-				lblUploadText.setText(constants.uploadResource());
-				lblUploadText.addStyleName("lblUploadPadding");
-				ArrayList<String> allowedExt = new ArrayList<String>();
-				allowedExt.addAll(Arrays.asList(SharedConstant.IMAGE_EXTENSIONS));
 				
-				ResourceUpload resourceUpload = new ResourceUpload(allowedExt,this.eventBus);
-				
-				final QuestionTypeProxy tempQuestionTypeProxy = proxy.getQuestionType(); 
-				
-				resourceUpload.addResourceUploadedHandler(new ResourceUploadEventHandler() {
-					
-					@Override
-					public void onResourceUploaded(ResourceUploadEvent event) {
-
-						String fileName = event.getFileName();
-						
-						if(event.isResourceUploaded() == true) {
-							Log.info("fileName is " + fileName);
-							
-							MultimediaType type = SharedUtility.getFileMultimediaType(SharedUtility.getFileExtension(fileName));
-							
-							switch (type) {
-							case Image:
-							{
-								// for image
-								final String picturePath = SharedConstant.UPLOAD_QUESTION_IMAGES_PATH + fileName;
-								final String url = new String(GWT.getHostPageBaseURL() + picturePath);
-								ClientUtility.checkImageSize(url,tempQuestionTypeProxy,new Function<Boolean, Void>() {
-									
-									@Override
-									public Void apply(Boolean flag) {
-								
-										if(flag != null && flag == true) {
-											Log.info("picturePath : " + picturePath);
-											imageViewer.setUrl(picturePath, questionType);	
-											delegate.updatePicturePathInQuestion(picturePath);
-										}else {
-											ConfirmationDialogBox.showOkDialogBox("Error", "Only Upload image of size" + tempQuestionTypeProxy.getImageWidth() + "*" + tempQuestionTypeProxy.getImageHeight());
-											delegate.deleteUploadedPicture(picturePath);
-											//deleteImage(url.replaceAll(GWT.getHostPageBaseURL(), ""));
-										}
-			
-										return null;
-									}
-								});
-								
-								break;
-							}	
-							default:
-							{
-								Window.alert("Error in ResourceUploadEventHandler");
-								break;
-							}
-							}
-							
-						}else {
-							Log.error("Upload fail.");
-						}
-					}
-				});
-				
-				VerticalPanel panel = new VerticalPanel();
-				panel.setWidth("100%");
-				HorizontalPanel h1 =  new HorizontalPanel();
-				HorizontalPanel h2 = new HorizontalPanel();
-				h2.setWidth("100%");
-				h1.add(lblUploadText);
-				h1.add(resourceUpload);
-				h2.add(imageViewer);
-				panel.add(h1);
-				panel.add(h2);
-				
-				questionTypeDetailPanel.add(panel, constants.resources());
 				break;
 			}
 				
 			case ShowInImage:
 			{
+				if(proxy != null && proxy.getQuestionType()!= null && proxy.getQuestionType().getQuestionType() != null) {
+					imageViewer(proxy.getQuestionType(),proxy,QuestionTypes.ShowInImage);
+				}
+				
 				break;
 			}
 				
@@ -579,4 +507,86 @@ public class QuestionDetailsViewImpl extends Composite implements
 
 	}
 
+	private void imageViewer(final QuestionTypeProxy questionTypeProxy,QuestionProxy questionProxy,final QuestionTypes type) {
+		final ImageViewer imageViewer = new ImageViewer();
+		if(questionProxy.getPicturePath() != null && questionProxy.getPicturePath().length() > 0) {
+			imageViewer.setUrl(questionProxy.getPicturePath(), type);
+		}
+			
+			
+		Label lblUploadText = new Label(); 
+		lblUploadText.setText(constants.uploadResource());
+		lblUploadText.addStyleName("lblUploadPadding");
+		ArrayList<String> allowedExt = new ArrayList<String>();
+		allowedExt.addAll(Arrays.asList(SharedConstant.IMAGE_EXTENSIONS));
+		
+		ResourceUpload resourceUpload = new ResourceUpload(allowedExt,this.eventBus);
+		
+//		final QuestionTypeProxy tempQuestionTypeProxy = proxy.getQuestionType(); 
+		
+		resourceUpload.addResourceUploadedHandler(new ResourceUploadEventHandler() {
+			
+			@Override
+			public void onResourceUploaded(ResourceUploadEvent event) {
+
+				String fileName = event.getFileName();
+				
+				if(event.isResourceUploaded() == true) {
+					Log.info("fileName is " + fileName);
+					
+					MultimediaType mtype = SharedUtility.getFileMultimediaType(SharedUtility.getFileExtension(fileName));
+					
+					switch (mtype) {
+					case Image:
+					{
+						// for image
+						final String picturePath = SharedConstant.UPLOAD_QUESTION_IMAGES_PATH + fileName;
+						final String url = new String(GWT.getHostPageBaseURL() + picturePath);
+						ClientUtility.checkImageSize(url,questionTypeProxy,new Function<Boolean, Void>() {
+							
+							@Override
+							public Void apply(Boolean flag) {
+						
+								if(flag != null && flag == true) {
+									Log.info("picturePath : " + picturePath);
+									imageViewer.setUrl(picturePath, type);	
+									delegate.updatePicturePathInQuestion(picturePath);
+								}else {
+									ConfirmationDialogBox.showOkDialogBox("Error", "Only Upload image of size" + questionTypeProxy.getImageWidth() + "*" + questionTypeProxy.getImageHeight());
+									delegate.deleteUploadedPicture(picturePath);
+									//deleteImage(url.replaceAll(GWT.getHostPageBaseURL(), ""));
+								}
+	
+								return null;
+							}
+						});
+						
+						break;
+					}	
+					default:
+					{
+						Window.alert("Error in ResourceUploadEventHandler");
+						break;
+					}
+					}
+					
+				}else {
+					Log.error("Upload fail.");
+				}
+			}
+		});
+		
+		VerticalPanel panel = new VerticalPanel();
+		panel.setWidth("100%");
+		HorizontalPanel h1 =  new HorizontalPanel();
+		HorizontalPanel h2 = new HorizontalPanel();
+		h2.setWidth("100%");
+		h1.add(lblUploadText);
+		h1.add(resourceUpload);
+		h2.add(imageViewer);
+		panel.add(h1);
+		panel.add(h2);
+		
+		questionTypeDetailPanel.add(panel, constants.resources());
+	}
 }
