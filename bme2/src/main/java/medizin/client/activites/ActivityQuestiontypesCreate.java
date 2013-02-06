@@ -1,6 +1,7 @@
 package medizin.client.activites;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import medizin.client.ui.ErrorPanel;
@@ -19,6 +20,7 @@ import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.request.QuestionTypeRequest;
+import medizin.client.shared.Operation;
 import medizin.shared.QuestionTypes;
 import medizin.shared.i18n.BmeConstants;
 
@@ -50,7 +52,7 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 	
 	private PlaceUserDetails userPlace;
 
-	private PlaceQuestiontypesDetails.Operation operation;
+	private Operation operation;
 
 
 
@@ -67,7 +69,7 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 
 	@Inject
 	public ActivityQuestiontypesCreate(PlaceQuestiontypesDetails place,
-			McAppRequestFactory requests, PlaceController placeController, PlaceQuestiontypesDetails.Operation create) {
+			McAppRequestFactory requests, PlaceController placeController, Operation create) {
 		super(place, requests, placeController);
 		this.questiontypePlace = place;
         this.requests = requests;
@@ -121,248 +123,57 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 		this.widget = widget;
 		this.view = questionTypeDetailsView;
         widget.setWidget(questionTypeDetailsView.asWidget());
-      //  editorDriver = view.createEditorDriver();
-		//setTable(view.getTable());
         
 		eventBus.addHandler(PlaceChangeEvent.TYPE, new PlaceChangeEvent.Handler() {
 			public void onPlaceChange(PlaceChangeEvent event) {
-				//updateSelection(event.getNewPlace());
-				// TODO implement
+				
 			}
 		});
-		//init();
+		
+		requests.institutionRequest().findAllInstitutions().fire(new Receiver<List<InstitutionProxy>>() {
+
+			@Override
+			public void onSuccess(List<InstitutionProxy> response) {
+				
+				view.getInstituteListBox().setAcceptableValues(response);
+				
+				requests.institutionRequest().myGetInstitutionToWorkWith().fire(new Receiver<InstitutionProxy>() {
+
+					@Override
+					public void onSuccess(InstitutionProxy response) {
+				
+						view.getInstituteListBox().setValue(response);
+					}
+				});
+			}
+		});
 		
 		view.setDelegate(this);
 		view.disableField(QuestionTypes.Textual);
 		
-//		requests.find(questiontypePlace.getProxyId()).fire(new Receiver<Object>() {
-//
-//			public void onFailure(ServerFailure error){
-//				Log.error(error.getMessage());
-//			}
-//			@Override
-//			public void onSuccess(Object response) {
-//				if(response instanceof QuestionTypeProxy){
-//					Log.info(((QuestionTypeProxy) response).getQuestionTypeName());
-//					init((QuestionTypeProxy) response);
-//				}
-//
-//				
-//			}
-//		    });
-
-/*
-		//Log.warn(requests.getProxyId(eventPlace.getProxyId().toString()));
-		
-		// Inherit the view's key provider
-		
-		//view.setDelegate(this);
-		//updateSelection(placeController.getWhere());
-
-	}
-	
-//	protected void showDetails(QuestionTypesEventProxy questionEvent) {
-//	//	Log.debug("QuestionTypesEvent Stable id: " + questionEvent.stableId() + " " +  PlaceInstitutionEvent.Operation.DETAILS); 
-//	//	placeController.goTo(new PlaceInstitutionEvent(questionEvent.stableId(), PlaceInstitutionEvent.Operation.DETAILS));
-//	}
-
-	@Override
-	public void goTo(Place place) {
-		  placeController.goTo(place);
-	}
-	
-//    protected Request<java.util.List<medizin.client.managed.request.QuestionTypesEventProxy>> createRangeRequest(Range range) {
-//        return requests.questionEventRequest().findQuestionTypesEventsByInstitutionNonRoo(institution.getId(), range.getStart(), range.getLength());
-//    }
-//
-//    protected void fireCountRequest(Receiver<java.lang.Long> callback) {
-//    	requests.questionEventRequest().countQuestionTypesEventsNonRoo(institution.getId()).fire(callback);
-//    }
-    
-	private void init(QuestionTypeProxy questionType) {
-
-		this.questionType = questionType;
-		Log.debug("Details für: "+questionType.getQuestionTypeName());
-		view.setValue(questionType);
-		
-		
-//		fireCountRequest(new Receiver<Long>() {
-//			@Override
-//			public void onSuccess(Long response) {
-//				if (view == null) {
-//					// This activity is dead
-//					return;
-//				}
-//				Log.debug("Geholte Personen aus der Datenbank: " + response);
-//				//view.getTable().setRowCount(response.intValue(), true);
-//
-//				setPersonDetails();
-//			}
-//		});
-		
-	}
-	
-//	private CellTable<QuestionTypesEventProxy> table;
-//	
-//	public CellTable<QuestionTypesEventProxy> getTable(){
-//		return table;
-//	}
-//	public void  setTable(CellTable<QuestionTypesEventProxy> table){
-//		this.table = table;
-//	}
-
-
-
-
-
-//	@Override
-//	public void deleteClicked() {
-//
-//		requests.personRequest().remove().using(person).fire(new Receiver<Void>() {
-//
-//            public void onSuccess(Void ignore) {
-//            	Log.debug("Sucessfull deleted");
-//            	placeController.goTo(new PlaceUser("PlaceUser"));
-//            	
-//            }
-//            @Override
-//			public void onFailure(ServerFailure error) {
-//					Log.warn(McAppConstant.ERROR_WHILE_DELETE + " in Institution:Event -" + error.getMessage());
-//					if(error.getMessage().contains("ConstraintViolationException")){
-//						Log.debug("Fehlen beim erstellen: Doppelter name");
-//						mcAppFactory.getErrorPanel().setErrorMessage(McAppConstant.EVENT_IS_REFERENCED);
-//					}
-//				
-//			}
-//			@Override
-//			public void onViolation(Set<Violation> errors) {
-//				Iterator<Violation> iter = errors.iterator();
-//				String message = "";
-//				while(iter.hasNext()){
-//					message += iter.next().getMessage() + "<br>";
-//				}
-//				Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Event -" + message);
-//				
-//				mcAppFactory.getErrorPanel().setErrorMessage(message);
-//
-//				
-//			}
-//            
-//        });
-//		
-//	}
-
-
-
-	@Override
-	public void cancelClicked() {
-		
-		Log.debug("Edit QuestionTypestype cancelled");
-		goTo(new PlaceQuestiontypes("PlaceQuestiontypes"));
-	
-	}
-
-	@Override
-	public void saveClicked (String questionTypeName, Boolean isWeil, Integer trueAnswers, Integer falseAnswers, Integer sumAnswers, Integer maxLetters) {
-		QuestionTypeRequest request = requests
-		.questionTypeRequest();
-		
-		questionType =	request.edit(questionType);
-		
-		// 
-		questionType.setQuestionTypeName(questionTypeName);
-		questionType.setIsWeil(isWeil);
-		questionType.setTrueAnswers(trueAnswers);
-		questionType.setFalseAnswers(falseAnswers);
-		questionType.setSumAnswers(sumAnswers);
-		questionType.setMaxLetters(maxLetters);
-		//Every Time questionType is edited, Version is altered.
-		Integer version = questionType.getVersion();
-		version++;
-		questionType.setVersion(version);
-		
-		Log.debug("�nderungen speichern geklickt");
-		
-
-		questionType.setFalseAnswers(falseAnswers);
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		request.persist().using(questionType).fire(new Receiver<Void>() {
-
-			public void onSuccess(Void ignore) {
-				Log.debug("Sucessfull saved");
-				goTo(new PlaceQuestiontypes("PlaceQuestiontypes"));
-				//getLastPage();
-
-			}
-
-			@Override
-			public void onFailure(ServerFailure error) {
-				Log.warn(McAppConstant.ERROR_WHILE_CREATE + " in QuestionTypestype -"
-						+ error.getMessage());
-				if (error.getMessage().contains("ConstraintViolationException")) {
-					Log.debug("Fehlen beim erstellen: Doppelter name");
-					//TODO mcAppFactory.getErrorPanel().setErrorMessage(McAppConstant.CONTENT_NOT_UNIQUE);
-				}
-
-			}
-
-			@Override
-			public void onViolation(Set<Violation> errors) {
-				Log.debug("Fehlen beim erstellen, volation: "
-						+ errors.toString());
-				Iterator<Violation> iter = errors.iterator();
-				String message = "";
-				while (iter.hasNext()) {
-					message += iter.next().getMessage() + "<br>";
-				}
-				Log.warn(McAppConstant.ERROR_WHILE_CREATE_VIOLATION
-						+ " in Institution -" + message);
-
-				//TODO mcAppFactory.getErrorPanel().setErrorMessage(message);
-
-			}
-
-		});
-		
-		
-	}
-*/
-		
-		if(this.operation==PlaceQuestiontypesDetails.Operation.EDIT){
-			Log.info("edit");
+		if(this.operation==Operation.EDIT){
 			
-			
-		requests.find(questiontypePlace.getProxyId()).fire(new Receiver<Object>() {
-
-			public void onFailure(ServerFailure error){
-				Log.error(error.getMessage());
-			}
-			@Override
-			public void onSuccess(Object response) {
-				if(response instanceof QuestionTypeProxy){
-					//Log.info(((QuestionTypeProxy) response).getQuestionTypeName());
-					//init((PersonProxy) response);
-					questionType=(QuestionTypeProxy)response;
-					initEdit(questionType);
-					System.out.println("ID : " + questionType.getId());
+			Log.info("edit");			
+			requests.find(questiontypePlace.getProxyId()).with("institution").fire(new Receiver<Object>() {
+	
+				public void onFailure(ServerFailure error){
+					Log.error(error.getMessage());
 				}
-
-				
-			}
-		    });
+				@Override
+				public void onSuccess(Object response) {
+					if(response instanceof QuestionTypeProxy){
+						questionType=(QuestionTypeProxy)response;
+						initEdit(questionType);
+						System.out.println("ID : " + questionType.getId());
+					}
+	
+					
+				}
+			    });
 		}
 		else{
 			
 			Log.info("neues Assement");
-			//questionPlace.setProxyId(person.stableId());
 			init();
 		}
 	}
@@ -387,40 +198,16 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 		}
 		
 		Log.info("edit");
-	      
-		
-	       Log.info("persist");
-	        request.persist().using(questionType);
-		//editorDriver.edit(questionType, request);
-
-		
+	
+		Log.info("persist");
+	    
+		request.persist().using(questionType);
+	
 		Log.info("flush");
-		//editorDriver.flush();
-//		this.question = question;
-		//Log.debug("Create für: "+questionType.getQuestionTypeName());
-//		view.setValue(person);
 		
 	}
 	
 	
-//	private void init(QuestionTypeProxy question) {
-//
-//		this.question = question;
-//		QuestionTypesRequest request = requests.questionRequest();
-//		request.persist().using(question);
-//		Log.info("edit");
-//		editorDriver.edit(question, request);
-//
-//		Log.info("flush");
-//		editorDriver.flush();
-//		Log.debug("Edit für: "+question.getQuestionTypeName());
-////		view.setValue(person);
-//		
-//	}
-
-
-
-
 	@Override
 	public void goTo(Place place) {
 		placeController.goTo(place);
@@ -430,7 +217,7 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 	@Override
 	public void cancelClicked() {
 		if(questionType.getId()!=null){
-			goTo(new PlaceQuestiontypesDetails(questionType.stableId(),PlaceQuestiontypesDetails.Operation.DETAILS));
+			goTo(new PlaceQuestiontypesDetails(questionType.stableId(),Operation.DETAILS));
 		}
 		else {			
 			goTo(new PlaceQuestiontypes("PlaceQuestiontypes!DELETED"));
@@ -439,45 +226,11 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 
 	@Override
 	public void saveClicked(final QuestionTypeProxy proxy) {
-		/*editorDriver.flush().fire(new Receiver<Void>() {
-			
-          @Override
-          public void onSuccess(Void response) {
-        	  Log.info("PersonSucesfullSaved");
-        	  
-        		placeController.goTo(new PlaceQuestiontypesDetails(questionType.stableId(), PlaceQuestiontypesDetails.Operation.DETAILS));
-          //	goTo(new PlaceQuestionTypes(person.stableId()));
-          }
-          
-          public void onFailure(ServerFailure error){
-        	  ErrorPanel errorPanel = new ErrorPanel();
-        	  errorPanel.setErrorMessage(error.getMessage());
-				Log.error(error.getMessage());
-			}
-          @Override
-			public void onViolation(Set<Violation> errors) {
-				Iterator<Violation> iter = errors.iterator();
-				String message = "";
-				while(iter.hasNext()){
-					message += iter.next().getMessage() + "<br>";
-				}
-				Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Fragetyp speichern -" + message);
-				
-	        	  ErrorPanel errorPanel = new ErrorPanel();
-	        	  errorPanel.setWarnMessage(message);
-				
-
-				
-			}
-      }); */
-		
-		
-		
-		requests.institutionRequest().myGetInstitutionToWorkWith().fire(new Receiver<InstitutionProxy>() {
+		/*requests.institutionRequest().myGetInstitutionToWorkWith().fire(new Receiver<InstitutionProxy>() {
 
 			@Override
 			public void onSuccess(InstitutionProxy response) {
-				QuestionTypeRequest questionTypeRequest = requests.questionTypeRequest();
+			*/	QuestionTypeRequest questionTypeRequest = requests.questionTypeRequest();
 				QuestionTypeProxy questionTypeProxy;
 				
 				if (proxy == null)
@@ -497,7 +250,7 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 				questionTypeProxy.setLongName(view.getLongNameTxtbox().getValue());
 				questionTypeProxy.setDescription(view.getDescriptionTxtbox().getValue());
 				questionTypeProxy.setQuestionType(selectedQuestionType);
-				questionTypeProxy.setInstitution(response);
+				questionTypeProxy.setInstitution(view.getInstituteListBox().getValue());
 				
 				if (selectedQuestionType.equals(QuestionTypes.Textual) || selectedQuestionType.equals(QuestionTypes.Sort))
 				{
@@ -575,13 +328,13 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 							
 							@Override
 							public void onOkButtonClicked(ConfirmDialogBoxOkButtonEvent event) {
-								placeController.goTo(new PlaceQuestiontypesDetails(finalQuestionTypeProxy.stableId(),PlaceQuestiontypesDetails.Operation.DETAILS));
+								placeController.goTo(new PlaceQuestiontypesDetails(finalQuestionTypeProxy.stableId(),Operation.DETAILS));
 							}
 						});
 					}
 				});
-			}
-		});
+			/*}
+		});*/
 		
 		
 	}

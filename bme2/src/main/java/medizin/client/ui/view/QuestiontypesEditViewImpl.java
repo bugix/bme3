@@ -30,6 +30,7 @@ import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.ValueListBox;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.web.bindery.requestfactory.gwt.ui.client.EntityProxyKeyProvider;
 
 public class QuestiontypesEditViewImpl extends Composite implements QuestiontypesEditView/*, Editor<QuestionTypeProxy>*/  {
 
@@ -96,13 +97,13 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 	
     @UiField (provided = true)
 	ValueListBox<InstitutionProxy> instituteListBox = new ValueListBox<InstitutionProxy>(new AbstractRenderer<InstitutionProxy>() {
-		// Note: this is not an EnumRenderer bc. translations of language names would be futile.
+
 		@Override
-		public String render(InstitutionProxy institutionProxy) {
-			if (institutionProxy != null)
-				return institutionProxy.getInstitutionName();
-			
-			return "null";
+		public String render(InstitutionProxy object) {
+			if (object != null)
+				return object.getInstitutionName();
+			else
+				return "";
 		}
 	});
     
@@ -505,7 +506,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
        this.proxy = proxy;
        disableField(proxy.getQuestionType());
        DOM.setElementPropertyBoolean(questionTypeListBox.getElement(), "disabled", true);
-
+       instituteListBox.setValue(proxy.getInstitution());
        questionTypeListBox.setValue(proxy.getQuestionType());
        shortNameTxtbox.setValue(proxy.getShortName());
        longNameTxtbox.setValue(proxy.getLongName());
@@ -602,6 +603,10 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				disableField(questionTypeListBox.getValue());
 			}
 		});
+		
+		DOM.setElementPropertyBoolean(instituteListBox.getElement(), "disabled", true);
+		instituteListBox.setWidth("120px");
+		questionTypeListBox.setWidth("120px");
 		
 		shortNameLbl.setText(constants.shortName());
 		longNameLbl.setText(constants.longName());
