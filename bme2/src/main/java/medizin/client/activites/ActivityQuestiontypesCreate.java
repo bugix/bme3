@@ -49,18 +49,18 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 
 	private AcceptsOneWidget widget;
 	private QuestiontypesEditView view;
-	
+
 	private PlaceUserDetails userPlace;
 
-	private Operation operation;
+	private PlaceQuestiontypesDetails.Operation operation;
 
 
 
 
 	private HandlerRegistration rangeChangeHandler;
-	
+
 	private QuestionTypeProxy questionType;
-	
+
 	private McAppRequestFactory requests;
 	private PlaceController placeController;
 
@@ -69,7 +69,7 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 
 	@Inject
 	public ActivityQuestiontypesCreate(PlaceQuestiontypesDetails place,
-			McAppRequestFactory requests, PlaceController placeController, Operation create) {
+			McAppRequestFactory requests, PlaceController placeController, PlaceQuestiontypesDetails.Operation create) {
 		super(place, requests, placeController);
 		this.questiontypePlace = place;
         this.requests = requests;
@@ -107,55 +107,55 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 
 	}
 
-	
+
 	@Override
 	public void start(AcceptsOneWidget widget, EventBus eventBus) {
 		super.start(widget, eventBus);
 
 	}
-	
+
 	@Override
 	public void start2(AcceptsOneWidget widget, EventBus eventBus) {
 		QuestiontypesEditView questionTypeDetailsView = new QuestiontypesEditViewImpl();
-		
+
 		questionTypeDetailsView.setPresenter(this);
-		
+
 		this.widget = widget;
 		this.view = questionTypeDetailsView;
         widget.setWidget(questionTypeDetailsView.asWidget());
         
 		eventBus.addHandler(PlaceChangeEvent.TYPE, new PlaceChangeEvent.Handler() {
 			public void onPlaceChange(PlaceChangeEvent event) {
-				
+
 			}
 		});
-		
+
 		requests.institutionRequest().findAllInstitutions().fire(new Receiver<List<InstitutionProxy>>() {
 
 			@Override
 			public void onSuccess(List<InstitutionProxy> response) {
-				
+
 				view.getInstituteListBox().setAcceptableValues(response);
-				
+
 				requests.institutionRequest().myGetInstitutionToWorkWith().fire(new Receiver<InstitutionProxy>() {
 
 					@Override
 					public void onSuccess(InstitutionProxy response) {
-				
+
 						view.getInstituteListBox().setValue(response);
 					}
 				});
 			}
 		});
-		
+
 		view.setDelegate(this);
 		view.disableField(QuestionTypes.Textual);
-		
-		if(this.operation==Operation.EDIT){
-			
+
+		if(this.operation==PlaceQuestiontypesDetails.Operation.EDIT){
+
 			Log.info("edit");			
 			requests.find(questiontypePlace.getProxyId()).with("institution").fire(new Receiver<Object>() {
-	
+
 				public void onFailure(ServerFailure error){
 					Log.error(error.getMessage());
 				}
@@ -166,28 +166,28 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 						initEdit(questionType);
 						System.out.println("ID : " + questionType.getId());
 					}
-	
-					
+
+
 				}
 			    });
 		}
 		else{
-			
+
 			Log.info("neues Assement");
 			init();
 		}
 	}
-	
+
 	private void initEdit(QuestionTypeProxy questionTypeProxy)
 	{
 		view.setValue(questionTypeProxy);
 		init();
 	}
-	
+
 	private void init() {
-		
+
 		QuestionTypeRequest request = requests.questionTypeRequest();
-		
+
 		if(questionType==null){
 			QuestionTypeProxy question = request.create(QuestionTypeProxy.class);
 			this.questionType=question;
@@ -196,28 +196,28 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 		else {
 			view.setEditTitle(true);
 		}
-		
+
 		Log.info("edit");
-	
+
 		Log.info("persist");
-	    
+
 		request.persist().using(questionType);
-	
+
 		Log.info("flush");
-		
+
 	}
-	
-	
+
+
 	@Override
 	public void goTo(Place place) {
 		placeController.goTo(place);
-		
+
 	}
 
 	@Override
 	public void cancelClicked() {
 		if(questionType.getId()!=null){
-			goTo(new PlaceQuestiontypesDetails(questionType.stableId(),Operation.DETAILS));
+			goTo(new PlaceQuestiontypesDetails(questionType.stableId(),PlaceQuestiontypesDetails.Operation.DETAILS));
 		}
 		else {			
 			goTo(new PlaceQuestiontypes("PlaceQuestiontypes!DELETED"));
@@ -232,7 +232,7 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 			public void onSuccess(InstitutionProxy response) {
 			*/	QuestionTypeRequest questionTypeRequest = requests.questionTypeRequest();
 				QuestionTypeProxy questionTypeProxy;
-				
+
 				if (proxy == null)
 				{
 					questionTypeProxy = questionTypeRequest.create(QuestionTypeProxy.class);					
@@ -242,16 +242,16 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 					questionTypeProxy = proxy;
 					questionTypeProxy = questionTypeRequest.edit(questionTypeProxy);
 				}
-				
-				
-				
+
+
+
 				final QuestionTypes selectedQuestionType = view.getQuestionTypeListBox().getValue();
 				questionTypeProxy.setShortName(view.getShortNameTxtbox().getValue());
 				questionTypeProxy.setLongName(view.getLongNameTxtbox().getValue());
 				questionTypeProxy.setDescription(view.getDescriptionTxtbox().getValue());
 				questionTypeProxy.setQuestionType(selectedQuestionType);
 				questionTypeProxy.setInstitution(view.getInstituteListBox().getValue());
-				
+
 				if (selectedQuestionType.equals(QuestionTypes.Textual) || selectedQuestionType.equals(QuestionTypes.Sort))
 				{
 					questionTypeProxy.setSumAnswer(Integer.parseInt(view.getSumAnswerTxtbox().getValue()));
@@ -316,27 +316,27 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 					questionTypeProxy.setMaxBytes(Integer.parseInt(view.getMaxBytesTxtbox().getValue()));
 					questionTypeProxy.setRichText(view.getRichTextChkBox().getValue());
 				}
-				
+
 				final QuestionTypeProxy finalQuestionTypeProxy = questionTypeProxy;
-				
+
 				questionTypeRequest.persist().using(questionTypeProxy).fire(new Receiver<Void>() {
 
 					public void onSuccess(Void response) {
 						view.setNullValue(selectedQuestionType);
 						//Window.alert("Record Inserted Successfully...");
 						ConfirmationDialogBox.showOkDialogBox(constants.success(), constants.questionTypeSaveMsg(), new ConfirmDialogBoxOkButtonEventHandler() {
-							
+
 							@Override
 							public void onOkButtonClicked(ConfirmDialogBoxOkButtonEvent event) {
-								placeController.goTo(new PlaceQuestiontypesDetails(finalQuestionTypeProxy.stableId(),Operation.DETAILS));
+								placeController.goTo(new PlaceQuestiontypesDetails(finalQuestionTypeProxy.stableId(),PlaceQuestiontypesDetails.Operation.DETAILS));
 							}
 						});
 					}
 				});
 			/*}
 		});*/
-		
-		
+
+
 	}
 
 
