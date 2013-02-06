@@ -700,15 +700,18 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 				});
 				// allowed extension
 				ArrayList<String> allowedExt = new ArrayList<String>();
-				
-				if(QuestionTypes.Textual.equals(questionType.getQuestionType()) || QuestionTypes.Imgkey.equals(questionType.getQuestionType()) || QuestionTypes.ShowInImage.equals(questionType.getQuestionType()) || QuestionTypes.MCQ.equals(questionType.getQuestionType())) {
+
+				if(questionType.getQueHaveImage() != null && questionType.getQueHaveImage() == true) {
 					allowedExt.addAll(Arrays.asList(SharedConstant.IMAGE_EXTENSIONS));
 				}
 				
-				if(QuestionTypes.Textual.equals(questionType.getQuestionType())) {
-					allowedExt.addAll(Arrays.asList(SharedConstant.VIDEO_EXTENSIONS));
+				if(questionType.getQueHaveSound()  != null && questionType.getQueHaveSound() == true) {
 					allowedExt.addAll(Arrays.asList(SharedConstant.SOUND_EXTENSIONS));
 				}
+				
+				if(questionType.getQueHaveVideo()  != null && questionType.getQueHaveVideo() == true) {
+					allowedExt.addAll(Arrays.asList(SharedConstant.VIDEO_EXTENSIONS));	
+				}			
 				
 				// added resourceUpload
 				

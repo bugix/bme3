@@ -78,6 +78,30 @@ public class QuestionResource {
 		}
 		
 	}
-			
+	
+	public static void deleteFiles(Set<String> paths) {
+		
+		for (String path : paths) {
+		
+			String appPath = BMEUtils.getRealPath(path);
+			String sysPath = SharedConstant.getUploadBaseDIRPath() + path;
+			log.info("applicatin Path : " + appPath);
+			log.info("system Path : " + sysPath);
+			try {
+				File real = new File(appPath);
+				if(real.exists()) {
+					real.delete();
+				}
+				
+				File sys = new File(sysPath);
+				if(sys.exists()) {
+					sys.delete();
+				}
+			}catch(Exception e ) {
+				log.error(e.getMessage(),e);
+			}
+		}
+		
+	}
 
 }

@@ -429,14 +429,22 @@ public class QuestionDetailsViewImpl extends Composite implements
 		lblUploadText.setText(constants.uploadResource());
 		lblUploadText.addStyleName("lblUploadPadding");
 		ArrayList<String> allowedExt = new ArrayList<String>();
-		allowedExt.addAll(Arrays.asList(SharedConstant.IMAGE_EXTENSIONS));
-		allowedExt.addAll(Arrays.asList(SharedConstant.VIDEO_EXTENSIONS));
-		allowedExt.addAll(Arrays.asList(SharedConstant.SOUND_EXTENSIONS));
 		
+		if(questionTypeProxy.getQueHaveImage() != null && questionTypeProxy.getQueHaveImage() == true) {
+			allowedExt.addAll(Arrays.asList(SharedConstant.IMAGE_EXTENSIONS));
+		}
+		
+		if(questionTypeProxy.getQueHaveSound()  != null && questionTypeProxy.getQueHaveSound() == true) {
+			allowedExt.addAll(Arrays.asList(SharedConstant.SOUND_EXTENSIONS));
+		}
+		
+		if(questionTypeProxy.getQueHaveVideo()  != null && questionTypeProxy.getQueHaveVideo() == true) {
+			allowedExt.addAll(Arrays.asList(SharedConstant.VIDEO_EXTENSIONS));	
+		}
 		
 		ResourceUpload resourceUpload = new ResourceUpload(allowedExt,this.eventBus);
 		
-		final QuestionTypeProxy tempQuestionTypeProxy = question.getQuestionType(); 
+		//final QuestionTypeProxy tempQuestionTypeProxy = question.getQuestionType(); 
 		
 		resourceUpload.addResourceUploadedHandler(new ResourceUploadEventHandler() {
 			

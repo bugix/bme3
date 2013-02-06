@@ -37,6 +37,8 @@ import medizin.shared.Status;
 import medizin.shared.UserType;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.common.base.Objects;
+import com.google.common.collect.Sets;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceChangeEvent;
@@ -124,8 +126,8 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		view.setDelegate(this);
 		view.setEventBus(eventBus);
 		
-		ClientUtility.setUserAccess(view.getAutherListBox(),userLoggedIn,UserType.ADMIN,true);
-		ClientUtility.setUserAccess(view.getAutherLbl(),userLoggedIn,UserType.ADMIN,true);
+		//ClientUtility.setUserAccess(view.getAutherListBox(),userLoggedIn,UserType.ADMIN,true);
+		//ClientUtility.setUserAccess(view.getAutherLbl(),userLoggedIn,UserType.ADMIN,true);
 
 //        view.setRepeForPickerValues(Collections.<QuestionProxy>emptyList());
 //        requests.questionRequest().findQuestionEntries(0, 50).with(medizin.client.ui.view.roo.QuestionProxyRenderer.instance().getPaths()).fire(new Receiver<List<QuestionProxy>>() {
@@ -206,6 +208,11 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		//init();
 		
 		view.setDelegate(this);
+		
+		if(userLoggedIn.getIsAdmin() == false) {
+			view.getAutherListBox().setSelected(userLoggedIn);
+			view.getAutherListBox().setEnabled(false);
+		}
 		
 		requests.personRequest().myGetLoggedPerson()
 		.fire(new Receiver<PersonProxy>() {
@@ -340,6 +347,21 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 
 	@Override
 	public void cancelClicked() {
+		
+		Set<QuestionResourceClient> clients =  view.getQuestionResources();
+		Set<String> paths = Sets.newHashSet();
+		
+		for (QuestionResourceClient client : clients) {
+			
+			Log.info("question resources client : " + Objects.toStringHelper(client).add("path", client.getPath()).add("state", client.getState()).toString());
+			
+			if(client.getState() == State.NEW) {
+				paths.add(client.getPath());
+			}
+		}
+		
+		deleteUploadedFiles(paths);
+		
 		if(question.getId()!=null){
 			goTo(new PlaceQuestionDetails(question.stableId()));
 		}
@@ -347,6 +369,32 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 			
 			goTo(new PlaceQuestion("PlaceQuestion!DELETED"));
 		}
+		
+	}
+
+	private void deleteUploadedFiles(Set<String> paths) {
+		
+		requests.questionResourceRequest().deleteFiles(paths).fire(new Receiver<Void>() {
+
+			@Override
+			public void onSuccess(Void response) {
+				Log.info("Files area deleted");
+				
+			}
+			
+			@Override
+			public void onConstraintViolation(
+					Set<ConstraintViolation<?>> violations) {
+				Log.info("ConstraintViolation in files delete process");
+				super.onConstraintViolation(violations);
+			}
+			
+			@Override
+			public void onFailure(ServerFailure error) {
+				Log.info("error in files delete process");
+				super.onFailure(error);
+			}
+		});
 		
 	}
 
