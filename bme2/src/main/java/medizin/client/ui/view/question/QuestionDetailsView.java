@@ -1,12 +1,7 @@
 package medizin.client.ui.view.question;
 
-import medizin.client.ui.view.assesment.QuestionSumPerPersonViewImpl;
-import medizin.client.ui.view.assesment.QuestionTypeCountViewImpl;
-import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
-import medizin.client.factory.request.McAppRequestFactory;
-import medizin.client.proxy.AssesmentProxy;
-import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionProxy;
+import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -35,6 +30,10 @@ public interface QuestionDetailsView extends IsWidget {
 		void deleteSelectedQuestionResource(Long qestionResourceId);
 
 		void addNewQuestionResource(QuestionResourceClient questionResourceClient);
+
+		void updatePicturePathInQuestion(String picturePath);
+
+		void deleteUploadedPicture(String picturePath);
 	}
 
 	AnswerListViewImpl getAnswerListViewImpl();

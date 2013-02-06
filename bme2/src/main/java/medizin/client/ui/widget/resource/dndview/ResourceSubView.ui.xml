@@ -35,16 +35,21 @@
 		}
 
 	</ui:style>
-	<g:AbsolutePanel ui:field="absPanel" width="80%">
+	<g:AbsolutePanel ui:field="absPanel" width="98%">
 		<g:VerticalPanel addStyleNames="{style.widthView}">
 			<g:HTMLPanel addStyleNames="{style.vPanelStyle}">
 				<table cellspacing="1" cellpadding="0" style="width: 100%;">
 					<tbody>
 						<tr>
+							<!-- <td align="left" style="vertical-align: middle;">
+								<div style="padding: 8px 5px 5px;heigth:23px;" >
+									<span class="ui-icon ui-icon-pin-s ui-icononly"></span>
+								</div>
+							</td> -->
 							<td align="left" style="vertical-align: middle; width:80%;">
 								<g:Label ui:field="htmlText" addStyleNames="{style.htmlText}"></g:Label>
 							</td>
-							<td align="right" style="vertical-align: middle; width:80%">
+							<td align="right" style="vertical-align: middle;">
 								<m:IconButton ui:field="viewButton" addStyleNames="{style.margin}"></m:IconButton>
 								<m:IconButton ui:field="deleteButton" icon="trash" addStyleNames="{style.margin}"></m:IconButton>
 							</td>

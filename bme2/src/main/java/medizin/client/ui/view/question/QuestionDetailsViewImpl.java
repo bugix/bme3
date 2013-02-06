@@ -7,11 +7,13 @@ import medizin.client.proxy.QuestionProxy;
 import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.TabPanelHelper;
+import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.resource.dndview.ResourceView;
 import medizin.client.ui.widget.resource.event.ResourceAddedEvent;
 import medizin.client.ui.widget.resource.event.ResourceAddedEventHandler;
 import medizin.client.ui.widget.resource.event.ResourceDeletedEvent;
 import medizin.client.ui.widget.resource.event.ResourceDeletedEventHandler;
+import medizin.client.ui.widget.resource.image.ImageViewer;
 import medizin.client.ui.widget.resource.upload.ResourceUpload;
 import medizin.client.ui.widget.resource.upload.event.ResourceUploadEvent;
 import medizin.client.ui.widget.resource.upload.event.ResourceUploadEventHandler;
@@ -23,6 +25,7 @@ import medizin.shared.utils.SharedConstant;
 import medizin.shared.utils.SharedUtility;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.common.base.Function;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -214,7 +217,7 @@ public class QuestionDetailsViewImpl extends Composite implements
 	public void setValue(QuestionProxy proxy) {
 		this.proxy = proxy;
 		
-		displayRenderer.setInnerText(proxy.getId().toString());
+		displayRenderer.setInnerText(proxy.getQuestionShortName()==null?proxy.getId().toString():proxy.getQuestionShortName());
 		lblQuestionTypeValue.setText(proxy.getQuestionType()==null?"":proxy.getQuestionType().getShortName());
 		lblQuestionShortNameValue.setText(proxy.getQuestionShortName()==null?"":proxy.getQuestionShortName());
 		lblQuestionTextValue.setText(proxy.getQuestionText()==null?"":proxy.getQuestionText());
@@ -305,46 +308,35 @@ public class QuestionDetailsViewImpl extends Composite implements
 
 	}
 
-	private void addSecondTabForQuestionResource(QuestionProxy proxy) {
+	private void addSecondTabForQuestionResource(final QuestionProxy proxy) {
 	
 		if(proxy != null && proxy.getQuestionType() != null  && proxy.getQuestionType().getQuestionType() != null) {
 			
-			QuestionTypes questionType = proxy.getQuestionType().getQuestionType();
+			final QuestionTypes questionType = proxy.getQuestionType().getQuestionType();
 			switch (questionType) {
 			
 			case Textual:
 			{
-		
-				final ResourceView resourceView = new ResourceView(eventBus,ClientUtility.getQuestionResourceClient(proxy.getQuestionResources()), proxy.getQuestionType().getQuestionType());
+				if(proxy != null && proxy.getQuestionType()!= null && proxy.getQuestionType().getQueHaveImage() != null &&  proxy.getQuestionType().getQueHaveSound() != null && proxy.getQuestionType().getQueHaveVideo() != null) {
+					setResourceUploadAndResourceViewer(proxy.getQuestionType(),proxy);
+				}
 				
-				resourceView.addResourceDeletedHandler(new ResourceDeletedEventHandler() {
-
-						@Override
-						public void onResourceDeleted(ResourceDeletedEvent event) {
-							Log.info("QuestionResourceClient : " + event.getQuestionResourceClient().getPath());
-							
-							delegate.deleteSelectedQuestionResource(event.getQuestionResourceClient().getId());
-						}
+				break;
+			}	
+				
+			case Imgkey:
+			{
+				final ImageViewer imageViewer = new ImageViewer();
+				if(proxy.getPicturePath() != null && proxy.getPicturePath().length() > 0) {
+					imageViewer.setUrl(proxy.getPicturePath(), questionType);
+				}
 					
-				});
-				
-				resourceView.addResourceAddedHandler(new ResourceAddedEventHandler(){
-
-					@Override
-					public void onResourceAdded(ResourceAddedEvent event) {
-						
-						delegate.addNewQuestionResource(event.getQuestionResourceClient());
-					}
-				});	
-				
+					
 				Label lblUploadText = new Label(); 
 				lblUploadText.setText(constants.uploadResource());
 				lblUploadText.addStyleName("lblUploadPadding");
 				ArrayList<String> allowedExt = new ArrayList<String>();
 				allowedExt.addAll(Arrays.asList(SharedConstant.IMAGE_EXTENSIONS));
-				allowedExt.addAll(Arrays.asList(SharedConstant.VIDEO_EXTENSIONS));
-				allowedExt.addAll(Arrays.asList(SharedConstant.SOUND_EXTENSIONS));
-				
 				
 				ResourceUpload resourceUpload = new ResourceUpload(allowedExt,this.eventBus);
 				
@@ -366,41 +358,29 @@ public class QuestionDetailsViewImpl extends Composite implements
 							case Image:
 							{
 								// for image
-								String url = new String(GWT.getHostPageBaseURL() + SharedConstant.UPLOAD_QUESTION_IMAGES_PATH + fileName);
-								
-								if(ClientUtility.checkImageSize(url,tempQuestionTypeProxy)) {
-								
-									if (resourceView != null) {
-										Log.info(SharedConstant.UPLOAD_QUESTION_IMAGES_PATH + fileName);
-										resourceView.addImageUrl(SharedConstant.UPLOAD_QUESTION_IMAGES_PATH + fileName);
-									}
-								}else {
-								
-									Window.alert("Only Upload image of size" + tempQuestionTypeProxy.getImageWidth() + "*" + tempQuestionTypeProxy.getImageHeight());
+								final String picturePath = SharedConstant.UPLOAD_QUESTION_IMAGES_PATH + fileName;
+								final String url = new String(GWT.getHostPageBaseURL() + picturePath);
+								ClientUtility.checkImageSize(url,tempQuestionTypeProxy,new Function<Boolean, Void>() {
 									
-									//deleteImage(url.replaceAll(GWT.getHostPageBaseURL(), ""));
-								}
-	
+									@Override
+									public Void apply(Boolean flag) {
+								
+										if(flag != null && flag == true) {
+											Log.info("picturePath : " + picturePath);
+											imageViewer.setUrl(picturePath, questionType);	
+											delegate.updatePicturePathInQuestion(picturePath);
+										}else {
+											ConfirmationDialogBox.showOkDialogBox("Error", "Only Upload image of size" + tempQuestionTypeProxy.getImageWidth() + "*" + tempQuestionTypeProxy.getImageHeight());
+											delegate.deleteUploadedPicture(picturePath);
+											//deleteImage(url.replaceAll(GWT.getHostPageBaseURL(), ""));
+										}
+			
+										return null;
+									}
+								});
+								
 								break;
 							}	
-							case Sound:
-							{	
-								if (resourceView != null) {
-									Log.info(SharedConstant.UPLOAD_QUESTION_SOUND_PATH + fileName);
-									resourceView.addSoundUrl(SharedConstant.UPLOAD_QUESTION_SOUND_PATH + fileName);
-								}
-								
-								break;
-							}
-							case Video :
-							{	
-								if (resourceView != null) {
-									Log.info(SharedConstant.UPLOAD_QUESTION_VIDEO_PATH + fileName);
-									
-									resourceView.addVideoUrl(SharedConstant.UPLOAD_QUESTION_VIDEO_PATH + fileName);
-								}
-								break;
-							}
 							default:
 							{
 								Window.alert("Error in ResourceUploadEventHandler");
@@ -414,7 +394,6 @@ public class QuestionDetailsViewImpl extends Composite implements
 					}
 				});
 				
-				
 				VerticalPanel panel = new VerticalPanel();
 				panel.setWidth("100%");
 				HorizontalPanel h1 =  new HorizontalPanel();
@@ -422,17 +401,11 @@ public class QuestionDetailsViewImpl extends Composite implements
 				h2.setWidth("100%");
 				h1.add(lblUploadText);
 				h1.add(resourceUpload);
-				h2.add(resourceView);
+				h2.add(imageViewer);
 				panel.add(h1);
 				panel.add(h2);
 				
 				questionTypeDetailPanel.add(panel, constants.resources());
-				break;
-			}	
-				
-			case Imgkey:
-			{
-				
 				break;
 			}
 				
@@ -492,6 +465,117 @@ public class QuestionDetailsViewImpl extends Composite implements
 	@Override
 	public void setDelegate(Delegate delegate) {
 		this.delegate = delegate;
+
+	}
+	
+	private void setResourceUploadAndResourceViewer(QuestionTypeProxy questionTypeProxy, QuestionProxy question) { 
+		
+		final ResourceView resourceView = new ResourceView(eventBus,ClientUtility.getQuestionResourceClient(question.getQuestionResources()), proxy.getQuestionType().getQuestionType(), proxy.getQuestionType().getQueHaveImage(),proxy.getQuestionType().getQueHaveSound(),proxy.getQuestionType().getQueHaveVideo());
+		
+		resourceView.addResourceDeletedHandler(new ResourceDeletedEventHandler() {
+
+				@Override
+				public void onResourceDeleted(ResourceDeletedEvent event) {
+					Log.info("QuestionResourceClient : " + event.getQuestionResourceClient().getPath());
+					
+					delegate.deleteSelectedQuestionResource(event.getQuestionResourceClient().getId());
+				}
+			
+		});
+		
+		resourceView.addResourceAddedHandler(new ResourceAddedEventHandler(){
+
+			@Override
+			public void onResourceAdded(ResourceAddedEvent event) {
+				
+				if(event.isAdded()) {
+					delegate.addNewQuestionResource(event.getQuestionResourceClient());
+				}else {
+					ConfirmationDialogBox.showOkDialogBox("Error", "This type of media is not allowed");
+					//TODO delete resource from location. 
+				}	
+			}
+		});	
+		
+		Label lblUploadText = new Label(); 
+		lblUploadText.setText(constants.uploadResource());
+		lblUploadText.addStyleName("lblUploadPadding");
+		ArrayList<String> allowedExt = new ArrayList<String>();
+		allowedExt.addAll(Arrays.asList(SharedConstant.IMAGE_EXTENSIONS));
+		allowedExt.addAll(Arrays.asList(SharedConstant.VIDEO_EXTENSIONS));
+		allowedExt.addAll(Arrays.asList(SharedConstant.SOUND_EXTENSIONS));
+		
+		
+		ResourceUpload resourceUpload = new ResourceUpload(allowedExt,this.eventBus);
+		
+		final QuestionTypeProxy tempQuestionTypeProxy = question.getQuestionType(); 
+		
+		resourceUpload.addResourceUploadedHandler(new ResourceUploadEventHandler() {
+			
+			@Override
+			public void onResourceUploaded(ResourceUploadEvent event) {
+
+				String fileName = event.getFileName();
+				
+				if(event.isResourceUploaded() == true) {
+					Log.info("fileName is " + fileName);
+					
+					MultimediaType type = SharedUtility.getFileMultimediaType(SharedUtility.getFileExtension(fileName));
+					
+					switch (type) {
+					case Image:
+					{
+						// for image
+						if (resourceView != null) {
+							Log.info(SharedConstant.UPLOAD_QUESTION_IMAGES_PATH + fileName);
+							resourceView.addImageUrl(SharedConstant.UPLOAD_QUESTION_IMAGES_PATH + fileName);
+						}
+						break;
+					}	
+					case Sound:
+					{	
+						if (resourceView != null) {
+							Log.info(SharedConstant.UPLOAD_QUESTION_SOUND_PATH + fileName);
+							resourceView.addSoundUrl(SharedConstant.UPLOAD_QUESTION_SOUND_PATH + fileName);
+						}
+						
+						break;
+					}
+					case Video :
+					{	
+						if (resourceView != null) {
+							Log.info(SharedConstant.UPLOAD_QUESTION_VIDEO_PATH + fileName);
+							
+							resourceView.addVideoUrl(SharedConstant.UPLOAD_QUESTION_VIDEO_PATH + fileName);
+						}
+						break;
+					}
+					default:
+					{
+						Window.alert("Error in ResourceUploadEventHandler");
+						break;
+					}
+					}
+					
+				}else {
+					Log.error("Upload fail.");
+				}
+			}
+		});
+		
+		
+		VerticalPanel panel = new VerticalPanel();
+		panel.setWidth("100%");
+		HorizontalPanel h1 =  new HorizontalPanel();
+		HorizontalPanel h2 = new HorizontalPanel();
+		h2.setWidth("100%");
+		h1.add(lblUploadText);
+		h1.add(resourceUpload);
+		h2.add(resourceView);
+		panel.add(h1);
+		panel.add(h2);
+		
+		questionTypeDetailPanel.add(panel, constants.resources());
 
 	}
 

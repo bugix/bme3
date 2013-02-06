@@ -12,6 +12,7 @@ import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.ui.view.roo.McSetEditor;
 import medizin.client.ui.widget.resource.dndview.ResourceView;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
+import medizin.client.ui.widget.resource.image.ImageViewer;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.EventHandlingValueHolderItem;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
 import medizin.shared.MultimediaType;
@@ -40,16 +41,14 @@ public interface QuestionEditView extends IsWidget {
 	interface Delegate {
 		void cancelClicked();
 
-
-
 		void saveClicked(boolean generateNewQuestion);
 
 		QuestionResourceProxy createQuestionResource(String url,
 				int sequenceNumber, MultimediaType type);
 
-
-
 		void deleteSelectedQuestionResource(Long id);
+
+		void deleteUploadedPicture(String picturePath);
 		
 	}
 
@@ -63,15 +62,9 @@ public interface QuestionEditView extends IsWidget {
 
 	void setQuestionTypePickerValues(Collection<QuestionTypeProxy> values);
 
-
-
 	void setMcsPickerValues(Collection<McProxy> values);
 
-
-
 	void setRichPanelHTML(String html);
-
-	
 
 	String getRichtTextHTML();
 
@@ -101,7 +94,7 @@ public interface QuestionEditView extends IsWidget {
 
 	CheckBox getSubmitToReviewComitee();
 
-//	ImageViewer getImageViewer();
+	ImageViewer getImageViewer();
 
 	Label getAutherLbl();
 
@@ -110,8 +103,5 @@ public interface QuestionEditView extends IsWidget {
 	void setEventBus(EventBus eventBus);
 
 	Set<QuestionResourceClient> getQuestionResources();
-
-
-
 
 }

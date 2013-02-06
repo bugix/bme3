@@ -199,7 +199,11 @@ public class ResourceSubView extends Composite {
 
 	private String getName(String path, MultimediaType multimediaType) {
 		String fileName = "";
-
+		
+		if(path.contains("_")) {
+			path = path.substring(path.indexOf("_")+1);
+		}
+			
 		switch (multimediaType) {
 		case Image: {
 			fileName = path.replace(

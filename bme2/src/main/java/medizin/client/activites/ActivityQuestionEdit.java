@@ -14,7 +14,6 @@ import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.PlaceQuestion;
 import medizin.client.place.PlaceQuestionDetails;
 import medizin.client.place.PlaceQuestionDetails.Operation;
-import medizin.client.proxy.AnswerProxy;
 import medizin.client.proxy.CommentProxy;
 import medizin.client.proxy.McProxy;
 import medizin.client.proxy.PersonProxy;
@@ -33,6 +32,7 @@ import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.ui.widget.resource.dndview.vo.State;
 import medizin.client.util.ClientUtility;
 import medizin.shared.MultimediaType;
+import medizin.shared.QuestionTypes;
 import medizin.shared.Status;
 import medizin.shared.UserType;
 
@@ -43,7 +43,6 @@ import com.google.gwt.place.shared.PlaceChangeEvent;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
-import com.google.web.bindery.requestfactory.gwt.client.RequestFactoryEditorDriver;
 import com.google.web.bindery.requestfactory.shared.Receiver;
 import com.google.web.bindery.requestfactory.shared.ServerFailure;
 import com.google.web.bindery.requestfactory.shared.Violation;
@@ -394,12 +393,9 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 			
 			questionNew.setComment(comment);
 			
-			
-			
-			//TODO change this
-//			if(view.getImageViewer() != null && view.getImageViewer().getImageRelativeUrl() != null) {
-//				questionNew.setPicturePath(view.getImageViewer().getImageRelativeUrl());
-//			}
+			if(QuestionTypes.Imgkey.equals(questionNew.getQuestionType().getQuestionType()) && view.getImageViewer() != null && view.getImageViewer().getImageRelativeUrl() != null) {
+				questionNew.setPicturePath(view.getImageViewer().getImageRelativeUrl());
+			}
 			
 			/*CommentProxy comment=commentRequest.create(CommentProxy.class);
 			comment.setComment(view.getQuestionComment().getHTML());*/
@@ -467,67 +463,49 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		          @Override
 		          public void onSuccess(Void response) {
 		        	  Log.info("PersonSucesfullSaved");
-		        	  
 		        	  // persist questionResources 
-		        	  
-		        	  
-		        	/*  for (QuestionResourceProxy proxy : view.getQuestionResources()) {
-		        		  requests.questionResourceRequest().persist().using(proxy);
-		        	  }
-		        	  
-		        	  requests.questionResourceRequest().fire(new Receiver<Void>() {
-						
-						@Override
-						public void onSuccess(Void response) {
-							placeController.goTo(new PlaceQuestionDetails(question.stableId(), PlaceQuestionDetails.Operation.DETAILS));
-						}
-		        	  });*/
-		        	  
-		        	  
-		        	  		  // persist questionResources 
-						        	 
-						        	  QuestionResourceRequest questionResourceRequest = requests.questionResourceRequest();
-						        	  Set<QuestionResourceProxy> proxies = new HashSet<QuestionResourceProxy>();
-						        	  
-						        	  for (QuestionResourceClient questionResource : view.getQuestionResources()) 
-						        	  {
-						        		  
-						        		  if(questionResource.getState().equals(State.NEW)) {
-							        		  QuestionResourceProxy proxy = questionResourceRequest.create(QuestionResourceProxy.class);
-							        		  
-							        		  proxy.setPath(questionResource.getPath());
-							        		  proxy.setSequenceNumber(questionResource.getSequenceNumber());
-							        		  proxy.setType(questionResource.getType());
-							        		  proxy.setQuestion(qpoxy);
-							        		  proxies.add(proxy);
-						        		  }
-						        	  }
-						        	  
-									 questionResourceRequest.persistSet(proxies).fire(new Receiver<Void>() {
+		        	  if (QuestionTypes.Textual.equals(qpoxy.getQuestionType().getQuestionType()) && view.getQuestionResources().size() > 0) {
+
+		        		  QuestionResourceRequest questionResourceRequest = requests.questionResourceRequest();
+		        		  Set<QuestionResourceProxy> proxies = new HashSet<QuestionResourceProxy>();
+
+		        		  for (QuestionResourceClient questionResource : view.getQuestionResources()) {
+
+		        			  if (questionResource.getState().equals(State.NEW)) {
+									QuestionResourceProxy proxy = questionResourceRequest.create(QuestionResourceProxy.class);
+
+										proxy.setPath(questionResource.getPath());
+										proxy.setSequenceNumber(questionResource.getSequenceNumber());
+										proxy.setType(questionResource.getType());
+										proxy.setQuestion(qpoxy);
+										proxies.add(proxy);
+									}
+								}
+
+								questionResourceRequest.persistSet(proxies).fire(new Receiver<Void>() {
 
 											@Override
 											public void onSuccess(Void response) {
-												placeController.goTo(new PlaceQuestionDetails(question.stableId(), PlaceQuestionDetails.Operation.DETAILS));
+												placeController.goTo(new PlaceQuestionDetails(question.stableId(),PlaceQuestionDetails.Operation.DETAILS));
 											}
-											
+
 											@Override
-											public void onConstraintViolation(
-													Set<ConstraintViolation<?>> violations) {
-												Log.error("constraint violation in Question Resourc");
+											public void onConstraintViolation(Set<ConstraintViolation<?>> violations) {
+												Log.error("constraint violation in Question resource");
 												super.onConstraintViolation(violations);
 											}
-											
+
 											@Override
 											public void onFailure(ServerFailure error) {
-												Log.error("Failure in Question Resourc " + error);
+												Log.error("Failure in Question resource "+ error);
 												super.onFailure(error);
 											}
-							        	  
-							        	  
-							        	  });
-							        	  
-							
-		        		//placeController.goTo(new PlaceQuestionDetails(question.stableId(), PlaceQuestionDetails.Operation.DETAILS));
+
+										});
+
+		        	  } else {
+		        		  placeController.goTo(new PlaceQuestionDetails(question.stableId(),PlaceQuestionDetails.Operation.DETAILS));
+		        	  }
 		          //	goTo(new PlaceQuestion(person.stableId()));
 		          }
 		          
@@ -580,10 +558,9 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 			questionNew.setStatus(Status.NEW);
 			questionNew.setComment(comment);
 			//questionNew.setQuestionResources(view.getQuestionResources());
-			//TODO change this
-//			if(view.getImageViewer() != null && view.getImageViewer().getImageRelativeUrl() != null) {
-//				questionNew.setPicturePath(view.getImageViewer().getImageRelativeUrl());
-//			}
+			if(QuestionTypes.Imgkey.equals(questionNew.getQuestionType().getQuestionType()) && view.getImageViewer() != null && view.getImageViewer().getImageRelativeUrl() != null) {
+				questionNew.setPicturePath(view.getImageViewer().getImageRelativeUrl());
+			}
 				
 			final QuestionProxy newQuestion=questionNew;
 			
@@ -598,17 +575,17 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		    	          @Override
 		    	          public void onSuccess(Void response) {
 		    	        	  Log.info("PersonSucesfullSaved");
-				        	  
-				        	  requests.find(newQuestion.stableId()).fire(new Receiver<Object>() 
-				        	  {
-								@Override
-								public void onSuccess(Object response) 
-								{
-									 Log.info("Question id" + ((QuestionProxy)response).getId());
-									  // persist questionResources 
-									 
-									 if(view !=null) {
-										 final QuestionProxy qproxy = ((QuestionProxy)response);
+		    	        	  // persist questionResources
+		    	        	  if (QuestionTypes.Textual.equals(newQuestion.getQuestionType().getQuestionType()) && view.getQuestionResources().size() > 0) {
+		    	        		  
+					        	  requests.find(newQuestion.stableId()).fire(new Receiver<Object>() 
+					        	  {
+									@Override
+									public void onSuccess(Object response) 
+									{
+										 Log.info("Question id" + ((QuestionProxy)response).getId());
+										  // persist questionResources 
+							        	  final QuestionProxy qproxy = ((QuestionProxy)response);
 							        	  QuestionResourceRequest questionResourceRequest = requests.questionResourceRequest();
 							        	  Set<QuestionResourceProxy> proxies = new HashSet<QuestionResourceProxy>();
 							        	  
@@ -624,7 +601,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 							        	  }
 							        	  
 										 questionResourceRequest.persistSet(proxies).fire(new Receiver<Void>() {
-
+	
 												@Override
 												public void onSuccess(Void response) {
 													placeController.goTo(new PlaceQuestionDetails(newQuestion.stableId(), PlaceQuestionDetails.Operation.DETAILS));
@@ -646,29 +623,14 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 								        	  
 								        	  });
 								        	  
-									 }
-						        	  
-									
-								}
-							});
+										
+									}
+								});
 				        	  
-				        	 
-				        	  
-				        	  /*for (QuestionResourceProxy proxy : view.getQuestionResources()) {
-				        		  QuestionResourceProxy newProxy = questionResourceRequest.create(QuestionResourceProxy.class);
-				        			
-				        		  newProxy.setPath(proxy.getPath());
-				        		  newProxy.setSequenceNumber(proxy.getSequenceNumber());
-				        		  newProxy.setType(proxy.getType());
-				        		  newProxy.setQuestion(newQuestion);
-	
-				        		  questionResourceRequest.persist().using(newProxy);
-				        		  Log.info("Done..." + newProxy.getPath() );
-				        	  }
-				        	  Log.info("For Done...");
-				        	  questionResourceRequest.fire();
-	*/			        	  
-		    	        		
+		    	        	  }else {
+		    	        		  placeController.goTo(new PlaceQuestionDetails(newQuestion.stableId(), PlaceQuestionDetails.Operation.DETAILS));
+		    	        	  }
+							
 		    	          //	goTo(new PlaceQuestion(person.stableId()));
 		    	          }
 		    	          
@@ -802,6 +764,37 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 				Log.info("selected question resource deleted successfully");
 			}
 		});
+		
+	}
+
+	@Override
+	public void deleteUploadedPicture(String picturePath) {
+
+		if(question != null) {
+			final QuestionRequest questionRequest = requests.questionRequest();
+			questionRequest.deletePictureFromDisk(picturePath).fire(new Receiver<Boolean>() {
+
+				@Override
+				public void onSuccess(Boolean response) {
+					Log.info("Picture deleted " + response);
+				}
+				
+				@Override
+				public void onConstraintViolation(
+						Set<ConstraintViolation<?>> violations) {
+					Log.error(violations.toString());
+					super.onConstraintViolation(violations);
+				}
+				
+				@Override
+				public void onFailure(ServerFailure error) {
+					Log.error(error.getMessage());
+					super.onFailure(error);
+				}
+			});
+		}else {
+			Log.error("Question is null");
+		}
 		
 	}
 

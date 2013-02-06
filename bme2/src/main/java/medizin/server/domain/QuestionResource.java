@@ -1,11 +1,14 @@
 package medizin.server.domain;
 
+import java.io.File;
 import java.util.Set;
 
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
+import medizin.server.utils.BMEUtils;
 import medizin.shared.MultimediaType;
+import medizin.shared.utils.SharedConstant;
 
 import org.apache.log4j.Logger;
 import org.springframework.roo.addon.javabean.RooJavaBean;
@@ -42,12 +45,38 @@ public class QuestionResource {
 		}
 	}
 	
-	public static void removeSelectedQuestionResource(Long qestionResourceId) {
+	public static void removeSelectedQuestionResource(Long questionResourceId) {
 		
-		log.info("to delete the selected resource");
+		log.info("to delete the selected resource : " + questionResourceId);
 		
-		QuestionResource questionResource = QuestionResource.findQuestionResource(qestionResourceId);
-		questionResource.remove();
+		QuestionResource questionResource = QuestionResource.findQuestionResource(questionResourceId);
+		
+		if(questionResource != null) {
+		
+			final String path = questionResource.getPath(); 
+			questionResource.remove();
+			
+			String appPath = BMEUtils.getRealPath(path);
+			String sysPath = SharedConstant.getUploadBaseDIRPath() + path;
+			log.info("applicatin Path : " + appPath);
+			log.info("system Path : " + sysPath);
+			try {
+				File real = new File(appPath);
+				if(real.exists()) {
+					real.delete();
+				}
+				
+				File sys = new File(sysPath);
+				if(sys.exists()) {
+					sys.delete();
+				}
+			}catch(Exception e ) {
+				log.error(e.getMessage(),e);
+			}
+		}else {
+			log.error("Question resource null.");
+		}
+		
 	}
 			
 

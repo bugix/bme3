@@ -1,5 +1,6 @@
 package medizin.server.domain;
 
+import java.io.File;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -18,7 +19,9 @@ import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import medizin.server.utils.BMEUtils;
 import medizin.shared.Status;
+import medizin.shared.utils.SharedConstant;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
@@ -443,7 +446,29 @@ public class Question {
 	        return q.getResultList();
 		}
 		
-	
+		public static Boolean deletePictureFromDisk(String picturePath) {
+			boolean flag = true;
+			
+			String appPath = BMEUtils.getRealPath(picturePath);
+			String sysPath = SharedConstant.getUploadBaseDIRPath() + picturePath;
+			log.info("applicatin Path : " + appPath);
+			log.info("system Path : " + sysPath);
+			try {
+				File real = new File(appPath);
+				if(real.exists()) {
+					real.delete();
+				}
+				
+				File sys = new File(sysPath);
+				if(sys.exists()) {
+					sys.delete();
+				}
+			}catch(Exception e ) {
+				flag = false;
+				log.error(e.getMessage(),e);
+			}
+			return flag;
+		}
 		 
 		
 		public void persistAndSetPreviousInactive(){

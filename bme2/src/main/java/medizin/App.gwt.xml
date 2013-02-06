@@ -25,7 +25,8 @@
 	<inherits name="com.google.gwt.text.Text"/>
 	<inherits name='org.vaadin.gwtgraphics.GWTGraphics' />
 	<inherits name='fr.hd3d.html5.video.HTML5Video'/>
-
+	<inherits name="com.google.common.collect.Collect"/>
+	
 	<!-- Inherit gwt-dnd support -->
 	<inherits name='com.allen_sauer.gwt.dnd.gwt-dnd' />	
 
@@ -51,6 +52,7 @@
      <extend-property name="locale" values="cn"/>
      <set-property name="locale" value="de,en,cn" />
 	
+	<set-property name="user.agent" value="gecko1_8"/>
 
 	<!-- Specify the app entry point class.                         -->
 	<entry-point class="medizin.client.AppEntryPoint"/>

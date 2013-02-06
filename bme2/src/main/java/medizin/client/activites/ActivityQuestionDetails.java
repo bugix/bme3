@@ -8,6 +8,21 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import javax.validation.ConstraintViolation;
+
+import medizin.client.factory.request.McAppRequestFactory;
+import medizin.client.place.PlaceQuestion;
+import medizin.client.place.PlaceQuestionDetails;
+import medizin.client.proxy.AnswerProxy;
+import medizin.client.proxy.CommentProxy;
+import medizin.client.proxy.PersonProxy;
+import medizin.client.proxy.QuestionProxy;
+import medizin.client.proxy.QuestionResourceProxy;
+import medizin.client.request.AnswerRequest;
+import medizin.client.request.CommentRequest;
+import medizin.client.request.QuestionRequest;
+import medizin.client.request.QuestionResourceRequest;
+import medizin.client.shared.Validity;
 import medizin.client.ui.ErrorPanel;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.question.AnswerDialogbox;
@@ -16,48 +31,21 @@ import medizin.client.ui.view.question.AnswerListView;
 import medizin.client.ui.view.question.AnswerListViewImpl;
 import medizin.client.ui.view.question.QuestionDetailsView;
 import medizin.client.ui.view.question.QuestionDetailsViewImpl;
-import medizin.client.ui.view.question.QuestionDetailsView;
-import medizin.client.ui.view.question.QuestionView;
-import medizin.client.ui.view.user.EventAccessDialogbox;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
-import medizin.client.place.PlaceAssesment;
-import medizin.client.place.PlaceAssesmentDetails;
-import medizin.client.place.PlaceQuestion;
-import medizin.client.place.PlaceQuestionDetails;
-import medizin.client.factory.request.McAppRequestFactory;
-import medizin.client.proxy.AnswerProxy;
-import medizin.client.request.AnswerRequest;
-import medizin.client.request.CommentRequest;
-import medizin.client.request.QuestionResourceRequest;
-import medizin.client.proxy.AssesmentProxy;
-import medizin.client.proxy.CommentProxy;
-import medizin.client.proxy.PersonProxy;
-import medizin.client.proxy.QuestionProxy;
-import medizin.client.proxy.QuestionProxy;
-import medizin.client.proxy.QuestionResourceProxy;
-import medizin.client.proxy.QuestionTypeCountPerExamProxy;
-import medizin.client.request.QuestionTypeCountPerExamRequest;
-import medizin.client.shared.Validity;
-
 
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.activity.shared.Activity;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceChangeEvent;
 import com.google.gwt.place.shared.PlaceController;
-import com.google.web.bindery.requestfactory.gwt.client.RequestFactoryEditorDriver;
-import com.google.web.bindery.requestfactory.shared.EntityProxyId;
-import com.google.web.bindery.requestfactory.shared.Receiver;
-import com.google.web.bindery.requestfactory.shared.Request;
-import com.google.web.bindery.requestfactory.shared.RequestContext;
-import com.google.web.bindery.requestfactory.shared.ServerFailure;
-import com.google.web.bindery.requestfactory.shared.Violation;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.RangeChangeEvent;
+import com.google.web.bindery.requestfactory.shared.Receiver;
+import com.google.web.bindery.requestfactory.shared.ServerFailure;
+import com.google.web.bindery.requestfactory.shared.Violation;
 
 
 
@@ -634,6 +622,70 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 				Log.info("Added new Question Resource");
 			}
 		});
+	}
+
+	@Override
+	public void updatePicturePathInQuestion(String picturePath) {
+		
+		if(question != null) {
+			final QuestionRequest questionRequest = requests.questionRequest();
+			
+			QuestionProxy updatedQuestion = questionRequest.edit(question);
+			updatedQuestion.setPicturePath(picturePath);
+			questionRequest.persist().using(updatedQuestion).fire(new Receiver<Void>() {
+
+				@Override
+				public void onSuccess(Void response) {
+					Log.info("Picture path updated.");
+				}
+				
+				@Override
+				public void onConstraintViolation(
+						Set<ConstraintViolation<?>> violations) {
+					Log.error(violations.toString());
+					super.onConstraintViolation(violations);
+				}
+				
+				@Override
+				public void onFailure(ServerFailure error) {
+					Log.error(error.getMessage());
+					super.onFailure(error);
+				}
+			});
+	
+		}else {
+			Log.error("Question is null");
+		}
+	}
+
+	@Override
+	public void deleteUploadedPicture(String picturePath) {
+		
+		if(question != null) {
+			final QuestionRequest questionRequest = requests.questionRequest();
+			questionRequest.deletePictureFromDisk(picturePath).fire(new Receiver<Boolean>() {
+
+				@Override
+				public void onSuccess(Boolean response) {
+					Log.info("Picture deleted " + response);
+				}
+				
+				@Override
+				public void onConstraintViolation(
+						Set<ConstraintViolation<?>> violations) {
+					Log.error(violations.toString());
+					super.onConstraintViolation(violations);
+				}
+				
+				@Override
+				public void onFailure(ServerFailure error) {
+					Log.error(error.getMessage());
+					super.onFailure(error);
+				}
+			});
+		}else {
+			Log.error("Question is null");
+		}
 	}
 
 }

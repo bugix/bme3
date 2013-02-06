@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.UUID;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -101,17 +102,18 @@ public class FileUploadServlet extends HttpServlet {
 					// Upload File to Application Directory
 					// appUploadDirectory=session.getServletContext().getRealPath(".")
 					// + appUploadDirectory;
-					File appUploadedFile = new File(getAppUploadDirectory(fileName), fileName);
+					final String uuidFileName = UUID.randomUUID() + "_"+ fileName;
+					File appUploadedFile = new File(getAppUploadDirectory(uuidFileName), uuidFileName);
 
 					FileUtils.touch(appUploadedFile);
 					appUploadedFile.createNewFile();
 					// save
 					item.write(appUploadedFile);
 					
-					log.info("file name " + fileName);
+					log.info("file name " + uuidFileName);
 
 					// upload file to local directory
-
+					
 					/*
 					 * File localUploadedFile = new File( localUploadDirectory,
 					 * fileName); localUploadedFile.createNewFile(); //save
@@ -119,19 +121,19 @@ public class FileUploadServlet extends HttpServlet {
 					 * //resp.setStatus(HttpServletResponse.SC_CREATED);
 					 * Log.info("file name " + fileName);
 					 */
-
-					System.out.println("File Name :" + fileName);
-
 					
 					//filterResource(request,response,appUploadedFile);
 					
-				
-					
+					response.setContentType("text/html");
+					response.setStatus(HttpServletResponse.SC_CREATED);
+					response.getWriter().append(uuidFileName);
+					response.getWriter().close();
+					response.getWriter().flush();
 				}
 			}
 		} catch (Exception e) {
-
 			log.error("An error occurred while creating the file : " + e.getMessage());
+			response.sendError(HttpServletResponse.SC_NOT_ACCEPTABLE,"An error occurred while creating the file : " + e.getMessage());
 		}
 		// service info
 		log.info("Attribtue names: ");
@@ -141,7 +143,7 @@ public class FileUploadServlet extends HttpServlet {
 		}
 		log.info("Content type: " + request.getContentType());
 
-		response.setContentType("text/html");
+		
 
 	}
 

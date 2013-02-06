@@ -7,8 +7,10 @@ import com.google.gwt.event.shared.GwtEvent;
 public class ResourceAddedEvent extends GwtEvent<ResourceAddedEventHandler> {
 
 	private final QuestionResourceClient questionResource;
+	private final boolean added;
 
-	public ResourceAddedEvent(QuestionResourceClient questionResource) {
+	public ResourceAddedEvent(boolean added,QuestionResourceClient questionResource) {
+		this.added = added;
 		this.questionResource = questionResource;
 	}
 	public static Type<ResourceAddedEventHandler> TYPE = new Type<ResourceAddedEventHandler>();
@@ -27,4 +29,8 @@ public class ResourceAddedEvent extends GwtEvent<ResourceAddedEventHandler> {
 		return questionResource;
 	}
 
+	public boolean isAdded() {
+		return added;
+	}
+	
 }

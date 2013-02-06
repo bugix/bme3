@@ -20,11 +20,14 @@ import medizin.client.ui.richtext.RichTextToolbar;
 import medizin.client.ui.view.roo.McSetEditor;
 import medizin.client.ui.view.roo.QuestionTypeProxyRenderer;
 import medizin.client.ui.widget.IconButton;
+import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.resource.dndview.ResourceView;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
-import medizin.client.ui.widget.resource.dndview.vo.State;
+import medizin.client.ui.widget.resource.event.ResourceAddedEvent;
+import medizin.client.ui.widget.resource.event.ResourceAddedEventHandler;
 import medizin.client.ui.widget.resource.event.ResourceDeletedEvent;
 import medizin.client.ui.widget.resource.event.ResourceDeletedEventHandler;
+import medizin.client.ui.widget.resource.image.ImageViewer;
 import medizin.client.ui.widget.resource.upload.ResourceUpload;
 import medizin.client.ui.widget.resource.upload.event.ResourceUploadEvent;
 import medizin.client.ui.widget.resource.upload.event.ResourceUploadEventHandler;
@@ -39,6 +42,7 @@ import medizin.shared.utils.SharedConstant;
 import medizin.shared.utils.SharedUtility;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.common.base.Function;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.SpanElement;
@@ -47,7 +51,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.safehtml.shared.SafeUri;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -56,7 +59,6 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RichTextArea;
 import com.google.gwt.user.client.ui.TabPanel;
@@ -297,8 +299,10 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 			@Override
 			public void onValueChange(ValueChangeEvent<QuestionTypeProxy> event) {
 				//Note: question is null in create mode 
-				setResourceUploadAndResourceViewer(event.getValue(),question);
+				setMediaView(event.getValue(),question);
+//				setResourceUploadAndResourceViewer(event.getValue(),question);
 			}
+
 		});
 
 	}
@@ -330,8 +334,8 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 		this.question = question;
 		
 		if(question != null) {
-			
-			setResourceUploadAndResourceViewer(question.getQuestionType(), question);
+			setMediaView(question.getQuestionType(), question);
+//			setResourceUploadAndResourceViewer(question.getQuestionType(), question);
 		}
 
 	}
@@ -440,6 +444,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 
 	private boolean edit;
 	private EventBus eventBus;
+	private ImageViewer imageViewer;
 
 	@Override
 	public void setEditTitle(boolean edit) {
@@ -521,8 +526,123 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 		return mcs;
 	}
 	
-	private void setResourceUploadAndResourceViewer(
-			QuestionTypeProxy questionType, QuestionProxy question) {	
+	// here for new question may be null
+	private void setMediaView(final QuestionTypeProxy questionTypeProxy,final QuestionProxy question) {
+	
+		Log.info("In set Media View");
+	
+		final QuestionTypes questionType = questionTypeProxy.getQuestionType();
+		switch (questionType) {
+		
+		case Textual:
+		{
+			setResourceUploadAndResourceViewer(questionTypeProxy, question);
+			break;
+		}	
+			
+		case Imgkey:
+		{
+			setImageViewer(questionTypeProxy, question,QuestionTypes.Imgkey);
+			break;
+		}
+			
+		case ShowInImage:
+		{
+			break;
+		}
+			
+		default:
+		{
+			Log.info("Error");
+			break;	
+		}
+		
+		}
+		
+	}
+	
+	// for image key question
+	private void setImageViewer(final QuestionTypeProxy questionTypeProxy,
+			QuestionProxy questionProxy,final QuestionTypes type) {
+		
+		//remove extra part
+		lblUploadText.setText("");
+		uploaderContainer.clear();
+		viewerContainer.clear();
+		
+		final ImageViewer imageViewer;
+		if(this.imageViewer == null) {
+			imageViewer = new ImageViewer();
+			this.imageViewer = imageViewer;
+		}else {
+			imageViewer = this.imageViewer;	
+		}
+		
+		if(questionProxy != null && questionProxy.getPicturePath() != null && questionProxy.getPicturePath().length() > 0) {
+			imageViewer.setUrl(questionProxy.getPicturePath(), type);
+		}					
+			
+		ArrayList<String> allowedExt = new ArrayList<String>();
+		allowedExt.addAll(Arrays.asList(SharedConstant.IMAGE_EXTENSIONS));
+		
+		ResourceUpload resourceUpload = new ResourceUpload(allowedExt,this.eventBus); 
+		
+		resourceUpload.addResourceUploadedHandler(new ResourceUploadEventHandler() {
+			
+			@Override
+			public void onResourceUploaded(ResourceUploadEvent event) {
+
+				String fileName = event.getFileName();
+				
+				if(event.isResourceUploaded() == true) {
+					Log.info("fileName is " + fileName);
+					
+					MultimediaType mtype = SharedUtility.getFileMultimediaType(SharedUtility.getFileExtension(fileName));
+					
+					switch (mtype) {
+					case Image:
+					{
+						// for image
+						final String picturePath = SharedConstant.UPLOAD_QUESTION_IMAGES_PATH + fileName;
+						final String url = new String(GWT.getHostPageBaseURL() + picturePath);
+						ClientUtility.checkImageSize(url,questionTypeProxy,new Function<Boolean, Void>() {
+							
+							@Override
+							public Void apply(Boolean flag) {
+						
+								if(flag != null && flag == true) {
+									Log.info("picturePath : " + picturePath);
+									imageViewer.setUrl(picturePath, type);	
+								}else {
+									ConfirmationDialogBox.showOkDialogBox("Error", "Only Upload image of size" + questionTypeProxy.getImageWidth() + "*" + questionTypeProxy.getImageHeight());
+									delegate.deleteUploadedPicture(picturePath);
+								}
+	
+								return null;
+							}
+						});
+						
+						break;
+					}	
+					default:
+					{
+						Window.alert("Error in ResourceUploadEventHandler");
+						break;
+					}
+					}
+					
+				}else {
+					Log.error("Upload fail.");
+				}
+			}
+		});
+		
+		uploaderContainer.add(resourceUpload);
+		viewerContainer.add(imageViewer);
+		
+	}
+
+	private void setResourceUploadAndResourceViewer(QuestionTypeProxy questionType, QuestionProxy question) {	
 	
 		//remove extra part
 		lblUploadText.setText("");
@@ -550,7 +670,19 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 						}
 					});
 				}
-				viewer = new ResourceView(eventBus,ClientUtility.getQuestionResourceClient(questionResources),questionType.getQuestionType());
+				viewer = new ResourceView(eventBus,ClientUtility.getQuestionResourceClient(questionResources),questionType.getQuestionType(),questionType.getQueHaveImage(),questionType.getQueHaveSound(),questionType.getQueHaveVideo());
+				
+				viewer.addResourceAddedHandler(new ResourceAddedEventHandler(){
+
+					@Override
+					public void onResourceAdded(ResourceAddedEvent event) {
+						
+						if(!event.isAdded()) {
+							ConfirmationDialogBox.showOkDialogBox("Error", "This type of media is not allowed");
+							//TODO delete resource from location. 
+						}	
+					}
+				});	
 				
 				viewer.addResourceDeletedHandler(new ResourceDeletedEventHandler() {
 
@@ -598,20 +730,11 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 							case Image:
 							{
 								// for image
-								String url = new String(GWT.getHostPageBaseURL() + SharedConstant.UPLOAD_QUESTION_IMAGES_PATH + fileName);
-								
-								if(checkImageSize(url,tempQuestionTypeProxy)) {
-								
-									if (viewer != null) {
-										Log.info(SharedConstant.UPLOAD_QUESTION_IMAGES_PATH + fileName);
-										
-										viewer.addImageUrl(SharedConstant.UPLOAD_QUESTION_IMAGES_PATH + fileName);
-									}
+								if (viewer != null) {
+									Log.info(SharedConstant.UPLOAD_QUESTION_IMAGES_PATH + fileName);
+									viewer.addImageUrl(SharedConstant.UPLOAD_QUESTION_IMAGES_PATH + fileName);
 								}else {
-								
-									Window.alert("Only Upload image of size" + tempQuestionTypeProxy.getImageWidth() + "*" + tempQuestionTypeProxy.getImageHeight());
-									
-									//deleteImage(url.replaceAll(GWT.getHostPageBaseURL(), ""));
+									Log.error("Viewer is null");
 								}
 	
 								break;
@@ -647,44 +770,6 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 						}
 					}
 					
-//					private boolean checkImgFileExtension() {
-//						boolean flag = false;
-//
-//						String extension = ClientUtility.getFileExtension(fileName);
-//						Log.info("Current extension : " + extension);
-//						for (String ext : BMEFileUploadConstant.IMAGE_EXTENSIONS) {
-//					
-//							if(ext.equalsIgnoreCase(extension)) {
-//								flag = true;
-//								break;
-//				}
-//			}
-//						return flag;
-//		}
-					
-					private boolean checkImageSize(final String url,
-							QuestionTypeProxy questionType) {
-						boolean flag = false;
-						
-						Image image = new Image(new SafeUri() {
-							
-							@Override
-							public String asString() {
-								return url;
-							}
-						});
-						
-						
-						Log.info("Image width * height : " + image.getWidth() + "*" + image.getHeight());
-						if(QuestionTypes.Textual.equals(questionType.getQuestionType())) {
-							flag = true;
-						}
-						else if(questionType.getImageWidth() != null && questionType.getImageWidth().equals(image.getWidth()) && questionType.getImageHeight() != null && questionType.getImageHeight().equals(image.getHeight())) {
-							flag = true;
-						}
-						
-						return flag;
-					}
 				});
 				
 				// added to container
@@ -755,6 +840,11 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 			return new HashSet<QuestionResourceClient>();
 		}
 		return viewer.getQuestionResources();
+	}
+
+	@Override
+	public ImageViewer getImageViewer() {
+		return imageViewer;
 	}
 
 }

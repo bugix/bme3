@@ -58,15 +58,39 @@ public class ResourceView extends Composite implements DragHandler {
 	private QuestionTypes questionType;
 
 	private final EventBus eventBus;
+
+	private final Boolean queHaveImage;
+	private final Boolean queHaveSound;
+	private final Boolean queHaveVideo;
 	
 	public VerticalPanelDropController getDropController2() {
 		return dropController1;
 	}
 	
-	public ResourceView(EventBus eventBus, List<QuestionResourceClient> questionResources,QuestionTypes questionType) {
+	public ResourceView(EventBus eventBus, List<QuestionResourceClient> questionResources,QuestionTypes questionType,Boolean queHaveImage, Boolean queHaveSound, Boolean queHaveVideo) {
 		this.eventBus = eventBus;
 		this.questionResources = questionResources;
 		this.questionType = questionType;
+		
+		if(queHaveImage == null) {
+			this.queHaveImage = false;
+		}else {
+			this.queHaveImage = queHaveImage;
+		}
+		
+		if(queHaveVideo == null) {
+			this.queHaveVideo = false;
+		}else {
+			this.queHaveVideo = queHaveVideo;	
+		}
+		
+		if(queHaveSound == null) {
+			this.queHaveSound = false;
+		}else {
+			this.queHaveSound = queHaveSound;	
+		}
+		
+		
 		initWidget(uiBinder.createAndBindUi(this));
 		impl = this;
 		frontRowNumber = questionResources.size();
@@ -120,20 +144,22 @@ public class ResourceView extends Composite implements DragHandler {
 
 	}
 	
-	private void addUrl(String url,MultimediaType type) {
+	private void addUrl(String url,MultimediaType type,boolean added) {
 		
 		QuestionResourceClient proxy =  new QuestionResourceClient();
-		proxy.setPath(url);
-		proxy.setSequenceNumber(frontRowNumber);
-		proxy.setType(type);
-		proxy.setState(State.NEW);
-		frontRowNumber++;
 		
-		questionResources.add(proxy);
-		
-		createResourceSubView(proxy);
-		
-		eventBus.fireEvent(new ResourceAddedEvent(proxy));
+		if(added == true) {
+			proxy.setPath(url);
+			proxy.setSequenceNumber(frontRowNumber);
+			proxy.setType(type);
+			proxy.setState(State.NEW);
+			frontRowNumber++;
+			
+			questionResources.add(proxy);
+			createResourceSubView(proxy);
+		}
+			
+		eventBus.fireEvent(new ResourceAddedEvent(added,proxy));
 	
 	}
 
@@ -144,15 +170,15 @@ public class ResourceView extends Composite implements DragHandler {
 	}
 
 	public void addVideoUrl(String url) {
-		addUrl(url, MultimediaType.Video);
+		addUrl(url, MultimediaType.Video,queHaveVideo);
 	}
 
 	public void addSoundUrl(String url) {
-		addUrl(url, MultimediaType.Sound);		
+		addUrl(url, MultimediaType.Sound,queHaveSound);
 	}
 
 	public void addImageUrl(String url) {
-		addUrl(url, MultimediaType.Image);		
+		addUrl(url, MultimediaType.Image,queHaveImage);		
 	}
 
 	// drag hander methods.

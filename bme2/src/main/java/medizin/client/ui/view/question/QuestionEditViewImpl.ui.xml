@@ -73,7 +73,7 @@
 									<g:Label styleName="{style.label}" ui:field="lblUploadText"></g:Label>
 								</td>
 								<td>
-									<g:HTMLPanel ui:field="viewerContainer">
+									<g:HTMLPanel ui:field="uploaderContainer">
 									</g:HTMLPanel>
 								</td>
 							</tr>
@@ -81,7 +81,7 @@
 								<td>
 								</td>
 								<td>
-									<g:HTMLPanel ui:field="uploaderContainer">
+									<g:HTMLPanel ui:field="viewerContainer">
 									</g:HTMLPanel>
 								</td>
 							</tr>

@@ -15,7 +15,9 @@ import medizin.shared.QuestionTypes;
 import medizin.shared.UserType;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.common.base.Function;
 import com.google.gwt.safehtml.shared.SafeUri;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -90,11 +92,10 @@ public final class ClientUtility {
 
 	}
 	
-	public static boolean checkImageSize(final String url,
-			QuestionTypeProxy questionType) {
-		boolean flag = false;
+	public static void checkImageSize(final String url,
+			final QuestionTypeProxy questionType,final Function<Boolean, Void> function) {
 		
-		Image image = new Image(new SafeUri() {
+		final Image image = new Image(new SafeUri() {
 			
 			@Override
 			public String asString() {
@@ -102,15 +103,24 @@ public final class ClientUtility {
 			}
 		});
 		
-		
-		Log.info("Image width * height : " + image.getWidth() + "*" + image.getHeight());
-		if(QuestionTypes.Textual.equals(questionType.getQuestionType())) {
-			flag = true;
-		}
-		else if(questionType.getImageWidth() != null && questionType.getImageWidth().equals(image.getWidth()) && questionType.getImageHeight() != null && questionType.getImageHeight().equals(image.getHeight())) {
-			flag = true;
-		}
-		
-		return flag;
+		new Timer() {
+			
+			@Override
+			public void run() {
+				
+				Log.info("Image width * height : " + image.getWidth() + "*" + image.getHeight());
+				if(QuestionTypes.Textual.equals(questionType.getQuestionType())) {
+					function.apply(true);
+				}
+				else if(questionType.getImageWidth() != null && questionType.getImageWidth().equals(image.getWidth()) && questionType.getImageHeight() != null && questionType.getImageHeight().equals(image.getHeight())) {
+					function.apply(true);
+				}else {
+					function.apply(false);	
+				}
+				
+				this.cancel();
+			}
+		}.schedule(2000);
+	
 	}
 }

@@ -43,8 +43,6 @@ public class ResourceUpload extends Composite {
 	@UiField
 	HorizontalPanel panel;
 	
-	private String fileName = "";
-
 	private final EventBus eventBus;
 	
 	interface ResourceUploadUiBinder extends UiBinder<Widget, ResourceUpload> {
@@ -71,14 +69,14 @@ public class ResourceUpload extends Composite {
 			public void onSubmit(SubmitEvent event) {
 				
 				Log.info(fileUpload.getFilename());
-				
+				Log.info("PS on Submit" + event); 
 				if (!"".equalsIgnoreCase(fileUpload.getFilename())) {
 					
 					Log.info("UPLOADING");
 				} else {
 					Log.info("UPLOADING cancel");
 					event.cancel();
-					eventBus.fireEvent(new ResourceUploadEvent(fileName,false));
+					eventBus.fireEvent(new ResourceUploadEvent("",false));
 				}
 			}
 		});
@@ -92,7 +90,7 @@ public class ResourceUpload extends Composite {
 						
 						uploadFormPanel.reset();
 
-						eventBus.fireEvent(new ResourceUploadEvent(fileName,true));					
+						eventBus.fireEvent(new ResourceUploadEvent(event.getResults(),true));					
 					}
 				});
 
@@ -113,7 +111,7 @@ public class ResourceUpload extends Composite {
 
 		if (fileUpload.getFilename() != null
 				&& fileUpload.getFilename().trim().compareTo("") != 0) {
-			fileName = fileUpload.getFilename();
+			String fileName = fileUpload.getFilename();
 			
 			if(checkFileExtension(fileName)) {
 				uploadFormPanel.submit();
