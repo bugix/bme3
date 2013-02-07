@@ -164,7 +164,7 @@ a:hover, .gwt-Anchor:hover {
 
 .gwt-DialogBox
 {
-	z-index: 10;
+	z-index: 1;
 }
 .gwt-DialogBox .Caption {
 	background: #ebebeb url(images/hborder.png) repeat-x 0px -2003px;
@@ -598,7 +598,7 @@ a:hover, .gwt-Anchor:hover {
 	/*padding: 6px;*/
 	background: url("images/ui-bg_highlight-soft_0_e0e0e0_1x400.png") repeat-x scroll 50% 50% #FFFFFF;
 	opacity: 0.9;
-	z-index: 1;
+	z-index: 100;
 	
 	/* Hack for compatibility with customized tabpanel */
 	/* z-index: 200; */
@@ -989,39 +989,39 @@ a:hover, .gwt-Anchor:hover {
 
 .gwt-SuggestBoxPopup {
 	margin-left: 4px;
-	z-index: 2 !important;
+	z-index: 2000 !important;
 }
 
 .gwt-SuggestBoxPopup strong {
 	background-color: #F1B532;
-	z-index: 2 !important;
+	z-index: 2000 !important;
 }
 
 .gwt-SuggestBoxPopup .item {
 	padding: 2px 4px;
 	color: #424242;
 	cursor: default;
-	z-index: 2 !important;
+	z-index: 2000 !important;
 }
 
 .gwt-SuggestBoxPopup .item-selected {
 	background: #F1B532;
-	z-index: 2 !important;
+	z-index: 2000 !important;
 }
 
 .gwt-SuggestBoxPopup .item-selected strong {
 	background: #FCFDB5;
-	z-index: 2 !important;
+	z-index: 2000 !important;
 }
 
 .gwt-SuggestBoxPopup .suggestPopupContent {
 	background: white;
-	z-index: 2 !important;
+	z-index: 2000 !important;
 }
 
 .gwt-SuggestBoxPopup {
 	border: 1px solid #aaa;
-	z-index: 2 !important;
+	z-index: 2000 !important;
 }
 
 /* .gwt-SuggestBoxPopup .suggestPopupTopCenter {

@@ -1,15 +1,21 @@
 package medizin.client.ui.view.question;
 
 import java.util.Collection;
+import java.util.List;
 
 import medizin.client.proxy.PersonProxy;
 import medizin.client.shared.Validity;
-
+import medizin.client.ui.richtext.RichTextToolbar;
 import medizin.client.ui.view.roo.PersonProxyRenderer;
 import medizin.client.ui.widget.IconButton;
+import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.EventHandlingValueHolderItem;
+import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
+import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.simple.DefaultSuggestOracle;
+import medizin.shared.i18n.BmeConstants;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.DivElement;
+import com.google.gwt.editor.client.Editor.Ignore;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.text.shared.AbstractRenderer;
@@ -17,9 +23,10 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DialogBox;
-import medizin.client.ui.richtext.RichTextToolbar;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RichTextArea;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextArea;
@@ -59,7 +66,14 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*
 	@UiField
 	TabPanel questionTypePanel;
 
+	@UiField
+	public Label lblAuther;
+
+	@UiField
+	@Ignore
+	public DefaultSuggestBox<PersonProxy, EventHandlingValueHolderItem<PersonProxy>> auther;
 	
+	public BmeConstants constants = GWT.create(BmeConstants.class);
 
 	@UiHandler("closeButton")
 	public void onCloseButtonClick(ClickEvent event) {
@@ -114,7 +128,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*
 		questionTypePanel.selectTab(0);
 		questionTypePanel.getTabBar().setTabText(0, "Manage Answer");
 		questionTypePanel.getTabBar().setTabText(1, "Media");
-		
+		lblAuther.setText(constants.auther());
 		/*RichTextToolbar toolbar = new RichTextToolbar(answerTextArea);*/
 
 		// toolbarPanel.add(toolbar);
@@ -198,6 +212,41 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*
 	{
 		return rewiewer;
 	}
+	
+	@Override
+	public void setAutherPickerValues(Collection<PersonProxy> values, PersonProxy logedUser) {
+	
+		
+		
+	DefaultSuggestOracle<PersonProxy> suggestOracle1 = (DefaultSuggestOracle<PersonProxy>) auther.getSuggestOracle();
+	suggestOracle1.setPossiblilities((List<PersonProxy>) values);
+	 /* Collection<MyObjectType> myCollection = ...;
+	 List<MyObjectType> list = new ArrayList<MyObjectType>(myCollection);*/
+	auther.setSuggestOracle(suggestOracle1);
+	auther.setRenderer(new AbstractRenderer<PersonProxy>() {
+
+		@Override
+		public String render(PersonProxy object) {
+			// TODO Auto-generated method stub
+			if(object!=null)
+			{
+			return object.getName() + " "+ object.getPrename();
+			}
+			else
+			{
+				return "";
+			}
+		}
+	});
+	//change {
+	if(logedUser.getIsAdmin() == false) {
+		
+		auther.setSelected(logedUser);
+		//answerDialogbox.getAutherSuggestBox().setSelected(userLoggedIn);
+		auther.setEnabled(false);
+	}
+	auther.setWidth(150);
+	}
 	@Override
 	public void setRewiewerPickerValues(Collection<PersonProxy> values) {
 		rewiewer.setAcceptableValues(values);
@@ -218,6 +267,13 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*
 	public void close() {
 		hide();
 
+	}
+	
+	
+	@Override
+	public DefaultSuggestBox<PersonProxy, EventHandlingValueHolderItem<PersonProxy>> getAutherSuggestBox() {
+		// TODO Auto-generated method stub
+		return auther;
 	}
 
 }

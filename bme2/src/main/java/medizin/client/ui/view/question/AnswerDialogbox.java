@@ -5,6 +5,8 @@ import java.util.Collection;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.AnswerProxy;
 import medizin.client.shared.Validity;
+import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.EventHandlingValueHolderItem;
+import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
 
 import com.google.gwt.place.shared.Place;
 import com.google.web.bindery.requestfactory.gwt.client.RequestFactoryEditorDriver;
@@ -55,6 +57,10 @@ public interface AnswerDialogbox extends IsWidget {
 	ValueListBox<Validity> getValidity();
 
 	ValueListBox<PersonProxy> getRewiewer();
+
+	void setAutherPickerValues(Collection<PersonProxy> values,PersonProxy logedUser);
+
+	DefaultSuggestBox<PersonProxy, EventHandlingValueHolderItem<PersonProxy>> getAutherSuggestBox();
 	
 
     

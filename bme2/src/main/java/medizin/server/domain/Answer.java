@@ -75,7 +75,7 @@ public class Answer {
     @DateTimeFormat(style = "M-")
     private Date dateChanged;
 
-    @NotNull
+    
     @ManyToOne
     private Person rewiewer;
 

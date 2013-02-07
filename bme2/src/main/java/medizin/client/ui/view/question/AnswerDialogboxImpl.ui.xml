@@ -2,7 +2,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:b="urn:import:com.google.gwt.user.cellview.client"
 	xmlns:d="urn:import:com.google.gwt.user.datepicker.client" xmlns:m="urn:import:medizin.client.ui.widget"
-	xmlns:r="urn:import:medizin.client.ui.richtext" >
+	xmlns:r="urn:import:medizin.client.ui.richtext" xmlns:i="urn:import:medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl">
 
 	<ui:style src="../../styles.css" />
 		
@@ -34,6 +34,19 @@
 					ui:field="toolbar" ></t:RichTextToolbar> <g:RichTextArea ui:field="answerTextArea" 
 					addStyleNames="{style.textarea}"></g:RichTextArea> </td> -->
 			</tr>
+			<tr id="auther">
+								<td>
+									<g:Label styleName="{style.label}" ui:field="lblAuther"></g:Label>
+								</td>
+								<td>
+									<!-- <g:ValueListBox ui:field="autor" /> -->
+									
+									<i:DefaultSuggestBox ui:field="auther"></i:DefaultSuggestBox>
+
+								</td>
+							</tr>
+			
+			
 			<tr id="rewiewer">
 				<td>
 					<div class="{style.label}">Rewiewer:</div>

@@ -399,17 +399,31 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	                answerDialogbox.setRewiewerPickerValues(values);
 	            }
 	        });
-//	        answerDialogbox.setAutorPickerValues(Collections.<PersonProxy>emptyList());
-//	        requests.personRequest().findPersonEntries(0, 50).with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).fire(new Receiver<List<PersonProxy>>() {
-//
-//	            public void onSuccess(List<PersonProxy> response) {
-//	                List<PersonProxy> values = new ArrayList<PersonProxy>();
-//	                values.add(null);
-//	                values.addAll(response);
-//	                answerDialogbox.setAutorPickerValues(values);
-//	            }
-//	        });
 	        
+	       // answerDialogbox.setAutherPickerValues(Collections.<PersonProxy>emptyList());
+	        requests.personRequest().findPersonEntries(0, 50).with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).fire(new Receiver<List<PersonProxy>>() {
+
+	            public void onSuccess(List<PersonProxy> response) {
+	                List<PersonProxy> values = new ArrayList<PersonProxy>();
+	                values.add(null);
+	                values.addAll(response);
+	                answerDialogbox.setAutherPickerValues(values,userLoggedIn);
+	            }
+	        });
+	        
+	        /*if(userLoggedIn!=null)
+	        {
+	        	if(userLoggedIn.getIsAdmin() == false) {
+	        		Log.info("1 " + answerDialogbox);
+	        		Log.info("1 " + answerDialogbox.getAutherSuggestBox());
+	        		Log.info("1 " +loggedUser);
+	        		
+	        		answerDialogbox.getAutherSuggestBox().setSelected(loggedUser);
+	        		//answerDialogbox.getAutherSuggestBox().setSelected(userLoggedIn);
+	        		answerDialogbox.getAutherSuggestBox().setEnabled(false);
+	        	}
+	        }*/
+	        	
 	        answerDialogbox.display();
 
 		
