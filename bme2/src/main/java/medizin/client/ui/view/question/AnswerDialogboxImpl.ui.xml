@@ -2,12 +2,17 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:b="urn:import:com.google.gwt.user.cellview.client"
 	xmlns:d="urn:import:com.google.gwt.user.datepicker.client" xmlns:m="urn:import:medizin.client.ui.widget"
-	xmlns:r="urn:import:medizin.client.ui.richtext">
+	xmlns:r="urn:import:medizin.client.ui.richtext" >
 
 	<ui:style src="../../styles.css" />
 		
 	<g:HTMLPanel width="100%">
-
+	
+	
+			<g:TabPanel ui:field="questionTypePanel" width="100%">
+				<g:Tab>
+					<g:TabHTML></g:TabHTML>
+		<g:HTMLPanel>
 
 		<table id="boundElementHolder">
 			<tr id="text">
@@ -84,4 +89,18 @@
 				ui-button-text-icon-primary {style.right}" ui:field="closeButton">Abbrechen</g:Button> -->
 		</div>
 	</g:HTMLPanel>
+	</g:Tab>
+	<g:Tab>
+					<g:TabHTML></g:TabHTML>
+					<g:HTMLPanel>
+					<g:Label>demo</g:Label>
+					
+					</g:HTMLPanel>
+					</g:Tab>
+	
+	
+	</g:TabPanel>
+	</g:HTMLPanel>
+	
+	
 </ui:UiBinder> 

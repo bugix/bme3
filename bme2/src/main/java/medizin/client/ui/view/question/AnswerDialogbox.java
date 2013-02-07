@@ -53,6 +53,8 @@ public interface AnswerDialogbox extends IsWidget {
 	CheckBox getSubmitToReviewerComitee();
 
 	ValueListBox<Validity> getValidity();
+
+	ValueListBox<PersonProxy> getRewiewer();
 	
 
     

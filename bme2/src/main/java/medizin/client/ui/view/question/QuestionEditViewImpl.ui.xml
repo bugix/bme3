@@ -36,7 +36,7 @@
 									<g:Label styleName="{style.label}" ui:field="lblQuestionShortName"></g:Label>
 								</td>
 								<td>
-									<g:TextBox ui:field="questionShortName"></g:TextBox>
+									<g:TextBox ui:field="questionShortName" width="174px"></g:TextBox>
 
 
 								</td>
@@ -47,7 +47,7 @@
 									<g:Label styleName="{style.label}" ui:field="lblQuestionType"></g:Label>
 								</td>
 								<td>
-									<g:ValueListBox ui:field="questionType" />
+									<g:ValueListBox ui:field="questionType"  width="180px"/>
 
 								</td>
 							</tr>
@@ -113,7 +113,7 @@
 									<g:Label styleName="{style.label}" ui:field="lblQuestionEvent"></g:Label>
 								</td>
 								<td>
-									<g:ValueListBox ui:field="questEvent" />
+									<g:ValueListBox ui:field="questEvent"  width="180px"/>
 
 								</td>
 							</tr>
@@ -138,7 +138,7 @@
 									<g:Label styleName="{style.label}" ui:field="lblQuestionComment"></g:Label>
 								</td>
 								<td>
-									<g:TextArea ui:field='questionComment'></g:TextArea>
+									<g:TextArea ui:field='questionComment' width="100%"></g:TextArea>
 
 									<!-- <t:RichTextToolbar ui:field="commentToolbar" /> <div style="-moz-border-radius-bottomleft: 
 										8px; -moz-border-radius-bottomright: 8px; border: 1px solid #AAA; border-top: 

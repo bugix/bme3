@@ -445,7 +445,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 			questionNew.setMcs(view.getMCS().getValue());
 			questionNew.setSubmitToReviewComitee(view.getSubmitToReviewComitee().getValue());
 //			questionNew.setStatus(Status.NEW);
-			
+			questionNew.setQuestionVersion(calculateSubversion(question2.getQuestionVersion()));
 			CommentProxy comment=req.edit(questionNew.getComment());
 			//comment.setComment(view.getQuestionComment().getHTML());
 			comment.setComment(view.getQuestionComment().getValue());
@@ -624,6 +624,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 //			questionNew.setDateChanged(new Date());
 			questionNew.setDateAdded(new Date());
 			questionNew.setSubmitToReviewComitee(view.getSubmitToReviewComitee().getValue());
+			questionNew.setQuestionVersion(1.0);
 			CommentProxy comment=commentRequest.create(CommentProxy.class);
 			//comment.setComment(view.getQuestionComment().getHTML());
 			comment.setComment(view.getQuestionComment().getValue());

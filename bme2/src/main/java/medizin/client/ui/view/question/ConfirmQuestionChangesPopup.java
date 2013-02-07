@@ -4,6 +4,7 @@ import medizin.client.ui.view.question.QuestionEditView.Delegate;
 import medizin.client.ui.widget.IconButton;
 import medizin.shared.i18n.BmeConstants;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -37,6 +38,8 @@ public class ConfirmQuestionChangesPopup extends DialogBox {
 		setModal(true);
 		//setTitle(constants.confirmText());
 		setText(constants.confirmText());
+		cancel.setText(constants.cancel());
+		
 		
 	}
 
@@ -46,6 +49,16 @@ IconButton saveChange;
 
 @UiField
 IconButton saveNew;
+
+@UiField
+Button cancel;
+
+
+@UiHandler ("cancel")
+void cancelClicked (ClickEvent event){
+	Log.info("cancel click");
+	super.hide();
+}
 
 
 @UiHandler ("saveNew")

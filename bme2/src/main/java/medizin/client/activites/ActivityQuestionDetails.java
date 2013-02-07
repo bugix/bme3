@@ -434,12 +434,12 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
         if(loggedUser.getIsAdmin()){
 	        answerProxy.setIsAnswerAcceptedAdmin(true);
 	        answerProxy.setIsAnswerAcceptedAutor(false);
-	        answerProxy.setRewiewer(question.getAutor());
+	      //  answerProxy.setRewiewer(question.getAutor());
         } else {
 	        answerProxy.setIsAnswerAcceptedAdmin(false);
 	        answerProxy.setIsAnswerAcceptedAutor(true);
         }
-
+        
         answerProxy.setIsAnswerAcceptedReviewWahrer(false);
         //answerDialogbox.setRichPanelHTML(answerProxy.getAnswerText());
         
@@ -448,6 +448,14 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		answerProxy.setAnswerText(answerDialogbox.getRichtTextHTML());
 		answerProxy.setValidity(answerDialogbox.getValidity().getValue());
 		commentProxy.setComment(answerDialogbox.getComment().getValue());
+		if(answerDialogbox.getSubmitToReviewerComitee().isChecked())
+		{
+			answerProxy.setRewiewer(null);
+		}
+		else
+		{
+			answerProxy.setRewiewer(answerDialogbox.getRewiewer().getValue());
+		}
 		answerProxy.setComment(commentProxy);
 		answerProxy.setSubmitToReviewComitee(answerDialogbox.getSubmitToReviewerComitee().getValue());
 		Log.info("before save");

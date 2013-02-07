@@ -11,14 +11,17 @@ import medizin.client.ui.widget.IconButton;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DialogBox;
 import medizin.client.ui.richtext.RichTextToolbar;
 import com.google.gwt.user.client.ui.RichTextArea;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.ValueListBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -52,6 +55,11 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*
 
 	@UiField
 	public TextArea comment;
+	
+	@UiField
+	TabPanel questionTypePanel;
+
+	
 
 	@UiHandler("closeButton")
 	public void onCloseButtonClick(ClickEvent event) {
@@ -103,12 +111,30 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*
 		setAnimationEnabled(true);
 		setTitle("Anzahl Fragentypen pro Prüfung hinzufügen");
 		setText("Anzahl Fragentypen pro Prüfung hinzufügen");
-
-		
+		questionTypePanel.selectTab(0);
+		questionTypePanel.getTabBar().setTabText(0, "Manage Answer");
+		questionTypePanel.getTabBar().setTabText(1, "Media");
 		
 		/*RichTextToolbar toolbar = new RichTextToolbar(answerTextArea);*/
 
 		// toolbarPanel.add(toolbar);
+		submitToReviewComitee.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				// TODO Auto-generated method stub
+			if(submitToReviewComitee.isChecked())
+			{
+				DOM.setElementPropertyBoolean(rewiewer.getElement(), "disabled", true);
+
+			}
+			else
+			{
+				
+				DOM.setElementPropertyBoolean(rewiewer.getElement(), "disabled", false);
+			}
+			}
+		});
 
 	}
 
@@ -166,6 +192,12 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*
 		return validity;
 	}
 
+	
+	@Override
+	public ValueListBox<PersonProxy> getRewiewer()
+	{
+		return rewiewer;
+	}
 	@Override
 	public void setRewiewerPickerValues(Collection<PersonProxy> values) {
 		rewiewer.setAcceptableValues(values);

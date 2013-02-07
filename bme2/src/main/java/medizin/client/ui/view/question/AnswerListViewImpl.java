@@ -13,6 +13,7 @@ import medizin.client.ui.McAppConstant;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.proxy.AnswerProxy;
 import medizin.client.proxy.QuestionProxy;
+import medizin.shared.i18n.BmeConstants;
 
 
 import com.google.gwt.user.cellview.client.Header;
@@ -72,6 +73,8 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 	}
 
 
+	public BmeConstants constant =GWT.create(BmeConstants.class);
+			
     private Delegate delegate;
     
 
@@ -182,7 +185,7 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
   	      public AnswerProxy getValue(AnswerProxy object) {
   	        return object;
   	      }
-  	    },  McAppConstant.ANSWER_TEXT);
+  	    }, constant.answerText());
         
 //        paths.add("answerText");
 //        tableAnswer.addColumn(new TextColumn<AnswerProxy>() {

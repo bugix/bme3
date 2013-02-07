@@ -48,7 +48,7 @@ public class Question {
     @Size(min = 2, max = 255)
     private String picturePath;
 
-   // @NotNull
+    @NotNull
     private Double questionVersion;
 
     @NotNull
