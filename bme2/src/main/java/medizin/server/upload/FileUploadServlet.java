@@ -114,7 +114,7 @@ public class FileUploadServlet extends HttpServlet {
 					
 					// copy file
 					log.info("Base dir :" + SharedConstant.getUploadBaseDIRPath());
-					String relativepath = StringUtils.substring(appUploadedFile.getAbsolutePath(), SharedConstant.getUploadBaseDIRPath().length()+1);
+					String relativepath = StringUtils.substring(appUploadedFile.getAbsolutePath(), SharedConstant.getUploadBaseDIRPath().length());
 					log.info("relative path " + relativepath);
 					
 					String realpath = BMEUtils.getRealPath(request,relativepath);

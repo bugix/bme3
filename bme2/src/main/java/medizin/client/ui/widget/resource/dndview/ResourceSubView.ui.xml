@@ -6,7 +6,6 @@
 			border: 1px solid #afc2c7;
 			background: #eceded;
 			border-radius: 5px;
-			margin-top: 10px;
 			width: 99%;
 		}
 		

@@ -2,6 +2,7 @@ package medizin.client.ui.view.question;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Set;
 
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.proxy.QuestionTypeProxy;
@@ -13,6 +14,8 @@ import medizin.client.ui.widget.resource.event.ResourceAddedEvent;
 import medizin.client.ui.widget.resource.event.ResourceAddedEventHandler;
 import medizin.client.ui.widget.resource.event.ResourceDeletedEvent;
 import medizin.client.ui.widget.resource.event.ResourceDeletedEventHandler;
+import medizin.client.ui.widget.resource.event.ResourceSequenceChangedEvent;
+import medizin.client.ui.widget.resource.event.ResourceSequenceChangedHandler;
 import medizin.client.ui.widget.resource.image.ImageViewer;
 import medizin.client.ui.widget.resource.upload.ResourceUpload;
 import medizin.client.ui.widget.resource.upload.event.ResourceUploadEvent;
@@ -26,6 +29,7 @@ import medizin.shared.utils.SharedUtility;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.base.Function;
+import com.google.common.collect.Sets;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -428,10 +432,21 @@ public class QuestionDetailsViewImpl extends Composite implements
 					delegate.addNewQuestionResource(event.getQuestionResourceClient());
 				}else {
 					ConfirmationDialogBox.showOkDialogBox("Error", "This type of media is not allowed");
-					//TODO delete resource from location. 
+					Set<String> paths = Sets.newHashSet();
+					paths.add(event.getQuestionResourceClient().getPath());
+					delegate.deleteUploadedFiles(paths);
 				}	
 			}
 		});	
+		
+		resourceView.addResourceSequenceChangedHandler(new ResourceSequenceChangedHandler() {
+
+			@Override
+			public void onSequenceChanged(ResourceSequenceChangedEvent event) {
+				delegate.changedResourceSequence(event.getQuestionResourceClients());	
+			}
+			
+		});
 		
 		Label lblUploadText = new Label(); 
 		lblUploadText.setText(constants.uploadResource());
@@ -464,9 +479,9 @@ public class QuestionDetailsViewImpl extends Composite implements
 				if(event.isResourceUploaded() == true) {
 					Log.info("fileName is " + fileName);
 					
-					MultimediaType type = SharedUtility.getFileMultimediaType(SharedUtility.getFileExtension(fileName));
+					MultimediaType mtype = SharedUtility.getFileMultimediaType(SharedUtility.getFileExtension(fileName));
 					
-					switch (type) {
+					switch (mtype) {
 					case Image:
 					{
 						// for image

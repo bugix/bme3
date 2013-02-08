@@ -32,8 +32,13 @@ import medizin.client.ui.view.question.AnswerListViewImpl;
 import medizin.client.ui.view.question.QuestionDetailsView;
 import medizin.client.ui.view.question.QuestionDetailsViewImpl;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
+import medizin.client.ui.widget.resource.dndview.vo.State;
+import medizin.client.ui.widget.resource.image.polygon.ImagePolygonViewer;
+import medizin.client.util.PolygonPath;
+import medizin.shared.QuestionTypes;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.common.collect.Sets;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.place.shared.Place;
@@ -348,8 +353,23 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	@Override
 	public void addNewAnswerClicked() {
 		
-		answerDialogbox = new AnswerDialogboxImpl();
+		answerDialogbox = new AnswerDialogboxImpl(question);
 		answerDialogbox.setDelegate(this);
+		
+		if(question != null && question.getQuestionType() != null && question.getQuestionType().getQuestionType() != null) {
+			switch (question.getQuestionType().getQuestionType()) {
+			case ShowInImage:
+				addForShowInImage();
+				break;
+
+			default:
+				Log.info("check for media");
+				break;
+			}
+	
+		}
+					
+		
 		/*answerDriver = answerDialogbox.createEditorDriver();*/
 		
 		
@@ -428,7 +448,41 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 
 		
 	}
-	
+	private void addForShowInImage() {
+
+		AnswerRequest answerRequest = requests.answerRequest();
+		Log.info("Question id :" + question.getId());
+		answerRequest.findAllAnswersPoints(question.getId()).fire(new Receiver<List<String>>() {
+
+			@Override
+			public void onSuccess(List<String> polygons) {
+		
+				List<PolygonPath> polygonPaths = PolygonPath.getPolygonPaths(polygons);
+				
+				if(question != null && question.getQuestionType() != null && QuestionTypes.ShowInImage.equals(question.getQuestionType().getQuestionType()) && question.getPicturePath() != null && question.getPicturePath().length() > 0 && question.getQuestionType().getImageHeight() != null && question.getQuestionType().getImageHeight() != null) {
+					ImagePolygonViewer viewer = new ImagePolygonViewer(question.getPicturePath(), question.getQuestionType().getImageWidth(), question.getQuestionType().getImageHeight(),polygonPaths);
+					answerDialogbox.getViewContainer().add(viewer);
+					answerDialogbox.setImagePolygonViewer(viewer);
+				}
+			}
+			
+
+			@Override
+			public void onConstraintViolation(
+					Set<ConstraintViolation<?>> violations) {
+				Log.error("error in onConstraintViolation");
+				super.onConstraintViolation(violations);
+			}
+			
+			@Override
+			public void onFailure(ServerFailure error) {
+				Log.error("error in onFailure : " + error.getMessage());
+				super.onFailure(error);
+			}
+			
+		});
+	}	
+
 	@Override
 	public void addAnswerClicked() {
 		
@@ -470,6 +524,21 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		{
 			answerProxy.setRewiewer(answerDialogbox.getRewiewer().getValue());
 		}
+		
+		if(question.getQuestionType() != null && QuestionTypes.ShowInImage.equals(question.getQuestionType().getQuestionType()) == true ) {
+			
+			if(answerDialogbox != null && answerDialogbox.getImagePolygonViewer() != null && answerDialogbox.getImagePolygonViewer().isValidPolygon()) {
+				Log.info("Points : " + answerDialogbox.getImagePolygonViewer().getPoints());
+				answerProxy.setPoints(answerDialogbox.getImagePolygonViewer().getPoints());
+				
+			}else {
+				ErrorPanel errorPanel = new ErrorPanel();
+				errorPanel.setErrorMessage("Polygon is not property added. Try again");
+				return;
+			}
+			Log.info("Points added");
+		}
+		
 		answerProxy.setComment(commentProxy);
 		answerProxy.setSubmitToReviewComitee(answerDialogbox.getSubmitToReviewerComitee().getValue());
 		Log.info("before save");
@@ -482,21 +551,39 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	        	  erorPanel.setErrorMessage(error.getMessage());
 					Log.error(error.getMessage());
 				}
-	          @Override
-				public void onViolation(Set<Violation> errors) {
-	        	  Log.info("on violate");
-					Iterator<Violation> iter = errors.iterator();
-					String message = "";
-					while(iter.hasNext()){
-						message += iter.next().getPath() + "<br>";
-					}
-					Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Antworten auflisten -" + message);
-					
-		        	  
-					ErrorPanel erorPanel = new ErrorPanel();
-		        	  erorPanel.setErrorMessage(message);
-
+			
+	@Override
+			public void onConstraintViolation(
+					Set<ConstraintViolation<?>> violations) {
+				
+				Iterator<ConstraintViolation<?>> iter = violations.iterator();
+				String message = "";
+				while(iter.hasNext()){
+					ConstraintViolation<?> v = iter.next();
+					message += v.getPropertyPath() + " : " + v.getMessage() + "<br>";
 				}
+				Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Event -" + message);
+				
+				ErrorPanel erorPanel = new ErrorPanel();
+	        	erorPanel.setWarnMessage(message);
+	        	super.onConstraintViolation(violations);
+			}
+
+//	          @Override
+//				public void onViolation(Set<Violation> errors) {
+//	        	  Log.info("on violate");
+//					Iterator<Violation> iter = errors.iterator();
+//					String message = "";
+//					while(iter.hasNext()){
+//						message += iter.next().getPath() + "<br>";
+//					}
+//					Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Antworten auflisten -" + message);
+//					
+//		        	  
+//					ErrorPanel erorPanel = new ErrorPanel();
+//		        	  erorPanel.setErrorMessage(message);
+//
+//				}
 	          
 			@Override
 			public void onSuccess(Void response) {
@@ -710,4 +797,85 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		}
 	}
 
+	@Override
+	public void deleteUploadedFiles(Set<String> paths) {
+		
+		requests.questionResourceRequest().deleteFiles(paths).fire(new Receiver<Void>() {
+
+			@Override
+			public void onSuccess(Void response) {
+				Log.info("Files area deleted");
+				
+			}
+			
+			@Override
+			public void onConstraintViolation(
+					Set<ConstraintViolation<?>> violations) {
+				Log.info("ConstraintViolation in files delete process");
+				super.onConstraintViolation(violations);
+			}
+			
+			@Override
+			public void onFailure(ServerFailure error) {
+				Log.info("error in files delete process");
+				super.onFailure(error);
+			}
+		});
+		
+	}
+
+	@Override
+	public void changedResourceSequence(Set<QuestionResourceClient> questionResourceClients) {
+		
+		if(question != null && questionResourceClients.size() > 0) {
+		
+			QuestionResourceRequest questionResourceRequest = requests.questionResourceRequest();
+			Set<QuestionResourceProxy> proxies = Sets.newHashSet();
+			Log.info("proxies.size() " + proxies.size());
+			for (QuestionResourceClient questionResource : questionResourceClients) {
+
+				if(questionResource.getState().equals(State.NEW) || questionResource.getState().equals(State.EDITED)) {
+					QuestionResourceProxy proxy = questionResourceRequest.create(QuestionResourceProxy.class);
+					proxy.setPath(questionResource.getPath());
+					proxy.setSequenceNumber(questionResource.getSequenceNumber());
+					proxy.setType(questionResource.getType());
+					proxy.setQuestion(question);
+					proxies.add(proxy);
+				}
+			}
+			
+			questionResourceRequest.persistSet(proxies).fire(new Receiver<Void>() {
+
+				@Override
+				public void onSuccess(Void response) {
+					Log.info("Added successfuly");
+				}
+				
+				@Override
+				public void onConstraintViolation(
+						Set<ConstraintViolation<?>> violations) {
+					
+					Iterator<ConstraintViolation<?>> iter = violations.iterator();
+					String message = "";
+					while(iter.hasNext()){
+						ConstraintViolation<?> v = iter.next();
+						message += v.getPropertyPath() + " : " + v.getMessage() + "<br>";
+					}
+					Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Event -" + message);
+					
+					ErrorPanel erorPanel = new ErrorPanel();
+		        	erorPanel.setWarnMessage(message);
+		        	super.onConstraintViolation(violations);
+				}
+				
+				@Override
+				public void onFailure(ServerFailure error) {
+					ErrorPanel erorPanel = new ErrorPanel();
+		        	erorPanel.setErrorMessage(error.getMessage());
+		        	super.onFailure(error);
+				}
+			});
+
+		}
+	}
 }

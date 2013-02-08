@@ -74,5 +74,9 @@ public interface AnswerProxy extends EntityProxy {
 
     abstract void setSubmitToReviewComitee(Boolean submitToReviewComitee);
 
+    abstract String getPoints();
+
+    abstract void setPoints(String points);
+
     abstract Integer getVersion();
 }

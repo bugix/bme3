@@ -456,6 +456,53 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 				questionNew.setPicturePath(view.getImageViewer().getImageRelativeUrl());
 			}else if(QuestionTypes.ShowInImage.equals(questionNew.getQuestionType().getQuestionType()) && view.getImageViewer() != null && view.getImageViewer().getImageRelativeUrl() != null) {
 				questionNew.setPicturePath(view.getImageViewer().getImageRelativeUrl());
+			}else if(QuestionTypes.Textual.equals(questionNew.getQuestionType().getQuestionType()) && view.getQuestionResources().size() > 0) {
+				QuestionResourceRequest questionResourceRequest = requests.questionResourceRequest();
+				Set<QuestionResourceProxy> proxies = Sets.newHashSet();
+				Log.info("proxies.size() " + proxies.size());
+				for (QuestionResourceClient questionResource : view.getQuestionResources()) {
+
+					if(questionResource.getState().equals(State.NEW) || questionResource.getState().equals(State.EDITED)) {
+						QuestionResourceProxy proxy = questionResourceRequest.create(QuestionResourceProxy.class);
+						proxy.setPath(questionResource.getPath());
+						proxy.setSequenceNumber(questionResource.getSequenceNumber());
+						proxy.setType(questionResource.getType());
+						proxy.setQuestion(questionNew);
+						proxies.add(proxy);
+					}
+				}
+				
+				questionResourceRequest.persistSet(proxies).fire(new Receiver<Void>() {
+
+					@Override
+					public void onSuccess(Void response) {
+						Log.info("Added successfuly");
+					}
+					
+					@Override
+					public void onConstraintViolation(
+							Set<ConstraintViolation<?>> violations) {
+						
+						Iterator<ConstraintViolation<?>> iter = violations.iterator();
+						String message = "";
+						while(iter.hasNext()){
+							ConstraintViolation<?> v = iter.next();
+							message += v.getPropertyPath() + " : " + v.getMessage() + "<br>";
+						}
+						Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Event -" + message);
+						
+						ErrorPanel erorPanel = new ErrorPanel();
+			        	erorPanel.setWarnMessage(message);
+			        	super.onConstraintViolation(violations);
+					}
+					
+					@Override
+					public void onFailure(ServerFailure error) {
+						ErrorPanel erorPanel = new ErrorPanel();
+			        	erorPanel.setErrorMessage(error.getMessage());
+			        	super.onFailure(error);
+					}
+				});
 			}
 			
 			/*CommentProxy comment=commentRequest.create(CommentProxy.class);
@@ -524,49 +571,8 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		          @Override
 		          public void onSuccess(Void response) {
 		        	  Log.info("PersonSucesfullSaved");
-		        	  // persist questionResources 
-		        	  if (QuestionTypes.Textual.equals(qpoxy.getQuestionType().getQuestionType()) && view.getQuestionResources().size() > 0) {
-
-		        		  QuestionResourceRequest questionResourceRequest = requests.questionResourceRequest();
-		        		  Set<QuestionResourceProxy> proxies = new HashSet<QuestionResourceProxy>();
-
-		        		  for (QuestionResourceClient questionResource : view.getQuestionResources()) {
-
-		        			  if (questionResource.getState().equals(State.NEW)) {
-									QuestionResourceProxy proxy = questionResourceRequest.create(QuestionResourceProxy.class);
-
-										proxy.setPath(questionResource.getPath());
-										proxy.setSequenceNumber(questionResource.getSequenceNumber());
-										proxy.setType(questionResource.getType());
-										proxy.setQuestion(qpoxy);
-										proxies.add(proxy);
-									}
-								}
-
-								questionResourceRequest.persistSet(proxies).fire(new Receiver<Void>() {
-
-											@Override
-											public void onSuccess(Void response) {
 												placeController.goTo(new PlaceQuestionDetails(question.stableId(),PlaceQuestionDetails.Operation.DETAILS));
-											}
 
-											@Override
-											public void onConstraintViolation(Set<ConstraintViolation<?>> violations) {
-												Log.error("constraint violation in Question resource");
-												super.onConstraintViolation(violations);
-											}
-
-											@Override
-											public void onFailure(ServerFailure error) {
-												Log.error("Failure in Question resource "+ error);
-												super.onFailure(error);
-											}
-
-										});
-
-		        	  } else {
-		        		  placeController.goTo(new PlaceQuestionDetails(question.stableId(),PlaceQuestionDetails.Operation.DETAILS));
-		        	  }
 		          //	goTo(new PlaceQuestion(person.stableId()));
 		          }
 		          

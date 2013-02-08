@@ -1,6 +1,5 @@
 package medizin.client.ui.widget.resource.dndview;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -11,6 +10,8 @@ import medizin.client.ui.widget.resource.event.ResourceAddedEvent;
 import medizin.client.ui.widget.resource.event.ResourceAddedEventHandler;
 import medizin.client.ui.widget.resource.event.ResourceDeletedEvent;
 import medizin.client.ui.widget.resource.event.ResourceDeletedEventHandler;
+import medizin.client.ui.widget.resource.event.ResourceSequenceChangedEvent;
+import medizin.client.ui.widget.resource.event.ResourceSequenceChangedHandler;
 import medizin.shared.MultimediaType;
 import medizin.shared.QuestionTypes;
 
@@ -25,7 +26,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -48,8 +48,8 @@ public class ResourceView extends Composite implements DragHandler {
 	
 	@UiField
 	VerticalPanel customContentPanel;
-	@UiField
-	AbsolutePanel absPanel;
+	/*@UiField
+	AbsolutePanel absPanel;*/
 	
 	PickupDragController dragController1;
 	PickupDragController dragController2;
@@ -118,7 +118,7 @@ public class ResourceView extends Composite implements DragHandler {
 
 		// absolutePanel.add(customContentSubViewImpl);
 
-		PickupDragController dragController = new PickupDragController(absPanel, false);
+		PickupDragController dragController = new PickupDragController(resourceSubView.getAbsPanel(), false);
 		dragController.setBehaviorDragProxy(true);
 		dragController.addDragHandler(this);
 		dragController.makeDraggable(resourceSubView.asWidget(), resourceSubView.getText());
@@ -136,10 +136,10 @@ public class ResourceView extends Composite implements DragHandler {
 //			customContentPanel.insert(resourceSubView, 0);
 //		}
 		
-		if (absPanel.getWidgetCount() == 0 || !isNewAdded) {
-			absPanel.add(resourceSubView);
+		if (customContentPanel.getWidgetCount() == 0 || !isNewAdded) {
+			customContentPanel.add(resourceSubView);
 		} else {
-			absPanel.insert(resourceSubView, 0);
+			customContentPanel.insert(resourceSubView, 0);
 		}
 
 	}
@@ -160,6 +160,7 @@ public class ResourceView extends Composite implements DragHandler {
 		}
 			
 		eventBus.fireEvent(new ResourceAddedEvent(added,proxy));
+		
 	
 	}
 
@@ -185,7 +186,7 @@ public class ResourceView extends Composite implements DragHandler {
 	@Override
 	public void onDragEnd(DragEndEvent event) {
 		ResourceSubView resourceSubView;
-		int size = absPanel.getWidgetCount();
+		int size = customContentPanel.getWidgetCount();
 		if (event != null) {
 			Log.info("in onDragEnd" + event.getSource());
 
@@ -204,15 +205,25 @@ public class ResourceView extends Composite implements DragHandler {
 //
 //			Log.info("!!" + ((ResourceSubView) absPanel.getWidget(0).asWidget()));
 		}
-		List<QuestionResourceClient> proxies = new ArrayList<QuestionResourceClient>();
+//		List<QuestionResourceClient> proxies = new ArrayList<QuestionResourceClient>();
 		
 		for (int i = 0; i < size; i++) {
 
-			resourceSubView = (ResourceSubView) absPanel.getWidget(i).asWidget();
+			resourceSubView = (ResourceSubView) customContentPanel.getWidget(i).asWidget();
 			// CustomContentProxy customContentProxy =
-			resourceSubView.getQuestionResourceClient().setSequenceNumber(i);
-			proxies.add(resourceSubView.getQuestionResourceClient());
+			QuestionResourceClient client = resourceSubView.getQuestionResourceClient();
+			client.setSequenceNumber(i);
+			client.setState(State.EDITED);
+			if(questionResources.contains(client) == false) {
+				questionResources.add(client);
+			}
+			Log.info("resource view : " + client);
 		}
+		
+		for (QuestionResourceClient iterable_element : questionResources) {
+			Log.info("orginal resource view : " + iterable_element);	
+		}
+		
 		// delegate.updateCustomContent(contentSubView, customContentProxy, i +
 		// 1);
 		//delegate.updateCustomContent(customContentProxies);
@@ -255,6 +266,11 @@ public class ResourceView extends Composite implements DragHandler {
 	public void addResourceAddedHandler(
 			ResourceAddedEventHandler handler) {
 		eventBus.addHandler(ResourceAddedEvent.TYPE, handler);
+	}
+
+	public void addResourceSequenceChangedHandler(
+			ResourceSequenceChangedHandler handler) {
+		eventBus.addHandler(ResourceSequenceChangedEvent.TYPE, handler);
 	}
 	
 }

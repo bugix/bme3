@@ -1,5 +1,7 @@
 package medizin.client.ui.view.question;
 
+import java.util.Set;
+
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 
@@ -34,6 +36,11 @@ public interface QuestionDetailsView extends IsWidget {
 		void updatePicturePathInQuestion(String picturePath);
 
 		void deleteUploadedPicture(String picturePath);
+
+		void deleteUploadedFiles(Set<String> paths);
+
+		void changedResourceSequence(
+				Set<QuestionResourceClient> questionResourceClients);
 	}
 
 	AnswerListViewImpl getAnswerListViewImpl();

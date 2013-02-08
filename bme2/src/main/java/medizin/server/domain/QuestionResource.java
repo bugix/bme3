@@ -40,8 +40,18 @@ public class QuestionResource {
 		log.info("persist set");
 		
 		for (QuestionResource questionResource : questionResources) {
-			//questionResource.question = question;
-			questionResource.persist();
+			QuestionResource resource = QuestionResource.findQuestionResource(questionResource.getId());
+			if(resource != null) {
+				resource.setId(questionResource.getId());
+				resource.setPath(questionResource.getPath());
+				resource.setQuestion(questionResource.getQuestion());
+				resource.setSequenceNumber(questionResource.getSequenceNumber());
+				resource.setType(questionResource.getType());
+				resource.setVersion(questionResource.getVersion());
+				resource.persist();
+			}else {
+				questionResource.persist();
+			}
 		}
 	}
 	

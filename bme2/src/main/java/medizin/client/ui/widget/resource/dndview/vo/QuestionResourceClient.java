@@ -1,5 +1,7 @@
 package medizin.client.ui.widget.resource.dndview.vo;
 
+import com.google.common.base.Objects;
+
 import medizin.shared.MultimediaType;
 
 public class QuestionResourceClient {
@@ -9,9 +11,9 @@ public class QuestionResourceClient {
 	private Integer sequenceNumber;
 
 	private MultimediaType type;
-	
+
 	private State state;
-	
+
 	private Long id;
 
 	public String getPath() {
@@ -48,11 +50,18 @@ public class QuestionResourceClient {
 
 	public void setId(Long id) {
 		this.id = id;
-	} 
-	
+	}
+
 	public Long getId() {
 		return this.id;
 	}
-	
 
+	@Override
+	public String toString() {
+
+		return Objects.toStringHelper(this).add("id", this.id)
+				.add("path", this.path)
+				.add("sequenceNumber", this.sequenceNumber)
+				.add("type", this.type).add("State", this.state).toString();
+	}
 }

@@ -90,6 +90,7 @@ public class Answer {
     @Value("false")
     private Boolean submitToReviewComitee;
     
+    private String points;
     
 	public static List<Answer> findAnswersEntriesByQuestion(Long id, int start, int max){
         Question question = Question.findQuestion(id);
@@ -232,4 +233,15 @@ public class Answer {
         q.setParameter("isAccepted", isAccepted);
 	        return q.getResultList();		
 	}	
+	
+	public static List<String> findAllAnswersPoints(Long questionId) {
+		
+		EntityManager em = entityManager();
+		String sql = "SELECT ans.points FROM Answer ans WHERE ans.question.id = " + questionId;
+		
+		TypedQuery<String> q = em.createQuery(sql, String.class);
+	    //q.setParameter("question", question);
+		log.info("SIZE : " + q.getResultList());
+	    return q.getResultList();
+	}
 }

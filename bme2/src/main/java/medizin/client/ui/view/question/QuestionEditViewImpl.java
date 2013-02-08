@@ -664,6 +664,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 			}
 		});
 		
+		lblUploadText.setText(constants.uploadResource());
 		uploaderContainer.add(resourceUpload);
 		viewerContainer.add(imageViewer);
 		
@@ -803,6 +804,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 				});
 				
 				// added to container
+				lblUploadText.setText(constants.uploadResource());
 				uploaderContainer.add(resourceUpload);
 				viewerContainer.add(viewer);
 				

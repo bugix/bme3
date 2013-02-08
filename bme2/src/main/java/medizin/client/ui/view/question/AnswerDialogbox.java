@@ -3,20 +3,17 @@ package medizin.client.ui.view.question;
 import java.util.Collection;
 
 import medizin.client.proxy.PersonProxy;
-import medizin.client.proxy.AnswerProxy;
 import medizin.client.shared.Validity;
+import medizin.client.ui.widget.resource.image.polygon.ImagePolygonViewer;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.EventHandlingValueHolderItem;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
 
 import com.google.gwt.place.shared.Place;
-import com.google.web.bindery.requestfactory.gwt.client.RequestFactoryEditorDriver;
-import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.ValueListBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 public interface AnswerDialogbox extends IsWidget {
  
@@ -61,6 +58,13 @@ public interface AnswerDialogbox extends IsWidget {
 	void setAutherPickerValues(Collection<PersonProxy> values,PersonProxy logedUser);
 
 	DefaultSuggestBox<PersonProxy, EventHandlingValueHolderItem<PersonProxy>> getAutherSuggestBox();
+
+VerticalPanel getViewContainer();
+
+	ImagePolygonViewer getImagePolygonViewer();
+
+	void setImagePolygonViewer(ImagePolygonViewer viewer);	
+
 	
 
     

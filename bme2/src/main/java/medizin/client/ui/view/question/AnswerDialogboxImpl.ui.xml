@@ -9,10 +9,10 @@
 	<g:HTMLPanel width="100%">
 	
 	
-			<g:TabPanel ui:field="questionTypePanel" width="100%">
+			<!-- <g:TabPanel ui:field="questionTypePanel" width="100%">
 				<g:Tab>
 					<g:TabHTML></g:TabHTML>
-		<g:HTMLPanel>
+		<g:HTMLPanel> -->
 
 		<table id="boundElementHolder">
 			<tr id="text">
@@ -34,6 +34,13 @@
 					ui:field="toolbar" ></t:RichTextToolbar> <g:RichTextArea ui:field="answerTextArea" 
 					addStyleNames="{style.textarea}"></g:RichTextArea> </td> -->
 			</tr>
+			<tr id="viewContainer">
+				<td colspan="2">
+					<g:VerticalPanel ui:field="viewContainer">
+					</g:VerticalPanel>
+				</td>
+			</tr>
+
 			<tr id="auther">
 								<td>
 									<g:Label styleName="{style.label}" ui:field="lblAuther"></g:Label>
@@ -101,7 +108,7 @@
 				<g:Button addStyleNames="ui-button ui-widget ui-state-default ui-corner-all 
 				ui-button-text-icon-primary {style.right}" ui:field="closeButton">Abbrechen</g:Button> -->
 		</div>
-	</g:HTMLPanel>
+	<!-- </g:HTMLPanel>
 	</g:Tab>
 	<g:Tab>
 					<g:TabHTML></g:TabHTML>
@@ -112,7 +119,7 @@
 					</g:Tab>
 	
 	
-	</g:TabPanel>
+	</g:TabPanel> -->
 	</g:HTMLPanel>
 	
 	

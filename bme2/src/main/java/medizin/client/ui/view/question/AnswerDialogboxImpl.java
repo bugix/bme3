@@ -4,10 +4,12 @@ import java.util.Collection;
 import java.util.List;
 
 import medizin.client.proxy.PersonProxy;
+import medizin.client.proxy.QuestionProxy;
 import medizin.client.shared.Validity;
 import medizin.client.ui.richtext.RichTextToolbar;
 import medizin.client.ui.view.roo.PersonProxyRenderer;
 import medizin.client.ui.widget.IconButton;
+import medizin.client.ui.widget.resource.image.polygon.ImagePolygonViewer;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.EventHandlingValueHolderItem;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.simple.DefaultSuggestOracle;
@@ -31,6 +33,7 @@ import com.google.gwt.user.client.ui.RichTextArea;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.ValueListBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.requestfactory.gwt.ui.client.EntityProxyKeyProvider;
 
@@ -63,11 +66,14 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*
 	@UiField
 	public TextArea comment;
 	
-	@UiField
+	/*@UiField
 	TabPanel questionTypePanel;
-
+*/
 	@UiField
 	public Label lblAuther;
+	
+	@UiField
+	VerticalPanel viewContainer;
 
 	@UiField
 	@Ignore
@@ -113,8 +119,12 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*
 	@UiField
 	public DivElement descriptionValue;
 	
-	public AnswerDialogboxImpl() {
+    private QuestionProxy question;
+
 		
+	public AnswerDialogboxImpl(QuestionProxy questionProxy) {
+		
+		this.question = questionProxy;
 		answerTextArea = new RichTextArea();
 		answerTextArea.setSize("100%", "14em");
 		toolbar = new RichTextToolbar(answerTextArea);
@@ -125,9 +135,10 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*
 		setAnimationEnabled(true);
 		setTitle("Anzahl Fragentypen pro Prüfung hinzufügen");
 		setText("Anzahl Fragentypen pro Prüfung hinzufügen");
-		questionTypePanel.selectTab(0);
+		/*questionTypePanel.selectTab(0);
 		questionTypePanel.getTabBar().setTabText(0, "Manage Answer");
-		questionTypePanel.getTabBar().setTabText(1, "Media");
+		questionTypePanel.getTabBar().setTabText(1, "Media");*/
+
 		lblAuther.setText(constants.auther());
 		/*RichTextToolbar toolbar = new RichTextToolbar(answerTextArea);*/
 
@@ -201,6 +212,9 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*
 				}
 			});
 
+	private ImagePolygonViewer imagePolygonViewer;
+
+
 	@Override
 	public ValueListBox<Validity> getValidity() {
 		return validity;
@@ -268,7 +282,22 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*
 		hide();
 
 	}
-	
+
+	@Override
+	public VerticalPanel getViewContainer() {
+		return viewContainer;
+	}
+
+	@Override
+	public ImagePolygonViewer getImagePolygonViewer() {
+		return imagePolygonViewer;
+	}
+
+	@Override
+	public void setImagePolygonViewer(ImagePolygonViewer viewer) {
+		this.imagePolygonViewer = viewer;
+		
+	}	
 	
 	@Override
 	public DefaultSuggestBox<PersonProxy, EventHandlingValueHolderItem<PersonProxy>> getAutherSuggestBox() {

@@ -21,5 +21,6 @@ public interface AnswerRequest extends AnswerRequest_Roo_Gwt {
 	Request<Long> countAnswersNonAcceptedAdminByQuestion(Long id);
 	Request<List<AnswerProxy>> findAnswersEntriesNonAcceptedAdminByQuestion(
 			Long questionId, Integer start, Integer length);
+	Request<List<String>> findAllAnswersPoints(Long id);
 	
 }
