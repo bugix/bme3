@@ -10,6 +10,7 @@ import medizin.client.ui.richtext.RichTextToolbar;
 import medizin.client.ui.view.roo.PersonProxyRenderer;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.resource.image.polygon.ImagePolygonViewer;
+import medizin.client.ui.widget.resource.image.rectangle.ImageRectangleViewer;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.EventHandlingValueHolderItem;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.simple.DefaultSuggestOracle;
@@ -80,6 +81,9 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*
 	public DefaultSuggestBox<PersonProxy, EventHandlingValueHolderItem<PersonProxy>> auther;
 	
 	public BmeConstants constants = GWT.create(BmeConstants.class);
+
+	private ImagePolygonViewer imagePolygonViewer;
+	private ImageRectangleViewer imageRectangleViewer;
 
 	@UiHandler("closeButton")
 	public void onCloseButtonClick(ClickEvent event) {
@@ -212,8 +216,6 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*
 				}
 			});
 
-	private ImagePolygonViewer imagePolygonViewer;
-
 
 	@Override
 	public ValueListBox<Validity> getValidity() {
@@ -299,6 +301,15 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*
 		
 	}	
 	
+	@Override
+	public void setImageRectangleViewer(ImageRectangleViewer viewer) {
+		this.imageRectangleViewer = viewer;
+	}
+
+	@Override
+	public ImageRectangleViewer getImageRectangleViewer() {
+		return this.imageRectangleViewer;
+	}
 	@Override
 	public DefaultSuggestBox<PersonProxy, EventHandlingValueHolderItem<PersonProxy>> getAutherSuggestBox() {
 		// TODO Auto-generated method stub

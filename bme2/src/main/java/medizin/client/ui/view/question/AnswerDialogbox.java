@@ -5,6 +5,7 @@ import java.util.Collection;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.shared.Validity;
 import medizin.client.ui.widget.resource.image.polygon.ImagePolygonViewer;
+import medizin.client.ui.widget.resource.image.rectangle.ImageRectangleViewer;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.EventHandlingValueHolderItem;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
 
@@ -63,7 +64,11 @@ VerticalPanel getViewContainer();
 
 	ImagePolygonViewer getImagePolygonViewer();
 
-	void setImagePolygonViewer(ImagePolygonViewer viewer);	
+	void setImagePolygonViewer(ImagePolygonViewer viewer);
+
+	void setImageRectangleViewer(ImageRectangleViewer viewer);
+
+	ImageRectangleViewer getImageRectangleViewer();	
 
 	
 

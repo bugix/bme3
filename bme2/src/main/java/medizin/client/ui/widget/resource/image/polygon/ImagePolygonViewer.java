@@ -142,7 +142,7 @@ public class ImagePolygonViewer extends Composite {
 			currentPath.close();
 			drawingArea.remove(currentPath);
 		}
-		
+		currentPath = null;
 		validPolygon = true;
 	}
 	

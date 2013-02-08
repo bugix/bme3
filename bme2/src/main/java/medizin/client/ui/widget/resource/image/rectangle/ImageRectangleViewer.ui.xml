@@ -1,0 +1,22 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:gwtgraphics="urn:import:org.vaadin.gwtgraphics.client">
+	<ui:style>
+		.imageBox {
+			overflow: auto;
+			height: 500px;
+			width: 500px;
+			
+		}
+	</ui:style>
+	<ui:with type="medizin.shared.i18n.BmeConstants" field="cc"></ui:with>
+	<g:HTMLPanel styleName="{style.imageBox}">
+		<g:VerticalPanel>
+			<g:HorizontalPanel horizontalAlignment="left">
+				<g:Button ui:field="btnAdd" height="20px" width="50px" text="{cc.add}"></g:Button>
+				<g:Button ui:field="btnClear" height="20px" width="50px" text="{cc.clear}"></g:Button>
+			</g:HorizontalPanel>
+			<gwtgraphics:DrawingArea ui:field="drawingArea"></gwtgraphics:DrawingArea>
+		</g:VerticalPanel>
+	</g:HTMLPanel>
+</ui:UiBinder> 

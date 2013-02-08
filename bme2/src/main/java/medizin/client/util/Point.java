@@ -1,5 +1,9 @@
 package medizin.client.util;
 
+import java.util.List;
+
+import com.allen_sauer.gwt.log.client.Log;
+import com.google.common.collect.Lists;
 
 public final class Point implements Comparable<Point> {
 
@@ -52,5 +56,25 @@ public final class Point implements Comparable<Point> {
 			return true;
 
 		return false;
+	}
+
+	public static List<Point> getPoints(List<String> points) {
+		
+		List<Point> list = Lists.newArrayList();
+		
+		for (String stringPoint : points) {
+			if(stringPoint != null ) {
+				String[] coordinates = stringPoint.split(",");
+				if(coordinates.length == 2) {
+					int x = Integer.parseInt(coordinates[0],10);
+					int y = Integer.parseInt(coordinates[1],10);
+					list.add(new  Point(x,y));
+				}else {
+					Log.error("error in point : " + stringPoint);
+				}
+			}
+		}
+		
+		return list;
 	}
 }

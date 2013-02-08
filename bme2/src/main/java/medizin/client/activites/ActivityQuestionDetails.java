@@ -34,6 +34,8 @@ import medizin.client.ui.view.question.QuestionDetailsViewImpl;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.ui.widget.resource.dndview.vo.State;
 import medizin.client.ui.widget.resource.image.polygon.ImagePolygonViewer;
+import medizin.client.ui.widget.resource.image.rectangle.ImageRectangleViewer;
+import medizin.client.util.Point;
 import medizin.client.util.PolygonPath;
 import medizin.shared.QuestionTypes;
 
@@ -362,6 +364,9 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 				addForShowInImage();
 				break;
 
+			case Imgkey:
+				addForImageKey();
+				break;
 			default:
 				Log.info("check for media");
 				break;
@@ -448,6 +453,41 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 
 		
 	}
+	private void addForImageKey() {
+
+		AnswerRequest answerRequest = requests.answerRequest();
+		Log.info("Question id :" + question.getId());
+		answerRequest.findAllAnswersPoints(question.getId()).fire(new Receiver<List<String>>() {
+
+			@Override
+			public void onSuccess(List<String> points) {
+		
+				List<Point> rectanglePoints = Point.getPoints(points);
+				
+				if(question != null && question.getQuestionType() != null && QuestionTypes.Imgkey.equals(question.getQuestionType().getQuestionType()) && question.getPicturePath() != null && question.getPicturePath().length() > 0 && question.getQuestionType().getImageWidth() != null && question.getQuestionType().getImageHeight() != null) {
+					ImageRectangleViewer viewer = new ImageRectangleViewer(question.getPicturePath(), question.getQuestionType().getImageWidth(), question.getQuestionType().getImageHeight(),rectanglePoints);
+					answerDialogbox.getViewContainer().add(viewer);
+					answerDialogbox.setImageRectangleViewer(viewer);
+				}
+			}
+			
+
+			@Override
+			public void onConstraintViolation(
+					Set<ConstraintViolation<?>> violations) {
+				Log.error("error in onConstraintViolation");
+				super.onConstraintViolation(violations);
+			}
+			
+			@Override
+			public void onFailure(ServerFailure error) {
+				Log.error("error in onFailure : " + error.getMessage());
+				super.onFailure(error);
+			}
+			
+		});		
+	}
+
 	private void addForShowInImage() {
 
 		AnswerRequest answerRequest = requests.answerRequest();
@@ -459,7 +499,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		
 				List<PolygonPath> polygonPaths = PolygonPath.getPolygonPaths(polygons);
 				
-				if(question != null && question.getQuestionType() != null && QuestionTypes.ShowInImage.equals(question.getQuestionType().getQuestionType()) && question.getPicturePath() != null && question.getPicturePath().length() > 0 && question.getQuestionType().getImageHeight() != null && question.getQuestionType().getImageHeight() != null) {
+				if(question != null && question.getQuestionType() != null && QuestionTypes.ShowInImage.equals(question.getQuestionType().getQuestionType()) && question.getPicturePath() != null && question.getPicturePath().length() > 0 && question.getQuestionType().getImageWidth() != null && question.getQuestionType().getImageHeight() != null) {
 					ImagePolygonViewer viewer = new ImagePolygonViewer(question.getPicturePath(), question.getQuestionType().getImageWidth(), question.getQuestionType().getImageHeight(),polygonPaths);
 					answerDialogbox.getViewContainer().add(viewer);
 					answerDialogbox.setImagePolygonViewer(viewer);
@@ -534,6 +574,17 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			}else {
 				ErrorPanel errorPanel = new ErrorPanel();
 				errorPanel.setErrorMessage("Polygon is not property added. Try again");
+				return;
+			}
+			Log.info("Points added");
+		}else if(question.getQuestionType() != null && QuestionTypes.Imgkey.equals(question.getQuestionType().getQuestionType()) == true && answerDialogbox.getValidity() != null & Validity.Wahr.equals(answerDialogbox.getValidity().getValue())) {
+			
+			if(answerDialogbox != null && answerDialogbox.getImageRectangleViewer() != null) {
+				Log.info("Points : " + answerDialogbox.getImageRectangleViewer().getPoint());
+				answerProxy.setPoints(answerDialogbox.getImageRectangleViewer().getPoint());		
+			}else {
+				ErrorPanel errorPanel = new ErrorPanel();
+				errorPanel.setErrorMessage("Rectangle is not property added. Try again");
 				return;
 			}
 			Log.info("Points added");
