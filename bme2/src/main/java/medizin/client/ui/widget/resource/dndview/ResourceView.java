@@ -43,8 +43,7 @@ public class ResourceView extends Composite implements DragHandler {
 	private int frontRowNumber = 0;
 	
 	private ResourceView impl;
-	private ResourceSubView resourceSubView;
-
+	//private ResourceSubView resourceSubView;
 	
 	@UiField
 	VerticalPanel customContentPanel;
@@ -224,6 +223,7 @@ public class ResourceView extends Composite implements DragHandler {
 			Log.info("orginal resource view : " + iterable_element);	
 		}
 		
+		eventBus.fireEvent(new ResourceSequenceChangedEvent(getQuestionResources()));
 		// delegate.updateCustomContent(contentSubView, customContentProxy, i +
 		// 1);
 		//delegate.updateCustomContent(customContentProxies);

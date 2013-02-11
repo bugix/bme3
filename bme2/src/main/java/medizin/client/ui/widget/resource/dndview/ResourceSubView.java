@@ -1,6 +1,7 @@
 package medizin.client.ui.widget.resource.dndview;
 
 import medizin.client.ui.widget.IconButton;
+import medizin.client.ui.widget.resource.audio.AudioViewer;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.ui.widget.resource.dndview.vo.State;
 import medizin.client.ui.widget.resource.event.ResourceDeletedEvent;
@@ -8,21 +9,21 @@ import medizin.client.ui.widget.resource.image.ImageViewer;
 import medizin.client.ui.widget.resource.video.VideoViewer;
 import medizin.shared.MultimediaType;
 import medizin.shared.QuestionTypes;
+import medizin.shared.i18n.BmeConstants;
 import medizin.shared.utils.SharedConstant;
 
-import com.allen_sauer.gwt.log.client.Log;
+import com.google.common.base.Function;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.media.client.Audio;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DialogBox;
-import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -33,6 +34,8 @@ public class ResourceSubView extends Composite {
 	private static ResourceSubViewUiBinder uiBinder = GWT
 			.create(ResourceSubViewUiBinder.class);
 
+	private final BmeConstants constants = GWT.create(BmeConstants.class);
+	
 	private QuestionResourceClient questionResource;
 
 	private ResourceView resourceView;
@@ -72,7 +75,7 @@ public class ResourceSubView extends Composite {
 	}
 
 	public void setDetails(final QuestionResourceClient questionResource,QuestionTypes questionType,
-			ResourceView resourceView) {
+			final ResourceView resourceView) {
 		this.questionResource = questionResource;
 		this.resourceView = resourceView;
 		this.questionType = questionType;
@@ -83,7 +86,9 @@ public class ResourceSubView extends Composite {
 			public void onClick(ClickEvent event) {
 				questionResource.setState(State.DELETED);
 				resourceSubView.removeFromParent();
+				resourceView.onDragEnd(null);
 				eventBus.fireEvent(new ResourceDeletedEvent(questionResource));
+				
 			}
 		});
 	}
@@ -109,9 +114,18 @@ public class ResourceSubView extends Composite {
 
 				@Override
 				public void onClick(ClickEvent event) {
-					ImageViewer viewer = new ImageViewer();
+					final ImageViewer viewer = new ImageViewer();
 					viewer.setUrl(questionResource.getPath(), questionType);
-					DialogBox dialogBox = createImageDialogBox("Image Viewer",viewer);
+					DialogBox dialogBox = createDialogBox(constants.mediaViewer(),viewer,new Function<Boolean,Void>(){
+
+						@Override
+						public Void apply(Boolean input) {
+							if(input != null && input.equals(true)) {
+								viewer.closed();	
+							}
+							return null;
+						}
+					});
 					dialogBox.center();
 		            dialogBox.show();
 				}
@@ -125,11 +139,19 @@ public class ResourceSubView extends Composite {
 
 				@Override
 				public void onClick(ClickEvent event) {
-//					ImageViewer viewer = new ImageViewer();
-//					viewer.setUrl(questionResource.getPath(), questionType);
-//					DialogBox dialogBox = createImageDialogBox("Image Viewer",viewer);
-//					dialogBox.center();
-//		            dialogBox.show();
+					final AudioViewer viewer = new AudioViewer(questionResource.getPath());
+					DialogBox dialogBox = createDialogBox(constants.mediaViewer(),viewer,new Function<Boolean,Void>(){
+
+						@Override
+						public Void apply(Boolean input) {
+							if(input != null && input.equals(true)) {
+								viewer.closed();	
+							}
+							return null;
+						}
+					});
+					dialogBox.center();
+		            dialogBox.show();
 				}
 			});
 			break;
@@ -140,9 +162,18 @@ public class ResourceSubView extends Composite {
 
 				@Override
 				public void onClick(ClickEvent event) {
-					VideoViewer viewer = new VideoViewer();
+					final VideoViewer viewer = new VideoViewer();
 					viewer.setVideoMediaContent(questionResource.getPath());
-					DialogBox dialogBox = createImageDialogBox("Video Viewer",viewer);
+					DialogBox dialogBox = createDialogBox(constants.mediaViewer(),viewer,new Function<Boolean,Void>(){
+
+						@Override
+						public Void apply(Boolean input) {
+							if(input != null && input.equals(true)) {
+								viewer.closed();	
+							}
+							return null;
+						}
+					});
 					dialogBox.center();
 		            dialogBox.show();
 				}
@@ -157,10 +188,11 @@ public class ResourceSubView extends Composite {
 
 	/**
 	 * Create the dialog box for this example.
+	 * @param function 
 	 * 
 	 * @return the new dialog box
 	 */
-	private DialogBox createImageDialogBox(String title,Widget widget) {
+	private DialogBox createDialogBox(String title,Widget widget, final Function<Boolean, Void> function) {
 		// Create a dialog box and set the caption text
 		final DialogBox dialogBox = new DialogBox();
 		dialogBox.ensureDebugId("cwDialogBox");
@@ -179,13 +211,13 @@ public class ResourceSubView extends Composite {
 				HasHorizontalAlignment.ALIGN_CENTER);
 
 		// Add a close button at the bottom of the dialog
-		Button closeButton = new Button("Closed");
+		Button closeButton = new Button(constants.close());
 		closeButton.addClickHandler(new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
 				dialogBox.hide();
-				
+				function.apply(true);
 			}
 		});
 		
@@ -225,36 +257,6 @@ public class ResourceSubView extends Composite {
 		}
 
 		return fileName;
-	}
-
-	@UiHandler("deleteButton")
-	public void deleteButtonClicked(ClickEvent e) {
-
-		Log.info("Delete button clicked");
-		// final VisitorDialogBox dialogBox = new
-		// VisitorDialogBox(constants.delete());
-		//
-		// dialogBox.getYesButton().addClickHandler(new ClickHandler() {
-		//
-		// @Override
-		// public void onClick(ClickEvent arg0) {
-		// customContentView.setSelectedView(contentSubViewImpl);
-		// delegate.deleteCustomContentDetail(customContentProxy,
-		// contentSubViewImpl);
-		// customContentView.onDragEnd(null);
-		// dialogBox.hide();
-		// }
-		// });
-		// dialogBox.getNoButton().addClickHandler(new ClickHandler() {
-		//
-		// @Override
-		// public void onClick(ClickEvent event) {
-		// dialogBox.hide();
-		// }
-		// });
-		//
-		// dialogBox.showYesNoDialog(constants.reallyDelete());
-
 	}
 
 	public ResourceView getResourceView() {

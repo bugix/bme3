@@ -52,4 +52,8 @@ public class VideoViewer extends Composite {
 		videoPanel.add(videoPlayer);
 	}
 
+	public void closed() {
+		Log.info("Video player is closed.");
+	}
+
 }

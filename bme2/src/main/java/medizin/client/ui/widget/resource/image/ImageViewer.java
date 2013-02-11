@@ -236,4 +236,10 @@ public class ImageViewer extends Composite{
 		return getImageUrl().replace(GWT.getHostPageBaseURL(), "");
 	}
 
+
+	public void closed() {
+		Log.info("Image viewer is closed");
+		
+	}
+
 }

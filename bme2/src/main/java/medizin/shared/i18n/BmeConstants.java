@@ -1,6 +1,7 @@
 package medizin.shared.i18n;
 
 import com.google.gwt.i18n.client.Constants;
+import com.google.gwt.safehtml.shared.SafeHtml;
 
 public interface BmeConstants extends Constants {
 	
@@ -187,4 +188,8 @@ public interface BmeConstants extends Constants {
 	public String answerText();
     public String add();
     public String clear();
+
+	public String mediaViewer();
+
+	public String close();
 }

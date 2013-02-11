@@ -1,0 +1,19 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:m="urn:import:medizin.client.ui.widget">
+	<ui:style>
+		.audioBox {
+			overflow: auto;
+			height: 300px;
+			width: 500px;	
+		}
+	</ui:style>
+	<g:HTMLPanel styleName="{style.audioBox">
+		<g:HorizontalPanel ui:field="audioPanel">
+			<m:IconButton ui:field="play" icon="play"></m:IconButton>
+			<!-- <m:IconButton ui:field="pause" icon="pause"></m:IconButton> -->
+			<m:IconButton ui:field="stop" icon="stop"></m:IconButton>
+			<g:Label ui:field="info"></g:Label>
+	    </g:HorizontalPanel>
+	</g:HTMLPanel>
+</ui:UiBinder> 

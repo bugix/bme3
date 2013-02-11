@@ -763,10 +763,9 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	}
 
 	@Override
-	public void addNewQuestionResource(
-			QuestionResourceClient questionResourceClient) {
+	public void addNewQuestionResource(final QuestionResourceClient questionResourceClient) {
 
-		QuestionResourceRequest request  = requests.questionResourceRequest();
+		final QuestionResourceRequest request  = requests.questionResourceRequest();
 		
 		QuestionResourceProxy proxy = request.create(QuestionResourceProxy.class);
 		
@@ -775,11 +774,21 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		proxy.setSequenceNumber(questionResourceClient.getSequenceNumber());
 		proxy.setType(questionResourceClient.getType());
 		
+		final QuestionResourceProxy proxy2 = proxy; 
 		request.persist().using(proxy).fire(new Receiver<Void>() {
 
 			@Override
 			public void onSuccess(Void response) {
 				Log.info("Added new Question Resource");
+				
+				requests.questionResourceRequest().find(proxy2.stableId()).fire(new Receiver<Object>(){
+
+					@Override
+					public void onSuccess(Object response) {
+						QuestionResourceProxy resourceProxy = (QuestionResourceProxy) response;
+						questionResourceClient.setId(resourceProxy.getId());
+					}
+				});
 			}
 		});
 	}
