@@ -46,6 +46,10 @@
            <url>file://${project.basedir}/lib</url>
            <layout>default</layout>
       	</repository>
+      	<repository>
+	        <id>gwt-soundmanager2-releases</id>
+	        <url>https://raw.github.com/rcaloras/rcaloras-mvn-repo/master/releases</url>
+    	</repository>
     </repositories>
     <pluginRepositories>
         <pluginRepository>
@@ -98,6 +102,12 @@
 			<version>1.0</version>
 		</dependency>
 		
+		<dependency>
+	        <groupId>com.chj</groupId>
+	        <artifactId>gwt-soundmanager2</artifactId>
+	        <version>0.1.1</version>
+	    </dependency>
+      
 		<dependency>
 		    <groupId>com.google.guava</groupId>
 		    <artifactId>guava-gwt</artifactId>
