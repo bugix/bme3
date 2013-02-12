@@ -36,9 +36,9 @@ public interface QuestionRequest extends QuestionRequest_Roo_Gwt {
 
 	Request<List<QuestionProxy>> findQuestionsAnswersNonAcceptedAdmin();
 
-	Request<Long>  countQuestionsByPerson(String string, Long institutionId);
+	Request<Long>  countQuestionsByPerson(String string, Long institutionId, String searchText, List<String> searchField);
 
-	Request<List<QuestionProxy>>  findQuestionEntriesByPerson(String string, Long institutionId, int start, int length);
+	Request<List<QuestionProxy>>  findQuestionEntriesByPerson(String string, Long institutionId, String searchText, List<String> searchField, int start, int length);
 	
 	InstanceRequest<QuestionProxy, Void> persistAndSetPreviousInactive();
 

@@ -4,9 +4,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import medizin.client.proxy.InstitutionProxy;
+import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.ui.widget.IconButton;
+import medizin.client.ui.widget.QuickSearchBox;
 import medizin.shared.Status;
 import medizin.shared.i18n.BmeConstants;
 
@@ -76,6 +80,15 @@ public class QuestionFilterViewImpl extends PopupPanel implements QuestionView {
 
 	@UiField
 	CheckBox reviewer;
+	
+	@UiField
+	CheckBox questionText;
+	
+	@UiField
+	CheckBox instructionText;
+	
+	@UiField
+	CheckBox keywordText;
 
 	@UiField(provided = true)
 	public ValueListBox<Status> status=new ValueListBox<Status>(new AbstractRenderer<Status>() {
@@ -87,11 +100,37 @@ public class QuestionFilterViewImpl extends PopupPanel implements QuestionView {
 		}
 	});
 	
+	@UiField(provided = true)
+	public ValueListBox<InstitutionProxy> institutionListBox=new ValueListBox<InstitutionProxy>(new AbstractRenderer<InstitutionProxy>() {
+
+		@Override
+		public String render(InstitutionProxy object) {
+			// TODO Auto-generated method stub
+			return object==null ?" ": String.valueOf(object.getInstitutionName());			
+		}
+	});
+	
+	@UiField(provided = true)
+	public ValueListBox<QuestionEventProxy> specialiationListBox=new ValueListBox<QuestionEventProxy>(new AbstractRenderer<QuestionEventProxy>() {
+
+		@Override
+		public String render(QuestionEventProxy object) {
+			// TODO Auto-generated method stub
+			return object==null ?" ": object.getEventName();
+		}
+	});
+	
 	@UiField
 	public DateBox createStartDate;
 	
 	@UiField
 	public DateBox createEndDate;
+	
+	@UiField
+	public DateBox usedMcStartDate;
+	
+	@UiField
+	public DateBox usedMcEndDate;
 	
 	
 	/*@UiField
@@ -218,6 +257,12 @@ public class QuestionFilterViewImpl extends PopupPanel implements QuestionView {
 
 		
 		status.setAcceptableValues(Arrays.asList(Status.values()));
+		
+		/*auther.setText("Author");
+		reviewer.setText("Reviwer");
+		questionText.setText("Question Text");
+		instructionText.setText("Instruction");
+		keywordText.setText("Keyword");*/
 		// TopicName Keyword ItemName ItemName RoleName CheckListItem ItemValue
 
 		/*
@@ -290,4 +335,33 @@ public class QuestionFilterViewImpl extends PopupPanel implements QuestionView {
 		return null;
 	}
 
+	@Override
+	public void setInstitutionFilter(List<InstitutionProxy> values) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setSpecialisationFilter(List<QuestionEventProxy> values) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Map<String, Object> getSearchFiledValue() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public QuickSearchBox getSerachBox() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<String> getSearchValue() {
+		List<String> searchField = new ArrayList<String>();
+		return searchField;
+	}
 }

@@ -1,15 +1,22 @@
 package medizin.client.ui.view.question;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import medizin.client.factory.request.McAppRequestFactory;
+import medizin.client.proxy.InstitutionProxy;
+import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.style.resources.MyCellTableResources;
 import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.QuickSearchBox;
+
 import medizin.shared.Status;
 import medizin.shared.i18n.BmeConstants;
 
@@ -165,8 +172,24 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 	public void newButtonClicked(ClickEvent e) {
 		delegate.newClicked();
 	}
+	
+	Map<String, Object> serachField;
+	
+	List<String> searchField = new ArrayList<String>();
 
+	@Override
+	public void setInstitutionFilter(List<InstitutionProxy> values)
+	{
+		filterPanel.institutionListBox.setAcceptableValues(values);
+	}
 
+	@Override
+	public void setSpecialisationFilter(List<QuestionEventProxy> values)
+	{
+		filterPanel.specialiationListBox.setAcceptableValues(values);
+	}
+
+	
 	public QuestionViewImpl() {
 		CellTable.Resources tableResources = GWT
 				.create(MyCellTableResources.class);
@@ -183,6 +206,94 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 			public void performAction() {
 				// delegate.performSearch(searchBox.getValue());
 				Log.info("serach click");
+				
+				searchField.clear();
+				
+				if (filterPanel.auther.isChecked())
+				{	
+					searchField.add("author");
+					searchField.add(filterPanel.auther.isChecked() ? "true" : "false");
+					//searchFileds.add(new SearchValue("author", filterPanel.auther.isChecked() ? "true" : "false"));
+				}
+				
+				if (filterPanel.reviewer.isChecked())
+				{
+					searchField.add("reviewer");
+					searchField.add(filterPanel.reviewer.isChecked()? "true" : "false");
+					//searchFileds.add(new SearchValue("reviewer", filterPanel.reviewer.isChecked()? "true" : "false"));
+				}
+				
+				if (filterPanel.questionText.isChecked())
+				{
+					searchField.add("quesitontext");
+					searchField.add(filterPanel.questionText.isChecked()? "true" : "false");
+					//searchFileds.add(new SearchValue("quesitontext", filterPanel.questionText.isChecked()? "true" : "false"));
+				}
+				
+				if (filterPanel.instructionText.isChecked())
+				{
+					searchField.add("instruction");
+					searchField.add(filterPanel.instructionText.isChecked()? "true" : "false");
+					//searchFileds.add(new SearchValue("instruction", filterPanel.instructionText.isChecked()? "true" : "false"));
+				}
+				
+				if (filterPanel.keywordText.isChecked())
+				{
+					searchField.add("keyword");
+					searchField.add(filterPanel.keywordText.isChecked()? "true" : "false");
+					//searchFileds.add(new SearchValue("keyword", filterPanel.keywordText.isChecked()? "true" : "false"));
+				}
+				
+				if (filterPanel.institutionListBox.getValue() != null)
+				{
+					searchField.add("institution");
+					searchField.add(filterPanel.institutionListBox.getValue().getId().toString());
+					//searchFileds.add(new SearchValue("institution", filterPanel.institutionListBox.getValue().getId().toString()));
+				}
+				
+				if (filterPanel.specialiationListBox.getValue() != null)
+				{
+					searchField.add("specialiation");
+					searchField.add(filterPanel.specialiationListBox.getValue().getId().toString());
+					//searchFileds.add(new SearchValue("specialiation", filterPanel.specialiationListBox.getValue().getId().toString()));
+				}
+				
+				if (filterPanel.status.getValue() != null)
+				{
+					searchField.add("status");
+					searchField.add(filterPanel.status.getValue().toString());
+					//searchFileds.add(new SearchValue("status", filterPanel.status.getValue().toString()));
+				}
+				
+				if (filterPanel.createStartDate.getValue() != null)
+				{
+					searchField.add("createdDateFrom");
+					searchField.add(filterPanel.createStartDate.getValue().toString());
+					//searchFileds.add(new SearchValue("createdDateFrom", filterPanel.createStartDate.getValue().toString()));
+				}
+				
+				if (filterPanel.createEndDate.getValue() != null)
+				{
+					searchField.add("createdDateTo");
+					searchField.add(filterPanel.createEndDate.getValue().toString());
+					//searchFileds.add(new SearchValue("createdDateTo", filterPanel.createEndDate.getValue().toString()));
+				}
+				
+				if (filterPanel.usedMcStartDate.getValue() != null)
+				{
+					searchField.add("usedMcFrom");
+					searchField.add(filterPanel.usedMcStartDate.getValue().toString());
+					//searchFileds.add(new SearchValue("usedMcFrom", filterPanel.usedMcStartDate.getValue().toString()));
+				}
+				
+				if (filterPanel.usedMcEndDate.getValue() != null)
+				{
+					searchField.add("usedMcTo");
+					searchField.add(filterPanel.usedMcEndDate.getValue().toString());
+					//searchFileds.add(new SearchValue("usedMcTo", filterPanel.usedMcEndDate.getValue().toString()));
+				}
+				
+				delegate.performSearch(searchBox.getValue());
 			}
 		});
 
@@ -193,11 +304,18 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 
 	}
 
+	
 	@UiHandler("filterButton")
 	public void filterButtonHover(MouseOverEvent event) {
 		// System.out.println("Mouse over");
 		Log.info("filter panel call");
 		showFilterPanel((Widget) event.getSource());
+	}
+	
+	@Override 
+	public Map<String,Object> getSearchFiledValue()
+	{
+		return serachField;
 	}
 
 	private void showFilterPanel(Widget eventSource) {
@@ -206,7 +324,7 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 
 		filterPanel.setPopupPosition(x, y);
 		filterPanel.show();
-		filterPanel.setSize("350px", "210px");
+		filterPanel.setSize("415px", "300px");
 		// Log.info(filterPanel.getSpecialisationBox().getValue());
 
 	}
@@ -569,6 +687,11 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 		
 	}
 
+	@Override
+	public QuickSearchBox getSerachBox()
+	{
+		return searchBox;
+	}
 
 	@Override
 	public void setPresenter(Presenter presenter) {
@@ -652,53 +775,13 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 
 		}
 	}
-	
-	private static class GridTreeCell extends AbstractCell<QuestionProxy> {
 
-		@Override
-		public void render(com.google.gwt.cell.client.Cell.Context context,
-				QuestionProxy value,  SafeHtmlBuilder sb) {
-			// Always do a null check on the value. Cell widgets can pass null
-			// to cells
-			// if the underlying data contains a null, or if the data arrives
-			// out of order.
-			
-			TreeItem department = new TreeItem("Department");
-			
-			TreeItem employee1 = new TreeItem("Robert");
-		      TreeItem employee2 = new TreeItem("Joe");
-		      TreeItem employee3 = new TreeItem("Chris");
-		      
-		      department.addItem(employee1);
-		      department.addItem(employee2);
-		      department.addItem(employee3);
-		      
-		      
-			if (value == null) {
-				return;
-			}
-			String beginn = "<div style=\"";
-			String end = "</div>";
-			if (!value.getIsAcceptedAdmin()) {
-				beginn += "color:red; ";
-			}
-			if (!value.getIsAcceptedRewiever()) {
-				beginn += "font-style:italic; ";
-			}
-			if (!value.getIsActive()) {
-				beginn += "text-decoration: line-through; ";
-			}
-
-			beginn += "\">";
-			
-			sb.appendHtmlConstant(department.getElement().getInnerHTML());
-			Log.info("html value--"+department.getElement().getInnerHTML());
-			/*sb.appendHtmlConstant(beginn);
-			sb.appendHtmlConstant(value.getQuestionText());
-			sb.appendHtmlConstant(end);*/
-
-		}
+	@Override
+	public List<String> getSearchValue() {
+		return searchField;
 	}
+	
+	
 
 
 }

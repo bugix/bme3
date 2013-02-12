@@ -192,4 +192,21 @@ public interface BmeConstants extends Constants {
 	public String mediaViewer();
 
 	public String close();
+
+public String instruction();
+			
+	public String keyword();
+	
+	public String specialiation();
+	
+	public String createdDate();
+	
+	public String usedinMC();
+	
+	public String from();
+			
+	public String to();
+	
+	public String searchFor();
+
 }

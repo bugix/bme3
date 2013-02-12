@@ -4,31 +4,19 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import medizin.client.factory.request.McAppRequestFactory;
+import medizin.client.place.PlaceQuestion;
+import medizin.client.place.PlaceQuestionDetails;
+import medizin.client.proxy.InstitutionProxy;
+import medizin.client.proxy.PersonProxy;
+import medizin.client.proxy.QuestionEventProxy;
+import medizin.client.proxy.QuestionProxy;
 import medizin.client.ui.ErrorPanel;
 import medizin.client.ui.McAppConstant;
-import medizin.client.ui.SlidingPanel;
-import medizin.client.ui.TopPanel;
-import medizin.client.ui.view.AcceptPersonView;
-import medizin.client.ui.view.AcceptPersonViewImpl;
-import medizin.client.ui.view.SystemOverviewView;
-import medizin.client.ui.view.SystemOverviewViewImpl;
 import medizin.client.ui.view.question.QuestionView;
 import medizin.client.ui.view.question.QuestionViewImpl;
 
-import medizin.client.place.PlaceAcceptPerson;
-import medizin.client.place.PlaceQuestionDetails;
-import medizin.client.place.PlaceQuestion;
-import medizin.client.place.PlaceQuestionDetails;
-import medizin.client.place.PlaceSystemOverview;
-import medizin.client.factory.request.McAppRequestFactory;
-import medizin.client.proxy.InstitutionProxy;
-import medizin.client.proxy.QuestionProxy;
-import medizin.client.proxy.PersonProxy;
-import medizin.client.proxy.QuestionProxy;
-
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.activity.shared.AbstractActivity;
-import com.google.gwt.activity.shared.Activity;
 import com.google.gwt.activity.shared.ActivityManager;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.shared.EventBus;
@@ -38,7 +26,6 @@ import com.google.gwt.place.shared.PlaceChangeEvent;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.cellview.client.AbstractHasData;
 import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.Range;
@@ -291,10 +278,10 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 			rangeChangeHandler.removeHandler();
 			rangeChangeHandler = null;
 		}
-
+	
 		requests.questionRequest()
 				.countQuestionsByPerson(this.userLoggedIn.getShidId(),
-						this.institutionActive.getId())
+						this.institutionActive.getId(), view.getSerachBox().getValue(), view.getSearchValue())
 				.fire(new Receiver<Long>() {
 					@Override
 					public void onSuccess(Long response) {
@@ -307,6 +294,16 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 						view.getTable().setRowCount(response.intValue(), true);
 						onRangeChanged();
 					}
+					
+					@Override
+					public void onFailure(ServerFailure error) {
+						System.out.println("ERROR : " + error.getMessage());
+					}
+					
+					@Override
+					public void onViolation(Set<Violation> errors) {
+						System.out.println("ERRORS SIZE : " + errors.size());
+					}
 				});
 
 		rangeChangeHandler = table
@@ -315,6 +312,23 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 						ActivityQuestion.this.onRangeChanged();
 					}
 				});
+	requests.institutionRequest().findAllInstitutions().fire(new Receiver<List<InstitutionProxy>>() {
+
+			@Override
+			public void onSuccess(List<InstitutionProxy> response) {
+				// TODO Auto-generated method stub
+				view.setInstitutionFilter(response);
+			}
+		});
+		
+		requests.questionEventRequest().findAllQuestionEvents().fire(new Receiver<List<QuestionEventProxy>>() {
+
+			@Override
+			public void onSuccess(List<QuestionEventProxy> response) {
+				// TODO Auto-generated method stub
+				view.setSpecialisationFilter(response);
+			}
+		});
 	}
 
 	protected void onRangeChanged() {
@@ -322,7 +336,7 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 
 		requests.questionRequest()
 				.findQuestionEntriesByPerson(this.userLoggedIn.getShidId(),
-						this.institutionActive.getId(), range.getStart(),
+						this.institutionActive.getId(), view.getSerachBox().getValue(), view.getSearchValue(), range.getStart(),
 						range.getLength()).with(view.getPaths())
 				.fire(new Receiver<List<QuestionProxy>>() {
 					@Override
@@ -348,6 +362,36 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 		placeController.goTo(new PlaceQuestionDetails(
 				PlaceQuestionDetails.Operation.CREATE));
 
+	}
+
+	@Override
+	public void performSearch(String searchText) {
+		requests.questionRequest()
+		.countQuestionsByPerson(this.userLoggedIn.getShidId(),
+				this.institutionActive.getId(), view.getSerachBox().getValue(), view.getSearchValue())
+		.fire(new Receiver<Long>() {
+			@Override
+			public void onSuccess(Long response) {
+				if (view == null) {
+					// This activity is dead
+					return;
+				}
+				Log.debug("Geholte Questions (Pr�fungen) aus der Datenbank: "
+						+ response);
+				view.getTable().setRowCount(response.intValue(), true);
+				onRangeChanged();
+			}
+			
+			@Override
+			public void onFailure(ServerFailure error) {
+				System.out.println("ERROR : " + error.getMessage());
+			}
+			
+			@Override
+			public void onViolation(Set<Violation> errors) {
+				System.out.println("ERRORS SIZE : " + errors.size());
+			}
+		});
 	}
 
 }
