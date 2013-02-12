@@ -284,6 +284,12 @@ public class ActivityUserCreate  extends AbstractActivityWrapper  implements Use
 		
 		if (view.getIsDoctor().getValue())
 			personProxy.setDoctor(view.getDoctorSuggestBox().getSelected());
+		else
+		{
+			if (personProxy.getDoctor() != null)
+				personProxy.setDoctor(null);
+		}
+		
 		
 		final PersonProxy finalPersonProxy = personProxy;
 		
