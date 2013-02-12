@@ -29,5 +29,9 @@ public interface QuestionAccessProxy extends EntityProxy {
 
     abstract void setQuestionEvent(QuestionEventProxy questionEvent);
 
+    abstract InstitutionProxy getInstitution();
+
+    abstract void setInstitution(InstitutionProxy institution);
+
     abstract Integer getVersion();
 }

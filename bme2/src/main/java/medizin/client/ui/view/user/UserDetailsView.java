@@ -29,4 +29,6 @@ public interface UserDetailsView extends IsWidget {
 	}
 
 	QuestionAccessViewImpl getQuestionAccessView();
+	
+	InstituteAccessViewImpl getInstituteAccessView();
 }

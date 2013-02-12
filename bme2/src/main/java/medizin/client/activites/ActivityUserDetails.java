@@ -19,6 +19,9 @@ import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.user.EventAccessDialogbox;
 import medizin.client.ui.view.user.EventAccessDialogboxImpl;
 import medizin.client.ui.view.user.EventAccessView;
+import medizin.client.ui.view.user.InstituteAccessDialogBox;
+import medizin.client.ui.view.user.InstituteAccessDialogBoxImpl;
+import medizin.client.ui.view.user.InstituteAccessView;
 import medizin.client.ui.view.user.QuestionAccessDialogbox;
 import medizin.client.ui.view.user.QuestionAccessDialogboxImpl;
 import medizin.client.ui.view.user.QuestionAccessView;
@@ -50,7 +53,8 @@ import com.google.web.bindery.requestfactory.shared.Violation;
  */
 public class ActivityUserDetails extends AbstractActivityWrapper implements UserDetailsView.Presenter, UserDetailsView.Delegate,
 		EventAccessView.Presenter, EventAccessView.Delegate, QuestionAccessView.Presenter, QuestionAccessView.Delegate,
-		 EventAccessDialogbox.Presenter, EventAccessDialogbox.Delegate,  QuestionAccessDialogbox.Presenter, QuestionAccessDialogbox.Delegate{
+		 EventAccessDialogbox.Presenter, EventAccessDialogbox.Delegate,  QuestionAccessDialogbox.Presenter, QuestionAccessDialogbox.Delegate,
+		 InstituteAccessView.Delegate, InstituteAccessView.Presenter, InstituteAccessDialogBox.Delegate, InstituteAccessDialogBox.Presenter{
 
 	private PlaceUserDetails userPlace;
 
@@ -103,6 +107,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 	
 	private UserDetailsView userDetailsView;
 
+	private InstituteAccessView instituteAccessView;
 
 
 	/**
@@ -147,7 +152,17 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 			public void onSuccess(Object response) {
 				if(response instanceof PersonProxy){
 					Log.info(((PersonProxy) response).getEmail());
-					init((PersonProxy) response);
+					
+					person = (PersonProxy) response;
+					
+					requests.personRequest().findPerson(person.getId()).with("doctor").fire(new Receiver<PersonProxy>() {
+
+						@Override
+						public void onSuccess(PersonProxy responseProxy) {
+							init(responseProxy);
+						}
+					});
+					
 				}
 
 				
@@ -174,7 +189,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 
 		initEventAccess();
 		initQuestionAccess();
-		
+		initInstituteAccess();
 	}
 	
 	private EventAccessView eventAccessView;
@@ -528,6 +543,8 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 
 	EventAccessDialogbox dialogBoxEvent;
 	QuestionAccessDialogbox dialogBoxQuestion;
+	
+	InstituteAccessDialogBox dialogBoxInstitute;
 	
 	ListBox institutionListbox;
 
@@ -1185,9 +1202,106 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 			
 		}
 
+		//spec change
+		
+		@Override
+		public void addClicked(AccessRights rights, final InstitutionProxy institutionProxy) {
+			
+			requests.personRequest().myGetLoggedPerson().fire(new Receiver<PersonProxy>() {
 
+				@Override
+				public void onSuccess(PersonProxy response) {
+					QuestionAccessRequest questionAccessRequest = requests.questionAccessRequest();
+					QuestionAccessProxy questionAccessProxy = questionAccessRequest.create(QuestionAccessProxy.class);
+					
+					questionAccessProxy.setInstitution(institutionProxy);
+					questionAccessProxy.setPerson(person);
+					
+					if (response.getIsAdmin())
+						questionAccessProxy.setAccRights(AccessRights.AccPrimaryAdmin);
+					else
+						questionAccessProxy.setAccRights(AccessRights.AccSecondaryAdmin);
+					
+					questionAccessRequest.persist().using(questionAccessProxy).fire(new Receiver<Void>() {
 
+						@Override
+						public void onSuccess(Void response) {
+							initInstituteAccess();
+						}
+						
+						@Override
+						public void onFailure(ServerFailure error) {
+							Log.info(error.getMessage());
+						}
+					});
+				}
+			});
+			
+			
+		}
+		
+		public void initInstituteAccess()
+		{
+			this.instituteAccessView = view.getInstituteAccessView();
+			instituteAccessView.setDelegate(this);
+			instituteAccessView.setPresenter(this);
+			
+			requests.questionAccessRequest().countInstiuteAccessByPerson(person.getId()).fire(new Receiver<Long>() {
 
+				@Override
+				public void onSuccess(Long response) {
+					instituteAccessView.getTable().setRowCount(response.intValue(), true);
+					
+					final Range range = instituteAccessView.getTable().getVisibleRange();
+					requests.questionAccessRequest().findInstiuteAccessByPerson(person.getId(), range.getStart(), range.getLength()).with("institution").fire(new Receiver<List<QuestionAccessProxy>>() {
 
+						@Override
+						public void onSuccess(List<QuestionAccessProxy> response) {
+							instituteAccessView.getTable().setRowData(range.getStart(), response);
+						}
+					});
+				}
+			});
+			
+			
+		}
 
+		@Override
+		public void deleteInstituteAccessClicked(QuestionAccessProxy event) {
+			
+			requests.questionAccessRequest().remove().using(event).fire(new Receiver<Void>() {
+
+				@Override
+				public void onSuccess(Void response) {
+					initInstituteAccess();
+				}
+				@Override
+				public void onFailure(ServerFailure error) {
+					Log.info(error.getMessage());
+				}
+			});
+		}
+
+		@Override
+		public void addNewInstituteAccessClicked() {
+			dialogBoxInstitute = new InstituteAccessDialogBoxImpl();
+			dialogBoxInstitute.display();
+			dialogBoxInstitute.setPresenter(this);
+			dialogBoxInstitute.setDelegate(this);
+			
+			requests.institutionRequest().findAllInstitutions().fire(new Receiver<List<InstitutionProxy>>() {
+
+				@Override
+				public void onSuccess(List<InstitutionProxy> response) {
+					
+					dialogBoxInstitute.getTable().setRowCount(response.size(), true);					
+					dialogBoxInstitute.getTable().setRowData(dialogBoxInstitute.getTable().getVisibleRange().getStart(), response);
+				}
+				
+				@Override
+				public void onFailure(ServerFailure error) {
+					Log.info(error.getMessage());
+				}
+			});
+		}
 }

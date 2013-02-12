@@ -3,6 +3,7 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:n="urn:import:medizin.client.ui"
 	xmlns:s="urn:import:medizin.client.ui.view.user">
 	
+	<ui:with type="medizin.shared.i18n.BmeConstants" field="constants"></ui:with>
 	<ui:style src="../../styles.css" />
 	
 	<g:HTMLPanel>
@@ -36,65 +37,81 @@
 								<td> <span ui:field="version"/> </td> </tr> -->
 							<tr id="name">
 								<td>
-									<span class="{style.label}">Name:</span>
+									<g:Label styleName="{style.label}" text="{constants.name}" ></g:Label>
 								</td>
 								<td>
-									<span ui:field="name" />
+									<g:Label ui:field="name" />
 								</td>
 							</tr>
 							<tr id="prename">
 								<td>
-									<span class="{style.label}">Vorname:</span>
+									<g:Label styleName="{style.label}" text="{constants.prename}"></g:Label>
 								</td>
 								<td>
-									<span ui:field="prename" />
+									<g:Label ui:field="prename" />
 								</td>
 							</tr>
 							<tr id="email">
 								<td>
-									<span class="{style.label}">Email:</span>
+									<g:Label styleName="{style.label}" text="{constants.email}"></g:Label>
 								</td>
 								<td>
-									<span ui:field="email" />
+									<g:Label ui:field="email" />
 								</td>
 							</tr>
 							<tr id="alternativEmail">
 								<td>
-									<span class="{style.label}">alternative Email:</span>
+									<g:Label styleName="{style.label}" text="{constants.alternativeEmail}"></g:Label>
 								</td>
 								<td>
-									<span ui:field="alternativEmail" />
+									<g:Label ui:field="alternativEmail" />
 								</td>
 							</tr>
 							<tr id="phoneNumber">
 								<td>
-									<span class="{style.label}">Telefonnummer:</span>
+									<g:Label styleName="{style.label}" text="{constants.phoneNo}"></g:Label>
 								</td>
 								<td>
-									<span ui:field="phoneNumber" />
+									<g:Label ui:field="phoneNumber" />
 								</td>
 							</tr>
 							<tr id="isAdmin">
 								<td>
-									<span class="{style.label}">Adminrechte:</span>
+									<g:Label styleName="{style.label}" text="{constants.adminRights}"></g:Label>
 								</td>
 								<td>
-									<span ui:field="isAdmin" />
+									<g:Label ui:field="isAdmin" />
 								</td>
 							</tr>
 							<tr id="isAccepted">
 								<td>
-									<span class="{style.label}">Zugang freigeschaltet:</span>
+									<g:Label styleName="{style.label}" text="{constants.accessRights}"></g:Label>
 								</td>
 								<td>
-									<span ui:field="isAccepted" />
+									<g:Label ui:field="isAccepted" />
 								</td>
-							</tr><!-- <tr id="questionAccesses"> <td> <span class="{style.label}">Question 
-								Accesses:</span> </td> <td> <span ui:field="questionAccesses"/> </td> </tr> -->
+							</tr>
+							<tr id="isDoctor">
+								<td>
+									<g:Label styleName="{style.label}" text="{constants.doctorRights}"></g:Label>
+								</td>
+								<td>
+									<g:Label ui:field="isDoctor" />
+								</td>
+							</tr>
+							<tr id="doctorDisplay">
+								<td>
+									<g:Label styleName="{style.label}" text="{constants.doctor}"></g:Label>
+								</td>
+								<td>
+									<g:Label ui:field="doctorLbl" />
+								</td>
+							</tr>
 						</table>
 					</td>
 				</tr>
 			</table>
+			<s:InstituteAccessViewImpl ui:field="instituteAccessView"></s:InstituteAccessViewImpl>
 			<s:EventAccessViewImpl ui:field="eventAccessView"></s:EventAccessViewImpl>
 			<s:QuestionAccessViewImpl ui:field="questionAccessView"></s:QuestionAccessViewImpl>
 		</div>

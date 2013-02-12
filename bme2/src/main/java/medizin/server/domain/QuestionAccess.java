@@ -6,11 +6,19 @@ import javax.persistence.EntityManager;
 import javax.persistence.Enumerated;
 import javax.persistence.ManyToOne;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.validation.constraints.NotNull;
 import medizin.client.shared.AccessRights;
+
+import org.hibernate.Query;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
+
+import com.allen_sauer.gwt.log.client.Log;
 
 @RooJavaBean
 @RooToString
@@ -30,6 +38,9 @@ public class QuestionAccess {
 
     @ManyToOne
     private QuestionEvent questionEvent;
+    
+    @ManyToOne
+    private Institution institution;
     
 	   public static long countQuestionEventAccessByPersonNonRoo(java.lang.Long personId) {
 	        Person person = Person.findPerson(personId);
@@ -73,4 +84,38 @@ public class QuestionAccess {
 		        q.setParameter("person", person);
 		        return q.getSingleResult();
 		    }
+		   
+		   public static long countInstiuteAccessByPerson(java.lang.Long personId){
+			   EntityManager em = QuestionEvent.entityManager();
+			   CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+			   CriteriaQuery<QuestionAccess> criteriaQuery = criteriaBuilder.createQuery(QuestionAccess.class);
+			   Root<QuestionAccess> from = criteriaQuery.from(QuestionAccess.class);
+			   
+			   Predicate pre1 = criteriaBuilder.equal(from.get("person").get("id"), personId);
+			   Predicate pre2 = criteriaBuilder.isNotNull(from.get("institution"));
+			   
+			   criteriaQuery.where(criteriaBuilder.and(pre1,pre2));
+			   
+			   TypedQuery<QuestionAccess> query = em.createQuery(criteriaQuery);
+			   
+			   Log.info("~~QUERY : " + query.unwrap(Query.class).getQueryString());
+			   
+			   return query.getResultList().size();
+		   }
+		   
+		   public static List<QuestionAccess> findInstiuteAccessByPerson(java.lang.Long personId, int start, int length){
+			   EntityManager em = QuestionEvent.entityManager();
+			   CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+			   CriteriaQuery<QuestionAccess> criteriaQuery = criteriaBuilder.createQuery(QuestionAccess.class);
+			   Root<QuestionAccess> from = criteriaQuery.from(QuestionAccess.class);
+			   
+			   Predicate pre1 = criteriaBuilder.equal(from.get("person").get("id"), personId);
+			   Predicate pre2 = criteriaBuilder.isNotNull(from.get("institution"));
+			   
+			   criteriaQuery.where(criteriaBuilder.and(pre1,pre2));
+			   
+			   TypedQuery<QuestionAccess> query = em.createQuery(criteriaQuery);
+			   
+			   return query.getResultList();
+		   }
 }

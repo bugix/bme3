@@ -4,6 +4,7 @@ import medizin.client.request.AnswerToAssQuestionRequest;
 import medizin.client.request.AssesmentQuestionRequest;
 import medizin.client.request.AssesmentRequest;
 import medizin.client.request.CommentRequest;
+import medizin.client.request.DoctorRequest;
 import medizin.client.request.InstitutionRequest;
 import medizin.client.request.KeywordRequest;
 import medizin.client.request.McRequest;
@@ -74,5 +75,5 @@ public interface McAppRequestFactory extends RequestFactory {
 
     StaticToAssesmentRequest staticToAssesmentRequest();
 
-
+    DoctorRequest doctorRequest();
 }

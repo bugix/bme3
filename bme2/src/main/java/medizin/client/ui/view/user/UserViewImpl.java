@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import medizin.client.proxy.PersonProxy;
+import medizin.shared.i18n.BmeConstants;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.StyleInjector;
@@ -34,11 +35,8 @@ public class UserViewImpl extends Composite implements UserView  {
 	
 	@UiField
 	SplitLayoutPanel splitLayoutPanel;
-	
-
 
 	private Presenter presenter;
-
 
 	public UserViewImpl() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -47,7 +45,6 @@ public class UserViewImpl extends Composite implements UserView  {
 		init();
 
 	}
-
 
 	@Override
 	public void setPresenter(Presenter presenter) {
@@ -59,6 +56,8 @@ public class UserViewImpl extends Composite implements UserView  {
 	    CellTable<PersonProxy> table;
 	   @UiField
 	   Button addInstitution;
+	   
+	   public BmeConstants constants = GWT.create(BmeConstants.class);
 	   
 	   @UiHandler ("addInstitution")
 	   public void onNewClicked(ClickEvent e) {
@@ -113,7 +112,8 @@ public class UserViewImpl extends Composite implements UserView  {
 	            public String getValue(PersonProxy object) {
 	                return renderer.render(object.getName());
 	            }
-	        }, "Name");
+	        }, constants.name());
+	        
 	        paths.add("prename");
 	        table.addColumn(new TextColumn<PersonProxy>() {
 
@@ -128,7 +128,8 @@ public class UserViewImpl extends Composite implements UserView  {
 	            public String getValue(PersonProxy object) {
 	                return renderer.render(object.getPrename());
 	            }
-	        }, "Prename");
+	        }, constants.prename());
+	        
 	        paths.add("email");
 	        table.addColumn(new TextColumn<PersonProxy>() {
 
@@ -143,7 +144,7 @@ public class UserViewImpl extends Composite implements UserView  {
 	            public String getValue(PersonProxy object) {
 	                return renderer.render(object.getEmail());
 	            }
-	        }, "Email");
+	        }, constants.email());
 //	        paths.add("alternativEmail");
 //	        table.addColumn(new TextColumn<PersonProxy>() {
 //

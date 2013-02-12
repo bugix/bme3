@@ -1,7 +1,10 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:n="urn:import:medizin.client.ui">
+	xmlns:n="urn:import:medizin.client.ui" xmlns:d="urn:import:com.google.gwt.dom.client" xmlns:i="urn:import:medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl">
+	
+	<ui:with type="medizin.shared.i18n.BmeConstants" field="constants"></ui:with>
+	
 	<ui:style>
  		.panelHTML {
 		border: 0px solid #ddf;
@@ -64,101 +67,117 @@
  	<div class="{style.boundary}">
 			<table class="{style.details}" cellpadding="0" cellspacing="0">
 
-
-
 				<tr>
-					<td class="{style.header}">
-						  
-      <div class="{style.header}" visible = "false" ui:field="editTitle">
-        <ui:msg>Person bearbeiten</ui:msg>
-      </div>
-      <div class="{style.header}" visible = "false"  ui:field="createTitle">
-                <ui:msg>Neue Person erstellen</ui:msg>
-            </div>
-
+	<td class="{style.header}">
+		<div class="{style.header}" visible="false" ui:field="editTitle">
+			<ui:msg>Person bearbeiten</ui:msg>
+		</div>
+		<div class="{style.header}" visible="false" ui:field="createTitle">
+			<ui:msg>Neue Person erstellen</ui:msg>
+		</div>
+	</td>
+	<td class="{style.bar}">
+		<div>
+			<g:Button addStyleNames="{style.button}" ui:field="save">
+				<span class="ui-icon ui-icon-disk" style="float: left; margin-right: 0.3em;"></span>
+				Benutzer Speichern
+			</g:Button>
+			<g:Button addStyleNames="{style.button}" ui:field="cancel">
+				<span class="ui-icon ui-icon-closethick" style="float: left; margin-right: 0.3em;"></span>
+				Bearbeiten abbrechen
+			</g:Button>
+		</div>
+	</td>
+</tr>
+	<tr>
+		<td colspan="2">
+			<table class="{style.fields}" id="boundElementHolder">
+				<tr id="name">
+					<td>
+						<div class="{style.label}"><g:Label text="{constants.name}" /></div>
 					</td>
-					<td class="{style.bar}">
-						<div>
-   
-      <g:Button addStyleNames="{style.button}" ui:field="save"><span class="ui-icon ui-icon-disk" style="float: left; margin-right: 0.3em;"></span>Benutzer Speichern</g:Button>
-      <g:Button addStyleNames="{style.button}" ui:field="cancel" ><span class="ui-icon ui-icon-closethick" style="float: left; margin-right: 0.3em;"></span>Bearbeiten abbrechen</g:Button>
-   
-						</div>
+					<td>
+						<g:TextBox ui:field="name" />
 					</td>
 				</tr>
-				<tr>
-					<td colspan="2">
-		 <table class="{style.fields}" id="boundElementHolder">
-      <tr id="name">
-                <td>
-                    <div class="{style.label}">Name:</div>
-                </td>
-                <td>
-                    <g:TextBox ui:field="name"/>
-                </td>
-            </tr>
-      <tr id="prename">
-                <td>
-                    <div class="{style.label}">Vorname:</div>
-                </td>
-                <td>
-                    <g:TextBox ui:field="prename"/>
-                </td>
-            </tr>
-      <tr id="email">
-                <td>
-                    <div class="{style.label}">Email:</div>
-                </td>
-                <td>
-                    <g:TextBox ui:field="email"/>
-                </td>
-            </tr>
-      <tr id="alternativEmail">
-                <td>
-                    <div class="{style.label}">alternative Email:</div>
-                </td>
-                <td>
-                    <g:TextBox ui:field="alternativEmail"/>
-                </td>
-            </tr>
-      <tr id="phoneNumber">
-                <td>
-                    <div class="{style.label}">Telefonnummer:</div>
-                </td>
-                <td>
-                    <g:TextBox ui:field="phoneNumber"/>
-                </td>
-            </tr>
-      <tr id="isAdmin">
-                <td>
-                    <div class="{style.label}">Adminrechte:</div>
-                </td>
-                <td>
-                    <g:CheckBox ui:field="isAdmin"/>
-                </td>
-            </tr>
-      <tr id="isAccepted">
-                <td>
-                    <div class="{style.label}">Zugang freigeschaltet:</div>
-                </td>
-                <td>
-                    <g:CheckBox ui:field="isAccepted"/>
-                </td>
-            </tr>
 
-    </table>
+				<tr id="prename">
+					<td>
+						<div class="{style.label}"><g:Label text="{constants.prename}" /></div>
+					</td>
+					<td>
+						<g:TextBox ui:field="prename" />
+					</td>
+				</tr>
+
+				<tr id="email">
+					<td>
+						<div class="{style.label}"><g:Label text="{constants.email}" /></div>
+					</td>
+					<td>
+						<g:TextBox ui:field="email" />
+					</td>
+				</tr>
+
+				<tr id="alternativEmail">
+					<td>
+						<div class="{style.label}"><g:Label text="{constants.alternativeEmail}" /></div>
+					</td>
+					<td>
+						<g:TextBox ui:field="alternativEmail" />
+					</td>
+				</tr>
+
+				<tr id="phoneNumber">
+					<td>
+						<div class="{style.label}"><g:Label text="{constants.phoneNo}" /></div>
+					</td>
+					<td>
+						<g:TextBox ui:field="phoneNumber" />
+					</td>
+				</tr>
+
+				<tr id="isAdmin">
+					<td>
+						<div class="{style.label}"><g:Label text="{constants.adminRights}" /></div>
+					</td>
+					<td>
+						<g:CheckBox ui:field="isAdmin" />
+					</td>
+				</tr>
+
+				<tr id="isAccepted">
+					<td>
+						<div class="{style.label}"><g:Label text="{constants.accessRights}" /></div>
+					</td>
+					<td>
+						<g:CheckBox ui:field="isAccepted" />
+					</td>
+				</tr>
+				
+				<tr id="isDoctor">
+					<td>
+						<div class="{style.label}"><g:Label text="{constants.doctorRights}" /></div>
+					</td>
+					<td>
+						<g:CheckBox ui:field="isDoctor" />
+					</td>
+				</tr>
+
+				<tr id="doctorDisplay">
+					<td>
+						<div class="{style.label}"><g:Label text="{constants.doctor}" /></div>
+					</td>
+					<td>
+						<i:DefaultSuggestBox ui:field="doctorSuggestBox"></i:DefaultSuggestBox>
 					</td>
 				</tr>
 			</table>
+		</td>
+	</tr>
+			</table>
 
 		</div>
-
- 
-
-
-
-   
-
 
   </g:HTMLPanel>
 </ui:UiBinder> 

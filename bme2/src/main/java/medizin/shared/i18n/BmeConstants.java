@@ -136,47 +136,71 @@ public interface BmeConstants extends Constants {
 	public String addQuestionType();
 	
 	public String editQuestionType();
+	
 	public String manageQuestionType();
+	
 	public String name();
+	
 	public String type();
+	
 	public String answer();
 	
 	public String sum();
+	
 	public String trueAns();
+	
 	public String falseAns();
 	
 	public String count();
+	
 	public String keyOnly();
+	
 	public String maxLen();
+	
 	public String single();
 	
 	public String searchField();
 	
 	public String questionText();
+	
 	public String auther();
+	
 	public String reviewer();
+	
 	public String comment();
+	
 	public String manageQuestion();
 
 	public String uploadResource();
+	
 	public String currentSize();
+	
 	public String changeToSize();
 	
 	public String id();
+	
 	public String status();
 	
 	public String questionShortName();
+	
 	public String questionEvent();
+	
 	public String mcs();
+	
 	public String submitToReviewComitee();
 
 	public String confirmText();
+	
 	public String major();
+	
 	public String minor();
 
 	public String yes();
+	
 	public String no();
+	
 	public String okBtn();
+	
 	public String success();
 
 	public String resources();
@@ -186,14 +210,16 @@ public interface BmeConstants extends Constants {
 	public String submitToReviewerCommitte();
 
 	public String answerText();
-    public String add();
-    public String clear();
+    
+	public String add();
+    
+	public String clear();
 
 	public String mediaViewer();
 
 	public String close();
 
-public String instruction();
+	public String instruction();
 			
 	public String keyword();
 	
@@ -208,5 +234,26 @@ public String instruction();
 	public String to();
 	
 	public String searchFor();
-
+	
+	//user permission constants
+	
+	public String prename();
+	
+	public String email();
+	
+	public String alternativeEmail();
+	
+	public String phoneNo();
+	
+	public String adminRights();
+	
+	public String accessRights();
+	
+	public String doctorRights();
+	
+	public String delete();
+	
+	public String access();
+	
+	public String doctor();
 }

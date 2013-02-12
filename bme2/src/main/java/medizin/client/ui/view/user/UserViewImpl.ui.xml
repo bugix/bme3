@@ -67,7 +67,7 @@
 				</g:HTMLPanel>
 				</g:ScrollPanel>
 			</g:west>
-<g:center><g:ScrollPanel>
+			<g:center><g:ScrollPanel>
 
 				<g:SimplePanel ui:field="slidingPanel">
 

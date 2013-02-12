@@ -17,4 +17,7 @@ public interface QuestionAccessRequest extends QuestionAccessRequest_Roo_Gwt {
     Request<List<QuestionAccessProxy>> findQuestionEventAccessByPersonNonRooNonRoo(java.lang.Long personId, int firstResult, int maxResults);
 	Request<List<QuestionAccessProxy>> findQuestionAccessQuestionByPersonNonRoo(Long personId, int firstResult, int maxResults);
 	Request<java.lang.Long>  countQuestionAccessQuestionByPersonNonRoo(Long personId);
+	
+	Request<List<QuestionAccessProxy>> findInstiuteAccessByPerson(Long personId, int firstResult, int maxResults);
+	Request<java.lang.Long>  countInstiuteAccessByPerson(Long personId);
 }

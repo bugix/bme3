@@ -1,16 +1,21 @@
 package medizin.client.activites;
 
+import java.util.List;
+import java.util.Set;
+
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.user.UserDetailsView;
 import medizin.client.ui.view.user.UserDetailsViewImpl;
 import medizin.client.ui.view.user.UserEditView;
 import medizin.client.ui.view.user.UserEditViewImpl;
+import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.simple.DefaultSuggestOracle;
 
 import medizin.client.place.PlaceUser;
 import medizin.client.place.PlaceUserDetails;
 import medizin.client.place.PlaceUserDetails.Operation;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.proxy.AnswerProxy;
+import medizin.client.proxy.DoctorProxy;
 import medizin.client.request.AnswerRequest;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.request.PersonRequest;
@@ -30,6 +35,7 @@ import com.google.web.bindery.requestfactory.shared.Request;
 import com.google.web.bindery.requestfactory.shared.RequestContext;
 import com.google.web.bindery.requestfactory.shared.ServerFailure;
 import com.google.web.bindery.requestfactory.shared.Violation;
+import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 /**
@@ -46,18 +52,6 @@ public class ActivityUserCreate  extends AbstractActivityWrapper  implements Use
 	private UserEditView view;
 	private PlaceUserDetails.Operation operation;
 	private PersonProxy person;
-
-//	public ActivityUserCreate(PlaceUserDetails place, McAppFactory mcAppFactory) {
-//		this.userPlace = place;
-//		this.mcAppFactory = mcAppFactory;
-//	}
-//
-//	public ActivityUserCreate(PlaceUserDetails place,
-//			McAppFactory mcAppFactory, Operation operation) {
-//		this.userPlace = place;
-//		this.mcAppFactory = mcAppFactory;
-//		this.operation = operation;
-//	}
 	
 	private McAppRequestFactory requests;
 	private PlaceController placeController;
@@ -104,7 +98,7 @@ public class ActivityUserCreate  extends AbstractActivityWrapper  implements Use
 
 	}
 	
-	private RequestFactoryEditorDriver<PersonProxy,UserEditViewImpl> editorDriver;
+	//private RequestFactoryEditorDriver<PersonProxy,UserEditViewImpl> editorDriver;
 
 	
 	@Override
@@ -119,7 +113,7 @@ public class ActivityUserCreate  extends AbstractActivityWrapper  implements Use
 
 		this.widget = widget;
 		this.view = userEditView;
-		editorDriver = view.createEditorDriver();
+		//editorDriver = view.createEditorDriver();
 		view.setDelegate(this);
 
 //		view.initialiseDriver(requests);
@@ -135,7 +129,36 @@ public class ActivityUserCreate  extends AbstractActivityWrapper  implements Use
 		});
 		//init();
 		
-		view.setDelegate(this);
+		requests.personRequest().myGetLoggedPerson().fire(new Receiver<PersonProxy>() {
+
+			@Override
+			public void onSuccess(PersonProxy response) {
+				if (response.getIsAdmin())
+					view.disableAdminField(true);
+				else
+					view.disableAdminField(false);
+			}
+		});
+		
+		requests.doctorRequest().findAllDoctors().fire(new Receiver<List<DoctorProxy>>() {
+
+			@Override
+			public void onSuccess(List<DoctorProxy> response) {
+				DefaultSuggestOracle<DoctorProxy> suggestOracle = (DefaultSuggestOracle<DoctorProxy>) view.getDoctorSuggestBox().getSuggestOracle();
+				suggestOracle.setPossiblilities(response);
+				
+				view.getDoctorSuggestBox().setSuggestOracle(suggestOracle);
+				
+				view.getDoctorSuggestBox().setRenderer(new AbstractRenderer<DoctorProxy>() {
+
+					@Override
+					public String render(DoctorProxy object) {
+						return object == null ? "" : object.getName();
+					}
+				});
+			}
+		});
+		
 		if(this.operation==PlaceUserDetails.Operation.EDIT){
 			Log.info("edit");
 		requests.find(userPlace.getProxyId()).fire(new Receiver<Object>() {
@@ -149,7 +172,16 @@ public class ActivityUserCreate  extends AbstractActivityWrapper  implements Use
 					Log.info(((PersonProxy) response).getEmail());
 					//init((PersonProxy) response);
 					person=(PersonProxy)response;
-					init();
+					
+					requests.personRequest().findPerson(person.getId()).with("doctor").fire(new Receiver<PersonProxy>() {
+
+						@Override
+						public void onSuccess(PersonProxy response) {
+							person = response;
+							init();
+						}
+					});
+					
 				}
 
 				
@@ -162,37 +194,36 @@ public class ActivityUserCreate  extends AbstractActivityWrapper  implements Use
 			//userPlace.setProxyId(person.stableId());
 			init();
 		}
+		
+		view.setDelegate(this);
 	}
 	private void init() {
-		
-		PersonRequest request = requests.personRequest();
-		
 		if(person==null){
-			PersonProxy person = request.create(PersonProxy.class);
+			/*PersonProxy person = request.create(PersonProxy.class);
 			this.person=person;
-			view.setEditTitle(false);
+			view.setEditTitle(false);*/
 		}
 		else
 		{
-			view.setEditTitle(true);
+			view.setValue(person);
 		}
 		
 		Log.info("edit");
 	      
-	       Log.info("persist");
-	        request.persist().using(person);
-		editorDriver.edit(person, request);
+	    Log.info("persist");
+	     //   request.persist().using(person);
+		//editorDriver.edit(person, request);
 
 		Log.info("flush");
-		editorDriver.flush();
+		//editorDriver.flush();
 		this.person = person;
-		Log.debug("Create für: "+person.getEmail());
+		//Log.debug("Create für: "+person.getEmail());
 //		view.setValue(person);
 		
 	}
 	
 	
-	private void init(PersonProxy person) {
+	/*private void init(PersonProxy person) {
 
 		this.person = person;
 		PersonRequest request = requests.personRequest();
@@ -205,7 +236,7 @@ public class ActivityUserCreate  extends AbstractActivityWrapper  implements Use
 		Log.debug("Edit für: "+person.getEmail());
 //		view.setValue(person);
 		
-	}
+	}*/
 
 
 
@@ -228,7 +259,53 @@ public class ActivityUserCreate  extends AbstractActivityWrapper  implements Use
 	@Override
 	public void saveClicked() {
 		save=true;
-		editorDriver.flush().fire(new Receiver<Void>() {
+		
+		PersonRequest personRequest = requests.personRequest();
+		PersonProxy personProxy;
+		
+		if (view.getProxy() == null)
+		{
+			personProxy = personRequest.create(PersonProxy.class);
+		}
+		else
+		{
+			personProxy = view.getProxy();
+			personProxy = personRequest.edit(personProxy);
+		}
+		
+		personProxy.setName(view.getName().getText());
+		personProxy.setPrename(view.getPrename().getText());
+		personProxy.setEmail(view.getEmail().getText());
+		personProxy.setAlternativEmail(view.getAlternativEmail().getText());
+		personProxy.setPhoneNumber(view.getPhoneNumber().getText());
+		personProxy.setIsAccepted(view.getIsAccepted().getValue());
+		personProxy.setIsAdmin(view.getIsAdmin().getValue());
+		personProxy.setIsDoctor(view.getIsDoctor().getValue());
+		
+		if (view.getIsDoctor().getValue())
+			personProxy.setDoctor(view.getDoctorSuggestBox().getSelected());
+		
+		final PersonProxy finalPersonProxy = personProxy;
+		
+		personRequest.persist().using(personProxy).fire(new Receiver<Void>() {
+
+			@Override
+			public void onSuccess(Void response) {
+				placeController.goTo(new PlaceUserDetails(finalPersonProxy.stableId(), PlaceUserDetails.Operation.DETAILS));
+			}
+			
+			@Override
+			public void onFailure(ServerFailure error) {
+				Log.info(error.getMessage());
+			}
+			
+			@Override
+			public void onViolation(Set<Violation> errors) {
+				
+			}
+		});
+		
+		/*editorDriver.flush().fire(new Receiver<Void>() {
 			
           @Override
           public void onSuccess(Void response) {
@@ -241,7 +318,7 @@ public class ActivityUserCreate  extends AbstractActivityWrapper  implements Use
           public void onFailure(ServerFailure error){
 				Log.error(error.getMessage());
 			}
-      }); 
+      }); */
 		
 	}
 

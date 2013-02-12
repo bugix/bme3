@@ -3,5 +3,5 @@ package medizin.client.shared;
 
 public enum AccessRights {
 
-    AccRead, AccWrite, AccAddAnswers, AccAddQuestions;
+    AccRead, AccWrite, AccAddAnswers, AccAddQuestions, AccPrimaryAdmin, AccSecondaryAdmin;
 }

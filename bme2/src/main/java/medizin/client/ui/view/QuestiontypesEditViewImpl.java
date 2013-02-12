@@ -605,6 +605,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		});
 		
 		DOM.setElementPropertyBoolean(instituteListBox.getElement(), "disabled", true);
+		
 		instituteListBox.setWidth("120px");
 		questionTypeListBox.setWidth("120px");
 		
