@@ -1,5 +1,6 @@
 package medizin.client.ui.view.question;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -29,6 +30,7 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.text.shared.AbstractRenderer;
@@ -268,28 +270,28 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 				if (filterPanel.createStartDate.getValue() != null)
 				{
 					searchField.add("createdDateFrom");
-					searchField.add(filterPanel.createStartDate.getValue().toString());
+					searchField.add(DateTimeFormat.getFormat("dd-MM-yyyy").format(filterPanel.createStartDate.getValue()));
 					//searchFileds.add(new SearchValue("createdDateFrom", filterPanel.createStartDate.getValue().toString()));
 				}
 				
 				if (filterPanel.createEndDate.getValue() != null)
 				{
 					searchField.add("createdDateTo");
-					searchField.add(filterPanel.createEndDate.getValue().toString());
+					searchField.add(DateTimeFormat.getFormat("dd-MM-yyyy").format(filterPanel.createEndDate.getValue()));
 					//searchFileds.add(new SearchValue("createdDateTo", filterPanel.createEndDate.getValue().toString()));
 				}
 				
 				if (filterPanel.usedMcStartDate.getValue() != null)
 				{
 					searchField.add("usedMcFrom");
-					searchField.add(filterPanel.usedMcStartDate.getValue().toString());
+					searchField.add(DateTimeFormat.getFormat("dd-MM-yyyy").format(filterPanel.usedMcStartDate.getValue()));
 					//searchFileds.add(new SearchValue("usedMcFrom", filterPanel.usedMcStartDate.getValue().toString()));
 				}
 				
 				if (filterPanel.usedMcEndDate.getValue() != null)
 				{
 					searchField.add("usedMcTo");
-					searchField.add(filterPanel.usedMcEndDate.getValue().toString());
+					searchField.add(DateTimeFormat.getFormat("dd-MM-yyyy").format(filterPanel.usedMcEndDate.getValue()));
 					//searchFileds.add(new SearchValue("usedMcTo", filterPanel.usedMcEndDate.getValue().toString()));
 				}
 				
