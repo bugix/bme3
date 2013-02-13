@@ -39,8 +39,7 @@ public interface QuestionDetailsView extends IsWidget {
 
 		void deleteUploadedFiles(Set<String> paths);
 
-		void changedResourceSequence(
-				Set<QuestionResourceClient> questionResourceClients);
+		void changedResourceSequence(Set<QuestionResourceClient> questionResourceClients);
 	}
 
 	AnswerListViewImpl getAnswerListViewImpl();

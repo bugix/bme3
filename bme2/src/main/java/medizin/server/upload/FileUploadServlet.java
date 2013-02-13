@@ -26,6 +26,9 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
+
 public class FileUploadServlet extends HttpServlet {
 
 	private static Logger log = Logger.getLogger(FileUploadServlet.class);
@@ -75,11 +78,17 @@ public class FileUploadServlet extends HttpServlet {
 			@SuppressWarnings("unchecked")
 			List<FileItem> items = upload.parseRequest(request);
 			System.out.println("Item Size: " + items.size());
-
+			String directory = SharedConstant.getUploadBaseDIRPath();
 			for (FileItem item : items) {
 				if (item.isFormField()) {
 					// fileName=item.getString() +"_"+fileName;
-					fileName = fileName;
+					
+					byte array[] = new byte[20];
+					item.getInputStream().read(array);
+
+					directory = new String(array).trim().concat("/");
+					
+					//fileName = fileName;
 				} else {
 
 					temp = FilenameUtils.getName(item.getName());
@@ -105,10 +114,10 @@ public class FileUploadServlet extends HttpServlet {
 					// appUploadDirectory=session.getServletContext().getRealPath(".")
 					// + appUploadDirectory;
 					final String uuidFileName = UUID.randomUUID() + "_"+ fileName;
-					File appUploadedFile = new File(getAppUploadDirectory(uuidFileName), uuidFileName);
+					File appUploadedFile = new File(directory, uuidFileName);
 
 					FileUtils.touch(appUploadedFile);
-					appUploadedFile.createNewFile();
+					//appUploadedFile.createNewFile();
 					// save
 					item.write(appUploadedFile);
 					
@@ -137,7 +146,9 @@ public class FileUploadServlet extends HttpServlet {
 					
 					response.setContentType("text/html");
 					response.setStatus(HttpServletResponse.SC_CREATED);
-					response.getWriter().append(uuidFileName);
+					
+					String data = getData(appUploadedFile,directory.concat(uuidFileName));
+					response.getWriter().append(data);
 					response.getWriter().close();
 					response.getWriter().flush();
 				}
@@ -158,49 +169,39 @@ public class FileUploadServlet extends HttpServlet {
 
 	}
 
-	private String getAppUploadDirectory(String fileName) {
-		String appUploadDirectory = null;
-		MultimediaType type = SharedUtility.getFileMultimediaType(SharedUtility.getFileExtension(fileName));
-		
+	private String getData(File appUploadedFile, String filePath) {
+		ToStringHelper helper = Objects.toStringHelper("");
+		helper.add(SharedConstant.FILEPATH, filePath);
+		MultimediaType type = SharedUtility.getFileMultimediaType(SharedUtility.getFileExtension(filePath));		
+				
 		switch (type) {
 		case Image:
 		{
-			appUploadDirectory = SharedConstant.UPLOAD_QUESTION_IMAGES_PATH;
+			
+			int[] size = BMEUtils.findImageWidthAndHeight(appUploadedFile);
+			if(size != null && size.length == 2) {
+				helper.add(SharedConstant.WIDTH, size[0]);
+				helper.add(SharedConstant.HEIGHT, size[1]);
+			}
+			
 			break;
 		}
 		case Sound:
 		{
-			appUploadDirectory = SharedConstant.UPLOAD_QUESTION_SOUND_PATH;
+			helper.add(SharedConstant.SOUND_MEDIA_SIZE, appUploadedFile.length());
 			break;
 		}
 		case Video:
 		{
-			appUploadDirectory = SharedConstant.UPLOAD_QUESTION_VIDEO_PATH;
+			helper.add(SharedConstant.VIDEO_MEDIA_SIZE, appUploadedFile.length());
 			break;
 		}
 		default:
-		{
-			log.error("invalid MultimediaType. Type is " + type);
 			break;
 		}
-		}
 		
-		return appUploadDirectory;
+		
+		return helper.toString();
 	}
 
-//	private void filterResource(HttpServletRequest request,
-//			HttpServletResponse response, File appUploadedFile) {
-//		
-//		
-//		String extension = FilenameUtils.getExtension(appUploadDirectory);
-//		
-//		//for image 
-//		if(ArrayUtils.contains(BMEFileUploadConstant.IMAGE_EXTENSIONS, extension)) {
-//			// positive response 
-//			response.setStatus(HttpServletResponse.SC_CREATED);
-//		}else {
-//			// negative response
-//			response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
-//		}
-//	}
 }

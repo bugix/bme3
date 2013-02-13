@@ -46,5 +46,5 @@ public interface QuestionRequest extends QuestionRequest_Roo_Gwt {
 
 	InstanceRequest<QuestionProxy, Void>  generateNewVersion();
 
-	Request<Boolean> deletePictureFromDisk(String picturePath);
+	Request<Boolean> deleteMediaFileFromDisk(String path);
 }

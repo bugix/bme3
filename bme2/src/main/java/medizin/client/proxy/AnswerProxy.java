@@ -42,9 +42,9 @@ public interface AnswerProxy extends EntityProxy {
 
     abstract void setValidity(Validity validity);
 
-    abstract String getPicturePath();
+    abstract String getMediaPath();
 
-    abstract void setPicturePath(String picturePath);
+    abstract void setMediaPath(String mediaPath);
 
     abstract QuestionProxy getQuestion();
 

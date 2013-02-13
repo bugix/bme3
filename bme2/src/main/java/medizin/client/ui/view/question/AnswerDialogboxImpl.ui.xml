@@ -34,6 +34,15 @@
 					ui:field="toolbar" ></t:RichTextToolbar> <g:RichTextArea ui:field="answerTextArea" 
 					addStyleNames="{style.textarea}"></g:RichTextArea> </td> -->
 			</tr>
+			<tr id="uploadContainer">
+				<td>
+					<g:Label styleName="{style.label}" ui:field="lblUploadText"></g:Label>
+				</td>
+				<td>
+					<g:VerticalPanel ui:field="uploadContainer">
+					</g:VerticalPanel>
+				</td>
+			</tr>
 			<tr id="viewContainer">
 				<td colspan="2">
 					<g:VerticalPanel ui:field="viewContainer">

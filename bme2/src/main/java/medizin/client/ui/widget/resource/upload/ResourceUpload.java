@@ -1,13 +1,16 @@
 package medizin.client.ui.widget.resource.upload;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import medizin.client.ui.widget.resource.upload.event.ResourceUploadEvent;
 import medizin.client.ui.widget.resource.upload.event.ResourceUploadEventHandler;
+import medizin.shared.MultimediaType;
 import medizin.shared.utils.SharedUtility;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.InputElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.shared.EventBus;
@@ -32,8 +35,6 @@ public class ResourceUpload extends Composite {
 	private final String uploadUrl = GWT.getHostPageBaseURL()
 			+ "fileUploadServlet";
 	
-	private final ArrayList<String> allowedExtension;
-
 	@UiField
 	FormPanel uploadFormPanel;
 
@@ -43,13 +44,21 @@ public class ResourceUpload extends Composite {
 	@UiField
 	HorizontalPanel panel;
 	
+	@UiField
+	InputElement directory;
+	
 	private final EventBus eventBus;
+
+	private final Map<MultimediaType, String> possiblePaths;
+	
+	private final ArrayList<String> allowedExtension;
 	
 	interface ResourceUploadUiBinder extends UiBinder<Widget, ResourceUpload> {
 	}
 
-	public ResourceUpload(ArrayList<String> allowedExtension,EventBus eventBus) {
+	public ResourceUpload(ArrayList<String> allowedExtension,Map<MultimediaType,String> possiblePaths,EventBus eventBus) {
 		this.allowedExtension = allowedExtension;
+		this.possiblePaths = possiblePaths;
 		this.eventBus = eventBus;
 		initWidget(uiBinder.createAndBindUi(this));
 		init();
@@ -76,7 +85,7 @@ public class ResourceUpload extends Composite {
 				} else {
 					Log.info("UPLOADING cancel");
 					event.cancel();
-					eventBus.fireEvent(new ResourceUploadEvent("",false));
+					eventBus.fireEvent(new ResourceUploadEvent("",null,false));
 				}
 			}
 		});
@@ -89,8 +98,8 @@ public class ResourceUpload extends Composite {
 						Log.info("PS Submit is Complete " + event.getResults()); 
 						
 						uploadFormPanel.reset();
-
-						eventBus.fireEvent(new ResourceUploadEvent(event.getResults(),true));					
+						MultimediaType type = SharedUtility.getFileMultimediaType(SharedUtility.getFileExtension(event.getResults()));
+						eventBus.fireEvent(new ResourceUploadEvent(event.getResults(),type,true));					
 					}
 				});
 
@@ -99,7 +108,7 @@ public class ResourceUpload extends Composite {
 			@Override
 			public void onChange(ChangeEvent event) {
 				Log.info("in on change");
-				Log.info(fileUpload.getFilename());
+				Log.info("file : " + fileUpload.getFilename());
 				uploadFile();
 			}
 
@@ -114,6 +123,9 @@ public class ResourceUpload extends Composite {
 			String fileName = fileUpload.getFilename();
 			
 			if(checkFileExtension(fileName)) {
+				MultimediaType type = SharedUtility.getFileMultimediaType(SharedUtility.getFileExtension(fileName));
+				String path = possiblePaths.get(type);
+				directory.setValue(path);
 				uploadFormPanel.submit();
 			}else {
 				Window.alert("Please upload valid file");

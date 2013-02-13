@@ -460,6 +460,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 				QuestionResourceRequest questionResourceRequest = requests.questionResourceRequest();
 				Set<QuestionResourceProxy> proxies = Sets.newHashSet();
 				Log.info("proxies.size() " + proxies.size());
+				
 				for (QuestionResourceClient questionResource : view.getQuestionResources()) {
 
 					if(questionResource.getState().equals(State.NEW) || questionResource.getState().equals(State.EDITED)) {
@@ -866,15 +867,15 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 	}
 
 	@Override
-	public void deleteUploadedPicture(String picturePath) {
+	public void deleteMediaFileFromDisk(String path) {
 
 		if(question != null) {
 			final QuestionRequest questionRequest = requests.questionRequest();
-			questionRequest.deletePictureFromDisk(picturePath).fire(new Receiver<Boolean>() {
+			questionRequest.deleteMediaFileFromDisk(path).fire(new Receiver<Boolean>() {
 
 				@Override
 				public void onSuccess(Boolean response) {
-					Log.info("Picture deleted " + response);
+					Log.info("Media deleted " + response);
 				}
 				
 				@Override

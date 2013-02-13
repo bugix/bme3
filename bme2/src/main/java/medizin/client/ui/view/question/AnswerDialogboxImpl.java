@@ -9,11 +9,16 @@ import medizin.client.shared.Validity;
 import medizin.client.ui.richtext.RichTextToolbar;
 import medizin.client.ui.view.roo.PersonProxyRenderer;
 import medizin.client.ui.widget.IconButton;
+import medizin.client.ui.widget.resource.audio.AudioViewer;
+import medizin.client.ui.widget.resource.image.ImageViewer;
 import medizin.client.ui.widget.resource.image.polygon.ImagePolygonViewer;
 import medizin.client.ui.widget.resource.image.rectangle.ImageRectangleViewer;
+import medizin.client.ui.widget.resource.image.simple.SimpleImageViewer;
+import medizin.client.ui.widget.resource.video.VideoViewer;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.EventHandlingValueHolderItem;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.simple.DefaultSuggestOracle;
+import medizin.shared.QuestionTypes;
 import medizin.shared.i18n.BmeConstants;
 
 import com.google.gwt.core.client.GWT;
@@ -26,12 +31,10 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RichTextArea;
-import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.ValueListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -76,6 +79,12 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*
 	@UiField
 	VerticalPanel viewContainer;
 
+	@UiField
+	VerticalPanel uploadContainer;
+	
+	@UiField
+	Label lblUploadText;
+	
 	@UiField
 	@Ignore
 	public DefaultSuggestBox<PersonProxy, EventHandlingValueHolderItem<PersonProxy>> auther;
@@ -196,7 +205,13 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*
 	}
 
 	@Override
-	public void display() {
+	public void display(QuestionTypes types) {
+		
+		if(QuestionTypes.MCQ.equals(types)) {
+			answerTextArea.setVisible(false);
+			toolbar.setVisible(false);
+		}
+		
 		center();
 		show();
 
@@ -215,6 +230,12 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*
 					return obj == null ? "" : String.valueOf(obj);
 				}
 			});
+
+	private SimpleImageViewer simpleImageViewer;
+
+	private AudioViewer audioViewer;
+
+	private VideoViewer videoViewer;
 
 
 	@Override
@@ -316,4 +337,43 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*
 		return auther;
 	}
 
+	@Override
+	public Label getLblUploadText() {
+		return lblUploadText;
+	}
+
+	@Override
+	public VerticalPanel getUploaderContainer() {
+		return uploadContainer;
+	}
+
+	@Override
+	public void setSimpleImageViewer(SimpleImageViewer viewer) {
+		this.simpleImageViewer = viewer;
+	}
+
+	@Override
+	public SimpleImageViewer getSimpleImageViewer() {
+		return this.simpleImageViewer;
+	}
+	
+	@Override
+	public void setAudioViewer(AudioViewer viewer) {
+		this.audioViewer = viewer;
+	}
+	
+	@Override
+	public AudioViewer getAudioViewer() {
+		return this.audioViewer;
+	}
+
+	@Override
+	public void setVideoViewer(VideoViewer viewer) {
+		this.videoViewer = viewer;
+	}
+
+	@Override
+	public VideoViewer getVideoViewer() {
+		return this.videoViewer;
+	}
 }

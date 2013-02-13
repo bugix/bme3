@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -31,16 +32,28 @@ import medizin.client.ui.view.question.AnswerListView;
 import medizin.client.ui.view.question.AnswerListViewImpl;
 import medizin.client.ui.view.question.QuestionDetailsView;
 import medizin.client.ui.view.question.QuestionDetailsViewImpl;
+import medizin.client.ui.widget.resource.audio.AudioViewer;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.ui.widget.resource.dndview.vo.State;
 import medizin.client.ui.widget.resource.image.polygon.ImagePolygonViewer;
 import medizin.client.ui.widget.resource.image.rectangle.ImageRectangleViewer;
+import medizin.client.ui.widget.resource.image.simple.SimpleImageViewer;
+import medizin.client.ui.widget.resource.upload.ResourceUpload;
+import medizin.client.ui.widget.resource.upload.event.ResourceUploadEvent;
+import medizin.client.ui.widget.resource.upload.event.ResourceUploadEventHandler;
+import medizin.client.ui.widget.resource.video.VideoViewer;
 import medizin.client.util.Point;
 import medizin.client.util.PolygonPath;
+import medizin.shared.MultimediaType;
 import medizin.shared.QuestionTypes;
+import medizin.shared.i18n.BmeConstants;
+import medizin.shared.utils.SharedConstant;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.place.shared.Place;
@@ -72,6 +85,8 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	private AnswerListViewImpl answerListView;
 	private CellTable<AnswerProxy> answerTable;
 	
+	private BmeConstants constants = GWT.create(BmeConstants.class);
+	
 	public ActivityQuestionDetails(PlaceQuestionDetails place,
 			McAppRequestFactory requests, PlaceController placeController) {
 		super(place, requests, placeController);
@@ -100,6 +115,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	
 	private PersonProxy loggedUser;
 	private HandlerRegistration answerRangeChangeHandler;
+	private EventBus eventBus;
 	
 	
 	@Override
@@ -115,6 +131,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		questionDetailsView.setPresenter(this);
 		this.widget = panel;
 		this.view = questionDetailsView;
+		this.eventBus = eventBus;
         widget.setWidget(questionDetailsView.asWidget());
 		//setTable(view.getTable());
         
@@ -359,14 +376,30 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		answerDialogbox.setDelegate(this);
 		
 		if(question != null && question.getQuestionType() != null && question.getQuestionType().getQuestionType() != null) {
+			
+			answerDialogbox.getLblUploadText().setText("");
+			answerDialogbox.getUploaderContainer().clear();
+			answerDialogbox.getViewContainer().clear();
+			
 			switch (question.getQuestionType().getQuestionType()) {
 			case ShowInImage:
+			{
 				addForShowInImage();
 				break;
-
+			}
 			case Imgkey:
+			{
 				addForImageKey();
 				break;
+			}
+			case MCQ:
+			{
+				if(question.getQuestionType().getMultimediaType() != null) {
+					addForMCQ();
+				}
+				break;
+			}
+			
 			default:
 				Log.info("check for media");
 				break;
@@ -449,10 +482,118 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	        	}
 	        }*/
 	        	
-	        answerDialogbox.display();
+	        answerDialogbox.display(question.getQuestionType().getQuestionType());
 
 		
 	}
+	private void addForMCQ() {
+		answerDialogbox.getLblUploadText().setText(constants.uploadResource());
+		ResourceUpload upload = null;
+		
+		switch (question.getQuestionType().getMultimediaType()) {
+		case Image:
+		{
+			ArrayList<String> allowedExt = Lists.newArrayList();
+			Map<MultimediaType,String> paths = Maps.newHashMap();
+			allowedExt.addAll(Arrays.asList(SharedConstant.IMAGE_EXTENSIONS));
+			paths.put(MultimediaType.Image, SharedConstant.UPLOAD_MEDIA_IMAGES_PATH);
+			upload = new ResourceUpload(allowedExt,paths, this.eventBus);
+			upload.addResourceUploadedHandler(new ResourceUploadEventHandler() {
+				
+				@Override
+				public void onResourceUploaded(ResourceUploadEvent event) {
+					if(event.isResourceUploaded()) {
+						final SimpleImageViewer viewer = new SimpleImageViewer(event.getFilePath());
+						answerDialogbox.getViewContainer().clear();
+						answerDialogbox.getViewContainer().add(viewer);
+						answerDialogbox.setSimpleImageViewer(viewer);
+
+					}					
+				}
+			});
+			
+			break;
+		}	
+		case Sound:
+		{	
+			ArrayList<String> allowedExt = Lists.newArrayList();
+			Map<MultimediaType,String> paths = Maps.newHashMap();
+			allowedExt.addAll(Arrays.asList(SharedConstant.SOUND_EXTENSIONS));
+			paths.put(MultimediaType.Sound, SharedConstant.UPLOAD_MEDIA_SOUND_PATH);
+			
+			upload = new ResourceUpload(allowedExt,paths, this.eventBus);
+			upload.addResourceUploadedHandler(new ResourceUploadEventHandler() {
+				
+				@Override
+				public void onResourceUploaded(ResourceUploadEvent event) {
+					if(event.isResourceUploaded()) {
+						if(event.getSoundMediaSize() != null && question != null && question.getQuestionType() != null && question.getQuestionType().getMaxBytes() != null) {
+							
+							if(event.getSoundMediaSize() <= question.getQuestionType().getMaxBytes()) {
+								AudioViewer viewer = new AudioViewer(event.getFilePath());
+								
+								answerDialogbox.getViewContainer().clear();
+								answerDialogbox.getViewContainer().add(viewer);
+								answerDialogbox.setAudioViewer(viewer);	
+							}else {
+								ErrorPanel errorPanel = new ErrorPanel();
+								errorPanel.setErrorMessage("Media size must be lessthan " + question.getQuestionType().getMaxBytes());
+							}
+						}else {
+							Log.error("Error in MCQ question.");
+						}
+						
+					}
+				}
+			});
+
+			break;
+		}
+		case Video:
+		{	
+			ArrayList<String> allowedExt = Lists.newArrayList();
+			Map<MultimediaType,String> paths = Maps.newHashMap();
+			allowedExt.addAll(Arrays.asList(SharedConstant.VIDEO_EXTENSIONS));
+			paths.put(MultimediaType.Video, SharedConstant.UPLOAD_MEDIA_VIDEO_PATH);
+			
+			upload = new ResourceUpload(allowedExt,paths, this.eventBus);
+			
+			upload.addResourceUploadedHandler(new ResourceUploadEventHandler() {
+				
+				@Override
+				public void onResourceUploaded(ResourceUploadEvent event) {
+					if(event.isResourceUploaded()) {
+						if(event.getVideoMediaSize() != null && question != null && question.getQuestionType() != null && question.getQuestionType().getMaxBytes() != null) {
+							
+							if(event.getVideoMediaSize() <= question.getQuestionType().getMaxBytes()) {
+								final VideoViewer viewer = new VideoViewer(event.getFilePath());
+								answerDialogbox.getViewContainer().clear();
+								answerDialogbox.setVideoViewer(viewer);
+								answerDialogbox.getViewContainer().add(viewer);
+							}else {
+								ErrorPanel errorPanel = new ErrorPanel();
+								errorPanel.setErrorMessage("Media size must be lessthan " + question.getQuestionType().getMaxBytes());
+							}
+						}else {
+							Log.error("Error in MCQ question.");
+						}
+					}
+				}
+			});
+			
+			
+			break;
+		}
+		default:
+			break;
+		}
+		
+		if(upload != null) {
+			answerDialogbox.getUploaderContainer().clear();
+			answerDialogbox.getUploaderContainer().add(upload);
+		}
+	}
+
 	private void addForImageKey() {
 
 		AnswerRequest answerRequest = requests.answerRequest();
@@ -566,28 +707,94 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		}
 		
 		if(question.getQuestionType() != null && QuestionTypes.ShowInImage.equals(question.getQuestionType().getQuestionType()) == true ) {
-			
+			Log.info("IN ShowInImage Question type");
 			if(answerDialogbox != null && answerDialogbox.getImagePolygonViewer() != null && answerDialogbox.getImagePolygonViewer().isValidPolygon()) {
 				Log.info("Points : " + answerDialogbox.getImagePolygonViewer().getPoints());
 				answerProxy.setPoints(answerDialogbox.getImagePolygonViewer().getPoints());
-				
+				Log.info("Points added");	
 			}else {
 				ErrorPanel errorPanel = new ErrorPanel();
 				errorPanel.setErrorMessage("Polygon is not property added. Try again");
+				Log.error("Polygon is not property added. Try again");
 				return;
 			}
-			Log.info("Points added");
-		}else if(question.getQuestionType() != null && QuestionTypes.Imgkey.equals(question.getQuestionType().getQuestionType()) == true && answerDialogbox.getValidity() != null & Validity.Wahr.equals(answerDialogbox.getValidity().getValue())) {
 			
+		}else if(question.getQuestionType() != null && QuestionTypes.Imgkey.equals(question.getQuestionType().getQuestionType()) == true && answerDialogbox.getValidity() != null && Validity.Wahr.equals(answerDialogbox.getValidity().getValue())) {
+			Log.info("IN Imgkey Question type");
 			if(answerDialogbox != null && answerDialogbox.getImageRectangleViewer() != null) {
 				Log.info("Points : " + answerDialogbox.getImageRectangleViewer().getPoint());
-				answerProxy.setPoints(answerDialogbox.getImageRectangleViewer().getPoint());		
+				answerProxy.setPoints(answerDialogbox.getImageRectangleViewer().getPoint());
+				Log.info("Points added");
 			}else {
 				ErrorPanel errorPanel = new ErrorPanel();
 				errorPanel.setErrorMessage("Rectangle is not property added. Try again");
+				Log.error("Rectangle is not property added. Try again");
 				return;
 			}
-			Log.info("Points added");
+			
+		}else if(question.getQuestionType() != null && QuestionTypes.MCQ.equals(question.getQuestionType().getQuestionType()) == true) {
+			Log.info("IN MCQ Question type");
+			if(answerDialogbox != null) {
+				
+				if(question != null && question.getQuestionType() != null && question.getQuestionType().getMultimediaType() != null) {
+				
+					switch (question.getQuestionType().getMultimediaType()) {
+					case Image:
+					{
+						if(answerDialogbox.getSimpleImageViewer() != null && answerDialogbox.getSimpleImageViewer().getURL() != null && answerDialogbox.getSimpleImageViewer().getURL().length() > 0) {
+							answerProxy.setMediaPath(answerDialogbox.getSimpleImageViewer().getURL());
+						}else {
+							ErrorPanel errorPanel = new ErrorPanel();
+							errorPanel.setErrorMessage("Error in ImageViewer.Try again");
+							Log.error("Error in ImageViewer. Try again");
+							return;
+						}
+						
+						break;
+					}
+					case Sound:
+					{
+						if(answerDialogbox.getAudioViewer() != null && answerDialogbox.getAudioViewer().getURL() != null && answerDialogbox.getAudioViewer().getURL().length() > 0) {
+							answerProxy.setMediaPath(answerDialogbox.getAudioViewer().getURL());
+						}else {
+							ErrorPanel errorPanel = new ErrorPanel();
+							errorPanel.setErrorMessage("Error in AudioViewer.Try again");
+							Log.error("Error in ImageViewer. Try again");
+							return;
+						}
+						break;
+					}
+					case Video:
+					{	
+						if(answerDialogbox.getVideoViewer() != null && answerDialogbox.getVideoViewer().getURL() != null && answerDialogbox.getVideoViewer().getURL().length() > 0) {
+							answerProxy.setMediaPath(answerDialogbox.getVideoViewer().getURL());
+						}else {
+							ErrorPanel errorPanel = new ErrorPanel();
+							errorPanel.setErrorMessage("Error in VideoViewer.Try again");
+							Log.error("Error in ImageViewer. Try again");
+							return;
+						}
+						break;
+					}
+					default:
+					{
+						ErrorPanel errorPanel = new ErrorPanel();
+						errorPanel.setErrorMessage("Error in MultimediaType. Try again");
+						Log.error("Error in MultimediaType. Try again");
+						return;
+					}
+					}
+				}
+				
+				
+				
+						
+			}else {
+				ErrorPanel errorPanel = new ErrorPanel();
+				errorPanel.setErrorMessage(". Try again");
+				return;
+			}
+			
 		}
 		
 		answerProxy.setComment(commentProxy);
@@ -832,7 +1039,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		
 		if(question != null) {
 			final QuestionRequest questionRequest = requests.questionRequest();
-			questionRequest.deletePictureFromDisk(picturePath).fire(new Receiver<Boolean>() {
+			questionRequest.deleteMediaFileFromDisk(picturePath).fire(new Receiver<Boolean>() {
 
 				@Override
 				public void onSuccess(Boolean response) {

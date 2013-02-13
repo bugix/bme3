@@ -618,11 +618,11 @@ public class Question {
 		return query.getResultList();
 	}
 
-	public static Boolean deletePictureFromDisk(String picturePath) {
+	public static Boolean deleteMediaFileFromDisk(String path) {
 		boolean flag = true;
 
-		String appPath = BMEUtils.getRealPath(picturePath);
-		String sysPath = SharedConstant.getUploadBaseDIRPath() + picturePath;
+		String appPath = BMEUtils.getRealPath(path);
+		String sysPath = SharedConstant.getUploadBaseDIRPath() + path;
 		log.info("applicatin Path : " + appPath);
 		log.info("system Path : " + sysPath);
 		try {

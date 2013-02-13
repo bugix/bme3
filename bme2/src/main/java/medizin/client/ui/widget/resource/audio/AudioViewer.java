@@ -37,10 +37,11 @@ public class AudioViewer extends Composite {
 	Label info;
 
 	private final ClientJukebox clientJukebox;
+	private final String url;
 
 	public AudioViewer(final String description) {
 		initWidget(uiBinder.createAndBindUi(this));
-		
+		this.url = description;
 		clientJukebox = new ClientJukebox(new SMSoundFactory(), this);
 		clientJukebox.queueRequest(description);
 		
@@ -87,6 +88,10 @@ public class AudioViewer extends Composite {
 	public void closed() {
 		Log.info("Audio player closed");
 		clientJukebox.stopPlaying();
+	}
+
+	public String getURL() {
+		return url;
 	}
 
 }

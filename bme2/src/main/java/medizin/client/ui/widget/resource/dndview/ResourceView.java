@@ -169,6 +169,21 @@ public class ResourceView extends Composite implements DragHandler {
 		addResourceView(subView,true);
 	}
 
+	public void addUrl(String url,MultimediaType type) {
+		switch (type) {
+		case Image:
+			addImageUrl(url);
+			break;
+		case Sound:
+			addSoundUrl(url);
+			break;
+		case Video:
+			addVideoUrl(url);
+			break;	
+		default:
+			break;
+		}
+	}
 	public void addVideoUrl(String url) {
 		addUrl(url, MultimediaType.Video,queHaveVideo);
 	}

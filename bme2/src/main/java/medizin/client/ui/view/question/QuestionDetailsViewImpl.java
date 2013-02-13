@@ -2,6 +2,7 @@ package medizin.client.ui.view.question;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Set;
 
 import medizin.client.proxy.QuestionProxy;
@@ -29,6 +30,7 @@ import medizin.shared.utils.SharedUtility;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.base.Function;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.SpanElement;
@@ -452,20 +454,25 @@ public class QuestionDetailsViewImpl extends Composite implements
 		lblUploadText.setText(constants.uploadResource());
 		lblUploadText.addStyleName("lblUploadPadding");
 		ArrayList<String> allowedExt = new ArrayList<String>();
-		
+		Map<MultimediaType,String> paths = Maps.newHashMap();
+	
+	
 		if(questionTypeProxy.getQueHaveImage() != null && questionTypeProxy.getQueHaveImage() == true) {
 			allowedExt.addAll(Arrays.asList(SharedConstant.IMAGE_EXTENSIONS));
+			paths.put(MultimediaType.Image, SharedConstant.UPLOAD_MEDIA_IMAGES_PATH);
 		}
 		
 		if(questionTypeProxy.getQueHaveSound()  != null && questionTypeProxy.getQueHaveSound() == true) {
 			allowedExt.addAll(Arrays.asList(SharedConstant.SOUND_EXTENSIONS));
+			paths.put(MultimediaType.Sound, SharedConstant.UPLOAD_MEDIA_SOUND_PATH);
 		}
 		
 		if(questionTypeProxy.getQueHaveVideo()  != null && questionTypeProxy.getQueHaveVideo() == true) {
 			allowedExt.addAll(Arrays.asList(SharedConstant.VIDEO_EXTENSIONS));	
+			paths.put(MultimediaType.Video, SharedConstant.UPLOAD_MEDIA_VIDEO_PATH);
 		}
 		
-		ResourceUpload resourceUpload = new ResourceUpload(allowedExt,this.eventBus);
+		ResourceUpload resourceUpload = new ResourceUpload(allowedExt,paths,this.eventBus);
 		
 		//final QuestionTypeProxy tempQuestionTypeProxy = question.getQuestionType(); 
 		
@@ -474,28 +481,28 @@ public class QuestionDetailsViewImpl extends Composite implements
 			@Override
 			public void onResourceUploaded(ResourceUploadEvent event) {
 
-				String fileName = event.getFileName();
+				String filePath = event.getFilePath();
 				
 				if(event.isResourceUploaded() == true) {
-					Log.info("fileName is " + fileName);
+					Log.info("filePath is " + filePath);
 					
-					MultimediaType mtype = SharedUtility.getFileMultimediaType(SharedUtility.getFileExtension(fileName));
+					MultimediaType mtype = SharedUtility.getFileMultimediaType(SharedUtility.getFileExtension(filePath));
 					
 					switch (mtype) {
 					case Image:
 					{
 						// for image
 						if (resourceView != null) {
-							Log.info(SharedConstant.UPLOAD_QUESTION_IMAGES_PATH + fileName);
-							resourceView.addImageUrl(SharedConstant.UPLOAD_QUESTION_IMAGES_PATH + fileName);
+//							resourceView.addImageUrl(SharedConstant.UPLOAD_QUESTION_IMAGES_PATH + fileName);
+							resourceView.addImageUrl(filePath);
 						}
 						break;
 					}	
 					case Sound:
 					{	
 						if (resourceView != null) {
-							Log.info(SharedConstant.UPLOAD_QUESTION_SOUND_PATH + fileName);
-							resourceView.addSoundUrl(SharedConstant.UPLOAD_QUESTION_SOUND_PATH + fileName);
+//							resourceView.addSoundUrl(SharedConstant.UPLOAD_QUESTION_SOUND_PATH + fileName);
+							resourceView.addSoundUrl(filePath);
 						}
 						
 						break;
@@ -503,9 +510,7 @@ public class QuestionDetailsViewImpl extends Composite implements
 					case Video :
 					{	
 						if (resourceView != null) {
-							Log.info(SharedConstant.UPLOAD_QUESTION_VIDEO_PATH + fileName);
-							
-							resourceView.addVideoUrl(SharedConstant.UPLOAD_QUESTION_VIDEO_PATH + fileName);
+							resourceView.addVideoUrl(filePath);
 						}
 						break;
 					}
@@ -550,8 +555,10 @@ public class QuestionDetailsViewImpl extends Composite implements
 		lblUploadText.addStyleName("lblUploadPadding");
 		ArrayList<String> allowedExt = new ArrayList<String>();
 		allowedExt.addAll(Arrays.asList(SharedConstant.IMAGE_EXTENSIONS));
+		Map<MultimediaType,String> paths = Maps.newHashMap();
+		paths.put(MultimediaType.Image, SharedConstant.UPLOAD_MEDIA_IMAGES_PATH);
 		
-		ResourceUpload resourceUpload = new ResourceUpload(allowedExt,this.eventBus);
+		ResourceUpload resourceUpload = new ResourceUpload(allowedExt,paths,this.eventBus);
 		
 //		final QuestionTypeProxy tempQuestionTypeProxy = proxy.getQuestionType(); 
 		
@@ -560,45 +567,40 @@ public class QuestionDetailsViewImpl extends Composite implements
 			@Override
 			public void onResourceUploaded(ResourceUploadEvent event) {
 
-				String fileName = event.getFileName();
+				final String filePath = event.getFilePath();
 				
 				if(event.isResourceUploaded() == true) {
-					Log.info("fileName is " + fileName);
+					Log.info("filepath is " + filePath);
+					// for image
+					final String url = new String(GWT.getHostPageBaseURL() + filePath);
+					if(questionTypeProxy.getImageWidth() != null && questionTypeProxy.getImageHeight() !=  null) {
 					
-					MultimediaType mtype = SharedUtility.getFileMultimediaType(SharedUtility.getFileExtension(fileName));
-					
-					switch (mtype) {
-					case Image:
-					{
-						// for image
-						final String picturePath = SharedConstant.UPLOAD_QUESTION_IMAGES_PATH + fileName;
-						final String url = new String(GWT.getHostPageBaseURL() + picturePath);
-						ClientUtility.checkImageSize(url,questionTypeProxy,new Function<Boolean, Void>() {
+						Function<Boolean, Void> function = new Function<Boolean, Void>() {
 							
 							@Override
 							public Void apply(Boolean flag) {
 						
 								if(flag != null && flag == true) {
-									Log.info("picturePath : " + picturePath);
-									imageViewer.setUrl(picturePath, type);	
-									delegate.updatePicturePathInQuestion(picturePath);
+									imageViewer.setUrl(filePath, type);	
+									delegate.updatePicturePathInQuestion(filePath);
 								}else {
 									ConfirmationDialogBox.showOkDialogBox("Error", "Only Upload image of size" + questionTypeProxy.getImageWidth() + "*" + questionTypeProxy.getImageHeight());
-									delegate.deleteUploadedPicture(picturePath);
-									//deleteImage(url.replaceAll(GWT.getHostPageBaseURL(), ""));
+									delegate.deleteUploadedPicture(filePath);
 								}
-	
+
 								return null;
 							}
-						});
+						};
 						
-						break;
-					}	
-					default:
-					{
-						Window.alert("Error in ResourceUploadEventHandler");
-						break;
-					}
+						if(event.getWidth() != null && event.getHeight() != null) {
+							if(event.getWidth().equals(questionTypeProxy.getImageWidth()) && event.getHeight().equals(questionTypeProxy.getImageHeight())) {
+								function.apply(true);
+							}else {
+								function.apply(false);
+							}
+						}else {
+							ClientUtility.checkImageSize(url,questionTypeProxy.getImageWidth(),questionTypeProxy.getImageHeight(),function);
+						}
 					}
 					
 				}else {

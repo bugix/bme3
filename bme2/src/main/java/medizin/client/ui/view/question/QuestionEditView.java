@@ -48,7 +48,7 @@ public interface QuestionEditView extends IsWidget {
 
 		void deleteSelectedQuestionResource(Long id);
 
-		void deleteUploadedPicture(String picturePath);
+		void deleteMediaFileFromDisk(String path);
 		
 	}
 

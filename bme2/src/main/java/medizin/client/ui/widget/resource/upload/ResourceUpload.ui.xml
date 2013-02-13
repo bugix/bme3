@@ -9,6 +9,9 @@
 			<g:FormPanel ui:field="uploadFormPanel">
 				<g:HorizontalPanel>
 					<g:FileUpload ui:field="fileUpload" visible="true" name="f1"/>
+					<g:HTMLPanel visible="false">
+						<input name="directory" ui:field="directory" />
+					</g:HTMLPanel>
 				</g:HorizontalPanel>
 			</g:FormPanel>
 		</g:HorizontalPanel>

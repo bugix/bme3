@@ -1,9 +1,15 @@
 package medizin.server.domain;
 
 import java.io.File;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.ManyToOne;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.validation.constraints.NotNull;
 
 import medizin.server.utils.BMEUtils;
@@ -11,6 +17,7 @@ import medizin.shared.MultimediaType;
 import medizin.shared.utils.SharedConstant;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Query;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
@@ -38,16 +45,13 @@ public class QuestionResource {
 	public static void persistSet(Set<QuestionResource> questionResources) {
 		
 		log.info("persist set");
-		
 		for (QuestionResource questionResource : questionResources) {
-			QuestionResource resource = QuestionResource.findQuestionResource(questionResource.getId());
+			QuestionResource resource = QuestionResource.findQuestionResourceByPathAndQuestion(questionResource.getPath(), questionResource.getQuestion());
 			if(resource != null) {
-				resource.setId(questionResource.getId());
 				resource.setPath(questionResource.getPath());
 				resource.setQuestion(questionResource.getQuestion());
 				resource.setSequenceNumber(questionResource.getSequenceNumber());
 				resource.setType(questionResource.getType());
-				resource.setVersion(questionResource.getVersion());
 				resource.persist();
 			}else {
 				questionResource.persist();
@@ -55,6 +59,35 @@ public class QuestionResource {
 		}
 	}
 	
+	public static List<QuestionResource> findQuestionResourceByQuestion(Question question) {
+		
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<QuestionResource> criteriaQuery = criteriaBuilder.createQuery(QuestionResource.class);
+		Root<QuestionResource> from = criteriaQuery.from(QuestionResource.class);
+		criteriaQuery.where(criteriaBuilder.equal(from.get("question").get("id"), question.getId()));
+		TypedQuery<QuestionResource> query = entityManager().createQuery(criteriaQuery);
+		log.info("Query is : " + query.unwrap(Query.class).getQueryString());
+		return query.getResultList();
+	}
+
+	public static QuestionResource findQuestionResourceByPathAndQuestion(String path,Question question) {
+		
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<QuestionResource> criteriaQuery = criteriaBuilder.createQuery(QuestionResource.class);
+		Root<QuestionResource> from = criteriaQuery.from(QuestionResource.class);
+		Predicate p1 = criteriaBuilder.equal(from.get("question").get("id"), question.getId());
+		Predicate p2 = criteriaBuilder.equal(from.get("path"), path);
+		criteriaQuery.where(criteriaBuilder.and(p1,p2));
+		TypedQuery<QuestionResource> query = entityManager().createQuery(criteriaQuery);
+		log.info("Query is : " + query.unwrap(Query.class).getQueryString());
+		List<QuestionResource> list = query.getResultList();
+		
+		if(list == null || list.size() == 0) {
+			return null;
+		}
+		return list.get(0);
+		
+	}
 	public static void removeSelectedQuestionResource(Long questionResourceId) {
 		
 		log.info("to delete the selected resource : " + questionResourceId);

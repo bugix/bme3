@@ -7,17 +7,15 @@ import medizin.client.ui.widget.resource.dndview.vo.State;
 import medizin.client.ui.widget.resource.event.ResourceDeletedEvent;
 import medizin.client.ui.widget.resource.image.ImageViewer;
 import medizin.client.ui.widget.resource.video.VideoViewer;
-import medizin.shared.MultimediaType;
+import medizin.client.util.ClientUtility;
 import medizin.shared.QuestionTypes;
 import medizin.shared.i18n.BmeConstants;
-import medizin.shared.utils.SharedConstant;
 
 import com.google.common.base.Function;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.media.client.Audio;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.AbsolutePanel;
@@ -103,7 +101,7 @@ public class ResourceSubView extends Composite {
 //
 //		htmlText.setVisible(true);
 		
-		htmlText.setText(getName(questionResource.getPath(), questionResource.getType()));
+		htmlText.setText(ClientUtility.getFileName(questionResource.getPath(), questionResource.getType()));
 		htmlText.setHeight(imageDim);
 		htmlText.setWidth(textDim);
 
@@ -162,8 +160,7 @@ public class ResourceSubView extends Composite {
 
 				@Override
 				public void onClick(ClickEvent event) {
-					final VideoViewer viewer = new VideoViewer();
-					viewer.setVideoMediaContent(questionResource.getPath());
+					final VideoViewer viewer = new VideoViewer(questionResource.getPath());
 					DialogBox dialogBox = createDialogBox(constants.mediaViewer(),viewer,new Function<Boolean,Void>(){
 
 						@Override
@@ -227,36 +224,6 @@ public class ResourceSubView extends Composite {
 
 		// Return the dialog box
 		return dialogBox;
-	}
-
-	private String getName(String path, MultimediaType multimediaType) {
-		String fileName = "";
-		
-		if(path.contains("_")) {
-			path = path.substring(path.indexOf("_")+1);
-		}
-			
-		switch (multimediaType) {
-		case Image: {
-			fileName = path.replace(
-					SharedConstant.UPLOAD_QUESTION_IMAGES_PATH, "");
-			break;
-		}
-		case Sound: {
-			fileName = path.replace(
-					SharedConstant.UPLOAD_QUESTION_SOUND_PATH, "");
-			break;
-		}
-		case Video: {
-			fileName = path.replace(
-					SharedConstant.UPLOAD_QUESTION_VIDEO_PATH, "");
-			break;
-		}
-		default:
-			break;
-		}
-
-		return fileName;
 	}
 
 	public ResourceView getResourceView() {

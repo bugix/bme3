@@ -2,8 +2,8 @@ package medizin.client.ui.widget.resource.audio;
 import java.util.ArrayList;
 
 import medizin.client.ui.ErrorPanel;
+import medizin.client.util.ClientUtility;
 import medizin.shared.MultimediaType;
-import medizin.shared.utils.SharedConstant;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.chj.gwt.client.soundmanager2.Callback;
@@ -98,7 +98,7 @@ public class ClientJukebox {
 
 
 	private void playRequest(final String request) {
-		lastPlayed = getName(request, MultimediaType.Sound);
+		lastPlayed = ClientUtility.getFileName(request, MultimediaType.Sound);
 
 		/* Create a callback */
 		soundFactory.playSong(request, new Callback(){
@@ -149,38 +149,5 @@ public class ClientJukebox {
 
 	public void setIsPaused(Boolean isPaused) {
 		this.isPaused = isPaused;
-	}
-
-	private String getName(String path, MultimediaType multimediaType) {
-		String fileName = "";
-		
-		if(path.contains("_")) {
-			path = path.substring(path.indexOf("_")+1);
-		}
-			
-		switch (multimediaType) {
-		case Image: {
-			fileName = path.replace(
-					SharedConstant.UPLOAD_QUESTION_IMAGES_PATH, "");
-			break;
-		}
-		case Sound: {
-			fileName = path.replace(
-					SharedConstant.UPLOAD_QUESTION_SOUND_PATH, "");
-			break;
-		}
-		case Video: {
-			fileName = path.replace(
-					SharedConstant.UPLOAD_QUESTION_VIDEO_PATH, "");
-			break;
-		}
-		default:
-			break;
-		}
-
-		return fileName;
-	}
-
-
-
+	}	
 }

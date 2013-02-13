@@ -28,11 +28,11 @@ public class VideoViewer extends Composite {
 
 	VideoWidget videoPlayer = null;
 
-	public VideoViewer() {
-		initWidget(uiBinder.createAndBindUi(this));
-	}
+	private final String url;
 
-	public void setVideoMediaContent(String description) {
+	public VideoViewer(String description) {
+		initWidget(uiBinder.createAndBindUi(this));
+		this.url = description;
 		
 		if (description == null || description.equals(""))
 			return;
@@ -51,9 +51,13 @@ public class VideoViewer extends Composite {
 
 		videoPanel.add(videoPlayer);
 	}
-
+	
 	public void closed() {
 		Log.info("Video player is closed.");
+	}
+
+	public String getURL() {
+		return url;
 	}
 
 }

@@ -33,7 +33,7 @@ public class Answer {
 
 	private static Logger log = Logger.getLogger(Answer.class);
 
-    @Size(min = 1, max = 999)
+    @Size(min = 0, max = 999)
     private String answerText;
 
     @NotNull
@@ -60,7 +60,7 @@ public class Answer {
     private Validity validity;
 
     @Size(min = 3, max = 255)
-    private String picturePath;
+    private String mediaPath;
 
     @ManyToOne
     private Question question;

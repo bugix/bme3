@@ -8,11 +8,11 @@ import java.util.Set;
 
 import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionResourceProxy;
-import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.ui.widget.resource.dndview.vo.State;
-import medizin.shared.QuestionTypes;
+import medizin.shared.MultimediaType;
 import medizin.shared.UserType;
+import medizin.shared.utils.SharedConstant;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.base.Function;
@@ -92,8 +92,7 @@ public final class ClientUtility {
 
 	}
 	
-	public static void checkImageSize(final String url,
-			final QuestionTypeProxy questionType,final Function<Boolean, Void> function) {
+	public static void checkImageSize(final String url,final int width,final int height,final Function<Boolean, Void> function) {
 		
 		final Image image = new Image(new SafeUri() {
 			
@@ -109,10 +108,7 @@ public final class ClientUtility {
 			public void run() {
 				
 				Log.info("Image width * height : " + image.getWidth() + "*" + image.getHeight());
-				if(QuestionTypes.Textual.equals(questionType.getQuestionType())) {
-					function.apply(true);
-				}
-				else if(questionType.getImageWidth() != null && questionType.getImageWidth().equals(image.getWidth()) && questionType.getImageHeight() != null && questionType.getImageHeight().equals(image.getHeight())) {
+				if(width == image.getWidth() && height == image.getHeight()) {
 					function.apply(true);
 				}else {
 					function.apply(false);	
@@ -122,5 +118,52 @@ public final class ClientUtility {
 			}
 		}.schedule(2000);
 	
+	}
+	
+	public static String getFileName(String path, MultimediaType multimediaType) {
+		String fileName = "";
+		
+		if(path.contains("_")) {
+			path = path.substring(path.indexOf("_")+1);
+		}
+			
+		switch (multimediaType) {
+		case Image: {
+			fileName = path.replace(
+					SharedConstant.UPLOAD_MEDIA_IMAGES_PATH, "");
+			break;
+		}
+		case Sound: {
+			fileName = path.replace(
+					SharedConstant.UPLOAD_MEDIA_SOUND_PATH, "");
+			break;
+		}
+		case Video: {
+			fileName = path.replace(
+					SharedConstant.UPLOAD_MEDIA_VIDEO_PATH, "");
+			break;
+		}
+		default:
+			break;
+		}
+
+		return fileName;
+	}
+
+	public static boolean isNumber(String value) {
+		
+		  try  
+		  {  
+		    int d = Integer.parseInt(value);  
+		  }  
+		  catch(NumberFormatException nfe)  
+		  {  
+		    return false;  
+		  }  
+		  catch (Exception e) {
+			  return false;
+		  }
+		  
+		  return true;  
 	}
 }

@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import medizin.client.factory.request.McAppRequestFactory;
@@ -16,11 +17,11 @@ import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.proxy.QuestionResourceProxy;
 import medizin.client.proxy.QuestionTypeProxy;
+import medizin.client.ui.ErrorPanel;
 import medizin.client.ui.richtext.RichTextToolbar;
 import medizin.client.ui.view.roo.McSetEditor;
 import medizin.client.ui.view.roo.QuestionTypeProxyRenderer;
 import medizin.client.ui.widget.IconButton;
-import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.resource.dndview.ResourceView;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.ui.widget.resource.event.ResourceAddedEvent;
@@ -39,10 +40,10 @@ import medizin.shared.MultimediaType;
 import medizin.shared.QuestionTypes;
 import medizin.shared.i18n.BmeConstants;
 import medizin.shared.utils.SharedConstant;
-import medizin.shared.utils.SharedUtility;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.base.Function;
+import com.google.common.collect.Maps;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.SpanElement;
@@ -57,7 +58,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -610,54 +610,58 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 		}					
 			
 		ArrayList<String> allowedExt = new ArrayList<String>();
-		allowedExt.addAll(Arrays.asList(SharedConstant.IMAGE_EXTENSIONS));
+		Map<MultimediaType, String> paths = Maps.newHashMap();
 		
-		ResourceUpload resourceUpload = new ResourceUpload(allowedExt,this.eventBus); 
+		allowedExt.addAll(Arrays.asList(SharedConstant.IMAGE_EXTENSIONS));
+		paths.put(MultimediaType.Image, SharedConstant.UPLOAD_MEDIA_IMAGES_PATH);
+		
+		ResourceUpload resourceUpload = new ResourceUpload(allowedExt,paths,this.eventBus); 
 		
 		resourceUpload.addResourceUploadedHandler(new ResourceUploadEventHandler() {
 			
 			@Override
 			public void onResourceUploaded(ResourceUploadEvent event) {
 
-				String fileName = event.getFileName();
+				final String filePath = event.getFilePath();
 				
 				if(event.isResourceUploaded() == true) {
-					Log.info("fileName is " + fileName);
+					Log.info("filePath is " + filePath);
 					
-					MultimediaType mtype = SharedUtility.getFileMultimediaType(SharedUtility.getFileExtension(fileName));
-					
-					switch (mtype) {
-					case Image:
-					{
-						// for image
-						final String picturePath = SharedConstant.UPLOAD_QUESTION_IMAGES_PATH + fileName;
-						final String url = new String(GWT.getHostPageBaseURL() + picturePath);
-						ClientUtility.checkImageSize(url,questionTypeProxy,new Function<Boolean, Void>() {
+					// for image
+					final String url = new String(GWT.getHostPageBaseURL() + filePath);
+					if(questionTypeProxy != null && questionTypeProxy.getImageWidth() != null && questionTypeProxy.getImageHeight() != null) {
+						
+						Function<Boolean, Void> function = new Function<Boolean, Void>() {
 							
 							@Override
 							public Void apply(Boolean flag) {
 						
 								if(flag != null && flag == true) {
-									Log.info("picturePath : " + picturePath);
-									imageViewer.setUrl(picturePath, type);	
-								}else {
-									ConfirmationDialogBox.showOkDialogBox("Error", "Only Upload image of size" + questionTypeProxy.getImageWidth() + "*" + questionTypeProxy.getImageHeight());
-									delegate.deleteUploadedPicture(picturePath);
+									Log.info("picturePath : " + filePath);
+									imageViewer.setUrl(filePath, type);	
+								} else {
+									ErrorPanel errorPanel = new ErrorPanel();
+									errorPanel.setErrorMessage("Only Upload image of size" + questionTypeProxy.getImageWidth() + "*" + questionTypeProxy.getImageHeight());
+									delegate.deleteMediaFileFromDisk(filePath);
 								}
-	
+
 								return null;
 							}
-						});
+						};
 						
-						break;
-					}	
-					default:
-					{
-						Window.alert("Error in ResourceUploadEventHandler");
-						break;
+						if(event.getWidth() != null && event.getHeight() != null) {
+							if(event.getWidth().equals(questionTypeProxy.getImageWidth()) && event.getHeight().equals(questionTypeProxy.getImageHeight())) {
+								function.apply(true);
+							}else {
+								function.apply(false);
+							}
+						}else {
+							ClientUtility.checkImageSize(url,questionTypeProxy.getImageWidth(),questionTypeProxy.getImageHeight(),function);
+						}
+							
+					}else {
+						Log.error("Error in questionType.");
 					}
-					}
-					
 				}else {
 					Log.error("Upload fail.");
 				}
@@ -678,10 +682,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 		viewerContainer.clear();
 		
 		if(questionType != null &&  questionType.getQuestionType() != null ) {
-		
-			
-			if(allowedQuestionTypeForResouce(questionType)) {
-
+					
 				lblUploadText.setText(constants.uploadResource());
 				
 				// added viewer
@@ -706,9 +707,10 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 					public void onResourceAdded(ResourceAddedEvent event) {
 						
 						if(!event.isAdded()) {
-							ConfirmationDialogBox.showOkDialogBox("Error", "This type of media is not allowed");
-							//TODO delete resource from location. 
-						}	
+							ErrorPanel errorPanel = new ErrorPanel();
+							errorPanel.setErrorMessage("This type of media is not allowed");
+							delegate.deleteMediaFileFromDisk(event.getQuestionResourceClient().getPath()); 
+						}
 					}
 				});	
 				
@@ -724,99 +726,50 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 				});
 				// allowed extension
 				ArrayList<String> allowedExt = new ArrayList<String>();
-
+				Map<MultimediaType, String> paths = Maps.newHashMap();
 				if(questionType.getQueHaveImage() != null && questionType.getQueHaveImage() == true) {
 					allowedExt.addAll(Arrays.asList(SharedConstant.IMAGE_EXTENSIONS));
+					paths.put(MultimediaType.Image,SharedConstant.UPLOAD_MEDIA_IMAGES_PATH);
 				}
 				
 				if(questionType.getQueHaveSound()  != null && questionType.getQueHaveSound() == true) {
 					allowedExt.addAll(Arrays.asList(SharedConstant.SOUND_EXTENSIONS));
+					paths.put(MultimediaType.Sound,SharedConstant.UPLOAD_MEDIA_SOUND_PATH);
 				}
 				
 				if(questionType.getQueHaveVideo()  != null && questionType.getQueHaveVideo() == true) {
-					allowedExt.addAll(Arrays.asList(SharedConstant.VIDEO_EXTENSIONS));	
+					allowedExt.addAll(Arrays.asList(SharedConstant.VIDEO_EXTENSIONS));
+					paths.put(MultimediaType.Video,SharedConstant.UPLOAD_MEDIA_VIDEO_PATH);
 				}			
 				
 				// added resourceUpload
-				
-				for (String string : allowedExt) {
-					
-					Log.info(string);
-				}
-				ResourceUpload resourceUpload = new ResourceUpload(allowedExt,eventBus);
-				
-				final QuestionTypeProxy tempQuestionTypeProxy = questionType; 
+				ResourceUpload resourceUpload = new ResourceUpload(allowedExt,paths,eventBus);
+				 
 				resourceUpload.addResourceUploadedHandler(new ResourceUploadEventHandler() {
 					
 					@Override
 					public void onResourceUploaded(ResourceUploadEvent event) {
-						String fileName = event.getFileName();
+						String filePath = event.getFilePath();
 						
 						if(event.isResourceUploaded() == true) {
-							Log.info("fileName is " + fileName);
+							Log.info("filePath is " + filePath);
 							
-							MultimediaType type = SharedUtility.getFileMultimediaType(SharedUtility.getFileExtension(fileName));
-							
-							switch (type) {
-							case Image:
-							{
-								// for image
-								if (viewer != null) {
-									Log.info(SharedConstant.UPLOAD_QUESTION_IMAGES_PATH + fileName);
-									viewer.addImageUrl(SharedConstant.UPLOAD_QUESTION_IMAGES_PATH + fileName);
-								}else {
-									Log.error("Viewer is null");
-								}
-	
-								break;
-							}	
-							case Sound:
-							{	
-								if (viewer != null) {
-									Log.info(SharedConstant.UPLOAD_QUESTION_SOUND_PATH + fileName);
-									
-									viewer.addSoundUrl(SharedConstant.UPLOAD_QUESTION_SOUND_PATH + fileName);
-								}
-								
-								break;
-							}
-							case Video :
-							{	
-								if (viewer != null) {
-									Log.info(SharedConstant.UPLOAD_QUESTION_VIDEO_PATH + fileName);
-									
-									viewer.addVideoUrl(SharedConstant.UPLOAD_QUESTION_VIDEO_PATH + fileName);
-								}
-								break;
-							}
-							default:
-							{
-								Window.alert("Error in ResourceUploadEventHandler");
-								break;
-							}
-							}
-							
+							MultimediaType type = event.getType();
+							if (viewer != null) {
+								viewer.addUrl(filePath, type);
+							}else {
+								Log.error("Viewer is null");
+							}		
 						}else {
 							Log.error("Upload fail.");
 						}
 					}
-					
 				});
 				
 				// added to container
 				lblUploadText.setText(constants.uploadResource());
 				uploaderContainer.add(resourceUpload);
 				viewerContainer.add(viewer);
-				
-//				if(question != null && questionType != null /*&& question.getPicturePath() != null && question.getPicturePath().length() > 0*/) {
-//					
-//					viewer.setup(question, questionType.getQuestionType());
-//					//viewer.setUrl(GWT.getHostPageBaseURL() + question.getPicturePath(),questionType.getQuestionType());
-//				}
-	}
-
-			
-			
 		}
 	}
 	
@@ -827,31 +780,6 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 		viewerContainer.clear();		
 	}
 	
-
-	private boolean allowedQuestionTypeForResouce(QuestionTypeProxy questionType) {
-		boolean flag = false;
-		
-		
-		// for image key question
-		if(QuestionTypes.Imgkey.equals(questionType.getQuestionType())){
-			flag = true;
-		}
-		//for textual question having images, sound or video
-		else if(QuestionTypes.Textual.equals(questionType.getQuestionType()) && ((questionType.getQueHaveImage() != null && questionType.getQueHaveImage().equals(true)) || (questionType.getQueHaveSound() != null && questionType.getQueHaveSound().equals(true)) || (questionType.getQueHaveVideo() != null && questionType.getQueHaveVideo().equals(true)))) {
-			flag = true;
-		}
-		//for area question having height and width
-		else if(QuestionTypes.ShowInImage.equals(questionType.getQuestionType()) && questionType.getImageWidth() != null && questionType.getImageHeight() != null) {
-			flag = true;
-		}
-		//MCQ question having type as image and height and width or type as sound or type as video
-		else if(QuestionTypes.MCQ.equals(questionType.getQuestionType()) && ( (MultimediaType.Image.equals(questionType.getMultimediaType()) && questionType.getImageWidth() != null && questionType.getImageHeight() != null) || (MultimediaType.Sound.equals(questionType.getMultimediaType()) ) || (MultimediaType.Video.equals(questionType.getMultimediaType()) ))) {
-			flag = true;
-		}
-		
-		return flag;
-	}
-
 //	@Override
 //	public ImageViewer getImageViewer() {
 //		return viewer;
