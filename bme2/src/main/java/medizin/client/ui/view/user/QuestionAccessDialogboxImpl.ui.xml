@@ -6,7 +6,7 @@
 		.panelHTML {
 			border: 0px solid #ddf;
 			height: 100%;
-			width: 1200px;
+			width: 800px;
 		}
 		
 		.controls {
@@ -38,11 +38,11 @@
 			width: 100%;
 		}
 		
-		.listView  &gt; table {
+		.listView   &gt; table {
 			table-layout: fixed;
 		}
 		
-		.listView  &gt; table td {
+		.listView   &gt; table td {
 			text-overflow: ellipsis;
 			overflow: hidden;
 			white-space: nowrap;
@@ -50,10 +50,8 @@
 		}
 		
 		.barNew {
-			float: right;
 			width: 100%;
 			padding: 3px;
-			
 		}
 		
 		.right {
@@ -66,7 +64,7 @@
 			padding-right: 10px;
 		}
 	</ui:style>
-	<g:HTMLPanel>
+	<g:HTMLPanel width="800px">
 		<div style="height:3em;" />
 		<b:CellTable ui:field="tableEvent" addStyleNames="{style.standardTable}"
 			width="100%" />
@@ -83,9 +81,9 @@
 		</div>
 		<!-- <div style="height:3em;" /> -->
 		<div class="{style.barNew}">
-			<!-- <g:Button ui:field="closeButton"
-				addStyleNames="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only {style.right}">Schliessen</g:Button> -->
-				 <g:Button ui:field="closeButton" addStyleNames=" {style.right}">Schliessen</g:Button> 
+			<!-- <g:Button ui:field="closeButton" addStyleNames="ui-button ui-widget 
+				ui-state-default ui-corner-all ui-button-text-only {style.right}">Schliessen</g:Button> -->
+			<g:Button ui:field="closeButton" addStyleNames=" {style.right}">Schliessen</g:Button>
 		</div>
 	</g:HTMLPanel>
 </ui:UiBinder> 

@@ -357,7 +357,7 @@ public class QuestionAccessDialogboxImpl extends DialogBox implements QuestionAc
 
 	@Override
 	public void display() {
-		setWidth("1200px");
+		setWidth("800px");
 		center();
 		show();
 		

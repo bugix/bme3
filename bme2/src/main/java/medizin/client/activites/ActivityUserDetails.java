@@ -871,6 +871,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 		institutionFilter=null;
 		questiuonStringFilter="";
 		dialogBoxQuestion = new QuestionAccessDialogboxImpl();
+		
 		dialogBoxQuestion.display();
 		Log.info("addNewQuestionClicked");
 		
@@ -1211,8 +1212,10 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 
 				@Override
 				public void onSuccess(PersonProxy response) {
+					
 					QuestionAccessRequest questionAccessRequest = requests.questionAccessRequest();
 					QuestionAccessProxy questionAccessProxy = questionAccessRequest.create(QuestionAccessProxy.class);
+					
 					
 					questionAccessProxy.setInstitution(institutionProxy);
 					questionAccessProxy.setPerson(person);

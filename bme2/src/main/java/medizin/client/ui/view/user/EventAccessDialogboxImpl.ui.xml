@@ -38,11 +38,11 @@
 			width: 100%;
 		}
 		
-		.listView  &gt; table {
+		.listView   &gt; table {
 			table-layout: fixed;
 		}
 		
-		.listView  &gt; table td {
+		.listView   &gt; table td {
 			text-overflow: ellipsis;
 			overflow: hidden;
 			white-space: nowrap;
@@ -50,17 +50,15 @@
 		}
 		
 		.barNew {
-			
 			width: 100%;
 			padding: 3px;
-			
-			
 		}
 		
 		.right {
 			float: right;
 			margin: 3px;
 		}
+		
 		.displayRight {
 			float: right;
 			padding-right: 10px;
@@ -74,15 +72,15 @@
 		<div class="{style.controls}">
 			<g:ListBox ui:field="searchInstitution"></g:ListBox>
 			<g:TextBox ui:field="searchEvent"></g:TextBox>
-			<b:SimplePager ui:field="pager" display="{tableEvent}" addStyleNames="{style.displayRight}"/>
+			<b:SimplePager ui:field="pager" display="{tableEvent}"
+				addStyleNames="{style.displayRight}" />
 			<!-- <b:SimplePager display="{tableEvent}" location="RIGHT"/> -->
 		</div>
 		<!-- <div style="height:3em;" /> -->
 		<div class="{style.barNew}">
-		<g:Button ui:field="closeButton"
-				addStyleNames="{style.right}">Schliessen</g:Button>
-			<!-- <g:Button ui:field="closeButton"
-				addStyleNames="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only {style.right}">Schliessen</g:Button> -->
+			<g:Button ui:field="closeButton" addStyleNames="{style.right}">Schliessen</g:Button>
+			<!-- <g:Button ui:field="closeButton" addStyleNames="ui-button ui-widget 
+				ui-state-default ui-corner-all ui-button-text-only {style.right}">Schliessen</g:Button> -->
 		</div>
 	</g:HTMLPanel>
 </ui:UiBinder> 

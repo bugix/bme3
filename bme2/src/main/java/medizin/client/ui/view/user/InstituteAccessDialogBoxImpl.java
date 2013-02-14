@@ -51,12 +51,18 @@ public class InstituteAccessDialogBoxImpl extends DialogBox implements Institute
 	    setTitle("Zufriff auf Themenblock hinzufügen");
 	    setText("Zufriff auf Themenblock hinzufügen");
 	    
-	   
+	   /* tableEvent.removeColumnStyleName(1, "cellTableCell");
+	    
+	    tableEvent.addColumnStyleName(1,"cellStyle" );
+	  
+	    tableEvent.removeColumnStyleName(0, "cellTableCell");
+	    
+	    tableEvent.addColumnStyleName(0,"cellStyle" );
+	   */
 	    
 	    init();
 	    
-	    tableEvent.getColumn(1).setCellStyleNames("cellStyle");
-	    
+	    //tableEvent.getColumn(1).setCellStyleNames("cellStyle");
 	    
 	  
 	    
