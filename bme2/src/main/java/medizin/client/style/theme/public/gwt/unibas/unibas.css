@@ -598,7 +598,7 @@ a:hover, .gwt-Anchor:hover {
 	/*padding: 6px;*/
 	background: url("images/ui-bg_highlight-soft_0_e0e0e0_1x400.png") repeat-x scroll 50% 50% #FFFFFF;
 	opacity: 0.9;
-	z-index: 100;
+	z-index: 1000;
 	
 	/* Hack for compatibility with customized tabpanel */
 	/* z-index: 200; */
@@ -3351,20 +3351,20 @@ color: #f1b532;
 
 .gwt-DateBox
 {
-	z-index: 2 !important;
+	z-index: 2000 !important;
 	
 }
 
 .gwt-DateBox {
-  z-index: 2 !important;
+  z-index: 2000 !important;
 }
 
 .dateBoxPopup {
-	z-index: 2 !important;
+	z-index: 2000 !important;
 }
 
 .gwt-DatePicker {
-  z-index: 2 !important;
+  z-index: 2000 !important;
 }
 
 .checkdemo
@@ -3403,15 +3403,15 @@ color: #f1b532;
 
 
 .gwt-DateBox {
-  z-index: 2 !important;
+  z-index: 2000 !important;
 }
 
 .dateBoxPopup {
-	z-index: 2 !important;
+	z-index: 2000 !important;
 }
 
 .gwt-DatePicker {
-  z-index: 2 !important;
+  z-index: 2000 !important;
 }
 
 
@@ -4317,3 +4317,24 @@ background: url("images/colorpicker.png");
 .lblUploadPadding {
 	padding-top: 15px;
 }
+
+.tableColumn {
+	width: 450px;
+	background-color: yellow !important;
+	background: url("images/ui-bg_glass_75_dadada_1x400.png") repeat-x
+		scroll 50% 50% #DADADA !important;	
+	
+}
+
+
+.cellStyle{
+	border: 0 !important;
+	height: 20px !important;
+	padding: 4px 10px !important;
+	overflow: hidden !important;
+	vertical-align: top !important;
+	float: center !important;
+	
+}
+
+

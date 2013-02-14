@@ -371,12 +371,26 @@ body {
 .standardTable button {
 	outline: none !important;
 	margin: 0 0 0 -5px;
-	padding: 3px 2px 0;
+	
 	border: 0;
-	background: none;
+	
 	cursor: pointer;
-	cursor: hand;
+	cursor: hand;	
+	padding: 3px 6px 3px 3px;
+	text-decoration: none !important;
+	background: url("images/ui-bg_glass_75_dadada_1x400.png") repeat-x scroll 50% 50% #DADADA;
+	border: 1px solid #999;
+	
+	height: 23px;
+	/*align:center;*/
+	font-size: 90%;
+	
+	border-radius: 4px;
+	white-space: nowrap;
+	text-align: center;
 }
+
+
 
 .standardTable button span {
 	

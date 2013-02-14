@@ -1,8 +1,8 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:b="urn:import:com.google.gwt.user.cellview.client">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:b="urn:import:com.google.gwt.user.cellview.client" xmlns:m="urn:import:medizin.client.ui.widget">
 
-	<ui:style>
+	<ui:style src="../../styles.css">
 		.panelHTML {
 		border: 0px solid #ddf;
 		height: 100%;
@@ -96,8 +96,42 @@
 
 
 		}
+		.rightAlign
+		{
+			float: right;
+			
+
+		}
 	</ui:style>
-	<g:HTMLPanel>
+	
+	<g:VerticalPanel width="100%">
+	<g:HTMLPanel width="100%">
+	
+	<b:CellTable ui:field="tableEvent" addStyleNames="{style.standardTable}"
+						width="500" />
+						
+						<g:HorizontalPanel width="100%">
+							<g:HorizontalPanel width="50%">
+						<m:IconButton ui:field="newQuestionAccess" icon="plusthick">New Access</m:IconButton>
+							</g:HorizontalPanel>
+							<g:HorizontalPanel addStyleNames="{style.rightAlign}">
+						<b:SimplePager ui:field="pager" display="{tableEvent}" />
+							</g:HorizontalPanel>
+						
+						</g:HorizontalPanel>
+						<!-- 
+					<div class="{style.controls} {style.controlsleft}">
+						
+						
+						
+						
+						 <i:DefaultSuggestBox ui:field="copiedOsce"></i:DefaultSuggestBox> 
+					</div> -->
+					
+	
+	</g:HTMLPanel>
+	</g:VerticalPanel>
+	<!-- <g:HTMLPanel>
 		<div style="height:2em;" />
 		<table class="{style.details}" cellpadding="0" cellspacing="0">
 
@@ -124,5 +158,5 @@
 			</tr>
 		</table>
 	</g:HTMLPanel>
-
+ -->
 </ui:UiBinder> 

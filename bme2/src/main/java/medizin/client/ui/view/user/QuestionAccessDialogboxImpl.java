@@ -5,10 +5,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import medizin.client.style.resources.MyCellTableResources;
+import medizin.client.style.resources.MySimplePagerResources;
+import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.user.EventAccessDialogbox.Delegate;
 import medizin.client.ui.view.user.EventAccessDialogbox.Presenter;
 
 
+import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
 
 import com.allen_sauer.gwt.log.client.Log;
@@ -30,6 +34,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -62,6 +67,13 @@ public class QuestionAccessDialogboxImpl extends DialogBox implements QuestionAc
 	
 
 	public QuestionAccessDialogboxImpl() {
+		CellTable.Resources tableResources = GWT.create(MyCellTableResources.class);
+		tableEvent = new CellTable<QuestionProxy>(McAppConstant.TABLE_PAGE_SIZE,tableResources);
+
+		SimplePager.Resources pagerResources = GWT.create(MySimplePagerResources.class);
+		pager = new SimplePager(SimplePager.TextLocation.RIGHT, pagerResources,true, McAppConstant.TABLE_JUMP_SIZE, true);
+		
+		
 		setWidget(uiBinder.createAndBindUi(this));
 	    setGlassEnabled(true);
 	    setAnimationEnabled(true);
@@ -291,8 +303,17 @@ public class QuestionAccessDialogboxImpl extends DialogBox implements QuestionAc
 	    C getValue(QuestionProxy contact);
 	  }
 	
-	@UiField
-	CellTable<QuestionProxy> tableEvent;
+	  
+	  @UiField(provided = true)
+			CellTable<QuestionProxy> tableEvent;
+
+			@UiField(provided = true)
+			public SimplePager pager;
+
+			
+			
+	/*@UiField
+	CellTable<QuestionProxy> tableEvent;*/
 
    
 	@UiField

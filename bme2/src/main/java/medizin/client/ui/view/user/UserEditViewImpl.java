@@ -6,6 +6,7 @@ import medizin.client.proxy.AnswerProxy;
 import medizin.client.proxy.DoctorProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.request.PersonRequest;
+import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.EventHandlingValueHolderItem;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
 
@@ -13,6 +14,7 @@ import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -26,6 +28,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -39,16 +42,17 @@ public class UserEditViewImpl extends Composite implements UserEditView  {
 	}
 
 	private Presenter presenter;
-	@UiField
+	
+	/*@UiField
 	Element  editTitle;
 	@UiField
-	Element  createTitle;
+	Element  createTitle;*/
 	
     @UiField
-    Button cancel;
+    IconButton cancel;
 
     @UiField
-    Button save;
+    IconButton save;
 
     private Delegate delegate;
 	
@@ -83,6 +87,14 @@ public class UserEditViewImpl extends Composite implements UserEditView  {
 
 	private McAppRequestFactory requests;
 
+	@UiField
+	TabPanel userTypePanel;
+	
+	@UiField
+	SpanElement title;
+
+
+	
     @UiHandler("cancel")
     void onCancel(ClickEvent event) {
         delegate.cancelClicked();
@@ -103,6 +115,11 @@ public class UserEditViewImpl extends Composite implements UserEditView  {
 	public UserEditViewImpl() {
 		initWidget(uiBinder.createAndBindUi(this));
 		
+		userTypePanel.selectTab(0);
+		userTypePanel.getTabBar().setTabText(0, "Manage User");
+		save.setText("Save");
+		cancel.setText("cancel");
+		title.setInnerText("Create");
 		isDoctor.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 			
 			@Override
@@ -124,7 +141,7 @@ public class UserEditViewImpl extends Composite implements UserEditView  {
 	@Override
 	public void setValue(PersonProxy person) {
 		this.proxy = person;
-		
+		title.setInnerText("Edit");
 		name.setText(person.getName() == null ? "" : person.getName());
 		prename.setText(person.getPrename() == null ? "" : person.getPrename());
 		email.setText(person.getEmail() == null ? "" : person.getEmail());

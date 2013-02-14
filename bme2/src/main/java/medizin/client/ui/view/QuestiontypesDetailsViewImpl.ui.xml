@@ -1,534 +1,509 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:n="urn:import:medizin.client.ui" xmlns:a="urn:import:medizin.client.ui.widget">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:n="urn:import:medizin.client.ui"
+	xmlns:a="urn:import:medizin.client.ui.widget">
 	<ui:style src="../styles.css">
-   .panelHTML {
-		border: 0px solid #ddf;
-		height: 100%;
-		width: 100%;
+		.panelHTML {
+			border: 0px solid #ddf;
+			height: 100%;
+			width: 100%;
 		}
+		
 		.fields {
-		margin: 0.5em;
-		padding-right: 1em;
-
-
+			margin: 0.5em;
+			padding-right: 1em;
 		}
+		
 		.label {
-		min-height: 25px;
-		font-weight: bold;
-
+			min-height: 25px;
+			font-weight: bold;
 		}
-				.label2 {
-
+		
+		.label2 {
 			float: left;
 		}
+		
 		.button {
-		margin-left: 0.5em;
-		float: right;
-		background: none;
-
-		cursor: pointer;
+			margin-left: 0.5em;
+			float: right;
+			background: none;
+			cursor: pointer;
 		}
-
+		
 		.header {
-		padding: 3px;
-		color: #4B4A4A;
-		text-shadow: #ddf 1px
-		1px 0;
-		margin-bottom: 0;
-		background-color: #E6EDED;
-		font-size: 1.2em;
-		font-weight: bold;
-
+			padding: 3px;
+			color: #4B4A4A;
+			text-shadow: #ddf 1px 1px 0;
+			margin-bottom: 0;
+			background-color: #E6EDED;
+			font-size: 1.2em;
+			font-weight: bold;
 		}
+		
 		.underline {
-		border-bottom: 1px solid #6F7277;
+			border-bottom: 1px solid #6F7277;
 		}
-		.boundary{
-		padding-left:
-		10px;
-		padding-right: 10px;
+		
+		.boundary {
+			padding-left: 10px;
+			padding-right: 10px;
 		}
-
+		
 		.bar {
-		padding: 3px;
-
-
-		background-color:
-		#E6EDED;
-
+			padding: 3px;
+			background-color: #E6EDED;
 		}
+		
 		.details {
-
-		border: 1px solid #E6EDED;
-		width:
-		100%;
-
+			border: 1px solid #E6EDED;
+			width: 100%;
 		}
 		
-				.trenner {
-
-		border-bottom: 1px solid #E6EDED;
-	
-
+		.trenner {
+			border-bottom: 1px solid #E6EDED;
 		}
 		
-		.padleft5
-	{
-		padding-left: 5px;
-	}
-	
+		.padleft5 {
+			padding-left: 5px;
+		}
 	</ui:style>
-<g:HTMLPanel>
-<g:VerticalPanel addStyleNames="{style.tabStyle}" >
-<g:HTMLPanel addStyleNames="{style.patientControls}">
-				<!-- <g:Image ui:field="arrow" styleName="{style.padleft5}"
-					url="/ApplicationEntry/gwt/unibas/images/arrowdownselect.png"></g:Image> -->
-				
+	<g:HTMLPanel>
+		<g:VerticalPanel addStyleNames="{style.tabStyle}">
+			<g:HTMLPanel addStyleNames="{style.patientControls}">
+				<!-- <g:Image ui:field="arrow" styleName="{style.padleft5}" url="/ApplicationEntry/gwt/unibas/images/arrowdownselect.png"></g:Image> -->
+
 				<g:HTMLPanel>
 					<div class="{style.controlsright}">
-							<h3 class="{style.header}" style="display:inline">
+						<h3 class="{style.header}" style="display:inline">
 							<span ui:field="displayRenderer"></span>
 						</h3>
-						
+
 						<a:IconButton ui:field="edit" icon="pencil">Edit</a:IconButton>
 						<a:IconButton ui:field="delete" icon="trash">Delete</a:IconButton>
-						
-						
+
+
 					</div>
 				</g:HTMLPanel>
+			</g:HTMLPanel>
+
+
+
+			<g:TabPanel ui:field="questionTypeDetailPanel"
+				addStyleNames="gwt-InvertedTabPanel" width="100%">
+
+				<g:Tab>
+					<g:TabHTML></g:TabHTML>
+					<!-- <g:HorizontalPanel > -->
+					<g:HTMLPanel addStyleNames="{style.patientDetails}">
+						<table class="{style.fields}">
+
+
+
+
+
+
+
+							<!-- <tr> <td class="{style.header}"> <span>Fragetyp Name:</span> 
+								<span ui:field="questionTypeName"/> </td> <td class="{style.bar}"> <div> 
+								<g:Button addStyleNames="{style.button}" ui:field="edit"> <span class="ui-icon 
+								ui-icon-pencil" style="float: left; margin-right: 0.3em;"></span> Fragetyp 
+								bearbeiten </g:Button> <g:Button addStyleNames="{style.button}" ui:field="delete"> 
+								<span class="ui-icon ui-icon-trash" style="float: left; margin-right: 0.3em;"></span> 
+								Fragetyp löschen </g:Button> </div> </td> </tr> -->
+							<tr>
+								<td colspan="2">
+									<table class="{style.fields}" id="boundElementHolder">
+
+										<tr id="shortName">
+											<td>
+												<g:Label styleName="{style.label}" ui:field="shortNameLbl"></g:Label>
+											</td>
+											<td>
+												<g:Label ui:field="shortNameValLbl"></g:Label>
+											</td>
+										</tr>
+										<tr id="longName">
+											<td>
+												<g:Label styleName="{style.label}" ui:field="longNameLbl"></g:Label>
+											</td>
+											<td>
+												<g:Label ui:field="longNameValLbl"></g:Label>
+											</td>
+										</tr>
+										<tr id="description">
+											<td>
+												<g:Label styleName="{style.label}" ui:field="descriptionLbl"></g:Label>
+											</td>
+											<td>
+												<g:Label ui:field="descriptionValLbl"></g:Label>
+											</td>
+										</tr>
+
+										<tr id="institute">
+											<td>
+												<g:Label styleName="{style.label}" ui:field="instituteLbl"></g:Label>
+											</td>
+											<td>
+												<g:Label ui:field="instituteValLbl"></g:Label>
+											</td>
+										</tr>
+
+										<tr id="questionType">
+											<td>
+												<g:Label styleName="{style.label}" ui:field="questionTypeLbl"></g:Label>
+											</td>
+											<td>
+												<g:Label ui:field="questionTypeValLbl"></g:Label>
+											</td>
+										</tr>
+
+										<tr id="sumAnswer">
+											<td>
+												<g:Label styleName="{style.label}" ui:field="sumAnswerLbl"></g:Label>
+											</td>
+											<td>
+												<g:Label ui:field="sumAnswerValLbl"></g:Label>
+											</td>
+										</tr>
+
+										<tr id="sumTrueAnswer">
+											<td>
+												<g:Label styleName="{style.label}" ui:field="sumTrueAnswerLbl"></g:Label>
+											</td>
+											<td>
+												<g:Label ui:field="sumTrueAnswerValLbl"></g:Label>
+											</td>
+										</tr>
+
+										<tr id="sumFalseAnswer">
+											<td>
+												<g:Label styleName="{style.label}" ui:field="sumFalseAnswerLbl"></g:Label>
+											</td>
+											<td>
+												<g:Label ui:field="sumFalseAnswerValLbl"></g:Label>
+											</td>
+										</tr>
+
+										<tr id="questionLength">
+											<td>
+												<g:Label styleName="{style.label}" ui:field="questionLengthLbl"></g:Label>
+											</td>
+											<td>
+												<g:Label ui:field="questionLengthValLbl"></g:Label>
+											</td>
+										</tr>
+
+										<tr id="answerLength">
+											<td>
+												<g:Label styleName="{style.label}" ui:field="answerLengthLbl"></g:Label>
+											</td>
+											<td>
+												<g:Label ui:field="answerLengthValLbl"></g:Label>
+											</td>
+										</tr>
+
+										<tr id="answerDiff">
+											<td>
+												<g:Label styleName="{style.label}" ui:field="answerDiffLbl"></g:Label>
+											</td>
+											<td>
+												<g:Label ui:field="answerDiffValLbl"></g:Label>
+											</td>
+										</tr>
+
+										<tr id="queHaveImg">
+											<td>
+												<g:Label styleName="{style.label}" ui:field="queHaveImgLbl"></g:Label>
+											</td>
+											<td>
+												<g:Label ui:field="queHaveImgValLbl"></g:Label>
+											</td>
+										</tr>
+
+										<tr id="queHaveVideo">
+											<td>
+												<g:Label styleName="{style.label}" ui:field="queHaveVideoLbl"></g:Label>
+											</td>
+											<td>
+												<g:Label ui:field="queHaveVideoValLbl"></g:Label>
+											</td>
+										</tr>
+
+										<tr id="queHaveSound">
+											<td>
+												<g:Label styleName="{style.label}" ui:field="queHaveSoundLbl"></g:Label>
+											</td>
+											<td>
+												<g:Label ui:field="queHaveSoundValLbl"></g:Label>
+											</td>
+										</tr>
+
+										<!-- ImgKey Question Type Field -->
+
+										<tr id="keywordCount">
+											<td>
+												<g:Label styleName="{style.label}" ui:field="keywordCountLbl"></g:Label>
+											</td>
+											<td>
+												<g:Label ui:field="keywordCountValLbl"></g:Label>
+											</td>
+										</tr>
+
+										<tr id="showAutoComplete">
+											<td>
+												<g:Label styleName="{style.label}" ui:field="showAutoCompleteLbl"></g:Label>
+											</td>
+											<td>
+												<g:Label ui:field="showAutoCompleteValLbl"></g:Label>
+											</td>
+										</tr>
+
+										<tr id="isDictionaryKeyword">
+											<td>
+												<g:Label styleName="{style.label}" ui:field="isDictionaryKeywordLbl"></g:Label>
+											</td>
+											<td>
+												<g:Label ui:field="isDictionaryKeywordValLbl"></g:Label>
+											</td>
+										</tr>
+
+										<tr id="allowTyping">
+											<td>
+												<g:Label styleName="{style.label}" ui:field="allowTypingLbl"></g:Label>
+											</td>
+											<td>
+												<g:Label ui:field="allowTypingValLbl"></g:Label>
+											</td>
+										</tr>
+
+										<tr id="minLetterForAutoComp">
+											<td>
+												<g:Label styleName="{style.label}" ui:field="minLetterForAutoCompLbl"></g:Label>
+											</td>
+											<td>
+												<g:Label ui:field="minLetterForAutoCompValLbl"></g:Label>
+											</td>
+										</tr>
+
+										<tr id="acceptNonKeyword">
+											<td>
+												<g:Label styleName="{style.label}" ui:field="acceptNonKeywordLbl"></g:Label>
+											</td>
+											<td>
+												<g:Label ui:field="acceptNonKeywordValLbl"></g:Label>
+											</td>
+										</tr>
+
+										<tr id="shortAnswerLength">
+											<td>
+												<g:Label styleName="{style.label}" ui:field="shortAnswerLengthLbl"></g:Label>
+											</td>
+											<td>
+												<g:Label ui:field="shortAnswerLengthValLbl"></g:Label>
+											</td>
+										</tr>
+
+										<tr id="imageWidth">
+											<td>
+												<g:Label styleName="{style.label}" ui:field="imageWidthLbl"></g:Label>
+											</td>
+											<td>
+												<g:Label ui:field="imageWidthValLbl"></g:Label>
+											</td>
+										</tr>
+
+										<tr id="imageLength">
+											<td>
+												<g:Label styleName="{style.label}" ui:field="imageLengthLbl"></g:Label>
+											</td>
+											<td>
+												<g:Label ui:field="imageLengthValLbl"></g:Label>
+											</td>
+										</tr>
+
+										<tr id="imageProportion">
+											<td>
+												<g:Label styleName="{style.label}" ui:field="imageProportionLbl"></g:Label>
+											</td>
+											<td>
+												<g:Label ui:field="imageProportionValLbl"></g:Label>
+											</td>
+										</tr>
+
+										<!-- Area Question Type Field -->
+
+										<tr id="linearPoint">
+											<td>
+												<g:Label styleName="{style.label}" ui:field="linearPointLbl"></g:Label>
+											</td>
+											<td>
+
+												<g:Label ui:field="linearPointValLbl"></g:Label>
+											</td>
+										</tr>
+
+										<tr id="linearPercentage">
+											<td>
+												<g:Label styleName="{style.label}" ui:field="linearPercentageLbl"></g:Label>
+											</td>
+											<td>
+												<g:Label ui:field="linearPercentageValLbl"></g:Label>
+											</td>
+										</tr>
+
+										<!-- Long Text Type Field -->
+
+										<tr id="keywordHighlight">
+											<td>
+												<g:Label styleName="{style.label}" ui:field="keywordHighlightLbl"></g:Label>
+											</td>
+											<td>
+												<g:Label ui:field="keywordHighlightValLbl"></g:Label>
+											</td>
+										</tr>
+
+										<tr id="richText">
+											<td>
+												<g:Label styleName="{style.label}" ui:field="richTextLbl"></g:Label>
+											</td>
+											<td>
+												<g:Label ui:field="richTextValLbl"></g:Label>
+											</td>
+										</tr>
+
+										<tr id="minLength">
+											<td>
+												<g:Label styleName="{style.label}" ui:field="minLengthLbl"></g:Label>
+											</td>
+											<td>
+												<g:Label ui:field="minLengthValLbl"></g:Label>
+											</td>
+										</tr>
+
+										<tr id="maxLength">
+											<td>
+												<g:Label styleName="{style.label}" ui:field="maxLengthLbl"></g:Label>
+											</td>
+											<td>
+												<g:Label ui:field="maxLengthValLbl"></g:Label>
+											</td>
+										</tr>
+
+										<tr id="minWordCount">
+											<td>
+												<g:Label styleName="{style.label}" ui:field="minWordCountLbl"></g:Label>
+											</td>
+											<td>
+												<g:Label ui:field="minWordCountValLbl"></g:Label>
+											</td>
+										</tr>
+
+										<tr id="maxWordCount">
+											<td>
+												<g:Label styleName="{style.label}" ui:field="maxWordCountLbl"></g:Label>
+											</td>
+											<td>
+												<g:Label ui:field="maxWordCountValLbl"></g:Label>
+											</td>
+										</tr>
+
+										<!-- Matrix Type Field -->
+
+										<tr id="oneToOneAss">
+											<td>
+												<g:Label styleName="{style.label}" ui:field="oneToOneAssLbl"></g:Label>
+											</td>
+											<td>
+												<g:Label ui:field="oneToOneAssValLbl"></g:Label>
+											</td>
+										</tr>
+
+										<!-- MCQ Type Field -->
+
+										<tr id="multimediaType">
+											<td>
+												<g:Label styleName="{style.label}" ui:field="multimediaTypeLbl"></g:Label>
+											</td>
+											<td>
+												<g:Label ui:field="multimediaTypeValLbl"></g:Label>
+											</td>
+										</tr>
+
+										<tr id="selectionType">
+											<td>
+												<g:Label styleName="{style.label}" ui:field="selectionTypeLbl"></g:Label>
+											</td>
+											<td>
+												<g:Label ui:field="selectionTypeValLbl"></g:Label>
+											</td>
+										</tr>
+
+										<tr id="column">
+											<td>
+												<g:Label styleName="{style.label}" ui:field="columnLbl"></g:Label>
+											</td>
+											<td>
+												<g:Label ui:field="columnValLbl"></g:Label>
+											</td>
+										</tr>
+
+										<tr id="thumbWidth">
+											<td>
+												<g:Label styleName="{style.label}" ui:field="thumbWidthLbl"></g:Label>
+											</td>
+											<td>
+												<g:Label ui:field="thumbWidthValLbl"></g:Label>
+											</td>
+										</tr>
+
+										<tr id="thumbHeight">
+											<td>
+												<g:Label styleName="{style.label}" ui:field="thumbHeightLbl"></g:Label>
+											</td>
+											<td>
+												<g:Label ui:field="thumbHeightValLbl"></g:Label>
+											</td>
+										</tr>
+
+										<tr id="allowZoomOut">
+											<td>
+												<g:Label styleName="{style.label}" ui:field="allowZoomOutLbl"></g:Label>
+											</td>
+											<td>
+												<g:Label ui:field="allowZoomOutValLbl"></g:Label>
+											</td>
+										</tr>
+
+										<tr id="allowZoomIn">
+											<td>
+												<g:Label styleName="{style.label}" ui:field="allowZoomInLbl"></g:Label>
+											</td>
+											<td>
+												<g:Label ui:field="allowZoomInValLbl"></g:Label>
+											</td>
+										</tr>
+
+										<tr id="maxBytes">
+											<td>
+												<g:Label styleName="{style.label}" ui:field="maxBytesLbl"></g:Label>
+											</td>
+											<td>
+												<g:Label ui:field="maxBytesValLbl"></g:Label>
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</table>
+
+
+					</g:HTMLPanel>
+					<!-- </g:HorizontalPanel> -->
+				</g:Tab>
+			</g:TabPanel>
+
+
+
+		</g:VerticalPanel>
 	</g:HTMLPanel>
-	
-	
-
-			<g:TabPanel ui:field="questionTypeDetailPanel" addStyleNames="gwt-InvertedTabPanel" width="100%">
-	
-			<g:Tab>
-			<g:TabHTML></g:TabHTML>
-			<!-- <g:HorizontalPanel > -->
-			<g:HTMLPanel addStyleNames="{style.patientDetails}">
-		<table  class="{style.fields}" >
-	
-
-
-			
-
-
-
-				<!-- <tr>
-					<td class="{style.header}">	
-									<span>Fragetyp Name:</span>
-									<span ui:field="questionTypeName"/>
-									
-					</td>
-					<td class="{style.bar}">
-						<div>
-							<g:Button addStyleNames="{style.button}" ui:field="edit">
-								<span class="ui-icon ui-icon-pencil" style="float: left; margin-right: 0.3em;"></span>
-								Fragetyp bearbeiten
-							</g:Button>
-							<g:Button addStyleNames="{style.button}" ui:field="delete">
-								<span class="ui-icon ui-icon-trash" style="float: left; margin-right: 0.3em;"></span>
-								Fragetyp löschen
-							</g:Button>
-						</div>
-					</td>
-				</tr> -->
-				<tr>
-					<td colspan="2">
-						<table class="{style.fields}" id="boundElementHolder">
-						
-						 	  <tr id="shortName">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="shortNameLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:Label ui:field="shortNameValLbl"></g:Label>						 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  <tr id="longName">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="longNameLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:Label ui:field="longNameValLbl"></g:Label>
-						 	  	</td>
-						 	  </tr>
-						 	  <tr id="description">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="descriptionLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:Label ui:field="descriptionValLbl"></g:Label>
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="institute">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="instituteLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:Label ui:field="instituteValLbl"></g:Label>
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	   <tr id="questionType">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="questionTypeLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:Label ui:field="questionTypeValLbl"></g:Label>
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="sumAnswer">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="sumAnswerLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:Label ui:field="sumAnswerValLbl"></g:Label>
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="sumTrueAnswer">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="sumTrueAnswerLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:Label ui:field="sumTrueAnswerValLbl"></g:Label>
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="sumFalseAnswer">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="sumFalseAnswerLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:Label ui:field="sumFalseAnswerValLbl"></g:Label>
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="questionLength">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="questionLengthLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:Label ui:field="questionLengthValLbl"></g:Label>
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="answerLength">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="answerLengthLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:Label ui:field="answerLengthValLbl"></g:Label>
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="answerDiff">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="answerDiffLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:Label ui:field="answerDiffValLbl"></g:Label>
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="queHaveImg">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="queHaveImgLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:Label ui:field="queHaveImgValLbl"></g:Label>					 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="queHaveVideo">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="queHaveVideoLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:Label ui:field="queHaveVideoValLbl"></g:Label>					 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="queHaveSound">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="queHaveSoundLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:Label ui:field="queHaveSoundValLbl"></g:Label>						 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <!-- ImgKey Question Type Field -->
-						 	  
-						 	  <tr id="keywordCount" >
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="keywordCountLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:Label ui:field="keywordCountValLbl"></g:Label>			 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="showAutoComplete">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="showAutoCompleteLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:Label ui:field="showAutoCompleteValLbl"></g:Label>		 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="isDictionaryKeyword">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="isDictionaryKeywordLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:Label ui:field="isDictionaryKeywordValLbl"></g:Label>						 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="allowTyping">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="allowTypingLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:Label ui:field="allowTypingValLbl"></g:Label>			 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="minLetterForAutoComp">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="minLetterForAutoCompLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:Label ui:field="minLetterForAutoCompValLbl"></g:Label>		 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="acceptNonKeyword">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="acceptNonKeywordLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:Label ui:field="acceptNonKeywordValLbl"></g:Label>					 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="shortAnswerLength">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="shortAnswerLengthLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:Label ui:field="shortAnswerLengthValLbl"></g:Label>			 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	   <tr id="imageWidth">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="imageWidthLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:Label ui:field="imageWidthValLbl"></g:Label>			 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	   <tr id="imageLength">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="imageLengthLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:Label ui:field="imageLengthValLbl"></g:Label>				 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="imageProportion" >
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="imageProportionLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:Label ui:field="imageProportionValLbl"></g:Label>				 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <!-- Area Question Type Field -->
-						 	  
-						 	  <tr id="linearPoint">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="linearPointLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		
-						 	  		<g:Label ui:field="linearPointValLbl"></g:Label>	 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="linearPercentage">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="linearPercentageLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:Label ui:field="linearPercentageValLbl"></g:Label>					 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <!-- Long Text Type Field -->
-						 	  
-						 	  <tr id="keywordHighlight">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="keywordHighlightLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:Label ui:field="keywordHighlightValLbl"></g:Label> 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="richText">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="richTextLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:Label ui:field="richTextValLbl"></g:Label>				 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="minLength">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="minLengthLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:Label ui:field="minLengthValLbl"></g:Label>					 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="maxLength">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="maxLengthLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:Label ui:field="maxLengthValLbl"></g:Label>					 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="minWordCount">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="minWordCountLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:Label ui:field="minWordCountValLbl"></g:Label>				 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="maxWordCount">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="maxWordCountLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:Label ui:field="maxWordCountValLbl"></g:Label>	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <!-- Matrix Type Field -->
-						 	  
-						 	  <tr id="oneToOneAss">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="oneToOneAssLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:Label ui:field="oneToOneAssValLbl"></g:Label>	 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <!-- MCQ Type Field -->
-						 	  					
-						 	  <tr id="multimediaType">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="multimediaTypeLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:Label ui:field="multimediaTypeValLbl"></g:Label>
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="selectionType">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="selectionTypeLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:Label ui:field="selectionTypeValLbl"></g:Label>
-						 	  	</td>
-						 	  </tr>	  
-						 	  
-						 	  <tr id="column">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="columnLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:Label ui:field="columnValLbl"></g:Label>					 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	   <tr id="thumbWidth">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="thumbWidthLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:Label ui:field="thumbWidthValLbl"></g:Label>			 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="thumbHeight">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="thumbHeightLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:Label ui:field="thumbHeightValLbl"></g:Label>				 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="allowZoomOut">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="allowZoomOutLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:Label ui:field="allowZoomOutValLbl"></g:Label>				 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="allowZoomIn">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="allowZoomInLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:Label ui:field="allowZoomInValLbl"></g:Label>				 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="maxBytes">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="maxBytesLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:Label ui:field="maxBytesValLbl"></g:Label>				 	  		
-						 	  	</td>
-						 	  </tr>
-						  </table>
-					</td>
-				</tr>
-			</table>
-
-
-		</g:HTMLPanel>
-		<!-- </g:HorizontalPanel> -->
-		</g:Tab>
-	</g:TabPanel>
-	
-	
-
-</g:VerticalPanel>
-  </g:HTMLPanel>
 </ui:UiBinder> 

@@ -4,6 +4,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 import medizin.client.proxy.InstitutionProxy;
+import medizin.client.proxy.QuestionAccessProxy;
+import medizin.client.style.resources.MyCellTableResources;
+import medizin.client.style.resources.MySimplePagerResources;
+import medizin.client.ui.McAppConstant;
 import medizin.shared.i18n.BmeConstants;
 
 import com.google.gwt.cell.client.AbstractEditableCell;
@@ -19,6 +23,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
@@ -34,13 +39,28 @@ public class InstituteAccessDialogBoxImpl extends DialogBox implements Institute
 	}
 
 	public InstituteAccessDialogBoxImpl() {
+		CellTable.Resources tableResources = GWT.create(MyCellTableResources.class);
+		tableEvent = new CellTable<InstitutionProxy>(McAppConstant.TABLE_PAGE_SIZE,tableResources);
+
+		SimplePager.Resources pagerResources = GWT.create(MySimplePagerResources.class);
+		pager = new SimplePager(SimplePager.TextLocation.RIGHT, pagerResources,true, McAppConstant.TABLE_JUMP_SIZE, true);
+		
 		setWidget(uiBinder.createAndBindUi(this));
 	    setGlassEnabled(true);
 	    setAnimationEnabled(true);
 	    setTitle("Zufriff auf Themenblock hinzufügen");
 	    setText("Zufriff auf Themenblock hinzufügen");
 	    
+	   
+	    
 	    init();
+	    
+	    tableEvent.getColumn(1).setCellStyleNames("cellStyle");
+	    
+	    
+	  
+	    
+	    
 	}
 
 	public BmeConstants constants = GWT.create(BmeConstants.class);
@@ -75,7 +95,10 @@ public class InstituteAccessDialogBoxImpl extends DialogBox implements Institute
     	      }, null);
       
     	tableEvent.addColumnStyleName(0, "questionTextColumn");
-    	tableEvent.addColumnStyleName(1, "accessRightColumn");
+//    	tableEvent.addColumnStyleName(1, "accessRightColumn");
+    	
+    	tableEvent.addColumnStyleName(1,"tableColumn");
+    	
 	}
 
 	private <C> void addColumn(Cell<C> cell, String headerText,
@@ -102,8 +125,14 @@ public class InstituteAccessDialogBoxImpl extends DialogBox implements Institute
 		    C getValue(InstitutionProxy contact);
 		  }
 		
-		@UiField
+		/*@UiField
+		CellTable<InstitutionProxy> tableEvent;*/
+		
+		@UiField(provided = true)
 		CellTable<InstitutionProxy> tableEvent;
+
+		@UiField(provided = true)
+		public SimplePager pager;
 		
 		private Delegate delegate;
 		

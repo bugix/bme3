@@ -4,6 +4,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import medizin.client.proxy.PersonProxy;
+import medizin.client.proxy.QuestionProxy;
+import medizin.client.style.resources.MyCellTableResources;
+import medizin.client.style.resources.MySimplePagerResources;
+import medizin.client.ui.McAppConstant;
+import medizin.client.ui.widget.IconButton;
 import medizin.shared.i18n.BmeConstants;
 
 import com.google.gwt.core.client.GWT;
@@ -16,6 +21,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Button;
@@ -39,6 +45,12 @@ public class UserViewImpl extends Composite implements UserView  {
 	private Presenter presenter;
 
 	public UserViewImpl() {
+		CellTable.Resources tableResources = GWT.create(MyCellTableResources.class);
+		table = new CellTable<PersonProxy>(McAppConstant.TABLE_PAGE_SIZE,tableResources);
+
+		SimplePager.Resources pagerResources = GWT.create(MySimplePagerResources.class);
+		pager = new SimplePager(SimplePager.TextLocation.RIGHT, pagerResources,true, McAppConstant.TABLE_JUMP_SIZE, true);
+
 		initWidget(uiBinder.createAndBindUi(this));
 		DOM.setElementAttribute(splitLayoutPanel.getElement(), "style", "position: absolute; left: 0px; top: 0px; right: 5px; bottom: 0px;");
 		
@@ -52,10 +64,18 @@ public class UserViewImpl extends Composite implements UserView  {
 		
 	}
 	
+	@UiField(provided = true)
+	CellTable<PersonProxy> table;
+
+	@UiField(provided = true)
+	public SimplePager pager;
+
+	
+	  /* @UiField
+	    CellTable<PersonProxy> table;*/
+	  
 	   @UiField
-	    CellTable<PersonProxy> table;
-	   @UiField
-	   Button addInstitution;
+	   IconButton addInstitution;
 	   
 	   public BmeConstants constants = GWT.create(BmeConstants.class);
 	   

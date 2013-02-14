@@ -1,41 +1,47 @@
 package medizin.client.ui.view.user;
 
-import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.proxy.PersonProxy;
+import medizin.client.ui.widget.IconButton;
+import medizin.client.ui.widget.TabPanelHelper;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
-import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.dom.client.Style.Display;
-import com.google.gwt.editor.client.Editor;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class UserDetailsViewImpl extends Composite implements UserDetailsView  {
+public class UserDetailsViewImpl extends Composite implements UserDetailsView  
+{
 
 	private static UserDetailsViewImplUiBinder uiBinder = GWT
 			.create(UserDetailsViewImplUiBinder.class);
 
 	interface UserDetailsViewImplUiBinder extends
-			UiBinder<Widget, UserDetailsViewImpl> {
+			UiBinder<Widget, UserDetailsViewImpl> 
+	{
 	}
 	
 
 
 	private Presenter presenter;
 
+	@UiField
+	TabPanel userDetailPanel;
+	
+	@UiField
+	TabPanel userAccessDetailPanel;
 	
     @UiField
-    HasClickHandlers edit;
+    IconButton edit;
 
     @UiField
-    HasClickHandlers delete;
+    IconButton delete;
 
     private Delegate delegate;
 	
@@ -51,8 +57,8 @@ public class UserDetailsViewImpl extends Composite implements UserDetailsView  {
     @UiField
     Label prename;
     
-    @UiField
-    SpanElement header;
+    /*@UiField
+    SpanElement header;*/
 
     @UiField
     Label email;
@@ -96,10 +102,11 @@ public class UserDetailsViewImpl extends Composite implements UserDetailsView  {
     PersonProxy proxy;
     
     @UiHandler("delete")
-    public void onDeleteClicked(ClickEvent e) {
-        delegate.deleteClicked();
-    }
-
+	public void onDeleteClicked(ClickEvent e) {
+		delegate.deleteClicked();
+	}
+    
+    
     @UiHandler("edit")
     public void onEditClicked(ClickEvent e) {
         delegate.editClicked();
@@ -113,7 +120,7 @@ public class UserDetailsViewImpl extends Composite implements UserDetailsView  {
        
 //        id.setInnerText(proxy.getId() == null ? "" : String.valueOf(proxy.getId()));
 //        version.setInnerText(proxy.getVersion() == null ? "" : String.valueOf(proxy.getVersion()));
-        header.setInnerText((proxy.getName() == null ? "" : String.valueOf(proxy.getName()) )+" "+ (proxy.getPrename() == null ? "" : String.valueOf(proxy.getPrename())));
+  //      header.setInnerText((proxy.getName() == null ? "" : String.valueOf(proxy.getName()) )+" "+ (proxy.getPrename() == null ? "" : String.valueOf(proxy.getPrename())));
         name.setText(proxy.getName() == null ? "" : String.valueOf(proxy.getName()));
         prename.setText(proxy.getPrename() == null ? "" : String.valueOf(proxy.getPrename()));
         email.setText(proxy.getEmail() == null ? "" : String.valueOf(proxy.getEmail()));
@@ -139,6 +146,16 @@ public class UserDetailsViewImpl extends Composite implements UserDetailsView  {
 
 	public UserDetailsViewImpl() {
 		initWidget(uiBinder.createAndBindUi(this));
+		userDetailPanel.selectTab(0);
+		userDetailPanel.getTabBar().setTabText(0, "Users");
+		TabPanelHelper.moveTabBarToBottom(userDetailPanel);
+		
+		userAccessDetailPanel.selectTab(0);
+		
+		userAccessDetailPanel.getTabBar().setTabText(0, "Institute Access");
+		userAccessDetailPanel.getTabBar().setTabText(1, "Event Access");
+		userAccessDetailPanel.getTabBar().setTabText(2, "Question Access");
+		
 
 	}
 

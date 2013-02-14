@@ -6,8 +6,13 @@ import java.util.List;
 import java.util.Set;
 
 import medizin.client.proxy.QuestionAccessProxy;
+import medizin.client.proxy.QuestionProxy;
+import medizin.client.style.resources.MyCellTableResources;
+import medizin.client.style.resources.MySimplePagerResources;
+import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.user.EventAccessView.Delegate;
 import medizin.client.ui.view.user.EventAccessView.Presenter;
+import medizin.client.ui.widget.IconButton;
 import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
@@ -24,6 +29,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
@@ -41,16 +47,31 @@ public class InstituteAccessViewImpl extends Composite implements InstituteAcces
 	}
 
 	public InstituteAccessViewImpl() {
+		
+		CellTable.Resources tableResources = GWT.create(MyCellTableResources.class);
+		tableEvent = new CellTable<QuestionAccessProxy>(McAppConstant.TABLE_PAGE_SIZE,tableResources);
+
+		SimplePager.Resources pagerResources = GWT.create(MySimplePagerResources.class);
+		pager = new SimplePager(SimplePager.TextLocation.RIGHT, pagerResources,true, McAppConstant.TABLE_JUMP_SIZE, true);
 		initWidget(uiBinder.createAndBindUi(this));
 		init();
 	}
+	
+	@UiField(provided = true)
+	CellTable<QuestionAccessProxy> tableEvent;
+
+	@UiField(provided = true)
+	public SimplePager pager;
+
+	/*@UiField
+    CellTable<QuestionAccessProxy> tableEvent;*/
 
 	private Delegate delegate;
     
 	public BmeConstants constants = GWT.create(BmeConstants.class);
 
 	@UiField
-    Button newAccess;
+    IconButton newAccess;
 
 	
 	@UiHandler("newAccess")
@@ -81,8 +102,7 @@ public class InstituteAccessViewImpl extends Composite implements InstituteAcces
 		
 	}
 	
-    @UiField
-    CellTable<QuestionAccessProxy> tableEvent;
+    
     
     protected Set<String> paths = new HashSet<String>();
 

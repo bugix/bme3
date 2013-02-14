@@ -5,8 +5,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import medizin.client.style.resources.MyCellTableResources;
+import medizin.client.style.resources.MySimplePagerResources;
+import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.EventView.Delegate;
 import medizin.client.ui.view.EventView.Presenter;
+import medizin.client.ui.widget.IconButton;
 import medizin.client.proxy.QuestionAccessProxy;
 import medizin.client.proxy.QuestionAccessProxy;
 
@@ -24,6 +28,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
@@ -43,6 +48,12 @@ public class EventAccessViewImpl extends Composite implements EventAccessView {
 	}
 
 	public EventAccessViewImpl() {
+		CellTable.Resources tableResources = GWT.create(MyCellTableResources.class);
+		tableEvent = new CellTable<QuestionAccessProxy>(McAppConstant.TABLE_PAGE_SIZE,tableResources);
+
+		SimplePager.Resources pagerResources = GWT.create(MySimplePagerResources.class);
+		pager = new SimplePager(SimplePager.TextLocation.RIGHT, pagerResources,true, McAppConstant.TABLE_JUMP_SIZE, true);
+		
 		initWidget(uiBinder.createAndBindUi(this));
 		init();
 	}
@@ -52,7 +63,7 @@ public class EventAccessViewImpl extends Composite implements EventAccessView {
     
 
 	@UiField
-    Button newAccess;
+    IconButton newAccess;
 
 	
 	@UiHandler("newAccess")
@@ -83,8 +94,15 @@ public class EventAccessViewImpl extends Composite implements EventAccessView {
 		
 	}
 	
+	@UiField(provided = true)
+	CellTable<QuestionAccessProxy> tableEvent;
+
+	@UiField(provided = true)
+	public SimplePager pager;
+
+	/*
     @UiField
-    CellTable<QuestionAccessProxy> tableEvent;
+    CellTable<QuestionAccessProxy> tableEvent;*/
     
     protected Set<String> paths = new HashSet<String>();
 

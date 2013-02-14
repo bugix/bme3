@@ -1,8 +1,8 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:b="urn:import:com.google.gwt.user.cellview.client">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:b="urn:import:com.google.gwt.user.cellview.client" xmlns:m="urn:import:medizin.client.ui.widget">
 
-	<ui:style>
+	<ui:style src="../../styles.css">
 		.panelHTML {
 		border: 0px solid #ddf;
 		height: 100%;
@@ -91,12 +91,51 @@
 		
 
 		}
+		.alignRight{
+		align: right !important;
+
+		}
+		.rightAlign
+		{
+			float: right;
+			
+
+		}
 	</ui:style>
 
+<g:HTMLPanel addStyleNames="{style.patientDetails}" width="100%">				
+		
 
-
-	<g:HTMLPanel>
-<div style="height:2em;" />
+	<!-- <g:HTMLPanel> -->
+	
+	<b:CellTable ui:field="tableEvent" addStyleNames="{style.standardTable}"
+						width="500" />
+		<!-- 			<div class="{style.controls} {style.controlsleft}"> -->
+						<g:HorizontalPanel width="100%">
+							<g:HorizontalPanel width="50%">
+								<m:IconButton ui:field="newAccess" icon="plusthick">New Access</m:IconButton>
+							</g:HorizontalPanel>
+							<g:HorizontalPanel addStyleNames="{style.rightAlign}">
+								<b:SimplePager ui:field="pager" display="{tableEvent}" addStyleNames="{style.alignRight}" />
+							</g:HorizontalPanel>
+						
+						</g:HorizontalPanel>
+						
+						<!-- <g:HTMLPanel >
+						<table class="{style.fields}">
+						<tr>
+							<td><m:IconButton ui:field="newAccess" icon="plusthick">New Access</m:IconButton>
+							</td>
+						<td ><b:SimplePager ui:field="pager" display="{tableEvent}" /></td>
+						</tr>
+						</table>
+						</g:HTMLPanel> -->
+						
+						
+						 <!-- <i:DefaultSuggestBox ui:field="copiedOsce"></i:DefaultSuggestBox> --> 
+					<!-- </div> -->
+					
+<!-- <div style="height:2em;" />
 		<table class="{style.details}" cellpadding="0" cellspacing="0">
 
 
@@ -122,7 +161,8 @@
 				</td>
 			</tr>
 		</table>
-	</g:HTMLPanel>
+ -->	
+ </g:HTMLPanel>
 
 
 

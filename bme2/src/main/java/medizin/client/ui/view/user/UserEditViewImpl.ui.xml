@@ -1,11 +1,11 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:n="urn:import:medizin.client.ui" xmlns:d="urn:import:com.google.gwt.dom.client" xmlns:i="urn:import:medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl">
+	xmlns:n="urn:import:medizin.client.ui" xmlns:d="urn:import:com.google.gwt.dom.client" xmlns:i="urn:import:medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl" xmlns:m="urn:import:medizin.client.ui.widget">
 	
 	<ui:with type="medizin.shared.i18n.BmeConstants" field="constants"></ui:with>
 	
-	<ui:style>
+	<ui:style  src="../../styles.css">
  		.panelHTML {
 		border: 0px solid #ddf;
 		height: 100%;
@@ -62,6 +62,124 @@
 
 		}
 	</ui:style>
+	
+	<g:VerticalPanel addStyleNames="{style.tabStyle}">
+
+
+		<g:HTMLPanel styleName="{style.patientControls}">
+
+			<div class="{style.controlsright}">
+
+				<h3 class="{style.header}" style="display:inline">
+					<span ui:field="title"></span>
+				</h3>
+	
+				<m:IconButton ui:field="save" icon="disk"></m:IconButton>
+				<m:IconButton ui:field="cancel" icon="closethick"></m:IconButton>
+
+			</div>
+		</g:HTMLPanel>
+		
+		<g:HTMLPanel>
+			<g:TabPanel ui:field="userTypePanel" width="100%">
+				<g:Tab>
+					<g:TabHTML></g:TabHTML>
+
+					<g:HTMLPanel>
+						<table>
+						<tr id="name">
+					<td>
+						<div class="{style.label}"><g:Label text="{constants.name}" /></div>
+					</td>
+					<td>
+						<g:TextBox ui:field="name" />
+					</td>
+				</tr>
+
+				<tr id="prename">
+					<td>
+						<div class="{style.label}"><g:Label text="{constants.prename}" /></div>
+					</td>
+					<td>
+						<g:TextBox ui:field="prename" />
+					</td>
+				</tr>
+
+				<tr id="email">
+					<td>
+						<div class="{style.label}"><g:Label text="{constants.email}" /></div>
+					</td>
+					<td>
+						<g:TextBox ui:field="email" />
+					</td>
+				</tr>
+
+				<tr id="alternativEmail">
+					<td>
+						<div class="{style.label}"><g:Label text="{constants.alternativeEmail}" /></div>
+					</td>
+					<td>
+						<g:TextBox ui:field="alternativEmail" />
+					</td>
+				</tr>
+
+				<tr id="phoneNumber">
+					<td>
+						<div class="{style.label}"><g:Label text="{constants.phoneNo}" /></div>
+					</td>
+					<td>
+						<g:TextBox ui:field="phoneNumber" />
+					</td>
+				</tr>
+
+				<tr id="isAdmin">
+					<td>
+						<div class="{style.label}"><g:Label text="{constants.adminRights}" /></div>
+					</td>
+					<td>
+						<g:CheckBox ui:field="isAdmin" />
+					</td>
+				</tr>
+
+				<tr id="isAccepted">
+					<td>
+						<div class="{style.label}"><g:Label text="{constants.accessRights}" /></div>
+					</td>
+					<td>
+						<g:CheckBox ui:field="isAccepted" />
+					</td>
+				</tr>
+				
+				<tr id="isDoctor">
+					<td>
+						<div class="{style.label}"><g:Label text="{constants.doctorRights}" /></div>
+					</td>
+					<td>
+						<g:CheckBox ui:field="isDoctor" />
+					</td>
+				</tr>
+
+				<tr id="doctorDisplay">
+					<td>
+						<div class="{style.label}"><g:Label text="{constants.doctor}" /></div>
+					</td>
+					<td>
+						<i:DefaultSuggestBox ui:field="doctorSuggestBox"></i:DefaultSuggestBox>
+					</td>
+				</tr>
+						</table>
+						
+
+					</g:HTMLPanel>
+				</g:Tab>
+
+			</g:TabPanel>
+		</g:HTMLPanel>
+		
+	</g:VerticalPanel>
+	
+	</ui:UiBinder> 
+<!-- 	
  <g:HTMLPanel>
  
  	<div class="{style.boundary}">
@@ -179,5 +297,4 @@
 
 		</div>
 
-  </g:HTMLPanel>
-</ui:UiBinder> 
+  </g:HTMLPanel> -->
