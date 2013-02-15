@@ -1,6 +1,8 @@
 package medizin.client.ui.widget.resource.audio;
 
 import medizin.client.ui.widget.IconButton;
+import medizin.client.util.ClientUtility;
+import medizin.shared.MultimediaType;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
@@ -44,7 +46,8 @@ public class AudioViewer extends Composite {
 		this.url = description;
 		clientJukebox = new ClientJukebox(new SMSoundFactory(), this);
 		clientJukebox.queueRequest(description);
-		
+		String fileName = ClientUtility.getFileName(description, MultimediaType.Sound);
+		getInfo().setText(fileName);
 		play.addClickHandler(new ClickHandler() {
 
 			public void onClick(ClickEvent event) {

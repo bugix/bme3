@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.EntityManager;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
@@ -66,18 +67,22 @@ public class Question {
 
 	@NotNull
 	@Value("false")
+	@Column(columnDefinition="BIT", length = 1)
 	private Boolean isAcceptedRewiever;
 
 	@NotNull
 	@Value("false")
+	@Column(columnDefinition="BIT", length = 1)
 	private Boolean submitToReviewComitee;
 
 	@NotNull
 	@Value("false")
+	@Column(columnDefinition="BIT", length = 1)
 	private Boolean isAcceptedAdmin;
 
 	@NotNull
 	@Value("false")
+	@Column(columnDefinition="BIT", length = 1)
 	private Boolean isActive;
 
 	@OneToOne

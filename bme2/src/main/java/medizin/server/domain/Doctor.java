@@ -1,5 +1,6 @@
 package medizin.server.domain;
 
+import javax.persistence.Column;
 import javax.persistence.Enumerated;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -33,6 +34,7 @@ public class Doctor {
 
     @Size(max = 30)
     private String telephone;
-
+    
+    @Column(columnDefinition="BIT", length = 1)
     private Boolean isActive;
 }

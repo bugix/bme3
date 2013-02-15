@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.EntityManager;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -42,16 +43,20 @@ public class AssesmentQuestion {
 
     @NotNull
     @Value("false")
+    @Column(columnDefinition="BIT", length = 1)
     private Boolean isAssQuestionAcceptedRewiever;
 
     @NotNull
     @Value("false")
+    @Column(columnDefinition="BIT", length = 1)
     private Boolean isAssQuestionAcceptedAdmin;
 
     @NotNull
     @Value("false")
+    @Column(columnDefinition="BIT", length = 1)
     private Boolean isAssQuestionAdminProposal;
 
+    @Column(columnDefinition="BIT", length = 1)
     private Boolean isAssQuestionAcceptedAutor;
 
     @NotNull

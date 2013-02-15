@@ -2,6 +2,7 @@ package medizin.server.domain;
 
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.EntityManager;
 import javax.persistence.ManyToOne;
 import javax.persistence.TypedQuery;
@@ -75,22 +76,29 @@ public class QuestionType {
     
     private Double diffBetAnswer;
     
+    @Column(columnDefinition="BIT", length = 1)
     private Boolean queHaveImage;
     
+    @Column(columnDefinition="BIT", length = 1)
     private Boolean queHaveVideo;
     
+    @Column(columnDefinition="BIT", length = 1)
     private Boolean queHaveSound;
     
     private Integer keywordCount;
     
+    @Column(columnDefinition="BIT", length = 1)
     private Boolean showAutocomplete;
     
+    @Column(columnDefinition="BIT", length = 1)
     private Boolean isDictionaryKeyword;
     
+    @Column(columnDefinition="BIT", length = 1)
     private Boolean allowTyping;
     
     private Integer minAutoCompleteLetter;
     
+    @Column(columnDefinition="BIT", length = 1)
     private Boolean acceptNonKeyword;
     
     private Integer lengthShortAnswer;
@@ -101,12 +109,15 @@ public class QuestionType {
     
     private String imageProportion;
     
+    @Column(columnDefinition="BIT", length = 1)
     private Boolean allowOneToOneAss;
     
+    @Column(columnDefinition="BIT", length = 1)
     private Boolean linearPoint;
     
     private Double linearPercentage;
     
+    @Column(columnDefinition="BIT", length = 1)
     private Boolean richText;
     
     private MultimediaType multimediaType;
@@ -119,12 +130,15 @@ public class QuestionType {
     
     private Integer thumbHeight;
     
+    @Column(columnDefinition="BIT", length = 1)
     private Boolean allowZoomOut;
     
+    @Column(columnDefinition="BIT", length = 1)
     private Boolean allowZoomIn;
     
     private Integer maxBytes;
     
+    @Column(columnDefinition="BIT", length = 1)
     private Boolean keywordHighlight;
     
     private Integer minLength;

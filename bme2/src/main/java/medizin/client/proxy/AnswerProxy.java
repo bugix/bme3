@@ -22,9 +22,9 @@ public interface AnswerProxy extends EntityProxy {
 
     abstract void setIsAnswerActive(Boolean isAnswerActive);
 
-    abstract Boolean getIsPicture();
+    abstract Boolean getIsMedia();
 
-    abstract void setIsPicture(Boolean isPicture);
+    abstract void setIsMedia(Boolean isMedia);
 
     abstract Boolean getIsAnswerAcceptedReviewWahrer();
 

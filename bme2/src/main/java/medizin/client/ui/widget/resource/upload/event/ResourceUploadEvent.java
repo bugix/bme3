@@ -5,6 +5,7 @@ import java.util.List;
 import medizin.client.util.ClientUtility;
 import medizin.shared.MultimediaType;
 import medizin.shared.utils.SharedConstant;
+import medizin.shared.utils.SharedUtility;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -17,16 +18,16 @@ public class ResourceUploadEvent extends GwtEvent<ResourceUploadEventHandler> {
 
 	private final boolean resourceUploaded;
 	private String filePath;
-	private final MultimediaType type;
+	private MultimediaType type;
 	private Integer width;
 	private Integer height;
 	private Integer soundMediaSize;
 	private Integer videoMediaSize;
 	
-	public ResourceUploadEvent(String data,MultimediaType type, Boolean resourceUploaded) {
+	public ResourceUploadEvent(String data, Boolean resourceUploaded) {
 		this.resourceUploaded = resourceUploaded;
-		parseData(data);
-		this.type = type;
+		if(data != null && data.length() > 0)
+			parseData(data);
 	}
 	
 	
@@ -35,6 +36,7 @@ public class ResourceUploadEvent extends GwtEvent<ResourceUploadEventHandler> {
 		FluentIterable<String> fluentIterable = FluentIterable.from(Splitter.on(",").omitEmptyStrings().trimResults().split(data));
 		
 		filePath = parseFilePath(fluentIterable);
+		type = SharedUtility.getFileMultimediaType(SharedUtility.getFileExtension(filePath));
 		width = parseImageWidth(fluentIterable);
 		height = parseImageHeight(fluentIterable);
 		soundMediaSize = parseSoundMediaSize(fluentIterable);

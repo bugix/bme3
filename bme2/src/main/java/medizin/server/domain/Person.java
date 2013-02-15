@@ -51,14 +51,17 @@ public class Person {
 
     @NotNull
     @Value("false")
+    @Column(columnDefinition="BIT", length = 1)
     private Boolean isAdmin;
 
     @NotNull
     @Value("false")
+    @Column(columnDefinition="BIT", length = 1)
     private Boolean isAccepted;
 
     @NotNull
     @Value("false")
+    @Column(columnDefinition="BIT", length = 1)
     private Boolean isDoctor;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "person")

@@ -58,7 +58,7 @@ public class ClientJukebox {
 		soundFactory.stopPlaying();
 		isPaused = false;
 		view.getPlayButton().setIcon("play");
-		view.getInfo().setText("");
+		view.getInfo().setText(lastPlayed);
 	}
 
 	public void pausePlaying(){

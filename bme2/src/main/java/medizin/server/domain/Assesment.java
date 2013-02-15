@@ -3,6 +3,7 @@ package medizin.server.domain;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.EntityManager;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -53,6 +54,7 @@ public class Assesment {
 
     @NotNull
     @Value("false")
+    @Column(columnDefinition="BIT", length = 1)
     private Boolean isClosed;
 
     @NotNull

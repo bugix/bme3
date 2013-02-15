@@ -85,7 +85,7 @@ public class ResourceUpload extends Composite {
 				} else {
 					Log.info("UPLOADING cancel");
 					event.cancel();
-					eventBus.fireEvent(new ResourceUploadEvent("",null,false));
+					eventBus.fireEvent(new ResourceUploadEvent("",false));
 				}
 			}
 		});
@@ -98,8 +98,7 @@ public class ResourceUpload extends Composite {
 						Log.info("PS Submit is Complete " + event.getResults()); 
 						
 						uploadFormPanel.reset();
-						MultimediaType type = SharedUtility.getFileMultimediaType(SharedUtility.getFileExtension(event.getResults()));
-						eventBus.fireEvent(new ResourceUploadEvent(event.getResults(),type,true));					
+						eventBus.fireEvent(new ResourceUploadEvent(event.getResults(),true));					
 					}
 				});
 

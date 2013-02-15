@@ -5,7 +5,7 @@
 		
 	</ui:style>
 	<g:HTMLPanel>
-		<g:HorizontalPanel spacing="10" ui:field="panel">
+		<g:HorizontalPanel ui:field="panel">
 			<g:FormPanel ui:field="uploadFormPanel">
 				<g:HorizontalPanel>
 					<g:FileUpload ui:field="fileUpload" visible="true" name="f1"/>

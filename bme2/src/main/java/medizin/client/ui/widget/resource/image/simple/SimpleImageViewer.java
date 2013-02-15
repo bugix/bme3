@@ -43,4 +43,9 @@ public class SimpleImageViewer extends Composite {
 			
 		}
 	}
+
+	public void closed() {
+		// TODO Auto-generated method stub
+		
+	}
 }

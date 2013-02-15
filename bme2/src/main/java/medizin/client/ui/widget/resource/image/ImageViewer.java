@@ -1,7 +1,6 @@
 package medizin.client.ui.widget.resource.image;
 
 import medizin.shared.QuestionTypes;
-import medizin.shared.i18n.BmeConstants;
 
 import org.vaadin.gwtgraphics.client.DrawingArea;
 
@@ -20,7 +19,7 @@ public class ImageViewer extends Composite{
 
 	private String url = null;
 
-	private final BmeConstants constants = GWT.create(BmeConstants.class);
+	/*private final BmeConstants constants = GWT.create(BmeConstants.class);*/
 	
 	interface ImageViewerUiBinder extends UiBinder<Widget, ImageViewer> {
 	}
@@ -138,12 +137,12 @@ public class ImageViewer extends Composite{
 				
 	}*/
 
-	private void setImageAndCanvasSize(int width,int height) {
+	/*private void setImageAndCanvasSize(int width,int height) {
 		image.setHeight(height);
 		image.setWidth(width);
 		drawingArea.setHeight(height);
 		drawingArea.setWidth(width);
-	}
+	}*/
 		
 	private void init() {
 		
@@ -166,9 +165,9 @@ public class ImageViewer extends Composite{
 		
 	}
 
-	private final String setWidthHeight(String size, int width, int height) {	
+	/*private final String setWidthHeight(String size, int width, int height) {	
 		return size.replace("(0)", width +"").replace("(1)", height + "");
-	}
+	}*/
 	
 	public String getImageUrl() {
 		return url;

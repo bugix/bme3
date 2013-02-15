@@ -593,9 +593,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 			QuestionProxy questionProxy,final QuestionTypes type) {
 		
 		//remove extra part
-		lblUploadText.setText("");
-		uploaderContainer.clear();
-		viewerContainer.clear();
+		clearMediaContainer();
 		
 		final ImageViewer imageViewer;
 		if(this.imageViewer == null) {
@@ -668,22 +666,15 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 			}
 		});
 		
-		lblUploadText.setText(constants.uploadResource());
-		uploaderContainer.add(resourceUpload);
-		viewerContainer.add(imageViewer);
-		
+		setMediaContainer(resourceUpload, imageViewer);
 	}
 
 	private void setResourceUploadAndResourceViewer(QuestionTypeProxy questionType, QuestionProxy question) {	
 	
 		//remove extra part
-		lblUploadText.setText("");
-		uploaderContainer.clear();
-		viewerContainer.clear();
+		clearMediaContainer();
 		
 		if(questionType != null &&  questionType.getQuestionType() != null ) {
-					
-				lblUploadText.setText(constants.uploadResource());
 				
 				// added viewer
 				List<QuestionResourceProxy> questionResources = new ArrayList<QuestionResourceProxy>();
@@ -767,17 +758,23 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 				});
 				
 				// added to container
-				lblUploadText.setText(constants.uploadResource());
-				uploaderContainer.add(resourceUpload);
-				viewerContainer.add(viewer);
+				setMediaContainer(resourceUpload, viewer);
 		}
 	}
 	
 	private void clearMediaContainer() {
 		//remove extra part
+		lblUploadText.removeStyleName("label");
 		lblUploadText.setText("");
 		uploaderContainer.clear();
 		viewerContainer.clear();		
+	}
+	
+	private void setMediaContainer(Widget upload,Widget viewer) {
+		lblUploadText.addStyleName("label");
+		lblUploadText.setText(constants.uploadResource());
+		uploaderContainer.add(upload);
+		viewerContainer.add(viewer);
 	}
 	
 //	@Override

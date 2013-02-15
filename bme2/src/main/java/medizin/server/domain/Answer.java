@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.EntityManager;
 import javax.persistence.Enumerated;
 import javax.persistence.ManyToOne;
@@ -37,22 +38,27 @@ public class Answer {
     private String answerText;
 
     @NotNull
+    @Column(columnDefinition="BIT", length = 1)
     private Boolean isAnswerActive;
 
     @NotNull
     @Value("false")
-    private Boolean isPicture;
+    @Column(columnDefinition="BIT", length = 1)
+    private Boolean isMedia;
 
     @NotNull
     @Value("false")
+    @Column(columnDefinition="BIT", length = 1)
     private Boolean isAnswerAcceptedReviewWahrer;
 
     @NotNull
     @Value("false")
+    @Column(columnDefinition="BIT", length = 1)
     private Boolean isAnswerAcceptedAutor;
 
     @NotNull
     @Value("false")
+    @Column(columnDefinition="BIT", length = 1)
     private Boolean isAnswerAcceptedAdmin;
 
     @NotNull
@@ -88,6 +94,7 @@ public class Answer {
     
     @NotNull
     @Value("false")
+    @Column(columnDefinition="BIT", length = 1)
     private Boolean submitToReviewComitee;
     
     private String points;

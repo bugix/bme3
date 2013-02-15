@@ -222,6 +222,7 @@ public class ResourceSubView extends Composite {
 		dialogContents.setCellHorizontalAlignment(closeButton,
 				HasHorizontalAlignment.ALIGN_RIGHT);
 
+		dialogBox.setGlassEnabled(true);
 		// Return the dialog box
 		return dialogBox;
 	}

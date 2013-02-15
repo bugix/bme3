@@ -72,8 +72,8 @@ public class FileUploadServlet extends HttpServlet {
 		try {
 			log.info("Request path: " + request.getContextPath());
 			log.info("Request content type: " + request.getContentType());
-			log.info("Request content type: " + request.getRequestURL());
-			log.info("Request content type: " + request.getServletPath());
+			log.info("Request Request URL: " + request.getRequestURL());
+			log.info("Request Servlet Path: " + request.getServletPath());
 			
 			@SuppressWarnings("unchecked")
 			List<FileItem> items = upload.parseRequest(request);
@@ -114,7 +114,7 @@ public class FileUploadServlet extends HttpServlet {
 					// appUploadDirectory=session.getServletContext().getRealPath(".")
 					// + appUploadDirectory;
 					final String uuidFileName = UUID.randomUUID() + "_"+ fileName;
-					File appUploadedFile = new File(directory, uuidFileName);
+					File appUploadedFile = new File(SharedConstant.getUploadBaseDIRPath() + directory, uuidFileName);
 
 					FileUtils.touch(appUploadedFile);
 					//appUploadedFile.createNewFile();
