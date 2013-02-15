@@ -4,11 +4,33 @@
 	xmlns:s="urn:import:medizin.client.ui.view.user" xmlns:m="urn:import:medizin.client.ui.widget">
 
 	<ui:with type="medizin.shared.i18n.BmeConstants" field="constants"></ui:with>
-	<ui:style src="../../styles.css" />
+	<ui:style src="../../styles.css" >
+	.padleft5 {
+			padding-left: 5px;
+		}
+		</ui:style>
 		
 	<g:HTMLPanel >
-		<g:VerticalPanel addStyleNames="{style.tabStyle}">
-
+	
+	<g:VerticalPanel addStyleNames="{style.tabStyle} {style.patientTopContainer}">
+			<g:HorizontalPanel styleName="{style.patientControls} {style.tabStyle}">
+				<g:Image ui:field="arrow" styleName="{style.padleft5}"
+					url="/application/gwt/unibas/images/up.png"></g:Image>
+				<g:Label addStyleNames="{style.label}" ui:field="labelLongNameHeader"></g:Label>
+				<g:HTMLPanel>
+					<div class="{style.controlsright}">
+						<h3 class="{style.header}" style="display:inline">
+							 <span ui:field="displayRenderer"></span> 
+						</h3>
+						<m:IconButton ui:field="edit" icon="pencil">Edit</m:IconButton>
+						<m:IconButton ui:field="delete" icon="trash">Delete</m:IconButton>
+					</div>
+				</g:HTMLPanel>
+			</g:HorizontalPanel>
+	
+		<!-- <g:VerticalPanel addStyleNames="{style.tabStyle}">
+			<g:HorizontalPanel styleName="{style.patientControls} {style.tabStyle}">
+		<g:Image ui:field="arrow" styleName="{style.padleft5}" url="/bme2/src/main/java/medizin/client/ui/upArrow.png"></g:Image>
 			<g:HTMLPanel addStyleNames="{style.patientControls}">
 
 
@@ -18,13 +40,16 @@
 							<span ui:field="displayRenderer"></span>
 						</h3>
 
-						<m:IconButton ui:field="edit" icon="pencil">Edit</m:IconButton>
-						<m:IconButton ui:field="delete" icon="trash">Delete</m:IconButton>
+						
 
 
 					</div>
 				</g:HTMLPanel>
+				
 			</g:HTMLPanel>
+			</g:HorizontalPanel> -->
+			<g:DisclosurePanel animationEnabled="true" open="true"
+				ui:field="userDisclosurePanel" width="100%">
 			<g:TabPanel ui:field="userDetailPanel" addStyleNames="gwt-InvertedTabPanel"
 				width="100%">
 
@@ -109,16 +134,15 @@
 					</g:HTMLPanel>
 				</g:Tab>
 			</g:TabPanel>
-
+		</g:DisclosurePanel>
 			<g:TabPanel ui:field="userAccessDetailPanel" width="100%">
 
 				<g:Tab>
-					<g:TabHTML><!-- RoleParticipants -->
+					<g:TabHTML>
 					</g:TabHTML>
-					<g:HTMLPanel addStyleNames="{style.patientDetails}"
-						width="100%">
+					
 						<s:InstituteAccessViewImpl ui:field="instituteAccessView"></s:InstituteAccessViewImpl>
-					</g:HTMLPanel>
+					
 				</g:Tab>
 				<g:Tab>
 					<g:TabHTML></g:TabHTML>

@@ -102,8 +102,8 @@
 
 		}
 	</ui:style>
-
-<g:HTMLPanel addStyleNames="{style.patientDetails}" width="100%">				
+<g:VerticalPanel width="100%">
+<g:HTMLPanel  width="100%">				
 		
 
 	<!-- <g:HTMLPanel> -->
@@ -164,6 +164,6 @@
  -->	
  </g:HTMLPanel>
 
-
+</g:VerticalPanel>
 
 </ui:UiBinder> 

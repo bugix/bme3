@@ -6,12 +6,15 @@ import medizin.client.ui.widget.TabPanelHelper;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DisclosurePanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -44,6 +47,13 @@ public class UserDetailsViewImpl extends Composite implements UserDetailsView
     IconButton delete;
 
     private Delegate delegate;
+    
+    @UiField
+	DisclosurePanel userDisclosurePanel;
+    
+	@UiField
+	Image arrow;
+
 	
 //    @UiField
 //    SpanElement id;
@@ -112,11 +122,13 @@ public class UserDetailsViewImpl extends Composite implements UserDetailsView
         delegate.editClicked();
     }
 
-//    @UiField
-//    SpanElement displayRenderer;
+    @UiField
+    SpanElement displayRenderer;
 
     public void setValue(PersonProxy proxy) {
         this.proxy = proxy;
+        
+        displayRenderer.setInnerText( (this.proxy.getPrename()==null?"":this.proxy.getPrename()) +" "+ (this.proxy.getName()==null?"":this.proxy.getName()));
        
 //        id.setInnerText(proxy.getId() == null ? "" : String.valueOf(proxy.getId()));
 //        version.setInnerText(proxy.getVersion() == null ? "" : String.valueOf(proxy.getVersion()));
@@ -144,8 +156,38 @@ public class UserDetailsViewImpl extends Composite implements UserDetailsView
 //        displayRenderer.setInnerText(medizin.client.ui.view.roo.PersonProxyRenderer.instance().render(proxy));
     }
 
+    @UiHandler("arrow")
+	void handleClick(ClickEvent e) {
+		if (userDisclosurePanel.isOpen()) {
+			userDisclosurePanel.setOpen(false);
+			///bme2/src/main/java/medizin/client/ui/view/user/UserDetailsViewImpl.ui.xml
+			///bme2/src/main/java/medizin/client/style/theme/public/gwt/unibas/images/arrowdownselect.png
+			
+			//arrow.setUrl("/application/gwt/unibas/images/arrowdownselect.png");// set
+			arrow.setUrl("/application/gwt/unibas/images/down.png");// set
+																				// url
+																				// of
+																				// up
+															// image
+
+		} else {
+			userDisclosurePanel.setOpen(true);
+			arrow.setUrl("/application/gwt/unibas/images/up.png");// set
+																				// url
+																				// of
+																				// down
+																				// image
+		}
+
+	}
+    
 	public UserDetailsViewImpl() {
 		initWidget(uiBinder.createAndBindUi(this));
+		
+		userDisclosurePanel.setOpen(true);
+		userDisclosurePanel.setContent(userDetailPanel);
+		userDisclosurePanel.setStyleName("");
+
 		userDetailPanel.selectTab(0);
 		userDetailPanel.getTabBar().setTabText(0, "Users");
 		TabPanelHelper.moveTabBarToBottom(userDetailPanel);
@@ -155,6 +197,12 @@ public class UserDetailsViewImpl extends Composite implements UserDetailsView
 		userAccessDetailPanel.getTabBar().setTabText(0, "Institute Access");
 		userAccessDetailPanel.getTabBar().setTabText(1, "Event Access");
 		userAccessDetailPanel.getTabBar().setTabText(2, "Question Access");
+		
+		
+		//userAccessDetailPanel.getTabBar().setTabEnabled(0, false);
+		
+		
+		
 		
 
 	}

@@ -97,10 +97,13 @@
 			
 
 		}
+		.displayRight {
+			float: right;
+			padding-right: 10px;
+		}
 	</ui:style>
 
-
-
+<g:VerticalPanel width="100%">
 	<g:HTMLPanel width="100%">
 	<b:CellTable ui:field="tableEvent" addStyleNames="{style.standardTable}" width="500" />
 						
@@ -109,11 +112,12 @@
 						<m:IconButton ui:field="newAccess" icon="plusthick">New Access</m:IconButton>
 							</g:HorizontalPanel>
 							<g:HorizontalPanel addStyleNames="{style.rightAlign}" >
-						<b:SimplePager ui:field="pager" display="{tableEvent}" />
+						<b:SimplePager ui:field="pager" display="{tableEvent}" addStyleNames="{style.displayRight}" />
 							</g:HorizontalPanel>
 						
 						</g:HorizontalPanel>
-						
+					</g:HTMLPanel>
+</g:VerticalPanel>
 					<!-- <div class="{style.controls} {style.controlsleft}">
 						
 					
@@ -146,8 +150,7 @@
 				</td>
 			</tr>
 		</table> -->
-	</g:HTMLPanel>
-
+	
 
 
 </ui:UiBinder> 
