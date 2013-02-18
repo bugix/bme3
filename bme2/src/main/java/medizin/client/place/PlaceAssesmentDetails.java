@@ -9,7 +9,8 @@ import com.google.web.bindery.requestfactory.shared.EntityProxyId;
 
 public class PlaceAssesmentDetails extends Place {
 
-	public enum Operation {
+	public enum Operation 
+	{
 		DETAILS, CREATE, EDIT
 	}
 	private static final String SEPARATOR = "!";
@@ -76,7 +77,7 @@ public class PlaceAssesmentDetails extends Place {
 					return requestFactory.getHistoryToken(place.getProxyId()) + SEPARATOR + PlaceAssesmentDetails.Operation.DETAILS;
 				}
 				else if (Operation.CREATE == place.getOperation()) {
-					return /*place.getProxyId() + SEPARATOR + */PlaceAssesmentDetails.Operation.CREATE.toString();
+					return /*place.getProxyId() + SEPARATOR + */SEPARATOR + PlaceAssesmentDetails.Operation.CREATE;
 				}
 				else if (Operation.EDIT == place.getOperation()) {
 					return requestFactory.getHistoryToken(place.getProxyId()) + SEPARATOR + PlaceAssesmentDetails.Operation.EDIT;

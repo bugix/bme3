@@ -71,8 +71,7 @@ public class PlaceUserDetails extends Place {
 			if (Operation.DETAILS == place.getOperation()) {
 				return requestFactory.getHistoryToken(place.getProxyId()) + SEPARATOR + PlaceUserDetails.Operation.DETAILS;
 			} else if (Operation.CREATE == place.getOperation()) {
-				return /* place.getProxyId() + SEPARATOR + */PlaceUserDetails.Operation.CREATE
-						.toString();
+				return /* place.getProxyId() + SEPARATOR + */SEPARATOR + PlaceUserDetails.Operation.CREATE;
 			} else if (Operation.EDIT == place.getOperation()) { 
 				return requestFactory.getHistoryToken(place.getProxyId()) + SEPARATOR + PlaceUserDetails.Operation.EDIT;
 			}

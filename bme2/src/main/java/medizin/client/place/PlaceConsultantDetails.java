@@ -7,7 +7,7 @@ import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.web.bindery.requestfactory.shared.EntityProxyId;
 
-public class PlaceQuestiontypesDetails extends Place {
+public class PlaceConsultantDetails extends Place {
 
 
 	public enum Operation {
@@ -26,23 +26,23 @@ public class PlaceQuestiontypesDetails extends Place {
 	public void setProxyId(EntityProxyId<?> id) {
 		this.proxyId = id;
 	}
-	    public PlaceQuestiontypesDetails(String placeName) {
+	    public PlaceConsultantDetails(String placeName) {
 	        this.placeName = placeName;
 	    }
 	    
-		public PlaceQuestiontypesDetails(EntityProxyId<?> record) {
+		public PlaceConsultantDetails(EntityProxyId<?> record) {
 			this(record, Operation.DETAILS);
 			
 		}
 
-		public PlaceQuestiontypesDetails(Operation operation) {
-	    	Log.debug("PlaceQuestiontypesDetails wird erstellt");
+		public PlaceConsultantDetails(Operation operation) {
+	    	Log.debug("PlaceConsultantDetails wird erstellt");
 			this.operation = operation;
 
 		}
 
-	    public PlaceQuestiontypesDetails(EntityProxyId<?> stableId, Operation operation) {
-	    	Log.debug("PlaceQuestiontypesDetails wird erstellt");
+	    public PlaceConsultantDetails(EntityProxyId<?> stableId, Operation operation) {
+	    	Log.debug("PlaceConsultantDetails wird erstellt");
 			this.operation = operation;
 			proxyId = stableId;
 
@@ -52,12 +52,12 @@ public class PlaceQuestiontypesDetails extends Place {
 	        return placeName;
 	    }
 		public Operation getOperation() {
-			Log.debug("PlaceQuestiontypesDetails.getOperation: " + operation);
+			Log.debug("PlaceConsultantDetails.getOperation: " + operation);
 			return operation;
 		}
 
 
-	    public static class Tokenizer implements PlaceTokenizer<PlaceQuestiontypesDetails> {
+	    public static class Tokenizer implements PlaceTokenizer<PlaceConsultantDetails> {
 	    	
 
 	        private McAppRequestFactory requestFactory;
@@ -67,20 +67,20 @@ public class PlaceQuestiontypesDetails extends Place {
 			}
 
 			@Override
-	        public String getToken(PlaceQuestiontypesDetails place) {
-	        	Log.debug("Im PlaceQuestiontypesDetails.getToken: Placename -" + place.getProxyId());
+	        public String getToken(PlaceConsultantDetails place) {
+	        	Log.debug("Im PlaceConsultantDetails.getToken: Placename -" + place.getProxyId());
 	        	
 //	        	if (requests==null)
 //	        	Log.warn("requests null");
 	        	
 				if (Operation.DETAILS == place.getOperation()) {
-					return requestFactory.getHistoryToken(place.getProxyId()) + SEPARATOR + PlaceQuestiontypesDetails.Operation.DETAILS;
+					return place.getProxyId() + SEPARATOR + PlaceConsultantDetails.Operation.DETAILS;
 				}
 				else if (Operation.CREATE == place.getOperation()) {
-					return /*place.getProxyId() + */SEPARATOR + PlaceQuestiontypesDetails.Operation.CREATE;
+					return /*place.getProxyId() + SEPARATOR + */SEPARATOR + PlaceConsultantDetails.Operation.CREATE;
 				}
 				else if (Operation.EDIT == place.getOperation()) {
-					return requestFactory.getHistoryToken(place.getProxyId()) + SEPARATOR + PlaceQuestiontypesDetails.Operation.EDIT;
+					return place.getProxyId() + SEPARATOR + PlaceConsultantDetails.Operation.EDIT;
 				}
 
 	        	
@@ -88,23 +88,23 @@ public class PlaceQuestiontypesDetails extends Place {
 	        }
 
 	        @Override
-	        public PlaceQuestiontypesDetails getPlace(String token) {
-	        	Log.debug("Im PlaceQuestiontypesDetails.getPlace: Token -" + token);
+	        public PlaceConsultantDetails getPlace(String token) {
+	        	Log.debug("Im PlaceConsultantDetails.getPlace: Token -" + token);
 	        	
 				String bits[] = token.split(SEPARATOR);
 				Operation operation = Operation.valueOf(bits[1]);
 				if (Operation.DETAILS == operation) {
-					return new PlaceQuestiontypesDetails(requestFactory.getProxyId(bits[0]), Operation.DETAILS);
+					return new PlaceConsultantDetails(requestFactory.getProxyId(bits[0]), Operation.DETAILS);
 				}
 				if (Operation.EDIT == operation) {
-					return new PlaceQuestiontypesDetails(requestFactory.getProxyId(bits[0]), Operation.EDIT);
+					return new PlaceConsultantDetails(requestFactory.getProxyId(bits[0]), Operation.EDIT);
 				}
 				if (Operation.CREATE == operation) {
-					return new PlaceQuestiontypesDetails(/*requestFactory.getProxyId(bits[0]), */Operation.CREATE);
+					return new PlaceConsultantDetails(/*requestFactory.getProxyId(bits[0]), */Operation.CREATE);
 				}
 
 				
-	            return new PlaceQuestiontypesDetails(token);
+	            return new PlaceConsultantDetails(token);
 	            
 	            
 	        }

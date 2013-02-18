@@ -76,7 +76,7 @@ public class PlaceQuestionDetails extends Place {
 					return requestFactory.getHistoryToken(place.getProxyId()) + SEPARATOR + PlaceQuestionDetails.Operation.DETAILS;
 				}
 				else if (Operation.CREATE == place.getOperation()) {
-					return /*place.getProxyId() + SEPARATOR + */PlaceQuestionDetails.Operation.CREATE.toString();
+					return /*place.getProxyId() + SEPARATOR + */SEPARATOR + PlaceQuestionDetails.Operation.CREATE;
 				}
 				else if (Operation.EDIT == place.getOperation()) {
 					return requestFactory.getHistoryToken(place.getProxyId()) + SEPARATOR + PlaceQuestionDetails.Operation.EDIT;
