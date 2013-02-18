@@ -1,6 +1,9 @@
 package medizin.client.ui.widget.resource.dndview;
 
 import medizin.client.ui.widget.IconButton;
+import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
+import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEvent;
+import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEventHandler;
 import medizin.client.ui.widget.resource.audio.AudioViewer;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.ui.widget.resource.dndview.vo.State;
@@ -82,10 +85,23 @@ public class ResourceSubView extends Composite {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				questionResource.setState(State.DELETED);
-				resourceSubView.removeFromParent();
-				resourceView.onDragEnd(null);
-				eventBus.fireEvent(new ResourceDeletedEvent(questionResource));
+				
+				ConfirmationDialogBox.showYesNoDialogBox(constants.delete(), constants.beforeDeleteMessage(), new ConfirmDialogBoxYesNoButtonEventHandler() {
+					
+					@Override
+					public void onYesButtonClicked(ConfirmDialogBoxYesNoButtonEvent event) {
+						questionResource.setState(State.DELETED);
+						resourceSubView.removeFromParent();
+						resourceView.onDragEnd(null);
+						eventBus.fireEvent(new ResourceDeletedEvent(questionResource));	
+					}
+					
+					@Override
+					public void onNoButtonClicked(ConfirmDialogBoxYesNoButtonEvent event) {
+						
+					}
+				});
+				
 				
 			}
 		});
@@ -113,7 +129,7 @@ public class ResourceSubView extends Composite {
 				@Override
 				public void onClick(ClickEvent event) {
 					final ImageViewer viewer = new ImageViewer();
-					viewer.setUrl(questionResource.getPath(), questionType);
+					viewer.setUrl(questionResource.getPath(),ImageViewer.TEXTUAL_IMAGE_WIDTH,ImageViewer.TEXTUAL_IMAGE_HEIGHT, questionType);
 					DialogBox dialogBox = createDialogBox(constants.mediaViewer(),viewer,new Function<Boolean,Void>(){
 
 						@Override

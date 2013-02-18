@@ -603,8 +603,9 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 			imageViewer = this.imageViewer;	
 		}
 		
+		this.imageViewer.clear();
 		if(questionProxy != null && questionProxy.getPicturePath() != null && questionProxy.getPicturePath().length() > 0) {
-			imageViewer.setUrl(questionProxy.getPicturePath(), type);
+			imageViewer.setUrl(questionProxy.getPicturePath(), questionTypeProxy.getImageWidth(), questionTypeProxy.getImageHeight(), type);
 		}					
 			
 		ArrayList<String> allowedExt = new ArrayList<String>();
@@ -618,7 +619,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 		resourceUpload.addResourceUploadedHandler(new ResourceUploadEventHandler() {
 			
 			@Override
-			public void onResourceUploaded(ResourceUploadEvent event) {
+			public void onResourceUploaded(final ResourceUploadEvent event) {
 
 				final String filePath = event.getFilePath();
 				
@@ -636,7 +637,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 						
 								if(flag != null && flag == true) {
 									Log.info("picturePath : " + filePath);
-									imageViewer.setUrl(filePath, type);	
+									imageViewer.setUrl(filePath, questionTypeProxy.getImageWidth(), questionTypeProxy.getImageHeight(), type);	
 								} else {
 									ErrorPanel errorPanel = new ErrorPanel();
 									errorPanel.setErrorMessage("Only Upload image of size" + questionTypeProxy.getImageWidth() + "*" + questionTypeProxy.getImageHeight());

@@ -9,10 +9,12 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ImageViewer extends Composite{
+
+	public static final int TEXTUAL_IMAGE_HEIGHT = 480;
+	public static final int TEXTUAL_IMAGE_WIDTH = 480;
 
 	private static ImageViewerUiBinder uiBinder = GWT
 			.create(ImageViewerUiBinder.class);
@@ -144,16 +146,19 @@ public class ImageViewer extends Composite{
 		drawingArea.setWidth(width);
 	}*/
 		
-	private void init() {
+	private void init(int width,int height) {
 		
 		Log.info("Init method called ");
 		Log.info("Image path : " + url);
-		Image tempImage = new Image(url);
+		/*Image tempImage = new Image(url);
 		
 		originalWidth = tempImage.getWidth();
-		originalHeight = tempImage.getHeight();
+		originalHeight = tempImage.getHeight();*/
 		
 //		lblCurrentSize.setText(setWidthHeight(constants.currentSize(),originalWidth,originalHeight));
+		
+		originalWidth = width;
+		originalHeight = height;
 		
 		drawingArea.setHeight(originalHeight);
 		drawingArea.setWidth(originalWidth);
@@ -173,13 +178,9 @@ public class ImageViewer extends Composite{
 		return url;
 	}
 
-	public void renderImage() {
+	private void renderImage(int width, int height) {
 		Log.info("Rendering image");
-		init();
-	}
-	public void rerenderImage() {
-		image.setHref(url);
-		init();
+		init(width,height);
 	}
 	
 	/*public Request<String> saveImage(McAppRequestFactory  request) {
@@ -193,25 +194,24 @@ public class ImageViewer extends Composite{
 
 
 //	@Override
-	public void setUrl(String url,QuestionTypes questionType) {
+	public void setUrl(String url,int width, int height, QuestionTypes questionType) {
 		Log.info("Set url : " + url);
 		this.url = url;
-		
-		if(questionType != null && QuestionTypes.Textual.equals(questionType)) {
-			renderTextualImage();
-		}else {
-			renderImage();	
-		}
+		/*if(questionType != null && QuestionTypes.Textual.equals(questionType)) {
+			renderTextualImage(480,480);
+		}else {*/
+			renderImage(width,height);	
+		/*}*/
 	}
 
 
-	private void renderTextualImage() {
+	/*private void renderTextualImage(int width,int height) {
 		
 		Log.info("Init method called ");
 		Log.info("Image path : " + url);
 		
-		originalWidth = 480;
-		originalHeight = 480;
+		originalWidth = width;
+		originalHeight = height;
 		
 //		lblCurrentSize.setText(setWidthHeight(constants.currentSize(),originalWidth,originalHeight));
 		
@@ -223,7 +223,7 @@ public class ImageViewer extends Composite{
 		
 		drawingArea.add(image);
 		
-	}
+	}*/
 
 
 	public String getImageRelativeUrl() {
@@ -239,6 +239,10 @@ public class ImageViewer extends Composite{
 	public void closed() {
 		Log.info("Image viewer is closed");
 		
+	}
+
+	public void clear() {
+		drawingArea.clear();
 	}
 
 }

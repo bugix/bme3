@@ -256,4 +256,6 @@ public interface BmeConstants extends Constants {
 	public String access();
 	
 	public String doctor();
+
+	public String beforeDeleteMessage();
 }

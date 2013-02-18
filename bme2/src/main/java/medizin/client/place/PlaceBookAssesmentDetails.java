@@ -69,7 +69,7 @@ private McAppRequestFactory requestFactory;
 //	        	Log.warn("requests null");
 	        	
 				if (Operation.DETAILS == place.getOperation()) {
-					return place.getProxyId() + SEPARATOR + PlaceBookAssesmentDetails.Operation.DETAILS;
+					return requestFactory.getHistoryToken(place.getProxyId()) + SEPARATOR + PlaceBookAssesmentDetails.Operation.DETAILS;
 				}
 
 	        	

@@ -546,7 +546,7 @@ public class QuestionDetailsViewImpl extends Composite implements
 	private void imageViewer(final QuestionTypeProxy questionTypeProxy,QuestionProxy questionProxy,final QuestionTypes type) {
 		final ImageViewer imageViewer = new ImageViewer();
 		if(questionProxy.getPicturePath() != null && questionProxy.getPicturePath().length() > 0) {
-			imageViewer.setUrl(questionProxy.getPicturePath(), type);
+			imageViewer.setUrl(questionProxy.getPicturePath(),questionTypeProxy.getImageWidth(),questionTypeProxy.getImageHeight(), type);
 		}
 			
 			
@@ -581,7 +581,7 @@ public class QuestionDetailsViewImpl extends Composite implements
 							public Void apply(Boolean flag) {
 						
 								if(flag != null && flag == true) {
-									imageViewer.setUrl(filePath, type);	
+									imageViewer.setUrl(filePath, questionTypeProxy.getImageWidth(), questionTypeProxy.getImageHeight(), type);	
 									delegate.updatePicturePathInQuestion(filePath);
 								}else {
 									ConfirmationDialogBox.showOkDialogBox("Error", "Only Upload image of size" + questionTypeProxy.getImageWidth() + "*" + questionTypeProxy.getImageHeight());

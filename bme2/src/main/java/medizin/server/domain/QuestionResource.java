@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.ManyToOne;
+import javax.persistence.PostRemove;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -21,6 +22,8 @@ import org.hibernate.Query;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
+
+import com.google.common.collect.Sets;
 
 @RooJavaBean
 @RooToString
@@ -143,8 +146,16 @@ public class QuestionResource {
 			}catch(Exception e ) {
 				log.error(e.getMessage(),e);
 			}
-		}
-		
+		}	
 	}
-
+	
+	@PostRemove 
+	void onPostRemove() {
+		log.info("in post remove method of questionResource");
+		if(this instanceof QuestionResource) {
+			QuestionResource resource = (QuestionResource) this;
+			deleteFiles(Sets.newHashSet(resource.getPath()));
+		}
+	}
+	
 }

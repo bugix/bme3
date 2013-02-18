@@ -73,13 +73,13 @@ public class PlaceAssesmentDetails extends Place {
 //	        	Log.warn("requests null");
 	        	
 				if (Operation.DETAILS == place.getOperation()) {
-					return place.getProxyId() + SEPARATOR + PlaceAssesmentDetails.Operation.DETAILS;
+					return requestFactory.getHistoryToken(place.getProxyId()) + SEPARATOR + PlaceAssesmentDetails.Operation.DETAILS;
 				}
 				else if (Operation.CREATE == place.getOperation()) {
 					return /*place.getProxyId() + SEPARATOR + */PlaceAssesmentDetails.Operation.CREATE.toString();
 				}
 				else if (Operation.EDIT == place.getOperation()) {
-					return place.getProxyId() + SEPARATOR + PlaceAssesmentDetails.Operation.EDIT;
+					return requestFactory.getHistoryToken(place.getProxyId()) + SEPARATOR + PlaceAssesmentDetails.Operation.EDIT;
 				}
 
 	        	

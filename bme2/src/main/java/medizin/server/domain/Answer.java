@@ -9,6 +9,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Enumerated;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.PostRemove;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
@@ -25,6 +26,7 @@ import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
 
+import com.google.common.collect.Sets;
 import com.google.web.bindery.requestfactory.server.RequestFactoryServlet;
 
 @RooJavaBean
@@ -250,5 +252,15 @@ public class Answer {
 	    //q.setParameter("question", question);
 		log.info("SIZE : " + q.getResultList());
 	    return q.getResultList();
+	}
+	
+	@PostRemove
+	void onPostRemove() {
+		log.info("in post remove method of answer");
+		if(this instanceof Answer) {
+			if(this.getMediaPath() != null) {
+				QuestionResource.deleteFiles(Sets.newHashSet(this.getMediaPath()));
+			}
+		}
 	}
 }

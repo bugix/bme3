@@ -1115,7 +1115,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 
 				@Override
 				public void onSuccess(Void response) {
-					Log.info("Added successfuly");
+					Log.info("sequence changed successfuly");
 				}
 				
 				@Override

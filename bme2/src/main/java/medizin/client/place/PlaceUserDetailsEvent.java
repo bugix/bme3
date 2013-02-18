@@ -72,10 +72,10 @@ public class PlaceUserDetailsEvent extends Place {
 //	        	Log.warn("requests null");
 	        	
 				if (Operation.ADD == place.getOperation()) {
-					return place.getProxyId() + SEPARATOR + PlaceUserDetailsEvent.Operation.ADD;
+					return requestFactory.getHistoryToken(place.getProxyId()) + SEPARATOR + PlaceUserDetailsEvent.Operation.ADD;
 				}
 				else if (Operation.SHOW == place.getOperation()) {
-					return place.getProxyId() + SEPARATOR + PlaceUserDetailsEvent.Operation.SHOW;
+					return requestFactory.getHistoryToken(place.getProxyId()) + SEPARATOR + PlaceUserDetailsEvent.Operation.SHOW;
 				}
 
 
