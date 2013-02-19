@@ -112,7 +112,7 @@ public class McApplication {
 							new ArrayList<String>()));
 		}
 
-		RequestEvent.register(eventBus, new RequestEvent.Handler() {
+		/*RequestEvent.register(eventBus, new RequestEvent.Handler() {
 			// Only show loading status if a request isn't serviced in 250ms.
 			private static final int LOADING_TIMEOUT = 250;
 
@@ -123,7 +123,7 @@ public class McApplication {
 					shell.getMole().hide();
 				}
 			}
-		});
+		});*/
 
 		
 		Log.debug("McApp.Mapper");

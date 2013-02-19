@@ -46,6 +46,7 @@ public class AppEntryPoint implements EntryPoint {
 	private void onModuleLoad2() {
 		Log.debug("Application starts...");
 		injectorWrapper.getApplication().run();
+		injectorWrapper.getAppLoader();
 		// new McAppFactory().getMcApp().run(RootLayoutPanel.get());
 
 	}

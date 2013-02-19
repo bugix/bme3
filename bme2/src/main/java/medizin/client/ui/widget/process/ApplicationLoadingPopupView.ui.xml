@@ -1,0 +1,16 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+	xmlns:g='urn:import:com.google.gwt.user.client.ui'>
+
+	<ui:style src="../../styles.css">
+		.arrowUp {
+			background-image: url(images/loading.gif);
+		}
+	</ui:style>
+	<ui:with type="medizin.client.style.resources.UiIcons" field="uiIcons"></ui:with>
+	<g:HTMLPanel>
+
+		<g:Image ui:field="loading" resource="{uiIcons.loading}"></g:Image>
+
+	</g:HTMLPanel>
+</ui:UiBinder>
