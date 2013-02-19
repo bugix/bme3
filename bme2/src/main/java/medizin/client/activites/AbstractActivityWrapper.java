@@ -8,15 +8,18 @@ import medizin.client.ui.ErrorPanel;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.question.AnswerListViewImpl;
 import medizin.client.ui.view.question.QuestionDetailsView;
+import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.place.PlaceQuestionDetails;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.proxy.AnswerProxy;
 import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionProxy;
+import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.activity.shared.AbstractActivity;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.Place;
@@ -39,7 +42,7 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 	private PlaceController placeController;
 	private Place place;
 	
-	
+	public BmeConstants constants = GWT.create(BmeConstants.class);
 	
 	public AbstractActivityWrapper(Place place,
 			McAppRequestFactory requests, PlaceController placeController) {
@@ -144,14 +147,16 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 		
 
 		if (userLoggedIn==null) {
-			Window.alert("Please log in");
+			//Window.alert("Please log in");
+			ConfirmationDialogBox.showOkDialogBox(constants.information(),constants.loginInformation());
 			return;
 		}
 		else {
 			Document.get().getElementById("userLoggedIn").setInnerHTML("Eingeloggt als: " + userLoggedIn.getName() + " " + userLoggedIn.getPrename());
 		}
 		if (institutionActive==null) {
-			Window.alert("Please select a institution");
+			//Window.alert("Please select a institution");
+			ConfirmationDialogBox.showOkDialogBox(constants.information(),constants.selectInstitution());
 			return;
 		}
 		else {

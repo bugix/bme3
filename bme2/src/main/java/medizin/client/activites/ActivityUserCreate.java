@@ -8,6 +8,7 @@ import medizin.client.ui.view.user.UserDetailsView;
 import medizin.client.ui.view.user.UserDetailsViewImpl;
 import medizin.client.ui.view.user.UserEditView;
 import medizin.client.ui.view.user.UserEditViewImpl;
+import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.simple.DefaultSuggestOracle;
 
 import medizin.client.place.PlaceUser;
@@ -19,6 +20,7 @@ import medizin.client.proxy.DoctorProxy;
 import medizin.client.request.AnswerRequest;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.request.PersonRequest;
+import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.activity.shared.AbstractActivity;
@@ -58,6 +60,8 @@ public class ActivityUserCreate  extends AbstractActivityWrapper  implements Use
 	private PlaceController placeController;
 
 	private boolean save;
+	
+	public BmeConstants constants = GWT.create(BmeConstants.class);
 
 	@Inject
 	public ActivityUserCreate(PlaceUserDetails place,
@@ -262,7 +266,7 @@ public class ActivityUserCreate  extends AbstractActivityWrapper  implements Use
 		save=true;
 		
 		if(view.getName().getText().equals("") || view.getPrename().getText().equals("") || view.getEmail().getText().equals("") || view.getAlternativEmail().getText().equals("") || view.getPhoneNumber().getText().equals("")){
-			Window.alert("Please enter appropriate value");
+			ConfirmationDialogBox.showOkDialogBox(constants.information(),constants.userCreateConstraintsViolationMessage());
 			return;
 		}
 		PersonRequest personRequest = requests.personRequest();
@@ -312,7 +316,7 @@ public class ActivityUserCreate  extends AbstractActivityWrapper  implements Use
 			
 			@Override
 			public void onViolation(Set<Violation> errors) {
-				Window.alert("Please enter appropriate value");
+				ConfirmationDialogBox.showOkDialogBox(constants.information(),constants.userCreateConstraintsViolationMessage());
 				Log.info("error "+errors.toString());
 			}
 		});

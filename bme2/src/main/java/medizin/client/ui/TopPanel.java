@@ -7,13 +7,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.tools.ant.taskdefs.Mkdir;
-
 import medizin.client.McAppShell;
-import medizin.client.McApplication;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.PersonProxy;
+import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.shared.Locale;
 import medizin.shared.i18n.BmeConstants;
 
@@ -31,7 +29,6 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.Window.Location;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.ValueListBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
@@ -159,7 +156,7 @@ public class TopPanel extends Composite {
 							{
 								shell.getMcAppNav().clear();
 								shell.getMasterPanel().clear();
-								Window.alert("You have no access rights for any institution");
+								ConfirmationDialogBox.showOkDialogBox(constants.information(),constants.noInstitutionaccssMessage());
 								
 								
 							}
@@ -175,8 +172,9 @@ public class TopPanel extends Composite {
 						public void onSuccess(List<InstitutionProxy> response) {
 							
 							
-							if(response==null)
-							Window.alert("Internal error occurred while setting your institutions please contact administrator");	
+							if(response==null){
+								ConfirmationDialogBox.showOkDialogBox(constants.error(),constants.institutionAccessError());
+							}		
 							
 							if (response!=null && response.size() > 0)
 							{
@@ -187,11 +185,10 @@ public class TopPanel extends Composite {
 							}
 							else
 							{
-								/*SimplePanel temp =(SimplePanel)instance.getParent();
-								temp.clear();
-*/								shell.getMcAppNav().clear();
+								
+								shell.getMcAppNav().clear();
 								shell.getMasterPanel().clear();
-								Window.alert("You have no access rights for any institution");
+								ConfirmationDialogBox.showOkDialogBox(constants.information(),constants.noInstitutionaccssMessage());
 							
 								
 							}

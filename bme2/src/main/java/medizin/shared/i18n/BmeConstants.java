@@ -258,4 +258,18 @@ public interface BmeConstants extends Constants {
 	public String doctor();
 
 	public String beforeDeleteMessage();
+	
+	public String noInstitutionaccssMessage();
+	
+	public String information();
+	
+	public String institutionAccessError();
+	
+	public String error();
+	
+	public String userCreateConstraintsViolationMessage();
+	
+	public String loginInformation();
+	
+	public String selectInstitution();
 }

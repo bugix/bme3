@@ -1,6 +1,5 @@
 package medizin.client.ui.view.user;
 
-import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.proxy.PersonProxy;
 
 import com.google.gwt.place.shared.Place;
