@@ -2,6 +2,8 @@ package medizin.client.activites;
 
 import java.util.List;
 
+import javax.sound.midi.MidiMessage;
+
 import medizin.client.ui.SlidingPanel;
 import medizin.client.ui.view.AcceptPersonView;
 import medizin.client.ui.view.AcceptPersonViewImpl;
@@ -28,6 +30,7 @@ import com.google.gwt.activity.shared.ActivityManager;
 import com.google.gwt.activity.shared.ActivityMapper;
 import com.google.gwt.activity.shared.CachingActivityMapper;
 import com.google.gwt.activity.shared.FilteredActivityMapper;
+import com.google.gwt.dev.ModuleTabPanel.Session;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.place.shared.Place;
@@ -68,6 +71,7 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 	private ActivityUserMapper activityUserMapper;
 	private SingleSelectionModel<PersonProxy> selectionModel;
 	private HandlerRegistration rangeChangeHandler;
+	private ActivityUser activityUser;
 
 
 	private McAppRequestFactory requests;
@@ -81,7 +85,7 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 		this.userPlace = place;
         this.requests = requests;
         this.placeController = placeController;
-
+        this.activityUser=this;
         
 //        // Filter
 //		CachingActivityMapper cached = new CachingActivityMapper(activityUserMapper);
@@ -109,11 +113,19 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 	@Override
 	public void onStop() {
 //		((SlidingPanel)widget).remove(view.asWidget());
+		if(activityManger!=null)
 		activityManger.setDisplay(null);
-		view.setDelegate(null);
-		view = null;
-		rangeChangeHandler.removeHandler();
-		rangeChangeHandler = null;
+		
+		if(view!=null){
+			view.setDelegate(null);
+			view = null;
+		}
+		if(rangeChangeHandler!=null){
+		
+			rangeChangeHandler.removeHandler();
+			rangeChangeHandler = null;
+		}
+		
 
 	}
 
@@ -123,14 +135,26 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 	
 	
 	@Override
-	public void start(AcceptsOneWidget widget, EventBus eventBus) {
-		super.start(widget, eventBus);
+	public void start(final AcceptsOneWidget widget, final EventBus eventBus) {
+		requests.questionAccessRequest().checkInstitutionalAdmin().fire(new Receiver<Boolean>() {
+
+			@Override
+			public void onSuccess(Boolean response) {
+			if(response){
+				 start2(widget, eventBus);
+				}
+			}
+		});
+		//super.start(widget, eventBus);
 
 	}
 	
 	@Override
 	public void start2(AcceptsOneWidget widget, EventBus eventBus) {
 		Log.info("Activity Person start");
+		
+		
+		
 		UserView userView = new UserViewImpl();
 		
 		userView.setPresenter(this);
@@ -140,7 +164,6 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 		setTable(view.getTable());
 		SplitLayoutPanel splitLayoutPanel= view.getSplitLayoutPanel();
 		
-
 		eventBus.addHandler(PlaceChangeEvent.TYPE,
 				new PlaceChangeEvent.Handler() {
 					public void onPlaceChange(PlaceChangeEvent event) {
@@ -175,6 +198,7 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 					}
 				});
 
+		
 		view.setDelegate(this);
 		
 
@@ -248,11 +272,12 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 //
 //		fireRangeRequest(range, callback);
 		
-		requests.personRequest()
-		.findPersonEntries(range.getStart(), range.getLength()).with(view.getPaths()).fire(new Receiver<List<PersonProxy>>() {
+		/*requests.personRequest()
+		.findPersonEntries(range.getStart(), range.getLength()).with(view.getPaths()).fire(new Receiver<List<PersonProxy>>() {*/
+		requests.personRequest().getAllPersons(range.getStart(),range.getLength()).with(view.getPaths()).fire(new Receiver<List<PersonProxy>>() {
 			@Override
 			public void onSuccess(List<PersonProxy> values) {
-				if (view == null) {
+				if (values==null ||view == null) {
 					// This activity is dead
 					return;
 				}
@@ -313,8 +338,9 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 //	}
 
 	protected void fireCountRequest(Receiver<Long> callback) {
-		requests.personRequest().countPeople()
-				.fire(callback);
+		/*requests.personRequest().countPeople()
+				.fire(callback);*/
+		requests.personRequest().findAllPersonCount().fire(callback);
 	}
 
 	@Override

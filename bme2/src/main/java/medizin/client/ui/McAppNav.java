@@ -41,6 +41,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DisclosurePanel;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.google.web.bindery.requestfactory.shared.Receiver;
@@ -103,9 +104,7 @@ public class McAppNav extends Composite {
 	Anchor bookAssesment;
 	@UiField
 	Anchor staticContent;
-	
-	
-	
+
 	@UiHandler("systemOverview")
 		void systemOverviewClicked(ClickEvent event) {
 			placeController.goTo(new PlaceSystemOverview("PlaceSystemOverview"));
@@ -164,8 +163,6 @@ public class McAppNav extends Composite {
 		placeController.goTo(new PlaceStaticContent("PlaceStaticContent"));
 	}
 	
-
-
 	public McAppNav() {
 		initWidget(uiBinderUser.createAndBindUi(this));
 		
@@ -174,6 +171,13 @@ public class McAppNav extends Composite {
 	private McAppRequestFactory requests;
 	private PlaceController placeController;
 	private McAppShell shell;
+	
+	public McAppNav(int value)
+	{
+		
+		displayMenue(false);
+		both = 0;
+	}
 
 	@Inject
 	public McAppNav(McAppRequestFactory requests, PlaceController placeController, McAppShell shell) {
@@ -181,11 +185,7 @@ public class McAppNav extends Composite {
         this.placeController = placeController;
         this.shell = shell;
 
-        
-
-        	requests.personRequest().myGetLoggedPerson().fire(new Receiver<PersonProxy>(){
-
-			
+    	/*requests.personRequest().myGetLoggedPerson().fire(new Receiver<PersonProxy>(){
 
 			@Override
 			public void onSuccess(PersonProxy response) {
@@ -199,8 +199,6 @@ public class McAppNav extends Composite {
         
         	 requests.institutionRequest().myGetInstitutionToWorkWith().fire(new Receiver<InstitutionProxy>(){
 
-     			
-
      			@Override
      			public void onSuccess(InstitutionProxy response) {
      				if (response == null){
@@ -209,8 +207,21 @@ public class McAppNav extends Composite {
      				}
      				//loggedUser = response;
      				 displayMenue();
-     			}});
+		}});*/
         
+        requests.personRequest().checkAdminRightToLoggedPerson().fire(new Receiver<Boolean>() {
+        
+			@Override
+			public void onSuccess(Boolean response) {
+				if (response == null)
+					both = 0;
+				else
+					both = 2;
+				
+				displayMenue(response);
+				
+			}
+		});
         
     }
 	
@@ -221,18 +232,20 @@ public class McAppNav extends Composite {
 	@UiField
 	DivElement deletethis;
 	
-	private void displayMenue(){
+	private void displayMenue(Boolean flag){
 		if (both < 1){
 			both++;
 			return;
 		}
 		both = 0;
 		
-		if (this.loggedUser.getIsAdmin()){
+		//if (this.loggedUser.getIsAdmin()){
+		//System.out.println("Flag " + flag);
+		if (flag){
 	        initWidget(uiBinderAdmin.createAndBindUi(this));
 	       // DOM.setElementAttribute(user.getParent().getParent().getElement(), "style", "margin-right: -2px; display: none;");
 		}
-		else {
+		else if(flag !=null) {
 			initWidget(uiBinderUser.createAndBindUi(this));
 			deletethis.setInnerHTML("");
 			//Log.error(Document.get().getElementById("deletethis").getInnerHTML());
@@ -404,6 +417,8 @@ public class McAppNav extends Composite {
 		
 		managementPanel.getHeaderTextAccessor().setText(constants.managementPanel());
 		user.setText(constants.user());
+		
+		//doctor.setText(constants.;)
 		
 		questionPanel.getHeaderTextAccessor().setText(constants.questionPanel());
 		question.setText(constants.question());

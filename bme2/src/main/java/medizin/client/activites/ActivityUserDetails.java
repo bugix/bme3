@@ -4,6 +4,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import javax.sound.midi.MidiMessage;
+
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.PlaceUser;
 import medizin.client.place.PlaceUserDetails;
@@ -189,6 +191,23 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 
 		initEventAccess();
 		initQuestionAccess();
+		
+		/*requests.personRequest().myGetLoggedPerson().fire(new Receiver<PersonProxy>() {
+
+			@Override
+			public void onSuccess(PersonProxy response) {
+			
+				if(response!=null && response.getIsAdmin())
+				{	
+					initInstituteAccess();
+				}
+				else{
+					view.getUserAccessDetailPanel().selectTab(1);
+					view.getUserAccessDetailPanel().remove(0);
+					
+				}
+			}
+		});*/
 		initInstituteAccess();
 	}
 	

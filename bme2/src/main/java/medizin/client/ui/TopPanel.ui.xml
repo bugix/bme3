@@ -7,8 +7,8 @@
 	<g:HTMLPanel>
 		<g:HTMLPanel>
 			<g:HorizontalPanel>
-				<g:ValueListBox ui:field="institutionListBox"></g:ValueListBox>
 				<g:ValueListBox ui:field="loggedUser"></g:ValueListBox>
+				<g:ValueListBox ui:field="institutionListBox" width="250px"></g:ValueListBox>
 				<g:Label ui:field="languageLbl"></g:Label>
 				<g:ValueListBox ui:field="languageListBox"></g:ValueListBox>
 			</g:HorizontalPanel>

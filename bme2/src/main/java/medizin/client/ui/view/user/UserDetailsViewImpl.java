@@ -40,6 +40,16 @@ public class UserDetailsViewImpl extends Composite implements UserDetailsView
 	@UiField
 	TabPanel userAccessDetailPanel;
 	
+	@Override
+    public TabPanel getUserAccessDetailPanel() {
+		return userAccessDetailPanel;
+	}
+
+	@Override
+	public void setUserAccessDetailPanel(TabPanel userAccessDetailPanel) {
+		this.userAccessDetailPanel = userAccessDetailPanel;
+	}
+
     @UiField
     IconButton edit;
 

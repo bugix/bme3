@@ -87,6 +87,23 @@
 
 					<g:HTMLPanel>
 						<table>
+						<tr id="isDoctor">
+					<td>
+						<div class="{style.label}"><g:Label text="{constants.doctorRights}" /></div>
+					</td>
+					<td>
+						<g:CheckBox ui:field="isDoctor" />
+					</td>
+				</tr>
+
+				<tr id="doctorDisplay">
+					<td>
+						<div class="{style.label}"><g:Label text="{constants.doctor}" /></div>
+					</td>
+					<td>
+						<i:DefaultSuggestBox ui:field="doctorSuggestBox"></i:DefaultSuggestBox>
+					</td>
+				</tr>
 						<tr id="name">
 					<td>
 						<div class="{style.label}"><g:Label text="{constants.name}" /></div>
@@ -150,7 +167,7 @@
 					</td>
 				</tr>
 				
-				<tr id="isDoctor">
+				<!-- <tr id="isDoctor">
 					<td>
 						<div class="{style.label}"><g:Label text="{constants.doctorRights}" /></div>
 					</td>
@@ -166,7 +183,7 @@
 					<td>
 						<i:DefaultSuggestBox ui:field="doctorSuggestBox"></i:DefaultSuggestBox>
 					</td>
-				</tr>
+				</tr> -->
 						</table>
 						
 

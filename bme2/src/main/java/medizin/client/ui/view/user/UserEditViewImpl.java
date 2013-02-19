@@ -1,11 +1,8 @@
 package medizin.client.ui.view.user;
 
-import medizin.client.place.PlaceUserDetails;
 import medizin.client.factory.request.McAppRequestFactory;
-import medizin.client.proxy.AnswerProxy;
 import medizin.client.proxy.DoctorProxy;
 import medizin.client.proxy.PersonProxy;
-import medizin.client.request.PersonRequest;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.EventHandlingValueHolderItem;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
@@ -13,21 +10,18 @@ import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
-import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.dom.client.Style.Display;
-import com.google.gwt.editor.client.Editor;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.web.bindery.requestfactory.gwt.client.RequestFactoryEditorDriver;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -130,7 +124,26 @@ public class UserEditViewImpl extends Composite implements UserEditView  {
 					Document.get().getElementById("doctorDisplay").getStyle().setDisplay(Display.NONE);
 			}
 		});
+		
+		initDoctorDetails();
 	}
+
+	private void initDoctorDetails() {
+
+		doctorSuggestBox.addHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				DoctorProxy doctorSelected =doctorSuggestBox.getSelected();
+				name.setValue(doctorSelected.getName());
+				prename.setValue(doctorSelected.getPreName());
+				email.setValue(doctorSelected.getEmail());
+				phoneNumber.setValue(doctorSelected.getTelephone());
+				
+			}
+		});
+	
+}
 
 	@Override
 	public void setDelegate(Delegate delegate) {

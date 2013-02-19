@@ -30,11 +30,19 @@ public class McAppShell extends Composite {
 	
 	@UiField
 	SimplePanel mcAppNav;
+	public SimplePanel getMcAppNav() {
+		return mcAppNav;
+	}
+
 	@UiField
 	SimplePanel topPanel;
 	@UiField
 	SimplePanel masterPanel;
 
+
+	public SimplePanel getMasterPanel() {
+		return masterPanel;
+	}
 
 	@UiField
 	NotificationMole mole;

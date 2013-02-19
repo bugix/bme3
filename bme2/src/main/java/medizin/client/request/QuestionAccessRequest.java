@@ -2,6 +2,8 @@ package medizin.client.request;
 
 import java.util.List;
 
+import medizin.client.proxy.InstitutionProxy;
+import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionAccessProxy;
 
 import org.springframework.roo.addon.gwt.RooGwtUnmanagedRequest;
@@ -20,4 +22,9 @@ public interface QuestionAccessRequest extends QuestionAccessRequest_Roo_Gwt {
 	
 	Request<List<QuestionAccessProxy>> findInstiuteAccessByPerson(Long personId, int firstResult, int maxResults);
 	Request<java.lang.Long>  countInstiuteAccessByPerson(Long personId);
+	
+	
+	Request<Boolean> checkInstitutionalAdmin();
+	
+	Request<List<InstitutionProxy>> findInstituionFromQuestionAccessByPerson(Long personId);
 }

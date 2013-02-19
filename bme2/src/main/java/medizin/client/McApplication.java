@@ -10,11 +10,9 @@ import java.util.logging.Logger;
 import medizin.client.activites.FilterForMainPlaces;
 import medizin.client.activites.McAppActivityMapper;
 import medizin.client.factory.request.McAppRequestFactory;
-import medizin.client.factory.request.RequestEvent;
 import medizin.client.place.McAppPlaceHistoryMapper;
 import medizin.client.place.McPlaceHistoryFactory;
 import medizin.client.place.PlaceSystemOverview;
-import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.ui.ErrorPanel;
 import medizin.client.ui.McAppConstant;
@@ -160,7 +158,7 @@ public class McApplication {
 		
 		final TopPanel topPanel = TopPanel.instance(requestFactory, placeController);
 		shell.setTopPanel(topPanel);
-		
+		topPanel.setShell(shell);
 		requestFactory.personRequest().findAllPeople().fire(new Receiver<List<PersonProxy>>(){
 
 			@Override
@@ -192,7 +190,7 @@ public class McApplication {
 				}
 		});
 		
-		requestFactory.institutionRequest().findAllInstitutions().fire(new Receiver<List<InstitutionProxy>>(){
+		/*requestFactory.institutionRequest().findAllInstitutions().fire(new Receiver<List<InstitutionProxy>>(){
 
 			@Override
 			public void onSuccess(List<InstitutionProxy> response) {
@@ -219,7 +217,7 @@ public class McApplication {
 
 					
 				}
-		});
+		});*/
 		
 		Log.debug("McApp.initAfter");
 	}

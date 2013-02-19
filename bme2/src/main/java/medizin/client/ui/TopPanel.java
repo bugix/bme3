@@ -3,19 +3,22 @@
  */
 package medizin.client.ui;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
-import javax.servlet.http.HttpSession;
+import org.apache.tools.ant.taskdefs.Mkdir;
 
+import medizin.client.McAppShell;
+import medizin.client.McApplication;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.shared.Locale;
 import medizin.shared.i18n.BmeConstants;
 
-
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.LocaleInfo;
@@ -28,10 +31,12 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.Window.Location;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.ValueListBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.google.web.bindery.requestfactory.gwt.ui.client.EntityProxyKeyProvider;
+import com.google.web.bindery.requestfactory.shared.Receiver;
 
 /**
  * The TopPanel contains the users login information and a list box to select the institution. 
@@ -54,7 +59,16 @@ public class TopPanel extends Composite {
         return instance;
     }
     
-    @UiField(provided = true)
+    private McAppShell shell;
+    
+    public McAppShell getShell() {
+		return shell;
+	}
+	public void setShell(McAppShell shell) {
+		this.shell = shell;
+	}
+
+	@UiField(provided = true)
     ValueListBox<InstitutionProxy> institutionListBox = new ValueListBox<InstitutionProxy>(medizin.client.ui.view.roo.InstitutionProxyRenderer.instance(), new EntityProxyKeyProvider<medizin.client.proxy.InstitutionProxy>());
 
     @UiField(provided = true)
@@ -70,6 +84,8 @@ public class TopPanel extends Composite {
 			return "null";
 		}
 	});
+    
+   // private List<InstitutionProxy> temp = new ArrayList<InstitutionProxy>();
     
     @UiField
     Label languageLbl;
@@ -110,10 +126,80 @@ public class TopPanel extends Composite {
 	public BmeConstants constants = GWT.create(BmeConstants.class);
 	
 	@Inject
-	public TopPanel(McAppRequestFactory requests, PlaceController placeController) {
+	public TopPanel(final McAppRequestFactory requests, PlaceController placeController) {
         this.requests = requests;
         this.placeController = placeController;
 		initWidget(uiBinder.createAndBindUi(this));
+		
+		loggedUser.addValueChangeHandler(new ValueChangeHandler<PersonProxy>() {
+
+			@Override
+			public void onValueChange(ValueChangeEvent<PersonProxy> event) {
+				
+				List<InstitutionProxy> temp = new ArrayList<InstitutionProxy>();
+				institutionListBox.setValue(null);
+				institutionListBox.setAcceptableValues(temp);
+				
+				Log.info("Overall Admin :" + event.getValue().getIsAdmin());
+				
+				if (event.getValue().getIsAdmin())
+				{
+					
+					requests.institutionRequest().findAllInstitutions().fire(new Receiver<List<InstitutionProxy>>() {
+
+						@Override
+						public void onSuccess(List<InstitutionProxy> response) {
+							if (response.size() > 0)
+							{
+								institutionListBox.setValue(response.get(0));
+								institutionListBox.setAcceptableValues(response);
+								TopPanel.this.requests.institutionRequest().mySetCurrentInstitution().using(institutionListBox.getValue()).fire();
+							}
+							else
+							{
+								shell.getMcAppNav().clear();
+								shell.getMasterPanel().clear();
+								Window.alert("You have no access rights for any institution");
+								
+								
+							}
+						}
+					});
+				}
+				else
+				{
+					
+					TopPanel.this.requests.questionAccessRequest().findInstituionFromQuestionAccessByPerson(event.getValue().getId()).fire(new Receiver<List<InstitutionProxy>>() {
+
+						@Override
+						public void onSuccess(List<InstitutionProxy> response) {
+							
+							
+							if(response==null)
+							Window.alert("Internal error occurred while setting your institutions please contact administrator");	
+							
+							if (response!=null && response.size() > 0)
+							{
+								
+								institutionListBox.setValue(response.get(0));
+								institutionListBox.setAcceptableValues(response);
+								TopPanel.this.requests.institutionRequest().mySetCurrentInstitution().using(institutionListBox.getValue()).fire();
+							}
+							else
+							{
+								/*SimplePanel temp =(SimplePanel)instance.getParent();
+								temp.clear();
+*/								shell.getMcAppNav().clear();
+								shell.getMasterPanel().clear();
+								Window.alert("You have no access rights for any institution");
+							
+								
+							}
+						}
+					});
+				}
+			}
+		});
 		
 		Locale[] locales = Locale.values();
 		String currentLocale = LocaleInfo.getCurrentLocale().getLocaleName();

@@ -5,6 +5,7 @@ import medizin.client.proxy.PersonProxy;
 
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.TabPanel;
 
 public interface UserDetailsView extends IsWidget {
     void setName(String helloName);
@@ -31,4 +32,7 @@ public interface UserDetailsView extends IsWidget {
 	QuestionAccessViewImpl getQuestionAccessView();
 	
 	InstituteAccessViewImpl getInstituteAccessView();
+	
+	TabPanel getUserAccessDetailPanel();
+	void setUserAccessDetailPanel(TabPanel userAccessDetailPanel);
 }

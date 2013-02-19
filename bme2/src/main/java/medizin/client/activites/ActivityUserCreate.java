@@ -36,6 +36,7 @@ import com.google.web.bindery.requestfactory.shared.RequestContext;
 import com.google.web.bindery.requestfactory.shared.ServerFailure;
 import com.google.web.bindery.requestfactory.shared.Violation;
 import com.google.gwt.text.shared.AbstractRenderer;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 /**
@@ -260,6 +261,10 @@ public class ActivityUserCreate  extends AbstractActivityWrapper  implements Use
 	public void saveClicked() {
 		save=true;
 		
+		if(view.getName().getText().equals("") || view.getPrename().getText().equals("") || view.getEmail().getText().equals("") || view.getAlternativEmail().getText().equals("") || view.getPhoneNumber().getText().equals("")){
+			Window.alert("Please enter appropriate value");
+			return;
+		}
 		PersonRequest personRequest = requests.personRequest();
 		PersonProxy personProxy;
 		
@@ -307,7 +312,8 @@ public class ActivityUserCreate  extends AbstractActivityWrapper  implements Use
 			
 			@Override
 			public void onViolation(Set<Violation> errors) {
-				
+				Window.alert("Please enter appropriate value");
+				Log.info("error "+errors.toString());
 			}
 		});
 		

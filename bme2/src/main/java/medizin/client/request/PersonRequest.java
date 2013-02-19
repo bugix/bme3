@@ -1,5 +1,7 @@
 package medizin.client.request;
 
+import java.util.List;
+
 import medizin.client.proxy.PersonProxy;
 
 import org.springframework.roo.addon.gwt.RooGwtUnmanagedRequest;
@@ -15,4 +17,11 @@ public interface PersonRequest extends PersonRequest_Roo_Gwt {
 	InstanceRequest<PersonProxy, Void> loginPerson();
 
 	Request<PersonProxy> myGetLoggedPerson();
+	
+	Request<Boolean> checkAdminRightToLoggedPerson();
+	
+	Request<List<PersonProxy>> getAllPersons(int start,int end);
+	
+	Request<Long> findAllPersonCount();
+
 }
