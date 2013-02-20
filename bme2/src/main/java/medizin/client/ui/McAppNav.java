@@ -23,12 +23,11 @@ import medizin.client.place.PlaceStaticContent;
 import medizin.client.place.PlaceSystemOverview;
 import medizin.client.place.PlaceUser;
 import medizin.client.place.PlaceUserDetails;
-import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.shared.i18n.BmeConstants;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceChangeEvent;
@@ -36,12 +35,9 @@ import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.uibinder.client.UiTemplate;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DisclosurePanel;
-import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.google.web.bindery.requestfactory.shared.Receiver;
@@ -52,7 +48,13 @@ import com.google.web.bindery.requestfactory.shared.Receiver;
  */
 public class McAppNav extends Composite {
 
-	private static McAppNavAdminUiBinder uiBinderAdmin = GWT
+	private static McAppNavUiBinder uiBinder = GWT.create(McAppNavUiBinder.class);
+
+	interface McAppNavUiBinder extends UiBinder<Widget, McAppNav> {
+	}
+	
+	
+	/*private static McAppNavAdminUiBinder uiBinderAdmin = GWT
 			.create(McAppNavAdminUiBinder.class);
 
 	@UiTemplate("McAppNavAdmin.ui.xml")
@@ -64,7 +66,7 @@ public class McAppNav extends Composite {
 	
 	@UiTemplate("McAppNavUser.ui.xml")
 	interface McAppNavUserUiBinder extends UiBinder<Widget, McAppNav> {
-	}
+	}*/
 	
 	public BmeConstants constants = GWT.create(BmeConstants.class);
 	
@@ -163,27 +165,29 @@ public class McAppNav extends Composite {
 		placeController.goTo(new PlaceStaticContent("PlaceStaticContent"));
 	}
 	
-	public McAppNav() {
-		initWidget(uiBinderUser.createAndBindUi(this));
-		
-	}
+//	public McAppNav() {
+//		initWidget(uiBinderUser.createAndBindUi(this));
+//		
+//	}
 	
 	private McAppRequestFactory requests;
 	private PlaceController placeController;
 	private McAppShell shell;
-	
-	public McAppNav(int value)
-	{
-		
-		displayMenue(false);
-		both = 0;
-	}
-
+	public static McAppNav MC_APP_NAV ;  
 	@Inject
 	public McAppNav(McAppRequestFactory requests, PlaceController placeController, McAppShell shell) {
         this.requests = requests;
         this.placeController = placeController;
         this.shell = shell;
+        MC_APP_NAV = this;
+        
+        initWidget(uiBinder.createAndBindUi(this));
+        
+		shell.setNavigation(this);
+        systemOweviewPanel.setOpen(false);
+        managementPanel.setOpen(false);
+        assementPanel.setOpen(false);
+        questionPanel.setOpen(false);
 
     	/*requests.personRequest().myGetLoggedPerson().fire(new Receiver<PersonProxy>(){
 
@@ -209,56 +213,70 @@ public class McAppNav extends Composite {
      				 displayMenue();
 		}});*/
         
-        requests.personRequest().checkAdminRightToLoggedPerson().fire(new Receiver<Boolean>() {
+        checkAdminRights(requests);
         
-			@Override
-			public void onSuccess(Boolean response) {
-				if (response == null)
-					both = 0;
-				else
-					both = 2;
-				
-				displayMenue(response);
-				
-			}
-		});
         
     }
+	
+	public static void checkAdminRights(McAppRequestFactory requests)
+	{
+		if(MC_APP_NAV != null) 
+		{
+			MC_APP_NAV.hideAllMenu();
+			
+			Log.info("INSIDE MCAPPNAV");
+			requests.personRequest().checkAdminRightToLoggedPerson().fire(new Receiver<Boolean>() {
+		        
+				@Override
+				public void onSuccess(Boolean response) {
+					if (response == null)
+						MC_APP_NAV.both = 0;
+					else
+						MC_APP_NAV.both = 2;
+					
+					MC_APP_NAV.displayMenue(response);
+					
+				}
+			});
+		}
+	}
 	
 	private PersonProxy loggedUser;
 	
 	private int both = 0;
 	
-	@UiField
-	DivElement deletethis;
+	/*@UiField
+	DivElement deletethis;*/
 	
 	private void displayMenue(Boolean flag){
 		if (both < 1){
 			both++;
+			
 			return;
 		}
 		both = 0;
 		
 		//if (this.loggedUser.getIsAdmin()){
 		//System.out.println("Flag " + flag);
-		if (flag){
-	        initWidget(uiBinderAdmin.createAndBindUi(this));
+		if (flag)
+			showAdminMenu();
+		else
+			showUserMenu();
+		
+		/*if (flag){
+	        //initWidget(uiBinderAdmin.createAndBindUi(this));
 	       // DOM.setElementAttribute(user.getParent().getParent().getElement(), "style", "margin-right: -2px; display: none;");
 		}
 		else if(flag !=null) {
-			initWidget(uiBinderUser.createAndBindUi(this));
-			deletethis.setInnerHTML("");
+			//initWidget(uiBinderUser.createAndBindUi(this));
+//			deletethis.setInnerHTML("");
 			//Log.error(Document.get().getElementById("deletethis").getInnerHTML());
-		}
+		}*/
 		//DOM.setElementAttribute(systemOverview.getParent().getParent().getElement(), "style", "margin-right: -2px; display: none;");
 		//DOM.setElementAttribute(asignAssQuestion.getParent().getParent().getElement(), "style", "margin-right: -2px; display: none;");
 		//DOM.setElementAttribute(question.getParent().getParent().getElement(), "style", "margin-right: -2px; display: none;");
 		
-		shell.setNavigation(this);
-        systemOweviewPanel.setOpen(false);
-        managementPanel.setOpen(false);
-        assementPanel.setOpen(false);
-        questionPanel.setOpen(false);
+
         
         requests.getEventBus().addHandler(PlaceChangeEvent.TYPE, new PlaceChangeEvent.Handler() {
 			public void onPlaceChange(PlaceChangeEvent event) {
@@ -268,8 +286,10 @@ public class McAppNav extends Composite {
 			}
 		});
         
-        Place place = placeController.getWhere();
-        changeMenue(place);
+        /*Place place = placeController.getWhere();
+        changeMenue(place);*/
+        
+        placeController.goTo( new PlaceSystemOverview("PlaceSystemOverview"));
 	}
 	
 	protected void changeMenue(Place place){
@@ -430,6 +450,44 @@ public class McAppNav extends Composite {
 		asignAssQuestion.setText(constants.asignAssQuestion());
 		bookAssesment.setText(constants.bookAssesment());
 		staticContent.setText(constants.staticContent());
+	}
+	
+	private void hideAllMenu()
+	{
+		systemOweviewPanel.setVisible(false);
+		managementPanel.setVisible(false);
+		questionPanel.setVisible(false);
+		assementPanel.setVisible(false);
+		
+		shell.getMasterPanel().clear();
+	}
+	
+	private void showAdminMenu()
+	{
+		systemOweviewPanel.setVisible(true);
+		managementPanel.setVisible(true);
+		questionPanel.setVisible(true);
+		assementPanel.setVisible(true);
+		
+		questionType.setVisible(true);
+		institution.setVisible(true);
+		assesment.setVisible(true);
+		bookAssesment.setVisible(true);
+		staticContent.setVisible(true);
+	}
+	
+	private void showUserMenu()
+	{
+		systemOweviewPanel.setVisible(true);
+		managementPanel.setVisible(false);
+		questionPanel.setVisible(true);
+		assementPanel.setVisible(true);
+		
+		questionType.setVisible(false);
+		institution.setVisible(false);
+		assesment.setVisible(false);
+		bookAssesment.setVisible(false);
+		staticContent.setVisible(false);
 	}
 
 }

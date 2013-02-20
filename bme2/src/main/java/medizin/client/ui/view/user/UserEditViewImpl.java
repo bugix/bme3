@@ -10,7 +10,6 @@ import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
 
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.common.collect.Maps;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.SpanElement;
@@ -149,10 +148,12 @@ public class UserEditViewImpl extends Composite implements UserEditView  {
 			@Override
 			public void onChange(ChangeEvent event) {
 				DoctorProxy doctorSelected =doctorSuggestBox.getSelected();
-				name.setValue(doctorSelected.getName());
-				prename.setValue(doctorSelected.getPreName());
-				email.setValue(doctorSelected.getEmail());
-				phoneNumber.setValue(doctorSelected.getTelephone());
+				if(doctorSelected!=null){
+					name.setValue(doctorSelected.getName()!=null ? doctorSelected.getName():"");
+					prename.setValue(doctorSelected.getPreName()!=null ? doctorSelected.getPreName():"");
+					email.setValue(doctorSelected.getEmail()!=null ?doctorSelected.getEmail():"");
+					phoneNumber.setValue(doctorSelected.getTelephone()!=null?doctorSelected.getTelephone():"");
+				}
 				
 			}
 		});

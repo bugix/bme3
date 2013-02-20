@@ -24,6 +24,12 @@ public class Institution {
     	HttpSession session = RequestFactoryServlet.getThreadLocalRequest().getSession();
 		session.setAttribute("institutionId", this.getId());
     }
+    
+    public static void fillCurrentInstitutionNull()
+    {
+    	HttpSession session = RequestFactoryServlet.getThreadLocalRequest().getSession();
+		session.setAttribute("institutionId", null);
+    }
 
     public static Institution myGetInstitutionToWorkWith(){
     	HttpSession session = RequestFactoryServlet.getThreadLocalRequest().getSession();

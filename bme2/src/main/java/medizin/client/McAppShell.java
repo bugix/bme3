@@ -11,12 +11,9 @@ import com.google.gwt.dom.client.StyleInjector;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.HorizontalSplitPanel;
 import com.google.gwt.user.client.ui.NotificationMole;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.ValueListBox;
 import com.google.gwt.user.client.ui.Widget;
 /**
  * The applications basic layout.
@@ -39,6 +36,7 @@ public class McAppShell extends Composite {
 	@UiField
 	SimplePanel masterPanel;
 
+	TopPanel topPanel2;
 
 	public SimplePanel getMasterPanel() {
 		return masterPanel;
@@ -285,8 +283,15 @@ public class McAppShell extends Composite {
 	}
 	
 	public void setTopPanel(TopPanel topPanel) {
+		this.topPanel2 = topPanel;
 		this.topPanel.add(topPanel);
 		
 	}
+
+	public TopPanel getTopPanel2() {
+		return topPanel2;
+	}
+	
+	
 
 }

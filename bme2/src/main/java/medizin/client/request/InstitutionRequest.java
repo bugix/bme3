@@ -15,4 +15,6 @@ public interface InstitutionRequest extends InstitutionRequest_Roo_Gwt {
 	InstanceRequest<InstitutionProxy, Void> mySetCurrentInstitution();
 
 	Request<InstitutionProxy> myGetInstitutionToWorkWith();
+	
+	Request<Void> fillCurrentInstitutionNull();
 }

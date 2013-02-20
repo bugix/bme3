@@ -8,11 +8,7 @@
 	padding: 2px 2px 2px 2px;
 	
 }
-.paddingLeft28px
-{
-	padding-left:28px !important;
-	background: pink;
-}
+
 
 .mainNavPanelContent a:hover {
 	background-color: #e6e6e6;
@@ -20,11 +16,11 @@
 		
 	</ui:style>
 	<g:HTMLPanel >
-	<g:DisclosurePanel ui:field="systemOweviewPanel" width="100%" open="true" addStyleNames='{style.mainNavPanel}'>
+	<g:DisclosurePanel ui:field="systemOweviewPanel" width="100%" open="true" addStyleNames='{style.mainNavPanel}' visible="false">
 	
 		<g:header></g:header>
 		<g:VerticalPanel addStyleNames='{style.mainNavPanelContent}' width="100%">
-			<g:Anchor ui:field="systemOverview" addStyleNames="{style.paddingLeft28px}"></g:Anchor>
+			<g:Anchor ui:field="systemOverview"></g:Anchor>
 			<g:Anchor ui:field="acceptPerson"></g:Anchor>
 			<g:Anchor ui:field="acceptQuestion"></g:Anchor>
 			<g:Anchor ui:field="acceptAnswer"></g:Anchor>
@@ -32,14 +28,14 @@
 			<g:Anchor ui:field="openDemand"></g:Anchor>
 		</g:VerticalPanel>
 	</g:DisclosurePanel>
-	<g:DisclosurePanel ui:field="managementPanel" width="100%" open="false" addStyleNames='{style.mainNavPanel}'>
+	<g:DisclosurePanel ui:field="managementPanel" width="100%" open="false" addStyleNames='{style.mainNavPanel}' visible="false">
 		<g:header ></g:header>
 		<g:VerticalPanel addStyleNames='{style.mainNavPanelContent}' width="100%">
 			<g:Anchor ui:field="user"></g:Anchor>
 		</g:VerticalPanel>
 	</g:DisclosurePanel>
 	
-	<g:DisclosurePanel ui:field="questionPanel" width="100%" open="false" addStyleNames='{style.mainNavPanel}'>
+	<g:DisclosurePanel ui:field="questionPanel" width="100%" open="false" addStyleNames='{style.mainNavPanel}' visible="false">
 		<g:header></g:header>
 		<g:VerticalPanel addStyleNames='{style.mainNavPanelContent}' width="100%">
 			<g:Anchor ui:field="question"></g:Anchor>
@@ -47,7 +43,7 @@
 			<g:Anchor ui:field="institution"></g:Anchor>
 		</g:VerticalPanel>
 	</g:DisclosurePanel>
-	<g:DisclosurePanel ui:field="assementPanel" width="100%" open="false" addStyleNames='{style.mainNavPanel}'>
+	<g:DisclosurePanel ui:field="assementPanel" width="100%" open="false" addStyleNames='{style.mainNavPanel}' visible="false">
 		<g:header></g:header>
 		<g:VerticalPanel addStyleNames='{style.mainNavPanelContent}' width="100%">
 			<g:Anchor ui:field="assesment"></g:Anchor>

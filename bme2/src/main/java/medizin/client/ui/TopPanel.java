@@ -94,6 +94,7 @@ public class TopPanel extends Composite {
     @UiHandler ("institutionListBox")
     public void setInstitution(ValueChangeEvent<InstitutionProxy> event){
     	requests.institutionRequest().mySetCurrentInstitution().using(institutionListBox.getValue()).fire();
+    	McAppNav.checkAdminRights(requests);
     }
     
     public ValueListBox<InstitutionProxy> getInstitutionListBox() {
@@ -123,7 +124,7 @@ public class TopPanel extends Composite {
 	public BmeConstants constants = GWT.create(BmeConstants.class);
 	
 	@Inject
-	public TopPanel(final McAppRequestFactory requests, PlaceController placeController) {
+	public TopPanel(final McAppRequestFactory requests, final PlaceController placeController) {
         this.requests = requests;
         this.placeController = placeController;
 		initWidget(uiBinder.createAndBindUi(this));
@@ -148,17 +149,16 @@ public class TopPanel extends Composite {
 						public void onSuccess(List<InstitutionProxy> response) {
 							if (response.size() > 0)
 							{
+								Log.info("ADMIN IS SELECTED");
 								institutionListBox.setValue(response.get(0));
 								institutionListBox.setAcceptableValues(response);
 								TopPanel.this.requests.institutionRequest().mySetCurrentInstitution().using(institutionListBox.getValue()).fire();
+								McAppNav.checkAdminRights(requests);
 							}
 							else
 							{
-								shell.getMcAppNav().clear();
-								shell.getMasterPanel().clear();
+								McAppNav.checkAdminRights(requests);
 								ConfirmationDialogBox.showOkDialogBox(constants.information(),constants.noInstitutionaccssMessage());
-								
-								
 							}
 						}
 					});
@@ -182,15 +182,13 @@ public class TopPanel extends Composite {
 								institutionListBox.setValue(response.get(0));
 								institutionListBox.setAcceptableValues(response);
 								TopPanel.this.requests.institutionRequest().mySetCurrentInstitution().using(institutionListBox.getValue()).fire();
+								McAppNav.checkAdminRights(requests);
 							}
 							else
 							{
-								
-								shell.getMcAppNav().clear();
-								shell.getMasterPanel().clear();
-								ConfirmationDialogBox.showOkDialogBox(constants.information(),constants.noInstitutionaccssMessage());
-							
-								
+								requests.institutionRequest().fillCurrentInstitutionNull().fire();
+								McAppNav.checkAdminRights(requests);
+								ConfirmationDialogBox.showOkDialogBox(constants.information(),constants.noInstitutionaccssMessage());	
 							}
 						}
 					});

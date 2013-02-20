@@ -1,35 +1,31 @@
 package medizin.server.domain;
 
-import com.google.web.bindery.requestfactory.server.RequestFactoryServlet;
-
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import medizin.client.shared.AccessRights;
-
 import org.apache.log4j.Logger;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
+
+import com.google.web.bindery.requestfactory.server.RequestFactoryServlet;
 
 @RooJavaBean
 @RooToString
@@ -85,6 +81,15 @@ public class Person {
 
     public void loginPerson() {
         HttpSession session = RequestFactoryServlet.getThreadLocalRequest().getSession();
+        
+        String shibId = this.shidId;
+        
+        if (shibId == null || shibId.isEmpty())
+        {
+        	this.shidId = String.valueOf(new Date().getTime());
+        	this.persist();
+        }
+        
         session.setAttribute("shibdId", this.shidId);
     }
 
@@ -156,7 +161,7 @@ public class Person {
             			return false;
         		}
         		else
-        			return false;
+        			return null;
             }
     	}
     	else
