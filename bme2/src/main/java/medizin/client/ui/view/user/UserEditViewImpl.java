@@ -1,5 +1,7 @@
 package medizin.client.ui.view.user;
 
+import java.util.Map;
+
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.proxy.DoctorProxy;
 import medizin.client.proxy.PersonProxy;
@@ -8,6 +10,7 @@ import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.common.collect.Maps;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.SpanElement;
@@ -106,8 +109,19 @@ public class UserEditViewImpl extends Composite implements UserEditView  {
 
 
 
-	public UserEditViewImpl() {
+	public UserEditViewImpl(Map<String, Widget> reciverMap) {
 		initWidget(uiBinder.createAndBindUi(this));
+		
+		reciverMap.put("name", name);
+		reciverMap.put("prename", prename);
+		reciverMap.put("email", email);
+		reciverMap.put("alternativEmail", alternativEmail);
+		reciverMap.put("phoneNumber", phoneNumber);
+		reciverMap.put("isAdmin", isAdmin);
+		reciverMap.put("isAccepted", isAccepted);
+		reciverMap.put("isDoctor", isDoctor);
+		reciverMap.put("doctor", doctorSuggestBox);		
+								
 		
 		userTypePanel.selectTab(0);
 		userTypePanel.getTabBar().setTabText(0, "Manage User");

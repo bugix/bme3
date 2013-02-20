@@ -1,32 +1,27 @@
 package medizin.client.activites;
 
 import java.util.Iterator;
-
+import java.util.Map;
 import java.util.Set;
 
-import medizin.client.ui.ErrorPanel;
-import medizin.client.ui.McAppConstant;
-import medizin.client.ui.view.question.AnswerListViewImpl;
-import medizin.client.ui.view.question.QuestionDetailsView;
-import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
-import medizin.client.place.PlaceQuestionDetails;
 import medizin.client.factory.request.McAppRequestFactory;
-import medizin.client.proxy.AnswerProxy;
 import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.PersonProxy;
-import medizin.client.proxy.QuestionProxy;
+import medizin.client.ui.ErrorPanel;
+import medizin.client.ui.McAppConstant;
+import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.common.collect.Maps;
 import com.google.gwt.activity.shared.AbstractActivity;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
-import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.requestfactory.shared.Receiver;
 import com.google.web.bindery.requestfactory.shared.ServerFailure;
 import com.google.web.bindery.requestfactory.shared.Violation;
@@ -41,6 +36,7 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 	private McAppRequestFactory requests;
 	private PlaceController placeController;
 	private Place place;
+	protected Map<String, Widget> reciverMap = Maps.newHashMap();
 	
 	public BmeConstants constants = GWT.create(BmeConstants.class);
 	

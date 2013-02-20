@@ -39,11 +39,11 @@ public class Person {
     private static Logger log = Logger.getLogger(Person.class);
 
     @NotNull
-    @Size(max = 50)
+    @Size(min=1,max = 50)
     private String name;
 
     @NotNull
-    @Size(max = 50)
+    @Size(min=1,max = 50)
     private String prename;
 
     @Size(max = 50)

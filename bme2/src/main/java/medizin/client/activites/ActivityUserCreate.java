@@ -1,44 +1,27 @@
 package medizin.client.activites;
 
 import java.util.List;
-import java.util.Set;
 
-import medizin.client.ui.McAppConstant;
-import medizin.client.ui.view.user.UserDetailsView;
-import medizin.client.ui.view.user.UserDetailsViewImpl;
-import medizin.client.ui.view.user.UserEditView;
-import medizin.client.ui.view.user.UserEditViewImpl;
-import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
-import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.simple.DefaultSuggestOracle;
-
+import medizin.client.factory.receiver.BMEReceiver;
+import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.PlaceUser;
 import medizin.client.place.PlaceUserDetails;
-import medizin.client.place.PlaceUserDetails.Operation;
-import medizin.client.factory.request.McAppRequestFactory;
-import medizin.client.proxy.AnswerProxy;
 import medizin.client.proxy.DoctorProxy;
-import medizin.client.request.AnswerRequest;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.request.PersonRequest;
+import medizin.client.ui.McAppConstant;
+import medizin.client.ui.view.user.UserEditView;
+import medizin.client.ui.view.user.UserEditViewImpl;
+import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.simple.DefaultSuggestOracle;
 import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.activity.shared.AbstractActivity;
-import com.google.gwt.activity.shared.Activity;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceChangeEvent;
 import com.google.gwt.place.shared.PlaceController;
-import com.google.web.bindery.requestfactory.gwt.client.RequestFactoryEditorDriver;
-import com.google.web.bindery.requestfactory.shared.EntityProxyId;
-import com.google.web.bindery.requestfactory.shared.Receiver;
-import com.google.web.bindery.requestfactory.shared.Request;
-import com.google.web.bindery.requestfactory.shared.RequestContext;
-import com.google.web.bindery.requestfactory.shared.ServerFailure;
-import com.google.web.bindery.requestfactory.shared.Violation;
 import com.google.gwt.text.shared.AbstractRenderer;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 /**
@@ -114,7 +97,7 @@ public class ActivityUserCreate  extends AbstractActivityWrapper  implements Use
 	
 	@Override
 	public void start2(AcceptsOneWidget widget, EventBus eventBus) {
-		UserEditView userEditView = new UserEditViewImpl();
+		UserEditView userEditView = new UserEditViewImpl(reciverMap);
 
 		this.widget = widget;
 		this.view = userEditView;
@@ -134,7 +117,7 @@ public class ActivityUserCreate  extends AbstractActivityWrapper  implements Use
 		});
 		//init();
 		
-		requests.personRequest().myGetLoggedPerson().fire(new Receiver<PersonProxy>() {
+		requests.personRequest().myGetLoggedPerson().fire(new BMEReceiver<PersonProxy>() {
 
 			@Override
 			public void onSuccess(PersonProxy response) {
@@ -145,7 +128,7 @@ public class ActivityUserCreate  extends AbstractActivityWrapper  implements Use
 			}
 		});
 		
-		requests.doctorRequest().findAllDoctors().fire(new Receiver<List<DoctorProxy>>() {
+		requests.doctorRequest().findAllDoctors().fire(new BMEReceiver<List<DoctorProxy>>() {
 
 			@Override
 			public void onSuccess(List<DoctorProxy> response) {
@@ -166,11 +149,11 @@ public class ActivityUserCreate  extends AbstractActivityWrapper  implements Use
 		
 		if(this.operation==PlaceUserDetails.Operation.EDIT){
 			Log.info("edit");
-		requests.find(userPlace.getProxyId()).fire(new Receiver<Object>() {
+		requests.find(userPlace.getProxyId()).fire(new BMEReceiver<Object>() {
 
-			public void onFailure(ServerFailure error){
+			/*public void onFailure(ServerFailure error){
 				Log.error(error.getMessage());
-			}
+			}*/
 			@Override
 			public void onSuccess(Object response) {
 				if(response instanceof PersonProxy){
@@ -178,7 +161,7 @@ public class ActivityUserCreate  extends AbstractActivityWrapper  implements Use
 					//init((PersonProxy) response);
 					person=(PersonProxy)response;
 					
-					requests.personRequest().findPerson(person.getId()).with("doctor").fire(new Receiver<PersonProxy>() {
+					requests.personRequest().findPerson(person.getId()).with("doctor").fire(new BMEReceiver<PersonProxy>() {
 
 						@Override
 						public void onSuccess(PersonProxy response) {
@@ -265,10 +248,10 @@ public class ActivityUserCreate  extends AbstractActivityWrapper  implements Use
 	public void saveClicked() {
 		save=true;
 		
-		if(view.getName().getText().equals("") || view.getPrename().getText().equals("") || view.getEmail().getText().equals("") || view.getAlternativEmail().getText().equals("") || view.getPhoneNumber().getText().equals("")){
+		/*if(view.getName().getText().equals("") || view.getPrename().getText().equals("") || view.getEmail().getText().equals("") || view.getAlternativEmail().getText().equals("") || view.getPhoneNumber().getText().equals("")){
 			ConfirmationDialogBox.showOkDialogBox(constants.information(),constants.userCreateConstraintsViolationMessage());
 			return;
-		}
+		}*/
 		PersonRequest personRequest = requests.personRequest();
 		PersonProxy personProxy;
 		
@@ -302,23 +285,23 @@ public class ActivityUserCreate  extends AbstractActivityWrapper  implements Use
 		
 		final PersonProxy finalPersonProxy = personProxy;
 		
-		personRequest.persist().using(personProxy).fire(new Receiver<Void>() {
+		personRequest.persist().using(personProxy).fire(new BMEReceiver<Void>(reciverMap) {
 
 			@Override
 			public void onSuccess(Void response) {
 				placeController.goTo(new PlaceUserDetails(finalPersonProxy.stableId(), PlaceUserDetails.Operation.DETAILS));
 			}
 			
-			@Override
+			/*@Override
 			public void onFailure(ServerFailure error) {
 				Log.info(error.getMessage());
-			}
+			}*/
 			
-			@Override
+			/*@Override
 			public void onViolation(Set<Violation> errors) {
 				ConfirmationDialogBox.showOkDialogBox(constants.information(),constants.userCreateConstraintsViolationMessage());
 				Log.info("error "+errors.toString());
-			}
+			}*/
 		});
 		
 		/*editorDriver.flush().fire(new Receiver<Void>() {

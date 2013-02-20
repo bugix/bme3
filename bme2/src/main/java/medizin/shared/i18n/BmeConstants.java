@@ -272,4 +272,10 @@ public interface BmeConstants extends Constants {
 	public String loginInformation();
 	
 	public String selectInstitution();
+
+	public String warning();
+
+	public String pleaseEnterWarning();
+
+	public String violationMessage();
 }

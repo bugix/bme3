@@ -2,10 +2,8 @@ package medizin.client.activites;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
-import javax.sound.midi.MidiMessage;
-
+import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.PlaceUser;
 import medizin.client.place.PlaceUserDetails;
@@ -16,8 +14,6 @@ import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.request.QuestionAccessRequest;
 import medizin.client.shared.AccessRights;
-import medizin.client.ui.ErrorPanel;
-import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.user.EventAccessDialogbox;
 import medizin.client.ui.view.user.EventAccessDialogboxImpl;
 import medizin.client.ui.view.user.EventAccessView;
@@ -44,10 +40,7 @@ import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
-import com.google.web.bindery.requestfactory.shared.Receiver;
 import com.google.web.bindery.requestfactory.shared.Request;
-import com.google.web.bindery.requestfactory.shared.ServerFailure;
-import com.google.web.bindery.requestfactory.shared.Violation;
 /**
  * Activity for Handling UserDetailsViews.
  * @author masterthesis
@@ -145,11 +138,11 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 		
 		view.setDelegate(this);
 		
-		requests.find(userPlace.getProxyId()).fire(new Receiver<Object>() {
+		requests.find(userPlace.getProxyId()).fire(new BMEReceiver<Object>() {
 
-			public void onFailure(ServerFailure error){
+			/*public void onFailure(ServerFailure error){
 				Log.error(error.getMessage());
-			}
+			}*/
 			@Override
 			public void onSuccess(Object response) {
 				if(response instanceof PersonProxy){
@@ -157,7 +150,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 					
 					person = (PersonProxy) response;
 					
-					requests.personRequest().findPerson(person.getId()).with("doctor").fire(new Receiver<PersonProxy>() {
+					requests.personRequest().findPerson(person.getId()).with("doctor").fire(new BMEReceiver<PersonProxy>() {
 
 						@Override
 						public void onSuccess(PersonProxy responseProxy) {
@@ -229,7 +222,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 			rangeEventAccessChangeHandler = null;
 		}
 
-		fireEventAccessCountRequest(new Receiver<Long>() {
+		fireEventAccessCountRequest(new BMEReceiver<Long>() {
 			@Override
 			public void onSuccess(Long response) {
 				if (view == null) {
@@ -257,7 +250,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 		Log.debug("Im QuestionEvent.onRangeEventAccessChanged");
 		final Range range = questionEventTable.getVisibleRange();
 
-		final Receiver<List<QuestionAccessProxy>> callback = new Receiver<List<QuestionAccessProxy>>() {
+		final BMEReceiver<List<QuestionAccessProxy>> callback = new BMEReceiver<List<QuestionAccessProxy>>() {
 			@Override
 			public void onSuccess(List<QuestionAccessProxy> values) {
 				if (view == null) {
@@ -283,7 +276,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 //		          widget.setWidget(view.asWidget());
 //				}
 			}
-	           @Override
+			 /* @Override
 				public void onFailure(ServerFailure error) {
 						Log.warn(McAppConstant.ERROR_WHILE_DELETE + " in Institution:Event -" + error.getMessage());
 						if(error.getMessage().contains("ConstraintViolationException")){
@@ -293,7 +286,8 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 						
 					
 				}
-				@Override
+				
+	          @Override
 				public void onViolation(Set<Violation> errors) {
 					Iterator<Violation> iter = errors.iterator();
 					String message = "";
@@ -306,7 +300,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 			        	  erorPanel.setWarnMessage(message);
 
 					
-				}
+				}*/
 		};
 
 		fireEventAccessRangeRequest(range, callback, null, null);
@@ -314,14 +308,14 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 	}
 	
 	private void fireEventAccessRangeRequest(final Range range,
-            final Receiver<List<QuestionAccessProxy>> callback, String proxyId, String eventName) {
+            final BMEReceiver<List<QuestionAccessProxy>> callback, String proxyId, String eventName) {
 			if(proxyId!=null){
 				
-				requests.find(requests.getProxyId(proxyId)).fire(new Receiver<Object>() {
+				requests.find(requests.getProxyId(proxyId)).fire(new BMEReceiver<Object>() {
 
-					public void onFailure(ServerFailure error){
+				/*	public void onFailure(ServerFailure error){
 						Log.error(error.getMessage());
-					}
+					}*/
 					@Override
 					public void onSuccess(Object response) {
 						if(response instanceof InstitutionProxy){
@@ -343,7 +337,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
         return requests.questionAccessRequest().findQuestionEventAccessByPersonNonRooNonRoo(person.getId(), range.getStart(), range.getLength()).with("questionEvent");
     }
 
-    protected void fireEventAccessCountRequest(Receiver<java.lang.Long> callback) {
+    protected void fireEventAccessCountRequest(BMEReceiver<java.lang.Long> callback) {
     	requests.questionAccessRequest().countQuestionEventAccessByPersonNonRoo(person.getId()).fire(callback);
     }
 
@@ -366,7 +360,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 			rangeQuestionAccessChangeHandler = null;
 		}
 
-		fireQuestionAccessCountRequest(new Receiver<Long>() {
+		fireQuestionAccessCountRequest(new BMEReceiver<Long>() {
 			@Override
 			public void onSuccess(Long response) {
 				if (view == null) {
@@ -395,7 +389,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 		
 		final Range range = questionTable.getVisibleRange();
 
-		final Receiver<List<QuestionAccessProxy>> callback = new Receiver<List<QuestionAccessProxy>>() {
+		final BMEReceiver<List<QuestionAccessProxy>> callback = new BMEReceiver<List<QuestionAccessProxy>>() {
 			@Override
 			public void onSuccess(List<QuestionAccessProxy> values) {
 				if (view == null) {
@@ -405,7 +399,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 				questionTable.setRowData(range.getStart(), values);
 
 			}
-	           @Override
+			/* @Override
 				public void onFailure(ServerFailure error) {
 						Log.warn(McAppConstant.ERROR_WHILE_DELETE + " in Institution:Event -" + error.getMessage());
 						if(error.getMessage().contains("ConstraintViolationException")){
@@ -414,7 +408,8 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 						}
 					
 				}
-				@Override
+				
+	           @Override
 				public void onViolation(Set<Violation> errors) {
 					Iterator<Violation> iter = errors.iterator();
 					String message = "";
@@ -427,7 +422,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 			        	  erorPanel.setWarnMessage(message);
 
 					
-				}
+				}*/
 		};
 
 		fireQuestionAccessRangeRequest(range, callback);
@@ -435,14 +430,14 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 	}
 	
 	private void fireQuestionAccessRangeRequest(final Range range,
-            final Receiver<List<QuestionAccessProxy>> callback) {
+            final BMEReceiver<List<QuestionAccessProxy>> callback) {
 			createQuestionAccessRangeRequest(range).fire(callback);
 }
     protected Request<java.util.List<medizin.client.proxy.QuestionAccessProxy>> createQuestionAccessRangeRequest(Range range) {
         return requests.questionAccessRequest().findQuestionAccessQuestionByPersonNonRoo(person.getId(), range.getStart(), range.getLength()).with("question");
     }
 
-    protected void fireQuestionAccessCountRequest(Receiver<java.lang.Long> callback) {
+    protected void fireQuestionAccessCountRequest(BMEReceiver<java.lang.Long> callback) {
     	requests.questionAccessRequest().countQuestionAccessQuestionByPersonNonRoo(person.getId()).fire(callback);
     }
     //////
@@ -467,14 +462,14 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 	@Override
 	public void deleteClicked() {
 
-		requests.personRequest().remove().using(person).fire(new Receiver<Void>() {
+		requests.personRequest().remove().using(person).fire(new BMEReceiver<Void>() {
 
             public void onSuccess(Void ignore) {
             	Log.debug("Sucessfull deleted");
             	placeController.goTo(new PlaceUser("PlaceUser!DELETED"));
             	
             }
-            @Override
+            /* @Override
 			public void onFailure(ServerFailure error) {
 					Log.warn(McAppConstant.ERROR_WHILE_DELETE + " in Institution:Event -" + error.getMessage());
 					if(error.getMessage().contains("ConstraintViolationException")){
@@ -495,7 +490,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 				//TODO mcAppFactory.getErrorPanel().setErrorMessage(message);
 
 				
-			}
+			}*/
             
         });
 		
@@ -523,14 +518,14 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 	public void deleteEventAccessClicked(QuestionAccessProxy questionAccess) {
 		
 		requests.questionAccessRequest().remove()
-		.using(questionAccess).fire(new Receiver<Void>() {
+		.using(questionAccess).fire(new BMEReceiver<Void>() {
 
 			public void onSuccess(Void ignore) {
 				Log.debug("Sucessfull deleted");
 				initEventAccess();
 			}
 
-			@Override
+			/*@Override
 			public void onFailure(ServerFailure error) {
 				Log.warn(McAppConstant.ERROR_WHILE_DELETE
 						+ " in Institution -" + error.getMessage());
@@ -555,7 +550,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 				//TODO mcAppFactory.getErrorPanel().setErrorMessage(message);
 
 			}
-
+*/
 		});
 		
 	}
@@ -595,7 +590,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 		institutionListbox = dialogBoxEvent.getSearchInstitution();
 		
 		// Fill the Institution Box
-		final Receiver<List<InstitutionProxy>> callback2 = new Receiver<List<InstitutionProxy>>() {
+		final BMEReceiver<List<InstitutionProxy>> callback2 = new BMEReceiver<List<InstitutionProxy>>() {
 			@Override
 			public void onSuccess(List<InstitutionProxy> values) {
 				if (view == null) {
@@ -613,7 +608,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 				//eventAccessTable.setRowData( values);
 
 			}
-	           @Override
+			/* @Override
 				public void onFailure(ServerFailure error) {
 						Log.warn(McAppConstant.ERROR_WHILE_DELETE + " in Institution:Event -" + error.getMessage());
 						if(error.getMessage().contains("ConstraintViolationException")){
@@ -635,7 +630,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 			        	  erorPanel.setWarnMessage(message);
 
 					
-				}
+				}*/
 		};
 
 		fireRequestAllInstitution( callback2);
@@ -650,7 +645,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 	}
 	
 	private void initEventAccessDialogbox() {
-		fireQuestionAccessCountByInstitutionOrEventnameRequest(new Receiver<Long>() {
+		fireQuestionAccessCountByInstitutionOrEventnameRequest(new BMEReceiver<Long>() {
 			@Override
 			public void onSuccess(Long response) {
 				if (view == null) {
@@ -670,21 +665,21 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 	private Boolean filterQuestionText = true;
 	private Boolean filterKeywords = false;
 	
-    protected void fireQuestionAccessCountByInstitutionOrEventOrQuestionNameOrKeywordRequest(Receiver<java.lang.Long> callback) {
+    protected void fireQuestionAccessCountByInstitutionOrEventOrQuestionNameOrKeywordRequest(BMEReceiver<java.lang.Long> callback) {
     	
     	requests.questionRequest().countQuestionByInstitutionOrEventOrQuestionNameOrKeyword(
     			institutionFilter==null? null:institutionFilter.getId(), eventFilter==null? null:eventFilter.getId(), 
     					questiuonStringFilter, filterQuestionText, filterKeywords).fire(callback);
     }
     
-    protected void  fireQuestionAccessByInstitutionOrEventOrQuestionNameOrKeywordRequest(Range range, Receiver<List<QuestionProxy>> callback){
+    protected void  fireQuestionAccessByInstitutionOrEventOrQuestionNameOrKeywordRequest(Range range, BMEReceiver<List<QuestionProxy>> callback){
     	requests.questionRequest().findQuestionByInstitutionOrEventOrQuestionNameOrKeyword(
     			institutionFilter==null? null:institutionFilter.getId(), eventFilter==null? null:eventFilter.getId(), 
     					questiuonStringFilter, filterQuestionText, filterKeywords, range.getStart(), range.getLength()).fire(callback);
     }
 	
 	private void initQuestionAccessDialogbox() {
-		fireQuestionAccessCountByInstitutionOrEventOrQuestionNameOrKeywordRequest(new Receiver<Long>() {
+		fireQuestionAccessCountByInstitutionOrEventOrQuestionNameOrKeywordRequest(new BMEReceiver<Long>() {
 			@Override
 			public void onSuccess(Long response) {
 				if (view == null) {
@@ -706,7 +701,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 		
 		final Range range = questionAccessTable.getVisibleRange();
 
-		final Receiver<List<QuestionProxy>> callback = new Receiver<List<QuestionProxy>>() {
+		final BMEReceiver<List<QuestionProxy>> callback = new BMEReceiver<List<QuestionProxy>>() {
 			@Override
 			public void onSuccess(List<QuestionProxy> values) {
 				if (view == null) {
@@ -716,7 +711,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 				questionAccessTable.setRowData(range.getStart(), values);
 
 			}
-	           @Override
+			  /* @Override
 				public void onFailure(ServerFailure error) {
 						Log.warn(McAppConstant.ERROR_WHILE_DELETE + " in Institution:Event -" + error.getMessage());
 						if(error.getMessage().contains("ConstraintViolationException")){
@@ -725,7 +720,8 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 						}
 					
 				}
-				@Override
+				
+	         @Override
 				public void onViolation(Set<Violation> errors) {
 					Iterator<Violation> iter = errors.iterator();
 					String message = "";
@@ -738,7 +734,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 			        	  erorPanel.setWarnMessage(message);
 
 					
-				}
+				}*/
 		};
 
 		fireQuestionAccessByInstitutionOrEventOrQuestionNameOrKeywordRequest(range, callback);
@@ -750,7 +746,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 		
 		final Range range = eventAccessTable.getVisibleRange();
 
-		final Receiver<List<QuestionEventProxy>> callback = new Receiver<List<QuestionEventProxy>>() {
+		final BMEReceiver<List<QuestionEventProxy>> callback = new BMEReceiver<List<QuestionEventProxy>>() {
 			@Override
 			public void onSuccess(List<QuestionEventProxy> values) {
 				if (view == null) {
@@ -760,7 +756,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 				eventAccessTable.setRowData(range.getStart(), values);
 
 			}
-	           @Override
+			/* @Override
 				public void onFailure(ServerFailure error) {
 						Log.warn(McAppConstant.ERROR_WHILE_DELETE + " in Institution:Event -" + error.getMessage());
 						if(error.getMessage().contains("ConstraintViolationException")){
@@ -782,7 +778,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 			        	  erorPanel.setWarnMessage(message);
 
 					
-				}
+				}*/
 		};
 
 		fireEventAccessByInstitutionOrEventnameRangeRequest(range, callback);
@@ -790,7 +786,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 	}
 	
 	private void fireEventAccessByInstitutionOrEventnameRangeRequest(final Range range,
-            final Receiver<List<QuestionEventProxy>> callback) {
+            final BMEReceiver<List<QuestionEventProxy>> callback) {
 			createEventAccessByInstitutionOrEventnameRangeRequest(range).fire(callback);
 	}
     protected Request<java.util.List<medizin.client.proxy.QuestionEventProxy>> createEventAccessByInstitutionOrEventnameRangeRequest(Range range) {
@@ -816,17 +812,17 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
     
 	/**
 	 * Function for fire a Request over all Instituions, is used for fill the ListBox for Filtering question event access
-	 * @param final Receiver<List<InstitutionProxy>> callback
+	 * @param final BMEReceiver<List<InstitutionProxy>> callback
 	 */
-	private void fireRequestAllInstitution( final Receiver<List<InstitutionProxy>> callback) {
+	private void fireRequestAllInstitution( final BMEReceiver<List<InstitutionProxy>> callback) {
 		createRequestAllInstitutions().fire(callback);
 	}
 	
 	/**
 	 * Function for fire a Request over all Events, is used for fill the ListBox for Filtering question access
-	 * @param final Receiver<List<QuestionEventProxy>> callback
+	 * @param final BMEReceiver<List<QuestionEventProxy>> callback
 	 */
-	private void fireRequestAllEvent( final Receiver<List<QuestionEventProxy>> callback) {
+	private void fireRequestAllEvent( final BMEReceiver<List<QuestionEventProxy>> callback) {
 		createRequestAllEvents().fire(callback);
 	}
 	
@@ -837,7 +833,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 	private ListBox eventListbox;
 
 	private CellTable<QuestionProxy> questionAccessTable;
-    protected void fireQuestionAccessCountByInstitutionOrEventnameRequest(Receiver<java.lang.Long> callback) {
+    protected void fireQuestionAccessCountByInstitutionOrEventnameRequest(BMEReceiver<java.lang.Long> callback) {
     	
     	requests.questionEventRequest().countQuestionEventsByInstitutionOrEvent(institutionFilter==null? null:institutionFilter.getId(), eventNameFilter).fire(callback);
     }
@@ -846,14 +842,14 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 	@Override
 	public void deleteQuestionAccessClicked(QuestionAccessProxy questionAccess) {
 		requests.questionAccessRequest().remove()
-		.using(questionAccess).fire(new Receiver<Void>() {
+		.using(questionAccess).fire(new BMEReceiver<Void>() {
 
 			public void onSuccess(Void ignore) {
 				Log.debug("Sucessfull deleted");
 				initQuestionAccess();
 			}
 
-			@Override
+			/*@Override
 			public void onFailure(ServerFailure error) {
 				Log.warn(McAppConstant.ERROR_WHILE_DELETE
 						+ " in Institution -" + error.getMessage());
@@ -877,7 +873,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 				
 				//TODO mcAppFactory.getErrorPanel().setErrorMessage(message);
 
-			}
+			}*/
 
 		});
 		
@@ -902,7 +898,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 		eventListbox = dialogBoxQuestion.getSearchEvent();
 		
 		// Fill the Institution Box
-		final Receiver<List<InstitutionProxy>> callback2 = new Receiver<List<InstitutionProxy>>() {
+		final BMEReceiver<List<InstitutionProxy>> callback2 = new BMEReceiver<List<InstitutionProxy>>() {
 			@Override
 			public void onSuccess(List<InstitutionProxy> values) {
 				if (view == null) {
@@ -920,7 +916,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 				//eventAccessTable.setRowData( values);
 
 			}
-	           @Override
+			/* @Override
 				public void onFailure(ServerFailure error) {
 						Log.warn(McAppConstant.ERROR_WHILE_DELETE + " in Institution:Event -" + error.getMessage());
 						if(error.getMessage().contains("ConstraintViolationException")){
@@ -929,7 +925,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 						}
 					
 				}
-				@Override
+			@Override
 				public void onViolation(Set<Violation> errors) {
 					Iterator<Violation> iter = errors.iterator();
 					String message = "";
@@ -942,13 +938,13 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 			        	  erorPanel.setWarnMessage(message);
 
 					
-				}
+				}*/
 		};
 
 		fireRequestAllInstitution( callback2);
 		
 		// Fill the Event Box
-		final Receiver<List<QuestionEventProxy>> callback3 = new Receiver<List<QuestionEventProxy>>() {
+		final BMEReceiver<List<QuestionEventProxy>> callback3 = new BMEReceiver<List<QuestionEventProxy>>() {
 			@Override
 			public void onSuccess(List<QuestionEventProxy> values) {
 				if (view == null) {
@@ -966,7 +962,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 				//eventAccessTable.setRowData( values);
 
 			}
-	           @Override
+			/*@Override
 				public void onFailure(ServerFailure error) {
 						Log.warn(McAppConstant.ERROR_WHILE_DELETE + " in Institution:Event -" + error.getMessage());
 						if(error.getMessage().contains("ConstraintViolationException")){
@@ -988,7 +984,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 			        	  erorPanel.setWarnMessage(message);
 
 					
-				}
+				}*/
 		};
 
 		fireRequestAllEvent( callback3);
@@ -1014,7 +1010,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 		eventAccess.setQuestionEvent(questionEvent);
 //		eventAccess.setVersion(0);
 		
-		request.fire(new Receiver<Void>() {
+		request.fire(new BMEReceiver<Void>() {
 			
 	          @Override
 	          public void onSuccess(Void response) {
@@ -1024,9 +1020,9 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 	          //	goTo(new PlaceUser(person.stableId()));
 	          }
 	          
-	          public void onFailure(ServerFailure error){
+	         /* public void onFailure(ServerFailure error){
 					Log.error(error.getMessage());
-				}
+				}*/
 	      }); 
 		
 		
@@ -1041,12 +1037,12 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 		Log.info(value);
 		if (value!=null&&!value.equals(""))
 		{
-			requests.find(requests.getProxyId(value)).fire(new Receiver<Object>() {
+			requests.find(requests.getProxyId(value)).fire(new BMEReceiver<Object>() {
 	
 				
-				public void onFailure(ServerFailure error){
+				/*public void onFailure(ServerFailure error){
 					Log.error(error.getMessage());
-				}
+				}*/
 				@Override
 				public void onSuccess(Object response) {
 					if(response instanceof InstitutionProxy){
@@ -1075,7 +1071,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 		{
 			Log.debug(value);
 			this.eventNameFilter=value;
-//			requests.find(requests.getProxyId(value)).fire(new Receiver<Object>() {
+//			requests.find(requests.getProxyId(value)).fire(new BMEReceiver<Object>() {
 //	
 //				
 //				public void onFailure(ServerFailure error){
@@ -1112,12 +1108,12 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 			
 			if (value!=null&&!value.equals(""))
 			{
-				requests.find(requests.getProxyId(value)).fire(new Receiver<Object>() {
+				requests.find(requests.getProxyId(value)).fire(new BMEReceiver<Object>() {
 		
 					
-					public void onFailure(ServerFailure error){
+					/*public void onFailure(ServerFailure error){
 						Log.error(error.getMessage());
-					}
+					}*/
 					@Override
 					public void onSuccess(Object response) {
 						if(response instanceof QuestionEventProxy){
@@ -1154,7 +1150,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 			eventAccess.setQuestion(question);
 //			eventAccess.setVersion(0);
 			
-			request.fire(new Receiver<Void>() {
+			request.fire(new BMEReceiver<Void>() {
 				
 		          @Override
 		          public void onSuccess(Void response) {
@@ -1164,9 +1160,9 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 		          //	goTo(new PlaceUser(person.stableId()));
 		          }
 		          
-		          public void onFailure(ServerFailure error){
+		         /* public void onFailure(ServerFailure error){
 						Log.error(error.getMessage());
-					}
+					}*/
 		      }); 
 		}
 			public void filterQuestionChanged(String text) {
@@ -1180,12 +1176,12 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 		public void filterInstitutionQuestionChanged(String value) {
 			if (value!=null&&!value.equals(""))
 			{
-				requests.find(requests.getProxyId(value)).fire(new Receiver<Object>() {
+				requests.find(requests.getProxyId(value)).fire(new BMEReceiver<Object>() {
 		
 					
-					public void onFailure(ServerFailure error){
+					/*public void onFailure(ServerFailure error){
 						Log.error(error.getMessage());
-					}
+					}*/
 					@Override
 					public void onSuccess(Object response) {
 						if(response instanceof InstitutionProxy){
@@ -1227,7 +1223,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 		@Override
 		public void addClicked(AccessRights rights, final InstitutionProxy institutionProxy) {
 			
-			requests.personRequest().myGetLoggedPerson().fire(new Receiver<PersonProxy>() {
+			requests.personRequest().myGetLoggedPerson().fire(new BMEReceiver<PersonProxy>() {
 
 				@Override
 				public void onSuccess(PersonProxy response) {
@@ -1244,17 +1240,17 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 					else
 						questionAccessProxy.setAccRights(AccessRights.AccSecondaryAdmin);
 					
-					questionAccessRequest.persist().using(questionAccessProxy).fire(new Receiver<Void>() {
+					questionAccessRequest.persist().using(questionAccessProxy).fire(new BMEReceiver<Void>() {
 
 						@Override
 						public void onSuccess(Void response) {
 							initInstituteAccess();
 						}
 						
-						@Override
+						/*@Override
 						public void onFailure(ServerFailure error) {
 							Log.info(error.getMessage());
-						}
+						}*/
 					});
 				}
 			});
@@ -1268,14 +1264,14 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 			instituteAccessView.setDelegate(this);
 			instituteAccessView.setPresenter(this);
 			
-			requests.questionAccessRequest().countInstiuteAccessByPerson(person.getId()).fire(new Receiver<Long>() {
+			requests.questionAccessRequest().countInstiuteAccessByPerson(person.getId()).fire(new BMEReceiver<Long>() {
 
 				@Override
 				public void onSuccess(Long response) {
 					instituteAccessView.getTable().setRowCount(response.intValue(), true);
 					
 					final Range range = instituteAccessView.getTable().getVisibleRange();
-					requests.questionAccessRequest().findInstiuteAccessByPerson(person.getId(), range.getStart(), range.getLength()).with("institution").fire(new Receiver<List<QuestionAccessProxy>>() {
+					requests.questionAccessRequest().findInstiuteAccessByPerson(person.getId(), range.getStart(), range.getLength()).with("institution").fire(new BMEReceiver<List<QuestionAccessProxy>>() {
 
 						@Override
 						public void onSuccess(List<QuestionAccessProxy> response) {
@@ -1291,16 +1287,16 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 		@Override
 		public void deleteInstituteAccessClicked(QuestionAccessProxy event) {
 			
-			requests.questionAccessRequest().remove().using(event).fire(new Receiver<Void>() {
+			requests.questionAccessRequest().remove().using(event).fire(new BMEReceiver<Void>() {
 
 				@Override
 				public void onSuccess(Void response) {
 					initInstituteAccess();
 				}
-				@Override
+				/*@Override
 				public void onFailure(ServerFailure error) {
 					Log.info(error.getMessage());
-				}
+				}*/
 			});
 		}
 
@@ -1311,7 +1307,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 			dialogBoxInstitute.setPresenter(this);
 			dialogBoxInstitute.setDelegate(this);
 			
-			requests.institutionRequest().findAllInstitutions().fire(new Receiver<List<InstitutionProxy>>() {
+			requests.institutionRequest().findAllInstitutions().fire(new BMEReceiver<List<InstitutionProxy>>() {
 
 				@Override
 				public void onSuccess(List<InstitutionProxy> response) {
@@ -1320,10 +1316,10 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 					dialogBoxInstitute.getTable().setRowData(dialogBoxInstitute.getTable().getVisibleRange().getStart(), response);
 				}
 				
-				@Override
+				/*@Override
 				public void onFailure(ServerFailure error) {
 					Log.info(error.getMessage());
-				}
+				}*/
 			});
 		}
 }
