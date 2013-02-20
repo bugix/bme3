@@ -278,4 +278,10 @@ public interface BmeConstants extends Constants {
 	public String pleaseEnterWarning();
 
 	public String violationMessage();
+	
+	public String selectReviewerOrComitee();
+
+	public String answerTextErrorMessage();
+
+	public String imageViewerError();
 }

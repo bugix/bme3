@@ -266,7 +266,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 	 * @UiField SimplePanel toolbarPanel;
 	 */
 
-	public QuestionEditViewImpl() {
+	public QuestionEditViewImpl(Map<String, Widget> reciverMap) {
 
 		questionTextArea = new RichTextArea();
 		questionTextArea.setSize("100%", "14em");
@@ -279,6 +279,16 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 		commentToolbar.setWidth("100%");
 */
 		initWidget(uiBinder.createAndBindUi(this));
+		
+		reciverMap.put("questionShortName", questionShortName);
+		reciverMap.put("questionText", questionTextArea);
+		reciverMap.put("questionType", questionType);
+		reciverMap.put("autor", auther.getTextField().advancedTextBox);
+		reciverMap.put("rewiewer", rewiewer);
+		reciverMap.put("questEvent", questEvent);
+		reciverMap.put("submitToReviewComitee", submitToReviewComitee);
+		reciverMap.put("comment", questionComment);
+		
 		questionTypePanel.selectTab(0);
 		save.setText(constants.save());
 		cancel.setText(constants.cancel());

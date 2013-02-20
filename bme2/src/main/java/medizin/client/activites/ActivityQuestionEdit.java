@@ -4,12 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import javax.validation.ConstraintViolation;
-
+import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.PlaceQuestion;
 import medizin.client.place.PlaceQuestionDetails;
@@ -24,10 +22,10 @@ import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.request.CommentRequest;
 import medizin.client.request.QuestionRequest;
 import medizin.client.request.QuestionResourceRequest;
-import medizin.client.ui.ErrorPanel;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.question.QuestionEditView;
 import medizin.client.ui.view.question.QuestionEditViewImpl;
+import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.ui.widget.resource.dndview.vo.State;
 import medizin.shared.MultimediaType;
@@ -43,9 +41,6 @@ import com.google.gwt.place.shared.PlaceChangeEvent;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
-import com.google.web.bindery.requestfactory.shared.Receiver;
-import com.google.web.bindery.requestfactory.shared.ServerFailure;
-import com.google.web.bindery.requestfactory.shared.Violation;
 
 
 public class ActivityQuestionEdit extends AbstractActivityWrapper implements 
@@ -115,7 +110,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 
 	@Override
 	public void start2(AcceptsOneWidget widget, EventBus eventBus) {
-		QuestionEditView questionEditView = new QuestionEditViewImpl();
+		QuestionEditView questionEditView = new QuestionEditViewImpl(reciverMap);
 		questionEditView.setName("hallo");
 		questionEditView.setPresenter(this);
 		this.widget = widget;
@@ -139,7 +134,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 //        });
 
 		view.setRewiewerPickerValues(Collections.<PersonProxy>emptyList());
-        requests.personRequest().findPersonEntries(0, 200).with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).fire(new Receiver<List<PersonProxy>>() {
+        requests.personRequest().findPersonEntries(0, 200).with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).fire(new BMEReceiver<List<PersonProxy>>() {
 
             public void onSuccess(List<PersonProxy> response) {
                 List<PersonProxy> values = new ArrayList<PersonProxy>();
@@ -149,7 +144,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
             }
         });
         view.setAutorPickerValues(Collections.<PersonProxy>emptyList());
-        requests.personRequest().findPersonEntries(0, 200).with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).fire(new Receiver<List<PersonProxy>>() {
+        requests.personRequest().findPersonEntries(0, 200).with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).fire(new BMEReceiver<List<PersonProxy>>() {
 
             public void onSuccess(List<PersonProxy> response) {
                 List<PersonProxy> values = new ArrayList<PersonProxy>();
@@ -160,7 +155,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
         });
 
         view.setQuestEventPickerValues(Collections.<QuestionEventProxy>emptyList());
-        requests.questionEventRequest().findQuestionEventEntries(0, 200).with(medizin.client.ui.view.roo.QuestionEventProxyRenderer.instance().getPaths()).fire(new Receiver<List<QuestionEventProxy>>() {
+        requests.questionEventRequest().findQuestionEventEntries(0, 200).with(medizin.client.ui.view.roo.QuestionEventProxyRenderer.instance().getPaths()).fire(new BMEReceiver<List<QuestionEventProxy>>() {
 
             public void onSuccess(List<QuestionEventProxy> response) {
                 List<QuestionEventProxy> values = new ArrayList<QuestionEventProxy>();
@@ -171,7 +166,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
         });
 
         view.setQuestionTypePickerValues(Collections.<QuestionTypeProxy>emptyList());
-        requests.questionTypeRequest().findQuestionTypeEntries(0, 50).with(medizin.client.ui.view.roo.QuestionTypeProxyRenderer.instance().getPaths()).fire(new Receiver<List<QuestionTypeProxy>>() {
+        requests.questionTypeRequest().findQuestionTypeEntries(0, 50).with(medizin.client.ui.view.roo.QuestionTypeProxyRenderer.instance().getPaths()).fire(new BMEReceiver<List<QuestionTypeProxy>>() {
 
             public void onSuccess(List<QuestionTypeProxy> response) {
                 List<QuestionTypeProxy> values = new ArrayList<QuestionTypeProxy>();
@@ -181,7 +176,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
             }
         });
         view.setMcsPickerValues(Collections.<McProxy>emptyList());
-        requests.mcRequest().findMcEntries(0, 50).with(medizin.client.ui.view.roo.McProxyRenderer.instance().getPaths()).fire(new Receiver<List<McProxy>>() {
+        requests.mcRequest().findMcEntries(0, 50).with(medizin.client.ui.view.roo.McProxyRenderer.instance().getPaths()).fire(new BMEReceiver<List<McProxy>>() {
 
             public void onSuccess(List<McProxy> response) {
                 List<McProxy> values = new ArrayList<McProxy>();
@@ -213,7 +208,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		}
 		
 		requests.personRequest().myGetLoggedPerson()
-		.fire(new Receiver<PersonProxy>() {
+		.fire(new BMEReceiver<PersonProxy>() {
 
 			@Override
 			public void onSuccess(PersonProxy response) {
@@ -221,8 +216,8 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 				start2();
 
 			}
-
-			public void onFailure(ServerFailure error) {
+			
+			/*public void onFailure(ServerFailure error) {
 				ErrorPanel erorPanel = new ErrorPanel();
 				erorPanel.setErrorMessage(error.getMessage());
 				Log.error(error.getMessage());
@@ -231,8 +226,8 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 
 			
 			@Override
-			public void onConstraintViolation(
-					Set<ConstraintViolation<?>> violations) {
+			public void onConstraintViolation(Set<ConstraintViolation<?>> violations) 
+			{
 				Iterator<ConstraintViolation<?>> iter = violations.iterator();
 				String message = "";
 				while (iter.hasNext()) {
@@ -245,6 +240,12 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 				erorPanel.setErrorMessage(message);
 				onStop();
 
+			}*/
+			
+			@Override
+			public void onReceiverFailure() 
+			{
+				onStop();
 			}
 
 		});
@@ -254,11 +255,11 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 	private void start2(){
 		if(this.operation==PlaceQuestionDetails.Operation.EDIT){
 			Log.info("edit");
-		requests.find(questionPlace.getProxyId()).with("previousVersion","keywords","questEvent","comment","questionType","mcs", "rewiewer", "autor", "answers", "answers.autor", "answers.rewiewer","questionResources").fire(new Receiver<Object>() {
+		requests.find(questionPlace.getProxyId()).with("previousVersion","keywords","questEvent","comment","questionType","mcs", "rewiewer", "autor", "answers", "answers.autor", "answers.rewiewer","questionResources").fire(new BMEReceiver<Object>() {
 
-			public void onFailure(ServerFailure error){
+		/*	public void onFailure(ServerFailure error){
 				Log.error(error.getMessage());
-			}
+			}*/
 			@Override
 			public void onSuccess(Object response) {
 				if(response instanceof QuestionProxy){
@@ -374,7 +375,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 
 	private void deleteUploadedFiles(Set<String> paths) {
 		
-		requests.questionResourceRequest().deleteFiles(paths).fire(new Receiver<Void>() {
+		requests.questionResourceRequest().deleteFiles(paths).fire(new BMEReceiver<Void>() {
 
 			@Override
 			public void onSuccess(Void response) {
@@ -382,7 +383,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 				
 			}
 			
-			@Override
+			/*@Override
 			public void onConstraintViolation(
 					Set<ConstraintViolation<?>> violations) {
 				Log.info("ConstraintViolation in files delete process");
@@ -393,7 +394,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 			public void onFailure(ServerFailure error) {
 				Log.info("error in files delete process");
 				super.onFailure(error);
-			}
+			}*/
 		});
 		
 	}
@@ -430,16 +431,17 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 			questionNew.setQuestionShortName(view.getShortName().getValue());
 			if(view.getSubmitToReviewComitee().isChecked())
 			{
-				
-				
 				questionNew.setRewiewer(null);
-					
 			}
-			else
+			else if(view.getReviewerListBox().getSelected() != null)
 			{
-				
-			questionNew.setRewiewer(view.getReviewerListBox().getSelected());
+				questionNew.setRewiewer(view.getReviewerListBox().getSelected());
+			}else {
+				ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.selectReviewerOrComitee());
+				return;
 			}
+			
+			questionNew.setQuestEvent(view.getQuestionEvent().getValue());
 //			questionNew.setDateAdded(new Date());
 			questionNew.setDateChanged(new Date());
 			questionNew.setMcs(view.getMCS().getValue());
@@ -473,14 +475,14 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 					}
 				}
 				
-				questionResourceRequest.persistSet(proxies).fire(new Receiver<Void>() {
+				questionResourceRequest.persistSet(proxies).fire(new BMEReceiver<Void>(reciverMap) {
 
 					@Override
 					public void onSuccess(Void response) {
 						Log.info("Added successfuly");
 					}
 					
-					@Override
+					/*@Override
 					public void onConstraintViolation(
 							Set<ConstraintViolation<?>> violations) {
 						
@@ -502,7 +504,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 						ErrorPanel erorPanel = new ErrorPanel();
 			        	erorPanel.setErrorMessage(error.getMessage());
 			        	super.onFailure(error);
-					}
+					}*/
 				});
 			}
 			
@@ -567,7 +569,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 			questionNew.setQuestionVersion(question2.getQuestionVersion()+1);
 	*/		
 			final QuestionProxy qpoxy = questionNew; 
-			req.generateNewVersion().using(questionNew).fire(new Receiver<Void>() {
+			req.generateNewVersion().using(questionNew).fire(new BMEReceiver<Void>(reciverMap) {
 				
 		          @Override
 		          public void onSuccess(Void response) {
@@ -577,7 +579,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		          //	goTo(new PlaceQuestion(person.stableId()));
 		          }
 		          
-		          public void onFailure(ServerFailure error){
+		          /*public void onFailure(ServerFailure error){
 						Log.error(error.getMessage());
 					}
 		          
@@ -595,7 +597,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 					ErrorPanel erorPanel = new ErrorPanel();
 		        	  erorPanel.setWarnMessage(message);
 
-		        }
+		        }*/
 		      }); 
 			
 		}
@@ -620,9 +622,12 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 				questionNew.setRewiewer(null);
 					
 			}
-			else
+			else if(view.getReviewerListBox().getSelected() != null)
 			{
-			questionNew.setRewiewer(view.getReviewerListBox().getSelected());
+				questionNew.setRewiewer(view.getReviewerListBox().getSelected());
+			}else {
+				ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.selectReviewerOrComitee());
+				return;
 			}
 			//questionNew.setRewiewer(view.getReviewerListBox().getSelected());
 			//questionNew.setRewiewer(view.getReviewer().getValue());
@@ -638,21 +643,24 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 			questionNew.setStatus(Status.NEW);
 			questionNew.setComment(comment);
 			//questionNew.setQuestionResources(view.getQuestionResources());
-			if(QuestionTypes.Imgkey.equals(questionNew.getQuestionType().getQuestionType()) && view.getImageViewer() != null && view.getImageViewer().getImageRelativeUrl() != null) {
-				questionNew.setPicturePath(view.getImageViewer().getImageRelativeUrl());
-			}else if(QuestionTypes.ShowInImage.equals(questionNew.getQuestionType().getQuestionType()) && view.getImageViewer() != null && view.getImageViewer().getImageRelativeUrl() != null) {
-				questionNew.setPicturePath(view.getImageViewer().getImageRelativeUrl());
+			if(questionNew.getQuestionType() != null) {
+				if(QuestionTypes.Imgkey.equals(questionNew.getQuestionType().getQuestionType()) && view.getImageViewer() != null && view.getImageViewer().getImageRelativeUrl() != null) {
+					questionNew.setPicturePath(view.getImageViewer().getImageRelativeUrl());
+				}else if(QuestionTypes.ShowInImage.equals(questionNew.getQuestionType().getQuestionType()) && view.getImageViewer() != null && view.getImageViewer().getImageRelativeUrl() != null) {
+					questionNew.setPicturePath(view.getImageViewer().getImageRelativeUrl());
+				}	
 			}
+			
 				
 			final QuestionProxy newQuestion=questionNew;
 			
-			commentRequest.persist().using(comment).fire(new Receiver<Void>() {
+			commentRequest.persist().using(comment).fire(new BMEReceiver<Void>(reciverMap) {
 				
 		          @Override
 		          public void onSuccess(Void response) {
 		        	  Log.info("PersonSucesfullSaved");
 		        	  		        	  
-		        	  request.persist().using(newQuestion).fire(new Receiver<Void>() {
+		        	  request.persist().using(newQuestion).fire(new BMEReceiver<Void>(reciverMap) {
 		  				
 		    	          @Override
 		    	          public void onSuccess(Void response) {
@@ -660,7 +668,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		    	        	  // persist questionResources
 		    	        	  if (QuestionTypes.Textual.equals(newQuestion.getQuestionType().getQuestionType()) && view.getQuestionResources().size() > 0) {
 		    	        		  
-					        	  requests.find(newQuestion.stableId()).fire(new Receiver<Object>() 
+					        	  requests.find(newQuestion.stableId()).fire(new BMEReceiver<Object>() 
 					        	  {
 									@Override
 									public void onSuccess(Object response) 
@@ -682,14 +690,14 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 							        		  proxies.add(proxy);
 							        	  }
 							        	  
-										 questionResourceRequest.persistSet(proxies).fire(new Receiver<Void>() {
+										 questionResourceRequest.persistSet(proxies).fire(new BMEReceiver<Void>(reciverMap) {
 	
 												@Override
 												public void onSuccess(Void response) {
 													placeController.goTo(new PlaceQuestionDetails(newQuestion.stableId(), PlaceQuestionDetails.Operation.DETAILS));
 												}
 												
-												@Override
+												/*@Override
 												public void onConstraintViolation(
 														Set<ConstraintViolation<?>> violations) {
 													Log.error("constraint violation in Question Resourc");
@@ -700,7 +708,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 												public void onFailure(ServerFailure error) {
 													Log.error("Failure in Question Resourc " + error);
 													super.onFailure(error);
-												}
+												}*/
 								        	  
 								        	  
 								        	  });
@@ -716,7 +724,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		    	          //	goTo(new PlaceQuestion(person.stableId()));
 		    	          }
 		    	          
-		    	          public void onFailure(ServerFailure error){
+		    	         /* public void onFailure(ServerFailure error){
 		    					Log.error(error.getMessage());
 		    					Log.error(error.getExceptionType());
 		    					Log.error(error.getStackTraceString());
@@ -736,7 +744,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		  					ErrorPanel erorPanel = new ErrorPanel();
 		  		        	  erorPanel.setWarnMessage(message);
 
-		  		        }
+		  		        }*/
 		    	          
 		    	          /*@Override
 		    				public void onViolation(Set<Violation> errors) {
@@ -757,7 +765,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		          //	goTo(new PlaceQuestion(person.stableId()));
 		          }
 		          
-		          public void onFailure(ServerFailure error){
+		         /* public void onFailure(ServerFailure error){
 						Log.error(error.getMessage());
 					}
 		          @Override
@@ -773,7 +781,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 				        	  erorPanel.setWarnMessage(message);
 		
 						
-					}
+					}*/
 		      }); 
 			
 			/*Log.debug(view.getRichtTextHTML());
@@ -856,7 +864,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 
 	@Override
 	public void deleteSelectedQuestionResource(Long qestionResourceId) {
-		requests.questionResourceRequest().removeSelectedQuestionResource(qestionResourceId).fire(new Receiver<Void>() {
+		requests.questionResourceRequest().removeSelectedQuestionResource(qestionResourceId).fire(new BMEReceiver<Void>(reciverMap) {
 
 			@Override
 			public void onSuccess(Void response) {
@@ -871,14 +879,14 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 
 		if(question != null) {
 			final QuestionRequest questionRequest = requests.questionRequest();
-			questionRequest.deleteMediaFileFromDisk(path).fire(new Receiver<Boolean>() {
+			questionRequest.deleteMediaFileFromDisk(path).fire(new BMEReceiver<Boolean>(reciverMap) {
 
 				@Override
 				public void onSuccess(Boolean response) {
 					Log.info("Media deleted " + response);
 				}
 				
-				@Override
+			/*	@Override
 				public void onConstraintViolation(
 						Set<ConstraintViolation<?>> violations) {
 					Log.error(violations.toString());
@@ -889,7 +897,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 				public void onFailure(ServerFailure error) {
 					Log.error(error.getMessage());
 					super.onFailure(error);
-				}
+				}*/
 			});
 		}else {
 			Log.error("Question is null");

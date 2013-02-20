@@ -2,6 +2,7 @@ package medizin.client.ui.view.question;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionProxy;
@@ -135,7 +136,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*
     private QuestionProxy question;
 
 		
-	public AnswerDialogboxImpl(QuestionProxy questionProxy) {
+	public AnswerDialogboxImpl(QuestionProxy questionProxy, Map<String, Widget> reciverMap) {
 		
 		this.question = questionProxy;
 		answerTextArea = new RichTextArea();
@@ -144,6 +145,16 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*
 		toolbar.setWidth("100%");
 		
 		setWidget(uiBinder.createAndBindUi(this));
+		
+		reciverMap.put("answerText",answerTextArea);
+		reciverMap.put("autor", auther.getTextField().advancedTextBox);
+		reciverMap.put("rewiewer", rewiewer);
+		reciverMap.put("validity", validity);
+		reciverMap.put("submitToReviewComitee", submitToReviewComitee);
+		reciverMap.put("comment", comment);
+		/*reciverMap.put("mediaPath", RunTimeGenerated);*/
+
+		
 		setGlassEnabled(true);
 		setAnimationEnabled(true);
 		setTitle("Anzahl Fragentypen pro Prüfung hinzufügen");
@@ -189,6 +200,8 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*
 		return answerTextArea.getHTML();
 		// return new String("<b>hallo</b>");
 	}
+	
+	
 
 	@UiField(provided = true)
 	public RichTextToolbar toolbar;
@@ -375,5 +388,10 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*
 	@Override
 	public VideoViewer getVideoViewer() {
 		return this.videoViewer;
+	}
+
+	@Override
+	public RichTextArea getRichtTextArea() {
+		return answerTextArea;
 	}
 }

@@ -17,6 +17,7 @@ import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.RichTextArea;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.ValueListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -90,5 +91,7 @@ VerticalPanel getViewContainer();
 	AudioViewer getAudioViewer();
 
 	VideoViewer getVideoViewer();
+
+	RichTextArea getRichtTextArea();
 
 }

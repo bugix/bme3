@@ -4,13 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.validation.ConstraintViolation;
-
+import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.PlaceQuestion;
 import medizin.client.place.PlaceQuestionDetails;
@@ -25,13 +23,13 @@ import medizin.client.request.QuestionRequest;
 import medizin.client.request.QuestionResourceRequest;
 import medizin.client.shared.Validity;
 import medizin.client.ui.ErrorPanel;
-import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.question.AnswerDialogbox;
 import medizin.client.ui.view.question.AnswerDialogboxImpl;
 import medizin.client.ui.view.question.AnswerListView;
 import medizin.client.ui.view.question.AnswerListViewImpl;
 import medizin.client.ui.view.question.QuestionDetailsView;
 import medizin.client.ui.view.question.QuestionDetailsViewImpl;
+import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.resource.audio.AudioViewer;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.ui.widget.resource.dndview.vo.State;
@@ -63,9 +61,6 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.RangeChangeEvent;
-import com.google.web.bindery.requestfactory.shared.Receiver;
-import com.google.web.bindery.requestfactory.shared.ServerFailure;
-import com.google.web.bindery.requestfactory.shared.Violation;
 
 
 
@@ -150,7 +145,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		this.answerTable = answerListView.getTable();
 		
 		requests.personRequest().myGetLoggedPerson()
-				.fire(new Receiver<PersonProxy>() {
+				.fire(new BMEReceiver<PersonProxy>() {
 
 					@Override
 					public void onSuccess(PersonProxy response) {
@@ -159,7 +154,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 
 					}
 
-					public void onFailure(ServerFailure error) {
+					/*public void onFailure(ServerFailure error) {
 						ErrorPanel erorPanel = new ErrorPanel();
 						erorPanel.setErrorMessage(error.getMessage());
 						Log.error(error.getMessage());
@@ -180,6 +175,11 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 						erorPanel.setErrorMessage(message);
 						onStop();
 
+					}*/
+					
+					@Override
+					public void onReceiverFailure() {
+						onStop();
 					}
 
 				});
@@ -188,11 +188,11 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	private void start2(){
 		if(loggedUser==null) return;
 		
-		requests.find(questionPlace.getProxyId()).with("previousVersion","keywords","questEvent","comment","questionType","mcs", "rewiewer", "autor","questionResources").fire(new Receiver<Object>() {
+		requests.find(questionPlace.getProxyId()).with("previousVersion","keywords","questEvent","comment","questionType","mcs", "rewiewer", "autor","questionResources").fire(new BMEReceiver<Object>() {
 
-			public void onFailure(ServerFailure error){
+			/*public void onFailure(ServerFailure error){
 				Log.error(error.getMessage());
-			}
+			}*/
 			@Override
 			public void onSuccess(Object response) {
 				if(response instanceof QuestionProxy){
@@ -226,7 +226,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			answerRangeChangeHandler=null;
 		}
 		
-		requests.answerRequest().contAnswersByQuestion(question.getId()).fire( new Receiver<Long>(){
+		requests.answerRequest().contAnswersByQuestion(question.getId()).fire( new BMEReceiver<Long>(){
 
 
 				@Override
@@ -237,7 +237,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 					onAnswerTableRangeChanged();
 				}
 				
-		          public void onFailure(ServerFailure error){
+		         /* public void onFailure(ServerFailure error){
 		        	  ErrorPanel erorPanel = new ErrorPanel();
 		        	  erorPanel.setErrorMessage(error.getMessage());
 						Log.error(error.getMessage());
@@ -256,7 +256,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 						
 
 						
-					}
+					}*/
 		      
 		});
 		
@@ -275,7 +275,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		final Range range = answerTable.getVisibleRange();
 		
 		
-		requests.answerRequest().findAnswersEntriesByQuestion(question.getId(), range.getStart(), range.getLength()).fire( new Receiver<List<AnswerProxy>>(){
+		requests.answerRequest().findAnswersEntriesByQuestion(question.getId(), range.getStart(), range.getLength()).fire( new BMEReceiver<List<AnswerProxy>>(){
 
 
 			@Override
@@ -285,7 +285,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 
 			}
 			
-	          public void onFailure(ServerFailure error){
+	        /*  public void onFailure(ServerFailure error){
 	        	  ErrorPanel erorPanel = new ErrorPanel();
 	        	  erorPanel.setErrorMessage(error.getMessage());
 					Log.error(error.getMessage());
@@ -303,7 +303,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		        	  erorPanel.setErrorMessage(message);
 					
 					
-				}
+				}*/
 	      
 	});
 		
@@ -317,14 +317,14 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 
 	@Override
 	public void deleteClicked() {
-		requests.questionRequest().remove().using(question).fire(new Receiver<Void>() {
+		requests.questionRequest().remove().using(question).fire(new BMEReceiver<Void>(reciverMap) {
 
             public void onSuccess(Void ignore) {
             	Log.debug("Sucessfull deleted");
             	placeController.goTo(new PlaceQuestion("PlaceQuestion!DELETED"));
             	
             }
-            @Override
+           /* @Override
 			public void onFailure(ServerFailure error) {
 					Log.warn(McAppConstant.ERROR_WHILE_DELETE + " in Assesment -" + error.getMessage());
 					if(error.getMessage().contains("ConstraintViolationException")){
@@ -345,7 +345,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 				//TODO mcAppFactory.getErrorPanel().setErrorMessage(message);
 
 				
-			}
+			}*/
             
         });
 		
@@ -372,8 +372,14 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	@Override
 	public void addNewAnswerClicked() {
 		
-		answerDialogbox = new AnswerDialogboxImpl(question);
+		answerDialogbox = new AnswerDialogboxImpl(question,reciverMap);
 		answerDialogbox.setDelegate(this);
+		
+		if(userLoggedIn.getIsAdmin() == false) {
+			answerDialogbox.getAutherSuggestBox().setSelected(userLoggedIn);
+			answerDialogbox.getAutherSuggestBox().setEnabled(false);
+		}
+
 		
 		if(question != null && question.getQuestionType() != null && question.getQuestionType().getQuestionType() != null) {
 			
@@ -448,7 +454,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 */		
 		answerDialogbox.setValidityPickerValues(Arrays.asList(Validity.values()));
 		answerDialogbox.setRewiewerPickerValues(Collections.<PersonProxy>emptyList());
-	        requests.personRequest().findPersonEntries(0, 50).with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).fire(new Receiver<List<PersonProxy>>() {
+	        requests.personRequest().findPersonEntries(0, 50).with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).fire(new BMEReceiver<List<PersonProxy>>() {
 
 	            public void onSuccess(List<PersonProxy> response) {
 	                List<PersonProxy> values = new ArrayList<PersonProxy>();
@@ -459,7 +465,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	        });
 	        
 	       // answerDialogbox.setAutherPickerValues(Collections.<PersonProxy>emptyList());
-	        requests.personRequest().findPersonEntries(0, 50).with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).fire(new Receiver<List<PersonProxy>>() {
+	        requests.personRequest().findPersonEntries(0, 50).with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).fire(new BMEReceiver<List<PersonProxy>>() {
 
 	            public void onSuccess(List<PersonProxy> response) {
 	                List<PersonProxy> values = new ArrayList<PersonProxy>();
@@ -598,7 +604,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 
 		AnswerRequest answerRequest = requests.answerRequest();
 		Log.info("Question id :" + question.getId());
-		answerRequest.findAllAnswersPoints(question.getId()).fire(new Receiver<List<String>>() {
+		answerRequest.findAllAnswersPoints(question.getId()).fire(new BMEReceiver<List<String>>() {
 
 			@Override
 			public void onSuccess(List<String> points) {
@@ -613,7 +619,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			}
 			
 
-			@Override
+		/*	@Override
 			public void onConstraintViolation(
 					Set<ConstraintViolation<?>> violations) {
 				Log.error("error in onConstraintViolation");
@@ -625,7 +631,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 				Log.error("error in onFailure : " + error.getMessage());
 				super.onFailure(error);
 			}
-			
+			*/
 		});		
 	}
 
@@ -633,7 +639,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 
 		AnswerRequest answerRequest = requests.answerRequest();
 		Log.info("Question id :" + question.getId());
-		answerRequest.findAllAnswersPoints(question.getId()).fire(new Receiver<List<String>>() {
+		answerRequest.findAllAnswersPoints(question.getId()).fire(new BMEReceiver<List<String>>() {
 
 			@Override
 			public void onSuccess(List<String> polygons) {
@@ -648,7 +654,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			}
 			
 
-			@Override
+			/*@Override
 			public void onConstraintViolation(
 					Set<ConstraintViolation<?>> violations) {
 				Log.error("error in onConstraintViolation");
@@ -659,7 +665,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			public void onFailure(ServerFailure error) {
 				Log.error("error in onFailure : " + error.getMessage());
 				super.onFailure(error);
-			}
+			}*/
 			
 		});
 	}	
@@ -672,14 +678,14 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		
 		final AnswerProxy answerProxy=ansRequest.create(AnswerProxy.class);
 		CommentProxy commentProxy=commnetRequest.create(CommentProxy.class);
-		
+		answerDialogbox.getRichtTextArea().removeStyleName("higlight_onViolation");
 		/*this.answerProxy = ansProxy;
 		this.commentProxy=comProxy;*/
 		
 		
         answerProxy.setQuestion(question);
         answerProxy.setDateAdded(new Date());
-        answerProxy.setAutor(loggedUser);
+        /*answerProxy.setAutor(loggedUser);
         if(loggedUser.getIsAdmin()){
 	        answerProxy.setIsAnswerAcceptedAdmin(true);
 	        answerProxy.setIsAnswerAcceptedAutor(false);
@@ -687,8 +693,8 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
         } else {
 	        answerProxy.setIsAnswerAcceptedAdmin(false);
 	        answerProxy.setIsAnswerAcceptedAutor(true);
-        }
-        
+        }*/
+        answerProxy.setAutor(answerDialogbox.getAutherSuggestBox().getSelected());
         answerProxy.setIsAnswerAcceptedReviewWahrer(false);
         //answerDialogbox.setRichPanelHTML(answerProxy.getAnswerText());
         
@@ -701,9 +707,20 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		{
 			answerProxy.setRewiewer(null);
 		}
-		else
+		else if(answerDialogbox.getRewiewer().getValue() != null)
 		{
 			answerProxy.setRewiewer(answerDialogbox.getRewiewer().getValue());
+		}else {
+			ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.selectReviewerOrComitee());
+			return;
+		}
+		
+		if(question.getQuestionType() != null && QuestionTypes.MCQ.equals(question.getQuestionType().getQuestionType()) == false) {
+			if(answerDialogbox.getRichtTextArea().getText() == null || answerDialogbox.getRichtTextArea().getText().length() <= 0) {
+				ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.answerTextErrorMessage());
+				answerDialogbox.getRichtTextArea().addStyleName("higlight_onViolation");
+				return;
+			}
 		}
 		
 		if(question.getQuestionType() != null && QuestionTypes.ShowInImage.equals(question.getQuestionType().getQuestionType()) == true ) {
@@ -744,9 +761,10 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 						if(answerDialogbox.getSimpleImageViewer() != null && answerDialogbox.getSimpleImageViewer().getURL() != null && answerDialogbox.getSimpleImageViewer().getURL().length() > 0) {
 							answerProxy.setMediaPath(answerDialogbox.getSimpleImageViewer().getURL());
 						}else {
-							ErrorPanel errorPanel = new ErrorPanel();
-							errorPanel.setErrorMessage("Error in ImageViewer.Try again");
-							Log.error("Error in ImageViewer. Try again");
+							ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.imageViewerError());
+							/*ErrorPanel errorPanel = new ErrorPanel();
+							errorPanel.setErrorMessage();
+							Log.error("Error in ImageViewer. Try again");*/
 							return;
 						}
 						
@@ -801,9 +819,9 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		answerProxy.setSubmitToReviewComitee(answerDialogbox.getSubmitToReviewerComitee().getValue());
 		Log.info("before save");
 		
-		commnetRequest.persist().using(commentProxy).fire(new Receiver<Void>() {
+		commnetRequest.persist().using(commentProxy).fire(new BMEReceiver<Void>(reciverMap) {
 
-			public void onFailure(ServerFailure error){
+			/*public void onFailure(ServerFailure error){
 				Log.info("on failure");
 				ErrorPanel erorPanel = new ErrorPanel();
 	        	  erorPanel.setErrorMessage(error.getMessage());
@@ -825,7 +843,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 				ErrorPanel erorPanel = new ErrorPanel();
 	        	erorPanel.setWarnMessage(message);
 	        	super.onConstraintViolation(violations);
-			}
+			}*/
 
 //	          @Override
 //				public void onViolation(Set<Violation> errors) {
@@ -846,7 +864,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			@Override
 			public void onSuccess(Void response) {
 				// TODO Auto-generated method stub
-				ansRequest.persist().using(answerProxy).fire(new Receiver<Void>() {
+				ansRequest.persist().using(answerProxy).fire(new BMEReceiver<Void>(reciverMap) {
 
 					@Override
 					public void onSuccess(Void response) {
@@ -856,7 +874,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		        		initAnswerView();
 		        		answerDialogbox.close();
 					}
-					public void onFailure(ServerFailure error){
+					/*public void onFailure(ServerFailure error){
 						Log.info("on failure");
 						ErrorPanel erorPanel = new ErrorPanel();
 			        	  erorPanel.setErrorMessage(error.getMessage());
@@ -876,7 +894,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 							ErrorPanel erorPanel = new ErrorPanel();
 				        	  erorPanel.setErrorMessage(message);
 
-						}
+						}*/
 				});
 		
 			}
@@ -925,14 +943,14 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		
 		
 
-		requests.answerRequest().eliminateAnswer().using(answer).fire(new Receiver<Void>(){
+		requests.answerRequest().eliminateAnswer().using(answer).fire(new BMEReceiver<Void>(reciverMap){
 
 			@Override
 			public void onSuccess(Void arg0) {
 				initAnswerView();
 				
 			}
-	          public void onFailure(ServerFailure error){
+	          /*public void onFailure(ServerFailure error){
 	        	  ErrorPanel erorPanel = new ErrorPanel();
 	        	  erorPanel.setErrorMessage(error.getMessage());
 					Log.error(error.getMessage());
@@ -951,19 +969,18 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 					
 
 					
-				}
+				}*/
 		});
 		
 	}
 
 	@Override
 	public void deleteSelectedQuestionResource(final Long qestionResourceId) {
-		requests.questionResourceRequest().removeSelectedQuestionResource(qestionResourceId).fire(new Receiver<Void>() {
+		requests.questionResourceRequest().removeSelectedQuestionResource(qestionResourceId).fire(new BMEReceiver<Void>(reciverMap) {
 
 			@Override
 			public void onSuccess(Void response) {
-			
-				
+				Log.info("Remove Resource.");				
 			}
 		});
 		
@@ -982,13 +999,13 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		proxy.setType(questionResourceClient.getType());
 		
 		final QuestionResourceProxy proxy2 = proxy; 
-		request.persist().using(proxy).fire(new Receiver<Void>() {
+		request.persist().using(proxy).fire(new BMEReceiver<Void>() {
 
 			@Override
 			public void onSuccess(Void response) {
 				Log.info("Added new Question Resource");
 				
-				requests.questionResourceRequest().find(proxy2.stableId()).fire(new Receiver<Object>(){
+				requests.questionResourceRequest().find(proxy2.stableId()).fire(new BMEReceiver<Object>(){
 
 					@Override
 					public void onSuccess(Object response) {
@@ -1008,14 +1025,14 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			
 			QuestionProxy updatedQuestion = questionRequest.edit(question);
 			updatedQuestion.setPicturePath(picturePath);
-			questionRequest.persist().using(updatedQuestion).fire(new Receiver<Void>() {
+			questionRequest.persist().using(updatedQuestion).fire(new BMEReceiver<Void>(reciverMap) {
 
 				@Override
 				public void onSuccess(Void response) {
 					Log.info("Picture path updated.");
 				}
 				
-				@Override
+				/*@Override
 				public void onConstraintViolation(
 						Set<ConstraintViolation<?>> violations) {
 					Log.error(violations.toString());
@@ -1026,7 +1043,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 				public void onFailure(ServerFailure error) {
 					Log.error(error.getMessage());
 					super.onFailure(error);
-				}
+				}*/
 			});
 	
 		}else {
@@ -1039,14 +1056,14 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		
 		if(question != null) {
 			final QuestionRequest questionRequest = requests.questionRequest();
-			questionRequest.deleteMediaFileFromDisk(picturePath).fire(new Receiver<Boolean>() {
+			questionRequest.deleteMediaFileFromDisk(picturePath).fire(new BMEReceiver<Boolean>(reciverMap) {
 
 				@Override
 				public void onSuccess(Boolean response) {
 					Log.info("Picture deleted " + response);
 				}
 				
-				@Override
+				/*@Override
 				public void onConstraintViolation(
 						Set<ConstraintViolation<?>> violations) {
 					Log.error(violations.toString());
@@ -1057,7 +1074,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 				public void onFailure(ServerFailure error) {
 					Log.error(error.getMessage());
 					super.onFailure(error);
-				}
+				}*/
 			});
 		}else {
 			Log.error("Question is null");
@@ -1067,7 +1084,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	@Override
 	public void deleteUploadedFiles(Set<String> paths) {
 		
-		requests.questionResourceRequest().deleteFiles(paths).fire(new Receiver<Void>() {
+		requests.questionResourceRequest().deleteFiles(paths).fire(new BMEReceiver<Void>(reciverMap) {
 
 			@Override
 			public void onSuccess(Void response) {
@@ -1075,7 +1092,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 				
 			}
 			
-			@Override
+			/*@Override
 			public void onConstraintViolation(
 					Set<ConstraintViolation<?>> violations) {
 				Log.info("ConstraintViolation in files delete process");
@@ -1086,7 +1103,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			public void onFailure(ServerFailure error) {
 				Log.info("error in files delete process");
 				super.onFailure(error);
-			}
+			}*/
 		});
 		
 	}
@@ -1111,14 +1128,14 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 				}
 			}
 			
-			questionResourceRequest.persistSet(proxies).fire(new Receiver<Void>() {
+			questionResourceRequest.persistSet(proxies).fire(new BMEReceiver<Void>(reciverMap) {
 
 				@Override
 				public void onSuccess(Void response) {
 					Log.info("sequence changed successfuly");
 				}
 				
-				@Override
+				/*@Override
 				public void onConstraintViolation(
 						Set<ConstraintViolation<?>> violations) {
 					
@@ -1140,7 +1157,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 					ErrorPanel erorPanel = new ErrorPanel();
 		        	erorPanel.setErrorMessage(error.getMessage());
 		        	super.onFailure(error);
-				}
+				}*/
 			});
 
 		}

@@ -2,52 +2,24 @@ package medizin.client.activites;
 
 import java.util.List;
 
-import javax.sound.midi.MidiMessage;
-
-import medizin.client.ui.SlidingPanel;
-import medizin.client.ui.view.AcceptPersonView;
-import medizin.client.ui.view.AcceptPersonViewImpl;
-import medizin.client.ui.view.InstitutionView;
-import medizin.client.ui.view.InstitutionViewImpl;
-import medizin.client.ui.view.SystemOverviewView;
-import medizin.client.ui.view.SystemOverviewViewImpl;
+import medizin.client.factory.receiver.BMEReceiver;
+import medizin.client.factory.request.McAppRequestFactory;
+import medizin.client.place.PlaceUser;
+import medizin.client.place.PlaceUserDetails;
+import medizin.client.proxy.PersonProxy;
 import medizin.client.ui.view.user.UserView;
 import medizin.client.ui.view.user.UserViewImpl;
 
-import medizin.client.place.PlaceAcceptPerson;
-import medizin.client.place.PlaceInstitutionEvent;
-import medizin.client.place.PlaceSystemOverview;
-import medizin.client.place.PlaceUser;
-import medizin.client.place.PlaceUserDetails;
-import medizin.client.factory.request.McAppRequestFactory;
-import medizin.client.proxy.InstitutionProxy;
-import medizin.client.proxy.PersonProxy;
-
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.activity.shared.AbstractActivity;
-import com.google.gwt.activity.shared.Activity;
 import com.google.gwt.activity.shared.ActivityManager;
-import com.google.gwt.activity.shared.ActivityMapper;
-import com.google.gwt.activity.shared.CachingActivityMapper;
-import com.google.gwt.activity.shared.FilteredActivityMapper;
-import com.google.gwt.dev.ModuleTabPanel.Session;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceChangeEvent;
 import com.google.gwt.place.shared.PlaceController;
-import com.google.web.bindery.requestfactory.gwt.client.RequestFactoryEditorDriver;
-import com.google.web.bindery.requestfactory.shared.EntityProxyId;
-import com.google.web.bindery.requestfactory.shared.Receiver;
-import com.google.web.bindery.requestfactory.shared.Request;
-import com.google.web.bindery.requestfactory.shared.RequestContext;
-import com.google.web.bindery.requestfactory.shared.ServerFailure;
-import com.google.web.bindery.requestfactory.shared.Violation;
 import com.google.gwt.user.cellview.client.AbstractHasData;
 import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.Range;
@@ -136,7 +108,7 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 	
 	@Override
 	public void start(final AcceptsOneWidget widget, final EventBus eventBus) {
-		requests.questionAccessRequest().checkInstitutionalAdmin().fire(new Receiver<Boolean>() {
+		requests.questionAccessRequest().checkInstitutionalAdmin().fire(new BMEReceiver<Boolean>() {
 
 			@Override
 			public void onSuccess(Boolean response) {
@@ -213,7 +185,7 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 		}
 
 
-		fireCountRequest(new Receiver<Long>() {
+		fireCountRequest(new BMEReceiver<Long>() {
 			@Override
 			public void onSuccess(Long response) {
 				if (view == null) {
@@ -274,7 +246,7 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 		
 		/*requests.personRequest()
 		.findPersonEntries(range.getStart(), range.getLength()).with(view.getPaths()).fire(new Receiver<List<PersonProxy>>() {*/
-		requests.personRequest().getAllPersons(range.getStart(),range.getLength()).with(view.getPaths()).fire(new Receiver<List<PersonProxy>>() {
+		requests.personRequest().getAllPersons(range.getStart(),range.getLength()).with(view.getPaths()).fire(new BMEReceiver<List<PersonProxy>>() {
 			@Override
 			public void onSuccess(List<PersonProxy> values) {
 				if (values==null ||view == null) {
@@ -296,7 +268,7 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 	}
 
 	private void getLastPage() {
-		fireCountRequest(new Receiver<Long>() {
+		fireCountRequest(new BMEReceiver<Long>() {
 			@Override
 			public void onSuccess(Long response) {
 				if (view == null) {
@@ -337,7 +309,7 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 //				.findPersonEntries(range.getStart(), range.getLength());
 //	}
 
-	protected void fireCountRequest(Receiver<Long> callback) {
+	protected void fireCountRequest(BMEReceiver<Long> callback) {
 		/*requests.personRequest().countPeople()
 				.fire(callback);*/
 		requests.personRequest().findAllPersonCount().fire(callback);

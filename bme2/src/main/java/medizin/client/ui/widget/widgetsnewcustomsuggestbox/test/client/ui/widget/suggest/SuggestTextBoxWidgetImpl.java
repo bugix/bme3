@@ -308,7 +308,7 @@ public class SuggestTextBoxWidgetImpl<T, W extends EventHandlingValueHolderItem<
 
 	@UiHandler("textField")
 	public void onMouseDown(MouseDownEvent event) {
-		Log.info("click");
+		//Log.info("click");
 
 		// chane for click
 		// Window.alert("onclick");

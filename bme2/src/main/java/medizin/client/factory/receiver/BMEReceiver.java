@@ -47,6 +47,13 @@ public abstract class BMEReceiver<T> extends Receiver<T> {
 	public final void onFailure(ServerFailure error) {
 		Log.error(error.getMessage());
 		showMessage(error.getMessage());
+		onReceiverFailure();
+	}
+	
+	
+	public void onReceiverFailure() {
+		Log.error("call bmeReceiverFailure");
+		
 	}
 
 	public void showMessage(String error) {
@@ -99,7 +106,7 @@ public abstract class BMEReceiver<T> extends Receiver<T> {
 			showMessage(errorBuffor.toString());
 
 		}
-		
+		onReceiverFailure();
 	}
 	
 	@Override

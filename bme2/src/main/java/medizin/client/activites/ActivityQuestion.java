@@ -1,9 +1,8 @@
 package medizin.client.activites;
 
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
+import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.PlaceQuestion;
 import medizin.client.place.PlaceQuestionDetails;
@@ -11,8 +10,6 @@ import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
-import medizin.client.ui.ErrorPanel;
-import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.question.QuestionView;
 import medizin.client.ui.view.question.QuestionViewImpl;
 
@@ -33,9 +30,6 @@ import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
-import com.google.web.bindery.requestfactory.shared.Receiver;
-import com.google.web.bindery.requestfactory.shared.ServerFailure;
-import com.google.web.bindery.requestfactory.shared.Violation;
 
 public class ActivityQuestion extends AbstractActivityWrapper implements
 		QuestionView.Presenter, QuestionView.Delegate {
@@ -154,7 +148,7 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 		activityManger.setDisplay(view.getDetailsPanel());
 
 		requests.personRequest().myGetLoggedPerson()
-				.fire(new Receiver<PersonProxy>() {
+				.fire(new BMEReceiver<PersonProxy>() {
 
 					@Override
 					public void onSuccess(PersonProxy response) {
@@ -163,7 +157,7 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 
 					}
 
-					public void onFailure(ServerFailure error) {
+					/*public void onFailure(ServerFailure error) {
 						ErrorPanel erorPanel = new ErrorPanel();
 						erorPanel.setErrorMessage(error.getMessage());
 						Log.error(error.getMessage());
@@ -184,11 +178,11 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 						erorPanel.setErrorMessage(message);
 						// onStop();
 
-					}
+					}*/
 
 				});
 		requests.institutionRequest().myGetInstitutionToWorkWith()
-				.fire(new Receiver<InstitutionProxy>() {
+				.fire(new BMEReceiver<InstitutionProxy>() {
 
 					@Override
 					public void onSuccess(InstitutionProxy response) {
@@ -197,7 +191,7 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 
 					}
 
-					public void onFailure(ServerFailure error) {
+					/*public void onFailure(ServerFailure error) {
 						ErrorPanel erorPanel = new ErrorPanel();
 						erorPanel.setErrorMessage(error.getMessage());
 						Log.error(error.getMessage());
@@ -218,7 +212,7 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 						erorPanel.setErrorMessage(message);
 						// onStop();
 
-					}
+					}*/
 
 				});
 		// Inherit the view's key provider
@@ -282,7 +276,7 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 		requests.questionRequest()
 				.countQuestionsByPerson(this.userLoggedIn.getShidId(),
 						this.institutionActive.getId(), view.getSerachBox().getValue(), view.getSearchValue())
-				.fire(new Receiver<Long>() {
+				.fire(new BMEReceiver<Long>() {
 					@Override
 					public void onSuccess(Long response) {
 						if (view == null) {
@@ -295,7 +289,7 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 						onRangeChanged();
 					}
 					
-					@Override
+					/*@Override
 					public void onFailure(ServerFailure error) {
 						System.out.println("ERROR : " + error.getMessage());
 					}
@@ -303,7 +297,7 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 					@Override
 					public void onViolation(Set<Violation> errors) {
 						System.out.println("ERRORS SIZE : " + errors.size());
-					}
+					}*/
 				});
 
 		rangeChangeHandler = table
@@ -312,7 +306,7 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 						ActivityQuestion.this.onRangeChanged();
 					}
 				});
-	requests.institutionRequest().findAllInstitutions().fire(new Receiver<List<InstitutionProxy>>() {
+	requests.institutionRequest().findAllInstitutions().fire(new BMEReceiver<List<InstitutionProxy>>() {
 
 			@Override
 			public void onSuccess(List<InstitutionProxy> response) {
@@ -321,7 +315,7 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 			}
 		});
 		
-		requests.questionEventRequest().findAllQuestionEvents().fire(new Receiver<List<QuestionEventProxy>>() {
+		requests.questionEventRequest().findAllQuestionEvents().fire(new BMEReceiver<List<QuestionEventProxy>>() {
 
 			@Override
 			public void onSuccess(List<QuestionEventProxy> response) {
@@ -338,7 +332,7 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 				.findQuestionEntriesByPerson(this.userLoggedIn.getShidId(),
 						this.institutionActive.getId(), view.getSerachBox().getValue(), view.getSearchValue(), range.getStart(),
 						range.getLength()).with(view.getPaths())
-				.fire(new Receiver<List<QuestionProxy>>() {
+				.fire(new BMEReceiver<List<QuestionProxy>>() {
 					@Override
 					public void onSuccess(List<QuestionProxy> values) {
 						if (view == null) {
@@ -369,7 +363,7 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 		requests.questionRequest()
 		.countQuestionsByPerson(this.userLoggedIn.getShidId(),
 				this.institutionActive.getId(), view.getSerachBox().getValue(), view.getSearchValue())
-		.fire(new Receiver<Long>() {
+		.fire(new BMEReceiver<Long>() {
 			@Override
 			public void onSuccess(Long response) {
 				if (view == null) {
@@ -382,7 +376,7 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 				onRangeChanged();
 			}
 			
-			@Override
+		/*	@Override
 			public void onFailure(ServerFailure error) {
 				System.out.println("ERROR : " + error.getMessage());
 			}
@@ -390,7 +384,7 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 			@Override
 			public void onViolation(Set<Violation> errors) {
 				System.out.println("ERRORS SIZE : " + errors.size());
-			}
+			}*/
 		});
 	}
 
