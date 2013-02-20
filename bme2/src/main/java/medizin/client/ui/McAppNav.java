@@ -213,18 +213,19 @@ public class McAppNav extends Composite {
      				 displayMenue();
 		}});*/
         
-        checkAdminRights(requests);
-        
+        checkAdminRights(requests,true);
         
     }
-	
-	public static void checkAdminRights(McAppRequestFactory requests)
+
+	public static void checkAdminRights(McAppRequestFactory requests,boolean isValiduser)
 	{
 		if(MC_APP_NAV != null) 
 		{
 			MC_APP_NAV.hideAllMenu();
 			
 			Log.info("INSIDE MCAPPNAV");
+			
+			if(isValiduser)
 			requests.personRequest().checkAdminRightToLoggedPerson().fire(new Receiver<Boolean>() {
 		        
 				@Override
@@ -247,7 +248,12 @@ public class McAppNav extends Composite {
 	
 	/*@UiField
 	DivElement deletethis;*/
-	
+	/*private boolean isValidUser(){
+		if(shell.getTopPanel2().getLoggedUser().getValue()!=null)
+			return true;
+		else
+			return false;
+	}*/
 	private void displayMenue(Boolean flag){
 		if (both < 1){
 			both++;
