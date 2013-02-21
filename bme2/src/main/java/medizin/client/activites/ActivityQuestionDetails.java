@@ -707,9 +707,9 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		{
 			answerProxy.setRewiewer(null);
 		}
-		else if(answerDialogbox.getRewiewer().getValue() != null)
+		else if(answerDialogbox.getReviewerSuggestBox().getSelected() != null)
 		{
-			answerProxy.setRewiewer(answerDialogbox.getRewiewer().getValue());
+			answerProxy.setRewiewer(answerDialogbox.getReviewerSuggestBox().getSelected());
 		}else {
 			ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.selectReviewerOrComitee());
 			return;
