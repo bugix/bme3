@@ -162,10 +162,10 @@ public class ActivityInstitution extends AbstractActivityWrapper implements
 		placeController.goTo(place);
 	}
 
-	protected Request<java.util.List<medizin.client.proxy.InstitutionProxy>> createRangeRequest(
-			Range range) {
-		return requests.institutionRequest()
-				.findInstitutionEntries(range.getStart(), range.getLength());
+	protected Request<java.util.List<medizin.client.proxy.InstitutionProxy>> createRangeRequest(Range range) 
+	{
+		//return requests.institutionRequest().findInstitutionEntries(range.getStart(), range.getLength());		
+		return requests.institutionRequest().findAllInstitutions(range.getStart(),range.getLength(),sortname,sortorder,searchValue);
 	}
 
 	protected void fireCountRequest(BMEReceiver<Long> callback) {

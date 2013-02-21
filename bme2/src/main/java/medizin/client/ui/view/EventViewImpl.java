@@ -10,8 +10,12 @@ import medizin.client.style.resources.MyCellTableResources;
 import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.widget.IconButton;
+import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
+import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEvent;
+import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEventHandler;
 import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.QuestionEventProxy;
+import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.cell.client.AbstractEditableCell;
@@ -52,7 +56,8 @@ public class EventViewImpl extends Composite implements EventView  {
     @UiField
     IconButton addEvent;
 
-	
+    
+    
 	@UiHandler("addEvent")
 	void addEventClicked(ClickEvent event) {
 		delegate.newClicked(eventName.getText());
@@ -64,6 +69,8 @@ public class EventViewImpl extends Composite implements EventView  {
 	private Presenter presenter;
 
 	private String name;
+	
+	public BmeConstants constants = GWT.create(BmeConstants.class);
 
 	public EventViewImpl(Map<String, Widget> reciverMap) {
 		
@@ -190,9 +197,21 @@ public class EventViewImpl extends Composite implements EventView  {
         
       	addColumn(new ActionCell<QuestionEventProxy>(
       			McAppConstant.DELETE_ICON, new ActionCell.Delegate<QuestionEventProxy>() {
-    	            public void execute(QuestionEventProxy questionEvent) {
+    	            public void execute(final QuestionEventProxy questionEvent) {
     	              Log.debug("You clicked " + questionEvent.getEventName());
-    	              delegate.deleteClicked(questionEvent);
+    	              ConfirmationDialogBox.showYesNoDialogBox(constants.warning(), constants.deleteTopicConfirmation(), new ConfirmDialogBoxYesNoButtonEventHandler() {
+							
+							@Override
+							public void onYesButtonClicked(ConfirmDialogBoxYesNoButtonEvent event) {
+								delegate.deleteClicked(questionEvent);
+							}
+							
+							@Override
+							public void onNoButtonClicked(ConfirmDialogBoxYesNoButtonEvent event) {
+															
+							}
+						});
+    	              
     	            }
     	          }), "", new GetValue<QuestionEventProxy>() {
     	        public QuestionEventProxy getValue(QuestionEventProxy contact) {

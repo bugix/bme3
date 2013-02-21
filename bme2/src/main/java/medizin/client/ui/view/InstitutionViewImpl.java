@@ -12,6 +12,10 @@ import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.QuickSearchBox;
+import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
+import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEvent;
+import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEventHandler;
+import medizin.shared.i18n.BmeConstants;
 
 import com.google.gwt.cell.client.AbstractEditableCell;
 import com.google.gwt.cell.client.ActionCell;
@@ -44,6 +48,8 @@ public class InstitutionViewImpl extends Composite implements InstitutionView  {
 			UiBinder<Widget, InstitutionViewImpl> {
 	}
     private Delegate delegate;
+
+    public BmeConstants constants = GWT.create(BmeConstants.class);
     
     @UiField
     TextBox institutionName;
@@ -180,7 +186,20 @@ public class InstitutionViewImpl extends Composite implements InstitutionView  {
         addColumn(new ActionCell<InstitutionProxy>(
         		McAppConstant.DELETE_ICON, new ActionCell.Delegate<InstitutionProxy>() {
 					public void execute(final InstitutionProxy institution) {
-						Window.alert("You clicked " + institution.getInstitutionName());
+						//Window.alert("You clicked " + institution.getInstitutionName());
+						ConfirmationDialogBox.showYesNoDialogBox(constants.warning(), constants.deleteInstitutionConfirmation(), new ConfirmDialogBoxYesNoButtonEventHandler() {
+							
+							@Override
+							public void onYesButtonClicked(ConfirmDialogBoxYesNoButtonEvent event) {
+								delegate.deleteClicked(institution);
+							}
+							
+							@Override
+							public void onNoButtonClicked(ConfirmDialogBoxYesNoButtonEvent event) {
+															
+							}
+						});
+						
 						
 					}	
 				}), "", new GetValue<InstitutionProxy>() {

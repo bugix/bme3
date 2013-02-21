@@ -325,5 +325,9 @@ public interface BmeConstants extends Constants {
 	public String newInstitution();
 	
 	public String newTopic();
+
+	public String deleteInstitutionConfirmation();
+
+	public String deleteTopicConfirmation();
 	
 }
