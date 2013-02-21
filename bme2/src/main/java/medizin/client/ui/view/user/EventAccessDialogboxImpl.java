@@ -10,8 +10,11 @@ import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.user.EventAccessDialogbox.Delegate;
 import medizin.client.ui.view.user.EventAccessDialogbox.Presenter;
+import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.EventHandlingValueHolderItem;
+import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
 
 
+import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.QuestionAccessProxy;
 import medizin.client.proxy.QuestionEventProxy;
 
@@ -201,7 +204,7 @@ public class EventAccessDialogboxImpl extends DialogBox implements EventAccessDi
 	    	        }
 	    	      }, null);
 	        
-	        searchInstitution.addChangeHandler(new ChangeHandler(){
+	        /*searchInstitution.addChangeHandler(new ChangeHandler(){
 
 				@Override
 				public void onChange(ChangeEvent event) {
@@ -213,7 +216,19 @@ public class EventAccessDialogboxImpl extends DialogBox implements EventAccessDi
 					
 				}
 	        	
-	        });
+	        });*/
+	    	
+	    	searchInstitution.addHandler(new ChangeHandler() {
+				
+				@Override
+				public void onChange(ChangeEvent event) {
+					if (searchInstitution.getSelected() != null)
+						delegate.filterInstitutionChanged(searchInstitution.getSelected().getId());
+					else
+						delegate.filterInstitutionChanged(null);
+				}
+			});
+	    	
 	        searchEvent.addKeyUpHandler(new KeyUpHandler(){
 
 				@Override
@@ -280,17 +295,26 @@ public class EventAccessDialogboxImpl extends DialogBox implements EventAccessDi
 		
 	/*@UiField
 	CellTable<QuestionEventProxy> tableEvent;*/
+	/*@UiField
+	ListBox searchInstitution;*/
+		
 	@UiField
-	ListBox searchInstitution;
+	DefaultSuggestBox<InstitutionProxy, EventHandlingValueHolderItem<InstitutionProxy>> searchInstitution;
+	
 	@UiField
     TextBox searchEvent;
 	
-	@Override
-	public ListBox getSearchInstitution(){
+	
+	
+	
+
+	private Delegate delegate;
+
+	public DefaultSuggestBox<InstitutionProxy, EventHandlingValueHolderItem<InstitutionProxy>> getSearchInstitution() {
 		return searchInstitution;
 	}
 
-	private Delegate delegate;
+
 
 	@Override
 	public CellTable<QuestionEventProxy> getTable() {

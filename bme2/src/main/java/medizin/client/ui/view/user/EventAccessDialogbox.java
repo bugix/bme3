@@ -1,8 +1,11 @@
 package medizin.client.ui.view.user;
 
+import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionAccessProxy;
 import medizin.client.proxy.QuestionEventProxy;
+import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.EventHandlingValueHolderItem;
+import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
 
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.cellview.client.CellTable;
@@ -25,7 +28,7 @@ public interface EventAccessDialogbox extends IsWidget {
 	interface Delegate {
 		void addClicked(medizin.client.shared.AccessRights rights, QuestionEventProxy questionEvent);
 
-		void filterInstitutionChanged(String value);
+		void filterInstitutionChanged(Long value);
 		void filterEventChanged(String value);
 
 
@@ -35,7 +38,8 @@ public interface EventAccessDialogbox extends IsWidget {
     String[] getPaths();
     
     void setDelegate(Delegate delegate);
-	ListBox getSearchInstitution();
+	//ListBox getSearchInstitution();
+    public DefaultSuggestBox<InstitutionProxy, EventHandlingValueHolderItem<InstitutionProxy>> getSearchInstitution();
     
 
 }

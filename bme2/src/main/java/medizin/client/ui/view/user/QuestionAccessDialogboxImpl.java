@@ -10,8 +10,11 @@ import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.user.EventAccessDialogbox.Delegate;
 import medizin.client.ui.view.user.EventAccessDialogbox.Presenter;
+import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.EventHandlingValueHolderItem;
+import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
 
 
+import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
 
@@ -203,7 +206,7 @@ public class QuestionAccessDialogboxImpl extends DialogBox implements QuestionAc
 
 	
 	        
-	        searchInstitution.addChangeHandler(new ChangeHandler(){
+	        /*searchInstitution.addChangeHandler(new ChangeHandler(){
 
 				@Override
 				public void onChange(ChangeEvent event) {
@@ -216,6 +219,7 @@ public class QuestionAccessDialogboxImpl extends DialogBox implements QuestionAc
 				}
 	        	
 	        });
+	        
 	        searchEvent.addChangeHandler(new ChangeHandler(){
 
 				@Override
@@ -228,7 +232,30 @@ public class QuestionAccessDialogboxImpl extends DialogBox implements QuestionAc
 					
 				}
 	        	
-	        });
+	        });*/
+	    	
+	    	searchInstitution.addHandler(new ChangeHandler() {
+				
+				@Override
+				public void onChange(ChangeEvent event) {
+					if(searchInstitution.getSelected() != null)
+						delegate.filterInstitutionQuestionChanged(searchInstitution.getSelected().getId());
+					else
+						delegate.filterInstitutionQuestionChanged(null);
+				}
+			});
+	    	
+	    	searchEvent.addHandler(new ChangeHandler() {
+				
+				@Override
+				public void onChange(ChangeEvent event) {
+					if (searchEvent.getSelected() != null)
+						delegate.filterEventQuestionChanged(searchEvent.getSelected().getId());
+					else
+						delegate.filterEventQuestionChanged(null);
+				}
+			});
+	    	
 	        searchQuestion.addKeyUpHandler(new KeyUpHandler(){
 
 				@Override
@@ -316,10 +343,17 @@ public class QuestionAccessDialogboxImpl extends DialogBox implements QuestionAc
 	CellTable<QuestionProxy> tableEvent;*/
 
    
-	@UiField
+	/*@UiField
 	ListBox searchInstitution;
 	@UiField
-	ListBox searchEvent;
+	ListBox searchEvent;*/
+	
+	@UiField
+	DefaultSuggestBox<InstitutionProxy, EventHandlingValueHolderItem<InstitutionProxy>> searchInstitution;
+
+	@UiField
+	DefaultSuggestBox<QuestionEventProxy, EventHandlingValueHolderItem<QuestionEventProxy>> searchEvent;
+	
 	@UiField
     TextBox searchQuestion;
 	@UiField
@@ -328,12 +362,12 @@ public class QuestionAccessDialogboxImpl extends DialogBox implements QuestionAc
 	CheckBox checkKeywords;	
 	
 	@Override
-	public ListBox getSearchInstitution(){
+	public DefaultSuggestBox<InstitutionProxy, EventHandlingValueHolderItem<InstitutionProxy>> getSearchInstitution(){
 		return searchInstitution;
 	}
 	
 	@Override
-	public ListBox getSearchEvent(){
+	public DefaultSuggestBox<QuestionEventProxy, EventHandlingValueHolderItem<QuestionEventProxy>> getSearchEvent(){
 		return searchEvent;
 	}
 

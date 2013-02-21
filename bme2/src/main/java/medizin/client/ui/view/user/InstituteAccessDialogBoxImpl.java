@@ -16,6 +16,8 @@ import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.text.shared.Renderer;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -27,6 +29,7 @@ import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class InstituteAccessDialogBoxImpl extends DialogBox implements InstituteAccessDialogBox {
@@ -105,6 +108,14 @@ public class InstituteAccessDialogBoxImpl extends DialogBox implements Institute
     	
     	tableEvent.addColumnStyleName(1,"tableColumn");
     	
+    	
+    	searchInstitute.addKeyUpHandler(new KeyUpHandler() {
+			
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				delegate.filterInstituteChanged(searchInstitute.getText());
+			}
+		});
 	}
 
 	private <C> void addColumn(Cell<C> cell, String headerText,
@@ -176,8 +187,13 @@ public class InstituteAccessDialogBoxImpl extends DialogBox implements Institute
 		@UiField
 		Button closeButton;
 		
+		@UiField
+		TextBox searchInstitute;
+		
 		@UiHandler ("closeButton")
 		public void onCloseButtonClick(ClickEvent event) {
 	            hide();
 	    }
+		
+		
 }

@@ -25,6 +25,7 @@ import medizin.client.ui.view.user.QuestionAccessDialogboxImpl;
 import medizin.client.ui.view.user.QuestionAccessView;
 import medizin.client.ui.view.user.UserDetailsView;
 import medizin.client.ui.view.user.UserDetailsViewImpl;
+import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.simple.DefaultSuggestOracle;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.activity.shared.ActivityManager;
@@ -33,6 +34,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceChangeEvent;
 import com.google.gwt.place.shared.PlaceController;
+import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.user.client.ui.ListBox;
@@ -40,6 +42,7 @@ import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
+import com.google.web.bindery.requestfactory.shared.Receiver;
 import com.google.web.bindery.requestfactory.shared.Request;
 /**
  * Activity for Handling UserDetailsViews.
@@ -560,7 +563,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 	
 	InstituteAccessDialogBox dialogBoxInstitute;
 	
-	ListBox institutionListbox;
+	//ListBox institutionListbox;
 
 	private CellTable<QuestionEventProxy> eventAccessTable;
 
@@ -586,8 +589,9 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 		this.eventAccessTable = dialogBoxEvent.getTable();
 		dialogBoxEvent.setPresenter(this);
 		dialogBoxEvent.setDelegate(this);
-		
-		institutionListbox = dialogBoxEvent.getSearchInstitution();
+	
+		//final EventAccessDialogbox tempDialogBoxEvent = dialogBoxEvent;
+		//institutionListbox = dialogBoxEvent.getSearchInstitution();
 		
 		// Fill the Institution Box
 		final BMEReceiver<List<InstitutionProxy>> callback2 = new BMEReceiver<List<InstitutionProxy>>() {
@@ -598,12 +602,32 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 					return;
 				}
 				
-				Iterator<InstitutionProxy> iter = values.iterator();
+				DefaultSuggestOracle<InstitutionProxy> suggestOracle1 = (DefaultSuggestOracle<InstitutionProxy>) dialogBoxEvent.getSearchInstitution().getSuggestOracle();
+				suggestOracle1.setPossiblilities(values);
+				
+				dialogBoxEvent.getSearchInstitution().setSuggestOracle(suggestOracle1);
+				dialogBoxEvent.getSearchInstitution().setRenderer(new AbstractRenderer<InstitutionProxy>() {
+
+					@Override
+					public String render(InstitutionProxy object) {
+						// TODO Auto-generated method stub
+						if(object!=null)
+						{
+							return object.getInstitutionName();
+						}
+						else
+						{
+							return "";
+						}
+					}
+				});
+				
+				/*Iterator<InstitutionProxy> iter = values.iterator();
 				institutionListbox.addItem("", "");
 				while(iter.hasNext()){
 					InstitutionProxy institution = iter.next();
 					institutionListbox.addItem(institution.getInstitutionName(), institution.stableId().toString());
-				}
+				}*/
 				
 				//eventAccessTable.setRowData( values);
 
@@ -894,8 +918,8 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 		dialogBoxQuestion.setPresenter(this);
 		dialogBoxQuestion.setDelegate(this);
 		
-		institutionListbox = dialogBoxQuestion.getSearchInstitution();
-		eventListbox = dialogBoxQuestion.getSearchEvent();
+		//institutionListbox = dialogBoxQuestion.getSearchInstitution();
+		//eventListbox = dialogBoxQuestion.getSearchEvent();
 		
 		// Fill the Institution Box
 		final BMEReceiver<List<InstitutionProxy>> callback2 = new BMEReceiver<List<InstitutionProxy>>() {
@@ -906,12 +930,32 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 					return;
 				}
 				
-				Iterator<InstitutionProxy> iter = values.iterator();
+				DefaultSuggestOracle<InstitutionProxy> suggestOracle1 = (DefaultSuggestOracle<InstitutionProxy>) dialogBoxQuestion.getSearchInstitution().getSuggestOracle();
+				suggestOracle1.setPossiblilities(values);
+				
+				dialogBoxQuestion.getSearchInstitution().setSuggestOracle(suggestOracle1);
+				dialogBoxQuestion.getSearchInstitution().setRenderer(new AbstractRenderer<InstitutionProxy>() {
+
+					@Override
+					public String render(InstitutionProxy object) {
+						// TODO Auto-generated method stub
+						if(object!=null)
+						{
+							return object.getInstitutionName();
+						}
+						else
+						{
+							return "";
+						}
+					}
+				});
+				
+				/*Iterator<InstitutionProxy> iter = values.iterator();
 				institutionListbox.addItem("", "");
 				while(iter.hasNext()){
 					InstitutionProxy institution = iter.next();
 					institutionListbox.addItem(institution.getInstitutionName(), institution.stableId().toString());
-				}
+				}*/
 				
 				//eventAccessTable.setRowData( values);
 
@@ -952,12 +996,32 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 					return;
 				}
 				
-				Iterator<QuestionEventProxy> iter = values.iterator();
+				DefaultSuggestOracle<QuestionEventProxy> suggestOracle1 = (DefaultSuggestOracle<QuestionEventProxy>) dialogBoxQuestion.getSearchEvent().getSuggestOracle();
+				suggestOracle1.setPossiblilities(values);
+				
+				dialogBoxQuestion.getSearchEvent().setSuggestOracle(suggestOracle1);
+				dialogBoxQuestion.getSearchEvent().setRenderer(new AbstractRenderer<QuestionEventProxy>() {
+
+					@Override
+					public String render(QuestionEventProxy object) {
+						// TODO Auto-generated method stub
+						if(object!=null)
+						{
+							return object.getEventName();
+						}
+						else
+						{
+							return "";
+						}
+					}
+				});
+				
+				/*Iterator<QuestionEventProxy> iter = values.iterator();
 				eventListbox.addItem("", "");
 				while(iter.hasNext()){
 					QuestionEventProxy questionEvent = iter.next();
 					eventListbox.addItem(questionEvent.getEventName(), questionEvent.stableId().toString());
-				}
+				}*/
 				
 				//eventAccessTable.setRowData( values);
 
@@ -1033,16 +1097,25 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 
 
 	@Override
-	public void filterInstitutionChanged(String value) {
-		Log.info(value);
+	public void filterInstitutionChanged(Long value) {
+		
 		if (value!=null&&!value.equals(""))
 		{
-			requests.find(requests.getProxyId(value)).fire(new BMEReceiver<Object>() {
+			requests.institutionRequest().findInstitution(value).fire(new BMEReceiver<Object>() {
+
+				@Override
+				public void onSuccess(Object response) {
+					institutionFilter=(InstitutionProxy)response;
+					initEventAccessDialogbox();
+				}
+			});
+			
+			/*requests.find(requests.getProxyId(value)).fire(new BMEReceiver<Object>() {
 	
 				
-				/*public void onFailure(ServerFailure error){
+				public void onFailure(ServerFailure error){
 					Log.error(error.getMessage());
-				}*/
+				}
 				@Override
 				public void onSuccess(Object response) {
 					if(response instanceof InstitutionProxy){
@@ -1053,7 +1126,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 	
 					
 				}
-			    });
+			    });*/
 		}
 		else {
 			this.institutionFilter=null;
@@ -1102,18 +1175,25 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 }
 		
 		@Override
-		public void filterEventQuestionChanged(String value) {
-			
-			Log.debug(value);
+		public void filterEventQuestionChanged(Long value) {
 			
 			if (value!=null&&!value.equals(""))
 			{
-				requests.find(requests.getProxyId(value)).fire(new BMEReceiver<Object>() {
+				requests.questionEventRequest().findQuestionEvent(value).fire(new Receiver<Object>() {
+
+					@Override
+					public void onSuccess(Object response) {
+						eventFilter=(QuestionEventProxy)response;
+						initQuestionAccessDialogbox();
+					}
+				});
+				
+				/*requests.find(requests.getProxyId(value)).fire(new BMEReceiver<Object>() {
 		
 					
-					/*public void onFailure(ServerFailure error){
+					public void onFailure(ServerFailure error){
 						Log.error(error.getMessage());
-					}*/
+					}
 					@Override
 					public void onSuccess(Object response) {
 						if(response instanceof QuestionEventProxy){
@@ -1124,7 +1204,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 		
 						
 					}
-				    });
+				    });*/
 			}
 			else {
 				this.eventFilter=null;
@@ -1165,23 +1245,32 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 					}*/
 		      }); 
 		}
-			public void filterQuestionChanged(String text) {
+		
+		public void filterQuestionChanged(String text) {			
 			questiuonStringFilter=text;
 			initQuestionAccessDialogbox();
-			
 		}
 			
 
 		@Override
-		public void filterInstitutionQuestionChanged(String value) {
+		public void filterInstitutionQuestionChanged(Long value) {
 			if (value!=null&&!value.equals(""))
 			{
-				requests.find(requests.getProxyId(value)).fire(new BMEReceiver<Object>() {
+				requests.institutionRequest().findInstitution(value).fire(new BMEReceiver<Object>() {
+
+					@Override
+					public void onSuccess(Object response) {
+						institutionFilter=(InstitutionProxy)response;
+						initQuestionAccessDialogbox();
+					}
+				});
+				
+				/*requests.find(requests.getProxyId(value)).fire(new BMEReceiver<Object>() {
 		
 					
-					/*public void onFailure(ServerFailure error){
+					public void onFailure(ServerFailure error){
 						Log.error(error.getMessage());
-					}*/
+					}
 					@Override
 					public void onSuccess(Object response) {
 						if(response instanceof InstitutionProxy){
@@ -1192,7 +1281,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 		
 						
 					}
-				    });
+				    });*/
 			}
 			else {
 				this.institutionFilter=null;
@@ -1208,7 +1297,6 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 		public void filterSearchTextChanged(boolean value) {
 			filterQuestionText=value;
 			initQuestionAccessDialogbox();
-			
 		}
 
 		@Override
@@ -1264,6 +1352,19 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 			instituteAccessView.setDelegate(this);
 			instituteAccessView.setPresenter(this);
 			
+			onInstituteAccessRangeChanged();
+			
+			instituteAccessView.getTable().addRangeChangeHandler(new RangeChangeEvent.Handler() {
+				
+				@Override
+				public void onRangeChange(RangeChangeEvent event) {
+					ActivityUserDetails.this.onInstituteAccessRangeChanged();
+				}
+			});
+		}
+		
+		public void onInstituteAccessRangeChanged()
+		{
 			requests.questionAccessRequest().countInstiuteAccessByPerson(person.getId()).fire(new BMEReceiver<Long>() {
 
 				@Override
@@ -1275,13 +1376,14 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 
 						@Override
 						public void onSuccess(List<QuestionAccessProxy> response) {
-							instituteAccessView.getTable().setRowData(range.getStart(), response);
+							if (response.size() > 0)
+								instituteAccessView.getTable().setRowData(range.getStart(), response);
+							else
+								instituteAccessView.getTable().setRowData(response);
 						}
 					});
 				}
 			});
-			
-			
 		}
 
 		@Override
@@ -1300,6 +1402,8 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 			});
 		}
 
+		String instituteSearchText = "";
+		
 		@Override
 		public void addNewInstituteAccessClicked() {
 			dialogBoxInstitute = new InstituteAccessDialogBoxImpl();
@@ -1307,7 +1411,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 			dialogBoxInstitute.setPresenter(this);
 			dialogBoxInstitute.setDelegate(this);
 			
-			requests.institutionRequest().findAllInstitutions().fire(new BMEReceiver<List<InstitutionProxy>>() {
+			/*requests.institutionRequest().findAllInstitutions().fire(new BMEReceiver<List<InstitutionProxy>>() {
 
 				@Override
 				public void onSuccess(List<InstitutionProxy> response) {
@@ -1316,10 +1420,45 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 					dialogBoxInstitute.getTable().setRowData(dialogBoxInstitute.getTable().getVisibleRange().getStart(), response);
 				}
 				
-				/*@Override
+				@Override
 				public void onFailure(ServerFailure error) {
 					Log.info(error.getMessage());
-				}*/
+				}
+			});*/
+			initInstituteAccessDialogBox();
+			
+			dialogBoxInstitute.getTable().addRangeChangeHandler(new RangeChangeEvent.Handler() {
+				
+				@Override
+				public void onRangeChange(RangeChangeEvent event) {
+					ActivityUserDetails.this.initInstituteAccessDialogBox();
+				}
 			});
+		}
+
+		public void initInstituteAccessDialogBox()
+		{
+			requests.institutionRequest().countInstitutionByName(instituteSearchText).fire(new BMEReceiver<Long>() {
+
+				@Override
+				public void onSuccess(Long response) {
+					dialogBoxInstitute.getTable().setRowCount(response.intValue(), true);
+					
+					final Range range = dialogBoxInstitute.getTable().getVisibleRange();
+					requests.institutionRequest().findInstitutionByName(instituteSearchText, range.getStart(), range.getLength()).fire(new BMEReceiver<List<InstitutionProxy>>() {
+
+						@Override
+						public void onSuccess(List<InstitutionProxy> list) {
+							dialogBoxInstitute.getTable().setRowData(range.getStart(), list);
+						}
+					});
+				}
+			});
+		}
+		
+		@Override
+		public void filterInstituteChanged(String text) {
+			instituteSearchText = text;
+			initInstituteAccessDialogBox();
 		}
 }

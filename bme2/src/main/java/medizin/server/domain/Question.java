@@ -244,7 +244,8 @@ public class Question {
 		if (eventId != null) {
 			if (institutionId != null) {
 
-				queryString += "OR ";
+				//queryString += "OR ";
+				queryString += "AND ";
 			}
 			event = QuestionEvent.findQuestionEvent(eventId);
 			queryString += "quest.questEvent= :event ";
@@ -252,7 +253,8 @@ public class Question {
 		if (!questiuonStringFilter.equals("")) {
 			if (institutionId != null || eventId != null) {
 
-				queryString += "OR ";
+				//queryString += "OR ";
+				queryString += "AND ";
 			}
 			if (filterQuestionText) {
 				queryString += "quest.questionText LIKE '%"

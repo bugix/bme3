@@ -23,11 +23,7 @@ public interface InstituteAccessDialogBox extends IsWidget {
 		 */
 		interface Delegate {
 			void addClicked(medizin.client.shared.AccessRights rights, InstitutionProxy questionEvent);
-
-			void filterInstitutionChanged(String value);
-			void filterEventChanged(String value);
-
-
+			void filterInstituteChanged(String text);
 		}
 
 	    CellTable<InstitutionProxy> getTable();

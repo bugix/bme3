@@ -58,18 +58,27 @@
 			float: right;
 			margin: 3px;
 		}
+		.displayRight {
+			float: right;
+			padding-left: 400px;			
+		}
 	</ui:style>
 	<g:HTMLPanel>
-		<div style="height:3em;" />
+		<!-- <div style="height:3em;" /> -->
+		<g:HorizontalPanel>
+			<g:TextBox ui:field="searchInstitute"></g:TextBox>		
+			<b:SimplePager ui:field="pager" display="{tableEvent}" addStyleNames="{style.displayRight}"  />			
+		</g:HorizontalPanel>
+		
 		<b:CellTable ui:field="tableEvent" addStyleNames="{style.standardTable}"
 			width="100%" />
 		<!-- <b:CellTable pageSize="8" ui:field="tableEvent" width="100%" /> -->
 
 		<!-- <div class="{style.controls}"> -->
-		<div>
+		<!-- <div>
 			<b:SimplePager ui:field="pager" display="{tableEvent}" />
-			<!-- <b:SimplePager display="{tableEvent}" location="RIGHT" /> -->
-		</div>
+			<b:SimplePager display="{tableEvent}" location="RIGHT" />
+		</div> -->
 
 		<div style="height:3em;" />
 		<div class="{style.barNew}">
