@@ -5,8 +5,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import medizin.client.ui.McAppConstant;
 import medizin.client.proxy.InstitutionProxy;
+import medizin.client.proxy.QuestionTypeProxy;
+import medizin.client.style.resources.MyCellTableResources;
+import medizin.client.style.resources.MySimplePagerResources;
+import medizin.client.ui.McAppConstant;
+import medizin.client.ui.widget.IconButton;
+import medizin.client.ui.widget.QuickSearchBox;
 
 import com.google.gwt.cell.client.AbstractEditableCell;
 import com.google.gwt.cell.client.ActionCell;
@@ -21,10 +26,10 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -42,8 +47,11 @@ public class InstitutionViewImpl extends Composite implements InstitutionView  {
     
     @UiField
     TextBox institutionName;
+    
 	@UiField
-    Button addInstitution;
+    IconButton addInstitution;
+	
+	
 	@UiField
 	SimplePanel slidingPanel;
 	
@@ -60,6 +68,21 @@ public class InstitutionViewImpl extends Composite implements InstitutionView  {
 	private String name;
 
 	public InstitutionViewImpl() {
+		
+		CellTable.Resources tableResources = GWT.create(MyCellTableResources.class);
+		table = new CellTable<InstitutionProxy>(McAppConstant.TABLE_PAGE_SIZE, tableResources);
+				
+		SimplePager.Resources pagerResources = GWT.create(MySimplePagerResources.class);
+		pager = new SimplePager(SimplePager.TextLocation.RIGHT, pagerResources, true, McAppConstant.TABLE_JUMP_SIZE, true);
+		
+		searchBox = new QuickSearchBox(new QuickSearchBox.Delegate() {
+			@Override
+			public void performAction() {
+				//delegate.performSearch(searchBox.getValue());
+			}
+		});
+		
+		
 		initWidget(uiBinder.createAndBindUi(this));
 		DOM.setElementAttribute(this.getElement(), "style", "position: absolute; left: 5px; top: 0px; right: 0px; bottom: 0px; overflow: auto;");
 		init();
@@ -82,9 +105,20 @@ public class InstitutionViewImpl extends Composite implements InstitutionView  {
 		
 	}
 	
-    @UiField
+	@UiField(provided=true)
+	CellTable<InstitutionProxy> table;
+	
+	@UiField(provided = true)
+	public SimplePager pager;
+	
+	 @UiField (provided = true)
+	 QuickSearchBox searchBox;
+	
+	
+	
+    /*@UiField
     CellTable<InstitutionProxy> table;
-    
+    */
     protected Set<String> paths = new HashSet<String>();
 
     public void init() {
@@ -140,6 +174,19 @@ public class InstitutionViewImpl extends Composite implements InstitutionView  {
             }
         }, "Name der Institution");
         
+        addColumn(new ActionCell<InstitutionProxy>(
+        		McAppConstant.DELETE_ICON, new ActionCell.Delegate<InstitutionProxy>() {
+					public void execute(final InstitutionProxy institution) {
+						Window.alert("You clicked " + institution.getInstitutionName());
+						
+					}	
+				}), "", new GetValue<InstitutionProxy>() {
+			public InstitutionProxy getValue(InstitutionProxy institution) {
+				return institution;
+			}
+		}, null);
+        
+       /* 
     	addColumn(new ActionCell<InstitutionProxy>(
     			McAppConstant.DECLINE_ICON, new ActionCell.Delegate<InstitutionProxy>() {
     	            public void execute(InstitutionProxy institution) {
@@ -150,9 +197,10 @@ public class InstitutionViewImpl extends Composite implements InstitutionView  {
     	        public InstitutionProxy getValue(InstitutionProxy contact) {
     	          return contact;
     	        }
-    	      }, null);
+    	      }, null);*/
     	
     	table.addColumnStyleName(1, "iconColumn");
+    	
     	table.addColumnStyleName(0, "questionTextColumn");
     }
     
@@ -183,7 +231,24 @@ public class InstitutionViewImpl extends Composite implements InstitutionView  {
 	   * @param headerText the header string
 	   * @param getter the value getter for the cell
 	   */
-	  private <C> void addColumn(Cell<C> cell, String headerText,
+	
+	
+	private <C> void addColumn(Cell<C> cell, String headerText,
+			final GetValue<C> getter, FieldUpdater<InstitutionProxy, C> fieldUpdater) {
+		Column<InstitutionProxy, C> column = new Column<InstitutionProxy, C>(cell) {
+			@Override
+			public C getValue(InstitutionProxy object) {
+				return getter.getValue(object);
+			}
+		};
+		column.setFieldUpdater(fieldUpdater);
+		if (cell instanceof AbstractEditableCell<?, ?>) {
+			editableCells.add((AbstractEditableCell<?, ?>) cell);
+		}
+		table.addColumn(column);
+	}
+	
+	 /* private <C> void addColumn(Cell<C> cell, String headerText,
 	      final GetValue<C> getter, FieldUpdater<InstitutionProxy, C> fieldUpdater) {
 	    Column<InstitutionProxy, C> column = new Column<InstitutionProxy, C>(cell) {
 	      @Override
@@ -196,7 +261,7 @@ public class InstitutionViewImpl extends Composite implements InstitutionView  {
 	      editableCells.add((AbstractEditableCell<?, ?>) cell);
 	    }
 	    table.addColumn(column, headerText);
-	  }
+	  }*/
 
 	  /**
 	   * Get a cell value from a record.

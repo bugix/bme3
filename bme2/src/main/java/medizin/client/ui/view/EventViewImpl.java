@@ -5,7 +5,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import medizin.client.style.resources.MyCellTableResources;
+import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
+import medizin.client.ui.widget.IconButton;
+import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.QuestionEventProxy;
 
 import com.allen_sauer.gwt.log.client.Log;
@@ -22,6 +26,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Button;
@@ -42,8 +47,9 @@ public class EventViewImpl extends Composite implements EventView  {
     
     @UiField
     TextBox eventName;
-	@UiField
-    Button addEvent;
+	
+    @UiField
+    IconButton addEvent;
 
 	
 	@UiHandler("addEvent")
@@ -59,6 +65,13 @@ public class EventViewImpl extends Composite implements EventView  {
 	private String name;
 
 	public EventViewImpl() {
+		
+		CellTable.Resources tableResources = GWT.create(MyCellTableResources.class);
+		tableEvent = new CellTable<QuestionEventProxy>(McAppConstant.TABLE_PAGE_SIZE, tableResources);
+				
+		SimplePager.Resources pagerResources = GWT.create(MySimplePagerResources.class);
+		pager = new SimplePager(SimplePager.TextLocation.RIGHT, pagerResources, true, McAppConstant.TABLE_JUMP_SIZE, true);
+		
 		initWidget(uiBinder.createAndBindUi(this));
 		//DOM.setElementAttribute(this.getElement(), "style", "position: absolute; left: 5px; top: 0px; right: 0px; bottom: 0px; overflow: auto;");
 		init();
@@ -80,9 +93,15 @@ public class EventViewImpl extends Composite implements EventView  {
 		
 	}
 	
-    @UiField
-    CellTable<QuestionEventProxy> tableEvent;
-    
+	@UiField(provided=true)
+	CellTable<QuestionEventProxy> tableEvent;
+	
+	@UiField(provided = true)
+	public SimplePager pager;
+	
+    /*@UiField
+    CellTable<QuestionEventProxy> tableEvent ;
+    */
     protected Set<String> paths = new HashSet<String>();
 
     public void init() {
@@ -166,7 +185,7 @@ public class EventViewImpl extends Composite implements EventView  {
         }, "Name des Themenbereichs");
         
       	addColumn(new ActionCell<QuestionEventProxy>(
-      			McAppConstant.DECLINE_ICON, new ActionCell.Delegate<QuestionEventProxy>() {
+      			McAppConstant.DELETE_ICON, new ActionCell.Delegate<QuestionEventProxy>() {
     	            public void execute(QuestionEventProxy questionEvent) {
     	              Log.debug("You clicked " + questionEvent.getEventName());
     	              delegate.deleteClicked(questionEvent);

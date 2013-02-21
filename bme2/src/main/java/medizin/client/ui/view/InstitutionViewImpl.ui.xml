@@ -1,10 +1,11 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:n="urn:import:medizin.client.ui"
-	xmlns:b="urn:import:com.google.gwt.user.cellview.client">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" 
+	xmlns:b="urn:import:com.google.gwt.user.cellview.client" xmlns:p="urn:import:javax.persistence" xmlns:a="urn:import:medizin.client.ui.widget">
+	
+	
 
-	<ui:style>
+	<ui:style src="../styles.css">
   	.panelHTML {
 		border: 0px solid #ddf;
 		position: absolute; 
@@ -58,13 +59,61 @@
 
 		cursor: pointer;
 		}
-		 table button {
+		 .table button {
     background: none;
+    
   }
+  .displayRight {
+			/* float: right; 
+			padding-left: 400px;*/
+			padding-left: 50px;			
+		}
+		.paddingLeft{
+		padding-right: 10px;	
+	}
 	</ui:style>
 
+<g:SplitLayoutPanel ui:field="splitLayoutPanel" >
+		<!-- <g:west size="500"> -->
+		<g:west size="500"> 
+			<g:ScrollPanel>
+				<g:HTMLPanel >
+						<!-- <div class="{style.controls} {style.controlsleft}"> -->
+						<g:HorizontalPanel spacing="3">
+							<a:QuickSearchBox ui:field="searchBox"></a:QuickSearchBox>
+						<!-- </div> -->
+						</g:HorizontalPanel >
+						<b:CellTable ui:field="table" addStyleNames="{style.standardTableIcon}"  />
+						<!-- <div class="{style.controls} {style.controlsleft}"> -->
+						
+						<g:HorizontalPanel spacing="3">
+						<g:TextBox ui:field="institutionName" addStyleNames="{style.paddingLeft}" ></g:TextBox>
+							<a:IconButton ui:field="addInstitution" icon="plusthick"  >Neue Institution</a:IconButton>
+							<!--  <g:Button ui:field="newQuestiontype"
+								addStyleNames="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
+								<span class="ui-icon ui-icon-plusthick" style="float: left; margin-right: 0.3em;"></span>
+								+Add
+							</g:Button>  -->
+							<b:SimplePager ui:field="pager" display="{table}" addStyleNames="{style.displayRight}" />
+							</g:HorizontalPanel>
+						<!-- </div> -->
+					
+				</g:HTMLPanel>
+			</g:ScrollPanel>
+		</g:west>
+		<g:center>
+			<g:ScrollPanel>
+				<g:SimplePanel ui:field="slidingPanel">
 
-	<g:SplitLayoutPanel  styleName="{style.panelHTML}" ui:field="splitLayoutPanel">
+				</g:SimplePanel>
+
+			</g:ScrollPanel>
+		</g:center>
+	</g:SplitLayoutPanel>
+	
+</ui:UiBinder> 
+
+	<!-- <g:SplitLayoutPanel  styleName="{style.panelHTML}" ui:field="splitLayoutPanel">
 <g:west size="400">	
 	<g:ScrollPanel  styleName="{style.scroll1}">
 		 <g:HTMLPanel styleName="{style.listView}">
@@ -88,5 +137,4 @@
 
 		  </g:ScrollPanel>
 			</g:center>
-</g:SplitLayoutPanel>
-</ui:UiBinder> 
+</g:SplitLayoutPanel> -->

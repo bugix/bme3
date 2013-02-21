@@ -307,8 +307,8 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 //                return renderer.render(object.getQuestion());
 //            }
 //        }, "Question");
-    	addColumn(new ActionCell<AnswerProxy>(
-    	        "Entf.", new ActionCell.Delegate<AnswerProxy>() {
+    	addColumn(new ActionCell<AnswerProxy>("Entf.", new ActionCell.Delegate<AnswerProxy>() 
+    	{
     	            public void execute(AnswerProxy answer) {
     	              delegate.deleteAnswerClicked(answer);
     	            }

@@ -359,6 +359,17 @@ body {
 	margin: 4px auto;
 	width: 98%;
 }
+.standardTableIcon {
+	clear: both;
+	position: relative;
+	margin: 4px auto;
+	width: 98%;
+}
+
+.standardTableIcon input{
+    /*width: 20px;*/
+}
+
 .standardTable input{
     /*width: 20px;*/
 }
@@ -369,6 +380,8 @@ body {
 
 /* Style for Buttons in CellTables (like delete Buttons) */
 .standardTable button {
+		outline: none !important;
+	cursor: hand;
 	outline: none !important;
 	margin: 0 0 0 -5px;
 	
@@ -382,12 +395,36 @@ body {
 	border: 1px solid #999;
 	
 	height: 23px;
-	/*align:center;*/
+	align:center;
 	font-size: 90%;
 	
 	border-radius: 4px;
 	white-space: nowrap;
 	text-align: center;
+}
+
+.standardTableIcon button {
+		outline: none !important;
+	margin: 0 0 0 -5px;
+	padding: 3px 2px 0;
+	border: 0;
+	background: none;
+	cursor: pointer;
+	cursor: hand;
+	/*outline: none !important;
+	margin: 0 0 0 -5px;
+	
+	border: 0;
+	
+	cursor: pointer;
+	cursor: hand;	
+	padding: 3px 6px 3px 3px;
+	text-decoration: none !important;
+	background: url("images/ui-bg_glass_75_dadada_1x400.png") repeat-x scroll 50% 50% #DADADA;
+	border: 1px solid #999;
+	
+	height: 23px;
+	*/
 }
 
 
