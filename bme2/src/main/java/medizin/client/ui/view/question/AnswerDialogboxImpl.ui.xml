@@ -5,6 +5,7 @@
 	xmlns:r="urn:import:medizin.client.ui.richtext" xmlns:i="urn:import:medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl">
 
 	<ui:style src="../../styles.css" />
+	<ui:with type="medizin.shared.i18n.BmeConstants" field="cc"></ui:with>
 		
 	<g:HTMLPanel width="100%">
 	
@@ -36,7 +37,7 @@
 			</tr>
 			<tr id="uploadContainer">
 				<td>
-					<g:Label styleName="{style.label}" ui:field="lblUploadText"></g:Label>
+					<g:Label ui:field="lblUploadText" text="{cc.uploadResource}" visible="false"></g:Label>
 				</td>
 				<td>
 					<g:VerticalPanel ui:field="uploadContainer">
@@ -49,23 +50,32 @@
 					</g:VerticalPanel>
 				</td>
 			</tr>
-
+			<tr id="keyword">
+				<td>
+					<g:Label ui:field="lblAdditionalKeyword" text="{cc.additionalKeyword}" visible="false"></g:Label> 
+					<br />
+					<g:Button ui:field="btnAdditionalKeyword" text="{cc.fetch}" visible="false"></g:Button>
+				</td>
+				<td>
+					<g:TextArea ui:field='txtAdditionalKeyword' width="450px" visible="false"></g:TextArea>
+				</td>
+			</tr>
 			<tr id="auther">
-								<td>
-									<g:Label styleName="{style.label}" ui:field="lblAuther"></g:Label>
-								</td>
-								<td>
-									<!-- <g:ValueListBox ui:field="autor" /> -->
-									
-									<i:DefaultSuggestBox ui:field="auther"></i:DefaultSuggestBox>
+				<td>
+					<g:Label styleName="{style.label}" text="{cc.auther}" ></g:Label>
+				</td>
+				<td>
+					<!-- <g:ValueListBox ui:field="autor" /> -->
+					
+					<i:DefaultSuggestBox ui:field="auther"></i:DefaultSuggestBox>
 
-								</td>
-							</tr>
-			
+				</td>
+			</tr>
 			
 			<tr id="rewiewer">
 				<td>
-					<div class="{style.label}">Rewiewer:</div>
+					<g:Label styleName="{style.label}" text="{cc.reviewer}"></g:Label>
+					<!-- <div class="">Rewiewer:</div> -->
 				</td>
 				<td>
 					<!-- <g:ValueListBox ui:field="rewiewer" /> -->
@@ -73,11 +83,10 @@
 				</td>
 			</tr>
 
-
-
 			<tr id="validity">
 				<td>
-					<div class="{style.label}">Validity:</div>
+					<g:Label styleName="{style.label}" text="{cc.validity}"></g:Label>
+					<!-- <div class="{style.label}">Validity:</div> -->
 				</td>
 				<td>
 					<g:ValueListBox ui:field="validity" />
@@ -85,7 +94,8 @@
 			</tr>
 			<tr id="questionSubmitToReviewComitee">
 				<td>
-					<div class="{style.label}">Question Submit To Review Comitee:</div>
+					<g:Label styleName="{style.label}" text="{cc.submitToReviewComitee}"></g:Label>
+					<!-- <div class="{style.label}">Question Submit To Review Comitee:</div> -->
 				</td>
 
 				<td>
@@ -95,7 +105,8 @@
 			</tr>
 			<tr id="questionComment">
 				<td>
-					<div class="{style.label}">Comment:</div>
+					<g:Label styleName="{style.label}" text="{cc.comment}"></g:Label>
+					<!-- <div class="{style.label}">Comment:</div> -->
 				</td>
 
 				<td>
@@ -108,8 +119,8 @@
 
 		<!-- <div class="{style.barPopup}"> -->
 		<div>
-			<m:IconButton ui:field="save" icon="disk">Speichern</m:IconButton>
-			<m:IconButton ui:field="closeButton" icon="closethick">Abbrechen</m:IconButton>
+			<m:IconButton ui:field="save" icon="disk"></m:IconButton>
+			<m:IconButton ui:field="closeButton" icon="closethick"></m:IconButton>
 
 
 

@@ -71,13 +71,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.requestfactory.gwt.ui.client.EntityProxyKeyProvider;
 
-public class QuestionEditViewImpl extends Composite implements QuestionEditView/*
-																				 * ,
-																				 * Editor
-																				 * <
-																				 * QuestionProxy
-																				 * >
-																				 */{
+public class QuestionEditViewImpl extends Composite implements QuestionEditView /* , Editor<QuestionProxy>*/{
 
 	private static QuestionEditViewImplUiBinder uiBinder = GWT
 			.create(QuestionEditViewImplUiBinder.class);
@@ -120,9 +114,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 	public Label lblQuestionType;
 
 	@UiField(provided = true)
-	public ValueListBox<QuestionTypeProxy> questionType = new ValueListBox<QuestionTypeProxy>(
-			QuestionTypeProxyRenderer.instance(),
-			new EntityProxyKeyProvider<medizin.client.proxy.QuestionTypeProxy>());
+	public ValueListBox<QuestionTypeProxy> questionType = new ValueListBox<QuestionTypeProxy>(QuestionTypeProxyRenderer.instance(),new EntityProxyKeyProvider<medizin.client.proxy.QuestionTypeProxy>());
 
 	@UiField
 	public Label lblQuestionText;
@@ -141,8 +133,6 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 
 	@UiField
 	public CheckBox submitToReviewComitee;
-
-	
 	
 	@UiField
 	public DivElement descriptionValue;
@@ -180,9 +170,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 	public Label lblQuestionEvent;
 
 	@UiField(provided = true)
-	public ValueListBox<QuestionEventProxy> questEvent = new ValueListBox<QuestionEventProxy>(
-			medizin.client.ui.view.roo.QuestionEventProxyRenderer.instance(),
-			new EntityProxyKeyProvider<medizin.client.proxy.QuestionEventProxy>());
+	public ValueListBox<QuestionEventProxy> questEvent = new ValueListBox<QuestionEventProxy>(medizin.client.ui.view.roo.QuestionEventProxyRenderer.instance(),new EntityProxyKeyProvider<medizin.client.proxy.QuestionEventProxy>());
 
 	@UiField
 	public Label lblQuestionComment;
@@ -199,8 +187,6 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 	
 	@UiField
 	public TextArea questionComment;
-	
-
 	
 	@UiField
 	public Label lblMCS;
@@ -296,7 +282,6 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 
 			@Override
 			public void onClick(ClickEvent event) {
-				// TODO Auto-generated method stub
 				
 				if(submitToReviewComitee.isChecked())
 				{
@@ -327,16 +312,14 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 			public void onValueChange(ValueChangeEvent<QuestionTypeProxy> event) {
 				//Note: question is null in create mode 
 				setMediaView(event.getValue(),question);
-//				setResourceUploadAndResourceViewer(event.getValue(),question);
 			}
-
 		});
 
 	}
 
 	@Override
 	public void setRichPanelHTML(String html) {
-		Log.error(html);
+		Log.info(html);
 		questionTextArea.setHTML(html);
 	}
 
@@ -369,10 +352,9 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 			rewiewer.setEnabled(true);
 		}
 		this.question = question;
-		
-		setMediaView(question.getQuestionType(), question);
-//			setResourceUploadAndResourceViewer(question.getQuestionType(), question);
 
+		// question is not null
+		setMediaView(question.getQuestionType(), question);
 	}
 
 	@Override
@@ -383,11 +365,11 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 		// return new String("<b>hallo</b>");
 	}
 
-	@Override
+	/*@Override
 	public void setName(String helloName) {
-		// TODO Auto-generated method stub
+		// todo Auto-generated method stub
 
-	}
+	}*/
 
 	@Override
 	public void setPresenter(Presenter presenter) {
@@ -413,10 +395,9 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 
 			@Override
 			public String render(PersonProxy object) {
-				// TODO Auto-generated method stub
 				if(object!=null)
 				{
-				return object.getName() + " "+ object.getPrename();
+					return object.getName() + " "+ object.getPrename();
 				}
 				else
 				{
@@ -445,10 +426,9 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 
 			@Override
 			public String render(PersonProxy object) {
-				// TODO Auto-generated method stub
 				if(object!=null)
 				{
-				return object.getName() + " "+ object.getPrename();
+					return object.getName() + " "+ object.getPrename();
 				}
 				else
 				{
@@ -485,12 +465,12 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 	public void setEditTitle(boolean edit) {
 		this.edit = edit;
 		if (edit) {
-			title.setInnerText("Edit");
+			title.setInnerText(constants.edit());
 			// questionTypePanel.getTabBar().setTabText(0, "Edit Question");
 			// editTitle.getStyle().clearDisplay();
 			// createTitle.getStyle().setDisplay(Display.NONE);
 		} else {
-			title.setInnerText("Create");
+			title.setInnerText(constants.create());
 			// questionTypePanel.getTabBar().setTabText(0, "New Question");
 			// editTitle.getStyle().setDisplay(Display.NONE);
 			// createTitle.getStyle().clearDisplay();
@@ -523,20 +503,17 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 	
 	@Override
 	public DefaultSuggestBox<PersonProxy, EventHandlingValueHolderItem<PersonProxy>> getAutherListBox() {
-		// TODO Auto-generated method stub
 		return auther;
 	}
 
 	
 	@Override
 	public DefaultSuggestBox<PersonProxy, EventHandlingValueHolderItem<PersonProxy>> getReviewerListBox() {
-		// TODO Auto-generated method stub
 		return rewiewer;
 	}
 
 	@Override
-	public TextBox getShortName()
-	{
+	public TextBox getShortName() {
 		return questionShortName;
 	}
 
@@ -586,11 +563,17 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView/
 			setImageViewer(questionTypeProxy, question,QuestionTypes.ShowInImage);
 			break;
 		}
+		
+		case Sort:
+		{
+			setResourceUploadAndResourceViewer(questionTypeProxy, question);
+			break;
+		}
 			
 		default:
 		{
 			clearMediaContainer();
-			Log.info("Error");
+			Log.info("question type :" + questionType + " is not implemented in setMediaView");
 			break;	
 		}
 		

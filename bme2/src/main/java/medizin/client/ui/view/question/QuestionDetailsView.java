@@ -9,7 +9,7 @@ import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.ui.IsWidget;
 
 public interface QuestionDetailsView extends IsWidget {
-    void setName(String helloName);
+    /*void setName(String helloName);*/
 
     void setPresenter(Presenter activityQuestionDetails);
     void setDelegate(Delegate delegate);
@@ -25,7 +25,6 @@ public interface QuestionDetailsView extends IsWidget {
 		void deleteClicked();
 
 		void editClicked();
-		
 
 		void newClicked();
 

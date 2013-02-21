@@ -1,6 +1,8 @@
 package medizin.client.ui.view.question;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 import medizin.client.proxy.PersonProxy;
 import medizin.client.shared.Validity;
@@ -13,14 +15,13 @@ import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
 import medizin.shared.QuestionTypes;
 
+import com.google.common.base.Function;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RichTextArea;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.ValueListBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
 
 public interface AnswerDialogbox extends IsWidget {
  
@@ -37,6 +38,8 @@ public interface AnswerDialogbox extends IsWidget {
 	interface Delegate {
 		void addAnswerClicked();
 		void cancelAnswerClicked();
+		void findAllAnswersPoints(Long id,Function<List<String>, Void> function);
+		void deleteUploadedFiles(Set<String> paths);
 	}
 
  
@@ -64,25 +67,9 @@ public interface AnswerDialogbox extends IsWidget {
 
 	DefaultSuggestBox<PersonProxy, EventHandlingValueHolderItem<PersonProxy>> getAutherSuggestBox();
 
-VerticalPanel getViewContainer();
-
 	ImagePolygonViewer getImagePolygonViewer();
 
-	void setImagePolygonViewer(ImagePolygonViewer viewer);
-
-	void setImageRectangleViewer(ImageRectangleViewer viewer);
-
 	ImageRectangleViewer getImageRectangleViewer();
-
-	Label getLblUploadText();
-
-	VerticalPanel getUploaderContainer();
-
-	void setSimpleImageViewer(SimpleImageViewer viewer);
-
-	void setAudioViewer(AudioViewer viewer);
-
-	void setVideoViewer(VideoViewer viewer);
 
 	SimpleImageViewer getSimpleImageViewer();
 	
@@ -93,5 +80,7 @@ VerticalPanel getViewContainer();
 	RichTextArea getRichtTextArea();
 
 	DefaultSuggestBox<PersonProxy, EventHandlingValueHolderItem<PersonProxy>> getReviewerSuggestBox();
+
+	TextArea getAdditionalKeywords();
 
 }

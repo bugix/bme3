@@ -111,7 +111,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 	@Override
 	public void start2(AcceptsOneWidget widget, EventBus eventBus) {
 		QuestionEditView questionEditView = new QuestionEditViewImpl(reciverMap);
-		questionEditView.setName("hallo");
+		/*questionEditView.setName("hallo");*/
 		questionEditView.setPresenter(this);
 		this.widget = widget;
 		this.view = questionEditView;
@@ -458,7 +458,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 				questionNew.setPicturePath(view.getImageViewer().getImageRelativeUrl());
 			}else if(QuestionTypes.ShowInImage.equals(questionNew.getQuestionType().getQuestionType()) && view.getImageViewer() != null && view.getImageViewer().getImageRelativeUrl() != null) {
 				questionNew.setPicturePath(view.getImageViewer().getImageRelativeUrl());
-			}else if(QuestionTypes.Textual.equals(questionNew.getQuestionType().getQuestionType()) && view.getQuestionResources().size() > 0) {
+			}else if((QuestionTypes.Textual.equals(questionNew.getQuestionType().getQuestionType()) || QuestionTypes.Sort.equals(questionNew.getQuestionType().getQuestionType())) && view.getQuestionResources().size() > 0) {
 				QuestionResourceRequest questionResourceRequest = requests.questionResourceRequest();
 				Set<QuestionResourceProxy> proxies = Sets.newHashSet();
 				Log.info("proxies.size() " + proxies.size());
@@ -481,30 +481,6 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 					public void onSuccess(Void response) {
 						Log.info("Added successfuly");
 					}
-					
-					/*@Override
-					public void onConstraintViolation(
-							Set<ConstraintViolation<?>> violations) {
-						
-						Iterator<ConstraintViolation<?>> iter = violations.iterator();
-						String message = "";
-						while(iter.hasNext()){
-							ConstraintViolation<?> v = iter.next();
-							message += v.getPropertyPath() + " : " + v.getMessage() + "<br>";
-						}
-						Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Event -" + message);
-						
-						ErrorPanel erorPanel = new ErrorPanel();
-			        	erorPanel.setWarnMessage(message);
-			        	super.onConstraintViolation(violations);
-					}
-					
-					@Override
-					public void onFailure(ServerFailure error) {
-						ErrorPanel erorPanel = new ErrorPanel();
-			        	erorPanel.setErrorMessage(error.getMessage());
-			        	super.onFailure(error);
-					}*/
 				});
 			}
 			

@@ -355,6 +355,15 @@ public class QuestionDetailsViewImpl extends Composite implements
 				
 				break;
 			}
+			
+			case Sort:
+			{
+				if(proxy != null && proxy.getQuestionType()!= null && proxy.getQuestionType().getQueHaveImage() != null &&  proxy.getQuestionType().getQueHaveSound() != null && proxy.getQuestionType().getQueHaveVideo() != null) {
+					setResourceUploadAndResourceViewer(proxy.getQuestionType(),proxy);
+				}
+				
+				break;
+			}
 				
 			default:
 			{
@@ -392,11 +401,11 @@ public class QuestionDetailsViewImpl extends Composite implements
 		
 	}
 
-	@Override
+	/*@Override
 	public void setName(String helloName) {
 		// TODO Auto-generated method stub
 
-	}
+	}*/
 
 	@Override
 	public void setPresenter(Presenter presenter) {

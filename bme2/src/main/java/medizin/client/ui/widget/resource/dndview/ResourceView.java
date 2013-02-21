@@ -1,5 +1,7 @@
 package medizin.client.ui.widget.resource.dndview;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -70,6 +72,15 @@ public class ResourceView extends Composite implements DragHandler {
 		this.eventBus = eventBus;
 		this.questionResources = questionResources;
 		this.questionType = questionType;
+		
+		Collections.sort(this.questionResources, new Comparator<QuestionResourceClient>() {
+
+			@Override
+			public int compare(QuestionResourceClient o1,QuestionResourceClient o2) {
+				
+				return o2.getSequenceNumber().compareTo(o1.getSequenceNumber());
+			}
+		});
 		
 		if(queHaveImage == null) {
 			this.queHaveImage = false;

@@ -78,5 +78,9 @@ public interface AnswerProxy extends EntityProxy {
 
     abstract void setPoints(String points);
 
+    abstract String getAdditionalKeywords();
+
+    abstract void setAdditionalKeywords(String additionalKeywords);
+
     abstract Integer getVersion();
 }

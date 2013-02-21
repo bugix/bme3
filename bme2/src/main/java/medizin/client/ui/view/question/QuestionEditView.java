@@ -28,7 +28,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.ValueListBox;
 
 public interface QuestionEditView extends IsWidget {
-    void setName(String helloName);
+    /*void setName(String helloName);*/
 
     void setPresenter(Presenter activityQuestionEdit);
     void setDelegate(Delegate delegate);

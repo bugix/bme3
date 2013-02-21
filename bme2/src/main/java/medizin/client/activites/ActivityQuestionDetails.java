@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import medizin.client.factory.receiver.BMEReceiver;
@@ -22,7 +21,6 @@ import medizin.client.request.CommentRequest;
 import medizin.client.request.QuestionRequest;
 import medizin.client.request.QuestionResourceRequest;
 import medizin.client.shared.Validity;
-import medizin.client.ui.ErrorPanel;
 import medizin.client.ui.view.question.AnswerDialogbox;
 import medizin.client.ui.view.question.AnswerDialogboxImpl;
 import medizin.client.ui.view.question.AnswerListView;
@@ -30,26 +28,13 @@ import medizin.client.ui.view.question.AnswerListViewImpl;
 import medizin.client.ui.view.question.QuestionDetailsView;
 import medizin.client.ui.view.question.QuestionDetailsViewImpl;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
-import medizin.client.ui.widget.resource.audio.AudioViewer;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.ui.widget.resource.dndview.vo.State;
-import medizin.client.ui.widget.resource.image.polygon.ImagePolygonViewer;
-import medizin.client.ui.widget.resource.image.rectangle.ImageRectangleViewer;
-import medizin.client.ui.widget.resource.image.simple.SimpleImageViewer;
-import medizin.client.ui.widget.resource.upload.ResourceUpload;
-import medizin.client.ui.widget.resource.upload.event.ResourceUploadEvent;
-import medizin.client.ui.widget.resource.upload.event.ResourceUploadEventHandler;
-import medizin.client.ui.widget.resource.video.VideoViewer;
-import medizin.client.util.Point;
-import medizin.client.util.PolygonPath;
-import medizin.shared.MultimediaType;
 import medizin.shared.QuestionTypes;
 import medizin.shared.i18n.BmeConstants;
-import medizin.shared.utils.SharedConstant;
 
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import com.google.common.base.Function;
 import com.google.common.collect.Sets;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
@@ -122,7 +107,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	public void start2(AcceptsOneWidget panel, EventBus eventBus) {
 		
 		questionDetailsView = new QuestionDetailsViewImpl(eventBus);
-		questionDetailsView.setName("hallo");
+		/*questionDetailsView.setName("hallo");*/
 		questionDetailsView.setPresenter(this);
 		this.widget = panel;
 		this.view = questionDetailsView;
@@ -372,7 +357,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	@Override
 	public void addNewAnswerClicked() {
 		
-		answerDialogbox = new AnswerDialogboxImpl(question,reciverMap);
+		answerDialogbox = new AnswerDialogboxImpl(question,eventBus,reciverMap);
 		answerDialogbox.setDelegate(this);
 		
 		if(userLoggedIn.getIsAdmin() == false) {
@@ -381,37 +366,6 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		}
 
 		
-		if(question != null && question.getQuestionType() != null && question.getQuestionType().getQuestionType() != null) {
-			
-			answerDialogbox.getLblUploadText().setText("");
-			answerDialogbox.getUploaderContainer().clear();
-			answerDialogbox.getViewContainer().clear();
-			
-			switch (question.getQuestionType().getQuestionType()) {
-			case ShowInImage:
-			{
-				addForShowInImage();
-				break;
-			}
-			case Imgkey:
-			{
-				addForImageKey();
-				break;
-			}
-			case MCQ:
-			{
-				if(question.getQuestionType().getMultimediaType() != null) {
-					addForMCQ();
-				}
-				break;
-			}
-			
-			default:
-				Log.info("check for media");
-				break;
-			}
-	
-		}
 					
 		
 		/*answerDriver = answerDialogbox.createEditorDriver();*/
@@ -492,183 +446,6 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 
 		
 	}
-	private void addForMCQ() {
-		answerDialogbox.getLblUploadText().setText(constants.uploadResource());
-		ResourceUpload upload = null;
-		
-		switch (question.getQuestionType().getMultimediaType()) {
-		case Image:
-		{
-			ArrayList<String> allowedExt = Lists.newArrayList();
-			Map<MultimediaType,String> paths = Maps.newHashMap();
-			allowedExt.addAll(Arrays.asList(SharedConstant.IMAGE_EXTENSIONS));
-			paths.put(MultimediaType.Image, SharedConstant.UPLOAD_MEDIA_IMAGES_PATH);
-			upload = new ResourceUpload(allowedExt,paths, this.eventBus);
-			upload.addResourceUploadedHandler(new ResourceUploadEventHandler() {
-				
-				@Override
-				public void onResourceUploaded(ResourceUploadEvent event) {
-					if(event.isResourceUploaded()) {
-						final SimpleImageViewer viewer = new SimpleImageViewer(event.getFilePath());
-						answerDialogbox.getViewContainer().clear();
-						answerDialogbox.getViewContainer().add(viewer);
-						answerDialogbox.setSimpleImageViewer(viewer);
-
-					}					
-				}
-			});
-			
-			break;
-		}	
-		case Sound:
-		{	
-			ArrayList<String> allowedExt = Lists.newArrayList();
-			Map<MultimediaType,String> paths = Maps.newHashMap();
-			allowedExt.addAll(Arrays.asList(SharedConstant.SOUND_EXTENSIONS));
-			paths.put(MultimediaType.Sound, SharedConstant.UPLOAD_MEDIA_SOUND_PATH);
-			
-			upload = new ResourceUpload(allowedExt,paths, this.eventBus);
-			upload.addResourceUploadedHandler(new ResourceUploadEventHandler() {
-				
-				@Override
-				public void onResourceUploaded(ResourceUploadEvent event) {
-					if(event.isResourceUploaded()) {
-						if(event.getSoundMediaSize() != null && question != null && question.getQuestionType() != null && question.getQuestionType().getMaxBytes() != null) {
-							
-							if(event.getSoundMediaSize() <= question.getQuestionType().getMaxBytes()) {
-								AudioViewer viewer = new AudioViewer(event.getFilePath());
-								
-								answerDialogbox.getViewContainer().clear();
-								answerDialogbox.getViewContainer().add(viewer);
-								answerDialogbox.setAudioViewer(viewer);	
-							}else {
-								ErrorPanel errorPanel = new ErrorPanel();
-								errorPanel.setErrorMessage("Media size must be lessthan " + question.getQuestionType().getMaxBytes());
-							}
-						}else {
-							Log.error("Error in MCQ question.");
-						}
-						
-					}
-				}
-			});
-
-			break;
-		}
-		case Video:
-		{	
-			ArrayList<String> allowedExt = Lists.newArrayList();
-			Map<MultimediaType,String> paths = Maps.newHashMap();
-			allowedExt.addAll(Arrays.asList(SharedConstant.VIDEO_EXTENSIONS));
-			paths.put(MultimediaType.Video, SharedConstant.UPLOAD_MEDIA_VIDEO_PATH);
-			
-			upload = new ResourceUpload(allowedExt,paths, this.eventBus);
-			
-			upload.addResourceUploadedHandler(new ResourceUploadEventHandler() {
-				
-				@Override
-				public void onResourceUploaded(ResourceUploadEvent event) {
-					if(event.isResourceUploaded()) {
-						if(event.getVideoMediaSize() != null && question != null && question.getQuestionType() != null && question.getQuestionType().getMaxBytes() != null) {
-							
-							if(event.getVideoMediaSize() <= question.getQuestionType().getMaxBytes()) {
-								final VideoViewer viewer = new VideoViewer(event.getFilePath());
-								answerDialogbox.getViewContainer().clear();
-								answerDialogbox.setVideoViewer(viewer);
-								answerDialogbox.getViewContainer().add(viewer);
-							}else {
-								ErrorPanel errorPanel = new ErrorPanel();
-								errorPanel.setErrorMessage("Media size must be lessthan " + question.getQuestionType().getMaxBytes());
-							}
-						}else {
-							Log.error("Error in MCQ question.");
-						}
-					}
-				}
-			});
-			
-			
-			break;
-		}
-		default:
-			break;
-		}
-		
-		if(upload != null) {
-			answerDialogbox.getUploaderContainer().clear();
-			answerDialogbox.getUploaderContainer().add(upload);
-		}
-	}
-
-	private void addForImageKey() {
-
-		AnswerRequest answerRequest = requests.answerRequest();
-		Log.info("Question id :" + question.getId());
-		answerRequest.findAllAnswersPoints(question.getId()).fire(new BMEReceiver<List<String>>() {
-
-			@Override
-			public void onSuccess(List<String> points) {
-		
-				List<Point> rectanglePoints = Point.getPoints(points);
-				
-				if(question != null && question.getQuestionType() != null && QuestionTypes.Imgkey.equals(question.getQuestionType().getQuestionType()) && question.getPicturePath() != null && question.getPicturePath().length() > 0 && question.getQuestionType().getImageWidth() != null && question.getQuestionType().getImageHeight() != null) {
-					ImageRectangleViewer viewer = new ImageRectangleViewer(question.getPicturePath(), question.getQuestionType().getImageWidth(), question.getQuestionType().getImageHeight(),rectanglePoints);
-					answerDialogbox.getViewContainer().add(viewer);
-					answerDialogbox.setImageRectangleViewer(viewer);
-				}
-			}
-			
-
-		/*	@Override
-			public void onConstraintViolation(
-					Set<ConstraintViolation<?>> violations) {
-				Log.error("error in onConstraintViolation");
-				super.onConstraintViolation(violations);
-			}
-			
-			@Override
-			public void onFailure(ServerFailure error) {
-				Log.error("error in onFailure : " + error.getMessage());
-				super.onFailure(error);
-			}
-			*/
-		});		
-	}
-
-	private void addForShowInImage() {
-
-		AnswerRequest answerRequest = requests.answerRequest();
-		Log.info("Question id :" + question.getId());
-		answerRequest.findAllAnswersPoints(question.getId()).fire(new BMEReceiver<List<String>>() {
-
-			@Override
-			public void onSuccess(List<String> polygons) {
-		
-				List<PolygonPath> polygonPaths = PolygonPath.getPolygonPaths(polygons);
-				
-				if(question != null && question.getQuestionType() != null && QuestionTypes.ShowInImage.equals(question.getQuestionType().getQuestionType()) && question.getPicturePath() != null && question.getPicturePath().length() > 0 && question.getQuestionType().getImageWidth() != null && question.getQuestionType().getImageHeight() != null) {
-					ImagePolygonViewer viewer = new ImagePolygonViewer(question.getPicturePath(), question.getQuestionType().getImageWidth(), question.getQuestionType().getImageHeight(),polygonPaths);
-					answerDialogbox.getViewContainer().add(viewer);
-					answerDialogbox.setImagePolygonViewer(viewer);
-				}
-			}
-			
-
-			/*@Override
-			public void onConstraintViolation(
-					Set<ConstraintViolation<?>> violations) {
-				Log.error("error in onConstraintViolation");
-				super.onConstraintViolation(violations);
-			}
-			
-			@Override
-			public void onFailure(ServerFailure error) {
-				Log.error("error in onFailure : " + error.getMessage());
-				super.onFailure(error);
-			}*/
-			
-		});
-	}	
 
 	@Override
 	public void addAnswerClicked() {
@@ -730,8 +507,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 				answerProxy.setPoints(answerDialogbox.getImagePolygonViewer().getPoints());
 				Log.info("Points added");	
 			}else {
-				ErrorPanel errorPanel = new ErrorPanel();
-				errorPanel.setErrorMessage("Polygon is not property added. Try again");
+				ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.polygonErrorMessage());
 				Log.error("Polygon is not property added. Try again");
 				return;
 			}
@@ -743,8 +519,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 				answerProxy.setPoints(answerDialogbox.getImageRectangleViewer().getPoint());
 				Log.info("Points added");
 			}else {
-				ErrorPanel errorPanel = new ErrorPanel();
-				errorPanel.setErrorMessage("Rectangle is not property added. Try again");
+				ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.rectangleErrorMessage());
 				Log.error("Rectangle is not property added. Try again");
 				return;
 			}
@@ -762,9 +537,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 							answerProxy.setMediaPath(answerDialogbox.getSimpleImageViewer().getURL());
 						}else {
 							ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.imageViewerError());
-							/*ErrorPanel errorPanel = new ErrorPanel();
-							errorPanel.setErrorMessage();
-							Log.error("Error in ImageViewer. Try again");*/
+							Log.error("Error in imageview");
 							return;
 						}
 						
@@ -775,9 +548,8 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 						if(answerDialogbox.getAudioViewer() != null && answerDialogbox.getAudioViewer().getURL() != null && answerDialogbox.getAudioViewer().getURL().length() > 0) {
 							answerProxy.setMediaPath(answerDialogbox.getAudioViewer().getURL());
 						}else {
-							ErrorPanel errorPanel = new ErrorPanel();
-							errorPanel.setErrorMessage("Error in AudioViewer.Try again");
-							Log.error("Error in ImageViewer. Try again");
+							ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.audioViewerError());
+							Log.error("Error in audioview.");
 							return;
 						}
 						break;
@@ -787,32 +559,29 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 						if(answerDialogbox.getVideoViewer() != null && answerDialogbox.getVideoViewer().getURL() != null && answerDialogbox.getVideoViewer().getURL().length() > 0) {
 							answerProxy.setMediaPath(answerDialogbox.getVideoViewer().getURL());
 						}else {
-							ErrorPanel errorPanel = new ErrorPanel();
-							errorPanel.setErrorMessage("Error in VideoViewer.Try again");
-							Log.error("Error in ImageViewer. Try again");
+							ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.audioViewerError());
+							Log.error("Error in videoViewer. Try again");
 							return;
 						}
 						break;
 					}
 					default:
 					{
-						ErrorPanel errorPanel = new ErrorPanel();
-						errorPanel.setErrorMessage("Error in MultimediaType. Try again");
+						ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.unknownMultimediaType());
 						Log.error("Error in MultimediaType. Try again");
 						return;
 					}
 					}
 				}
-				
-				
-				
 						
 			}else {
-				ErrorPanel errorPanel = new ErrorPanel();
-				errorPanel.setErrorMessage(". Try again");
+				ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.unknownError());
+				Log.error("answerDialogbox is null");
 				return;
 			}
 			
+		}else if(question.getQuestionType() != null && QuestionTypes.Sort.equals(question.getQuestionType().getQuestionType()) == true) {
+			answerProxy.setAdditionalKeywords(answerDialogbox.getAdditionalKeywords().getValue());
 		}
 		
 		answerProxy.setComment(commentProxy);
@@ -863,12 +632,11 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	          
 			@Override
 			public void onSuccess(Void response) {
-				// TODO Auto-generated method stub
+				
 				ansRequest.persist().using(answerProxy).fire(new BMEReceiver<Void>(reciverMap) {
 
 					@Override
 					public void onSuccess(Void response) {
-						// TODO Auto-generated method stub
 						Log.info("fullSaved");
 			        	  
 		        		initAnswerView();
@@ -940,8 +708,6 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 
 	@Override
 	public void deleteAnswerClicked(AnswerProxy answer) {
-		
-		
 
 		requests.answerRequest().eliminateAnswer().using(answer).fire(new BMEReceiver<Void>(reciverMap){
 
@@ -1091,21 +857,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 				Log.info("Files area deleted");
 				
 			}
-			
-			/*@Override
-			public void onConstraintViolation(
-					Set<ConstraintViolation<?>> violations) {
-				Log.info("ConstraintViolation in files delete process");
-				super.onConstraintViolation(violations);
-			}
-			
-			@Override
-			public void onFailure(ServerFailure error) {
-				Log.info("error in files delete process");
-				super.onFailure(error);
-			}*/
 		});
-		
 	}
 
 	@Override
@@ -1161,5 +913,20 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			});
 
 		}
+	}
+
+	@Override
+	public void findAllAnswersPoints(Long questionId,final Function<List<String>, Void> function) {
+		
+		requests.answerRequest().findAllAnswersPoints(questionId).fire(new BMEReceiver<List<String>>() {
+
+			@Override
+			public void onSuccess(List<String> polygons) {
+		
+				function.apply(polygons);
+			}
+		});
+
+		
 	}
 }
