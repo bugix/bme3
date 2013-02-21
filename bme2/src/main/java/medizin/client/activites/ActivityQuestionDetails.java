@@ -30,6 +30,7 @@ import medizin.client.ui.view.question.QuestionDetailsViewImpl;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.ui.widget.resource.dndview.vo.State;
+import medizin.client.util.ClientUtility;
 import medizin.shared.QuestionTypes;
 import medizin.shared.i18n.BmeConstants;
 
@@ -480,7 +481,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		answerProxy.setAnswerText(answerDialogbox.getRichtTextHTML());
 		answerProxy.setValidity(answerDialogbox.getValidity().getValue());
 		commentProxy.setComment(answerDialogbox.getComment().getValue());
-		if(answerDialogbox.getSubmitToReviewerComitee().isChecked())
+		if(answerDialogbox.getSubmitToReviewerComitee().getValue())
 		{
 			answerProxy.setRewiewer(null);
 		}
@@ -582,6 +583,15 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			
 		}else if(question.getQuestionType() != null && QuestionTypes.Sort.equals(question.getQuestionType().getQuestionType()) == true) {
 			answerProxy.setAdditionalKeywords(answerDialogbox.getAdditionalKeywords().getValue());
+			answerDialogbox.getSequenceNumber().removeStyleName("higlight_onViolation");
+			if(ClientUtility.isNumber(answerDialogbox.getSequenceNumber().getValue())) {
+				answerProxy.setSequenceNumber(Integer.parseInt(answerDialogbox.getSequenceNumber().getValue(), 10));
+			}else {
+				ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.sequenceNumberError());
+				answerDialogbox.getSequenceNumber().addStyleName("higlight_onViolation");
+				Log.info("squence number is not valid number");
+				return;
+			}
 		}
 		
 		answerProxy.setComment(commentProxy);

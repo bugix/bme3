@@ -103,6 +103,9 @@ public class Answer {
     
     private String additionalKeywords;
     
+    @NotNull
+	private Integer sequenceNumber;
+    
 	public static List<Answer> findAnswersEntriesByQuestion(Long id, int start, int max){
         Question question = Question.findQuestion(id);
         if (question == null) throw new IllegalArgumentException("The question argument is required");

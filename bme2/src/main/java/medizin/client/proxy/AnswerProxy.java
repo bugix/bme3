@@ -82,5 +82,9 @@ public interface AnswerProxy extends EntityProxy {
 
     abstract void setAdditionalKeywords(String additionalKeywords);
 
+    abstract Integer getSequenceNumber();
+
+    abstract void setSequenceNumber(Integer sequenceNumber);
+
     abstract Integer getVersion();
 }

@@ -590,10 +590,17 @@ public class QuestionDetailsViewImpl extends Composite implements
 							public Void apply(Boolean flag) {
 						
 								if(flag != null && flag == true) {
+									
+									if(imageViewer != null && imageViewer.getImageUrl() != null && imageViewer.getImageUrl().length() > 0) {
+										// delete old files
+										Log.info("Delete old uploaded file " + imageViewer.getImageUrl().toString());
+										delegate.deleteUploadedFiles(Sets.newHashSet(imageViewer.getImageUrl().replace(GWT.getHostPageBaseURL(), "")));
+									}
+									
 									imageViewer.setUrl(filePath, questionTypeProxy.getImageWidth(), questionTypeProxy.getImageHeight(), type);	
 									delegate.updatePicturePathInQuestion(filePath);
 								}else {
-									ConfirmationDialogBox.showOkDialogBox("Error", "Only Upload image of size" + questionTypeProxy.getImageWidth() + "*" + questionTypeProxy.getImageHeight());
+									ConfirmationDialogBox.showOkDialogBox(constants.warning(),constants.imageSizeError().replace("(0)", questionTypeProxy.getImageWidth().toString()).replace("(1)", questionTypeProxy.getImageHeight().toString()));
 									delegate.deleteUploadedPicture(filePath);
 								}
 

@@ -283,7 +283,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 			@Override
 			public void onClick(ClickEvent event) {
 				
-				if(submitToReviewComitee.isChecked())
+				if(submitToReviewComitee.getValue() == true)
 				{
 					rewiewer.setEnabled(false);
 				}
@@ -630,6 +630,12 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 						
 								if(flag != null && flag == true) {
 									Log.info("picturePath : " + filePath);
+									if(imageViewer != null && imageViewer.getImageUrl() != null && imageViewer.getImageUrl().length() > 0) {
+										// delete old files
+										Log.info("Delete old uploaded file " + imageViewer.getImageUrl().toString());
+										delegate.deleteMediaFileFromDisk(imageViewer.getImageUrl().replace(GWT.getHostPageBaseURL(), ""));
+									}
+									
 									imageViewer.setUrl(filePath, questionTypeProxy.getImageWidth(), questionTypeProxy.getImageHeight(), type);	
 								} else {
 									ErrorPanel errorPanel = new ErrorPanel();

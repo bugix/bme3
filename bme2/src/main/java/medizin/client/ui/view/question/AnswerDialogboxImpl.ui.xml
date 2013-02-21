@@ -60,6 +60,15 @@
 					<g:TextArea ui:field='txtAdditionalKeyword' width="450px" visible="false"></g:TextArea>
 				</td>
 			</tr>
+			<tr id="sequenceNumber">
+				<td>
+					<g:Label ui:field="lblSequenceNumber" text="{cc.sequenceNumber}" visible="false"></g:Label> 
+				</td>
+				<td>
+					<g:TextBox ui:field="txtSequenceNumber" width="450px" visible="false"></g:TextBox>
+				</td>
+			</tr>
+			
 			<tr id="auther">
 				<td>
 					<g:Label styleName="{style.label}" text="{cc.auther}" ></g:Label>

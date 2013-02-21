@@ -330,4 +330,10 @@ public interface BmeConstants extends Constants {
 
 	public String deleteTopicConfirmation();
 	
+	public String imageSizeError();
+	
+	public String sequenceNumber();
+
+	public String sequenceNumberError();
+	
 }

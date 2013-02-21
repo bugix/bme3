@@ -8,6 +8,7 @@ import java.util.Map;
 
 import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionProxy;
+import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.shared.Validity;
 import medizin.client.ui.richtext.RichTextToolbar;
 import medizin.client.ui.widget.IconButton;
@@ -23,6 +24,7 @@ import medizin.client.ui.widget.resource.video.VideoViewer;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.EventHandlingValueHolderItem;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.simple.DefaultSuggestOracle;
+import medizin.client.util.ClientUtility;
 import medizin.client.util.Point;
 import medizin.client.util.PolygonPath;
 import medizin.shared.MultimediaType;
@@ -51,6 +53,7 @@ import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RichTextArea;
 import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.ValueListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -109,6 +112,12 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 	
 	@UiField
 	TextArea txtAdditionalKeyword;
+	
+	@UiField
+	Label lblSequenceNumber;
+	
+	@UiField
+	TextBox txtSequenceNumber;
 	
 	public BmeConstants constants = GWT.create(BmeConstants.class);
 
@@ -179,6 +188,8 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 		reciverMap.put("submitToReviewComitee", submitToReviewComitee);
 		reciverMap.put("comment", comment);
 		reciverMap.put("additionalKeywords", txtAdditionalKeyword);
+		reciverMap.put("sequenceNumber", txtSequenceNumber);
+		
 		/*reciverMap.put("mediaPath", RunTimeGenerated);*/
 
 		
@@ -273,11 +284,46 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 			upload.addResourceUploadedHandler(new ResourceUploadEventHandler() {
 				
 				@Override
-				public void onResourceUploaded(ResourceUploadEvent event) {
+				public void onResourceUploaded(final ResourceUploadEvent event) {
 					if(event.isResourceUploaded()) {
-						simpleImageViewer = new SimpleImageViewer(event.getFilePath());
-						viewContainer.clear();
-						viewContainer.add(simpleImageViewer);
+						final String url = new String(GWT.getHostPageBaseURL() + event.getFilePath());
+						final QuestionTypeProxy questionTypeProxy = question.getQuestionType();
+						if(questionTypeProxy != null && questionTypeProxy.getImageWidth() != null && questionTypeProxy.getImageHeight() != null) {
+						
+							Function<Boolean, Void> function = new Function<Boolean, Void>() {
+								
+								@Override
+								public Void apply(Boolean flag) {
+							
+									if(flag != null && flag == true) {
+										Log.info("image Path : " + url);
+										if(simpleImageViewer != null && simpleImageViewer.getURL() != null && simpleImageViewer.getURL().length() > 0) {
+											// delete old files
+											Log.info("Delete old uploaded file");
+											delegate.deleteUploadedFiles(Sets.newHashSet(simpleImageViewer.getURL().replace(GWT.getHostPageBaseURL(), "")));
+										}
+										simpleImageViewer = new SimpleImageViewer(url);
+										viewContainer.clear();
+										viewContainer.add(simpleImageViewer);
+									} else {
+										ConfirmationDialogBox.showOkDialogBox(constants.error(), constants.imageSizeError().replace("(0)", questionTypeProxy.getImageWidth().toString()).replace("(1)", questionTypeProxy.getImageHeight().toString()));
+										delegate.deleteUploadedFiles(Sets.newHashSet(event.getFilePath()));
+									}
+
+									return null;
+								}
+							};
+			
+							if(event.getWidth() != null && event.getHeight() != null) {
+								if(event.getWidth().equals(questionTypeProxy.getImageWidth()) && event.getHeight().equals(questionTypeProxy.getImageHeight())) {
+									function.apply(true);
+								}else {
+									function.apply(false);
+								}
+							}else {
+								ClientUtility.checkImageSize(url,questionTypeProxy.getImageWidth(),questionTypeProxy.getImageHeight(),function);
+							}
+						}
 					}					
 				}
 			});
@@ -300,6 +346,11 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 						if(event.getSoundMediaSize() != null && question != null && question.getQuestionType() != null && question.getQuestionType().getMaxBytes() != null) {
 							
 							if(event.getSoundMediaSize() <= question.getQuestionType().getMaxBytes()) {
+								if(audioViewer != null && audioViewer.getURL() != null && audioViewer.getURL().length() > 0) {
+									// delete old files
+									Log.info("Delete old uploaded file");
+									delegate.deleteUploadedFiles(Sets.newHashSet(audioViewer.getURL().replace(GWT.getHostPageBaseURL(), "")));
+								}
 								audioViewer = new AudioViewer(event.getFilePath());
 								viewContainer.clear();
 								viewContainer.add(audioViewer);
@@ -334,6 +385,11 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 						if(event.getVideoMediaSize() != null && question != null && question.getQuestionType() != null && question.getQuestionType().getMaxBytes() != null) {
 							
 							if(event.getVideoMediaSize() <= question.getQuestionType().getMaxBytes()) {
+								if(videoViewer != null && videoViewer.getURL() != null && videoViewer.getURL().length() > 0) {
+									// delete old files
+									Log.info("Delete old uploaded file");
+									delegate.deleteUploadedFiles(Sets.newHashSet(videoViewer.getURL().replace(GWT.getHostPageBaseURL(), "")));
+								}
 								videoViewer = new VideoViewer(event.getFilePath());
 								viewContainer.clear();
 								viewContainer.add(videoViewer);
@@ -405,6 +461,10 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 				lblAdditionalKeyword.setStyleName("label");
 				btnAdditionalKeyword.setVisible(true);
 				txtAdditionalKeyword.setVisible(true);
+				
+				lblSequenceNumber.setVisible(true);
+				lblSequenceNumber.setStyleName("label");
+				txtSequenceNumber.setVisible(true);
 			}
 		}
 		
@@ -577,5 +637,10 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 	@Override
 	public TextArea getAdditionalKeywords() {
 		return txtAdditionalKeyword;
+	}
+
+	@Override
+	public TextBox getSequenceNumber() {
+		return txtSequenceNumber;
 	}
 }
