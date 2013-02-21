@@ -40,8 +40,6 @@ public class ImagePolygonViewer extends Composite {
 	@UiField
 	Button btnClear;
 	
-	private boolean validPolygon = false;
-	private boolean btnPolyLineClicked = false;
 	private PolygonPath currentPolygonPath = null;
 	private Path currentPath = null;
 	private org.vaadin.gwtgraphics.client.Image vImage;
@@ -60,7 +58,6 @@ public class ImagePolygonViewer extends Composite {
 			return;
 		}
 		
-		
 		drawingArea = new DrawingArea(width, height);
 		vImage = new org.vaadin.gwtgraphics.client.Image(0, 0, width, height, imageUrl);
 		drawingArea.add(vImage);
@@ -74,7 +71,7 @@ public class ImagePolygonViewer extends Composite {
 			@Override
 			public void onMouseDown(MouseDownEvent event) {
 
-				if (btnPolyLineClicked == true) {
+				if (btnPolyLine.isEnabled() == false) {
 					int x = event.getRelativeX(event.getRelativeElement());
 					int y = event.getRelativeY(event.getRelativeElement());
 					
@@ -104,7 +101,6 @@ public class ImagePolygonViewer extends Composite {
 			drawingArea.bringToFront(path);			
 		}else if(startPoint.withinDeltaRange(point)){
 			path.close();
-			validPolygon = true;
 		} else {
 			path.lineTo(point.getX(), point.getY());
 		}
@@ -128,27 +124,23 @@ public class ImagePolygonViewer extends Composite {
 	@UiHandler("btnPolyLine")
 	void clickedPolyLine(ClickEvent event) {
 		btnPolyLine.setEnabled(false);
-		btnPolyLineClicked = true;
 		currentPolygonPath = new PolygonPath();
-		validPolygon = false;
 	}
 	
 	@UiHandler("btnClear")
 	void clearBtnclicked(ClickEvent event) {
 		btnPolyLine.setEnabled(true);
-		btnPolyLineClicked = false;
 		currentPolygonPath = null;
 		if(currentPath != null) {
 			currentPath.close();
 			drawingArea.remove(currentPath);
 		}
 		currentPath = null;
-		validPolygon = true;
 	}
 	
 	private void addNewPath(Point point) {
 		Log.info("client " + point) ;
-		validPolygon = false;
+
 		if (currentPath == null) {
 			currentPath = new Path(point.getX(), point.getY());
 			currentPath.setFillColor("#fa7575"); // red
@@ -159,22 +151,24 @@ public class ImagePolygonViewer extends Composite {
 			
 			if(currentPolygonPath.getPoint(0).withinDeltaRange(point)) {
 				currentPath.close();
-				validPolygon = true;
 				currentPolygonPath.addPoint(point);
+				currentPolygonPath.closed();
 				return;
-			}else {
+			}else if(currentPolygonPath.isClosed() == false){
 				currentPath.lineTo(point.getX(), point.getY());
+			}else {
+				Log.info("Do nothing");
 			}
 			
 		}
 		currentPolygonPath.addPoint(point);
 		
-		if(currentPolygonPath.checkForPolygon() == false) {
+		if(currentPolygonPath.isClosed() == false && currentPolygonPath.checkForPolygon() == false) {
 		 	currentPath.close();
 			drawingArea.remove(currentPath);
 			btnPolyLine.setEnabled(true);
-			btnPolyLineClicked = false;
-			validPolygon = true;
+			currentPolygonPath = null;
+			currentPath = null;
 		}
 	}
 
@@ -187,6 +181,6 @@ public class ImagePolygonViewer extends Composite {
 	}
 
 	public boolean isValidPolygon() {
-		return validPolygon;
+		return currentPolygonPath != null && currentPolygonPath.isClosed();
 	}
 }

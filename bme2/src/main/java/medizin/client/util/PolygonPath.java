@@ -10,7 +10,8 @@ import com.google.common.collect.Lists;
 
 public class PolygonPath {
 
-	private final List<Point> points; 
+	private final List<Point> points;
+	private boolean close = false; 
 	
 	public PolygonPath() {
 		points = new ArrayList<Point>();
@@ -18,15 +19,17 @@ public class PolygonPath {
 	
 	
 	public void addPoint(Point p) {
-		points.add(p);
+		if(isClosed() == false) {
+			points.add(p);	
+		}
 	}
 	
 	public void addPoint(int x,int y) {
-		points.add(new Point(x, y));
+		addPoint(new Point(x, y));
 	}
 	
 	public void setPoint(Point p) {
-		points.add(p);
+		addPoint(p);
 	}
 	public Point getPoint(int index) {
 		return points.get(index);
@@ -179,5 +182,15 @@ public class PolygonPath {
 		}
 */		
 		return path;
+	}
+
+
+	public void closed() {
+		this.close = true;
+	}
+
+
+	public boolean isClosed() {
+		return this.close;
 	}
 }
