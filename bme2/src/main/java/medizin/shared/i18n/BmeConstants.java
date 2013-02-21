@@ -284,4 +284,18 @@ public interface BmeConstants extends Constants {
 	public String answerTextErrorMessage();
 
 	public String imageViewerError();
+
+	public String enterAllValue();
+
+	public String enterAllImageKeyValue();
+
+	public String enterAllAreaValue();
+
+	public String enterAllLongTextValue();
+
+	public String enterAllMatrixValue();
+
+	public String enterAllMCQValue();
+	
+	
 }

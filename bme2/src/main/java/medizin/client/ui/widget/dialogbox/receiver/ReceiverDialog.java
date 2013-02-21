@@ -48,7 +48,7 @@ public class ReceiverDialog extends DialogBox {
 			}
 		});
 
-		panel.setWidth("500px");
+		panel.setWidth("350px");
 		panel.add(html);
 		panel.add(HPbtn);
 	}

@@ -1,10 +1,12 @@
 package medizin.client.ui.view;
 
 import java.util.Arrays;
+import java.util.Map;
 
 import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.ui.widget.IconButton;
+import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.shared.MultimediaType;
 import medizin.shared.QuestionTypes;
 import medizin.shared.SelectionType;
@@ -22,7 +24,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
@@ -30,7 +31,6 @@ import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.ValueListBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.web.bindery.requestfactory.gwt.ui.client.EntityProxyKeyProvider;
 
 public class QuestiontypesEditViewImpl extends Composite implements QuestiontypesEditView/*, Editor<QuestionTypeProxy>*/  {
 
@@ -431,7 +431,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
     	if (shortNameTxtbox.getText().equals("") || longNameTxtbox.getText().equals("") || descriptionTxtbox.getText().equals(""))
     	{
     		flag = true;
-    		Window.alert("Enter all Value.");
+    		ConfirmationDialogBox.showOkDialogBox(constants.warning(),constants.enterAllValue());
     		return;
     	}
     	
@@ -441,7 +441,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
      			   questionLengthTxtbox.getText().equals("") || answerLengthTxtbox.getText().equals("") || answerDiffTxtbox.getText().equals(""))
      	   {
      		  flag = true;
-     		  Window.alert("Enter all Value.");
+     		 ConfirmationDialogBox.showOkDialogBox(constants.warning(),constants.enterAllValue());     		  
      	   }
         }
         if (questionTypeListBox.getValue().equals(QuestionTypes.Imgkey))
@@ -451,7 +451,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
         			imageLengthTxtbox.getText().equals("") || imageProportionTxtbox.getText().equals(""))
         	{
         		flag = true;
-        		Window.alert("Enter all Image Key Value.");
+        		ConfirmationDialogBox.showOkDialogBox(constants.warning(),constants.enterAllImageKeyValue());        		
         	}
      	   
         }
@@ -461,7 +461,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
         			linearPercentageTxtbox.getText().equals(""))
         	{
         		flag = true;
-        		Window.alert("Enter all Area Value.");
+        		ConfirmationDialogBox.showOkDialogBox(constants.warning(),constants.enterAllAreaValue());        		
         	}
         }
         if (questionTypeListBox.getValue().equals(QuestionTypes.LongText))
@@ -469,7 +469,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
         	if(minLengthTxtbox.getText().equals("") || maxLengthTxtbox.getText().equals("") || minWordCountTxtbox.getText().equals("") || maxWordCountTxtbox.getText().equals(""))
         	{
         		flag = true;
-        		Window.alert("Enter all LongText Value.");
+        		ConfirmationDialogBox.showOkDialogBox(constants.warning(),constants.enterAllLongTextValue());         		
         	}
         }
         if (questionTypeListBox.getValue().equals(QuestionTypes.Matrix))
@@ -477,7 +477,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
      	   if (maxLengthTxtbox.getText().equals(""))
      	   {
      		  flag = true;
-     		  Window.alert("Enter all Matrix Value.");
+     		 ConfirmationDialogBox.showOkDialogBox(constants.warning(),constants.enterAllMatrixValue());     		  
      	   }
         }
         if (questionTypeListBox.getValue().equals(QuestionTypes.MCQ))
@@ -487,7 +487,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
      			 thumbWidthTxtbox.getText().equals("") || thumbHeightTxtbox.getText().equals("") || maxBytesTxtbox.getText().equals(""))
      	   {
      		  flag = true;
-     		  Window.alert("Enter all MCQ Value.");
+     		 ConfirmationDialogBox.showOkDialogBox(constants.warning(),constants.enterAllMCQValue());     		  
      	   }
         }
         
@@ -579,10 +579,42 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
        
     }
 
-	public QuestiontypesEditViewImpl() {
+	public QuestiontypesEditViewImpl(Map<String, Widget> reciverMap) {
 		
 		initWidget(uiBinder.createAndBindUi(this));
 		
+		reciverMap.put("shortName",shortNameTxtbox );
+		reciverMap.put("longName", longNameTxtbox);
+		reciverMap.put("description", descriptionTxtbox);
+		reciverMap.put("institution", instituteListBox);
+		reciverMap.put("questionType", questionTypeListBox);
+		reciverMap.put("sumAnswer",sumAnswerTxtbox );
+		reciverMap.put("sumTrueAnswer", sumTrueAnswerTxtbox);
+		reciverMap.put("sumFalseAnswer", sumFalseAnswerTxtbox);
+		reciverMap.put("questionLength", questionLengthTxtbox);
+		reciverMap.put("answerLength", answerLengthTxtbox);
+		reciverMap.put("diffBetAnswer", answerDiffTxtbox);
+		reciverMap.put("queHaveImage", queHaveImgChkBox);
+		reciverMap.put("queHaveVideo", queHaveVideoChkBox);
+		reciverMap.put("queHaveSound", queHaveSoundChkBox);
+		reciverMap.put("keywordCount", keywordCountTxtbox);
+		reciverMap.put("minAutoCompleteLetter", minLetterForAutoCompTxtbox);
+		reciverMap.put("lengthShortAnswer",shortAnswerLengthTxtbox );
+		reciverMap.put("imageWidth", imageWidthTxtbox);
+		reciverMap.put("imageHeight", imageLengthTxtbox);
+		reciverMap.put("imageProportion", imageProportionTxtbox);
+		reciverMap.put("linearPercentage", linearPercentageTxtbox);
+		reciverMap.put("multimediaType", multimediaTypeListBox);
+		reciverMap.put("selectionType", selectionTypeListBox);
+		reciverMap.put("columns", columnTxtbox);
+		reciverMap.put("thumbWidth",thumbWidthTxtbox );
+		reciverMap.put("thumbHeight", thumbHeightTxtbox);
+		reciverMap.put("maxBytes", maxBytesTxtbox);
+		reciverMap.put("minLength", minLengthTxtbox);
+		reciverMap.put("maxLength", maxLengthTxtbox);
+		reciverMap.put("minWordCount", minWordCountTxtbox);
+		reciverMap.put("maxWordCount", maxWordCountTxtbox);
+				
 		questionTypePanel.selectTab(0);
 		questionTypePanel.getTabBar().setTabText(0, constants.manageQuestionType());
 		

@@ -8,6 +8,7 @@ import medizin.client.ui.widget.Sorting;
 import medizin.client.place.PlaceQuestiontypes;
 import medizin.client.place.PlaceQuestiontypesDetails;
 import medizin.client.place.PlaceQuestiontypesDetails.Operation;
+import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.proxy.QuestionTypeProxy;
 
@@ -30,7 +31,6 @@ import com.google.gwt.view.client.RangeChangeEvent.Handler;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
-import com.google.web.bindery.requestfactory.shared.Receiver;
 
 public class ActivityQuestiontypes extends AbstractActivityWrapper implements QuestiontypesView.Presenter, QuestiontypesView.Delegate {
 
@@ -91,8 +91,11 @@ public class ActivityQuestiontypes extends AbstractActivityWrapper implements Qu
 	public void onStop() {
 //		((SlidingPanel)widget).remove(view.asWidget());
 		activityManger.setDisplay(null);
-		view.setDelegate(null);
-		view = null;
+		if(view != null) {
+			view.setDelegate(null);
+			view = null;	
+		}
+		
 		
 		if (rangeChangeHandler != null)
 		rangeChangeHandler.removeHandler();
@@ -211,7 +214,7 @@ public class ActivityQuestiontypes extends AbstractActivityWrapper implements Qu
 	{
 		final Range range =table.getVisibleRange();
 		
-		requests.questionTypeRequest().countAllQuestionType(searchValue).fire(new  Receiver<Long>() {
+		requests.questionTypeRequest().countAllQuestionType(searchValue).fire(new  BMEReceiver<Long>() {
 
 			@Override
 			public void onSuccess(Long arg0) {
@@ -220,7 +223,7 @@ public class ActivityQuestiontypes extends AbstractActivityWrapper implements Qu
 				table.setRowCount(arg0.intValue());
 				
 			//	System.out.println("Start: " + range.getStart() + " Length: " + range.getLength());
-				requests.questionTypeRequest().findAllQuestionType(range.getStart(),range.getLength(),sortname,sortorder,searchValue).fire(new Receiver<List<QuestionTypeProxy>>() {
+				requests.questionTypeRequest().findAllQuestionType(range.getStart(),range.getLength(),sortname,sortorder,searchValue).fire(new BMEReceiver<List<QuestionTypeProxy>>() {
 
 					@Override
 					public void onSuccess(List<QuestionTypeProxy> arg0) {
@@ -237,7 +240,7 @@ public class ActivityQuestiontypes extends AbstractActivityWrapper implements Qu
 			
 			
 			final Range range =table.getVisibleRange();
-			requests.questionTypeRequest().countAllQuestionType(searchValue).fire(new  Receiver<Long>() {
+			requests.questionTypeRequest().countAllQuestionType(searchValue).fire(new  BMEReceiver<Long>() {
 
 				@Override
 				public void onSuccess(Long response) {
@@ -246,7 +249,7 @@ public class ActivityQuestiontypes extends AbstractActivityWrapper implements Qu
 					table.setRowCount(response.intValue());
 					
 				//	System.out.println("Start: " + range.getStart() + " Length: " + range.getLength());
-					requests.questionTypeRequest().findAllQuestionType(range.getStart(),range.getLength(),sortname,sortorder,searchValue).fire(new Receiver<List<QuestionTypeProxy>>() {
+					requests.questionTypeRequest().findAllQuestionType(range.getStart(),range.getLength(),sortname,sortorder,searchValue).fire(new BMEReceiver<List<QuestionTypeProxy>>() {
 
 						@Override
 						public void onSuccess(List<QuestionTypeProxy> arg0) {
@@ -375,7 +378,7 @@ public class ActivityQuestiontypes extends AbstractActivityWrapper implements Qu
 //
 //			fireRangeRequest(range, callback);
 			
-			requests.questionTypeRequest().findQuestionTypeEntries(range.getStart(), range.getLength()).with(view.getPaths()).fire(new Receiver<List<QuestionTypeProxy>>() {
+			requests.questionTypeRequest().findQuestionTypeEntries(range.getStart(), range.getLength()).with(view.getPaths()).fire(new BMEReceiver<List<QuestionTypeProxy>>() {
 				@Override
 				public void onSuccess(List<QuestionTypeProxy> values) {
 					if (view == null) {

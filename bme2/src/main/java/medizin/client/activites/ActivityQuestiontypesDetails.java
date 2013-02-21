@@ -1,57 +1,20 @@
 package medizin.client.activites;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import medizin.client.ui.ErrorPanel;
-import medizin.client.ui.SlidingPanel;
-import medizin.client.ui.McAppConstant;
-
-import medizin.client.ui.view.EventView;
-import medizin.client.ui.view.EventViewImpl;
+import medizin.client.factory.receiver.BMEReceiver;
+import medizin.client.factory.request.McAppRequestFactory;
+import medizin.client.place.PlaceQuestiontypes;
+import medizin.client.place.PlaceQuestiontypesDetails;
+import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.ui.view.QuestiontypesDetailsView;
 import medizin.client.ui.view.QuestiontypesDetailsViewImpl;
 
-import medizin.client.place.PlaceAssesmentDetails;
-import medizin.client.place.PlaceQuestiontypes;
-import medizin.client.place.PlaceQuestiontypesDetails;
-import medizin.client.place.PlaceQuestiontypesDetails.Operation;
-import medizin.client.factory.request.McAppRequestFactory;
-
-import medizin.client.proxy.QuestionTypeProxy;
-
-import medizin.client.request.QuestionEventRequest;
-
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.activity.shared.AbstractActivity;
-import com.google.gwt.activity.shared.Activity;
-import com.google.gwt.activity.shared.ActivityManager;
-import com.google.gwt.activity.shared.ActivityMapper;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceChangeEvent;
 import com.google.gwt.place.shared.PlaceController;
-import com.google.web.bindery.requestfactory.gwt.client.RequestFactoryEditorDriver;
-import com.google.web.bindery.requestfactory.shared.EntityProxyId;
-import com.google.web.bindery.requestfactory.shared.Receiver;
-import com.google.web.bindery.requestfactory.shared.Request;
-import com.google.web.bindery.requestfactory.shared.RequestContext;
-import com.google.web.bindery.requestfactory.shared.ServerFailure;
-import com.google.web.bindery.requestfactory.shared.Violation;
-import com.google.gwt.user.cellview.client.AbstractHasData;
-import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
-import com.google.gwt.view.client.HasData;
-import com.google.gwt.view.client.ProvidesKey;
-import com.google.gwt.view.client.Range;
-import com.google.gwt.view.client.RangeChangeEvent;
-import com.google.gwt.view.client.SelectionChangeEvent;
-import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
 
 public class ActivityQuestiontypesDetails extends AbstractActivityWrapper implements QuestiontypesDetailsView.Presenter, QuestiontypesDetailsView.Delegate {
@@ -123,7 +86,7 @@ public class ActivityQuestiontypesDetails extends AbstractActivityWrapper implem
 		
 		view.setDelegate(this);
 		
-		requests.find(questiontypePlace.getProxyId()).with("institution").fire(new Receiver<Object>() {
+		requests.find(questiontypePlace.getProxyId()).with("institution").fire(new BMEReceiver<Object>() {
 
 			@Override
 			public void onSuccess(Object response) {
@@ -135,7 +98,7 @@ public class ActivityQuestiontypesDetails extends AbstractActivityWrapper implem
 				
 			}
 			
-	          public void onFailure(ServerFailure error){
+	         /* public void onFailure(ServerFailure error){
 	        	  ErrorPanel errorPanel = new ErrorPanel();
 	        	  errorPanel.setErrorMessage(error.getMessage());
 					Log.error(error.getMessage());
@@ -154,7 +117,7 @@ public class ActivityQuestiontypesDetails extends AbstractActivityWrapper implem
 					
 
 					
-				}
+				}*/
 		    });
 
 
@@ -193,7 +156,7 @@ public class ActivityQuestiontypesDetails extends AbstractActivityWrapper implem
 	@Override
 	public void deleteClicked() {
 		
-		requests.questionTypeRequest().remove().using(questionType).fire(new Receiver<Void>() {
+		requests.questionTypeRequest().remove().using(questionType).fire(new BMEReceiver<Void>() {
 
             public void onSuccess(Void ignore) {
             	Log.debug("Sucessfull deleted");
@@ -201,7 +164,7 @@ public class ActivityQuestiontypesDetails extends AbstractActivityWrapper implem
             	
             }
             
-            @Override
+          /*  @Override
             public void onFailure(ServerFailure error){
           	  ErrorPanel errorPanel = new ErrorPanel();
           	  errorPanel.setErrorMessage(error.getMessage());
@@ -221,7 +184,7 @@ public class ActivityQuestiontypesDetails extends AbstractActivityWrapper implem
   				
 
   				
-  			}
+  			}*/
             
         });
 		

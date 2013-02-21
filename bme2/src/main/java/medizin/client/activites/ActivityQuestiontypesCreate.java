@@ -1,45 +1,30 @@
 package medizin.client.activites;
 
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
-import medizin.client.ui.ErrorPanel;
-import medizin.client.ui.McAppConstant;
+import medizin.client.factory.receiver.BMEReceiver;
+import medizin.client.factory.request.McAppRequestFactory;
+import medizin.client.place.PlaceQuestiontypes;
+import medizin.client.place.PlaceQuestiontypesDetails;
+import medizin.client.place.PlaceUserDetails;
+import medizin.client.proxy.InstitutionProxy;
+import medizin.client.proxy.QuestionTypeProxy;
+import medizin.client.request.QuestionTypeRequest;
 import medizin.client.ui.view.QuestiontypesEditView;
 import medizin.client.ui.view.QuestiontypesEditViewImpl;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxOkButtonEvent;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxOkButtonEventHandler;
-import medizin.client.place.PlaceQuestion;
-import medizin.client.place.PlaceQuestionDetails;
-import medizin.client.place.PlaceQuestiontypes;
-import medizin.client.place.PlaceQuestiontypesDetails;
-import medizin.client.place.PlaceUserDetails;
-import medizin.client.factory.request.McAppRequestFactory;
-import medizin.client.proxy.InstitutionProxy;
-import medizin.client.proxy.QuestionTypeProxy;
-import medizin.client.request.QuestionTypeRequest;
-import medizin.client.shared.Operation;
 import medizin.shared.QuestionTypes;
 import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.activity.shared.AbstractActivity;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceChangeEvent;
 import com.google.gwt.place.shared.PlaceController;
-import com.google.web.bindery.requestfactory.gwt.client.RequestFactoryEditorDriver;
-import com.google.web.bindery.requestfactory.shared.EntityProxyId;
-import com.google.web.bindery.requestfactory.shared.Receiver;
-import com.google.web.bindery.requestfactory.shared.Request;
-import com.google.web.bindery.requestfactory.shared.RequestContext;
-import com.google.web.bindery.requestfactory.shared.ServerFailure;
-import com.google.web.bindery.requestfactory.shared.Violation;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 
@@ -116,7 +101,7 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 
 	@Override
 	public void start2(AcceptsOneWidget widget, EventBus eventBus) {
-		QuestiontypesEditView questionTypeDetailsView = new QuestiontypesEditViewImpl();
+		QuestiontypesEditView questionTypeDetailsView = new QuestiontypesEditViewImpl(reciverMap);
 
 		questionTypeDetailsView.setPresenter(this);
 
@@ -130,14 +115,14 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 			}
 		});
 
-		requests.institutionRequest().findAllInstitutions().fire(new Receiver<List<InstitutionProxy>>() {
+		requests.institutionRequest().findAllInstitutions().fire(new BMEReceiver<List<InstitutionProxy>>() {
 
 			@Override
 			public void onSuccess(List<InstitutionProxy> response) {
 
 				view.getInstituteListBox().setAcceptableValues(response);
 
-				requests.institutionRequest().myGetInstitutionToWorkWith().fire(new Receiver<InstitutionProxy>() {
+				requests.institutionRequest().myGetInstitutionToWorkWith().fire(new BMEReceiver<InstitutionProxy>() {
 
 					@Override
 					public void onSuccess(InstitutionProxy response) {
@@ -154,11 +139,11 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 		if(this.operation==PlaceQuestiontypesDetails.Operation.EDIT){
 
 			Log.info("edit");			
-			requests.find(questiontypePlace.getProxyId()).with("institution").fire(new Receiver<Object>() {
-
+			requests.find(questiontypePlace.getProxyId()).with("institution").fire(new BMEReceiver<Object>() {
+/*
 				public void onFailure(ServerFailure error){
 					Log.error(error.getMessage());
-				}
+				}*/
 				@Override
 				public void onSuccess(Object response) {
 					if(response instanceof QuestionTypeProxy){
@@ -244,7 +229,6 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 				}
 
 
-
 				final QuestionTypes selectedQuestionType = view.getQuestionTypeListBox().getValue();
 				questionTypeProxy.setShortName(view.getShortNameTxtbox().getValue());
 				questionTypeProxy.setLongName(view.getLongNameTxtbox().getValue());
@@ -319,7 +303,7 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 
 				final QuestionTypeProxy finalQuestionTypeProxy = questionTypeProxy;
 
-				questionTypeRequest.persist().using(questionTypeProxy).fire(new Receiver<Void>() {
+				questionTypeRequest.persist().using(questionTypeProxy).fire(new BMEReceiver<Void>(reciverMap) {
 
 					public void onSuccess(Void response) {
 						view.setNullValue(selectedQuestionType);
