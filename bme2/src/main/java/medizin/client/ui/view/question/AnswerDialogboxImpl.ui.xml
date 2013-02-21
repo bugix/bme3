@@ -68,7 +68,8 @@
 					<div class="{style.label}">Rewiewer:</div>
 				</td>
 				<td>
-					<g:ValueListBox ui:field="rewiewer" />
+					<!-- <g:ValueListBox ui:field="rewiewer" /> -->
+					<i:DefaultSuggestBox ui:field="rewiewer"></i:DefaultSuggestBox>
 				</td>
 			</tr>
 

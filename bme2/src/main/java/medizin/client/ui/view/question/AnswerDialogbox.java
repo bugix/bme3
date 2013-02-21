@@ -60,8 +60,6 @@ public interface AnswerDialogbox extends IsWidget {
 
 	ValueListBox<Validity> getValidity();
 
-	ValueListBox<PersonProxy> getRewiewer();
-
 	void setAutherPickerValues(Collection<PersonProxy> values,PersonProxy logedUser);
 
 	DefaultSuggestBox<PersonProxy, EventHandlingValueHolderItem<PersonProxy>> getAutherSuggestBox();
@@ -93,5 +91,7 @@ VerticalPanel getViewContainer();
 	VideoViewer getVideoViewer();
 
 	RichTextArea getRichtTextArea();
+
+	DefaultSuggestBox<PersonProxy, EventHandlingValueHolderItem<PersonProxy>> getReviewerSuggestBox();
 
 }

@@ -90,6 +90,11 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*
 	@Ignore
 	public DefaultSuggestBox<PersonProxy, EventHandlingValueHolderItem<PersonProxy>> auther;
 	
+	@UiField
+	@Ignore
+	public DefaultSuggestBox<PersonProxy, EventHandlingValueHolderItem<PersonProxy>> rewiewer;
+	
+	
 	public BmeConstants constants = GWT.create(BmeConstants.class);
 
 	private ImagePolygonViewer imagePolygonViewer;
@@ -148,7 +153,8 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*
 		
 		reciverMap.put("answerText",answerTextArea);
 		reciverMap.put("autor", auther.getTextField().advancedTextBox);
-		reciverMap.put("rewiewer", rewiewer);
+		reciverMap.put("rewiewer", rewiewer.getTextField().advancedTextBox);
+		//reciverMap.put("rewiewer", rewiewer);
 		reciverMap.put("validity", validity);
 		reciverMap.put("submitToReviewComitee", submitToReviewComitee);
 		reciverMap.put("comment", comment);
@@ -230,11 +236,12 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*
 
 	}
 
-	@UiField(provided = true)
+	
+	/*@UiField(provided = true)
 	ValueListBox<PersonProxy> rewiewer = new ValueListBox<PersonProxy>(
 			PersonProxyRenderer.instance(),
 			new EntityProxyKeyProvider<PersonProxy>());
-
+*/
 	@UiField(provided = true)
 	ValueListBox<Validity> validity = new ValueListBox<Validity>(
 			new AbstractRenderer<medizin.client.shared.Validity>() {
@@ -256,12 +263,13 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*
 		return validity;
 	}
 
-	
 	@Override
-	public ValueListBox<PersonProxy> getRewiewer()
-	{
+	public DefaultSuggestBox<PersonProxy, EventHandlingValueHolderItem<PersonProxy>> getReviewerSuggestBox() {
+		// TODO Auto-generated method stub
 		return rewiewer;
 	}
+	
+	
 	
 	@Override
 	public void setAutherPickerValues(Collection<PersonProxy> values, PersonProxy logedUser) {
@@ -296,10 +304,30 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*
 		auther.setEnabled(false);
 	}
 	auther.setWidth(150);
+	rewiewer.setWidth(150);
 	}
 	@Override
 	public void setRewiewerPickerValues(Collection<PersonProxy> values) {
-		rewiewer.setAcceptableValues(values);
+		DefaultSuggestOracle<PersonProxy> suggestOracle1 = (DefaultSuggestOracle<PersonProxy>) rewiewer.getSuggestOracle();
+		suggestOracle1.setPossiblilities((List<PersonProxy>) values);
+		 /* Collection<MyObjectType> myCollection = ...;
+		 List<MyObjectType> list = new ArrayList<MyObjectType>(myCollection);*/
+		rewiewer.setSuggestOracle(suggestOracle1);
+		rewiewer.setRenderer(new AbstractRenderer<PersonProxy>() {
+
+			@Override
+			public String render(PersonProxy object) {
+				// TODO Auto-generated method stub
+				if(object!=null)
+				{
+				return object.getName() + " "+ object.getPrename();
+				}
+				else
+				{
+					return "";
+				}
+			}
+		});
 	}
 
 	@Override
