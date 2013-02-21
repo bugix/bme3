@@ -1,54 +1,35 @@
 package medizin.client.activites;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import medizin.client.ui.ErrorPanel;
-import medizin.client.ui.SlidingPanel;
-import medizin.client.ui.McAppConstant;
-
+import medizin.client.factory.receiver.BMEReceiver;
+import medizin.client.factory.request.McAppRequestFactory;
+import medizin.client.place.PlaceInstitutionEvent;
+import medizin.client.proxy.InstitutionProxy;
+import medizin.client.proxy.QuestionEventProxy;
+import medizin.client.request.QuestionEventRequest;
 import medizin.client.ui.view.EventView;
 import medizin.client.ui.view.EventViewImpl;
 
-import medizin.client.place.PlaceInstitutionEvent;
-import medizin.client.factory.request.McAppRequestFactory;
-
-import medizin.client.proxy.InstitutionProxy;
-import medizin.client.proxy.QuestionEventProxy;
-
-import medizin.client.request.QuestionEventRequest;
-
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.activity.shared.AbstractActivity;
-import com.google.gwt.activity.shared.Activity;
-import com.google.gwt.activity.shared.ActivityManager;
-import com.google.gwt.activity.shared.ActivityMapper;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceChangeEvent;
 import com.google.gwt.place.shared.PlaceController;
-import com.google.web.bindery.requestfactory.gwt.client.RequestFactoryEditorDriver;
-import com.google.web.bindery.requestfactory.shared.EntityProxyId;
-import com.google.web.bindery.requestfactory.shared.Receiver;
-import com.google.web.bindery.requestfactory.shared.Request;
-import com.google.web.bindery.requestfactory.shared.RequestContext;
-import com.google.web.bindery.requestfactory.shared.ServerFailure;
-import com.google.web.bindery.requestfactory.shared.Violation;
 import com.google.gwt.user.cellview.client.AbstractHasData;
 import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
-import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
+import com.google.web.bindery.requestfactory.shared.EntityProxyId;
+import com.google.web.bindery.requestfactory.shared.Request;
 
 public class ActivityInstitutionEvent extends AbstractActivityWrapper implements EventView.Presenter, EventView.Delegate {
 
@@ -107,7 +88,7 @@ public class ActivityInstitutionEvent extends AbstractActivityWrapper implements
 	
 	@Override
 	public void start2(AcceptsOneWidget widget, EventBus eventBus) {
-		EventView eventView = new EventViewImpl();
+		EventView eventView = new EventViewImpl(reciverMap);
 		eventView.setName("hallo");
 		eventView.setPresenter(this);
 		this.widget = widget;
@@ -123,11 +104,11 @@ public class ActivityInstitutionEvent extends AbstractActivityWrapper implements
 		});
 		//init();
 		
-		requests.find(eventPlace.getProxyId()).fire(new Receiver<Object>() {
+		requests.find(eventPlace.getProxyId()).fire(new BMEReceiver<Object>() {
 
-			public void onFailure(ServerFailure error){
+			/*public void onFailure(ServerFailure error){
 				Log.error(error.getMessage());
-			}
+			}*/
 			@Override
 			public void onSuccess(Object response) {
 				if(response instanceof InstitutionProxy){
@@ -176,7 +157,7 @@ public class ActivityInstitutionEvent extends AbstractActivityWrapper implements
         return requests.questionEventRequest().findQuestionEventsByInstitutionNonRoo(institution.getId(), range.getStart(), range.getLength());
     }
 
-    protected void fireCountRequest(Receiver<java.lang.Long> callback) {
+    protected void fireCountRequest(BMEReceiver<java.lang.Long> callback) {
     	requests.questionEventRequest().countQuestionEventsByInstitutionNonRoo(institution.getId()).fire(callback);
     }
     
@@ -184,7 +165,7 @@ public class ActivityInstitutionEvent extends AbstractActivityWrapper implements
 
 		this.institution = institution;
 		
-		fireCountRequest(new Receiver<Long>() {
+		fireCountRequest(new BMEReceiver<Long>() {
 			@Override
 			public void onSuccess(Long response) {
 				if (view == null) {
@@ -221,7 +202,7 @@ public class ActivityInstitutionEvent extends AbstractActivityWrapper implements
 		Log.debug("Im ActivityInsitutionEvent.onRangeChanged");
 		final Range range = table.getVisibleRange();
 
-		final Receiver<List<QuestionEventProxy>> callback = new Receiver<List<QuestionEventProxy>>() {
+		final BMEReceiver<List<QuestionEventProxy>> callback = new BMEReceiver<List<QuestionEventProxy>>() {
 			@Override
 			public void onSuccess(List<QuestionEventProxy> values) {
 				if (view == null) {
@@ -254,7 +235,7 @@ public class ActivityInstitutionEvent extends AbstractActivityWrapper implements
 	}
 	
 	private void getLastPage() {
-		fireCountRequest(new Receiver<Long>() {
+		fireCountRequest(new BMEReceiver<Long>() {
 			@Override
 			public void onSuccess(Long response) {
 				if (view == null) {
@@ -277,7 +258,7 @@ public class ActivityInstitutionEvent extends AbstractActivityWrapper implements
 		});
 	}
 	private void fireRangeRequest(final Range range,
-            final Receiver<List<QuestionEventProxy>> callback) {
+            final BMEReceiver<List<QuestionEventProxy>> callback) {
 			createRangeRequest(range).with(view.getPaths()).fire(callback);
 }
 	
@@ -310,14 +291,14 @@ public class ActivityInstitutionEvent extends AbstractActivityWrapper implements
                 placeController.goTo(getBackButtonPlace());
             }
         });*/
-		requests.questionEventRequest().remove().using(questionEvent).fire(new Receiver<Void>() {
+		requests.questionEventRequest().remove().using(questionEvent).fire(new BMEReceiver<Void>(reciverMap) {
 
             public void onSuccess(Void ignore) {
             	Log.debug("Sucessfull deleted");
             	init(institution);
             	
             }
-            @Override
+           /* @Override
 			public void onFailure(ServerFailure error) {
 					Log.warn(McAppConstant.ERROR_WHILE_DELETE + " in Institution:Event -" + error.getMessage());
 					if(error.getMessage().contains("ConstraintViolationException")){
@@ -339,7 +320,7 @@ public class ActivityInstitutionEvent extends AbstractActivityWrapper implements
 			        	  erorPanel.setWarnMessage(message);
 
 				
-			}
+			}*/
             
         });
 		
@@ -360,7 +341,7 @@ public class ActivityInstitutionEvent extends AbstractActivityWrapper implements
 		questionEvent.setInstitution(institution);
 //		questionEvent.setVersion(0);
 
-		request.persist().using(questionEvent).fire(new Receiver<Void>() {
+		request.persist().using(questionEvent).fire(new BMEReceiver<Void>(reciverMap) {
 
             public void onSuccess(Void ignore) {
             	Log.debug("Sucessfull created");
@@ -368,7 +349,7 @@ public class ActivityInstitutionEvent extends AbstractActivityWrapper implements
             
             	
             }
-			@Override
+			/*@Override
 			public void onFailure(ServerFailure error) {
 					Log.warn(McAppConstant.ERROR_WHILE_CREATE + " in QuestionEvent -" + error.getMessage());
 					if(error.getMessage().contains("ConstraintViolationException")){
@@ -391,7 +372,7 @@ public class ActivityInstitutionEvent extends AbstractActivityWrapper implements
 			        	  erorPanel.setWarnMessage(message);
 
 				
-			}
+			}*/
             
         });
 	}

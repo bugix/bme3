@@ -11,11 +11,16 @@ import javax.persistence.criteria.Root;
 import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import medizin.client.proxy.InstitutionProxy;
+import medizin.client.ui.widget.Sorting;
+
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
 
 import com.google.web.bindery.requestfactory.server.RequestFactoryServlet;
+import com.google.web.bindery.requestfactory.shared.Request;
 
 @RooJavaBean
 @RooToString
@@ -71,5 +76,44 @@ public class Institution {
  		TypedQuery<Long> query = entityManager().createQuery(criteriaQuery);
  		
  		return query.getSingleResult();
+    }
+    public static Long countAllInstitutions(String searchValue) {
+        	CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+    		CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+    		Root<Institution> from = criteriaQuery.from(Institution.class);
+    		criteriaQuery.select(criteriaBuilder.count(from));				
+    		
+    		Expression<String> shortNameExp = from.get("institutionName");
+     		criteriaQuery.where(criteriaBuilder.or(criteriaBuilder.like(shortNameExp, "%" + searchValue + "%")));
+     		
+    		TypedQuery<Long> result = entityManager().createQuery(criteriaQuery);
+        	return result.getSingleResult();
+        }    
+    public static List<Institution> findAllInstitutions(Integer start,Integer end,String sortBy,Sorting sortOrder,String searchValue) 
+    {
+		
+    	System.out.println("in find");
+    	 CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+ 		CriteriaQuery<Institution> criteriaQuery = criteriaBuilder.createQuery(Institution.class);
+ 		Root<Institution> from = criteriaQuery.from(Institution.class);
+ 		criteriaQuery.select(from);
+ 		if(sortOrder==Sorting.ASC)
+ 		{
+ 			criteriaQuery.orderBy(criteriaBuilder.asc(from.get(sortBy)));
+ 		}
+ 		else
+ 		{
+ 			criteriaQuery.orderBy(criteriaBuilder.desc(from.get(sortBy)));
+ 		}
+ 		
+ 		
+ 		Expression<String> shortNameExp = from.get("institutionName");
+ 		
+ 		criteriaQuery.where(criteriaBuilder.or(criteriaBuilder.like(shortNameExp, "%" + searchValue + "%")));
+ 		
+ 		TypedQuery<Institution> q = entityManager().createQuery(criteriaQuery);
+ 		q.setFirstResult(start);
+ 		q.setMaxResults(end);
+ 		return q.getResultList();
     }
 }

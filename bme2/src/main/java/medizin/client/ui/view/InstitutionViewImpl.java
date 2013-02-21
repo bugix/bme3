@@ -3,10 +3,10 @@ package medizin.client.ui.view;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import medizin.client.proxy.InstitutionProxy;
-import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.style.resources.MyCellTableResources;
 import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
@@ -67,7 +67,7 @@ public class InstitutionViewImpl extends Composite implements InstitutionView  {
 
 	private String name;
 
-	public InstitutionViewImpl() {
+	public InstitutionViewImpl(Map<String, Widget> reciverMap) {
 		
 		CellTable.Resources tableResources = GWT.create(MyCellTableResources.class);
 		table = new CellTable<InstitutionProxy>(McAppConstant.TABLE_PAGE_SIZE, tableResources);
@@ -78,12 +78,15 @@ public class InstitutionViewImpl extends Composite implements InstitutionView  {
 		searchBox = new QuickSearchBox(new QuickSearchBox.Delegate() {
 			@Override
 			public void performAction() {
-				//delegate.performSearch(searchBox.getValue());
+				delegate.performSearch(searchBox.getValue());
 			}
 		});
 		
 		
 		initWidget(uiBinder.createAndBindUi(this));
+		
+		reciverMap.put("institutionName", institutionName);
+		
 		DOM.setElementAttribute(this.getElement(), "style", "position: absolute; left: 5px; top: 0px; right: 0px; bottom: 0px; overflow: auto;");
 		init();
 

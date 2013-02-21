@@ -1,55 +1,38 @@
 package medizin.client.activites;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import medizin.client.ui.SlidingPanel;
-import medizin.client.ui.McAppConstant;
-import medizin.client.ui.view.AcceptPersonView;
-import medizin.client.ui.view.AcceptPersonViewImpl;
-import medizin.client.ui.view.InstitutionView;
-import medizin.client.ui.view.InstitutionViewImpl;
-import medizin.client.ui.view.SystemOverviewView;
-import medizin.client.ui.view.SystemOverviewViewImpl;
-
-import medizin.client.place.PlaceAcceptPerson;
+import medizin.client.factory.receiver.BMEReceiver;
+import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.PlaceInstitution;
 import medizin.client.place.PlaceInstitutionEvent;
-import medizin.client.place.PlaceSystemOverview;
-import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.proxy.InstitutionProxy;
+import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.request.InstitutionRequest;
+import medizin.client.ui.view.InstitutionView;
+import medizin.client.ui.view.InstitutionViewImpl;
+import medizin.client.ui.widget.Sorting;
 
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.activity.shared.AbstractActivity;
-import com.google.gwt.activity.shared.Activity;
 import com.google.gwt.activity.shared.ActivityManager;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceChangeEvent;
 import com.google.gwt.place.shared.PlaceController;
-import com.google.web.bindery.requestfactory.gwt.client.RequestFactoryEditorDriver;
-import com.google.web.bindery.requestfactory.shared.EntityProxyId;
-import com.google.web.bindery.requestfactory.shared.Receiver;
-import com.google.web.bindery.requestfactory.shared.Request;
-import com.google.web.bindery.requestfactory.shared.RequestContext;
-import com.google.web.bindery.requestfactory.shared.ServerFailure;
-import com.google.web.bindery.requestfactory.shared.Violation;
 import com.google.gwt.user.cellview.client.AbstractHasData;
 import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
-import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
+import com.google.web.bindery.requestfactory.shared.EntityProxyId;
+import com.google.web.bindery.requestfactory.shared.Request;
 
 public class ActivityInstitution extends AbstractActivityWrapper implements
 		InstitutionView.Presenter, InstitutionView.Delegate {
@@ -72,6 +55,10 @@ public class ActivityInstitution extends AbstractActivityWrapper implements
 
 	private McAppRequestFactory requests;
 	private PlaceController placeController;
+	
+	public String sortname = "institutionName";
+	 public Sorting sortorder = Sorting.ASC; 
+	String searchValue = "";
 
 	@Inject
 	public ActivityInstitution(PlaceInstitution place,
@@ -119,7 +106,7 @@ public class ActivityInstitution extends AbstractActivityWrapper implements
 	@Override
 	public void start2(AcceptsOneWidget widget, EventBus eventBus) {
 		Log.info("Activity Institution start");
-		InstitutionView institutionView = new InstitutionViewImpl();
+		InstitutionView institutionView = new InstitutionViewImpl(reciverMap);
 		institutionView.setName("hallo");
 		institutionView.setPresenter(this);
 		this.widget = widget;
@@ -181,18 +168,17 @@ public class ActivityInstitution extends AbstractActivityWrapper implements
 				.findInstitutionEntries(range.getStart(), range.getLength());
 	}
 
-	protected void fireCountRequest(Receiver<Long> callback) {
+	protected void fireCountRequest(BMEReceiver<Long> callback) {
 		requests.institutionRequest()
 				.countInstitutions().fire(callback);
 	}
 
 	private void init() {
 
-		fireCountRequest(new Receiver<Long>() {
+		fireCountRequest(new BMEReceiver<Long>() {
 			@Override
 			public void onSuccess(Long response) {
 				if (view == null) {
-					// This activity is dead
 					return;
 				}
 				Log.debug("Geholte Intitution aus der Datenbank: " + response);
@@ -224,7 +210,7 @@ public class ActivityInstitution extends AbstractActivityWrapper implements
 	protected void onRangeChanged() {
 		final Range range = table.getVisibleRange();
 
-		final Receiver<List<InstitutionProxy>> callback = new Receiver<List<InstitutionProxy>>() {
+		final BMEReceiver<List<InstitutionProxy>> callback = new BMEReceiver<List<InstitutionProxy>>() {
 			@Override
 			public void onSuccess(List<InstitutionProxy> values) {
 				if (view == null) {
@@ -256,7 +242,7 @@ public class ActivityInstitution extends AbstractActivityWrapper implements
 	}
 
 	private void getLastPage() {
-		fireCountRequest(new Receiver<Long>() {
+		fireCountRequest(new BMEReceiver<Long>() {
 			@Override
 			public void onSuccess(Long response) {
 				if (view == null) {
@@ -280,7 +266,7 @@ public class ActivityInstitution extends AbstractActivityWrapper implements
 	}
 
 	private void fireRangeRequest(final Range range,
-			final Receiver<List<InstitutionProxy>> callback) {
+			final BMEReceiver<List<InstitutionProxy>> callback) {
 		createRangeRequest(range).with(view.getPaths()).fire(callback);
 		// Log.debug(((String[])view.getPaths().toArray()).toString());
 	}
@@ -304,7 +290,7 @@ public class ActivityInstitution extends AbstractActivityWrapper implements
 	public void deleteClicked(InstitutionProxy institution) {
 
 		requests.institutionRequest().remove()
-				.using(institution).fire(new Receiver<Void>() {
+				.using(institution).fire(new BMEReceiver<Void>(reciverMap) {
 
 					public void onSuccess(Void ignore) {
 						Log.debug("Sucessfull deleted");
@@ -312,7 +298,7 @@ public class ActivityInstitution extends AbstractActivityWrapper implements
 
 					}
 
-					@Override
+					/*@Override
 					public void onFailure(ServerFailure error) {
 						Log.warn(McAppConstant.ERROR_WHILE_DELETE
 								+ " in Institution -" + error.getMessage());
@@ -336,7 +322,7 @@ public class ActivityInstitution extends AbstractActivityWrapper implements
 
 						//TODO mcAppFactory.getErrorPanel().setErrorMessage(message);
 
-					}
+					}*/
 
 				});
 
@@ -356,7 +342,7 @@ public class ActivityInstitution extends AbstractActivityWrapper implements
 		institution.setInstitutionName(institutionName);
 //		institution.setVersion(0);
 
-		request.persist().using(institution).fire(new Receiver<Void>() {
+		request.persist().using(institution).fire(new BMEReceiver<Void>(reciverMap) {
 
 			public void onSuccess(Void ignore) {
 				Log.debug("Sucessfull created");
@@ -364,7 +350,7 @@ public class ActivityInstitution extends AbstractActivityWrapper implements
 
 			}
 
-			@Override
+		/*	@Override
 			public void onFailure(ServerFailure error) {
 				Log.warn(McAppConstant.ERROR_WHILE_CREATE + " in Institution -"
 						+ error.getMessage());
@@ -389,8 +375,39 @@ public class ActivityInstitution extends AbstractActivityWrapper implements
 
 				//TODO mcAppFactory.getErrorPanel().setErrorMessage(message);
 
-			}
+			}*/
 
 		});
+	}
+	
+	private void tableRangeChangeCall()
+	{
+		
+		final Range range =table.getVisibleRange();
+		
+		requests.institutionRequest().countAllInstitutions(searchValue).fire(new  BMEReceiver<Long>() {
+
+			@Override
+			public void onSuccess(Long arg0) {
+				Log.info("count total--"+arg0);
+				table.setRowCount(arg0.intValue());
+				requests.institutionRequest().findAllInstitutions(range.getStart(),range.getLength(),sortname,sortorder,searchValue).fire(new BMEReceiver<List<InstitutionProxy>>() {
+					@Override
+					public void onSuccess(List<InstitutionProxy> arg0) {
+						// TODO Auto-generated method stub
+						Log.info("response of all list--"+arg0.size());
+						table.setRowData(range.getStart(), arg0);
+					}
+				});
+			}
+		});
+	}
+
+	@Override
+	public void performSearch(String searchValue) {
+		Log.info("performSearch");
+		final Range range = table.getVisibleRange();
+		this.searchValue = searchValue;
+		tableRangeChangeCall();
 	}
 }

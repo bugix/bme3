@@ -3,6 +3,7 @@ package medizin.client.ui.view;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import medizin.client.style.resources.MyCellTableResources;
@@ -64,7 +65,7 @@ public class EventViewImpl extends Composite implements EventView  {
 
 	private String name;
 
-	public EventViewImpl() {
+	public EventViewImpl(Map<String, Widget> reciverMap) {
 		
 		CellTable.Resources tableResources = GWT.create(MyCellTableResources.class);
 		tableEvent = new CellTable<QuestionEventProxy>(McAppConstant.TABLE_PAGE_SIZE, tableResources);
@@ -74,6 +75,9 @@ public class EventViewImpl extends Composite implements EventView  {
 		
 		initWidget(uiBinder.createAndBindUi(this));
 		//DOM.setElementAttribute(this.getElement(), "style", "position: absolute; left: 5px; top: 0px; right: 0px; bottom: 0px; overflow: auto;");
+		
+		reciverMap.put("eventName", eventName);
+		
 		init();
 
 

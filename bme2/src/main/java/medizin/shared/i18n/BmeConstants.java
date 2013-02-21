@@ -322,4 +322,8 @@ public interface BmeConstants extends Constants {
 
 	public String unknownError();
 	
+	public String newInstitution();
+	
+	public String newTopic();
+	
 }

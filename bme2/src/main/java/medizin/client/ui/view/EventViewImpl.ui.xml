@@ -55,6 +55,8 @@
 	}
 	</ui:style>
 	
+	<ui:with type="medizin.shared.i18n.BmeConstants" field="cc"></ui:with>
+	
 	<g:ScrollPanel>
 				<g:HTMLPanel width="100%" >
 						<!-- <div class="{style.controls} {style.controlsleft}"> -->
@@ -65,7 +67,7 @@
 						<g:HorizontalPanel spacing="3">
 						<g:TextBox ui:field="eventName" addStyleNames="{style.paddingLeft}" ></g:TextBox>
 							
-							<m:IconButton ui:field="addEvent" icon="plusthick"  >neuer Themenblock</m:IconButton>
+							<m:IconButton ui:field="addEvent" icon="plusthick" text="{cc.newTopic}"></m:IconButton>
 							
 							<b:SimplePager ui:field="pager" display="{tableEvent}" addStyleNames="{style.displayRight}" />
 							</g:HorizontalPanel>

@@ -72,6 +72,9 @@
 		padding-right: 10px;	
 	}
 	</ui:style>
+	
+	<ui:with type="medizin.shared.i18n.BmeConstants" field="cc"></ui:with>
+	
 
 <g:SplitLayoutPanel ui:field="splitLayoutPanel" >
 		<!-- <g:west size="500"> -->
@@ -88,7 +91,7 @@
 						
 						<g:HorizontalPanel spacing="3">
 						<g:TextBox ui:field="institutionName" addStyleNames="{style.paddingLeft}" ></g:TextBox>
-							<a:IconButton ui:field="addInstitution" icon="plusthick"  >Neue Institution</a:IconButton>
+							<a:IconButton ui:field="addInstitution" icon="plusthick"  text="{cc.newInstitution}"></a:IconButton>
 							<!--  <g:Button ui:field="newQuestiontype"
 								addStyleNames="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
 								<span class="ui-icon ui-icon-plusthick" style="float: left; margin-right: 0.3em;"></span>
