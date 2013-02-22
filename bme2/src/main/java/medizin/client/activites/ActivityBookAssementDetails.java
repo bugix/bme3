@@ -113,11 +113,11 @@ public class ActivityBookAssementDetails extends AbstractActivityWrapper impleme
 	private BookAssesmentDetailsView bookAssesmentViewDetails;
 	private LoadingPopUp loadingPopup = new LoadingPopUp();
 	
-	@Override
+	/*@Override
 	public void start(AcceptsOneWidget widget, EventBus eventBus) {
 		super.start(widget, eventBus);
 
-	}
+	}*/
 	
 	/**
 	 * Starts up activity.

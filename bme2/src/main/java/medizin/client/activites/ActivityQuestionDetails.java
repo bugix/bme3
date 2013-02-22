@@ -94,16 +94,16 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 
 	}
 	
-	private PersonProxy loggedUser;
+	/*private PersonProxy loggedUser;*/
 	private HandlerRegistration answerRangeChangeHandler;
 	private EventBus eventBus;
 	
 	
-	@Override
+	/*@Override
 	public void start(AcceptsOneWidget widget, EventBus eventBus) {
 		super.start(widget, eventBus);
 
-	}
+	}*/
 	@Override
 	public void start2(AcceptsOneWidget panel, EventBus eventBus) {
 		
@@ -130,7 +130,9 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		answerListView.setDelegate(this);
 		this.answerTable = answerListView.getTable();
 		
-		requests.personRequest().myGetLoggedPerson()
+		start2();
+		
+		/*requests.personRequest().myGetLoggedPerson()
 				.fire(new BMEReceiver<PersonProxy>() {
 
 					@Override
@@ -140,7 +142,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 
 					}
 
-					/*public void onFailure(ServerFailure error) {
+					public void onFailure(ServerFailure error) {
 						ErrorPanel erorPanel = new ErrorPanel();
 						erorPanel.setErrorMessage(error.getMessage());
 						Log.error(error.getMessage());
@@ -161,18 +163,19 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 						erorPanel.setErrorMessage(message);
 						onStop();
 
-					}*/
+					}
 					
 					@Override
 					public void onReceiverFailure() {
 						onStop();
 					}
 
-				});
+				});*/
 
 	}
 	private void start2(){
-		if(loggedUser==null) return;
+		/*if(loggedUser==null) return;*/
+		if(userLoggedIn==null) return;
 		
 		requests.find(questionPlace.getProxyId()).with("previousVersion","keywords","questEvent","comment","questionType","mcs", "rewiewer", "autor","questionResources").fire(new BMEReceiver<Object>() {
 
@@ -515,6 +518,8 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			
 		}else if(question.getQuestionType() != null && QuestionTypes.Imgkey.equals(question.getQuestionType().getQuestionType()) == true && answerDialogbox.getValidity() != null && Validity.Wahr.equals(answerDialogbox.getValidity().getValue())) {
 			Log.info("IN Imgkey Question type");
+			answerProxy.setAdditionalKeywords(answerDialogbox.getAdditionalKeywords().getValue());
+			
 			if(answerDialogbox != null && answerDialogbox.getImageRectangleViewer() != null) {
 				Log.info("Points : " + answerDialogbox.getImageRectangleViewer().getPoint());
 				answerProxy.setPoints(answerDialogbox.getImageRectangleViewer().getPoint());

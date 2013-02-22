@@ -41,7 +41,7 @@ public class ActivityAcceptQuestion extends AbstractActivityWrapper implements A
 	private McAppRequestFactory requests;
 	private PlaceController placeController;
 
-	protected PersonProxy loggedUser;
+	//protected PersonProxy loggedUser;
 
 	//private SingleSelectionModel<QuestionProxy> selectionModel;
 
@@ -74,11 +74,11 @@ public class ActivityAcceptQuestion extends AbstractActivityWrapper implements A
 
 	}
 	
-	@Override
+	/*@Override
 	public void start(AcceptsOneWidget widget, EventBus eventBus) {
 		super.start(widget, eventBus);
 
-	}
+	}*/
 
 	@Override
 	public void start2(AcceptsOneWidget widget, EventBus eventBus) {
@@ -110,7 +110,9 @@ public class ActivityAcceptQuestion extends AbstractActivityWrapper implements A
 //			}
 //		});
 
-    	requests.personRequest().myGetLoggedPerson()
+        init();
+        
+    	/*requests.personRequest().myGetLoggedPerson()
 		.fire(new Receiver<PersonProxy>() {
 
 			@Override
@@ -143,7 +145,7 @@ public class ActivityAcceptQuestion extends AbstractActivityWrapper implements A
 
 			}
 
-		});
+		});*/
 
 
 	}
@@ -223,7 +225,8 @@ public class ActivityAcceptQuestion extends AbstractActivityWrapper implements A
 			Log.debug("is QUestionProxy");
 			QuestionRequest req = requests.questionRequest();
 			QuestionProxy questionProxy =  req.edit((QuestionProxy)entityProxy);
-			if(loggedUser.getIsAdmin()){
+			/*if(loggedUser.getIsAdmin()){*/
+			if(userLoggedIn.getIsAdmin()){
 				questionProxy.setIsAcceptedAdmin(true);
 			} else {
 				questionProxy.setIsAcceptedRewiever(true);

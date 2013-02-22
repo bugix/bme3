@@ -52,7 +52,8 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 		this.answerPlace = place;
         this.requests = requests;
         this.placeController = placeController;
-	}        
+	} 
+	
 	@Override
 	public String mayStop() {
 		
@@ -72,11 +73,11 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 
 	}
 
-	@Override
+	/*@Override
 	public void start(AcceptsOneWidget widget, EventBus eventBus) {
 		super.start(widget, eventBus);
 
-	}
+	}*/
 	
 	@Override
 	public void start2(AcceptsOneWidget panel, EventBus eventBus) {
@@ -88,7 +89,7 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 		this.view = acceptAnswerView;
         widget.setWidget(acceptAnswerView.asWidget());
         
-      questionPanel=view.getQuestionPanel();
+        questionPanel=view.getQuestionPanel();
        
         acceptAnswerView.setDelegate(this);
        

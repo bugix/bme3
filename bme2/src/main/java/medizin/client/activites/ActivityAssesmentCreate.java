@@ -108,11 +108,11 @@ public class ActivityAssesmentCreate  extends AbstractActivityWrapper  implement
 	
 	private RequestFactoryEditorDriver<AssesmentProxy,AssesmentEditViewImpl> editorDriver;
 
-	@Override
+	/*@Override
 	public void start(AcceptsOneWidget widget, EventBus eventBus) {
 		super.start(widget, eventBus);
 
-	}
+	}*/
 	@Override
 	public void start2(AcceptsOneWidget widget, EventBus eventBus) {
 		AssesmentEditView assesmentEditView = new AssesmentEditViewImpl();

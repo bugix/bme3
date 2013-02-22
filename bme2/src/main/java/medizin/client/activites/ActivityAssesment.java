@@ -107,11 +107,11 @@ public class ActivityAssesment extends AbstractActivityWrapper implements Assesm
 
 	}
 
-	@Override
+	/*@Override
 	public void start(AcceptsOneWidget widget, EventBus eventBus) {
 	
 		super.start(widget, eventBus);
-	}
+	}*/
 	@Override
 	public void start2(AcceptsOneWidget panel, EventBus eventBus) {
 		AssesmentView assesmentView = new AssesmentViewImpl();

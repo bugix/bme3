@@ -7,7 +7,6 @@ import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.PlaceQuestion;
 import medizin.client.place.PlaceQuestionDetails;
 import medizin.client.proxy.InstitutionProxy;
-import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.ui.view.question.QuestionView;
@@ -50,9 +49,9 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 
 	private HandlerRegistration rangeChangeHandler;
 
-	private PersonProxy userLoggedIn;
+	/*private PersonProxy userLoggedIn;
 
-	private InstitutionProxy institutionActive;
+	private InstitutionProxy institutionActive;*/
 
 	@Inject
 	public ActivityQuestion(PlaceQuestion place, McAppRequestFactory requests,
@@ -87,11 +86,11 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 
 	}
 
-	@Override
+	/*@Override
 	public void start(AcceptsOneWidget widget, EventBus eventBus) {
 		super.start(widget, eventBus);
 
-	}
+	}*/
 
 	@Override
 	public void start2(AcceptsOneWidget widget, EventBus eventBus) {
@@ -147,7 +146,9 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 
 		activityManger.setDisplay(view.getDetailsPanel());
 
-		requests.personRequest().myGetLoggedPerson()
+		init();
+		
+		/*requests.personRequest().myGetLoggedPerson()
 				.fire(new BMEReceiver<PersonProxy>() {
 
 					@Override
@@ -157,7 +158,7 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 
 					}
 
-					/*public void onFailure(ServerFailure error) {
+					public void onFailure(ServerFailure error) {
 						ErrorPanel erorPanel = new ErrorPanel();
 						erorPanel.setErrorMessage(error.getMessage());
 						Log.error(error.getMessage());
@@ -178,10 +179,10 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 						erorPanel.setErrorMessage(message);
 						// onStop();
 
-					}*/
+					}
 
-				});
-		requests.institutionRequest().myGetInstitutionToWorkWith()
+				});*/
+		/*requests.institutionRequest().myGetInstitutionToWorkWith()
 				.fire(new BMEReceiver<InstitutionProxy>() {
 
 					@Override
@@ -191,7 +192,7 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 
 					}
 
-					/*public void onFailure(ServerFailure error) {
+					public void onFailure(ServerFailure error) {
 						ErrorPanel erorPanel = new ErrorPanel();
 						erorPanel.setErrorMessage(error.getMessage());
 						Log.error(error.getMessage());
@@ -212,9 +213,9 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 						erorPanel.setErrorMessage(message);
 						// onStop();
 
-					}*/
+					}
 
-				});
+				});*/
 		// Inherit the view's key provider
 		ProvidesKey<QuestionProxy> keyProvider = ((AbstractHasData<QuestionProxy>) table)
 				.getKeyProvider();
@@ -310,7 +311,6 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 
 			@Override
 			public void onSuccess(List<InstitutionProxy> response) {
-				// TODO Auto-generated method stub
 				view.setInstitutionFilter(response);
 			}
 		});
@@ -319,7 +319,6 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 
 			@Override
 			public void onSuccess(List<QuestionEventProxy> response) {
-				// TODO Auto-generated method stub
 				view.setSpecialisationFilter(response);
 			}
 		});

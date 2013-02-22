@@ -461,7 +461,9 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 				lblAdditionalKeyword.setStyleName("label");
 				btnAdditionalKeyword.setVisible(true);
 				txtAdditionalKeyword.setVisible(true);
-				
+			}
+			
+			if(QuestionTypes.Sort.equals(question.getQuestionType().getQuestionType()) == true) {
 				lblSequenceNumber.setVisible(true);
 				lblSequenceNumber.setStyleName("label");
 				txtSequenceNumber.setVisible(true);

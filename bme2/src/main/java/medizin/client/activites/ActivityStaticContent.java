@@ -61,11 +61,11 @@ public class ActivityStaticContent extends AbstractActivityWrapper implements St
 
 	}
 	
-	@Override
+	/*@Override
 	public void start(AcceptsOneWidget widget, EventBus eventBus) {
 		super.start(widget, eventBus);
 
-	}
+	}*/
 
 	@Override
 	public void start2(AcceptsOneWidget widget, EventBus eventBus) {

@@ -106,11 +106,11 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 	 * calls @see medizin.client.a_nonroo.app.activities.ActivityAssesmentDetails#init(AssesmentProxy) , 
 	 * Overriden funtion from @see com.google.gwt.activity.shared.Activity
 	 */
-	@Override
+	/*@Override
 	public void start(AcceptsOneWidget widget, EventBus eventBus) {
 		super.start(widget, eventBus);
 
-	}
+	}*/
 	
 
 

@@ -1,14 +1,11 @@
 package medizin.client.activites;
 
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
+import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.PersonProxy;
-import medizin.client.ui.ErrorPanel;
-import medizin.client.ui.McAppConstant;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.shared.i18n.BmeConstants;
 
@@ -22,9 +19,6 @@ import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.web.bindery.requestfactory.shared.Receiver;
-import com.google.web.bindery.requestfactory.shared.ServerFailure;
-import com.google.web.bindery.requestfactory.shared.Violation;
 /**
  * This wrapper is used to provide access control in all activities.
  * @author masterthesis
@@ -40,6 +34,10 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 	
 	public BmeConstants constants = GWT.create(BmeConstants.class);
 	
+	protected PersonProxy userLoggedIn;
+	protected InstitutionProxy institutionActive;
+	private int count = 0;
+	
 	public AbstractActivityWrapper(Place place,
 			McAppRequestFactory requests, PlaceController placeController) {
 		this.place = place;
@@ -47,18 +45,12 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
         this.placeController = placeController;
 	}
 	
-	protected PersonProxy userLoggedIn;
-
-	protected InstitutionProxy institutionActive;
-	
-	private int count = 0;
 	@Override
-	public void start(final AcceptsOneWidget panel, final EventBus eventBus) {
+	public final void start(final AcceptsOneWidget panel, final EventBus eventBus) {
 
-		
-
-			requests.personRequest().myGetLoggedPerson()
-			.fire(new Receiver<PersonProxy>() {
+			Log.info("start method called");
+			
+			requests.personRequest().myGetLoggedPerson().fire(new BMEReceiver<PersonProxy>() {
 
 				@Override
 				public void onSuccess(PersonProxy response) {
@@ -67,7 +59,7 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 
 				}
 
-				public void onFailure(ServerFailure error) {
+				/*public void onFailure(ServerFailure error) {
 					ErrorPanel erorPanel = new ErrorPanel();
 					erorPanel.setErrorMessage(error.getMessage());
 					Log.error(error.getMessage());
@@ -88,11 +80,10 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 					erorPanel.setErrorMessage(message);
 					//onStop();
 
-				}
+				}*/
 
 			});
-			requests.institutionRequest().myGetInstitutionToWorkWith()
-			.fire(new Receiver<InstitutionProxy>() {
+			requests.institutionRequest().myGetInstitutionToWorkWith().fire(new BMEReceiver<InstitutionProxy>() {
 
 				@Override
 				public void onSuccess(InstitutionProxy response) {
@@ -100,7 +91,7 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 					newStart(panel, eventBus);
 				}
 
-				public void onFailure(ServerFailure error) {
+				/*public void onFailure(ServerFailure error) {
 					ErrorPanel erorPanel = new ErrorPanel();
 					erorPanel.setErrorMessage(error.getMessage());
 					Log.error(error.getMessage());
@@ -122,25 +113,22 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 					//onStop();
 					
 
-				}
+				}*/
 
 			});
-
-
 	}
+	
 	/**
 	 * Checks if user is logged, if not login dialog is shown.
 	 * @param panel
 	 * @param eventBus
 	 */
-	public void newStart(AcceptsOneWidget panel, EventBus eventBus){
+	private void newStart(AcceptsOneWidget panel, EventBus eventBus){
 		count ++;
 		
 		if(count<2){
 			return;
 		}
-		
-		
 
 		if (userLoggedIn==null) {
 			//Window.alert("Please log in");
@@ -160,7 +148,6 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 		}
 		
 		start2(panel, eventBus);
-		
 		
 	}
 	

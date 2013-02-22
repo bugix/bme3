@@ -59,7 +59,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 
 	//private RequestFactoryEditorDriver<QuestionProxy, QuestionEditViewImpl> editorDriver;
 
-	protected PersonProxy loggedUser;
+	/*protected PersonProxy loggedUser;*/
 
 	@Inject
 	public ActivityQuestionEdit(PlaceQuestionDetails place,
@@ -102,11 +102,11 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 
 	}
 	
-	@Override
+	/*@Override
 	public void start(AcceptsOneWidget widget, EventBus eventBus) {
 		super.start(widget, eventBus);
 
-	}
+	}*/
 
 	@Override
 	public void start2(AcceptsOneWidget widget, EventBus eventBus) {
@@ -207,7 +207,9 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 			view.getAutherListBox().setEnabled(false);
 		}
 		
-		requests.personRequest().myGetLoggedPerson()
+		start2();
+		
+		/*requests.personRequest().myGetLoggedPerson()
 		.fire(new BMEReceiver<PersonProxy>() {
 
 			@Override
@@ -217,7 +219,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 
 			}
 			
-			/*public void onFailure(ServerFailure error) {
+			public void onFailure(ServerFailure error) {
 				ErrorPanel erorPanel = new ErrorPanel();
 				erorPanel.setErrorMessage(error.getMessage());
 				Log.error(error.getMessage());
@@ -240,7 +242,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 				erorPanel.setErrorMessage(message);
 				onStop();
 
-			}*/
+			}
 			
 			@Override
 			public void onReceiverFailure() 
@@ -248,7 +250,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 				onStop();
 			}
 
-		});
+		});*/
 		
 	}
 	

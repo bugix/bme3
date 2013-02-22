@@ -106,7 +106,7 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 	}
 	
 	
-	@Override
+	/*@Override
 	public void start(final AcceptsOneWidget widget, final EventBus eventBus) {
 		requests.questionAccessRequest().checkInstitutionalAdmin().fire(new BMEReceiver<Boolean>() {
 
@@ -119,10 +119,23 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 		});
 		//super.start(widget, eventBus);
 
-	}
+	}*/
 	
 	@Override
-	public void start2(AcceptsOneWidget widget, EventBus eventBus) {
+	public void start2(final AcceptsOneWidget widget, final EventBus eventBus) {
+
+		requests.questionAccessRequest().checkInstitutionalAdmin().fire(new BMEReceiver<Boolean>() {
+
+			@Override
+			public void onSuccess(Boolean response) {
+			if(response){
+				 start3(widget, eventBus);
+				}
+			}
+		});
+	}
+	
+	public void start3(AcceptsOneWidget widget, EventBus eventBus) {
 		Log.info("Activity Person start");
 		
 		
