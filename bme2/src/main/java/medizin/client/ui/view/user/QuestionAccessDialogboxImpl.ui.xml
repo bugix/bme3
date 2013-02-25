@@ -70,8 +70,8 @@
 			<i:DefaultSuggestBox ui:field="searchInstitution"></i:DefaultSuggestBox>
 			<i:DefaultSuggestBox ui:field="searchEvent"></i:DefaultSuggestBox>
 			<g:TextBox ui:field="searchQuestion"></g:TextBox>
-			<g:CheckBox ui:field="checkQuestiontext">Fragentext</g:CheckBox>
-			<g:CheckBox ui:field="checkKeywords">Keywords</g:CheckBox>
+			<g:CheckBox ui:field="checkQuestiontext"></g:CheckBox>
+			<g:CheckBox ui:field="checkKeywords"></g:CheckBox>
 			<b:SimplePager ui:field="pager" display="{tableEvent}" addStyleNames="{style.displayRight}" />
 		</g:HorizontalPanel>
 		

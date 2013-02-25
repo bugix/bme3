@@ -51,8 +51,8 @@ public class InstituteAccessDialogBoxImpl extends DialogBox implements Institute
 		setWidget(uiBinder.createAndBindUi(this));
 	    setGlassEnabled(true);
 	    setAnimationEnabled(true);
-	    setTitle("Zufriff auf Themenblock hinzufügen");
-	    setText("Zufriff auf Themenblock hinzufügen");
+	    setTitle(constants.institutedAccDialogTitle());
+	    setText(constants.institutedAccDialogTitle());
 	    
 	   /* tableEvent.removeColumnStyleName(1, "cellTableCell");
 	    

@@ -58,7 +58,9 @@ public class ActivityInstitution extends AbstractActivityWrapper implements
 	
 	public String sortname = "institutionName";
 	 public Sorting sortorder = Sorting.ASC; 
-	String searchValue = "";
+	
+	 String searchValue = "";
+	 Long loggedPersonId = 0l;
 
 	@Inject
 	public ActivityInstitution(PlaceInstitution place,
@@ -106,7 +108,10 @@ public class ActivityInstitution extends AbstractActivityWrapper implements
 	@Override
 	public void start2(AcceptsOneWidget widget, EventBus eventBus) {
 		Log.info("Activity Institution start");
-		InstitutionView institutionView = new InstitutionViewImpl(reciverMap);
+		if (!userLoggedIn.getIsAdmin())
+			loggedPersonId = userLoggedIn.getId();
+			
+		InstitutionView institutionView = new InstitutionViewImpl(reciverMap, userLoggedIn.getIsAdmin());
 		institutionView.setName("hallo");
 		institutionView.setPresenter(this);
 		this.widget = widget;
@@ -165,12 +170,14 @@ public class ActivityInstitution extends AbstractActivityWrapper implements
 	protected Request<java.util.List<medizin.client.proxy.InstitutionProxy>> createRangeRequest(Range range) 
 	{
 		//return requests.institutionRequest().findInstitutionEntries(range.getStart(), range.getLength());		
-		return requests.institutionRequest().findAllInstitutions(range.getStart(),range.getLength(),sortname,sortorder,searchValue);
+		//return requests.institutionRequest().findAllInstitutions(range.getStart(),range.getLength(),sortname,sortorder,searchValue);
+		return requests.institutionRequest().findAllInstitutionsBySearchValue(searchValue, loggedPersonId, range.getStart(), range.getLength());				
 	}
 
 	protected void fireCountRequest(BMEReceiver<Long> callback) {
-		requests.institutionRequest()
-				.countInstitutions().fire(callback);
+		//requests.institutionRequest().countInstitutions().fire(callback);
+		
+		requests.institutionRequest().countAllInstitutionsBySearchValue(searchValue, loggedPersonId).fire(callback);
 	}
 
 	private void init() {
@@ -406,8 +413,10 @@ public class ActivityInstitution extends AbstractActivityWrapper implements
 	@Override
 	public void performSearch(String searchValue) {
 		Log.info("performSearch");
-		final Range range = table.getVisibleRange();
+		/*final Range range = table.getVisibleRange();
 		this.searchValue = searchValue;
-		tableRangeChangeCall();
+		tableRangeChangeCall();*/
+		this.searchValue = searchValue;
+		init();
 	}
 }

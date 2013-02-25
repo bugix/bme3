@@ -17,6 +17,7 @@ import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget
 import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.QuestionAccessProxy;
 import medizin.client.proxy.QuestionEventProxy;
+import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.cell.client.AbstractEditableCell;
@@ -65,8 +66,8 @@ public class EventAccessDialogboxImpl extends DialogBox implements EventAccessDi
             
           }
 
+	public BmeConstants constants = GWT.create(BmeConstants.class);
 	
-
 	public EventAccessDialogboxImpl() {
 		
 		CellTable.Resources tableResources = GWT.create(MyCellTableResources.class);
@@ -78,8 +79,8 @@ public class EventAccessDialogboxImpl extends DialogBox implements EventAccessDi
 		setWidget(uiBinder.createAndBindUi(this));
 	    setGlassEnabled(true);
 	    setAnimationEnabled(true);
-	    setTitle("Zufriff auf Themenblock hinzufügen");
-	    setText("Zufriff auf Themenblock hinzufügen");
+	    setTitle(constants.eventAccDialogTitle());
+	    setText(constants.eventAccDialogTitle());
 	    
 	    init();
 	    
@@ -167,38 +168,38 @@ public class EventAccessDialogboxImpl extends DialogBox implements EventAccessDi
 	            public String getValue(QuestionEventProxy object) {
 	                return renderer.render(object.getEventName());
 	            }
-	        }, "Name des Themenbereichs");
+	        }, constants.eventName());
 	        
 	    	addColumn(new ActionCell<QuestionEventProxy>(
-	    	        "Lesen", new ActionCell.Delegate<QuestionEventProxy>() {
+	    	        constants.read(), new ActionCell.Delegate<QuestionEventProxy>() {
 	    	            public void execute(QuestionEventProxy questionEvent) {
 	    	              Log.debug("You clicked " + questionEvent.getEventName());
 	    	              delegate.addClicked(medizin.client.shared.AccessRights.AccRead, questionEvent);
 	    	            }
-	    	          }), "Lesend", new GetValue<QuestionEventProxy>() {
+	    	          }), constants.read(), new GetValue<QuestionEventProxy>() {
 	    	        public QuestionEventProxy getValue(QuestionEventProxy contact) {
 	    	          return contact;
 	    	        }
 	    	      }, null);
 	    	
 	    	addColumn(new ActionCell<QuestionEventProxy>(
-	    	        "Schreiben", new ActionCell.Delegate<QuestionEventProxy>() {
+	    			constants.write(), new ActionCell.Delegate<QuestionEventProxy>() {
 	    	            public void execute(QuestionEventProxy questionEvent) {
 	    	              Log.debug("You clicked " + questionEvent.getEventName());
 	    	              delegate.addClicked(medizin.client.shared.AccessRights.AccWrite, questionEvent);
 	    	            }
-	    	          }), "Schreiben", new GetValue<QuestionEventProxy>() {
+	    	          }), constants.write(), new GetValue<QuestionEventProxy>() {
 	    	        public QuestionEventProxy getValue(QuestionEventProxy contact) {
 	    	          return contact;
 	    	        }
 	    	      }, null);
 	    	addColumn(new ActionCell<QuestionEventProxy>(
-	    	        "n.Fr.hin.", new ActionCell.Delegate<QuestionEventProxy>() {
+	    			constants.addQuestions(), new ActionCell.Delegate<QuestionEventProxy>() {
 	    	            public void execute(QuestionEventProxy questionEvent) {
 	    	              Log.debug("You clicked " + questionEvent.getEventName());
 	    	              delegate.addClicked(medizin.client.shared.AccessRights.AccAddQuestions, questionEvent);
 	    	            }
-	    	          }), "neue Fragen hinzufügen", new GetValue<QuestionEventProxy>() {
+	    	          }), constants.addQuestions(), new GetValue<QuestionEventProxy>() {
 	    	        public QuestionEventProxy getValue(QuestionEventProxy contact) {
 	    	          return contact;
 	    	        }

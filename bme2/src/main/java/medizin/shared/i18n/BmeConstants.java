@@ -336,4 +336,21 @@ public interface BmeConstants extends Constants {
 
 	public String sequenceNumberError();
 	
+	public String institutedAccDialogTitle();
+	
+	public String queAccDialogTitle();
+	
+	public String eventAccDialogTitle();
+	
+	public String read();
+	
+	public String write();
+	
+	public String addAnswers();
+	
+	public String addQuestions();
+	
+	public String eventName();
+	
+	public String privilege();
 }

@@ -12,6 +12,7 @@ import medizin.client.ui.view.EventView.Delegate;
 import medizin.client.ui.view.EventView.Presenter;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.proxy.QuestionAccessProxy;
+import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.cell.client.AbstractEditableCell;
@@ -59,6 +60,7 @@ public class QuestionAccessViewImpl extends Composite implements QuestionAccessV
 		init();
 	}
 
+	private BmeConstants constants = GWT.create(BmeConstants.class);
 
     private Delegate delegate;
     
@@ -182,7 +184,7 @@ public class QuestionAccessViewImpl extends Composite implements QuestionAccessV
             public String getValue(QuestionAccessProxy object) {
                 return renderer.render(object.getQuestion().getQuestionText());
             }
-        }, "Fragentext");
+        }, constants.question());
         paths.add("accRights");
         tableEvent.addColumn(new TextColumn<QuestionAccessProxy>() {
 
@@ -197,15 +199,15 @@ public class QuestionAccessViewImpl extends Composite implements QuestionAccessV
             public String getValue(QuestionAccessProxy object) {
                 return renderer.render(object.getAccRights().toString());
             }
-        }, "Zugriffsrecht");
+        }, constants.privilege());
         
     	addColumn(new ActionCell<QuestionAccessProxy>(
-    	        "Entf.", new ActionCell.Delegate<QuestionAccessProxy>() {
+    	        constants.delete(), new ActionCell.Delegate<QuestionAccessProxy>() {
     	            public void execute(QuestionAccessProxy question) {
     	              Log.debug("You clicked " + question.getQuestion().getQuestionText());
     	              delegate.deleteQuestionAccessClicked(question);
     	            }
-    	          }), "Entfernen", new GetValue<QuestionAccessProxy>() {
+    	          }), constants.delete(), new GetValue<QuestionAccessProxy>() {
     	        public QuestionAccessProxy getValue(QuestionAccessProxy contact) {
     	          return contact;
     	        }

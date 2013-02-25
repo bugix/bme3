@@ -97,7 +97,8 @@
 								<span class="ui-icon ui-icon-plusthick" style="float: left; margin-right: 0.3em;"></span>
 								+Add
 							</g:Button>  -->
-							<b:SimplePager ui:field="pager" display="{table}" addStyleNames="{style.displayRight}" />
+							<!-- <b:SimplePager ui:field="pager" display="{table}" addStyleNames="{style.displayRight}" /> -->
+							<b:SimplePager ui:field="pager" display="{table}" />
 							</g:HorizontalPanel>
 						<!-- </div> -->
 					

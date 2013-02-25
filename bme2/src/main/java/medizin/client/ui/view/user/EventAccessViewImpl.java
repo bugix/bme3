@@ -13,6 +13,7 @@ import medizin.client.ui.view.EventView.Presenter;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.proxy.QuestionAccessProxy;
 import medizin.client.proxy.QuestionAccessProxy;
+import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.cell.client.AbstractEditableCell;
@@ -64,6 +65,8 @@ public class EventAccessViewImpl extends Composite implements EventAccessView {
 
 	@UiField
     IconButton newAccess;
+	
+	private BmeConstants constants = GWT.create(BmeConstants.class);
 
 	
 	@UiHandler("newAccess")
@@ -184,7 +187,7 @@ public class EventAccessViewImpl extends Composite implements EventAccessView {
             public String getValue(QuestionAccessProxy object) {
                 return renderer.render(object.getQuestionEvent().getEventName());
             }
-        }, "Name des Themenbereichs");
+        }, constants.eventName());
         
         paths.add("accRights");
         tableEvent.addColumn(new TextColumn<QuestionAccessProxy>() {
@@ -200,15 +203,15 @@ public class EventAccessViewImpl extends Composite implements EventAccessView {
             public String getValue(QuestionAccessProxy object) {
                 return renderer.render(object.getAccRights().toString());
             }
-        }, "Zugriffsrecht");
+        }, constants.privilege());
         
      	addColumn(new ActionCell<QuestionAccessProxy>(
-    	        "Entf.", new ActionCell.Delegate<QuestionAccessProxy>() {
+    	        constants.delete(), new ActionCell.Delegate<QuestionAccessProxy>() {
     	            public void execute(QuestionAccessProxy questionAccessProxy) {
     	              Log.debug("You clicked " + questionAccessProxy.getQuestionEvent().getEventName());
     	              delegate.deleteEventAccessClicked(questionAccessProxy);
     	            }
-    	          }), "Entfernen", new GetValue<QuestionAccessProxy>() {
+    	          }), constants.delete(), new GetValue<QuestionAccessProxy>() {
     	        public QuestionAccessProxy getValue(QuestionAccessProxy contact) {
     	          return contact;
     	        }

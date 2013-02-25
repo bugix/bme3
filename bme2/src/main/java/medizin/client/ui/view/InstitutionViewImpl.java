@@ -22,6 +22,8 @@ import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Float;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.text.shared.Renderer;
@@ -73,7 +75,7 @@ public class InstitutionViewImpl extends Composite implements InstitutionView  {
 
 	private String name;
 
-	public InstitutionViewImpl(Map<String, Widget> reciverMap) {
+	public InstitutionViewImpl(Map<String, Widget> reciverMap, Boolean flag) {
 		
 		CellTable.Resources tableResources = GWT.create(MyCellTableResources.class);
 		table = new CellTable<InstitutionProxy>(McAppConstant.TABLE_PAGE_SIZE, tableResources);
@@ -94,7 +96,20 @@ public class InstitutionViewImpl extends Composite implements InstitutionView  {
 		reciverMap.put("institutionName", institutionName);
 		
 		DOM.setElementAttribute(this.getElement(), "style", "position: absolute; left: 5px; top: 0px; right: 0px; bottom: 0px; overflow: auto;");
-		init();
+		
+		if (!flag)
+		{
+			addInstitution.setVisible(false);
+			institutionName.setVisible(false);
+			
+			pager.getElement().getStyle().setFloat(Float.RIGHT);
+		}
+		else
+		{
+			pager.getElement().getStyle().setPaddingLeft(50, Unit.PX);
+		}
+		
+		init(flag);
 
 
 	}
@@ -130,7 +145,7 @@ public class InstitutionViewImpl extends Composite implements InstitutionView  {
     */
     protected Set<String> paths = new HashSet<String>();
 
-    public void init() {
+    public void init(Boolean flag) {
     	editableCells = new ArrayList<AbstractEditableCell<?, ?>>();
     	
 
@@ -181,32 +196,38 @@ public class InstitutionViewImpl extends Composite implements InstitutionView  {
             public String getValue(InstitutionProxy object) {
                 return renderer.render(object.getInstitutionName());
             }
-        }, "Name der Institution");
+        }, constants.institutionLbl());
         
-        addColumn(new ActionCell<InstitutionProxy>(
-        		McAppConstant.DELETE_ICON, new ActionCell.Delegate<InstitutionProxy>() {
-					public void execute(final InstitutionProxy institution) {
-						//Window.alert("You clicked " + institution.getInstitutionName());
-						ConfirmationDialogBox.showYesNoDialogBox(constants.warning(), constants.deleteInstitutionConfirmation(), new ConfirmDialogBoxYesNoButtonEventHandler() {
-							
-							@Override
-							public void onYesButtonClicked(ConfirmDialogBoxYesNoButtonEvent event) {
-								delegate.deleteClicked(institution);
-							}
-							
-							@Override
-							public void onNoButtonClicked(ConfirmDialogBoxYesNoButtonEvent event) {
-															
-							}
-						});
-						
-						
-					}	
-				}), "", new GetValue<InstitutionProxy>() {
-			public InstitutionProxy getValue(InstitutionProxy institution) {
-				return institution;
-			}
-		}, null);
+        if (flag)
+        {
+        	addColumn(new ActionCell<InstitutionProxy>(
+            		McAppConstant.DELETE_ICON, new ActionCell.Delegate<InstitutionProxy>() {
+    					public void execute(final InstitutionProxy institution) {
+    						//Window.alert("You clicked " + institution.getInstitutionName());
+    						ConfirmationDialogBox.showYesNoDialogBox(constants.warning(), constants.deleteInstitutionConfirmation(), new ConfirmDialogBoxYesNoButtonEventHandler() {
+    							
+    							@Override
+    							public void onYesButtonClicked(ConfirmDialogBoxYesNoButtonEvent event) {
+    								delegate.deleteClicked(institution);
+    							}
+    							
+    							@Override
+    							public void onNoButtonClicked(ConfirmDialogBoxYesNoButtonEvent event) {
+    															
+    							}
+    						});
+    						
+    						
+    					}	
+    				}), "", new GetValue<InstitutionProxy>() {
+    			public InstitutionProxy getValue(InstitutionProxy institution) {
+    				return institution;
+    			}
+    		}, null);
+        	
+        	table.addColumnStyleName(1, "iconColumn");
+        }
+        
         
        /* 
     	addColumn(new ActionCell<InstitutionProxy>(
@@ -221,7 +242,7 @@ public class InstitutionViewImpl extends Composite implements InstitutionView  {
     	        }
     	      }, null);*/
     	
-    	table.addColumnStyleName(1, "iconColumn");
+    	
     	
     	table.addColumnStyleName(0, "questionTextColumn");
     }
@@ -301,9 +322,5 @@ public class InstitutionViewImpl extends Composite implements InstitutionView  {
 		
 		return slidingPanel;
 	}
-
-	  
-
-
 
 }
