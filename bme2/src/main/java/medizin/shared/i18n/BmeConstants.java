@@ -353,4 +353,6 @@ public interface BmeConstants extends Constants {
 	public String eventName();
 	
 	public String privilege();
+	
+	public String newUser();
 }

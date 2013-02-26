@@ -75,11 +75,11 @@ public class UserViewImpl extends Composite implements UserView  {
 	    CellTable<PersonProxy> table;*/
 	  
 	   @UiField
-	   IconButton addInstitution;
+	   IconButton addUser;
 	   
 	   public BmeConstants constants = GWT.create(BmeConstants.class);
 	   
-	   @UiHandler ("addInstitution")
+	   @UiHandler ("addUser")
 	   public void onNewClicked(ClickEvent e) {
         delegate.newClicked();
     }
