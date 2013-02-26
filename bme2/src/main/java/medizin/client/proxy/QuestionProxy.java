@@ -83,9 +83,9 @@ public interface QuestionProxy extends EntityProxy {
 
     abstract void setQuestionResources(Set<medizin.client.proxy.QuestionResourceProxy> questionResources);
 
-    abstract Set<medizin.client.proxy.QuestionAccessProxy> getQuestionAccess();
+    abstract Set<medizin.client.proxy.UserAccessRightsProxy> getQuestionAccess();
 
-    abstract void setQuestionAccess(Set<medizin.client.proxy.QuestionAccessProxy> questionAccess);
+    abstract void setQuestionAccess(Set<medizin.client.proxy.UserAccessRightsProxy> questionAccess);
 
     abstract Date getDateAdded();
 

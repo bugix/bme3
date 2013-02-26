@@ -133,8 +133,8 @@ public class Institution {
 		
 		if (personId != null && personId != 0)
 		{
-			Subquery<QuestionAccess> subQry = criteriaQuery.subquery(QuestionAccess.class);
-			Root queAccRoot = subQry.from(QuestionAccess.class);
+			Subquery<UserAccessRights> subQry = criteriaQuery.subquery(UserAccessRights.class);
+			Root queAccRoot = subQry.from(UserAccessRights.class);
 			
 			Predicate subPre1 = criteriaBuilder.equal(queAccRoot.get("accRights"), AccessRights.AccPrimaryAdmin);
 			Predicate subPre2 = criteriaBuilder.equal(queAccRoot.get("person").get("id"), personId);
@@ -166,8 +166,8 @@ public class Institution {
 		
 		if (personId != null && personId != 0)
 		{
-			Subquery<QuestionAccess> subQry = criteriaQuery.subquery(QuestionAccess.class);
-			Root queAccRoot = subQry.from(QuestionAccess.class);
+			Subquery<UserAccessRights> subQry = criteriaQuery.subquery(UserAccessRights.class);
+			Root queAccRoot = subQry.from(UserAccessRights.class);
 			
 			Predicate subPre1 = criteriaBuilder.equal(queAccRoot.get("accRights"), AccessRights.AccPrimaryAdmin.ordinal());
 			Predicate subPre2 = criteriaBuilder.equal(queAccRoot.get("person").get("id"), personId);

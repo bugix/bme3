@@ -124,7 +124,7 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 	@Override
 	public void start2(final AcceptsOneWidget widget, final EventBus eventBus) {
 
-		requests.questionAccessRequest().checkInstitutionalAdmin().fire(new BMEReceiver<Boolean>() {
+		requests.userAccessRightsRequest().checkInstitutionalAdmin().fire(new BMEReceiver<Boolean>() {
 
 			@Override
 			public void onSuccess(Boolean response) {

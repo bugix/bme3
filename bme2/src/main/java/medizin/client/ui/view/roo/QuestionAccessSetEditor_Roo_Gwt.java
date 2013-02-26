@@ -4,11 +4,12 @@ package medizin.client.ui.view.roo;
 
 import java.util.Set;
 
-import medizin.client.proxy.QuestionAccessProxy;
+import medizin.client.proxy.UserAccessRightsProxy;
+
 
 import com.google.gwt.editor.client.LeafValueEditor;
 import com.google.gwt.editor.client.ValueAwareEditor;
 import com.google.gwt.user.client.ui.Composite;
 
-public abstract class QuestionAccessSetEditor_Roo_Gwt extends Composite implements ValueAwareEditor<Set<QuestionAccessProxy>>, LeafValueEditor<Set<QuestionAccessProxy>> {
+public abstract class QuestionAccessSetEditor_Roo_Gwt extends Composite implements ValueAwareEditor<Set<UserAccessRightsProxy>>, LeafValueEditor<Set<UserAccessRightsProxy>> {
 }

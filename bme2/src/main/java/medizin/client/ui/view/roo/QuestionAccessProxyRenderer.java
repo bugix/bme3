@@ -2,12 +2,12 @@ package medizin.client.ui.view.roo;
 
 import com.google.web.bindery.requestfactory.gwt.ui.client.ProxyRenderer;
 import medizin.client.proxy.PersonProxy;
-import medizin.client.proxy.QuestionAccessProxy;
 import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
+import medizin.client.proxy.UserAccessRightsProxy;
 import medizin.client.shared.AccessRights;
 
-public class QuestionAccessProxyRenderer extends ProxyRenderer<QuestionAccessProxy> {
+public class QuestionAccessProxyRenderer extends ProxyRenderer<UserAccessRightsProxy> {
 
     private static medizin.client.ui.view.roo.QuestionAccessProxyRenderer INSTANCE;
 
@@ -22,7 +22,7 @@ public class QuestionAccessProxyRenderer extends ProxyRenderer<QuestionAccessPro
         return INSTANCE;
     }
 
-    public String render(QuestionAccessProxy object) {
+    public String render(UserAccessRightsProxy object) {
         if (object == null) {
             return "";
         }

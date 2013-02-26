@@ -9,10 +9,12 @@ import medizin.client.place.PlaceUser;
 import medizin.client.place.PlaceUserDetails;
 import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.PersonProxy;
-import medizin.client.proxy.QuestionAccessProxy;
+import medizin.client.proxy.UserAccessRightsProxy;
+
 import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
-import medizin.client.request.QuestionAccessRequest;
+
+import medizin.client.request.UserAccessRightsRequest;
 import medizin.client.shared.AccessRights;
 import medizin.client.ui.view.user.EventAccessDialogbox;
 import medizin.client.ui.view.user.EventAccessDialogboxImpl;
@@ -253,9 +255,9 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 		Log.debug("Im QuestionEvent.onRangeEventAccessChanged");
 		final Range range = questionEventTable.getVisibleRange();
 
-		final BMEReceiver<List<QuestionAccessProxy>> callback = new BMEReceiver<List<QuestionAccessProxy>>() {
+		final BMEReceiver<List<UserAccessRightsProxy>> callback = new BMEReceiver<List<UserAccessRightsProxy>>() {
 			@Override
-			public void onSuccess(List<QuestionAccessProxy> values) {
+			public void onSuccess(List<UserAccessRightsProxy> values) {
 				if (view == null) {
 					// This activity is dead
 					return;
@@ -311,7 +313,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 	}
 	
 	private void fireEventAccessRangeRequest(final Range range,
-            final BMEReceiver<List<QuestionAccessProxy>> callback, String proxyId, String eventName) {
+            final BMEReceiver<List<UserAccessRightsProxy>> callback, String proxyId, String eventName) {
 			if(proxyId!=null){
 				
 				requests.find(requests.getProxyId(proxyId)).fire(new BMEReceiver<Object>() {
@@ -336,12 +338,12 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 			}
 			
 }
-    protected Request<java.util.List<medizin.client.proxy.QuestionAccessProxy>> createEventAccessRangeRequest(Range range) {
-        return requests.questionAccessRequest().findQuestionEventAccessByPersonNonRooNonRoo(person.getId(), range.getStart(), range.getLength()).with("questionEvent");
+    protected Request<java.util.List<medizin.client.proxy.UserAccessRightsProxy>> createEventAccessRangeRequest(Range range) {
+        return requests.userAccessRightsRequest().findQuestionEventAccessByPersonNonRooNonRoo(person.getId(), range.getStart(), range.getLength()).with("questionEvent");
     }
 
     protected void fireEventAccessCountRequest(BMEReceiver<java.lang.Long> callback) {
-    	requests.questionAccessRequest().countQuestionEventAccessByPersonNonRoo(person.getId()).fire(callback);
+    	requests.userAccessRightsRequest().countQuestionEventAccessByPersonNonRoo(person.getId()).fire(callback);
     }
 
 	private QuestionAccessView questionAccessView;
@@ -350,7 +352,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 
 	private HandlerRegistration rangeQuestionAccessChangeHandler;
 
-	private CellTable<QuestionAccessProxy> questionTable;
+	private CellTable<UserAccessRightsProxy> questionTable;
 	
 	private void initQuestionAccess() {
 		this.questionAccessView = userDetailsView.getQuestionAccessView();
@@ -392,9 +394,9 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 		
 		final Range range = questionTable.getVisibleRange();
 
-		final BMEReceiver<List<QuestionAccessProxy>> callback = new BMEReceiver<List<QuestionAccessProxy>>() {
+		final BMEReceiver<List<UserAccessRightsProxy>> callback = new BMEReceiver<List<UserAccessRightsProxy>>() {
 			@Override
-			public void onSuccess(List<QuestionAccessProxy> values) {
+			public void onSuccess(List<UserAccessRightsProxy> values) {
 				if (view == null) {
 					// This activity is dead
 					return;
@@ -433,15 +435,15 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 	}
 	
 	private void fireQuestionAccessRangeRequest(final Range range,
-            final BMEReceiver<List<QuestionAccessProxy>> callback) {
+            final BMEReceiver<List<UserAccessRightsProxy>> callback) {
 			createQuestionAccessRangeRequest(range).fire(callback);
 }
-    protected Request<java.util.List<medizin.client.proxy.QuestionAccessProxy>> createQuestionAccessRangeRequest(Range range) {
-        return requests.questionAccessRequest().findQuestionAccessQuestionByPersonNonRoo(person.getId(), range.getStart(), range.getLength()).with("question");
+    protected Request<java.util.List<medizin.client.proxy.UserAccessRightsProxy>> createQuestionAccessRangeRequest(Range range) {
+        return requests.userAccessRightsRequest().findQuestionAccessQuestionByPersonNonRoo(person.getId(), range.getStart(), range.getLength()).with("question");
     }
 
     protected void fireQuestionAccessCountRequest(BMEReceiver<java.lang.Long> callback) {
-    	requests.questionAccessRequest().countQuestionAccessQuestionByPersonNonRoo(person.getId()).fire(callback);
+    	requests.userAccessRightsRequest().countQuestionAccessQuestionByPersonNonRoo(person.getId()).fire(callback);
     }
     //////
 
@@ -449,7 +451,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 	 * CellTable for EntitiesProxis of Type @see medizin.client.a_nonroo.app.request.QuestionAccessProxy
 	 * This table is designed for showing acceses to questions oven question events
 	 */
-	private CellTable<QuestionAccessProxy> questionEventTable;
+	private CellTable<UserAccessRightsProxy> questionEventTable;
 
 
 
@@ -518,9 +520,9 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 	}
 
 	@Override
-	public void deleteEventAccessClicked(QuestionAccessProxy questionAccess) {
+	public void deleteEventAccessClicked(UserAccessRightsProxy questionAccess) {
 		
-		requests.questionAccessRequest().remove()
+		requests.userAccessRightsRequest().remove()
 		.using(questionAccess).fire(new BMEReceiver<Void>() {
 
 			public void onSuccess(Void ignore) {
@@ -864,8 +866,8 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
     //////
 
 	@Override
-	public void deleteQuestionAccessClicked(QuestionAccessProxy questionAccess) {
-		requests.questionAccessRequest().remove()
+	public void deleteQuestionAccessClicked(UserAccessRightsProxy questionAccess) {
+		requests.userAccessRightsRequest().remove()
 		.using(questionAccess).fire(new BMEReceiver<Void>() {
 
 			public void onSuccess(Void ignore) {
@@ -1064,8 +1066,8 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 
 	@Override
 	public void addClicked(AccessRights rights, QuestionEventProxy questionEvent) {
-		QuestionAccessRequest request = requests.questionAccessRequest();
-		QuestionAccessProxy eventAccess = request.create(QuestionAccessProxy.class);
+		UserAccessRightsRequest request = requests.userAccessRightsRequest();
+		UserAccessRightsProxy eventAccess = request.create(UserAccessRightsProxy.class);
 
 		request.persist().using(eventAccess);
 
@@ -1220,8 +1222,8 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 		@Override
 		public void addClicked(AccessRights rights, QuestionProxy question) {
 			Log.debug("im add clicked");
-			QuestionAccessRequest request = requests.questionAccessRequest();
-			QuestionAccessProxy eventAccess = request.create(QuestionAccessProxy.class);
+			UserAccessRightsRequest request = requests.userAccessRightsRequest();
+			UserAccessRightsProxy eventAccess = request.create(UserAccessRightsProxy.class);
 
 			request.persist().using(eventAccess);
 
@@ -1316,8 +1318,8 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 				@Override
 				public void onSuccess(PersonProxy response) {
 					
-					QuestionAccessRequest questionAccessRequest = requests.questionAccessRequest();
-					QuestionAccessProxy questionAccessProxy = questionAccessRequest.create(QuestionAccessProxy.class);
+					UserAccessRightsRequest questionAccessRequest = requests.userAccessRightsRequest();
+					UserAccessRightsProxy questionAccessProxy = questionAccessRequest.create(UserAccessRightsProxy.class);
 					
 					
 					questionAccessProxy.setInstitution(institutionProxy);
@@ -1348,7 +1350,8 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 		
 		public void initInstituteAccess()
 		{
-			this.instituteAccessView = view.getInstituteAccessView();
+			//this.instituteAccessView = view.getInstituteAccessView();
+			this.instituteAccessView = userDetailsView.getInstituteAccessView();
 			instituteAccessView.setDelegate(this);
 			instituteAccessView.setPresenter(this);
 			
@@ -1365,21 +1368,18 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 		
 		public void onInstituteAccessRangeChanged()
 		{
-			requests.questionAccessRequest().countInstiuteAccessByPerson(person.getId()).fire(new BMEReceiver<Long>() {
+			requests.userAccessRightsRequest().countInstiuteAccessByPerson(person.getId()).fire(new BMEReceiver<Long>() {
 
 				@Override
 				public void onSuccess(Long response) {
 					instituteAccessView.getTable().setRowCount(response.intValue(), true);
 					
 					final Range range = instituteAccessView.getTable().getVisibleRange();
-					requests.questionAccessRequest().findInstiuteAccessByPerson(person.getId(), range.getStart(), range.getLength()).with("institution").fire(new BMEReceiver<List<QuestionAccessProxy>>() {
+					requests.userAccessRightsRequest().findInstiuteAccessByPerson(person.getId(), range.getStart(), range.getLength()).with("institution").fire(new BMEReceiver<List<UserAccessRightsProxy>>() {
 
 						@Override
-						public void onSuccess(List<QuestionAccessProxy> response) {
-							if (response.size() > 0)
-								instituteAccessView.getTable().setRowData(range.getStart(), response);
-							else
-								instituteAccessView.getTable().setRowData(response);
+						public void onSuccess(List<UserAccessRightsProxy> response) {
+							instituteAccessView.getTable().setRowData(range.getStart(), response);
 						}
 					});
 				}
@@ -1387,9 +1387,9 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 		}
 
 		@Override
-		public void deleteInstituteAccessClicked(QuestionAccessProxy event) {
+		public void deleteInstituteAccessClicked(UserAccessRightsProxy event) {
 			
-			requests.questionAccessRequest().remove().using(event).fire(new BMEReceiver<Void>() {
+			requests.userAccessRightsRequest().remove().using(event).fire(new BMEReceiver<Void>() {
 
 				@Override
 				public void onSuccess(Void response) {

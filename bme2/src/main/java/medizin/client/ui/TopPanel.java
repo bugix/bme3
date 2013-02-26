@@ -169,7 +169,7 @@ public class TopPanel extends Composite {
 					else
 					{
 						
-						TopPanel.this.requests.questionAccessRequest().findInstituionFromQuestionAccessByPerson(event.getValue().getId()).fire(new Receiver<List<InstitutionProxy>>() {
+						TopPanel.this.requests.userAccessRightsRequest().findInstituionFromQuestionAccessByPerson(event.getValue().getId()).fire(new Receiver<List<InstitutionProxy>>() {
 	
 							@Override
 							public void onSuccess(List<InstitutionProxy> response) {

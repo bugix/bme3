@@ -12,9 +12,20 @@ import medizin.server.domain.Mc;
 import medizin.server.domain.Person;
 import medizin.server.domain.Question;
 import medizin.server.domain.QuestionEvent;
+import medizin.server.domain.QuestionResource;
 import medizin.server.domain.QuestionType;
+import medizin.server.domain.UserAccessRights;
+import medizin.shared.Status;
 
 privileged aspect Question_Roo_JavaBean {
+    
+    public String Question.getQuestionShortName() {
+        return this.questionShortName;
+    }
+    
+    public void Question.setQuestionShortName(String questionShortName) {
+        this.questionShortName = questionShortName;
+    }
     
     public String Question.getQuestionText() {
         return this.questionText;
@@ -46,6 +57,14 @@ privileged aspect Question_Roo_JavaBean {
     
     public void Question.setIsAcceptedRewiever(Boolean isAcceptedRewiever) {
         this.isAcceptedRewiever = isAcceptedRewiever;
+    }
+    
+    public Boolean Question.getSubmitToReviewComitee() {
+        return this.submitToReviewComitee;
+    }
+    
+    public void Question.setSubmitToReviewComitee(Boolean submitToReviewComitee) {
+        this.submitToReviewComitee = submitToReviewComitee;
     }
     
     public Boolean Question.getIsAcceptedAdmin() {
@@ -104,6 +123,14 @@ privileged aspect Question_Roo_JavaBean {
         this.questionType = questionType;
     }
     
+    public Status Question.getStatus() {
+        return this.status;
+    }
+    
+    public void Question.setStatus(Status status) {
+        this.status = status;
+    }
+    
     public Set<Mc> Question.getMcs() {
         return this.mcs;
     }
@@ -118,6 +145,22 @@ privileged aspect Question_Roo_JavaBean {
     
     public void Question.setAnswers(Set<Answer> answers) {
         this.answers = answers;
+    }
+    
+    public Set<QuestionResource> Question.getQuestionResources() {
+        return this.questionResources;
+    }
+    
+    public void Question.setQuestionResources(Set<QuestionResource> questionResources) {
+        this.questionResources = questionResources;
+    }
+    
+    public Set<UserAccessRights> Question.getQuestionAccess() {
+        return this.questionAccess;
+    }
+    
+    public void Question.setQuestionAccess(Set<UserAccessRights> questionAccess) {
+        this.questionAccess = questionAccess;
     }
     
     public Date Question.getDateAdded() {

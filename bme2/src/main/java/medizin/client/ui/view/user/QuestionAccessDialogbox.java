@@ -2,7 +2,6 @@ package medizin.client.ui.view.user;
 
 import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.PersonProxy;
-import medizin.client.proxy.QuestionAccessProxy;
 import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.EventHandlingValueHolderItem;

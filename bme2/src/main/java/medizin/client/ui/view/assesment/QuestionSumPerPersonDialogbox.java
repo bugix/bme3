@@ -3,7 +3,7 @@ package medizin.client.ui.view.assesment;
 import java.util.Collection;
 
 import medizin.client.proxy.PersonProxy;
-import medizin.client.proxy.QuestionAccessProxy;
+
 import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionSumPerPersonProxy;
 import medizin.client.proxy.QuestionSumPerPersonProxy;

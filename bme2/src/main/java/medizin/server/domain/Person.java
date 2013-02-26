@@ -74,7 +74,7 @@ public class Person {
     private Boolean isDoctor;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "person")
-    private Set<QuestionAccess> questionAccesses = new HashSet<QuestionAccess>();
+    private Set<UserAccessRights> questionAccesses = new HashSet<UserAccessRights>();
 
     @OneToOne
     private Doctor doctor;
@@ -145,15 +145,15 @@ public class Person {
             		Institution institution = Institution.findInstitution(instId);
             		
             		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
-            		CriteriaQuery<QuestionAccess> criteriaQuery = criteriaBuilder.createQuery(QuestionAccess.class);
-            		Root<QuestionAccess> from = criteriaQuery.from(QuestionAccess.class);
+            		CriteriaQuery<UserAccessRights> criteriaQuery = criteriaBuilder.createQuery(UserAccessRights.class);
+            		Root<UserAccessRights> from = criteriaQuery.from(UserAccessRights.class);
             		
             		Predicate pre1 = criteriaBuilder.equal(from.get("person").get("id"), person.getId());
             		Predicate pre2 = criteriaBuilder.equal(from.get("institution").get("id"), institution.getId());
             		
             		criteriaQuery.where(criteriaBuilder.and(pre1, pre2));
             		
-            		TypedQuery<QuestionAccess> query = entityManager().createQuery(criteriaQuery);
+            		TypedQuery<UserAccessRights> query = entityManager().createQuery(criteriaQuery);
             		
             		if (query.getResultList().size() > 0)
             			return true;

@@ -1,6 +1,6 @@
 package medizin.client.ui.view.assesment;
 
-import medizin.client.proxy.QuestionAccessProxy;
+
 import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.proxy.QuestionSumPerPersonProxy;

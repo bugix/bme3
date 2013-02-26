@@ -1,7 +1,7 @@
 package medizin.client.ui.view.user;
 
-import medizin.client.proxy.QuestionAccessProxy;
 import medizin.client.proxy.QuestionEventProxy;
+import medizin.client.proxy.UserAccessRightsProxy;
 
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.cellview.client.CellTable;
@@ -19,12 +19,12 @@ public interface EventAccessView extends IsWidget {
 	 * Implemented by the owner of the view.
 	 */
 	interface Delegate {
-		void deleteEventAccessClicked(QuestionAccessProxy event);
+		void deleteEventAccessClicked(UserAccessRightsProxy event);
 
 		void addNewEventAccessClicked();
 	}
 
-    CellTable<QuestionAccessProxy> getTable();
+    CellTable<UserAccessRightsProxy> getTable();
     String[] getPaths();
     
     void setDelegate(Delegate delegate);

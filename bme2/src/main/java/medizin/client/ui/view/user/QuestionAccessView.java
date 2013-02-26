@@ -1,8 +1,9 @@
 package medizin.client.ui.view.user;
 
-import medizin.client.proxy.QuestionAccessProxy;
+
 import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
+import medizin.client.proxy.UserAccessRightsProxy;
 
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.cellview.client.CellTable;
@@ -20,12 +21,12 @@ public interface QuestionAccessView extends IsWidget {
 	 * Implemented by the owner of the view.
 	 */
 	interface Delegate {
-		void deleteQuestionAccessClicked(QuestionAccessProxy questionAccess);
+		void deleteQuestionAccessClicked(UserAccessRightsProxy questionAccess);
 
 		void addNewQuestionAccessClicked();
 	}
 
-    CellTable<QuestionAccessProxy> getTable();
+    CellTable<UserAccessRightsProxy> getTable();
     String[] getPaths();
     
     void setDelegate(Delegate delegate);

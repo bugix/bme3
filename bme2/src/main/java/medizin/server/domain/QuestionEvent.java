@@ -115,7 +115,7 @@ public class QuestionEvent {
 	        Person person = Person.findPerson(personId);
 	        if (person == null) throw new IllegalArgumentException("The institution argument is required");
 	        EntityManager em = QuestionEvent.entityManager();
-	        TypedQuery<Long> q = em.createQuery("SELECT count(qevent) FROM QuestionAccess qaccess " + 
+	        TypedQuery<Long> q = em.createQuery("SELECT count(qevent) FROM UserAccessRights qaccess " + 
 	        		"INNER JOIN qaccess.questionEvent qevent WHERE qaccess.person = :person", Long.class);
 	        q.setParameter("person", person);
 	        return q.getSingleResult();
@@ -125,7 +125,7 @@ public class QuestionEvent {
 	        Person person = Person.findPerson(personId);
 	        if (person == null) throw new IllegalArgumentException("The institution argument is required");
 	        EntityManager em = QuestionEvent.entityManager();
-	        TypedQuery<QuestionEvent> q = em.createQuery("SELECT qevent FROM QuestionAccess qaccess " + 
+	        TypedQuery<QuestionEvent> q = em.createQuery("SELECT qevent FROM UserAccessRights qaccess " + 
 	        		"INNER JOIN qaccess.questionEvent qevent WHERE qaccess.person = :person", QuestionEvent.class).setFirstResult(firstResult).setMaxResults(maxResults);
 //	        TypedQuery<QuestionEvent> q = em.createQuery("SELECT QuestionEvent FROM QuestionEvent AS questionevent ", QuestionEvent.class).setFirstResult(firstResult).setMaxResults(maxResults);
 	        q.setParameter("person", person);

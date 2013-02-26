@@ -5,13 +5,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import medizin.client.proxy.UserAccessRightsProxy;
 import medizin.client.style.resources.MyCellTableResources;
 import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.EventView.Delegate;
 import medizin.client.ui.view.EventView.Presenter;
 import medizin.client.ui.widget.IconButton;
-import medizin.client.proxy.QuestionAccessProxy;
+
 import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
@@ -50,7 +51,7 @@ public class QuestionAccessViewImpl extends Composite implements QuestionAccessV
 	public QuestionAccessViewImpl() {
 		
 		CellTable.Resources tableResources = GWT.create(MyCellTableResources.class);
-		tableEvent = new CellTable<QuestionAccessProxy>(McAppConstant.TABLE_PAGE_SIZE,tableResources);
+		tableEvent = new CellTable<UserAccessRightsProxy>(McAppConstant.TABLE_PAGE_SIZE,tableResources);
 
 		SimplePager.Resources pagerResources = GWT.create(MySimplePagerResources.class);
 		pager = new SimplePager(SimplePager.TextLocation.RIGHT, pagerResources,true, McAppConstant.TABLE_JUMP_SIZE, true);
@@ -97,7 +98,7 @@ public class QuestionAccessViewImpl extends Composite implements QuestionAccessV
 	}
 	
 	@UiField(provided = true)
-	CellTable<QuestionAccessProxy> tableEvent;
+	CellTable<UserAccessRightsProxy> tableEvent;
 
 	@UiField(provided = true)
 	public SimplePager pager;
@@ -171,7 +172,7 @@ public class QuestionAccessViewImpl extends Composite implements QuestionAccessV
 
 
         paths.add("questionText");
-        tableEvent.addColumn(new TextColumn<QuestionAccessProxy>() {
+        tableEvent.addColumn(new TextColumn<UserAccessRightsProxy>() {
 
             Renderer<java.lang.String> renderer = new AbstractRenderer<java.lang.String>() {
 
@@ -181,12 +182,12 @@ public class QuestionAccessViewImpl extends Composite implements QuestionAccessV
             };
 
             @Override
-            public String getValue(QuestionAccessProxy object) {
+            public String getValue(UserAccessRightsProxy object) {
                 return renderer.render(object.getQuestion().getQuestionText());
             }
         }, constants.question());
         paths.add("accRights");
-        tableEvent.addColumn(new TextColumn<QuestionAccessProxy>() {
+        tableEvent.addColumn(new TextColumn<UserAccessRightsProxy>() {
 
             Renderer<java.lang.String> renderer = new AbstractRenderer<java.lang.String>() {
 
@@ -196,19 +197,19 @@ public class QuestionAccessViewImpl extends Composite implements QuestionAccessV
             };
 
             @Override
-            public String getValue(QuestionAccessProxy object) {
+            public String getValue(UserAccessRightsProxy object) {
                 return renderer.render(object.getAccRights().toString());
             }
         }, constants.privilege());
         
-    	addColumn(new ActionCell<QuestionAccessProxy>(
-    	        constants.delete(), new ActionCell.Delegate<QuestionAccessProxy>() {
-    	            public void execute(QuestionAccessProxy question) {
+    	addColumn(new ActionCell<UserAccessRightsProxy>(
+    	        constants.delete(), new ActionCell.Delegate<UserAccessRightsProxy>() {
+    	            public void execute(UserAccessRightsProxy question) {
     	              Log.debug("You clicked " + question.getQuestion().getQuestionText());
     	              delegate.deleteQuestionAccessClicked(question);
     	            }
-    	          }), constants.delete(), new GetValue<QuestionAccessProxy>() {
-    	        public QuestionAccessProxy getValue(QuestionAccessProxy contact) {
+    	          }), constants.delete(), new GetValue<UserAccessRightsProxy>() {
+    	        public UserAccessRightsProxy getValue(UserAccessRightsProxy contact) {
     	          return contact;
     	        }
     	      }, null);
@@ -218,7 +219,7 @@ public class QuestionAccessViewImpl extends Composite implements QuestionAccessV
     	tableEvent.addColumnStyleName(2, "deleteColumn");
     }
 	@Override
-	public CellTable<QuestionAccessProxy> getTable() {
+	public CellTable<UserAccessRightsProxy> getTable() {
 
 		return tableEvent;
 	}
@@ -243,10 +244,10 @@ public class QuestionAccessViewImpl extends Composite implements QuestionAccessV
 	   * @param getter the value getter for the cell
 	   */
 	  private <C> void addColumn(Cell<C> cell, String headerText,
-	      final GetValue<C> getter, FieldUpdater<QuestionAccessProxy, C> fieldUpdater) {
-	    Column<QuestionAccessProxy, C> column = new Column<QuestionAccessProxy, C>(cell) {
+	      final GetValue<C> getter, FieldUpdater<UserAccessRightsProxy, C> fieldUpdater) {
+	    Column<UserAccessRightsProxy, C> column = new Column<UserAccessRightsProxy, C>(cell) {
 	      @Override
-	      public C getValue(QuestionAccessProxy object) {
+	      public C getValue(UserAccessRightsProxy object) {
 	        return getter.getValue(object);
 	      }
 	    };
@@ -263,7 +264,7 @@ public class QuestionAccessViewImpl extends Composite implements QuestionAccessV
 	   * @param <C> the cell type
 	   */
 	  private static interface GetValue<C> {
-	    C getValue(QuestionAccessProxy contact);
+	    C getValue(UserAccessRightsProxy contact);
 	  }
 	  
 	 

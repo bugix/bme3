@@ -9,7 +9,6 @@ import medizin.client.request.InstitutionRequest;
 import medizin.client.request.KeywordRequest;
 import medizin.client.request.McRequest;
 import medizin.client.request.PersonRequest;
-import medizin.client.request.QuestionAccessRequest;
 import medizin.client.request.QuestionEventRequest;
 import medizin.client.request.QuestionRequest;
 import medizin.client.request.QuestionResourceRequest;
@@ -18,6 +17,8 @@ import medizin.client.request.QuestionTypeCountPerExamRequest;
 import medizin.client.request.QuestionTypeRequest;
 import medizin.client.request.StaticContentRequest;
 import medizin.client.request.StaticToAssesmentRequest;
+import medizin.client.request.UserAccessRightsRequest;
+import medizin.server.domain.UserAccessRights;
 
 import com.google.web.bindery.requestfactory.shared.LoggingRequest;
 import com.google.web.bindery.requestfactory.shared.RequestFactory;
@@ -57,8 +58,6 @@ public interface McAppRequestFactory extends RequestFactory {
 
     PersonRequest personRequest();
 
-    QuestionAccessRequest questionAccessRequest();
-
     QuestionEventRequest questionEventRequest();
 
     QuestionRequest questionRequest();
@@ -76,4 +75,6 @@ public interface McAppRequestFactory extends RequestFactory {
     StaticToAssesmentRequest staticToAssesmentRequest();
 
     DoctorRequest doctorRequest();
+    
+    UserAccessRightsRequest userAccessRightsRequest();
 }

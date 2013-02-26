@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import medizin.client.proxy.QuestionAccessProxy;
+import medizin.client.proxy.UserAccessRightsProxy;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.EditorDelegate;
@@ -36,7 +36,7 @@ public class QuestionAccessSetEditor extends QuestionAccessSetEditor_Roo_Gwt {
 
     @UiField(provided = true)
     @Ignore
-    ValueListBox<QuestionAccessProxy> picker = new ValueListBox<QuestionAccessProxy>(medizin.client.ui.view.roo.QuestionAccessProxyRenderer.instance(), new com.google.web.bindery.requestfactory.gwt.ui.client.EntityProxyKeyProvider<QuestionAccessProxy>());
+    ValueListBox<UserAccessRightsProxy> picker = new ValueListBox<UserAccessRightsProxy>(medizin.client.ui.view.roo.QuestionAccessProxyRenderer.instance(), new com.google.web.bindery.requestfactory.gwt.ui.client.EntityProxyKeyProvider<UserAccessRightsProxy>());
 
     @UiField
     Button add;
@@ -58,16 +58,16 @@ public class QuestionAccessSetEditor extends QuestionAccessSetEditor_Roo_Gwt {
 
     boolean editing = false;
 
-    private Set<QuestionAccessProxy> values;
+    private Set<UserAccessRightsProxy> values;
 
-    private final List<QuestionAccessProxy> displayedList;
+    private final List<UserAccessRightsProxy> displayedList;
 
     public QuestionAccessSetEditor() {
         initWidget(GWT.<Binder>create(Binder.class).createAndBindUi(this));
         Driver driver = GWT.<Driver>create(Driver.class);
-        ListEditor<QuestionAccessProxy, NameLabel> listEditor = ListEditor.of(new NameLabelSource());
+        ListEditor<UserAccessRightsProxy, NameLabel> listEditor = ListEditor.of(new NameLabelSource());
         driver.initialize(listEditor);
-        driver.display(new ArrayList<QuestionAccessProxy>());
+        driver.display(new ArrayList<UserAccessRightsProxy>());
         displayedList = listEditor.getList();
         editing = false;
     }
@@ -77,7 +77,7 @@ public class QuestionAccessSetEditor extends QuestionAccessSetEditor_Roo_Gwt {
         if (picker.getValue() == null) {
             return;
         }
-        for (QuestionAccessProxy proxy : displayedList) {
+        for (UserAccessRightsProxy proxy : displayedList) {
             if (proxy.getId().equals(picker.getValue().getId())) {
                 return;
             }
@@ -97,11 +97,11 @@ public class QuestionAccessSetEditor extends QuestionAccessSetEditor_Roo_Gwt {
     }
 
     @Override
-    public Set<medizin.client.proxy.QuestionAccessProxy> getValue() {
+    public Set<medizin.client.proxy.UserAccessRightsProxy> getValue() {
         if (values == null && displayedList.size() == 0) {
             return null;
         }
-        return new HashSet<QuestionAccessProxy>(displayedList);
+        return new HashSet<UserAccessRightsProxy>(displayedList);
     }
 
     public void onLoad() {
@@ -112,23 +112,23 @@ public class QuestionAccessSetEditor extends QuestionAccessSetEditor_Roo_Gwt {
     public void onPropertyChange(String... strings) {
     }
 
-    public void setAcceptableValues(Collection<medizin.client.proxy.QuestionAccessProxy> proxies) {
+    public void setAcceptableValues(Collection<medizin.client.proxy.UserAccessRightsProxy> proxies) {
         picker.setAcceptableValues(proxies);
     }
 
     @Override
-    public void setDelegate(EditorDelegate<java.util.Set<medizin.client.proxy.QuestionAccessProxy>> editorDelegate) {
+    public void setDelegate(EditorDelegate<java.util.Set<medizin.client.proxy.UserAccessRightsProxy>> editorDelegate) {
     }
 
     @Override
-    public void setValue(Set<medizin.client.proxy.QuestionAccessProxy> values) {
+    public void setValue(Set<medizin.client.proxy.UserAccessRightsProxy> values) {
         this.values = values;
         makeEditable(editing = false);
         if (displayedList != null) {
             displayedList.clear();
             table.clear();
             if (values != null) {
-                for (QuestionAccessProxy e : values) {
+                for (UserAccessRightsProxy e : values) {
                     displayedList.add(e);
                     addToTable(e);
                 }
@@ -137,11 +137,11 @@ public class QuestionAccessSetEditor extends QuestionAccessSetEditor_Roo_Gwt {
         viewLabel.setText(makeFlatList(values));
     }
 
-    private void addToTable(QuestionAccessProxy value) {
+    private void addToTable(UserAccessRightsProxy value) {
         addToTable(value, displayedList.size() - 1);
     }
 
-    private void addToTable(QuestionAccessProxy value, int index) {
+    private void addToTable(UserAccessRightsProxy value, int index) {
         final int finalIndex = index;
         if (value != null) {
             table.setText(finalIndex, 0, medizin.client.ui.view.roo.QuestionAccessProxyRenderer.instance().render(value));
@@ -170,7 +170,7 @@ public class QuestionAccessSetEditor extends QuestionAccessSetEditor_Roo_Gwt {
         }
     }
 
-    private String makeFlatList(Collection<medizin.client.proxy.QuestionAccessProxy> values) {
+    private String makeFlatList(Collection<medizin.client.proxy.UserAccessRightsProxy> values) {
         return CollectionRenderer.of(medizin.client.ui.view.roo.QuestionAccessProxyRenderer.instance()).render(values);
     }
 
@@ -182,14 +182,14 @@ public class QuestionAccessSetEditor extends QuestionAccessSetEditor_Roo_Gwt {
     interface Binder extends UiBinder<Widget, QuestionAccessSetEditor> {
     }
 
-    interface Driver extends RequestFactoryEditorDriver<List<QuestionAccessProxy>, ListEditor<QuestionAccessProxy, NameLabel>> {
+    interface Driver extends RequestFactoryEditorDriver<List<UserAccessRightsProxy>, ListEditor<UserAccessRightsProxy, NameLabel>> {
     }
 
-    class NameLabel extends Composite implements LeafValueEditor<QuestionAccessProxy> {
+    class NameLabel extends Composite implements LeafValueEditor<UserAccessRightsProxy> {
 
         final Label idEditor = new Label();
 
-        private QuestionAccessProxy proxy = null;
+        private UserAccessRightsProxy proxy = null;
 
         public NameLabel() {
             this(null);
@@ -199,13 +199,13 @@ public class QuestionAccessSetEditor extends QuestionAccessSetEditor_Roo_Gwt {
             initWidget(idEditor);
         }
 
-        public void setValue(QuestionAccessProxy proxy) {
+        public void setValue(UserAccessRightsProxy proxy) {
             this.proxy = proxy;
             idEditor.setText(medizin.client.ui.view.roo.QuestionAccessProxyRenderer.instance().render(proxy));
         }
 
         @Override
-        public QuestionAccessProxy getValue() {
+        public UserAccessRightsProxy getValue() {
             return proxy;
         }
     }

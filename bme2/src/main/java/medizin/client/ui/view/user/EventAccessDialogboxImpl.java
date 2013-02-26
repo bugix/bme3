@@ -15,7 +15,6 @@ import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget
 
 
 import medizin.client.proxy.InstitutionProxy;
-import medizin.client.proxy.QuestionAccessProxy;
 import medizin.client.proxy.QuestionEventProxy;
 import medizin.shared.i18n.BmeConstants;
 

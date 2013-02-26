@@ -6,6 +6,7 @@ package medizin.server.domain;
 import java.util.Date;
 import medizin.client.shared.Validity;
 import medizin.server.domain.Answer;
+import medizin.server.domain.Comment;
 import medizin.server.domain.Person;
 import medizin.server.domain.Question;
 
@@ -27,12 +28,12 @@ privileged aspect Answer_Roo_JavaBean {
         this.isAnswerActive = isAnswerActive;
     }
     
-    public Boolean Answer.getIsPicture() {
-        return this.isPicture;
+    public Boolean Answer.getIsMedia() {
+        return this.isMedia;
     }
     
-    public void Answer.setIsPicture(Boolean isPicture) {
-        this.isPicture = isPicture;
+    public void Answer.setIsMedia(Boolean isMedia) {
+        this.isMedia = isMedia;
     }
     
     public Boolean Answer.getIsAnswerAcceptedReviewWahrer() {
@@ -67,12 +68,12 @@ privileged aspect Answer_Roo_JavaBean {
         this.validity = validity;
     }
     
-    public String Answer.getPicturePath() {
-        return this.picturePath;
+    public String Answer.getMediaPath() {
+        return this.mediaPath;
     }
     
-    public void Answer.setPicturePath(String picturePath) {
-        this.picturePath = picturePath;
+    public void Answer.setMediaPath(String mediaPath) {
+        this.mediaPath = mediaPath;
     }
     
     public Question Answer.getQuestion() {
@@ -113,6 +114,46 @@ privileged aspect Answer_Roo_JavaBean {
     
     public void Answer.setAutor(Person autor) {
         this.autor = autor;
+    }
+    
+    public Comment Answer.getComment() {
+        return this.comment;
+    }
+    
+    public void Answer.setComment(Comment comment) {
+        this.comment = comment;
+    }
+    
+    public Boolean Answer.getSubmitToReviewComitee() {
+        return this.submitToReviewComitee;
+    }
+    
+    public void Answer.setSubmitToReviewComitee(Boolean submitToReviewComitee) {
+        this.submitToReviewComitee = submitToReviewComitee;
+    }
+    
+    public String Answer.getPoints() {
+        return this.points;
+    }
+    
+    public void Answer.setPoints(String points) {
+        this.points = points;
+    }
+    
+    public String Answer.getAdditionalKeywords() {
+        return this.additionalKeywords;
+    }
+    
+    public void Answer.setAdditionalKeywords(String additionalKeywords) {
+        this.additionalKeywords = additionalKeywords;
+    }
+    
+    public Integer Answer.getSequenceNumber() {
+        return this.sequenceNumber;
+    }
+    
+    public void Answer.setSequenceNumber(Integer sequenceNumber) {
+        this.sequenceNumber = sequenceNumber;
     }
     
 }

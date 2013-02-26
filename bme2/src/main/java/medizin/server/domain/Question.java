@@ -113,7 +113,7 @@ public class Question {
 	private Set<QuestionResource> questionResources = new HashSet<QuestionResource>();
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "question")
-	private Set<QuestionAccess> questionAccess = new HashSet<QuestionAccess>();
+	private Set<UserAccessRights> questionAccess = new HashSet<UserAccessRights>();
 
 	// RedactionalBase code
 	// @NotNull
@@ -141,7 +141,7 @@ public class Question {
 		EntityManager em = QuestionEvent.entityManager();
 		TypedQuery<Long> q = em
 				.createQuery(
-						"SELECT count(quest) FROM QuestionAccess qaccess "
+						"SELECT count(quest) FROM UserAccessRights qaccess "
 								+ "INNER JOIN qaccess.question quest WHERE qaccess.person = :person",
 						Long.class);
 		q.setParameter("person", person);
@@ -699,18 +699,18 @@ public class Question {
 				Predicate mainpre1 = criteriaBuilder.equal(from.get("questEvent")
 						.get("institution").get("id"), institutionId);
 
-				Subquery<QuestionAccess> subQry = criteriaQuery
-						.subquery(QuestionAccess.class);
-				Root queAccRoot = subQry.from(QuestionAccess.class);
+				Subquery<UserAccessRights> subQry = criteriaQuery
+						.subquery(UserAccessRights.class);
+				Root queAccRoot = subQry.from(UserAccessRights.class);
 				subQry.select(queAccRoot.get("question").get("id")).where(
 						criteriaBuilder.equal(queAccRoot.get("person").get("id"),
 								loggedUser.getId()));
 				Predicate mainpre2 = criteriaBuilder.in(from.get("id")).value(
 						subQry);
 
-				Subquery<QuestionAccess> subQuery = criteriaQuery
-						.subquery(QuestionAccess.class);
-				Root questionAccessRoot = subQuery.from(QuestionAccess.class);
+				Subquery<UserAccessRights> subQuery = criteriaQuery
+						.subquery(UserAccessRights.class);
+				Root questionAccessRoot = subQuery.from(UserAccessRights.class);
 				subQuery.select(questionAccessRoot.get("questionEvent").get("id"))
 						.where(criteriaBuilder.equal(
 								questionAccessRoot.get("person").get("id"),

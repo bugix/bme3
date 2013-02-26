@@ -49,9 +49,9 @@ public interface PersonProxy extends EntityProxy {
 
     abstract void setIsDoctor(Boolean isDoctor);
 
-    abstract Set<medizin.client.proxy.QuestionAccessProxy> getQuestionAccesses();
+    abstract Set<medizin.client.proxy.UserAccessRightsProxy> getQuestionAccesses();
 
-    abstract void setQuestionAccesses(Set<medizin.client.proxy.QuestionAccessProxy> questionAccesses);
+    abstract void setQuestionAccesses(Set<medizin.client.proxy.UserAccessRightsProxy> questionAccesses);
 
     abstract DoctorProxy getDoctor();
 

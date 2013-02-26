@@ -1,6 +1,6 @@
 package medizin.client.ui.view.user;
 
-import medizin.client.proxy.QuestionAccessProxy;
+import medizin.client.proxy.UserAccessRightsProxy;
 import medizin.client.ui.view.user.EventAccessView.Delegate;
 import medizin.client.ui.view.user.EventAccessView.Presenter;
 
@@ -20,12 +20,12 @@ public interface InstituteAccessView {
 	 * Implemented by the owner of the view.
 	 */
 	interface Delegate {
-		void deleteInstituteAccessClicked(QuestionAccessProxy event);
+		void deleteInstituteAccessClicked(UserAccessRightsProxy event);
 
 		void addNewInstituteAccessClicked();
 	}
 
-    CellTable<QuestionAccessProxy> getTable();
+    CellTable<UserAccessRightsProxy> getTable();
     String[] getPaths();
     
     void setDelegate(Delegate delegate);

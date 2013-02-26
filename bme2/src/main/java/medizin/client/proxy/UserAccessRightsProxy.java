@@ -7,9 +7,9 @@ import com.google.web.bindery.requestfactory.shared.ProxyForName;
 import medizin.client.shared.AccessRights;
 import org.springframework.roo.addon.gwt.RooGwtProxy;
 
-@ProxyForName(value = "medizin.server.domain.QuestionAccess", locator = "medizin.server.locator.QuestionAccessLocator")
-@RooGwtProxy(value = "medizin.server.domain.QuestionAccess", readOnly = { "version", "id" })
-public interface QuestionAccessProxy extends EntityProxy {
+@ProxyForName(value = "medizin.server.domain.UserAccessRights", locator = "medizin.server.locator.UserAccessRightsLocator")
+@RooGwtProxy(value = "medizin.server.domain.UserAccessRights", readOnly = { "version", "id" })
+public interface UserAccessRightsProxy extends EntityProxy {
 
     abstract Long getId();
 

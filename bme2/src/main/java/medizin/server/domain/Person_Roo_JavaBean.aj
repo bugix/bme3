@@ -4,8 +4,9 @@
 package medizin.server.domain;
 
 import java.util.Set;
+import medizin.server.domain.Doctor;
 import medizin.server.domain.Person;
-import medizin.server.domain.QuestionAccess;
+import medizin.server.domain.UserAccessRights;
 
 privileged aspect Person_Roo_JavaBean {
     
@@ -73,12 +74,28 @@ privileged aspect Person_Roo_JavaBean {
         this.isAccepted = isAccepted;
     }
     
-    public Set<QuestionAccess> Person.getQuestionAccesses() {
+    public Boolean Person.getIsDoctor() {
+        return this.isDoctor;
+    }
+    
+    public void Person.setIsDoctor(Boolean isDoctor) {
+        this.isDoctor = isDoctor;
+    }
+    
+    public Set<UserAccessRights> Person.getQuestionAccesses() {
         return this.questionAccesses;
     }
     
-    public void Person.setQuestionAccesses(Set<QuestionAccess> questionAccesses) {
+    public void Person.setQuestionAccesses(Set<UserAccessRights> questionAccesses) {
         this.questionAccesses = questionAccesses;
+    }
+    
+    public Doctor Person.getDoctor() {
+        return this.doctor;
+    }
+    
+    public void Person.setDoctor(Doctor doctor) {
+        this.doctor = doctor;
     }
     
 }

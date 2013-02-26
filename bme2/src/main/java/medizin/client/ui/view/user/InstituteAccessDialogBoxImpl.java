@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import medizin.client.proxy.InstitutionProxy;
-import medizin.client.proxy.QuestionAccessProxy;
 import medizin.client.style.resources.MyCellTableResources;
 import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
