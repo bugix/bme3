@@ -155,13 +155,31 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
         });
 
         view.setQuestEventPickerValues(Collections.<QuestionEventProxy>emptyList());
-        requests.questionEventRequest().findQuestionEventEntries(0, 200).with(medizin.client.ui.view.roo.QuestionEventProxyRenderer.instance().getPaths()).fire(new BMEReceiver<List<QuestionEventProxy>>() {
+        
+        /*requests.questionEventRequest().findQuestionEventEntries(0, 200).with(medizin.client.ui.view.roo.QuestionEventProxyRenderer.instance().getPaths()).fire(new BMEReceiver<List<QuestionEventProxy>>() {
 
             public void onSuccess(List<QuestionEventProxy> response) {
                 List<QuestionEventProxy> values = new ArrayList<QuestionEventProxy>();
                 values.add(null);
                 values.addAll(response);
                 view.setQuestEventPickerValues(values);
+            }
+        });*/
+        
+        Boolean flag = false;
+        if (personRightProxy.getIsAdmin())
+        	flag = true;
+        else if (personRightProxy.getIsInstitutionalAdmin())
+        	flag = true;
+        
+        requests.questionEventRequest().findQuestionEventByInstitutionAndAccRights(flag, userLoggedIn.getId(), institutionActive.getId()).with(medizin.client.ui.view.roo.QuestionEventProxyRenderer.instance().getPaths()).fire(new BMEReceiver<List<QuestionEventProxy>>() {
+
+            public void onSuccess(List<QuestionEventProxy> response) {
+                /*List<QuestionEventProxy> values = new ArrayList<QuestionEventProxy>();
+                values.add(null);
+                values.addAll(response);*/
+                view.getQuestionEvent().setValue(response.get(0));
+                view.setQuestEventPickerValues(response);
             }
         });
 

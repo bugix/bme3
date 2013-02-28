@@ -43,6 +43,6 @@ public interface QuestionDetailsView extends IsWidget {
 
 	AnswerListViewImpl getAnswerListViewImpl();
 
-	
+	public void setInvisibleIconButton(Boolean flag);
 
 }

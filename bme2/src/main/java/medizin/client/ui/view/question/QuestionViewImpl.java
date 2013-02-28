@@ -192,7 +192,7 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 	}
 
 	
-	public QuestionViewImpl() {
+	public QuestionViewImpl(Boolean flag) {
 		CellTable.Resources tableResources = GWT
 				.create(MyCellTableResources.class);
 		table = new CellTable<QuestionProxy>(McAppConstant.TABLE_PAGE_SIZE,
@@ -302,6 +302,12 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 		initWidget(uiBinder.createAndBindUi(this));
 		DOM.setElementAttribute(splitLayoutPanel.getElement(), "style",
 				"position: absolute; left: 0px; top: 0px; right: 5px; bottom: 0px;");
+		
+		if (flag)
+			newQuestion.setVisible(true);
+		else
+			newQuestion.setVisible(false);
+		
 		init();
 
 	}
@@ -782,8 +788,4 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 	public List<String> getSearchValue() {
 		return searchField;
 	}
-	
-	
-
-
 }

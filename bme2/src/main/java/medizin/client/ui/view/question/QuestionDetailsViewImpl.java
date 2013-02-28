@@ -382,8 +382,21 @@ public class QuestionDetailsViewImpl extends Composite implements
 		
 	}
 
-	public QuestionDetailsViewImpl(EventBus eventBus) {
+	public QuestionDetailsViewImpl(EventBus eventBus, Boolean flag) {
 		initWidget(uiBinder.createAndBindUi(this));
+		
+		if (flag)
+		{
+			edit.setVisible(true);
+			delete.setVisible(true);
+		}
+		else
+		{
+			edit.setVisible(false);
+			delete.setVisible(false);
+		}
+		
+		
 		
 		this.eventBus = eventBus;
 		
@@ -637,5 +650,19 @@ public class QuestionDetailsViewImpl extends Composite implements
 		panel.add(h2);
 		
 		questionTypeDetailPanel.add(panel, constants.resources());
+	}
+	
+	public void setInvisibleIconButton(Boolean flag)
+	{
+		if (flag)
+		{
+			edit.setVisible(true);
+			delete.setVisible(true);
+		}
+		else
+		{
+			edit.setVisible(false);
+			delete.setVisible(false);
+		}
 	}
 }

@@ -696,9 +696,15 @@ public class Question {
 			Predicate andPredicate = null;
 
 			if (!loggedUser.getIsAdmin()) {
+				
+				Predicate p1 = criteriaBuilder.equal(from.get("autor").get("id"), loggedUser.getId());
+				Predicate p2 = criteriaBuilder.equal(from.get("rewiewer").get("id"), loggedUser.getId());
+								
 				Predicate mainpre1 = criteriaBuilder.equal(from.get("questEvent")
 						.get("institution").get("id"), institutionId);
 
+				mainpre1 = criteriaBuilder.and(criteriaBuilder.or(p2, p1), mainpre1);
+				
 				Subquery<UserAccessRights> subQry = criteriaQuery
 						.subquery(UserAccessRights.class);
 				Root queAccRoot = subQry.from(UserAccessRights.class);
@@ -717,9 +723,16 @@ public class Question {
 								loggedUser.getId()));
 				Predicate mainpre3 = criteriaBuilder.in(
 						from.get("questEvent").get("id")).value(subQuery);
+				
+				Subquery<UserAccessRights> instSubQuery = criteriaQuery.subquery(UserAccessRights.class);
+				Root instAccessRoot = instSubQuery.from(UserAccessRights.class);
+				Predicate instP1 = criteriaBuilder.equal(instAccessRoot.get("person").get("id"), loggedUser.getId());
+				Predicate instP2 = criteriaBuilder.equal(instAccessRoot.get("institution").get("id"), institutionId);
+				instSubQuery.select(instAccessRoot.get("institution").get("id")).where(criteriaBuilder.and(instP1, instP2));
+				Predicate mainpre4 = criteriaBuilder.in(from.get("questEvent").get("institution").get("id")).value(instSubQuery);
 
-				andAdminPredicate = criteriaBuilder.and(mainpre1,
-						criteriaBuilder.or(mainpre2, mainpre3));
+				andAdminPredicate = criteriaBuilder.or(mainpre1,
+						criteriaBuilder.or(mainpre2, mainpre3, mainpre4));
 			} else {
 				Predicate adminpre1 = criteriaBuilder.equal(from.get("questEvent")
 						.get("institution").get("id"), institutionId);

@@ -2,8 +2,10 @@ package medizin.server.domain;
 
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -19,12 +21,17 @@ import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import medizin.client.shared.AccessRights;
+import medizin.shared.utils.PersonAccessRight;
+
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.web.bindery.requestfactory.server.RequestFactoryServlet;
 
 @RooJavaBean
@@ -113,7 +120,7 @@ public class Person {
         	person = findPersonByShibId(session.getAttribute("shibdId").toString());
         }
         return person;
-        }
+    }
     
     public static Boolean checkAdminRightToLoggedPerson()
     {
@@ -205,37 +212,96 @@ public class Person {
     	return resultList;
     }
 
-public static Long findAllPersonCount(){
-	
-	log.info("inside getAllPersonCount");
-	Long value=0l;
-	
-	CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
-	CriteriaQuery<Person> criteriaQuery = criteriaBuilder.createQuery(Person.class);
-	Root<Person> from = criteriaQuery.from(Person.class);
-	
-	try{
-		Person currentuser =myGetLoggedPerson();
-    	if(currentuser.getIsAdmin()){
-    		Predicate pre1 = criteriaBuilder.notEqual(from.get("id"),currentuser.getId());
-	    	criteriaQuery.where(pre1);
-    	}
-    	else{
-	    	Predicate pre1 = criteriaBuilder.notEqual(from.get("id"),currentuser.getId());
-	    	Predicate pre2 = criteriaBuilder.notEqual(from.get("isAdmin"),Boolean.TRUE);
+	public static Long findAllPersonCount(){
+		
+		log.info("inside getAllPersonCount");
+		Long value=0l;
+		
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Person> criteriaQuery = criteriaBuilder.createQuery(Person.class);
+		Root<Person> from = criteriaQuery.from(Person.class);
+		
+		try{
+			Person currentuser =myGetLoggedPerson();
+	    	if(currentuser.getIsAdmin()){
+	    		Predicate pre1 = criteriaBuilder.notEqual(from.get("id"),currentuser.getId());
+		    	criteriaQuery.where(pre1);
+	    	}
+	    	else{
+		    	Predicate pre1 = criteriaBuilder.notEqual(from.get("id"),currentuser.getId());
+		    	Predicate pre2 = criteriaBuilder.notEqual(from.get("isAdmin"),Boolean.TRUE);
+		    	
+		    	criteriaQuery.where(criteriaBuilder.and(pre1,pre2));
+	    }
 	    	
-	    	criteriaQuery.where(criteriaBuilder.and(pre1,pre2));
-    }
-    	
-    	TypedQuery<Person> query =entityManager().createQuery(criteriaQuery);
-    	
-    	value= (long)query.getResultList().size();
-    	
-	}catch (Exception e) {
-		e.printStackTrace();
-		log.info("Error Whil getting person count" + e.getStackTrace().toString());
+	    	TypedQuery<Person> query =entityManager().createQuery(criteriaQuery);
+	    	
+	    	value= (long)query.getResultList().size();
+	    	
+		}catch (Exception e) {
+			e.printStackTrace();
+			log.info("Error Whil getting person count" + e.getStackTrace().toString());
+			return value;
+	}
 		return value;
-}
-	return value;
-}
+	}
+
+	public static PersonAccessRight getLoggedPersonAccessRights()
+	{
+		PersonAccessRight personAccess = new PersonAccessRight();
+		HttpSession session = RequestFactoryServlet.getThreadLocalRequest().getSession();
+	
+		if (session.getAttribute("shibdId") != null && session.getAttribute("institutionId") != null)
+		{
+			Person person = findPersonByShibId(session.getAttribute("shibdId").toString());
+			Long instId = (Long) session.getAttribute("institutionId");
+			
+			if (person.getIsAdmin())
+			{
+				personAccess.setIsAdmin(true);
+			}
+			else
+			{
+				CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+				CriteriaQuery<UserAccessRights> criteriaQuery = criteriaBuilder.createQuery(UserAccessRights.class);
+				Root<UserAccessRights> from = criteriaQuery.from(UserAccessRights.class);
+				
+				Predicate pre1 = criteriaBuilder.equal(from.get("person").get("id"), person.getId());				 
+				Predicate pre2 = criteriaBuilder.equal(from.get("institution").get("id"), instId); 
+				
+				criteriaQuery.where(criteriaBuilder.and(pre1,pre2));
+				
+				TypedQuery<UserAccessRights> query = entityManager().createQuery(criteriaQuery);
+				
+				if (query.getResultList().size() > 0)
+				{
+					personAccess.setIsInstitutionalAdmin(true);
+				}
+				else
+				{
+					Predicate pre11 = criteriaBuilder.equal(from.get("person").get("id"), person.getId());				 
+					Predicate pre12 = criteriaBuilder.equal(from.get("questionEvent").get("institution").get("id"), instId); 
+					
+					criteriaQuery.where(criteriaBuilder.and(pre11,pre12));
+					
+					TypedQuery<UserAccessRights> query1 = entityManager().createQuery(criteriaQuery);
+					
+					//Log.info("QUERY1 : " + query1.unwrap(org.hibernate.Query.class).getQueryString());
+					
+					personAccess.setQuestionEventAccList(query1.getResultList());
+					
+					Predicate pre21 = criteriaBuilder.equal(from.get("person").get("id"), person.getId());				 
+					Predicate pre22 = criteriaBuilder.equal(from.get("question").get("questEvent").get("institution").get("id"), instId); 
+					
+					criteriaQuery.where(criteriaBuilder.and(pre21,pre22));
+					
+					TypedQuery<UserAccessRights> query2 = entityManager().createQuery(criteriaQuery);
+										
+					personAccess.setQuestionAccList(query2.getResultList());
+				}
+			}
+		}
+		
+		return personAccess;
+    }
 }

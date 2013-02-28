@@ -8,8 +8,16 @@ import javax.persistence.Column;
 import javax.persistence.EntityManager;
 import javax.persistence.ManyToOne;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import medizin.client.shared.AccessRights;
+
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
@@ -182,5 +190,35 @@ public class QuestionEvent {
 	        }
 	        return q.getResultList();
 	    	
+	    }
+	    
+	    public static List<QuestionEvent> findQuestionEventByInstitutionAndAccRights(Boolean isAdmin, Long personId, Long instId)
+	    {
+	    	CriteriaBuilder cb = entityManager().getCriteriaBuilder();
+	    	CriteriaQuery<QuestionEvent> cq = cb.createQuery(QuestionEvent.class);
+	    	Root<QuestionEvent> from = cq.from(QuestionEvent.class);
+	    	
+	    	Predicate pre1 = cb.equal(from.get("institution").get("id"), instId);
+	    	
+	    	if (!isAdmin)
+	    	{
+	    		Subquery<UserAccessRights> subQry = cq.subquery(UserAccessRights.class);
+				Root queAccRoot = subQry.from(UserAccessRights.class);
+				
+				Predicate subP1 = cb.equal(queAccRoot.get("person").get("id"), personId);
+				Predicate subP2 = cb.equal(queAccRoot.get("accRights"), AccessRights.AccAddQuestions.ordinal());
+				
+				subQry.select(queAccRoot.get("questionEvent").get("id")).where(cb.and(subP1, subP2));
+				
+				Predicate pre2 = cb.in(from.get("id")).value(subQry);
+				
+				pre1 = cb.and(pre1, pre2);
+	    	}
+	    	
+	    	cq.where(pre1);
+	    	
+	    	TypedQuery<QuestionEvent> query = entityManager().createQuery(cq);
+	    	
+	    	return query.getResultList();
 	    }
 }

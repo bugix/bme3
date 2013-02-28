@@ -16,10 +16,12 @@ import medizin.client.proxy.CommentProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.proxy.QuestionResourceProxy;
+import medizin.client.proxy.UserAccessRightsProxy;
 import medizin.client.request.AnswerRequest;
 import medizin.client.request.CommentRequest;
 import medizin.client.request.QuestionRequest;
 import medizin.client.request.QuestionResourceRequest;
+import medizin.client.shared.AccessRights;
 import medizin.client.shared.Validity;
 import medizin.client.ui.view.question.AnswerDialogbox;
 import medizin.client.ui.view.question.AnswerDialogboxImpl;
@@ -104,10 +106,36 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		super.start(widget, eventBus);
 
 	}*/
+	Boolean flag = false;
+	Boolean answerFlag = false;
 	@Override
 	public void start2(AcceptsOneWidget panel, EventBus eventBus) {
+				
+		if (personRightProxy.getIsAdmin())
+		{
+			flag = true;
+			answerFlag = true;
+		}
+		else if (personRightProxy.getIsInstitutionalAdmin())
+		{
+			flag = true;
+			answerFlag = true;
+		}
+		else
+		{
+			for (UserAccessRightsProxy proxy : personRightProxy.getQuestionEventAccList())
+			{
+				if (proxy.getAccRights().equals(AccessRights.AccWrite))
+				{
+					flag = true;
+					answerFlag = false;
+					break;
+				}
+			}
+		}
 		
-		questionDetailsView = new QuestionDetailsViewImpl(eventBus);
+		questionDetailsView = new QuestionDetailsViewImpl(eventBus, flag);
+		
 		/*questionDetailsView.setName("hallo");*/
 		questionDetailsView.setPresenter(this);
 		this.widget = panel;
@@ -183,13 +211,41 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 				Log.error(error.getMessage());
 			}*/
 			@Override
-			public void onSuccess(Object response) {
+			public void onSuccess(final Object response) {
 				if(response instanceof QuestionProxy){
 					Log.info(((QuestionProxy) response).getQuestionText());
-					init((QuestionProxy) response);
-				}
+					
+					if (!flag && !answerFlag)
+					{
+						if (((QuestionProxy) response).getAutor().getId().equals(userLoggedIn.getId()))
+						{
+							view.setInvisibleIconButton(true);
+							init((QuestionProxy) response);
+						}
+						else
+						{
+							view.setInvisibleIconButton(false);
+							
+							requests.userAccessRightsRequest().checkAddAnswerRightsByQuestionAndPerson(userLoggedIn.getId(), ((QuestionProxy) response).getId()).fire(new BMEReceiver<Boolean>() {
 
-				
+								@Override
+								public void onSuccess(Boolean rightsResponse) {
+									
+									if (rightsResponse)
+										questionDetailsView.getAnswerListViewImpl().getNewAnswer().setVisible(true);
+									else
+										questionDetailsView.getAnswerListViewImpl().getNewAnswer().setVisible(false);
+							
+									init((QuestionProxy) response);
+								}
+							});
+						}
+					}
+					else
+					{
+						init((QuestionProxy) response);
+					}
+				}				
 			}
 			
 		    });

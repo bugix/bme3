@@ -9,6 +9,8 @@ import medizin.client.place.PlaceQuestionDetails;
 import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
+import medizin.client.proxy.UserAccessRightsProxy;
+import medizin.client.shared.AccessRights;
 import medizin.client.ui.view.question.QuestionView;
 import medizin.client.ui.view.question.QuestionViewImpl;
 
@@ -118,9 +120,27 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 		// onStop();
 		// return;
 		// }
-
+		
+		Boolean flag = false;
+	
+		if (personRightProxy.getIsAdmin())
+			flag = true;
+		else if (personRightProxy.getIsInstitutionalAdmin())
+			flag = true;
+		else
+		{
+			for (UserAccessRightsProxy proxy : personRightProxy.getQuestionEventAccList())
+			{
+				if (proxy.getAccRights().equals(AccessRights.AccAddQuestions))
+				{
+					flag = true;
+					break;
+				}
+			}
+		}
+		
 		Log.debug("start()");
-		QuestionView questionView = new QuestionViewImpl();
+		QuestionView questionView = new QuestionViewImpl(flag);
 		Log.debug("start()");
 		// questionView.setName("hallo");
 		questionView.setPresenter(this);

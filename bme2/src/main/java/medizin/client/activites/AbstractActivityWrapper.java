@@ -1,14 +1,17 @@
 package medizin.client.activites;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.proxy.InstitutionProxy;
+import medizin.client.proxy.PersonAccessRightProxy;
 import medizin.client.proxy.PersonProxy;
+import medizin.client.proxy.UserAccessRightsProxy;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.shared.i18n.BmeConstants;
-
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.collect.Maps;
 import com.google.gwt.activity.shared.AbstractActivity;
@@ -19,6 +22,7 @@ import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.web.bindery.requestfactory.shared.Receiver;
 /**
  * This wrapper is used to provide access control in all activities.
  * @author masterthesis
@@ -37,6 +41,9 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 	protected PersonProxy userLoggedIn;
 	protected InstitutionProxy institutionActive;
 	private int count = 0;
+	protected Boolean isInstitutionalAdmin = false;
+	
+	protected PersonAccessRightProxy personRightProxy;
 	
 	public AbstractActivityWrapper(Place place,
 			McAppRequestFactory requests, PlaceController placeController) {
@@ -58,6 +65,8 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 					newStart(panel, eventBus);
 
 				}
+				
+			
 
 				/*public void onFailure(ServerFailure error) {
 					ErrorPanel erorPanel = new ErrorPanel();
@@ -83,6 +92,7 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 				}*/
 
 			});
+			
 			requests.institutionRequest().myGetInstitutionToWorkWith().fire(new BMEReceiver<InstitutionProxy>() {
 
 				@Override
@@ -123,7 +133,7 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 	 * @param panel
 	 * @param eventBus
 	 */
-	private void newStart(AcceptsOneWidget panel, EventBus eventBus){
+	private void newStart(final AcceptsOneWidget panel, final EventBus eventBus){
 		count ++;
 		
 		if(count<2){
@@ -147,7 +157,17 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 			Document.get().getElementById("institutionActive").setInnerHTML("Institution: " + institutionActive.getInstitutionName());
 		}
 		
-		start2(panel, eventBus);
+		requests.personRequest().getLoggedPersonAccessRights().with("question", "questionEvent", "institution").fire(new Receiver<PersonAccessRightProxy>() {
+
+			@Override
+			public void onSuccess(PersonAccessRightProxy response) {
+				personRightProxy = response;		
+				
+				start2(panel, eventBus);
+			}
+		});
+		
+		
 		
 	}
 	

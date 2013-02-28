@@ -459,7 +459,14 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 			}
 		  }
 
+	public IconButton getNewAnswer() {
+		return newAnswer;
+	}
+	public void setNewAnswer(IconButton newAnswer) {
+		this.newAnswer = newAnswer;
+	}
 
+	  
 
 
 }
