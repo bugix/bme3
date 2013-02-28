@@ -28,5 +28,5 @@ public interface UserAccessRightsRequest extends UserAccessRightsRequest_Roo_Gwt
 	
 	Request<List<InstitutionProxy>> findInstituionFromQuestionAccessByPerson(Long personId);
 
-	Request<Boolean> checkAddAnswerRightsByQuestionAndPerson(Long personid, Long questionid);
+	Request<List<UserAccessRightsProxy>> checkAddAnswerRightsByQuestionAndPerson(Long personid, Long questionid);
 }

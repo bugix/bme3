@@ -247,7 +247,7 @@ public class UserAccessRights {
 		  //return institutionList;  
 	   }
 	   
-	  public static Boolean checkAddAnswerRightsByQuestionAndPerson(Long personid, Long questionid)
+	  public static List<UserAccessRights> checkAddAnswerRightsByQuestionAndPerson(Long personid, Long questionid)
 	  {
 		  CriteriaBuilder cb = entityManager().getCriteriaBuilder();
 		  CriteriaQuery<UserAccessRights> cq = cb.createQuery(UserAccessRights.class);
@@ -255,15 +255,12 @@ public class UserAccessRights {
 			
 		  Predicate pre1 = cb.equal(from.get("person").get("id"), personid);
 		  Predicate pre3 = cb.equal(from.get("question").get("id"), questionid);
-		  Predicate pre4 = cb.equal(from.get("accRights"), AccessRights.AccAddAnswers.ordinal());
+		  //Predicate pre4 = cb.equal(from.get("accRights"), AccessRights.AccAddAnswers.ordinal());
 		  
-		  cq.where(cb.and(pre1,pre4,pre3));
+		  cq.where(cb.and(pre1,pre3));
 		  
 		  TypedQuery<UserAccessRights> query = entityManager().createQuery(cq);
-		  
-		  if (query.getResultList().size() > 0)
-			  return true;
-		  else
-			  return false;
+		 
+		  return query.getResultList();
 	  }
 }

@@ -224,17 +224,32 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 						}
 						else
 						{
-							view.setInvisibleIconButton(false);
-							
-							requests.userAccessRightsRequest().checkAddAnswerRightsByQuestionAndPerson(userLoggedIn.getId(), ((QuestionProxy) response).getId()).fire(new BMEReceiver<Boolean>() {
+							requests.userAccessRightsRequest().checkAddAnswerRightsByQuestionAndPerson(userLoggedIn.getId(), ((QuestionProxy) response).getId()).fire(new BMEReceiver<List<UserAccessRightsProxy>>() {
 
 								@Override
-								public void onSuccess(Boolean rightsResponse) {
+								public void onSuccess(List<UserAccessRightsProxy> rightsResponse) {
 									
-									if (rightsResponse)
-										questionDetailsView.getAnswerListViewImpl().getNewAnswer().setVisible(true);
+									if (rightsResponse.size() > 0)
+									{
+										for (UserAccessRightsProxy proxy : rightsResponse)
+										{
+											if (proxy.getAccRights().equals(AccessRights.AccWrite))
+											{
+												view.setInvisibleIconButton(true);
+												questionDetailsView.getAnswerListViewImpl().getNewAnswer().setVisible(false);
+											}
+											
+											if (proxy.getAccRights().equals(AccessRights.AccAddAnswers))
+											{
+												view.setInvisibleIconButton(false);
+											}	
+										}
+									}
 									else
+									{
+										view.setInvisibleIconButton(false);
 										questionDetailsView.getAnswerListViewImpl().getNewAnswer().setVisible(false);
+									}
 							
 									init((QuestionProxy) response);
 								}
