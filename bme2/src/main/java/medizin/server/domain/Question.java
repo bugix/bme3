@@ -93,7 +93,7 @@ public class Question {
 	@ManyToOne
 	private QuestionEvent questEvent;
 
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	private Comment comment;
 
 	@NotNull

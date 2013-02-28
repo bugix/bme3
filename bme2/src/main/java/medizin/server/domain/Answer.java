@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EntityManager;
 import javax.persistence.Enumerated;
@@ -67,7 +68,7 @@ public class Answer {
     @Enumerated
     private Validity validity;
 
-    @Size(min = 3, max = 255)
+    @Size(min = 0, max = 255)
     private String mediaPath;
 
     @ManyToOne
@@ -91,7 +92,7 @@ public class Answer {
     @ManyToOne
     private Person autor;
     
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private Comment comment;
     
     @NotNull
@@ -103,7 +104,6 @@ public class Answer {
     
     private String additionalKeywords;
     
-    @NotNull
 	private Integer sequenceNumber;
     
 	public static List<Answer> findAnswersEntriesByQuestion(Long id, int start, int max){

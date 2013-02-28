@@ -13,12 +13,14 @@ import medizin.client.place.PlaceQuestion;
 import medizin.client.place.PlaceQuestionDetails;
 import medizin.client.proxy.AnswerProxy;
 import medizin.client.proxy.CommentProxy;
+import medizin.client.proxy.MatrixValidityProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.proxy.QuestionResourceProxy;
 import medizin.client.proxy.UserAccessRightsProxy;
 import medizin.client.request.AnswerRequest;
 import medizin.client.request.CommentRequest;
+import medizin.client.request.MatrixValidityRequest;
 import medizin.client.request.QuestionRequest;
 import medizin.client.request.QuestionResourceRequest;
 import medizin.client.shared.AccessRights;
@@ -27,12 +29,16 @@ import medizin.client.ui.view.question.AnswerDialogbox;
 import medizin.client.ui.view.question.AnswerDialogboxImpl;
 import medizin.client.ui.view.question.AnswerListView;
 import medizin.client.ui.view.question.AnswerListViewImpl;
+import medizin.client.ui.view.question.MatrixAnswerView;
+import medizin.client.ui.view.question.MatrixAnswerViewImpl;
 import medizin.client.ui.view.question.QuestionDetailsView;
 import medizin.client.ui.view.question.QuestionDetailsViewImpl;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.ui.widget.resource.dndview.vo.State;
 import medizin.client.util.ClientUtility;
+import medizin.client.util.Matrix;
+import medizin.client.util.MatrixValidityVO;
 import medizin.shared.QuestionTypes;
 import medizin.shared.i18n.BmeConstants;
 
@@ -54,7 +60,7 @@ import com.google.gwt.view.client.RangeChangeEvent;
 
 public class ActivityQuestionDetails extends AbstractActivityWrapper implements 
 	QuestionDetailsView.Delegate, QuestionDetailsView.Presenter, AnswerDialogbox.Delegate, 
-	 AnswerListView.Delegate{
+	 AnswerListView.Delegate, MatrixAnswerView.Presenter , MatrixAnswerView.Delegate{
 
 	private AcceptsOneWidget widget;
 	//private QuestionDetailsView view;
@@ -431,6 +437,46 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 
 	@Override
 	public void addNewAnswerClicked() {
+		
+		if(question.getQuestionType() != null && QuestionTypes.Matrix.equals(question.getQuestionType().getQuestionType()) == true) {
+			
+			
+			final MatrixAnswerView matrixAnswerView = new MatrixAnswerViewImpl(question);
+			matrixAnswerView.setDelegate(this);
+			
+//			matrixAnswerView.setRewiewerPickerValues(Collections.<PersonProxy>emptyList());
+	        requests.personRequest().findPersonEntries(0, 50).with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).fire(new BMEReceiver<List<PersonProxy>>() {
+
+	            public void onSuccess(List<PersonProxy> response) {
+	                List<PersonProxy> values = new ArrayList<PersonProxy>();
+	                values.add(null);
+	                values.addAll(response);
+	                matrixAnswerView.setRewiewerPickerValues(values);
+	            }
+	        });
+	        
+	       // answerDialogbox.setAutherPickerValues(Collections.<PersonProxy>emptyList());
+	        requests.personRequest().findPersonEntries(0, 50).with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).fire(new BMEReceiver<List<PersonProxy>>() {
+
+	            public void onSuccess(List<PersonProxy> response) {
+	                List<PersonProxy> values = new ArrayList<PersonProxy>();
+	                values.add(null);
+	                values.addAll(response);
+	                matrixAnswerView.setAutherPickerValues(values,userLoggedIn);
+	            }
+	        });
+			
+			requests.MatrixValidityRequest().findAllMatrixValidityForQuestion(question.getId()).with("answerX","answerY","answerX.autor","answerX.rewiewer","answerX.comment","answerY.autor","answerY.rewiewer","answerY.comment").fire(new BMEReceiver<List<MatrixValidityProxy>>() {
+
+				@Override
+				public void onSuccess(List<MatrixValidityProxy> response) {
+										
+			        matrixAnswerView.setValues(response);
+			        matrixAnswerView.display();
+				}
+			});
+			return;
+		}
 		
 		answerDialogbox = new AnswerDialogboxImpl(question,eventBus,reciverMap);
 		answerDialogbox.setDelegate(this);
@@ -1015,4 +1061,192 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 
 		
 	}
+
+	@Override
+	public void saveMatrixAnswer(List<MatrixValidityProxy> currentMatrixValidityProxy,Matrix<MatrixValidityVO> matrixList, PersonProxy author,PersonProxy rewiewer, Boolean submitToReviewComitee, String comment) {
+		
+		MatrixValidityRequest validityRequest = requests.MatrixValidityRequest();
+		for (MatrixValidityVO vo : matrixList) {
+			
+			Log.info(vo.toString());
+
+			if(vo.getMatrixValidityProxy() != null) {
+				
+				MatrixValidityProxy proxy = validityRequest.edit(vo.getMatrixValidityProxy());
+				proxy.setValidity(vo.getValidity());
+				
+				proxy.getAnswerX().setDateChanged(new Date());
+				proxy.getAnswerX().setAutor(author);
+				proxy.getAnswerX().setRewiewer(rewiewer);
+				proxy.getAnswerX().setSubmitToReviewComitee(submitToReviewComitee);
+				proxy.getAnswerX().setIsAnswerAcceptedReviewWahrer(false);
+				proxy.getAnswerX().setIsAnswerActive(false);
+				proxy.getAnswerX().getComment().setComment(comment);
+				proxy.getAnswerX().setQuestion(question);
+				proxy.getAnswerX().setValidity(vo.getValidity());
+				
+				proxy.getAnswerY().setDateChanged(new Date());
+				proxy.getAnswerY().setAutor(author);
+				proxy.getAnswerY().setRewiewer(rewiewer);
+				proxy.getAnswerY().setSubmitToReviewComitee(submitToReviewComitee);
+				proxy.getAnswerY().setIsAnswerAcceptedReviewWahrer(false);
+				proxy.getAnswerY().setIsAnswerActive(false);
+				proxy.getAnswerY().getComment().setComment(comment);
+				proxy.getAnswerY().setQuestion(question);
+				proxy.getAnswerY().setValidity(vo.getValidity());
+				
+				validityRequest.persist().using(proxy);
+			}
+		}
+		
+		validityRequest.fire(new BMEReceiver<Void>() {
+
+			@Override
+			public void onSuccess(Void response) {
+				
+				Log.info("save done for matrix validity");
+			}
+		});
+		
+		
+	}
+
+	@Override
+	public void saveAnswerProxy(AnswerProxy answerProxy, String answerText, PersonProxy author, PersonProxy rewiewer, Boolean submitToReviewComitee, String comment, final Function<AnswerProxy, Void> function) {
+		
+		Log.info("in saveAnswerProxy method");
+		final AnswerRequest answerRequest = requests.answerRequest();
+		CommentRequest commentRequest = requests.commentRequest();
+		
+		if(answerProxy != null) {
+			AnswerProxy editerAnswerProxy  = answerRequest.edit(answerProxy);
+			editerAnswerProxy.setDateChanged(new Date());
+			editerAnswerProxy.setAnswerText(answerText);
+			editerAnswerProxy.setAutor(author);
+			editerAnswerProxy.setRewiewer(rewiewer);
+			editerAnswerProxy.setSubmitToReviewComitee(submitToReviewComitee);
+			editerAnswerProxy.setIsAnswerAcceptedReviewWahrer(false);
+			editerAnswerProxy.setIsAnswerActive(false);
+			editerAnswerProxy.getComment().setComment(comment);
+			editerAnswerProxy.setQuestion(question);
+			
+			if(answerProxy.getValidity() != null) {
+				editerAnswerProxy.setValidity(answerProxy.getValidity());
+			}else {
+				editerAnswerProxy.setValidity(Validity.Falsch);
+			}
+			
+			final AnswerProxy finalAnswerProxy = editerAnswerProxy;
+			answerRequest.persist().using(editerAnswerProxy).fire(new BMEReceiver<Void>(reciverMap) {
+
+				@Override
+				public void onSuccess(Void response) {
+					function.apply(finalAnswerProxy);	
+				}
+			});
+		}else {
+			AnswerProxy newAnswerProxy = answerRequest.create(AnswerProxy.class);
+			CommentProxy commentProxy = commentRequest.create(CommentProxy.class);
+			
+			newAnswerProxy.setDateAdded(new Date());
+			newAnswerProxy.setAnswerText(answerText);
+			newAnswerProxy.setAutor(author);
+			newAnswerProxy.setRewiewer(rewiewer);
+			newAnswerProxy.setSubmitToReviewComitee(submitToReviewComitee);
+			newAnswerProxy.setIsAnswerAcceptedReviewWahrer(false);
+			newAnswerProxy.setIsAnswerActive(false);
+			newAnswerProxy.setComment(commentProxy);
+			commentProxy.setComment(comment);
+			newAnswerProxy.setValidity(Validity.Falsch);
+			newAnswerProxy.setQuestion(question);
+			final AnswerProxy finalAnswerProxy = newAnswerProxy;
+			
+			commentRequest.persist().using(commentProxy).fire(new BMEReceiver<Void>(reciverMap) {
+
+				@Override
+				public void onSuccess(Void response) {
+					
+					answerRequest.persist().using(finalAnswerProxy).fire(new BMEReceiver<Void>(reciverMap) {
+
+						@Override
+						public void onSuccess(Void response) {
+							
+							requests.answerRequest().find(finalAnswerProxy.stableId()).with("autor","rewiewer","comment").fire(new BMEReceiver<Object>() {
+
+								@Override
+								public void onSuccess(Object response) {
+									if(response instanceof AnswerProxy) {
+										function.apply((AnswerProxy) response);	
+									}		
+								}
+							});
+								
+						}
+					});
+					
+				}
+				
+			});
+		}
+
+	}
+
+	@Override
+	public void saveMatrixValidityValue(final MatrixValidityVO matrixValidityVO, Validity validity, final Function<MatrixValidityProxy, Void> function) {
+		
+		if(matrixValidityVO.getAnswerX().getAnswerProxy() != null && matrixValidityVO.getAnswerY().getAnswerProxy() != null) {
+			final MatrixValidityRequest matrixValidityRequest = requests.MatrixValidityRequest();
+			MatrixValidityProxy proxy = null;
+			if(matrixValidityVO.getMatrixValidityProxy() != null) {
+				// update
+				proxy = matrixValidityRequest.edit(matrixValidityVO.getMatrixValidityProxy());
+				
+			}else {
+				// update
+				proxy = matrixValidityRequest.create(MatrixValidityProxy.class);
+			}
+			
+			proxy.setAnswerX(matrixValidityVO.getAnswerX().getAnswerProxy());
+			proxy.setAnswerY(matrixValidityVO.getAnswerY().getAnswerProxy());
+			proxy.setValidity(validity);
+			final MatrixValidityProxy proxy2 = proxy;
+			matrixValidityRequest.persist().using(proxy).fire(new BMEReceiver<Void>(reciverMap) {
+
+				@Override
+				public void onSuccess(Void response) {
+					if(matrixValidityVO.getMatrixValidityProxy() == null) {
+						requests.MatrixValidityRequest().find(proxy2.stableId()).with("answerX","answerY","answerX.autor","answerX.rewiewer","answerX.comment","answerY.autor","answerY.rewiewer","answerY.comment").fire(new BMEReceiver<Object>() {
+
+							@Override
+							public void onSuccess(Object response) {
+
+								if(response instanceof MatrixValidityProxy) {
+									function.apply((MatrixValidityProxy) response);			
+								}
+							}
+						});
+						
+					}else {
+						function.apply(proxy2);		
+					}
+				}
+			});
+			
+		}else {
+			Log.error("Error in saveMatrixValidityValue method");
+		}
+		
+	}
+
+	@Override
+	public void deletedSelectedAnswer(AnswerProxy answerProxy, Boolean isAnswerX,final Function<Boolean, Void> function) {
+		requests.MatrixValidityRequest().deleteAnswerAndItsMatrixValidity(answerProxy.getId(),isAnswerX).fire(new BMEReceiver<Boolean>() {
+
+			@Override
+			public void onSuccess(Boolean response) {
+				function.apply(response);
+			}		
+		});
+	}
+
 }

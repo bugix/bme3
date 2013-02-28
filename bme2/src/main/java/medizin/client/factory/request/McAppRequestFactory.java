@@ -7,6 +7,7 @@ import medizin.client.request.CommentRequest;
 import medizin.client.request.DoctorRequest;
 import medizin.client.request.InstitutionRequest;
 import medizin.client.request.KeywordRequest;
+import medizin.client.request.MatrixValidityRequest;
 import medizin.client.request.McRequest;
 import medizin.client.request.PersonRequest;
 import medizin.client.request.QuestionEventRequest;
@@ -77,4 +78,6 @@ public interface McAppRequestFactory extends RequestFactory {
     DoctorRequest doctorRequest();
     
     UserAccessRightsRequest userAccessRightsRequest();
+    
+    MatrixValidityRequest MatrixValidityRequest();
 }

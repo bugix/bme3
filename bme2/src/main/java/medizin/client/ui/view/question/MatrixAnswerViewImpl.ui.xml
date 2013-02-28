@@ -1,0 +1,63 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:i="urn:import:medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl" xmlns:m="urn:import:medizin.client.ui.widget">
+	
+	<ui:style src="../../styles.css" >
+	
+	
+	</ui:style>
+	<ui:with type="medizin.shared.i18n.BmeConstants" field="cc"></ui:with>
+	
+	<g:HTMLPanel  width="100%">
+		<g:VerticalPanel width="100%">
+			<g:FlexTable ui:field="matrix"></g:FlexTable>
+		</g:VerticalPanel>
+		
+		<g:VerticalPanel width="100%">
+			<g:HTMLPanel>
+			<table>
+			<tr id="auther">
+					<td>
+						<g:Label styleName="{style.label}" text="{cc.auther}" ></g:Label>
+					</td>
+					<td>
+						<i:DefaultSuggestBox ui:field="auther"></i:DefaultSuggestBox>
+					</td>
+				</tr>
+				<tr id="rewiewer">
+					<td>
+						<g:Label styleName="{style.label}" text="{cc.reviewer}"></g:Label>
+					</td>
+					<td>
+						<i:DefaultSuggestBox ui:field="rewiewer"></i:DefaultSuggestBox>
+					</td>
+				</tr>
+				<tr id="submitToReviewComitee">
+					<td>
+						<g:Label styleName="{style.label}" text="{cc.submitToReviewComitee}"></g:Label>
+					</td>
+	
+					<td>
+						<g:CheckBox ui:field="submitToReviewComitee" />
+	
+					</td>
+				</tr>
+				<tr id="comment">
+					<td>
+						<g:Label styleName="{style.label}" text="{cc.comment}"></g:Label>
+					</td>
+					<td>
+						<g:TextArea ui:field='comment' width="100%"></g:TextArea>
+					</td>
+				</tr>
+			</table>
+			</g:HTMLPanel>
+		</g:VerticalPanel>
+		<g:VerticalPanel>
+			<g:HorizontalPanel>
+				<m:IconButton  ui:field="save" icon="disk" text="{cc.save}"></m:IconButton>
+				<m:IconButton ui:field="closeButton" icon="closethick" text="{cc.cancel}"></m:IconButton>
+			</g:HorizontalPanel>
+		</g:VerticalPanel>
+	</g:HTMLPanel>
+</ui:UiBinder> 

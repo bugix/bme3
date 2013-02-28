@@ -355,4 +355,20 @@ public interface BmeConstants extends Constants {
 	public String privilege();
 	
 	public String newUser();
+	
+	public String addAnswerX();
+
+	public String addAnswerY();
+
+	public String inputBox();
+
+	public String inputMatrixAnswerX();
+
+	public String inputMatrixAnswerY();
+
+	public String errorInMatrixList();
+
+	public String authorMayNotBeNull();
+
+	public String commentMayNotBeNull();
 }
