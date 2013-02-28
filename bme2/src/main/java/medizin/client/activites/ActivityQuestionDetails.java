@@ -1105,6 +1105,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			public void onSuccess(Void response) {
 				
 				Log.info("save done for matrix validity");
+				initAnswerView();
 			}
 		});
 		
