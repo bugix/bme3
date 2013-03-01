@@ -371,4 +371,6 @@ public interface BmeConstants extends Constants {
 	public String authorMayNotBeNull();
 
 	public String commentMayNotBeNull();
+
+	public String deleteMatrixAnswerConfirmation();
 }

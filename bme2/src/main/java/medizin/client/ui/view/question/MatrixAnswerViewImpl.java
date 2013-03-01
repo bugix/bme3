@@ -10,6 +10,8 @@ import medizin.client.proxy.QuestionProxy;
 import medizin.client.shared.Validity;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
+import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEvent;
+import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEventHandler;
 import medizin.client.ui.widget.dialogbox.receiver.ReceiverDialog;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.EventHandlingValueHolderItem;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
@@ -573,65 +575,76 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 		@Override
 		public void onClick(ClickEvent event) {
 			Log.info("Delete clicked");
-			
-			FluentIterable<MatrixValidityVO> fluentIterable = FluentIterable.from(matrixList);
-			final FluentIterable<MatrixValidityVO> foundAnswers;
-			if(isAnswerX == true) {
-				foundAnswers = fluentIterable.filter(new AnswerXPredicate(answer.getAnswerProxy()));
-			}else {
-				foundAnswers = fluentIterable.filter(new AnswerYPredicate(answer.getAnswerProxy()));
-			}
-			
-			if(foundAnswers.isEmpty() == false) {
-				delegate.deletedSelectedAnswer(answer.getAnswerProxy(),isAnswerX,new Function<Boolean, Void>() {
-
-					@Override
-					public Void apply(Boolean input) {
-
-						if(input == true) {
-							//delete the full answer
-							matrix.clear();
-							auther.setSelected(null);
-							rewiewer.setSelected(null);
-							comment.setText("");
-							submitToReviewComitee.setValue(false);
-							matrixList.clear();
-							
-							// create new matrix with addAnswerX and addAnswerY
-							matrix.setWidth("100%");
-							matrix.setCellSpacing(5);
-							matrix.setCellPadding(3);
-							matrix.setWidget(0, 1, addAnswerY);
-							matrix.setWidget(1, 0, addAnswerX);
-						}else {
-							if(isAnswerX ==  true) {
-								int currentRow = matrixList.getRowForObject(foundAnswers.get(0));
-								if(currentRow > -1) {
-									matrix.removeRow(currentRow);
-									matrixList.removeRow(currentRow);
-								}else {
-									Log.error("cannot find row for matrix vo : " + currentRow);
-								}
-							}else {
-								int firstRow = matrixList.getRowForObject(foundAnswers.get(0));
-								int currentColumn = matrixList.getColumnForObject(foundAnswers.get(0));
-								int totalRows = matrixList.getRows();
-								if(firstRow > -1 && currentColumn > -1) {
-									for(int i=(totalRows-1);i>=(firstRow-1);i--) {
-										matrix.removeCell(i, currentColumn);
-										matrixList.removeCell(i,currentColumn);	
-									}	
-								}else {
-									Log.error("error in first row or current column " + firstRow + " : " + currentColumn);
-								}
-							}
-						}
-						return null;
+			ConfirmationDialogBox.showYesNoDialogBox(constants.warning(), constants.deleteMatrixAnswerConfirmation(), new ConfirmDialogBoxYesNoButtonEventHandler() {
+				
+				@Override
+				public void onYesButtonClicked(ConfirmDialogBoxYesNoButtonEvent event) {
+					
+					FluentIterable<MatrixValidityVO> fluentIterable = FluentIterable.from(matrixList);
+					final FluentIterable<MatrixValidityVO> foundAnswers;
+					if(isAnswerX == true) {
+						foundAnswers = fluentIterable.filter(new AnswerXPredicate(answer.getAnswerProxy()));
+					}else {
+						foundAnswers = fluentIterable.filter(new AnswerYPredicate(answer.getAnswerProxy()));
 					}
-				});
-			}else {
-				Log.info("Error in delete operation");
-			}
+					
+					if(foundAnswers.isEmpty() == false) {
+						delegate.deletedSelectedAnswer(answer.getAnswerProxy(),isAnswerX,new Function<Boolean, Void>() {
+
+							@Override
+							public Void apply(Boolean input) {
+
+								if(input == true) {
+									//delete the full answer
+									matrix.clear();
+									auther.setSelected(null);
+									rewiewer.setSelected(null);
+									comment.setText("");
+									submitToReviewComitee.setValue(false);
+									matrixList.clear();
+									
+									// create new matrix with addAnswerX and addAnswerY
+									matrix.setWidth("100%");
+									matrix.setCellSpacing(5);
+									matrix.setCellPadding(3);
+									matrix.setWidget(0, 1, addAnswerY);
+									matrix.setWidget(1, 0, addAnswerX);
+								}else {
+									if(isAnswerX ==  true) {
+										int currentRow = matrixList.getRowForObject(foundAnswers.get(0));
+										if(currentRow > -1) {
+											matrix.removeRow(currentRow);
+											matrixList.removeRow(currentRow);
+										}else {
+											Log.error("cannot find row for matrix vo : " + currentRow);
+										}
+									}else {
+										int firstRow = matrixList.getRowForObject(foundAnswers.get(0));
+										int currentColumn = matrixList.getColumnForObject(foundAnswers.get(0));
+										int totalRows = matrix.getRowCount() -2; // removed answerx button row
+										if(firstRow > -1 && currentColumn > -1) {
+											for(int i=totalRows;i>=0;i--) {
+												matrix.removeCell(i, currentColumn);
+												matrixList.removeCell(i,currentColumn);	
+											}	
+										}else {
+											Log.error("error in first row or current column " + firstRow + " : " + currentColumn);
+										}
+									}
+								}
+								return null;
+							}
+						});
+					}else {
+						Log.info("Error in delete operation");
+					}
+				}
+				
+				@Override
+				public void onNoButtonClicked(ConfirmDialogBoxYesNoButtonEvent event) {
+					Log.info("No clicked");
+				}
+			});
 		}
 		
 	}
