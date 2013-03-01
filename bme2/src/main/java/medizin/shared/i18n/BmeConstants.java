@@ -373,4 +373,6 @@ public interface BmeConstants extends Constants {
 	public String commentMayNotBeNull();
 
 	public String deleteMatrixAnswerConfirmation();
+
+	public String newAccess();
 }

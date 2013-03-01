@@ -738,6 +738,12 @@ public class Question {
 						.get("institution").get("id"), institutionId);
 				andAdminPredicate = adminpre1;
 			}
+			
+			Predicate statusActivePredicate = criteriaBuilder.equal(from.get("isActive"), Boolean.TRUE);
+			//Predicate statusNewPredicate = criteriaBuilder.equal(from.get("status"),Status.NEW);
+			Predicate statusNewPredicate = from.get("status").in(Status.ACTIVE, Status.NEW);
+			
+			andAdminPredicate = criteriaBuilder.and(criteriaBuilder.or(statusNewPredicate, statusActivePredicate), andAdminPredicate);
 
 			if (!searchText.equals("")) {
 				Expression<String> exp1 = from.get("questionShortName");

@@ -204,7 +204,7 @@ public class InstituteAccessViewImpl extends Composite implements InstituteAcces
         }, constants.accessRights());
         
      	addColumn(new ActionCell<UserAccessRightsProxy>(
-    	        constants.delete(), new ActionCell.Delegate<UserAccessRightsProxy>() {
+    	        McAppConstant.DELETE_ICON, new ActionCell.Delegate<UserAccessRightsProxy>() {
     	            public void execute(UserAccessRightsProxy questionAccessProxy) {
     	              delegate.deleteInstituteAccessClicked(questionAccessProxy);
     	            }
@@ -216,7 +216,7 @@ public class InstituteAccessViewImpl extends Composite implements InstituteAcces
         
     	tableEvent.addColumnStyleName(0, "questionTextColumn");
     	tableEvent.addColumnStyleName(1, "accessRightColumn");
-    	tableEvent.addColumnStyleName(2, "deleteColumn");
+    	tableEvent.addColumnStyleName(2, "iconColumn");
     }
 	@Override
 	public CellTable<UserAccessRightsProxy> getTable() {

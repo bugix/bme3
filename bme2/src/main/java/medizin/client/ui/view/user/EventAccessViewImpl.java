@@ -206,7 +206,7 @@ public class EventAccessViewImpl extends Composite implements EventAccessView {
         }, constants.privilege());
         
      	addColumn(new ActionCell<UserAccessRightsProxy>(
-    	        constants.delete(), new ActionCell.Delegate<UserAccessRightsProxy>() {
+     			McAppConstant.DELETE_ICON, new ActionCell.Delegate<UserAccessRightsProxy>() {
     	            public void execute(UserAccessRightsProxy questionAccessProxy) {
     	              Log.debug("You clicked " + questionAccessProxy.getQuestionEvent().getEventName());
     	              delegate.deleteEventAccessClicked(questionAccessProxy);
@@ -219,7 +219,7 @@ public class EventAccessViewImpl extends Composite implements EventAccessView {
         
     	tableEvent.addColumnStyleName(0, "questionTextColumn");
     	tableEvent.addColumnStyleName(1, "accessRightColumn");
-    	tableEvent.addColumnStyleName(2, "deleteColumn");
+    	tableEvent.addColumnStyleName(2, "iconColumn");
     }
 	@Override
 	public CellTable<UserAccessRightsProxy> getTable() {

@@ -203,7 +203,7 @@ public class QuestionAccessViewImpl extends Composite implements QuestionAccessV
         }, constants.privilege());
         
     	addColumn(new ActionCell<UserAccessRightsProxy>(
-    	        constants.delete(), new ActionCell.Delegate<UserAccessRightsProxy>() {
+    	        McAppConstant.DELETE_ICON, new ActionCell.Delegate<UserAccessRightsProxy>() {
     	            public void execute(UserAccessRightsProxy question) {
     	              Log.debug("You clicked " + question.getQuestion().getQuestionText());
     	              delegate.deleteQuestionAccessClicked(question);
@@ -216,7 +216,7 @@ public class QuestionAccessViewImpl extends Composite implements QuestionAccessV
     	
     	tableEvent.addColumnStyleName(0, "questionTextColumn");
     	tableEvent.addColumnStyleName(1, "accessRightColumn");
-    	tableEvent.addColumnStyleName(2, "deleteColumn");
+    	tableEvent.addColumnStyleName(2, "iconColumn");
     }
 	@Override
 	public CellTable<UserAccessRightsProxy> getTable() {
