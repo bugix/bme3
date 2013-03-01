@@ -555,8 +555,8 @@ public class QuestionDetailsViewImpl extends Composite implements
 		HorizontalPanel h1 =  new HorizontalPanel();
 		HorizontalPanel h2 = new HorizontalPanel();
 		h2.setWidth("100%");
-		h1.add(lblUploadText);
-		h1.add(resourceUpload);
+		/*h1.add(lblUploadText);*/
+		/*h1.add(resourceUpload);*/
 		h2.add(resourceView);
 		panel.add(h1);
 		panel.add(h2);
@@ -643,8 +643,8 @@ public class QuestionDetailsViewImpl extends Composite implements
 		HorizontalPanel h1 =  new HorizontalPanel();
 		HorizontalPanel h2 = new HorizontalPanel();
 		h2.setWidth("100%");
-		h1.add(lblUploadText);
-		h1.add(resourceUpload);
+		/*h1.add(lblUploadText);*/
+		/*h1.add(resourceUpload);*/
 		h2.add(imageViewer);
 		panel.add(h1);
 		panel.add(h2);

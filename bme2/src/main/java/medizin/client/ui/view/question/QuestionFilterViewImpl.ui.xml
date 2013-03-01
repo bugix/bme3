@@ -64,15 +64,15 @@
 			padding-right: 27px;
 		}
 		
-		.labelSize{
-		width: 115px;
-		vertical-align: middle;
+		.labelSize {
+			width: 115px;
+			vertical-align: middle;
 		}
-		.labelVertical{
-		vertical-align: middle;
+		.labelVertical {
+			vertical-align: middle;
 		}
 		
-		.horizontal
+		<!-- .horizontal -->
 	</ui:style>
 	<g:FocusPanel ui:field="filterPanelRoot" addStyleNames="{style.noOutline}">
 		<g:HTMLPanel addStyleNames="{style.popupPanel}">
