@@ -17,8 +17,14 @@ public class PlaceQuestionDetails extends Place {
 
 	private EntityProxyId<?> proxyId;
 	private Operation operation = null;
+	private String fromPlace = "";
 	
-	
+	public String getFromPlace() {
+		return fromPlace;
+	}
+	public void setFromPlace(String fromPlace) {
+		this.fromPlace = fromPlace;
+	}
 	public EntityProxyId<?> getProxyId() {
 		return proxyId;
 	}
@@ -33,6 +39,12 @@ public class PlaceQuestionDetails extends Place {
 			this(record, Operation.DETAILS);
 			
 		}
+		
+		public PlaceQuestionDetails(EntityProxyId<?> record, String fromPlace) {
+			this.proxyId = record;
+			this.fromPlace = fromPlace;
+			this.operation = Operation.DETAILS;
+		}
 
 		public PlaceQuestionDetails(Operation operation) {
 	    	Log.debug("PlaceQuestionDetails wird erstellt");
@@ -44,6 +56,14 @@ public class PlaceQuestionDetails extends Place {
 	    	Log.debug("PlaceQuestionDetails wird erstellt");
 			this.operation = operation;
 			proxyId = stableId;
+			assert(operation!=operation.CREATE);
+		}
+	    
+	    public PlaceQuestionDetails(EntityProxyId<?> stableId, Operation operation, String fromPlace) {
+	    	Log.debug("PlaceQuestionDetails wird erstellt");
+			this.operation = operation;
+			proxyId = stableId;
+			this.fromPlace = fromPlace;
 			assert(operation!=operation.CREATE);
 		}
 

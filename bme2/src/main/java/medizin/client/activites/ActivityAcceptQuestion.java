@@ -6,6 +6,7 @@ import java.util.Set;
 
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.PlaceAcceptQuestion;
+import medizin.client.place.PlaceQuestionDetails;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.request.QuestionRequest;
@@ -16,14 +17,19 @@ import medizin.client.ui.view.AcceptQuestionView;
 import medizin.client.ui.view.AcceptQuestionViewImpl;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.activity.shared.ActivityManager;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.place.shared.Place;
+import com.google.gwt.place.shared.PlaceChangeEvent;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.cellview.client.AbstractHasData;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
+import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.RangeChangeEvent;
+import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
 import com.google.web.bindery.requestfactory.shared.EntityProxy;
 import com.google.web.bindery.requestfactory.shared.Receiver;
@@ -43,9 +49,11 @@ public class ActivityAcceptQuestion extends AbstractActivityWrapper implements A
 
 	//protected PersonProxy loggedUser;
 
-	//private SingleSelectionModel<QuestionProxy> selectionModel;
-
-
+	private SingleSelectionModel<QuestionProxy> selectionModel;
+	private ActivityManager activityManger;
+	private ActivityQuestionMapper activityQuestionMapper;
+	
+	
 	@Inject
 	public ActivityAcceptQuestion(PlaceAcceptQuestion place,
 			McAppRequestFactory requests, PlaceController placeController) {
@@ -53,6 +61,11 @@ public class ActivityAcceptQuestion extends AbstractActivityWrapper implements A
 		this.questionPlace = place;	
 		this.requests = requests;
         this.placeController = placeController;
+        
+        this.activityQuestionMapper = new ActivityQuestionMapper(requests,
+				placeController);
+		this.activityManger = new ActivityManager(activityQuestionMapper,
+				requests.getEventBus());
 	}
 
 	@Override
@@ -92,23 +105,34 @@ public class ActivityAcceptQuestion extends AbstractActivityWrapper implements A
         
         table=view.getTable();
         
-//        ProvidesKey<QuestionProxy> keyProvider = ((AbstractHasData<QuestionProxy>) table)
-//		.getKeyProvider();
-//selectionModel = new SingleSelectionModel<QuestionProxy>(keyProvider);
-//table.setSelectionModel(selectionModel);
-//
-//selectionModel
-//		.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-//			public void onSelectionChange(SelectionChangeEvent event) {
-//				QuestionProxy selectedObject = selectionModel
-//						.getSelectedObject();
-//				if (selectedObject != null) {
-//					Log.debug(selectedObject.getQuestionText()
-//							+ " selected!");
-//					showDetails(selectedObject);
-//				}
-//			}
-//		});
+        eventBus.addHandler(PlaceChangeEvent.TYPE,
+				new PlaceChangeEvent.Handler() {
+					public void onPlaceChange(PlaceChangeEvent event) {
+
+						Place place = event.getNewPlace();
+						if (place instanceof PlaceQuestionDetails) {
+							init();
+						}
+					}
+				});
+
+		activityManger.setDisplay(view.getDetailsPanel());
+        
+        ProvidesKey<QuestionProxy> keyProvider = ((AbstractHasData<QuestionProxy>) table).getKeyProvider();
+        selectionModel = new SingleSelectionModel<QuestionProxy>(keyProvider);
+        table.setSelectionModel(selectionModel);
+
+        selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+        	
+			public void onSelectionChange(SelectionChangeEvent event) {
+			
+				QuestionProxy selectedObject = selectionModel.getSelectedObject();
+				if (selectedObject != null) {
+					Log.debug(selectedObject.getQuestionText() + " selected!");
+					showDetails(selectedObject);
+				}
+			}
+		});
 
         init();
         
@@ -150,11 +174,11 @@ public class ActivityAcceptQuestion extends AbstractActivityWrapper implements A
 
 	}
 
-//	protected void showDetails(QuestionProxy question) {
-//		Log.debug("Question Stable id: " + question.stableId() + " "
-//				+ PlaceQuestionDetails.Operation.DETAILS);
-//		
-//	}
+	protected void showDetails(QuestionProxy question) {
+		Log.debug("Question Stable id: " + question.stableId() + " " + PlaceQuestionDetails.Operation.DETAILS);
+		placeController.goTo(new PlaceQuestionDetails(question.stableId(), "ACCEPT_QUESTION"));
+	}
+	
 
 	@Override
 	public void goTo(Place place) {

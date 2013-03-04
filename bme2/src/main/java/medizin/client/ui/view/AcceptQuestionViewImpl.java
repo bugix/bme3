@@ -4,11 +4,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 
+import medizin.client.style.resources.MyCellTableResources;
+import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.DeclineEmailPopup;
 import medizin.client.ui.DeclineEmailPopupDelagate;
 import medizin.client.ui.McAppConstant;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.ui.view.roo.McProxyRenderer;
+import medizin.shared.i18n.BmeConstants;
 
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.ActionCell;
@@ -22,9 +25,11 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class AcceptQuestionViewImpl extends Composite implements AcceptQuestionView  {
@@ -40,14 +45,31 @@ public class AcceptQuestionViewImpl extends Composite implements AcceptQuestionV
 
 
 	public AcceptQuestionViewImpl() {
+		CellTable.Resources tableResources = GWT.create(MyCellTableResources.class);
+		table = new CellTable<QuestionProxy>(McAppConstant.TABLE_PAGE_SIZE, tableResources);
+		
+		SimplePager.Resources pagerResources = GWT.create(MySimplePagerResources.class);
+		pager = new SimplePager(SimplePager.TextLocation.RIGHT, pagerResources, true, McAppConstant.TABLE_JUMP_SIZE, true);
+		
 		initWidget(uiBinder.createAndBindUi(this));
+		
 		DOM.setElementAttribute(this.getElement(), "style", "position: absolute; left: 5px; top: 0px; right: 0px; bottom: 0px; overflow: auto;");
+		
 		init();
 	}
 
+	BmeConstants constants = GWT.create(BmeConstants.class);
 
-
-
+	@UiField
+	SimplePanel detailsPanel;
+	
+	public SimplePanel getDetailsPanel() {
+		return detailsPanel;
+	}
+	
+	public void setDetailsPanel(SimplePanel detailsPanel) {
+		this.detailsPanel = detailsPanel;
+	}
 
 	private void init() {
 	     paths.add("id");
@@ -64,7 +86,7 @@ public class AcceptQuestionViewImpl extends Composite implements AcceptQuestionV
 	            public String getValue(QuestionProxy object) {
 	                return renderer.render(object.getId());
 	            }
-	        }, "Id");
+	        }, constants.id());
 	       
 		     	
 		     	
@@ -76,7 +98,7 @@ public class AcceptQuestionViewImpl extends Composite implements AcceptQuestionV
 	    	      public QuestionProxy getValue(QuestionProxy object) {
 	    	        return object;
 	    	      }
-	    	    },  McAppConstant.QUESTION_TEXT);
+	    	    },  constants.question());
 
 	     	
 	     	paths.add("rewiewer");
@@ -84,17 +106,17 @@ public class AcceptQuestionViewImpl extends Composite implements AcceptQuestionV
 	     	paths.add("questEvent");
 	     	paths.add("mcs");
 	     	paths.add("questionType");
-		     	table.addColumn(new Column<QuestionProxy, QuestionProxy>(new SimpleAttributeCell()) {
-		    	      @Override
-		    	      public QuestionProxy getValue(QuestionProxy object) {
-		    	        return object;
-		    	      }
-		    	    },  "");
+	     	table.addColumn(new Column<QuestionProxy, QuestionProxy>(new SimpleAttributeCell()) {
+	    	      @Override
+	    	      public QuestionProxy getValue(QuestionProxy object) {
+	    	        return object;
+	    	      }
+	    	},  "");
 		     	
 
 		     	
 		
-		    	addColumn(new ActionCell<QuestionProxy>( McAppConstant.DECLINE_ICON, new ActionCell.Delegate<QuestionProxy>() {
+		    	/*addColumn(new ActionCell<QuestionProxy>( McAppConstant.DECLINE_ICON, new ActionCell.Delegate<QuestionProxy>() {
 		    	            public void execute(QuestionProxy questionProxy) {
 		    	            	DeclineEmailPopup popup = new DeclineEmailPopup(questionProxy);
 		    	            	popup.setDelegate(delegate);
@@ -115,7 +137,7 @@ public class AcceptQuestionViewImpl extends Composite implements AcceptQuestionV
     	        public QuestionProxy getValue(QuestionProxy questionProxy) {
     	          return questionProxy;
     	        }
-    	      }, null);
+    	      }, null);*/
 		    	
 		    	table.addColumnStyleName(0, "iconColumn");
 		    	table.addColumnStyleName(1, "questionTextColumnAccept");
@@ -158,7 +180,7 @@ public class AcceptQuestionViewImpl extends Composite implements AcceptQuestionV
 	  
 	  private static class SimpleAttributeCell extends AbstractCell<QuestionProxy> {
 
-		  
+		  BmeConstants constants = GWT.create(BmeConstants.class);
 
 
 			@Override
@@ -172,25 +194,25 @@ public class AcceptQuestionViewImpl extends Composite implements AcceptQuestionV
 			      sb.appendHtmlConstant("<table>");
 			      
 			      if(value.getRewiewer()!=null){
-			    	  sb.appendHtmlConstant(getTableRow("Reviewer:", value.getRewiewer().getPrename() + " " + value.getRewiewer().getName()));
+			    	  sb.appendHtmlConstant(getTableRow(constants.reviewer(), value.getRewiewer().getPrename() + " " + value.getRewiewer().getName()));
 			    	 // sb.appendHtmlConstant("<tr><td><strong>Reviewer: </strong></td><td>" + value.getRewiewer().getPrename() + " " + value.getRewiewer().getName() + " " + "</td></tr>");
 			    	  
 			      }
 			      if(value.getRewiewer()!=null){
-			    	  sb.appendHtmlConstant(getTableRow("Autor:",value.getAutor().getPrename() + " " + value.getAutor().getName()));
+			    	  sb.appendHtmlConstant(getTableRow(constants.auther(),value.getAutor().getPrename() + " " + value.getAutor().getName()));
 			    	 // sb.appendHtmlConstant("<tr><td><strong>Autor: </strong></td><td>" + value.getAutor().getPrename() + " " + value.getAutor().getName() + " " + "</td></tr>");
 			      }
 			      if(value.getQuestEvent()!=null){
-			    	  sb.appendHtmlConstant(getTableRow("Themenbereich:",value.getQuestEvent().getEventName()));
+			    	  sb.appendHtmlConstant(getTableRow(constants.questionEvent(),value.getQuestEvent().getEventName()));
 			    	  // sb.appendHtmlConstant("<tr><td><strong>Themenbereich: </strong></td><td>" + value.getQuestEvent().getEventName() + "</td></tr>");
 			      }
 			      if(value.getMcs()!=null){
-			    	  sb.appendHtmlConstant(getTableRow("Mc:", medizin.client.ui.view.roo.CollectionRenderer.of(McProxyRenderer.instance()).render(value.getMcs())));
+			    	  sb.appendHtmlConstant(getTableRow(constants.mcs(), medizin.client.ui.view.roo.CollectionRenderer.of(McProxyRenderer.instance()).render(value.getMcs())));
 			    	  
 			      }
 			     
 			      if( value.getQuestionType()!=null){
-			    	  sb.appendHtmlConstant(getTableRow("Fragetyp:", value.getQuestionType().getShortName()));
+			    	  sb.appendHtmlConstant(getTableRow(constants.questionType(), value.getQuestionType().getShortName()));
 			    	  
 			      }
 			      
@@ -203,10 +225,12 @@ public class AcceptQuestionViewImpl extends Composite implements AcceptQuestionV
 				return "<tr style=\"vertical-align: top;\"><td><strong>"+ title +"&nbsp;</strong></td><td>" + value + "</td></tr>";
 			}
 		  }
-    @UiField
+    @UiField(provided = true)
     CellTable<QuestionProxy> table;
 	
-
+    @UiField(provided = true)
+	public SimplePager pager;
+    
 	protected Set<String> paths = new HashSet<String>();
 
 	private DeclineEmailPopupDelagate delegate;
@@ -245,7 +269,8 @@ public class AcceptQuestionViewImpl extends Composite implements AcceptQuestionV
 	  
 	  
 	  private static class QuestionTextCell extends AbstractCell<QuestionProxy> {
-
+		  
+		  BmeConstants constants = GWT.create(BmeConstants.class);
 
 			@Override
 			public void render(com.google.gwt.cell.client.Cell.Context context,
@@ -258,7 +283,7 @@ public class AcceptQuestionViewImpl extends Composite implements AcceptQuestionV
 			      sb.appendHtmlConstant("<table>");
 			      
 			      if(value.getQuestionText() != null){
-			    	  sb.appendHtmlConstant(getTableRow("Fragentext:", value.getQuestionText()));
+			    	  sb.appendHtmlConstant(getTableRow(constants.questionText(), value.getQuestionText()));
 			    	 // sb.appendHtmlConstant("<tr><td><strong>Reviewer: </strong></td><td>" + value.getRewiewer().getPrename() + " " + value.getRewiewer().getName() + " " + "</td></tr>");
 			    	  
 			      }
@@ -267,11 +292,11 @@ public class AcceptQuestionViewImpl extends Composite implements AcceptQuestionV
 			    	 // sb.appendHtmlConstant("<tr><td><strong>Autor: </strong></td><td>" + value.getAutor().getPrename() + " " + value.getAutor().getName() + " " + "</td></tr>");
 			      }
 			      if(value.getComment() != null){
-			    	  sb.appendHtmlConstant(getTableRow("Kommentar:", value.getComment().getComment()));
+			    	  sb.appendHtmlConstant(getTableRow(constants.comment(), value.getComment().getComment()));
 			    	 // sb.appendHtmlConstant("<tr><td><strong>Autor: </strong></td><td>" + value.getAutor().getPrename() + " " + value.getAutor().getName() + " " + "</td></tr>");
 			      }
 			      if(value.getKeywords() != null){
-			    	  sb.appendHtmlConstant(getTableRow("Keywords:", medizin.client.ui.view.roo.CollectionRenderer.of(medizin.client.ui.view.roo.KeywordProxyRenderer.instance()).render(value.getKeywords())));
+			    	  sb.appendHtmlConstant(getTableRow(constants.keyword(), medizin.client.ui.view.roo.CollectionRenderer.of(medizin.client.ui.view.roo.KeywordProxyRenderer.instance()).render(value.getKeywords())));
 			    	 // sb.appendHtmlConstant("<tr><td><strong>Autor: </strong></td><td>" + value.getAutor().getPrename() + " " + value.getAutor().getName() + " " + "</td></tr>");
 			      }
 			      

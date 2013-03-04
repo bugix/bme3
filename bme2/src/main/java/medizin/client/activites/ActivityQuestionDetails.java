@@ -9,6 +9,7 @@ import java.util.Set;
 
 import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
+import medizin.client.place.PlaceAcceptQuestion;
 import medizin.client.place.PlaceQuestion;
 import medizin.client.place.PlaceQuestionDetails;
 import medizin.client.proxy.AnswerProxy;
@@ -40,6 +41,7 @@ import medizin.client.util.ClientUtility;
 import medizin.client.util.Matrix;
 import medizin.client.util.MatrixValidityVO;
 import medizin.shared.QuestionTypes;
+import medizin.shared.Status;
 import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
@@ -116,29 +118,32 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	Boolean answerFlag = false;
 	@Override
 	public void start2(AcceptsOneWidget panel, EventBus eventBus) {
-				
-		if (personRightProxy.getIsAdmin())
+		
+		if (!questionPlace.getFromPlace().equals("ACCEPT_QUESTION"))
 		{
-			flag = true;
-			answerFlag = true;
-		}
-		else if (personRightProxy.getIsInstitutionalAdmin())
-		{
-			flag = true;
-			answerFlag = true;
-		}
-		else
-		{
-			for (UserAccessRightsProxy proxy : personRightProxy.getQuestionEventAccList())
+			if (personRightProxy.getIsAdmin())
 			{
-				if (proxy.getAccRights().equals(AccessRights.AccWrite))
+				flag = true;
+				answerFlag = true;
+			}
+			else if (personRightProxy.getIsInstitutionalAdmin())
+			{
+				flag = true;
+				answerFlag = true;
+			}
+			else
+			{
+				for (UserAccessRightsProxy proxy : personRightProxy.getQuestionEventAccList())
 				{
-					flag = true;
-					answerFlag = false;
-					break;
+					if (proxy.getAccRights().equals(AccessRights.AccWrite))
+					{
+						flag = true;
+						answerFlag = false;
+						break;
+					}
 				}
 			}
-		}
+		}		
 		
 		questionDetailsView = new QuestionDetailsViewImpl(eventBus, flag);
 		
@@ -160,9 +165,16 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		
 		view.setDelegate(this);
 		
+		if(questionPlace.getFromPlace().equals("ACCEPT_QUESTION"))
+		{
+			view.getAnswerListViewImpl().setVisible(false);
+			view.setVisibleAcceptButton();
+		}
+	
 		this.answerListView = view.getAnswerListViewImpl();
 		answerListView.setDelegate(this);
 		this.answerTable = answerListView.getTable();
+		
 		
 		start2();
 		
@@ -221,51 +233,60 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 				if(response instanceof QuestionProxy){
 					Log.info(((QuestionProxy) response).getQuestionText());
 					
-					if (!flag && !answerFlag)
-					{
-						if (((QuestionProxy) response).getAutor().getId().equals(userLoggedIn.getId()))
-						{
-							view.setInvisibleIconButton(true);
-							init((QuestionProxy) response);
-						}
-						else
-						{
-							requests.userAccessRightsRequest().checkAddAnswerRightsByQuestionAndPerson(userLoggedIn.getId(), ((QuestionProxy) response).getId()).fire(new BMEReceiver<List<UserAccessRightsProxy>>() {
-
-								@Override
-								public void onSuccess(List<UserAccessRightsProxy> rightsResponse) {
-									
-									if (rightsResponse.size() > 0)
-									{
-										for (UserAccessRightsProxy proxy : rightsResponse)
-										{
-											if (proxy.getAccRights().equals(AccessRights.AccWrite))
-											{
-												view.setInvisibleIconButton(true);
-												questionDetailsView.getAnswerListViewImpl().getNewAnswer().setVisible(false);
-											}
-											
-											if (proxy.getAccRights().equals(AccessRights.AccAddAnswers))
-											{
-												view.setInvisibleIconButton(false);
-											}	
-										}
-									}
-									else
-									{
-										view.setInvisibleIconButton(false);
-										questionDetailsView.getAnswerListViewImpl().getNewAnswer().setVisible(false);
-									}
-							
-									init((QuestionProxy) response);
-								}
-							});
-						}
-					}
-					else
+					if (questionPlace.getFromPlace().equals("ACCEPT_QUESTION"))
 					{
 						init((QuestionProxy) response);
 					}
+					else
+					{
+						if (!flag && !answerFlag)
+						{
+							if (((QuestionProxy) response).getAutor().getId().equals(userLoggedIn.getId()))
+							{
+								view.setInvisibleIconButton(true);
+								init((QuestionProxy) response);
+							}
+							else
+							{
+								requests.userAccessRightsRequest().checkAddAnswerRightsByQuestionAndPerson(userLoggedIn.getId(), ((QuestionProxy) response).getId()).fire(new BMEReceiver<List<UserAccessRightsProxy>>() {
+
+									@Override
+									public void onSuccess(List<UserAccessRightsProxy> rightsResponse) {
+										
+										if (rightsResponse.size() > 0)
+										{
+											for (UserAccessRightsProxy proxy : rightsResponse)
+											{
+												if (proxy.getAccRights().equals(AccessRights.AccWrite))
+												{
+													view.setInvisibleIconButton(true);
+													questionDetailsView.getAnswerListViewImpl().getNewAnswer().setVisible(false);
+												}
+												
+												if (proxy.getAccRights().equals(AccessRights.AccAddAnswers))
+												{
+													view.setInvisibleIconButton(false);
+												}	
+											}
+										}
+										else
+										{
+											view.setInvisibleIconButton(false);
+											questionDetailsView.getAnswerListViewImpl().getNewAnswer().setVisible(false);
+										}
+								
+										init((QuestionProxy) response);
+									}
+								});
+							}
+						}
+						else
+						{
+							init((QuestionProxy) response);
+						}
+					}
+					
+					
 				}				
 			}
 			
@@ -419,8 +440,11 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 
 	@Override
 	public void editClicked() {
-		placeController.goTo(new PlaceQuestionDetails(question.stableId(), PlaceQuestionDetails.Operation.EDIT));
-
+		
+		if (questionPlace.getFromPlace().equals("ACCEPT_QUESTION"))
+			placeController.goTo(new PlaceQuestionDetails(question.stableId(), PlaceQuestionDetails.Operation.EDIT, "ACCEPT_QUESTION"));
+		else
+			placeController.goTo(new PlaceQuestionDetails(question.stableId(), PlaceQuestionDetails.Operation.EDIT));
 		
 	}
 
@@ -1247,6 +1271,45 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			public void onSuccess(Boolean response) {
 				function.apply(response);
 			}		
+		});
+	}
+
+	@Override
+	public void acceptQuestionClicked(QuestionProxy proxy) {
+		QuestionRequest questionRequest = requests.questionRequest();
+		proxy = questionRequest.edit(proxy);
+		
+		if (userLoggedIn.getIsAdmin())
+		{
+			proxy.setIsAcceptedAdmin(true);
+			
+			if (proxy.getIsAcceptedRewiever())
+			{
+				proxy.setStatus(Status.ACTIVE);
+				proxy.setIsActive(true);
+			}
+			else
+				proxy.setStatus(Status.ACCEPTED_ADMIN);
+		}
+		else
+		{
+			proxy.setIsAcceptedRewiever(true);
+			
+			if (proxy.getIsAcceptedAdmin())
+			{
+				proxy.setStatus(Status.ACTIVE);
+				proxy.setIsActive(true);
+			}
+			else
+				proxy.setStatus(Status.ACCEPTED_REVIEWER);
+		}
+		
+		questionRequest.persist().using(proxy).fire(new BMEReceiver<Void>() {
+
+			@Override
+			public void onSuccess(Void response) {
+				placeController.goTo(new PlaceAcceptQuestion(""));
+			}
 		});
 	}
 

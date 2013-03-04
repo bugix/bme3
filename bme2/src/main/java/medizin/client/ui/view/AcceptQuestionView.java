@@ -7,6 +7,7 @@ import medizin.client.proxy.QuestionProxy;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.SimplePanel;
 
 public interface AcceptQuestionView extends IsWidget {
 
@@ -24,6 +25,6 @@ public interface AcceptQuestionView extends IsWidget {
 	    String[] getPaths();
 		void setDelegate(DeclineEmailPopupDelagate delegate);
 	    
-
+		public SimplePanel getDetailsPanel();
 
 }

@@ -3,6 +3,8 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:n="urn:import:medizin.client.ui"
 	xmlns:s="urn:import:medizin.client.ui.view.user" xmlns:m="urn:import:medizin.client.ui.view.question"
 	xmlns:medizin="urn:import:medizin.client.ui.widget">
+	
+	<ui:with type="medizin.shared.i18n.BmeConstants" field="constants"></ui:with>
 	<ui:style src="../../styles.css" />
 		
 	<g:HTMLPanel>
@@ -16,9 +18,9 @@
 						<h3 class="{style.header}" style="display:inline">
 							<span ui:field="displayRenderer"></span>
 						</h3>
-
-						<medizin:IconButton ui:field="edit" icon="pencil">Edit</medizin:IconButton>
-						<medizin:IconButton ui:field="delete" icon="trash">Delete</medizin:IconButton>
+						<medizin:IconButton ui:field="accept" icon="check" text="{constants.acceptQuestion}" visible="false"></medizin:IconButton>
+						<medizin:IconButton ui:field="edit" icon="pencil" text="{constants.edit}"></medizin:IconButton>
+						<medizin:IconButton ui:field="delete" icon="trash" text="{constants.delete}"></medizin:IconButton>
 
 
 					</div>

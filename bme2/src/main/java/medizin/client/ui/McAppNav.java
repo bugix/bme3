@@ -380,7 +380,7 @@ public class McAppNav extends Composite {
             questionPanel.setOpen(false);		
 	//		user.addStyleName("gwt-AnchorSelected");
         }
-        if (place instanceof PlaceQuestion || place instanceof PlaceQuestionDetails){
+        if (place instanceof PlaceQuestion /*|| place instanceof PlaceQuestionDetails*/){
             systemOweviewPanel.setOpen(false);
             managementPanel.setOpen(false);
             assementPanel.setOpen(false);

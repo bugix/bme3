@@ -384,7 +384,10 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		deleteUploadedFiles(paths);
 		
 		if(question.getId()!=null){
-			goTo(new PlaceQuestionDetails(question.stableId()));
+			if (questionPlace.getFromPlace().equals("ACCEPT_QUESTION"))
+				goTo(new PlaceQuestionDetails(question.stableId(), "ACCEPT_QUESTION"));
+			else
+				goTo(new PlaceQuestionDetails(question.stableId()));
 		}
 		else {
 			
@@ -570,8 +573,12 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		          @Override
 		          public void onSuccess(Void response) {
 		        	  Log.info("PersonSucesfullSaved");
-												placeController.goTo(new PlaceQuestionDetails(question.stableId(),PlaceQuestionDetails.Operation.DETAILS));
-
+		        	  
+		        	  if (questionPlace.getFromPlace().equals("ACCEPT_QUESTION"))
+		        		  placeController.goTo(new PlaceQuestionDetails(question.stableId(),PlaceQuestionDetails.Operation.DETAILS, "ACCEPT_QUESTION"));
+		        	  else
+		        		  placeController.goTo(new PlaceQuestionDetails(question.stableId(),PlaceQuestionDetails.Operation.DETAILS));
+		        		  
 		          //	goTo(new PlaceQuestion(person.stableId()));
 		          }
 		          
@@ -690,7 +697,10 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 	
 												@Override
 												public void onSuccess(Void response) {
-													placeController.goTo(new PlaceQuestionDetails(newQuestion.stableId(), PlaceQuestionDetails.Operation.DETAILS));
+													if (questionPlace.getFromPlace().equals("ACCEPT_QUESTION"))
+														placeController.goTo(new PlaceQuestionDetails(newQuestion.stableId(), PlaceQuestionDetails.Operation.DETAILS, "ACCEPT_QUESTION"));
+													else
+														placeController.goTo(new PlaceQuestionDetails(newQuestion.stableId(), PlaceQuestionDetails.Operation.DETAILS));
 												}
 												
 												/*@Override
@@ -714,7 +724,10 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 								});
 				        	  
 		    	        	  }else {
-		    	        		  placeController.goTo(new PlaceQuestionDetails(newQuestion.stableId(), PlaceQuestionDetails.Operation.DETAILS));
+		    	        		  if (questionPlace.getFromPlace().equals("ACCEPT_QUESTION"))
+		    	        			  placeController.goTo(new PlaceQuestionDetails(newQuestion.stableId(), PlaceQuestionDetails.Operation.DETAILS, "ACCEPT_QUESTION"));
+		    	        		  else
+		    	        			  placeController.goTo(new PlaceQuestionDetails(newQuestion.stableId(), PlaceQuestionDetails.Operation.DETAILS));
 		    	        	  }
 							
 		    	          //	goTo(new PlaceQuestion(person.stableId()));

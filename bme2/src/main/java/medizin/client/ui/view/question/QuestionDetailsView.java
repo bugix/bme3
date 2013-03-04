@@ -39,10 +39,14 @@ public interface QuestionDetailsView extends IsWidget {
 		void deleteUploadedFiles(Set<String> paths);
 
 		void changedResourceSequence(Set<QuestionResourceClient> questionResourceClients);
+		
+		void acceptQuestionClicked(QuestionProxy proxy);
 	}
 
 	AnswerListViewImpl getAnswerListViewImpl();
 
 	public void setInvisibleIconButton(Boolean flag);
+	
+	public void setVisibleAcceptButton();
 
 }

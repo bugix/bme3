@@ -73,6 +73,9 @@ public class QuestionDetailsViewImpl extends Composite implements
 	IconButton delete;
 
 	@UiField
+	IconButton accept;
+	
+	@UiField
 	SpanElement displayRenderer;
 
 	@UiField
@@ -664,5 +667,18 @@ public class QuestionDetailsViewImpl extends Composite implements
 			edit.setVisible(false);
 			delete.setVisible(false);
 		}
+	}
+	
+	public void setVisibleAcceptButton()
+	{
+		delete.setVisible(false);
+		edit.setVisible(true);
+		accept.setVisible(true);
+	}
+	
+	@UiHandler("accept")
+	public void onAcceptClicked(ClickEvent e) {
+		if (proxy != null)
+			delegate.acceptQuestionClicked(proxy);
 	}
 }

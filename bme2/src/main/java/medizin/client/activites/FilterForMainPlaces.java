@@ -134,7 +134,11 @@ public class FilterForMainPlaces implements FilteredActivityMapper.Filter {
 		 
 		 if (place instanceof PlaceQuestionDetails){
 			 PlaceQuestionDetails placeQuestionDetails= (PlaceQuestionDetails)place;
-			 return new PlaceQuestion(placeQuestionDetails.getProxyId());
+			 
+			 if (((PlaceQuestionDetails) place).getFromPlace().equals("ACCEPT_QUESTION"))
+				 return new PlaceAcceptQuestion(placeQuestionDetails.getProxyId());
+			 else
+				 return new PlaceQuestion(placeQuestionDetails.getProxyId());
 		 }
 		
 		 
