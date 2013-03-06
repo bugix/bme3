@@ -12,7 +12,7 @@
 		}
 	</ui:style>
 	<g:HTMLPanel styleName="{style.imageBox}">
-		<g:VerticalPanel ui:field="questionPanel" spacing="15">
+		<g:VerticalPanel ui:field="questionPanel" spacing="15" width="100%">
 			<g:HTMLPanel>Keine Antworten zu akzeptieren</g:HTMLPanel>
 		</g:VerticalPanel>
 	</g:HTMLPanel>

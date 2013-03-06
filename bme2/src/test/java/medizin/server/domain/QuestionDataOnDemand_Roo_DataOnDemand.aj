@@ -22,6 +22,7 @@ import medizin.server.domain.QuestionEvent;
 import medizin.server.domain.QuestionEventDataOnDemand;
 import medizin.server.domain.QuestionType;
 import medizin.server.domain.QuestionTypeDataOnDemand;
+import medizin.shared.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -56,10 +57,12 @@ privileged aspect QuestionDataOnDemand_Roo_DataOnDemand {
         setPicturePath(obj, index);
         setPreviousVersion(obj, index);
         setQuestEvent(obj, index);
+        setQuestionShortName(obj, index);
         setQuestionText(obj, index);
         setQuestionType(obj, index);
         setQuestionVersion(obj, index);
-        setRewiewer(obj, index);
+        setStatus(obj, index);
+        setSubmitToReviewComitee(obj, index);
         return obj;
     }
     
@@ -111,6 +114,14 @@ privileged aspect QuestionDataOnDemand_Roo_DataOnDemand {
         obj.setQuestEvent(questEvent);
     }
     
+    public void QuestionDataOnDemand.setQuestionShortName(Question obj, int index) {
+        String questionShortName = "questionShortName_" + index;
+        if (questionShortName.length() > 255) {
+            questionShortName = questionShortName.substring(0, 255);
+        }
+        obj.setQuestionShortName(questionShortName);
+    }
+    
     public void QuestionDataOnDemand.setQuestionText(Question obj, int index) {
         String questionText = "questionText_" + index;
         if (questionText.length() > 600) {
@@ -129,9 +140,14 @@ privileged aspect QuestionDataOnDemand_Roo_DataOnDemand {
         obj.setQuestionVersion(questionVersion);
     }
     
-    public void QuestionDataOnDemand.setRewiewer(Question obj, int index) {
-        Person rewiewer = personDataOnDemand.getRandomPerson();
-        obj.setRewiewer(rewiewer);
+    public void QuestionDataOnDemand.setStatus(Question obj, int index) {
+        Status status = null;
+        obj.setStatus(status);
+    }
+    
+    public void QuestionDataOnDemand.setSubmitToReviewComitee(Question obj, int index) {
+        Boolean submitToReviewComitee = Boolean.TRUE;
+        obj.setSubmitToReviewComitee(submitToReviewComitee);
     }
     
     public Question QuestionDataOnDemand.getSpecificQuestion(int index) {

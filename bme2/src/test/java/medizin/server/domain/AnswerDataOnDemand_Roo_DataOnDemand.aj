@@ -16,9 +16,11 @@ import javax.validation.ConstraintViolationException;
 import medizin.client.shared.Validity;
 import medizin.server.domain.Answer;
 import medizin.server.domain.AnswerDataOnDemand;
+import medizin.server.domain.CommentDataOnDemand;
 import medizin.server.domain.Person;
 import medizin.server.domain.PersonDataOnDemand;
 import medizin.server.domain.QuestionDataOnDemand;
+import medizin.shared.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -34,10 +36,14 @@ privileged aspect AnswerDataOnDemand_Roo_DataOnDemand {
     PersonDataOnDemand AnswerDataOnDemand.personDataOnDemand;
     
     @Autowired
+    CommentDataOnDemand AnswerDataOnDemand.commentDataOnDemand;
+    
+    @Autowired
     QuestionDataOnDemand AnswerDataOnDemand.questionDataOnDemand;
     
     public Answer AnswerDataOnDemand.getNewTransientAnswer(int index) {
         Answer obj = new Answer();
+        setAdditionalKeywords(obj, index);
         setAnswerText(obj, index);
         setAutor(obj, index);
         setDateAdded(obj, index);
@@ -46,11 +52,19 @@ privileged aspect AnswerDataOnDemand_Roo_DataOnDemand {
         setIsAnswerAcceptedAutor(obj, index);
         setIsAnswerAcceptedReviewWahrer(obj, index);
         setIsAnswerActive(obj, index);
-        setIsPicture(obj, index);
-        setPicturePath(obj, index);
-        setRewiewer(obj, index);
+        setIsMedia(obj, index);
+        setMediaPath(obj, index);
+        setPoints(obj, index);
+        setSequenceNumber(obj, index);
+        setStatus(obj, index);
+        setSubmitToReviewComitee(obj, index);
         setValidity(obj, index);
         return obj;
+    }
+    
+    public void AnswerDataOnDemand.setAdditionalKeywords(Answer obj, int index) {
+        String additionalKeywords = "additionalKeywords_" + index;
+        obj.setAdditionalKeywords(additionalKeywords);
     }
     
     public void AnswerDataOnDemand.setAnswerText(Answer obj, int index) {
@@ -96,22 +110,37 @@ privileged aspect AnswerDataOnDemand_Roo_DataOnDemand {
         obj.setIsAnswerActive(isAnswerActive);
     }
     
-    public void AnswerDataOnDemand.setIsPicture(Answer obj, int index) {
-        Boolean isPicture = Boolean.TRUE;
-        obj.setIsPicture(isPicture);
+    public void AnswerDataOnDemand.setIsMedia(Answer obj, int index) {
+        Boolean isMedia = Boolean.TRUE;
+        obj.setIsMedia(isMedia);
     }
     
-    public void AnswerDataOnDemand.setPicturePath(Answer obj, int index) {
-        String picturePath = "picturePath_" + index;
-        if (picturePath.length() > 255) {
-            picturePath = picturePath.substring(0, 255);
+    public void AnswerDataOnDemand.setMediaPath(Answer obj, int index) {
+        String mediaPath = "mediaPath_" + index;
+        if (mediaPath.length() > 255) {
+            mediaPath = mediaPath.substring(0, 255);
         }
-        obj.setPicturePath(picturePath);
+        obj.setMediaPath(mediaPath);
     }
     
-    public void AnswerDataOnDemand.setRewiewer(Answer obj, int index) {
-        Person rewiewer = personDataOnDemand.getRandomPerson();
-        obj.setRewiewer(rewiewer);
+    public void AnswerDataOnDemand.setPoints(Answer obj, int index) {
+        String points = "points_" + index;
+        obj.setPoints(points);
+    }
+    
+    public void AnswerDataOnDemand.setSequenceNumber(Answer obj, int index) {
+        Integer sequenceNumber = new Integer(index);
+        obj.setSequenceNumber(sequenceNumber);
+    }
+    
+    public void AnswerDataOnDemand.setStatus(Answer obj, int index) {
+        Status status = null;
+        obj.setStatus(status);
+    }
+    
+    public void AnswerDataOnDemand.setSubmitToReviewComitee(Answer obj, int index) {
+        Boolean submitToReviewComitee = Boolean.TRUE;
+        obj.setSubmitToReviewComitee(submitToReviewComitee);
     }
     
     public void AnswerDataOnDemand.setValidity(Answer obj, int index) {

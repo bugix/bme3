@@ -7,7 +7,6 @@ import java.util.Set;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.PlaceAcceptQuestion;
 import medizin.client.place.PlaceQuestionDetails;
-import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.request.QuestionRequest;
 import medizin.client.ui.DeclineEmailPopupDelagate;
@@ -51,7 +50,7 @@ public class ActivityAcceptQuestion extends AbstractActivityWrapper implements A
 
 	private SingleSelectionModel<QuestionProxy> selectionModel;
 	private ActivityManager activityManger;
-	private ActivityQuestionMapper activityQuestionMapper;
+	private ActivityAcceptQuestionMapper activityAcceptQuestionMapper;
 	
 	
 	@Inject
@@ -62,9 +61,9 @@ public class ActivityAcceptQuestion extends AbstractActivityWrapper implements A
 		this.requests = requests;
         this.placeController = placeController;
         
-        this.activityQuestionMapper = new ActivityQuestionMapper(requests,
+        this.activityAcceptQuestionMapper = new ActivityAcceptQuestionMapper(requests,
 				placeController);
-		this.activityManger = new ActivityManager(activityQuestionMapper,
+		this.activityManger = new ActivityManager(activityAcceptQuestionMapper,
 				requests.getEventBus());
 	}
 

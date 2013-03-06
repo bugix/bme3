@@ -15,6 +15,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.validation.constraints.NotNull;
 
 import org.apache.log4j.Logger;
@@ -288,5 +292,18 @@ public class AssesmentQuestion {
 
         q.setParameter("assesment", assesment);
         return q.getResultList();
+	}
+
+	public static List<AssesmentQuestion> findAssesmentQuestionsByQuestion(Long questionId) {
+		
+		CriteriaBuilder cb = entityManager().getCriteriaBuilder();
+		CriteriaQuery<AssesmentQuestion> cq = cb.createQuery(AssesmentQuestion.class);
+		Root<AssesmentQuestion> from = cq.from(AssesmentQuestion.class);
+		Predicate pre = cb.equal(from.get("question").get("id"), questionId);
+		cq.where(pre);
+		
+		TypedQuery<AssesmentQuestion> query = entityManager().createQuery(cq);
+	 
+		return query.getResultList();
 	}
 }

@@ -22,6 +22,8 @@ import medizin.client.ui.richtext.RichTextToolbar;
 import medizin.client.ui.view.roo.McSetEditor;
 import medizin.client.ui.view.roo.QuestionTypeProxyRenderer;
 import medizin.client.ui.widget.IconButton;
+import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
+import medizin.client.ui.widget.dialogbox.receiver.ReceiverDialog;
 import medizin.client.ui.widget.resource.dndview.ResourceView;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.ui.widget.resource.event.ResourceAddedEvent;
@@ -44,6 +46,7 @@ import medizin.shared.utils.SharedConstant;
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.SpanElement;
@@ -148,24 +151,24 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	public DefaultSuggestBox<PersonProxy, EventHandlingValueHolderItem<PersonProxy>> auther;
 
 	
-	/*@UiField(provided = true)
+	/*
+	@UiField(provided = true)
 	public ValueListBox<PersonProxy> autor = new ValueListBox<PersonProxy>(
 			medizin.client.ui.view.roo.PersonProxyRenderer.instance(),
 			new EntityProxyKeyProvider<medizin.client.proxy.PersonProxy>());
-*/
+
+	@UiField(provided = true)
+	public ValueListBox<PersonProxy> rewiewer = new ValueListBox<PersonProxy>(
+			medizin.client.ui.view.roo.PersonProxyRenderer.instance(),
+			new EntityProxyKeyProvider<medizin.client.proxy.PersonProxy>());
+	 */
 	@UiField
 	public Label lblReviewer;
 
 	@UiField
 	@Ignore
 	public DefaultSuggestBox<PersonProxy, EventHandlingValueHolderItem<PersonProxy>> rewiewer;
-
 	
-	/*@UiField(provided = true)
-	public ValueListBox<PersonProxy> rewiewer = new ValueListBox<PersonProxy>(
-			medizin.client.ui.view.roo.PersonProxyRenderer.instance(),
-			new EntityProxyKeyProvider<medizin.client.proxy.PersonProxy>());
-*/
 	@UiField
 	public Label lblQuestionEvent;
 
@@ -209,7 +212,12 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	//private ImageViewer viewer;
 	private ResourceView viewer;
 	
+	private boolean edit;
+	private EventBus eventBus;
+	private ImageViewer imageViewer;
+
 	private QuestionProxy question = null;
+	private final PersonProxy userLoggedIn;
 	// @UiField
 	// DateBox dateAdded;
 	//
@@ -235,13 +243,27 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 
 	@UiHandler("save")
 	void onSave(ClickEvent event) {
-		if (!edit) {
-			delegate.saveClicked(false);
-		} else {
-			ConfirmQuestionChangesPopup confirm = new ConfirmQuestionChangesPopup(
-					delegate);
+		if(validationOfFields()) {
+		
+			if (!edit) {
+				saveQuestion(false,false);
+				//delegate.saveClicked(false);
+			} else {
+				
+				final ConfirmQuestionChangesPopup confirm = new ConfirmQuestionChangesPopup(new Function<Boolean, Void>() {
+					
+					@Override
+					public Void apply(Boolean input) {
+						saveQuestion(true, input);
+						//confirm.removeFromParent();
+						return null;
+					}
+				});
+				/*delegate);*/		
+				
+				
+			}
 		}
-
 		// delegate.saveClicked(false);
 	}
 
@@ -252,8 +274,10 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	 * @UiField SimplePanel toolbarPanel;
 	 */
 
-	public QuestionEditViewImpl(Map<String, Widget> reciverMap) {
+	public QuestionEditViewImpl(Map<String, Widget> reciverMap, EventBus eventBus, PersonProxy userLoggedIn) {
 
+		this.eventBus = eventBus;
+		this.userLoggedIn = userLoggedIn;
 		questionTextArea = new RichTextArea();
 		questionTextArea.setSize("100%", "14em");
 		toolbar = new RichTextToolbar(questionTextArea);
@@ -314,7 +338,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 				setMediaView(event.getValue(),question);
 			}
 		});
-
+		
 	}
 
 	@Override
@@ -357,13 +381,13 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		setMediaView(question.getQuestionType(), question);
 	}
 
-	@Override
+	/*@Override
 	public String getRichtTextHTML() {
 		// Log.info(questionTextArea.getHTML());
 		// Log.info(questionTextArea.getText());
 		return questionTextArea.getHTML();
 		// return new String("<b>hallo</b>");
-	}
+	}*/
 
 	/*@Override
 	public void setName(String helloName) {
@@ -439,6 +463,11 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		//change {
 		auther.setWidth(150);
 
+		if(userLoggedIn.getIsAdmin() == false) {
+			auther.setSelected(userLoggedIn);
+			auther.setEnabled(false);
+		}
+
 	}
 
 	@Override
@@ -457,9 +486,6 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	 * @UiField Element createTitle;
 	 */
 
-	private boolean edit;
-	private EventBus eventBus;
-	private ImageViewer imageViewer;
 
 	@Override
 	public void setEditTitle(boolean edit) {
@@ -478,7 +504,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 
 	}
 
-	@Override
+	/*@Override
 	public ValueListBox<QuestionTypeProxy> getQuestionType() {
 		return questionType;
 	}
@@ -493,7 +519,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	public CheckBox getSubmitToReviewComitee() {
 		return submitToReviewComitee;
 		
-	}
+	}*/
 	
 //	@Override
 //	public ValueListBox<PersonProxy> getAuther() {
@@ -501,7 +527,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 //		return null;
 //	}
 	
-	@Override
+	/*@Override
 	public DefaultSuggestBox<PersonProxy, EventHandlingValueHolderItem<PersonProxy>> getAutherListBox() {
 		return auther;
 	}
@@ -515,7 +541,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	@Override
 	public TextBox getShortName() {
 		return questionShortName;
-	}
+	}*/
 
 //	@Override
 //	public ValueListBox<PersonProxy> getReviewer() {
@@ -527,7 +553,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	public ValueListBox<QuestionEventProxy> getQuestionEvent() {
 		return questEvent;
 	}
-
+	/*
 	@Override
 	public TextArea getQuestionComment() {
 		return questionComment;
@@ -536,7 +562,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	@Override
 	public McSetEditor getMCS() {
 		return mcs;
-	}
+	}*/
 	
 	// here for new question may be null
 	private void setMediaView(final QuestionTypeProxy questionTypeProxy,final QuestionProxy question) {
@@ -782,7 +808,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 //		return viewer;
 //	}
 
-	@Override
+	/*@Override
 	public ResourceView getResourceView() {
 		return viewer;
 	}
@@ -790,12 +816,12 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	@Override
 	public Label getAutherLbl() {
 		return lblAuther;
-	}
+	}*/
 
-	@Override
+	/*@Override
 	public void setEventBus(EventBus eventBus) {
 		this.eventBus = eventBus;
-	}
+	}*/
 
 	@Override
 	public Set<QuestionResourceClient> getQuestionResources() {
@@ -805,9 +831,138 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		return viewer.getQuestionResources();
 	}
 
-	@Override
+	/*@Override
 	public ImageViewer getImageViewer() {
 		return imageViewer;
+	}*/
+	
+	private void saveQuestion(boolean isEdit,boolean withNewMajorVersion) {
+		
+		double questionVersion = 1.0d;
+		
+		if(isEdit == true ) {
+			if(withNewMajorVersion == true) {
+				questionVersion = question.getQuestionVersion() + 1;	
+			}else {
+				questionVersion = calculateSubversion(question.getQuestionVersion());
+			}
+		}else {
+			questionVersion = 1.0d;
+		}
+		String picturePath = null;
+		Set<QuestionResourceClient> questionResourceClients = Sets.newHashSet() ;
+		
+		switch (questionType.getValue().getQuestionType()) {
+		
+		case Imgkey:
+		case ShowInImage:
+		{
+			picturePath = imageViewer.getImageRelativeUrl();
+			break;
+		}
+		
+		case Sort:
+		case Textual:
+		{
+			questionResourceClients = viewer.getQuestionResources();
+			break;
+				
+		}
+		default:
+		{
+			Log.info("in default case");
+			picturePath = null;
+			questionResourceClients = Sets.newHashSet();
+			break;
+		}
+		} 
+		
+		if(isEdit == true && withNewMajorVersion == false) {	
+			// update question with  minor new version
+			delegate.updateQuestion(questionType.getValue(),questionShortName.getText(),questionTextArea.getText(),auther.getSelected(),rewiewer.getSelected(),submitToReviewComitee.getValue(),questEvent.getValue(),mcs.getValue(),questionComment.getText(),questionVersion, picturePath,questionResourceClients);
+		}else {
+			// create new question or create new major version question 
+			delegate.createNewQuestion(questionType.getValue(),questionShortName.getText(),questionTextArea.getText(),auther.getSelected(),rewiewer.getSelected(),submitToReviewComitee.getValue(),questEvent.getValue(),mcs.getValue(),questionComment.getText(),questionVersion,picturePath,questionResourceClients);
+		}
+	}
+
+	private Double calculateSubversion(Double questionVersion) {
+		
+		Double subversion = questionVersion%1;
+		Double mainVersion = questionVersion-subversion;
+		Log.info("Subversion basis: "+ subversion + " " + Math.round(subversion*10000)/10000.0);
+		subversion=incrementSubversion(Math.round(subversion*10000)/10000.0, true);
+		
+		return subversion+mainVersion;
+	}
+
+	private Double incrementSubversion(Double subversion, boolean first) {
+		Log.info(subversion.toString());
+		if(subversion*10 == 0.0)
+		{
+			subversion=1.0;
+			return subversion/10;
+		}
+		else if(subversion*10 == 9.0 && first)
+		{
+			subversion=(subversion*10)+1;
+			return subversion/1000;
+		}
+		else if(subversion*10 == 9.0)
+		{
+			subversion=(subversion*10)+2;
+			return subversion/10;
+		}
+		else if(subversion*10%1 == 0){
+			subversion=(subversion*10)+1;
+			return subversion/10;
+		}
+		else{
+			Log.info("übergabe an Funktion" + (subversion*10-subversion*10%1)/10);
+			Log.info("Returnwert" + ((Math.round(subversion*10000)/10000.0)*10)%1/10);
+			return (subversion*10-subversion*10%1)/10 + incrementSubversion(Math.round(subversion*10%1*10000)/10000.0, false)/10;
+		}
+		
+	}
+	
+	private boolean validationOfFields() {
+		
+		auther.removeStyleName("higlight_onViolation");
+		questionComment.removeStyleName("higlight_onViolation");
+		
+		if(submitToReviewComitee.getValue() == true) 
+		{
+			rewiewer.setSelected(null);	
+		} 
+		else if(rewiewer.getSelected() != null)
+		{
+			submitToReviewComitee.setValue(false);
+		}
+		else 
+		{
+			ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.selectReviewerOrComitee());
+			return false;
+		}
+		
+		boolean flag = true;
+		StringBuilder errorString = new StringBuilder();
+		if(auther.getSelected() == null) {
+			flag = false;
+			errorString.append(constants.authorMayNotBeNull()).append("<br />");
+			auther.addStyleName("higlight_onViolation");
+		}
+		
+		if(questionComment.getText() == null || questionComment.getText().isEmpty()) {
+			flag = false;
+			errorString.append(constants.commentMayNotBeNull()).append("<br />");
+			questionComment.addStyleName("higlight_onViolation");
+		}
+		
+		if(flag == false) {
+			ReceiverDialog.showMessageDialog(errorString.toString());
+		}
+		
+		return flag;
 	}
 
 }

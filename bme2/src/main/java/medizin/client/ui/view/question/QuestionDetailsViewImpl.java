@@ -45,7 +45,6 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class QuestionDetailsViewImpl extends Composite implements
@@ -130,9 +129,17 @@ public class QuestionDetailsViewImpl extends Composite implements
 	@UiField
 	Label lblMcsValue;
 
+	@UiField
+	IconButton previous;
 	
-	
+	@UiField
+	IconButton latest;
 
+	@UiField
+	HorizontalPanel resourceUploadPanel;
+	
+	@UiField
+	HorizontalPanel resourceViewPanel;
 	// @UiField
 	// SpanElement id;
 	//
@@ -223,6 +230,56 @@ public class QuestionDetailsViewImpl extends Composite implements
 		delegate.editClicked();
 	}
 
+
+	@UiHandler("previous")
+	public void onPreviousClicked(ClickEvent e) {
+		//remove edit and delete btn
+		setInvisibleIconButton(false);
+		
+		if(proxy != null && proxy.getPreviousVersion() != null) {
+			delegate.getQuestionDetails(proxy.getPreviousVersion() ,new Function<QuestionProxy, Void>() {
+
+				@Override
+				public Void apply(QuestionProxy input) {
+					setValue(input);
+					latest.setEnabled(true);
+					if(input.getPreviousVersion() == null) {
+						previous.setEnabled(false);	
+					}
+					return null;
+				}
+			});	
+		}else {
+			previous.setEnabled(false);
+		}
+	}
+
+	@UiHandler("latest")
+	public void onlatestClicked(ClickEvent e) {
+		//remove edit and delete btn
+		
+		if(delegate.isQuestionDetailsPlace()) {
+			setInvisibleIconButton(true);	
+		}else {
+			setVisibleAcceptButton();
+		}
+		
+		delegate.getLatestQuestionDetails(new Function<QuestionProxy, Void>() {
+
+			@Override
+			public Void apply(QuestionProxy input) {
+				setValue(input);
+				latest.setEnabled(false);
+				if(input.getPreviousVersion()== null) {
+					previous.setEnabled(false);	
+				}else {
+					previous.setEnabled(true);
+				}
+				return null;
+			}
+		});	
+	}
+
 	// @UiField
 	// SpanElement displayRenderer;
 
@@ -247,6 +304,9 @@ public class QuestionDetailsViewImpl extends Composite implements
 		addSecondTabForQuestionResource(proxy);
 		
 		
+		if(proxy.getPreviousVersion() == null) {
+			previous.setEnabled(false);
+		}
 		
 		
 		
@@ -326,7 +386,10 @@ public class QuestionDetailsViewImpl extends Composite implements
 	}
 
 	private void addSecondTabForQuestionResource(final QuestionProxy proxy) {
-	
+		
+		resourceUploadPanel.clear();
+		resourceViewPanel.clear();
+		
 		if(proxy != null && proxy.getQuestionType() != null  && proxy.getQuestionType().getQuestionType() != null) {
 			
 			final QuestionTypes questionType = proxy.getQuestionType().getQuestionType();
@@ -371,6 +434,7 @@ public class QuestionDetailsViewImpl extends Composite implements
 			default:
 			{
 				Log.info("Error");
+				questionTypeDetailPanel.remove(1);
 				break;	
 			}
 			
@@ -405,6 +469,7 @@ public class QuestionDetailsViewImpl extends Composite implements
 		
 		questionTypeDetailPanel.selectTab(0);
 		questionTypeDetailPanel.getTabBar().setTabText(0, constants.manageQuestion());
+		questionTypeDetailPanel.getTabBar().setTabText(1, constants.resources());
 		TabPanelHelper.moveTabBarToBottom(questionTypeDetailPanel);
 		lblQuestionShortName.setText(constants.questionShortName());
 		lblQuestionType.setText(constants.questionType());
@@ -553,18 +618,22 @@ public class QuestionDetailsViewImpl extends Composite implements
 		});
 		
 		
-		VerticalPanel panel = new VerticalPanel();
+		/*VerticalPanel panel = new VerticalPanel();
 		panel.setWidth("100%");
 		HorizontalPanel h1 =  new HorizontalPanel();
 		HorizontalPanel h2 = new HorizontalPanel();
 		h2.setWidth("100%");
-		/*h1.add(lblUploadText);*/
-		/*h1.add(resourceUpload);*/
+		h1.add(lblUploadText);
+		h1.add(resourceUpload);
 		h2.add(resourceView);
 		panel.add(h1);
 		panel.add(h2);
+		questionTypeDetailPanel.add(panel, constants.resources());*/
 		
-		questionTypeDetailPanel.add(panel, constants.resources());
+		
+		/*resourceUploadPanel.add(lblUploadText);
+		resourceUploadPanel.add(resourceUpload);*/
+		resourceViewPanel.add(resourceView);
 
 	}
 
@@ -641,32 +710,28 @@ public class QuestionDetailsViewImpl extends Composite implements
 			}
 		});
 		
-		VerticalPanel panel = new VerticalPanel();
+		/*VerticalPanel panel = new VerticalPanel();
 		panel.setWidth("100%");
 		HorizontalPanel h1 =  new HorizontalPanel();
 		HorizontalPanel h2 = new HorizontalPanel();
 		h2.setWidth("100%");
-		/*h1.add(lblUploadText);*/
-		/*h1.add(resourceUpload);*/
+		h1.add(lblUploadText);
+		h1.add(resourceUpload);
 		h2.add(imageViewer);
 		panel.add(h1);
 		panel.add(h2);
 		
-		questionTypeDetailPanel.add(panel, constants.resources());
+		questionTypeDetailPanel.add(panel, constants.resources());*/
+		
+		/*resourceUploadPanel.add(lblUploadText);
+		resourceUploadPanel.add(resourceUpload);*/
+		resourceViewPanel.add(imageViewer);
 	}
 	
 	public void setInvisibleIconButton(Boolean flag)
 	{
-		if (flag)
-		{
-			edit.setVisible(true);
-			delete.setVisible(true);
-		}
-		else
-		{
-			edit.setVisible(false);
-			delete.setVisible(false);
-		}
+		edit.setVisible(flag);
+		delete.setVisible(flag);
 	}
 	
 	public void setVisibleAcceptButton()

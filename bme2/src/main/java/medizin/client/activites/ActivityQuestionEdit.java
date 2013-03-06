@@ -3,7 +3,7 @@ package medizin.client.activites;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -25,15 +25,16 @@ import medizin.client.request.QuestionResourceRequest;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.question.QuestionEditView;
 import medizin.client.ui.view.question.QuestionEditViewImpl;
-import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.ui.widget.resource.dndview.vo.State;
 import medizin.shared.MultimediaType;
-import medizin.shared.QuestionTypes;
 import medizin.shared.Status;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.common.base.Function;
 import com.google.common.base.Objects;
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.Place;
@@ -110,14 +111,14 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 
 	@Override
 	public void start2(AcceptsOneWidget widget, EventBus eventBus) {
-		QuestionEditView questionEditView = new QuestionEditViewImpl(reciverMap);
+		QuestionEditView questionEditView = new QuestionEditViewImpl(reciverMap,eventBus,userLoggedIn);
 		/*questionEditView.setName("hallo");*/
 		questionEditView.setPresenter(this);
 		this.widget = widget;
 		this.view = questionEditView;
 	//	editorDriver = view.createEditorDriver();
 		view.setDelegate(this);
-		view.setEventBus(eventBus);
+		/*view.setEventBus(eventBus);*/
 		
 		//ClientUtility.setUserAccess(view.getAutherListBox(),userLoggedIn,UserType.ADMIN,true);
 		//ClientUtility.setUserAccess(view.getAutherLbl(),userLoggedIn,UserType.ADMIN,true);
@@ -220,10 +221,10 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		
 		view.setDelegate(this);
 		
-		if(userLoggedIn.getIsAdmin() == false) {
+		/*if(userLoggedIn.getIsAdmin() == false) {
 			view.getAutherListBox().setSelected(userLoggedIn);
 			view.getAutherListBox().setEnabled(false);
-		}
+		}*/
 		
 		start2();
 		
@@ -384,13 +385,9 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		deleteUploadedFiles(paths);
 		
 		if(question.getId()!=null){
-			if (questionPlace.getFromPlace().equals("ACCEPT_QUESTION"))
-				goTo(new PlaceQuestionDetails(question.stableId(), "ACCEPT_QUESTION"));
-			else
-				goTo(new PlaceQuestionDetails(question.stableId()));
+			gotoDetailsPlace(question);
 		}
 		else {
-			
 			goTo(new PlaceQuestion("PlaceQuestion!DELETED"));
 		}
 		
@@ -422,7 +419,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		
 	}
 
-	@Override
+	/*@Override
 	public void saveClicked(boolean generateNewQuestion) {
 		this.save=true;
 	
@@ -434,11 +431,11 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		{
 			// edit question 
 			
-			/*QuestionProxy questionProxy=standardizedRole.getCheckList();
+			QuestionProxy questionProxy=standardizedRole.getCheckList();
 			CheckListRequest checklsitRequest=requests.checkListRequest();
 			checklistProxy=checklsitRequest.edit(checklistProxy);
 			checklistProxy.setTitle(((RoleEditCheckListSubViewImpl)checkListView).title.getText
-			*/		
+					
 			QuestionRequest req=requests.questionRequest();
 			QuestionProxy questionNew=req.edit(question);
 			
@@ -507,12 +504,12 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 				});
 			}
 			
-			/*CommentProxy comment=commentRequest.create(CommentProxy.class);
-			comment.setComment(view.getQuestionComment().getHTML());*/
+			CommentProxy comment=commentRequest.create(CommentProxy.class);
+			comment.setComment(view.getQuestionComment().getHTML());
 			
 			//questionNew.setComment(comment);
 			
-			/*Iterator<AnswerProxy> iter = question2.getAnswers().iterator();
+			Iterator<AnswerProxy> iter = question2.getAnswers().iterator();
 			Set<AnswerProxy> answers = new HashSet<AnswerProxy>();
 			while (iter.hasNext()) {
 				AnswerProxy answer = (AnswerProxy) iter.next();
@@ -566,7 +563,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 			
 			
 			questionNew.setQuestionVersion(question2.getQuestionVersion()+1);
-	*/		
+			
 			final QuestionProxy qpoxy = questionNew; 
 			req.generateNewVersion().using(questionNew).fire(new BMEReceiver<Void>(reciverMap) {
 				
@@ -582,7 +579,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		          //	goTo(new PlaceQuestion(person.stableId()));
 		          }
 		          
-		          /*public void onFailure(ServerFailure error){
+		          public void onFailure(ServerFailure error){
 						Log.error(error.getMessage());
 					}
 		          
@@ -600,7 +597,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 					ErrorPanel erorPanel = new ErrorPanel();
 		        	  erorPanel.setWarnMessage(message);
 
-		        }*/
+		        }
 		      }); 
 			
 		}
@@ -615,11 +612,11 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 			
 			questionNew.setQuestionType(view.getQuestionType().getValue());
 			questionNew.setQuestionText(view.getRichtTextHTML());
-/*			Log.info("auther "+ view.getAuther().getValue().getName());*/
+			Log.info("auther "+ view.getAuther().getValue().getName());
 			questionNew.setQuestionShortName(view.getShortName().getValue());
 		//	questionNew.setAutor(view.getAuther().getValue());
 			questionNew.setAutor(view.getAutherListBox().getSelected());
-			/*Log.info("reviewer "+ view.getReviewer().getValue().getName());*/
+			Log.info("reviewer "+ view.getReviewer().getValue().getName());
 			if(view.getSubmitToReviewComitee().isChecked())
 			{
 				questionNew.setRewiewer(null);
@@ -639,7 +636,9 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 //			questionNew.setDateChanged(new Date());
 			questionNew.setDateAdded(new Date());
 			questionNew.setSubmitToReviewComitee(view.getSubmitToReviewComitee().getValue());
-			questionNew.setQuestionVersion(1.0);
+			//questionNew.setQuestionVersion(1.0);
+			questionNew.setQuestionVersion(incrementVersion(question));
+			questionNew.setPreviousVersion(question);
 			CommentProxy comment=commentRequest.create(CommentProxy.class);
 			//comment.setComment(view.getQuestionComment().getHTML());
 			comment.setComment(view.getQuestionComment().getValue());
@@ -703,7 +702,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 														placeController.goTo(new PlaceQuestionDetails(newQuestion.stableId(), PlaceQuestionDetails.Operation.DETAILS));
 												}
 												
-												/*@Override
+												@Override
 												public void onConstraintViolation(
 														Set<ConstraintViolation<?>> violations) {
 													Log.error("constraint violation in Question Resourc");
@@ -714,7 +713,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 												public void onFailure(ServerFailure error) {
 													Log.error("Failure in Question Resourc " + error);
 													super.onFailure(error);
-												}*/
+												}
 								        	  
 								        	  
 								        	  });
@@ -733,7 +732,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		    	          //	goTo(new PlaceQuestion(person.stableId()));
 		    	          }
 		    	          
-		    	         /* public void onFailure(ServerFailure error){
+		    	          public void onFailure(ServerFailure error){
 		    					Log.error(error.getMessage());
 		    					Log.error(error.getExceptionType());
 		    					Log.error(error.getStackTraceString());
@@ -753,9 +752,9 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		  					ErrorPanel erorPanel = new ErrorPanel();
 		  		        	  erorPanel.setWarnMessage(message);
 
-		  		        }*/
+		  		        }
 		    	          
-		    	          /*@Override
+		    	          @Override
 		    				public void onViolation(Set<Violation> errors) {
 		    					Iterator<Violation> iter = errors.iterator();
 		    					String message = "";
@@ -768,13 +767,13 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		    			        	  erorPanel.setWarnMessage(message);
 		    	
 		    					
-		    				}*/
+		    				}
 		    	      }); 
 		        		
 		          //	goTo(new PlaceQuestion(person.stableId()));
 		          }
 		          
-		         /* public void onFailure(ServerFailure error){
+		          public void onFailure(ServerFailure error){
 						Log.error(error.getMessage());
 					}
 		          @Override
@@ -790,10 +789,10 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 				        	  erorPanel.setWarnMessage(message);
 		
 						
-					}*/
+					}
 		      }); 
 			
-			/*Log.debug(view.getRichtTextHTML());
+			Log.debug(view.getRichtTextHTML());
 			question2.setQuestionText(view.getRichtTextHTML());
 			Log.debug(question2.toString());
 			if(question2.getId()==null){
@@ -813,11 +812,20 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 				question2.setDateChanged(new Date());
 				question2.setIsAcceptedAdmin(false);
 				question2.setQuestionVersion(calculateSubversion(question2.getQuestionVersion()));
-			}*/
-			/*editorDriver.flush()*/
+			}
+			editorDriver.flush()
 			
 		}
 		
+	}
+
+	private Double incrementVersion(QuestionProxy question) {
+		
+		if(question == null || question.getQuestionVersion() == null) {
+			return 1.0d;
+		}
+		Double currentVersion = question.getQuestionVersion();
+		return currentVersion + 1;
 	}
 
 	private Double calculateSubversion(Double questionVersion) {
@@ -857,7 +865,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 			return (subversion*10-subversion*10%1)/10 + incrementSubversion(Math.round(subversion*10%1*10000)/10000.0, false)/10;
 		}
 		
-	}
+	}*/
 
 	@Override
 	public QuestionResourceProxy createQuestionResource(String url,
@@ -894,19 +902,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 				public void onSuccess(Boolean response) {
 					Log.info("Media deleted " + response);
 				}
-				
-			/*	@Override
-				public void onConstraintViolation(
-						Set<ConstraintViolation<?>> violations) {
-					Log.error(violations.toString());
-					super.onConstraintViolation(violations);
-				}
-				
-				@Override
-				public void onFailure(ServerFailure error) {
-					Log.error(error.getMessage());
-					super.onFailure(error);
-				}*/
+			
 			});
 		}else {
 			Log.error("Question is null");
@@ -914,4 +910,145 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		
 	}
 
+	@Override
+	public void createNewQuestion(QuestionTypeProxy questionType, String questionShortName, String questionText, PersonProxy auther, PersonProxy rewiewer, Boolean submitToReviewComitee, QuestionEventProxy questionEvent, Set<McProxy> mcs, String questionComment, double questionVersion, String picturePath, final Set<QuestionResourceClient> questionResourceClients) {
+		this.save=true;
+		Long reviewerId = rewiewer != null?rewiewer.getId():null;
+		List<Long> mcIds = Lists.newArrayList();
+		if(mcs != null) {
+		
+			Iterator<Long> iterator = FluentIterable.from(mcs).transform(new Function<McProxy, Long>() {
+
+				@Override
+				public Long apply(McProxy input) {
+					
+					if(input != null) {
+						return input.getId();	
+					}else {
+						return null;
+					}
+					
+				}
+			}).iterator();
+			
+			mcIds = Lists.newArrayList(iterator);
+
+		}
+				
+		Long oldQuestionId = question != null ? question.getId() : null;
+		requests.questionRequest().persistNewQuestion(questionType.getId(), questionShortName, questionText, auther.getId(), reviewerId, submitToReviewComitee, questionEvent.getId(), mcIds, questionComment, questionVersion, picturePath,oldQuestionId).fire(new BMEReceiver<QuestionProxy>(reciverMap) {
+
+			@Override
+			public void onSuccess(final QuestionProxy response) {
+				
+				save=true; // save done for question
+				
+				Set<QuestionResourceProxy> proxies = Sets.newHashSet();
+				
+				if(questionResourceClients.isEmpty() == false) {
+					
+					QuestionResourceRequest questionResourceRequest = requests.questionResourceRequest();
+					
+					Log.info("proxies.size() " + proxies.size());
+					
+					for (QuestionResourceClient questionResource : questionResourceClients) {
+
+						QuestionResourceProxy proxy = questionResourceRequest.create(QuestionResourceProxy.class);
+						proxy.setPath(questionResource.getPath());
+						proxy.setSequenceNumber(questionResource.getSequenceNumber());
+						proxy.setType(questionResource.getType());
+						proxy.setQuestion(response);
+						proxies.add(proxy);
+						
+					}
+				
+					questionResourceRequest.persistSet(proxies).fire(new BMEReceiver<Void>(reciverMap) {
+	
+						@Override
+						public void onSuccess(Void response1) {
+							Log.info("Added successfuly");
+							gotoDetailsPlace(response);
+						}
+					});
+				}else {
+					gotoDetailsPlace(response);
+				}
+			}
+			
+		});
+		
+	}
+
+	@Override
+	public void updateQuestion(QuestionTypeProxy questionType, String questionShortName, String questionText, PersonProxy auther, PersonProxy rewiewer, Boolean submitToReviewComitee, QuestionEventProxy questEvent, Set<McProxy> mcs, String questionComment, double questionVersion, String picturePath,Set<QuestionResourceClient> questionResourceClients) {
+		
+		QuestionRequest req=requests.questionRequest();
+		QuestionProxy questionEdit=req.edit(question);
+		questionEdit.setQuestionType(questionType);
+		questionEdit.setQuestionText(questionText);	
+		questionEdit.setAutor(auther);
+		questionEdit.setQuestionShortName(questionShortName);
+		questionEdit.setRewiewer(rewiewer);
+		questionEdit.setSubmitToReviewComitee(submitToReviewComitee);
+		questionEdit.setQuestEvent(questEvent);
+		questionEdit.setDateChanged(new Date());
+		questionEdit.setMcs(mcs);
+		questionEdit.setQuestionVersion(questionVersion);
+		CommentProxy comment=req.edit(questionEdit.getComment());
+		comment.setComment(questionComment);
+		questionEdit.setComment(comment);
+		questionEdit.setPicturePath(picturePath);
+		
+		// question state change to new
+		questionEdit.setIsAcceptedAdmin(false);
+		questionEdit.setIsAcceptedRewiever(false);
+		questionEdit.setIsActive(false);
+		questionEdit.setStatus(Status.NEW);
+		
+		
+		if(questionResourceClients.isEmpty() == false) {
+		
+			QuestionResourceRequest questionResourceRequest = requests.questionResourceRequest();
+			Set<QuestionResourceProxy> proxies = Sets.newHashSet();
+			Log.info("proxies.size() " + proxies.size());
+			
+			for (QuestionResourceClient questionResource : questionResourceClients) {
+
+				if(questionResource.getState().equals(State.NEW) || questionResource.getState().equals(State.EDITED)) {
+					QuestionResourceProxy proxy = questionResourceRequest.create(QuestionResourceProxy.class);
+					proxy.setPath(questionResource.getPath());
+					proxy.setSequenceNumber(questionResource.getSequenceNumber());
+					proxy.setType(questionResource.getType());
+					proxy.setQuestion(questionEdit);
+					proxies.add(proxy);
+				}
+			}
+			
+			questionResourceRequest.persistSet(proxies).fire(new BMEReceiver<Void>(reciverMap) {
+
+				@Override
+				public void onSuccess(Void response) {
+					Log.info("Added successfuly");
+				}
+			});
+
+		}
+		
+		
+		final QuestionProxy qpoxy = questionEdit; 
+		req.persist().using(questionEdit).fire(new BMEReceiver<Void>(reciverMap) {
+			
+	          @Override
+	          public void onSuccess(Void response) {
+	        	  Log.info("question update successful");
+	        	  save=true; // save done for question
+	        	  gotoDetailsPlace(qpoxy);
+	          }
+		});
+	}
+	
+	
+	protected void gotoDetailsPlace(QuestionProxy questionProxy) {
+   	  	placeController.goTo(new PlaceQuestionDetails(questionProxy.stableId(),PlaceQuestionDetails.Operation.DETAILS));
+	}
 }

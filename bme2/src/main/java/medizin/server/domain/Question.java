@@ -5,6 +5,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -41,6 +42,9 @@ import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
 
+import com.google.common.base.Function;
+import com.google.common.base.Predicates;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Sets;
 import com.google.web.bindery.requestfactory.server.RequestFactoryServlet;
 
@@ -60,7 +64,7 @@ public class Question {
 	@Size(min = 2, max = 255)
 	private String picturePath;
 
-	// @NotNull
+	@NotNull
 	private Double questionVersion;
 
 	@NotNull
@@ -102,7 +106,7 @@ public class Question {
 
 	private Status status;
 
-	// @NotNull
+	@NotNull
 	@ManyToMany(cascade = CascadeType.ALL)
 	private Set<Mc> mcs = new HashSet<Mc>();
 
@@ -116,7 +120,7 @@ public class Question {
 	private Set<UserAccessRights> questionAccess = new HashSet<UserAccessRights>();
 
 	// RedactionalBase code
-	// @NotNull
+	@NotNull
 	@Temporal(TemporalType.TIMESTAMP)
 	@DateTimeFormat(style = "M-")
 	private Date dateAdded;
@@ -900,6 +904,71 @@ public class Question {
 			
 		}	
 		return null;
+	}
+	
+	public static Question persistNewQuestion(Long questionTypeId, String questionShortName, String questionText, Long autherId,Long reviewerId,
+			Boolean submitToReviewComitee,Long questionEventId, List<Long> mcIds, String questionComment, double questionVersion, String picturePath, Long oldQuestionId) {
+		
+		Comment newComment = new Comment();
+		newComment.setComment(questionComment);
+		newComment.persist();
+		
+		Question question = new Question();
+		question.setQuestionType(QuestionType.findQuestionType(questionTypeId));
+		question.setQuestionText(questionText);	
+		question.setAutor(Person.findPerson(autherId));
+		question.setQuestionShortName(questionShortName);
+		question.setRewiewer(Person.findPerson(reviewerId));
+		question.setSubmitToReviewComitee(submitToReviewComitee);
+		question.setQuestEvent(QuestionEvent.findQuestionEvent(questionEventId));
+		question.setDateAdded(new Date());
+		
+		Iterator<Mc> iterator = FluentIterable.from(mcIds).filter(Predicates.notNull()).transform(new Function<Long, Mc>() {
+
+			@Override
+			public Mc apply(Long input) {
+				
+				return Mc.findMc(input);
+			}
+		}).iterator();
+		
+		question.setMcs(Sets.newHashSet(iterator));
+		question.setQuestionVersion(questionVersion);
+		question.setComment(newComment);
+		question.setPicturePath(picturePath);
+		question.setIsAcceptedAdmin(false);
+		question.setIsAcceptedRewiever(false);
+		question.setIsActive(false);
+		question.setStatus(Status.NEW);
+		question.setPreviousVersion(Question.findQuestion(oldQuestionId));
+		question.persist();
+		
+		
+		Question oldQuestion = Question.findQuestion(oldQuestionId);
+		if(oldQuestion != null) {
+			
+			for(Answer answer : oldQuestion.getAnswers()) {
+				answer.setQuestion(question);
+				answer.persist();
+			}
+			
+			List<UserAccessRights> userAccessRights = UserAccessRights.findUserAccessRightsByQuestion(oldQuestion.getId());
+			for (UserAccessRights userAccessRight : userAccessRights) {
+				userAccessRight.setQuestion(question);
+				userAccessRight.persist();
+			}
+			
+			List<AssesmentQuestion> assesmentQuestions = AssesmentQuestion.findAssesmentQuestionsByQuestion(oldQuestion.getId());
+			for (AssesmentQuestion assesmentQuestion : assesmentQuestions) {
+				assesmentQuestion.setQuestion(question);
+				assesmentQuestion.persist();
+			}
+			
+			oldQuestion.setStatus(Status.DEACTIVATED);
+			oldQuestion.persist();
+		}
+		
+		return question;
 	}
 	
 	@PostRemove

@@ -9,6 +9,7 @@ import medizin.server.domain.Answer;
 import medizin.server.domain.Comment;
 import medizin.server.domain.Person;
 import medizin.server.domain.Question;
+import medizin.shared.Status;
 
 privileged aspect Answer_Roo_JavaBean {
     
@@ -154,6 +155,14 @@ privileged aspect Answer_Roo_JavaBean {
     
     public void Answer.setSequenceNumber(Integer sequenceNumber) {
         this.sequenceNumber = sequenceNumber;
+    }
+    
+    public Status Answer.getStatus() {
+        return this.status;
+    }
+    
+    public void Answer.setStatus(Status status) {
+        this.status = status;
     }
     
 }

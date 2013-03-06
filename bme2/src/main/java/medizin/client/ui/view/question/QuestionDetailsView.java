@@ -5,6 +5,7 @@ import java.util.Set;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 
+import com.google.common.base.Function;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.ui.IsWidget;
 
@@ -41,6 +42,12 @@ public interface QuestionDetailsView extends IsWidget {
 		void changedResourceSequence(Set<QuestionResourceClient> questionResourceClients);
 		
 		void acceptQuestionClicked(QuestionProxy proxy);
+
+		boolean isQuestionDetailsPlace();
+
+		void getQuestionDetails(QuestionProxy previousVersion,Function<QuestionProxy, Void> function);
+
+		void getLatestQuestionDetails(Function<QuestionProxy, Void> function);
 	}
 
 	AnswerListViewImpl getAnswerListViewImpl();

@@ -6,6 +6,7 @@ import com.google.web.bindery.requestfactory.shared.EntityProxy;
 import com.google.web.bindery.requestfactory.shared.ProxyForName;
 import java.util.Date;
 import medizin.client.shared.Validity;
+import medizin.shared.Status;
 import org.springframework.roo.addon.gwt.RooGwtProxy;
 
 @ProxyForName(value = "medizin.server.domain.Answer", locator = "medizin.server.locator.AnswerLocator")
@@ -85,6 +86,10 @@ public interface AnswerProxy extends EntityProxy {
     abstract Integer getSequenceNumber();
 
     abstract void setSequenceNumber(Integer sequenceNumber);
+
+    abstract Status getStatus();
+
+    abstract void setStatus(Status status);
 
     abstract Integer getVersion();
 }

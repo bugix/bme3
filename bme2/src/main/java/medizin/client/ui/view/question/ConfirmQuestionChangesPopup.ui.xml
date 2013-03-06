@@ -24,7 +24,7 @@
 		<div class="ui-state-highlight ui-corner-all {style.panel}">
 		<span class="ui-icon ui-icon-info" style="float: left; margin-right: 0.3em;"></span>
 		<g:Label text="{cc.minor}"></g:Label>
-		<m:IconButton icon="disk" ui:field="saveChange">Frage als neue unterversion Speichern</m:IconButton>
+		<m:IconButton icon="disk" ui:field="saveChange" text="{cc.minorVersion}">Frage als neue unterversion Speichern</m:IconButton>
 		<!-- <g:Button addStyleNames="{style.button}" ui:field="saveChange">
 								<span class="ui-icon ui-icon-disk" style="float: left; margin-right: 0.3em;"></span>
 								
@@ -33,7 +33,7 @@
 		<div style="height:2em;"  />
 		<div class="ui-state-error ui-corner-all  {style.panel}"><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>
 		<g:Label text="{cc.major}"></g:Label>
-		<m:IconButton icon="disk" ui:field="saveNew">Frage als neue Version Kopieren</m:IconButton>
+		<m:IconButton icon="disk" ui:field="saveNew" text="{cc.majorVersion}">Frage als neue Version Kopieren</m:IconButton>
 		<!-- <g:Button addStyleNames="{style.button}" ui:field="saveNew">
 								<span class="ui-icon ui-icon-disk" style="float: left; margin-right: 0.3em;"></span>
 								Frage als neue Version Kopieren</g:Button> -->

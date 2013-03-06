@@ -10,8 +10,10 @@ import java.util.List;
 import java.util.Random;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
+import medizin.server.domain.DoctorDataOnDemand;
 import medizin.server.domain.Person;
 import medizin.server.domain.PersonDataOnDemand;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 privileged aspect PersonDataOnDemand_Roo_DataOnDemand {
@@ -22,12 +24,16 @@ privileged aspect PersonDataOnDemand_Roo_DataOnDemand {
     
     private List<Person> PersonDataOnDemand.data;
     
+    @Autowired
+    DoctorDataOnDemand PersonDataOnDemand.doctorDataOnDemand;
+    
     public Person PersonDataOnDemand.getNewTransientPerson(int index) {
         Person obj = new Person();
         setAlternativEmail(obj, index);
         setEmail(obj, index);
         setIsAccepted(obj, index);
         setIsAdmin(obj, index);
+        setIsDoctor(obj, index);
         setName(obj, index);
         setPhoneNumber(obj, index);
         setPrename(obj, index);
@@ -59,6 +65,11 @@ privileged aspect PersonDataOnDemand_Roo_DataOnDemand {
     public void PersonDataOnDemand.setIsAdmin(Person obj, int index) {
         Boolean isAdmin = Boolean.TRUE;
         obj.setIsAdmin(isAdmin);
+    }
+    
+    public void PersonDataOnDemand.setIsDoctor(Person obj, int index) {
+        Boolean isDoctor = Boolean.TRUE;
+        obj.setIsDoctor(isDoctor);
     }
     
     public void PersonDataOnDemand.setName(Person obj, int index) {

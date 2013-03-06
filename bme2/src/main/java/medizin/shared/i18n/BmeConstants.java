@@ -381,4 +381,12 @@ public interface BmeConstants extends Constants {
 	public String reject();
 	
 	public String rejectAnswerMsg();
+
+	public String majorVersion();
+	
+	public String minorVersion();
+	
+	public String previousVersion();
+	
+	public String latestVersion();
 }

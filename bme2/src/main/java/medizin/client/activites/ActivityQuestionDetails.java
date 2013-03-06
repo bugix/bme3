@@ -70,9 +70,9 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	private PlaceController placeController;
 	private PlaceQuestionDetails questionPlace;
 	
-	private QuestionProxy question;
+	protected QuestionProxy question;
 	private QuestionDetailsView questionDetailsView;
-	private QuestionDetailsView view;
+	protected QuestionDetailsView view;
 	private AnswerListViewImpl answerListView;
 	private CellTable<AnswerProxy> answerTable;
 	
@@ -118,8 +118,8 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	Boolean answerFlag = false;
 	@Override
 	public void start2(AcceptsOneWidget panel, EventBus eventBus) {
-		
-		if (!questionPlace.getFromPlace().equals("ACCEPT_QUESTION"))
+		startForAccessRights();
+		/*if (!questionPlace.getFromPlace().equals("ACCEPT_QUESTION"))
 		{
 			if (personRightProxy.getIsAdmin())
 			{
@@ -143,7 +143,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 					}
 				}
 			}
-		}		
+		}*/		
 		
 		questionDetailsView = new QuestionDetailsViewImpl(eventBus, flag);
 		
@@ -165,11 +165,13 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		
 		view.setDelegate(this);
 		
-		if(questionPlace.getFromPlace().equals("ACCEPT_QUESTION"))
+		startForAcceptQuestion();
+		
+		/*if(questionPlace.getFromPlace().equals("ACCEPT_QUESTION"))
 		{
 			view.getAnswerListViewImpl().setVisible(false);
 			view.setVisibleAcceptButton();
-		}
+		}*/
 	
 		this.answerListView = view.getAnswerListViewImpl();
 		answerListView.setDelegate(this);
@@ -232,8 +234,8 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			public void onSuccess(final Object response) {
 				if(response instanceof QuestionProxy){
 					Log.info(((QuestionProxy) response).getQuestionText());
-					
-					if (questionPlace.getFromPlace().equals("ACCEPT_QUESTION"))
+					initForActivity((QuestionProxy) response);
+					/*if (questionPlace.getFromPlace().equals("ACCEPT_QUESTION"))
 					{
 						init((QuestionProxy) response);
 					}
@@ -284,7 +286,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 						{
 							init((QuestionProxy) response);
 						}
-					}
+					}*/
 					
 					
 				}				
@@ -293,11 +295,92 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		    });
 	}
 	
+	protected void startForAcceptQuestion() {
+		//do nothing
+
+	}
+	//method is overridden by sub class accept question
+	protected void startForAccessRights() {
+
+		if (personRightProxy.getIsAdmin())
+		{
+			flag = true;
+			answerFlag = true;
+		}
+		else if (personRightProxy.getIsInstitutionalAdmin())
+		{
+			flag = true;
+			answerFlag = true;
+		}
+		else
+		{
+			for (UserAccessRightsProxy proxy : personRightProxy.getQuestionEventAccList())
+			{
+				if (proxy.getAccRights().equals(AccessRights.AccWrite))
+				{
+					flag = true;
+					answerFlag = false;
+					break;
+				}
+			}
+		}
+	
+	}
+	
+	//method is overridden by sub class accept question
+	protected void initForActivity(final QuestionProxy response) {
+
+		if (!flag && !answerFlag)
+		{
+			if (((QuestionProxy) response).getAutor().getId().equals(userLoggedIn.getId()))
+			{
+				view.setInvisibleIconButton(true);
+				init((QuestionProxy) response);
+			}
+			else
+			{
+				requests.userAccessRightsRequest().checkAddAnswerRightsByQuestionAndPerson(userLoggedIn.getId(), ((QuestionProxy) response).getId()).fire(new BMEReceiver<List<UserAccessRightsProxy>>() {
+
+					@Override
+					public void onSuccess(List<UserAccessRightsProxy> rightsResponse) {
+						
+						if (rightsResponse.size() > 0)
+						{
+							for (UserAccessRightsProxy proxy : rightsResponse)
+							{
+								if (proxy.getAccRights().equals(AccessRights.AccWrite))
+								{
+									view.setInvisibleIconButton(true);
+									questionDetailsView.getAnswerListViewImpl().getNewAnswer().setVisible(false);
+								}
+								
+								if (proxy.getAccRights().equals(AccessRights.AccAddAnswers))
+								{
+									view.setInvisibleIconButton(false);
+								}	
+							}
+						}
+						else
+						{
+							view.setInvisibleIconButton(false);
+							questionDetailsView.getAnswerListViewImpl().getNewAnswer().setVisible(false);
+						}
+				
+						init((QuestionProxy) response);
+					}
+				});
+			}
+		}
+		else
+		{
+			init((QuestionProxy) response);
+		}	
+	}
 	/**
 	 * 
 	 * @param AssesmentProxy assesment
 	 */
-	private void init(QuestionProxy question) {
+	protected void init(QuestionProxy question) {
 
 		this.question = question;
 		Log.debug("Details für: "+question.getQuestionText());
@@ -438,12 +521,13 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		
 	}
 
+	//method is overridden by sub class accept question
 	@Override
 	public void editClicked() {
 		
-		if (questionPlace.getFromPlace().equals("ACCEPT_QUESTION"))
+		/*if (questionPlace.getFromPlace().equals("ACCEPT_QUESTION"))
 			placeController.goTo(new PlaceQuestionDetails(question.stableId(), PlaceQuestionDetails.Operation.EDIT, "ACCEPT_QUESTION"));
-		else
+		else*/
 			placeController.goTo(new PlaceQuestionDetails(question.stableId(), PlaceQuestionDetails.Operation.EDIT));
 		
 	}
@@ -1322,4 +1406,28 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		});
 	}
 
+	//method is overridden by sub class accept question
+	@Override
+	public boolean isQuestionDetailsPlace() {
+		return true;
+	}
+
+	@Override
+	public void getQuestionDetails(QuestionProxy previousVersion, final Function<QuestionProxy, Void> function) {
+		
+		
+		requests.questionRequest().findQuestion(previousVersion.getId()).with("previousVersion","keywords","questEvent","comment","questionType","mcs", "rewiewer", "autor","questionResources").fire(new BMEReceiver<Object>() {
+
+			@Override
+			public void onSuccess(Object response) {
+				function.apply((QuestionProxy) response);
+			}
+		});
+		
+	}
+
+	@Override
+	public void getLatestQuestionDetails(Function<QuestionProxy, Void> function) {
+		function.apply(question);
+	}
 }

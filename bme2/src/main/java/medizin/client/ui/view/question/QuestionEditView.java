@@ -9,22 +9,11 @@ import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.proxy.QuestionResourceProxy;
 import medizin.client.proxy.QuestionTypeProxy;
-import medizin.client.ui.view.roo.McSetEditor;
-import medizin.client.ui.widget.resource.dndview.ResourceView;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
-import medizin.client.ui.widget.resource.image.ImageViewer;
-import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.EventHandlingValueHolderItem;
-import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
 import medizin.shared.MultimediaType;
 
-import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.Place;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.RichTextArea;
-import com.google.gwt.user.client.ui.TextArea;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.ValueListBox;
 
 public interface QuestionEditView extends IsWidget {
@@ -41,15 +30,18 @@ public interface QuestionEditView extends IsWidget {
 	interface Delegate {
 		void cancelClicked();
 
-		void saveClicked(boolean generateNewQuestion);
+		//void saveClicked(boolean generateNewQuestion);
 
-		QuestionResourceProxy createQuestionResource(String url,
-				int sequenceNumber, MultimediaType type);
+		QuestionResourceProxy createQuestionResource(String url,int sequenceNumber, MultimediaType type);
 
 		void deleteSelectedQuestionResource(Long id);
 
 		void deleteMediaFileFromDisk(String path);
-		
+
+		void createNewQuestion(QuestionTypeProxy questionType, String questionShortName,String questionText, PersonProxy auther, PersonProxy rewiewer,Boolean submitToReviewComitee, QuestionEventProxy questEvent, Set<McProxy> mcs,String questionComment, double questionVersion, String picturePath, Set<QuestionResourceClient> questionResourceClients);
+
+		void updateQuestion(QuestionTypeProxy questionType, String questionShortName,String questionText, PersonProxy auther, PersonProxy rewiewer,Boolean submitToReviewComitee, QuestionEventProxy questEvent, Set<McProxy> mcs,String questionComment, double questionVersion,String picturePath,Set<QuestionResourceClient> questionResourceClients);
+
 	}
 
 	//RequestFactoryEditorDriver<QuestionProxy, QuestionEditViewImpl> createEditorDriver();
@@ -66,25 +58,25 @@ public interface QuestionEditView extends IsWidget {
 
 	void setRichPanelHTML(String html);
 
-	String getRichtTextHTML();
+	/*String getRichtTextHTML();*/
 
 	void setEditTitle(boolean edit);
 
-	ValueListBox<QuestionTypeProxy> getQuestionType();
+	/*ValueListBox<QuestionTypeProxy> getQuestionType();
 
 	RichTextArea getQuestionTextArea();
-
+*/
 //	ValueListBox<PersonProxy> getAuther();
 //
 //	ValueListBox<PersonProxy> getReviewer();
 
-	TextArea getQuestionComment();
+/*	TextArea getQuestionComment(); */
 
 	ValueListBox<QuestionEventProxy> getQuestionEvent();
 
 	void setValue(QuestionProxy question);
 
-	McSetEditor getMCS();
+/*	McSetEditor getMCS();
 
 	DefaultSuggestBox<PersonProxy,  EventHandlingValueHolderItem<PersonProxy>> getAutherListBox();
 
@@ -100,7 +92,7 @@ public interface QuestionEditView extends IsWidget {
 
 	ResourceView getResourceView();
 
-	void setEventBus(EventBus eventBus);
+	void setEventBus(EventBus eventBus);*/
 
 	Set<QuestionResourceClient> getQuestionResources();
 

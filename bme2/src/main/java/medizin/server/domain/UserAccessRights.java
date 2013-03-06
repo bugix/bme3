@@ -283,4 +283,17 @@ public class UserAccessRights {
 		 
 		  return query.getResultList();
 	  }
+
+	public static List<UserAccessRights> findUserAccessRightsByQuestion(Long questionId) {
+		
+		CriteriaBuilder cb = entityManager().getCriteriaBuilder();
+		CriteriaQuery<UserAccessRights> cq = cb.createQuery(UserAccessRights.class);
+		Root<UserAccessRights> from = cq.from(UserAccessRights.class);
+		Predicate pre = cb.equal(from.get("question").get("id"), questionId);
+		cq.where(pre);
+		
+		TypedQuery<UserAccessRights> query = entityManager().createQuery(cq);
+	 
+		return query.getResultList();
+	}
 }
