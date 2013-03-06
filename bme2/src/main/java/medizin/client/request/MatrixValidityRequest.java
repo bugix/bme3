@@ -16,5 +16,6 @@ public interface MatrixValidityRequest extends MatrixValidityRequest_Roo_Gwt {
 	Request<List<MatrixValidityProxy>> findAllMatrixValidityForQuestion(Long id);
 
 	Request<Boolean> deleteAnswerAndItsMatrixValidity(Long id, Boolean isAnswerX);
-	
+
+	Request<Long> countAllMatrixValidityForQuestion(Long id);
 }

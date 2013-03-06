@@ -30,6 +30,7 @@ import medizin.client.ui.view.question.AnswerDialogbox;
 import medizin.client.ui.view.question.AnswerDialogboxImpl;
 import medizin.client.ui.view.question.AnswerListView;
 import medizin.client.ui.view.question.AnswerListViewImpl;
+import medizin.client.ui.view.question.MatrixAnswerListView;
 import medizin.client.ui.view.question.MatrixAnswerView;
 import medizin.client.ui.view.question.MatrixAnswerViewImpl;
 import medizin.client.ui.view.question.QuestionDetailsView;
@@ -62,7 +63,8 @@ import com.google.gwt.view.client.RangeChangeEvent;
 
 public class ActivityQuestionDetails extends AbstractActivityWrapper implements 
 	QuestionDetailsView.Delegate, QuestionDetailsView.Presenter, AnswerDialogbox.Delegate, 
-	 AnswerListView.Delegate, MatrixAnswerView.Presenter , MatrixAnswerView.Delegate{
+	 AnswerListView.Delegate, MatrixAnswerView.Presenter , MatrixAnswerView.Delegate, 
+	 MatrixAnswerListView.Delegate, MatrixAnswerListView.Presenter{
 
 	private AcceptsOneWidget widget;
 	//private QuestionDetailsView view;
@@ -386,8 +388,20 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		Log.debug("Details für: "+question.getQuestionText());
 		view.setValue(question);	
 		
-		initAnswerView();
+		if (question.getQuestionType().getQuestionType().equals(QuestionTypes.Matrix))
+		{
+			view.getMatrixAnswerListViewImpl().setDelegate(this);
+			view.getAnswerListViewImpl().setVisible(false);
+			initMatrixAnswerView();
+		}
+		else
+		{
+			view.getMatrixAnswerListViewImpl().setVisible(false);
+			initAnswerView();
+		}
 	}
+	
+	
 
 	private void initAnswerView() {
 		
@@ -1216,7 +1230,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			public void onSuccess(Void response) {
 				
 				Log.info("save done for matrix validity");
-				initAnswerView();
+				initMatrixAnswerView();
 			}
 		});
 		
@@ -1429,5 +1443,90 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	@Override
 	public void getLatestQuestionDetails(Function<QuestionProxy, Void> function) {
 		function.apply(question);
+	}
+	
+	private void initMatrixAnswerView()
+	{
+		if (answerRangeChangeHandler!=null){
+			answerRangeChangeHandler.removeHandler();
+			answerRangeChangeHandler=null;
+		}
+		
+		requests.MatrixValidityRequest().countAllMatrixValidityForQuestion(question.getId()).with("answerX","answerY").fire(new BMEReceiver<Long>() {
+
+			@Override
+			public void onSuccess(Long response) {
+				view.getMatrixAnswerListViewImpl().getTable().setRowCount(response.intValue(), true);
+				
+				onMatrixAnswerTableRangeChanged();
+			}
+		});
+	
+		answerRangeChangeHandler =  view.getMatrixAnswerListViewImpl().getTable().addRangeChangeHandler(new RangeChangeEvent.Handler() {
+			public void onRangeChange(RangeChangeEvent event) {
+				ActivityQuestionDetails.this.onMatrixAnswerTableRangeChanged();
+			}
+		});
+		
+	}
+	
+	private void onMatrixAnswerTableRangeChanged()
+	{
+		requests.MatrixValidityRequest().findAllMatrixValidityForQuestion(question.getId()).with("answerX","answerY").fire(new BMEReceiver<List<MatrixValidityProxy>>() {
+
+			@Override
+			public void onSuccess(List<MatrixValidityProxy> response) {
+				view.getMatrixAnswerListViewImpl().getTable().setRowData(view.getMatrixAnswerListViewImpl().getTable().getVisibleRange().getStart(), response);
+			}
+		});
+	}
+
+	@Override
+	public void deleteAnswerClicked(MatrixValidityProxy Answer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addMatrixNewAnswerClicked() {
+		
+		if(question.getQuestionType() != null && QuestionTypes.Matrix.equals(question.getQuestionType().getQuestionType()) == true) {
+			
+			
+			final MatrixAnswerView matrixAnswerView = new MatrixAnswerViewImpl(question);
+			matrixAnswerView.setDelegate(this);
+			
+//			matrixAnswerView.setRewiewerPickerValues(Collections.<PersonProxy>emptyList());
+	        requests.personRequest().findPersonEntries(0, 50).with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).fire(new BMEReceiver<List<PersonProxy>>() {
+
+	            public void onSuccess(List<PersonProxy> response) {
+	                List<PersonProxy> values = new ArrayList<PersonProxy>();
+	                values.add(null);
+	                values.addAll(response);
+	                matrixAnswerView.setRewiewerPickerValues(values);
+	            }
+	        });
+	        
+	       // answerDialogbox.setAutherPickerValues(Collections.<PersonProxy>emptyList());
+	        requests.personRequest().findPersonEntries(0, 50).with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).fire(new BMEReceiver<List<PersonProxy>>() {
+
+	            public void onSuccess(List<PersonProxy> response) {
+	                List<PersonProxy> values = new ArrayList<PersonProxy>();
+	                values.add(null);
+	                values.addAll(response);
+	                matrixAnswerView.setAutherPickerValues(values,userLoggedIn);
+	            }
+	        });
+			
+			requests.MatrixValidityRequest().findAllMatrixValidityForQuestion(question.getId()).with("answerX","answerY","answerX.autor","answerX.rewiewer","answerX.comment","answerY.autor","answerY.rewiewer","answerY.comment").fire(new BMEReceiver<List<MatrixValidityProxy>>() {
+
+				@Override
+				public void onSuccess(List<MatrixValidityProxy> response) {
+										
+			        matrixAnswerView.setValues(response);
+			        matrixAnswerView.display();
+				}
+			});			
+		}
 	}
 }

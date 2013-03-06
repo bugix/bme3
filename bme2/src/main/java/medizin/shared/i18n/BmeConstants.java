@@ -389,4 +389,8 @@ public interface BmeConstants extends Constants {
 	public String previousVersion();
 	
 	public String latestVersion();
+	
+	public String answerX();
+	
+	public String answerY();
 }

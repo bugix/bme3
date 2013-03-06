@@ -68,7 +68,7 @@ public class MatrixValidity {
 		if(answerId != null && isAnswerX != null) {
 			Answer answer = Answer.findAnswer(answerId);
 			List<MatrixValidity> matrixValidities = MatrixValidity.findAllMatrixValidityForAnswer(answerId,isAnswerX);
-			Long fullMatrixSize = MatrixValidity.findAllMatrixValiditySizeForQuestion(answer.getQuestion().getId());
+			Long fullMatrixSize = MatrixValidity.countAllMatrixValidityForQuestion(answer.getQuestion().getId());
 			
 			for (MatrixValidity matrixValidity : matrixValidities) {
 				
@@ -117,7 +117,7 @@ public class MatrixValidity {
 		
 	}
 	
-	public static Long findAllMatrixValiditySizeForQuestion(Long id) {
+	public static Long countAllMatrixValidityForQuestion(Long id) {
 
 		log.info("Find all matrix validty size with answer for given question id : "+ id);
 

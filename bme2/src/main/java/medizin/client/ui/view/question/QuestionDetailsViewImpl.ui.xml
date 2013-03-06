@@ -134,6 +134,7 @@
 				</g:Tab>
 			</g:TabPanel>
 		<m:AnswerListViewImpl ui:field="answerListViewImpl"></m:AnswerListViewImpl> 
+		<m:MatrixAnswerListViewImpl ui:field="matrixAnswerListViewImpl"></m:MatrixAnswerListViewImpl>
 		</g:VerticalPanel>
 	</g:HTMLPanel>
 </ui:UiBinder>

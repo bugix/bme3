@@ -746,4 +746,18 @@ public class QuestionDetailsViewImpl extends Composite implements
 		if (proxy != null)
 			delegate.acceptQuestionClicked(proxy);
 	}
+	
+	@UiField
+	MatrixAnswerListViewImpl matrixAnswerListViewImpl;
+
+	public MatrixAnswerListViewImpl getMatrixAnswerListViewImpl() {
+		return matrixAnswerListViewImpl;
+	}
+
+	public void setMatrixAnswerListViewImpl(
+			MatrixAnswerListViewImpl matrixAnswerListViewImpl) {
+		this.matrixAnswerListViewImpl = matrixAnswerListViewImpl;
+	}
+	
+	
 }
