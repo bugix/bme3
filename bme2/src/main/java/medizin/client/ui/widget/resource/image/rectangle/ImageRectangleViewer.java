@@ -46,7 +46,7 @@ public class ImageRectangleViewer extends Composite{
 	private Rectangle currentRectangle = null;
 	private Point currentPoint = null;
 	
-	public ImageRectangleViewer(final String imageUrl,final int width,final int height,final List<Point> otherAnswer) {
+	public ImageRectangleViewer(final String imageUrl,final int width,final int height,final List<Point> otherAnswer, final boolean displayBtnFlag) {
 		
 		Log.info("url :" + imageUrl + " width : " + width + " height :" + height);
 		
@@ -63,44 +63,51 @@ public class ImageRectangleViewer extends Composite{
 		drawingArea = new DrawingArea(width, height);
 		vImage = new org.vaadin.gwtgraphics.client.Image(0, 0, width, height, imageUrl);
 		drawingArea.add(vImage);
-		drawingArea.add(target.getCircle());
-		drawingArea.add(target.gethLine());
-		drawingArea.add(target.getvLine());
+		
 		addOtherRectangle(otherAnswer);
 		
 		initWidget(uiBinder.createAndBindUi(this));
 	
-		drawingArea.addMouseDownHandler(new MouseDownHandler() {
+		if (displayBtnFlag)
+		{
+			drawingArea.add(target.getCircle());
+			drawingArea.add(target.gethLine());
+			drawingArea.add(target.getvLine());
+			
+			drawingArea.addMouseDownHandler(new MouseDownHandler() {
 
-			@Override
-			public void onMouseDown(MouseDownEvent event) {
+				@Override
+				public void onMouseDown(MouseDownEvent event) {
 
-				if (btnAddClicked == true) {
+					if (btnAddClicked == true) {
+						int x = event.getRelativeX(event.getRelativeElement());
+						int y = event.getRelativeY(event.getRelativeElement());
+						
+						Log.info("Relative [x,y] : [" + x +","+ y+ "]");
+						currentPoint = new Point(x - target.getRadius(),y - target.getRadius());
+						currentRectangle = addNewRectangle(new Point(x - target.getRadius(),y - target.getRadius()),"#fa7575"); //red color
+						
+						validRectangle = true;
+						target.setVisible(false);
+						btnAddClicked = false;
+					}
+				}
+
+			});
+
+			drawingArea.addMouseMoveHandler(new MouseMoveHandler() {
+
+				@Override
+				public void onMouseMove(MouseMoveEvent event) {
 					int x = event.getRelativeX(event.getRelativeElement());
 					int y = event.getRelativeY(event.getRelativeElement());
-					
-					Log.info("Relative [x,y] : [" + x +","+ y+ "]");
-					currentPoint = new Point(x - target.getRadius(),y - target.getRadius());
-					currentRectangle = addNewRectangle(new Point(x - target.getRadius(),y - target.getRadius()),"#fa7575"); //red color
-					
-					validRectangle = true;
-					target.setVisible(false);
-					btnAddClicked = false;
+					target.setCenter(x, y);
 				}
-			}
-
-		});
-
-		drawingArea.addMouseMoveHandler(new MouseMoveHandler() {
-
-			@Override
-			public void onMouseMove(MouseMoveEvent event) {
-				int x = event.getRelativeX(event.getRelativeElement());
-				int y = event.getRelativeY(event.getRelativeElement());
-				target.setCenter(x, y);
-			}
-		});
+			});
+		}		
 		
+		btnAdd.setVisible(displayBtnFlag);
+		btnClear.setVisible(displayBtnFlag);
 	}
 	
 	

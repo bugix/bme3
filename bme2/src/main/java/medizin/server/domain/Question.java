@@ -411,7 +411,7 @@ public class Question {
 			throw new IllegalArgumentException(
 					"The person and institution arguments are required");
 
-		EntityManager em = Question.entityManager();
+		/*EntityManager em = Question.entityManager();
 		StringBuilder queryBuilder;
 
 		if (loggedUser.getIsAdmin()) {
@@ -429,8 +429,39 @@ public class Question {
 		q.setParameter("isAccepted", isAcceptedAdmin);
 		if (!loggedUser.getIsAdmin()) {
 			q.setParameter("person", loggedUser);
-		}
+		}*/
+		
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Question> criteriaQuery = criteriaBuilder.createQuery(Question.class);
+		Root<Question> from = criteriaQuery.from(Question.class);
 
+		Subquery<Answer> subQuery = criteriaQuery.subquery(Answer.class);
+		Root answerRoot = subQuery.from(Answer.class);
+		
+		//Predicate subPre = criteriaBuilder.equal(from.get("question").get("questEvent").get("institution").get("id"), institution.getId());
+		Predicate subPre1 = null;
+		
+		if (!loggedUser.getIsAdmin())
+		{
+			Predicate subPre2 = criteriaBuilder.equal(answerRoot.get("rewiewer"), loggedUser.getId());
+			subPre1 = criteriaBuilder.and(answerRoot.get("status").in(Status.NEW, Status.ACCEPTED_ADMIN), subPre2);
+		}
+		else
+		{
+			subPre1 = answerRoot.get("status").in(Status.NEW, Status.ACCEPTED_REVIEWER);
+		}
+			
+		subQuery.select(answerRoot.get("question").get("id")).where(subPre1);
+		
+		Predicate mainPre2 = criteriaBuilder.equal(from.get("questEvent").get("institution").get("id"), institution.getId());
+		Predicate mainpre = criteriaBuilder.and(mainPre2, criteriaBuilder.in(from.get("id")).value(subQuery));
+		
+		criteriaQuery.where(mainpre);
+		
+		TypedQuery<Question> q = entityManager().createQuery(criteriaQuery);
+		
+		//System.out.println("Q : " + q.unwrap(Query.class).getQueryString());
+		
 		return q.getResultList();
 	}
 

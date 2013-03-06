@@ -375,4 +375,10 @@ public interface BmeConstants extends Constants {
 	public String deleteMatrixAnswerConfirmation();
 
 	public String newAccess();
+	
+	public String accept();
+	
+	public String reject();
+	
+	public String rejectAnswerMsg();
 }

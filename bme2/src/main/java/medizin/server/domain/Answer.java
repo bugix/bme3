@@ -14,13 +14,19 @@ import javax.persistence.PostRemove;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import medizin.client.shared.Validity;
+import medizin.shared.Status;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.roo.addon.javabean.RooJavaBean;
@@ -105,6 +111,8 @@ public class Answer {
     private String additionalKeywords;
     
 	private Integer sequenceNumber;
+	
+	private Status status;
     
 	public static List<Answer> findAnswersEntriesByQuestion(Long id, int start, int max){
         Question question = Question.findQuestion(id);
@@ -162,7 +170,7 @@ public class Answer {
 		if (loggedUser == null || institution == null) throw new IllegalArgumentException("The person and institution arguments are required");
 		// End filter fuctionality
 		
-		 StringBuilder queryBuilder = new StringBuilder("SELECT count(ans) FROM Answer ans INNER JOIN ans.question as question  WHERE  ans.question = :question  AND  ");
+		 /*StringBuilder queryBuilder = new StringBuilder("SELECT count(ans) FROM Answer ans INNER JOIN ans.question as question  WHERE  ans.question = :question  AND  ");
 		 
 		 Boolean isAccepted = false;
 		 
@@ -184,7 +192,31 @@ public class Answer {
         	 q.setParameter("person", loggedUser);
         }
         
-        q.setParameter("isAccepted", isAccepted);
+        q.setParameter("isAccepted", isAccepted);*/
+		
+		CriteriaBuilder cb = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+		Root<Answer> from = cq.from(Answer.class);
+		
+		cq.select(cb.count(from));
+		
+		Predicate pre1 = cb.equal(from.get("question").get("id"), questionId);
+		
+		if (!loggedUser.getIsAdmin())
+		{
+			pre1 = cb.and(from.get("status").in(Status.NEW, Status.ACCEPTED_ADMIN), pre1);
+			pre1 = cb.and(pre1, cb.equal(from.get("rewiewer"), loggedUser.getId()));
+		}
+		else
+		{
+			pre1 = cb.and(from.get("status").in(Status.NEW, Status.ACCEPTED_REVIEWER), pre1);
+		}
+		
+		cq.where(pre1);
+		
+        TypedQuery<Long> q = entityManager().createQuery(cq);
+        
+        //System.out.println("Q1 : " + q.unwrap(Query.class).getQueryString());
         
         return q.getSingleResult();
 
@@ -222,7 +254,7 @@ public class Answer {
 		if (loggedUser == null || institution == null) throw new IllegalArgumentException("The person and institution arguments are required");
 		// End filter fuctionality
 		
-		 StringBuilder queryBuilder = new StringBuilder("SELECT ans FROM Answer ans INNER JOIN ans.question as question  WHERE  ans.question = :question  AND  ");
+		 /*StringBuilder queryBuilder = new StringBuilder("SELECT ans FROM Answer ans INNER JOIN ans.question as question  WHERE  ans.question = :question  AND  ");
 		 
 		 Boolean isAccepted = false;
 		 
@@ -245,7 +277,27 @@ public class Answer {
         }
         
         q.setParameter("isAccepted", isAccepted);
-	        return q.getResultList();		
+	        return q.getResultList();		*/
+		CriteriaBuilder cb = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Answer> cq = cb.createQuery(Answer.class);
+		Root<Answer> from = cq.from(Answer.class);
+		
+		Predicate pre1 = cb.equal(from.get("question").get("id"), questionId);
+		
+		if (!loggedUser.getIsAdmin())
+		{
+			pre1 = cb.and(from.get("status").in(Status.NEW, Status.ACCEPTED_ADMIN), pre1);
+			pre1 = cb.and(pre1, cb.equal(from.get("rewiewer"), loggedUser.getId()));
+		}
+		else
+		{
+			pre1 = cb.and(from.get("status").in(Status.NEW, Status.ACCEPTED_REVIEWER), pre1);
+		}
+		
+		cq.where(pre1);
+		
+        TypedQuery<Answer> q = entityManager().createQuery(cq);
+        return q.getResultList();
 	}	
 	
 	public static List<String> findAllAnswersPoints(Long questionId) {

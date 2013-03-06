@@ -1,17 +1,43 @@
 package medizin.client.ui.view;
 
+import java.util.List;
+
 import medizin.client.proxy.AnswerProxy;
 import medizin.client.proxy.QuestionProxy;
+import medizin.client.style.resources.MyCellTableNoHilightResources;
+import medizin.client.style.resources.MyCellTableResources;
+import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.DeclineEmailPopup;
 import medizin.client.ui.DeclineEmailPopupDelagate;
 import medizin.client.ui.McAppConstant;
+import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
+import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEvent;
+import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEventHandler;
+import medizin.client.ui.widget.resource.audio.AudioViewer;
+import medizin.client.ui.widget.resource.image.ImageViewer;
+import medizin.client.ui.widget.resource.image.polygon.ImagePolygonViewer;
+import medizin.client.ui.widget.resource.image.rectangle.ImageRectangleViewer;
+import medizin.client.ui.widget.resource.video.VideoViewer;
+import medizin.client.util.ClientUtility;
+import medizin.client.util.Point;
+import medizin.client.util.PolygonPath;
+import medizin.shared.MultimediaType;
+import medizin.shared.QuestionTypes;
+import medizin.shared.i18n.BmeConstants;
 
+import com.google.common.collect.Lists;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.DivElement;
+import com.google.gwt.event.dom.client.LoadEvent;
+import com.google.gwt.event.dom.client.LoadHandler;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -19,9 +45,19 @@ import com.google.gwt.user.cellview.client.AbstractHasData;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.Header;
+import com.google.gwt.user.cellview.client.SimplePager;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DialogBox;
+import com.google.gwt.user.client.ui.DisclosurePanel;
+import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.RangeChangeEvent;
+import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SingleSelectionModel;
 
 public class AcceptAnswerSubViewImpl extends Composite implements AcceptAnswerSubView  {
 
@@ -33,9 +69,14 @@ public class AcceptAnswerSubViewImpl extends Composite implements AcceptAnswerSu
 	}
 	
 	
-	@UiField
-	CellTable<AnswerProxy> table;
+	/*@UiField
+	CellTable<AnswerProxy> table;*/
 
+	@UiField(provided = true)
+	CellTable<AnswerProxy> table;
+		
+    @UiField(provided = true)
+	public SimplePager pager;
 	
 	@Override
 	public AbstractHasData<AnswerProxy> getTable(){
@@ -45,9 +86,112 @@ public class AcceptAnswerSubViewImpl extends Composite implements AcceptAnswerSu
 	private  Delegate delegate;
 	private QuestionProxy questionProxy;
 
-
+	private SingleSelectionModel<AnswerProxy> selectionModel;
+	
+	private BmeConstants constants = GWT.create(BmeConstants.class);
+	
+	DialogBox dialogBox;
+	
 	public AcceptAnswerSubViewImpl() {
+		
+		CellTable.Resources tableResources = GWT.create(MyCellTableResources.class);
+		table = new CellTable<AnswerProxy>(McAppConstant.TABLE_PAGE_SIZE, tableResources);
+		
+		SimplePager.Resources pagerResources = GWT.create(MySimplePagerResources.class);
+		pager = new SimplePager(SimplePager.TextLocation.RIGHT, pagerResources, true, McAppConstant.TABLE_JUMP_SIZE, true);
+		
 		initWidget(uiBinder.createAndBindUi(this));
+		
+		ProvidesKey<AnswerProxy> keyProvider = ((AbstractHasData<AnswerProxy>) table).getKeyProvider();
+        selectionModel = new SingleSelectionModel<AnswerProxy>(keyProvider);
+        table.setSelectionModel(selectionModel);  
+       
+        selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+        	
+			public void onSelectionChange(SelectionChangeEvent event) {
+				AnswerProxy selectedObject = selectionModel.getSelectedObject();
+				
+				if (selectionModel.isSelected(selectedObject))
+					selectionModel.setSelected(selectedObject, false);
+				
+				if (selectedObject != null) {	
+					
+					if (questionProxy.getQuestionType().getQuestionType().equals(QuestionTypes.Imgkey) || questionProxy.getQuestionType().getQuestionType().equals(QuestionTypes.ShowInImage) || questionProxy.getQuestionType().getQuestionType().equals(QuestionTypes.MCQ))
+					{					
+					 	dialogBox = new DialogBox();
+					 	
+					 	VerticalPanel vp = new VerticalPanel();
+						 
+						if (questionProxy.getQuestionType().getQuestionType().equals(QuestionTypes.Imgkey))
+						{	
+							List<Point> points = Point.getPoints(Lists.newArrayList(selectedObject.getPoints()));
+							
+							ImageRectangleViewer viewer = new ImageRectangleViewer(questionProxy.getPicturePath(), questionProxy.getQuestionType().getImageWidth(), questionProxy.getQuestionType().getImageHeight(), points, false);
+							
+							vp.add(viewer);
+						}
+						else if (questionProxy.getQuestionType().getQuestionType().equals(QuestionTypes.ShowInImage))
+						{
+							List<PolygonPath> polygonPathList = PolygonPath.getPolygonPaths(Lists.newArrayList(selectedObject.getPoints()));
+							
+							ImagePolygonViewer imgPolygonViewer = new ImagePolygonViewer(questionProxy.getPicturePath(), questionProxy.getQuestionType().getImageWidth(), questionProxy.getQuestionType().getImageHeight(), polygonPathList, false);
+							
+							vp.add(imgPolygonViewer);
+						}
+						else if (questionProxy.getQuestionType().getQuestionType().equals(QuestionTypes.MCQ))
+						{
+							if (questionProxy.getQuestionType().getMultimediaType().equals(MultimediaType.Image))
+							{
+								ImageViewer imgViewer = new ImageViewer();
+								imgViewer.setUrl(selectedObject.getMediaPath(), questionProxy.getQuestionType().getImageWidth(), questionProxy.getQuestionType().getImageHeight(), questionProxy.getQuestionType().getQuestionType());
+								vp.add(imgViewer);
+							}
+							
+							if (questionProxy.getQuestionType().getMultimediaType().equals(MultimediaType.Sound))
+							{
+								final AudioViewer audioViewer = new AudioViewer(selectedObject.getMediaPath());
+								vp.add(audioViewer);
+								
+								dialogBox.addCloseHandler(new CloseHandler<PopupPanel>() {
+									
+									@Override
+									public void onClose(CloseEvent<PopupPanel> event) {
+										audioViewer.closed();
+									}
+								});
+							}
+							
+							if (questionProxy.getQuestionType().getMultimediaType().equals(MultimediaType.Video))
+							{
+								VideoViewer videoViewer = new VideoViewer(selectedObject.getMediaPath());
+								vp.add(videoViewer);
+							}
+						}
+													
+						dialogBox.setWidget(vp);	
+						dialogBox.setGlassEnabled(true);
+						dialogBox.setAutoHideEnabled(true);
+						dialogBox.getElement().getStyle().setZIndex(5);
+						dialogBox.center();	
+						dialogBox.show();
+						
+						/*dialogBox.setPopupPositionAndShow(new PopupPanel.PositionCallback() {
+							
+							@Override
+							public void setPosition(int offsetWidth, int offsetHeight) {
+								int left = ((Window.getClientWidth() - offsetWidth) / 2) >> 0;
+                                int top = ((Window.getClientHeight() - offsetHeight) / 2) >> 0;
+                                
+                                dialogBox.setPopupPosition(left, top);
+							}
+						});*/
+											
+					}
+					//showDetails(selectedObject);
+				}
+			}
+		});        
+        
 		init();
 
 	}
@@ -77,33 +221,45 @@ public class AcceptAnswerSubViewImpl extends Composite implements AcceptAnswerSu
   	      public AnswerProxy getValue(AnswerProxy object) {
   	        return object;
   	      }
-  	    },  McAppConstant.ANSWER_TEXT);
+  	    },  constants.answerText());
         
 
 		addColumn(new ActionCell<AnswerProxy>( McAppConstant.DECLINE_ICON, new ActionCell.Delegate<AnswerProxy>() {
             
 
-			public void execute(AnswerProxy answerProxy) {
-            	DeclineEmailPopup popup = new DeclineEmailPopup(answerProxy);
-            	popup.setDelegate(delegatePopup);
+			public void execute(final AnswerProxy answerProxy) {
+            	/*DeclineEmailPopup popup = new DeclineEmailPopup(answerProxy);
+            	popup.setDelegate(delegatePopup);*/
 //            	Log.debug("hinterPupup");
              // delegate.rejectClicked(answerProxy, "verweigert");
+				
+				ConfirmationDialogBox.showYesNoDialogBox(constants.warning(), constants.rejectAnswerMsg(), new ConfirmDialogBoxYesNoButtonEventHandler() {
+					
+					@Override
+					public void onYesButtonClicked(ConfirmDialogBoxYesNoButtonEvent event) {
+						delegate.rejectClicked(answerProxy);
+					}
+					
+					@Override
+					public void onNoButtonClicked(ConfirmDialogBoxYesNoButtonEvent event) {
+					}
+				});				
             }
-          }), "Ablehnen", new GetValue<AnswerProxy>() {
+          }), constants.reject(), new GetValue<AnswerProxy>() {
         public AnswerProxy getValue(AnswerProxy answerProxy) {
           return answerProxy;
         }
       }, null);
 
-addColumn(new ActionCell<AnswerProxy>( McAppConstant.ACCEPT_ICON, new ActionCell.Delegate<AnswerProxy>() {
-    public void execute(AnswerProxy answerProxy) {
-      delegate.acceptClicked(answerProxy);
-    }
-  }), "Annehmen", new GetValue<AnswerProxy>() {
-public AnswerProxy getValue(AnswerProxy answerProxy) {
-  return answerProxy;
-}
-}, null);
+		addColumn(new ActionCell<AnswerProxy>( McAppConstant.ACCEPT_ICON, new ActionCell.Delegate<AnswerProxy>() {
+		    public void execute(AnswerProxy answerProxy) {
+		      delegate.acceptClicked(answerProxy);
+		    }
+		  }), constants.accept(), new GetValue<AnswerProxy>() {
+		public AnswerProxy getValue(AnswerProxy answerProxy) {
+		  return answerProxy;
+		}
+		}, null);
     	
     	table.addColumnStyleName(0, "iconColumn");
     	table.addColumnStyleName(1, "questionTextColumn");
@@ -150,8 +306,11 @@ public AnswerProxy getValue(AnswerProxy answerProxy) {
 		
 	}
 
-@UiField
-DivElement questionText;
+/*@UiField
+DivElement questionText;*/
+	
+	@UiField
+	DisclosurePanel questionDisclosurePanel;
 
 
 	@Override
@@ -166,7 +325,8 @@ DivElement questionText;
 		});
 		delegate.onRangeChanged(questionProxy, table);
 		
-		questionText.setInnerHTML(questionProxy.getQuestionText());
+		//questionText.setInnerHTML(questionProxy.getQuestionText());
+		questionDisclosurePanel.getHeaderTextAccessor().setText(questionProxy.getQuestionText());
 		
 	}
 
@@ -197,7 +357,20 @@ DivElement questionText;
 
 			      beginn += "\">";
 			      sb.appendHtmlConstant(beginn);
-			      sb.appendHtmlConstant(value.getAnswerText());
+			      
+			      if (value.getAnswerText().equals(""))
+			      {
+			    	  String name = "";
+			    	  if (value.getQuestion() != null && value.getQuestion().getQuestionType() != null && value.getMediaPath() != null)
+			    		  name = ClientUtility.getFileName(value.getMediaPath(), value.getQuestion().getQuestionType().getMultimediaType());
+			    	 
+			    	  sb.appendHtmlConstant(name);
+			      }
+			      else
+			      {
+			    	  sb.appendHtmlConstant(value.getAnswerText());
+			      }
+			      
 			      sb.appendHtmlConstant(end);
 				
 			}

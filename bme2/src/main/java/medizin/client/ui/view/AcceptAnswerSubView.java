@@ -19,6 +19,7 @@ public interface AcceptAnswerSubView extends IsWidget {
 
 		void acceptClicked(AnswerProxy answerProxy);
        
+		void rejectClicked(AnswerProxy answerProxy);
     }
 
 

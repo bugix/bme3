@@ -622,6 +622,9 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
         
         answerProxy.setIsAnswerActive(false);
         
+        answerProxy.setIsAnswerAcceptedAdmin(false);
+        answerProxy.setStatus(Status.NEW);
+        
 		answerProxy.setAnswerText(answerDialogbox.getRichtTextHTML());
 		answerProxy.setValidity(answerDialogbox.getValidity().getValue());
 		commentProxy.setComment(answerDialogbox.getComment().getValue());
@@ -1150,10 +1153,12 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			editerAnswerProxy.setAutor(author);
 			editerAnswerProxy.setRewiewer(rewiewer);
 			editerAnswerProxy.setSubmitToReviewComitee(submitToReviewComitee);
+			editerAnswerProxy.setIsAnswerAcceptedAdmin(false);
 			editerAnswerProxy.setIsAnswerAcceptedReviewWahrer(false);
 			editerAnswerProxy.setIsAnswerActive(false);
 			editerAnswerProxy.getComment().setComment(comment);
 			editerAnswerProxy.setQuestion(question);
+			editerAnswerProxy.setStatus(Status.NEW);
 			
 			if(answerProxy.getValidity() != null) {
 				editerAnswerProxy.setValidity(answerProxy.getValidity());
@@ -1178,12 +1183,16 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			newAnswerProxy.setAutor(author);
 			newAnswerProxy.setRewiewer(rewiewer);
 			newAnswerProxy.setSubmitToReviewComitee(submitToReviewComitee);
+			newAnswerProxy.setIsAnswerAcceptedAdmin(false);
 			newAnswerProxy.setIsAnswerAcceptedReviewWahrer(false);
 			newAnswerProxy.setIsAnswerActive(false);
 			newAnswerProxy.setComment(commentProxy);
 			commentProxy.setComment(comment);
 			newAnswerProxy.setValidity(Validity.Falsch);
 			newAnswerProxy.setQuestion(question);
+			
+			newAnswerProxy.setStatus(Status.NEW);
+			
 			final AnswerProxy finalAnswerProxy = newAnswerProxy;
 			
 			commentRequest.persist().using(commentProxy).fire(new BMEReceiver<Void>(reciverMap) {

@@ -44,7 +44,7 @@ public class ImagePolygonViewer extends Composite {
 	private Path currentPath = null;
 	private org.vaadin.gwtgraphics.client.Image vImage;
 	
-	public ImagePolygonViewer(final String imageUrl,final int width,final int height,final List<PolygonPath> otherAnswer) {
+	public ImagePolygonViewer(final String imageUrl,final int width,final int height,final List<PolygonPath> otherAnswer, boolean diplayBtnFlag) {
 		
 		Log.info("url :" + imageUrl + " width : " + width + " height :" + height);
 		
@@ -88,6 +88,9 @@ public class ImagePolygonViewer extends Composite {
 
 			}
 		});
+		
+		btnClear.setVisible(diplayBtnFlag);
+		btnPolyLine.setVisible(diplayBtnFlag);
 	}
 
 	private Path addNewPointToPath(Point point,Path path,Point startPoint) {

@@ -238,6 +238,26 @@ public class UserAccessRights {
 				}
 			}
 			
+			CriteriaBuilder ansCb = entityManager().getCriteriaBuilder();
+			CriteriaQuery<Answer> ansCq = ansCb.createQuery(Answer.class);
+			Root<Answer> ansFrom = ansCq.from(Answer.class);
+			
+			Predicate ansPre2 = criteriaBuilder.equal(ansFrom.get("rewiewer").get("id"), personId);
+			
+			cq.where(quePre2);
+			
+			TypedQuery<Answer> ansq = entityManager().createQuery(ansCq);
+			
+			for (Answer answer : ansq.getResultList())
+			{
+				if (answer.getQuestion() !=null && answer.getQuestion().getQuestEvent() != null && answer.getQuestion().getQuestEvent().getInstitution() !=null)
+				{
+					if (!institutionList.contains(answer.getQuestion().getQuestEvent().getInstitution())) {
+						institutionList.add(answer.getQuestion().getQuestEvent().getInstitution());
+					}
+				}
+			}
+			
 			//System.out.println("result size :" + institutionList.size());
 			 return institutionList;
 		} catch (Exception e) {

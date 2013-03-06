@@ -238,7 +238,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 				List<PolygonPath> polygonPaths = PolygonPath.getPolygonPaths(polygons);
 				
 				if(question != null && question.getQuestionType() != null && QuestionTypes.ShowInImage.equals(question.getQuestionType().getQuestionType()) && question.getPicturePath() != null && question.getPicturePath().length() > 0 && question.getQuestionType().getImageWidth() != null && question.getQuestionType().getImageHeight() != null) {
-					imagePolygonViewer = new ImagePolygonViewer(question.getPicturePath(), question.getQuestionType().getImageWidth(), question.getQuestionType().getImageHeight(),polygonPaths);
+					imagePolygonViewer = new ImagePolygonViewer(question.getPicturePath(), question.getQuestionType().getImageWidth(), question.getQuestionType().getImageHeight(),polygonPaths, true);
 					viewContainer.add(imagePolygonViewer);
 				}
 				
@@ -259,7 +259,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 				List<Point> rectanglePoints = Point.getPoints(points);
 				
 				if(question != null && question.getQuestionType() != null && QuestionTypes.Imgkey.equals(question.getQuestionType().getQuestionType()) && question.getPicturePath() != null && question.getPicturePath().length() > 0 && question.getQuestionType().getImageWidth() != null && question.getQuestionType().getImageHeight() != null) {
-					imageRectangleViewer = new ImageRectangleViewer(question.getPicturePath(), question.getQuestionType().getImageWidth(), question.getQuestionType().getImageHeight(),rectanglePoints);
+					imageRectangleViewer = new ImageRectangleViewer(question.getPicturePath(), question.getQuestionType().getImageWidth(), question.getQuestionType().getImageHeight(),rectanglePoints, true);
 					viewContainer.add(imageRectangleViewer);
 				}
 				

@@ -1,21 +1,19 @@
 package medizin.client.activites;
 
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
+import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.PlaceAcceptAnswer;
 import medizin.client.proxy.AnswerProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.request.AnswerRequest;
 import medizin.client.ui.DeclineEmailPopupDelagate;
-import medizin.client.ui.ErrorPanel;
-import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.AcceptAnswerSubView;
 import medizin.client.ui.view.AcceptAnswerSubViewImpl;
 import medizin.client.ui.view.AcceptAnswerView;
 import medizin.client.ui.view.AcceptAnswerViewImpl;
+import medizin.shared.Status;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.shared.EventBus;
@@ -26,9 +24,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.view.client.Range;
 import com.google.inject.Inject;
 import com.google.web.bindery.requestfactory.shared.EntityProxy;
-import com.google.web.bindery.requestfactory.shared.Receiver;
-import com.google.web.bindery.requestfactory.shared.ServerFailure;
-import com.google.web.bindery.requestfactory.shared.Violation;
 /**
  * Activity for accepting answers.
  * @author masterthesis
@@ -132,13 +127,13 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 	}
 	
 
-
+	
 	
 	private void init() {
 		
 
 		questionPanel.clear();
-		requests.questionRequest().findQuestionsAnswersNonAcceptedAdmin().with("answers").fire(new Receiver<List<QuestionProxy>>() {
+		requests.questionRequest().findQuestionsAnswersNonAcceptedAdmin().with("answers", "questionType").fire(new BMEReceiver<List<QuestionProxy>>() {
 			@Override
 			public void onSuccess(List<QuestionProxy> response) {
 				if (view == null) {
@@ -146,42 +141,20 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 					return;
 				}
 				
-				Iterator<QuestionProxy> iter = response.iterator();
-				while (iter.hasNext()) {
-					QuestionProxy questionProxy = (QuestionProxy) iter.next();
+				for(QuestionProxy proxy : response)
+				{
+					QuestionProxy questionProxy = proxy;
+					
 					AcceptAnswerSubView acceptAnswerSubView = new AcceptAnswerSubViewImpl();				
 				    acceptAnswerSubView.getTable().setRowCount(questionProxy.getAnswers().size(), true);
 				    acceptAnswerSubView.setDelegate(ActivityAcceptAnswer.this);
 				    acceptAnswerSubView.setDelegatePopup(ActivityAcceptAnswer.this);
 				    acceptAnswerSubView.setProxy(questionProxy);
 				    questionPanel.add(acceptAnswerSubView);
-				    
+					
 				}
 				
 			}
-			
-	          public void onFailure(ServerFailure error){
-	        	  ErrorPanel erorPanel = new ErrorPanel();
-	        	  erorPanel.setErrorMessage(error.getMessage());
-					Log.error(error.getMessage());
-				}
-	          @Override
-				public void onViolation(Set<Violation> errors) {
-					Iterator<Violation> iter = errors.iterator();
-					String message = "";
-					while(iter.hasNext()){
-						message += iter.next().getMessage() + "<br>";
-					}
-					Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Antwort hinzufügen -" + message);
-					
-		        	  ErrorPanel erorPanel = new ErrorPanel();
-		        	  erorPanel.setErrorMessage(message);
-					
-
-					
-				}
-
-
 		});
 
 	}
@@ -190,7 +163,7 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 			final AbstractHasData<AnswerProxy> table) {
 		final Range range = table.getVisibleRange();
 		
-		requests.answerRequest().countAnswersNonAcceptedAdminByQuestion(questionProxy.getId()).with("question", "autor", "rewiewer").fire(new Receiver<Long>() {
+		requests.answerRequest().countAnswersNonAcceptedAdminByQuestion(questionProxy.getId()).with("question", "autor", "rewiewer").fire(new BMEReceiver<Long>() {
 			@Override
 			public void onSuccess(Long response) {
 				if (view == null) {
@@ -202,33 +175,11 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 				
 			}
 			
-	          public void onFailure(ServerFailure error){
-	        	  ErrorPanel erorPanel = new ErrorPanel();
-	        	  erorPanel.setErrorMessage(error.getMessage());
-					Log.error(error.getMessage());
-				}
-	          @Override
-				public void onViolation(Set<Violation> errors) {
-					Iterator<Violation> iter = errors.iterator();
-					String message = "";
-					while(iter.hasNext()){
-						message += iter.next().getMessage() + "<br>";
-					}
-					Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Antwort hinzufügen -" + message);
-					
-		        	  ErrorPanel erorPanel = new ErrorPanel();
-		        	  erorPanel.setErrorMessage(message);
-					
-
-					
-				}
-
-
 		});
 		
 	}
 	void findAnswersEntriesNonAcceptedAdminByQuestion(Long questionId, Integer start, Integer length, final AbstractHasData<AnswerProxy> table){
-		requests.answerRequest().findAnswersEntriesNonAcceptedAdminByQuestion(questionId, start, length).with("rewiewer","autor").fire(new Receiver<List<AnswerProxy>>() {
+		requests.answerRequest().findAnswersEntriesNonAcceptedAdminByQuestion(questionId, start, length).with("rewiewer","autor", "question", "question.questionType").fire(new BMEReceiver<List<AnswerProxy>>() {
 			@Override
 			public void onSuccess(List<AnswerProxy> response) {
 				if (view == null) {
@@ -239,26 +190,6 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 				
 				
 			}
-			
-	          public void onFailure(ServerFailure error){
-	        	  ErrorPanel erorPanel = new ErrorPanel();
-	        	  erorPanel.setErrorMessage(error.getMessage());
-					Log.error(error.getMessage());
-				}
-	          @Override
-				public void onViolation(Set<Violation> errors) {
-					Iterator<Violation> iter = errors.iterator();
-					String message = "";
-					while(iter.hasNext()){
-						message += iter.next().getMessage() + "<br>";
-					}
-					Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Antwort hinzufügen -" + message);
-					
-		        	  ErrorPanel erorPanel = new ErrorPanel();
-		        	  erorPanel.setErrorMessage(message);
-				
-				}
-
 		});
 	}
 	@Override
@@ -269,45 +200,46 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 			AnswerProxy answerProxy =  req.edit((AnswerProxy)answerProxy2);
 			if(userLoggedIn.getIsAdmin()){
 				answerProxy.setIsAnswerAcceptedAdmin(true);
-				answerProxy.setIsAnswerActive(true);
+				
+				if (answerProxy.getIsAnswerAcceptedReviewWahrer())
+				{
+					answerProxy.setIsAnswerActive(true);
+					answerProxy.setStatus(Status.ACTIVE);
+				}
+				else
+				{
+					answerProxy.setStatus(Status.ACCEPTED_ADMIN);
+				}
 			} 
+			
 			if(answerProxy2.getRewiewer().getId() == userLoggedIn.getId()) {
+				
 				answerProxy.setIsAnswerAcceptedReviewWahrer(true);
+				
+				if (answerProxy.getIsAnswerAcceptedAdmin())
+				{
+					answerProxy.setIsAnswerActive(true);
+					answerProxy.setStatus(Status.ACTIVE);
+				}
+				else
+				{
+					answerProxy.setStatus(Status.ACCEPTED_REVIEWER);
+				}
 			}
-			if(answerProxy2.getAutor().getId() == userLoggedIn.getId())
+			/*if(answerProxy2.getAutor().getId() == userLoggedIn.getId())
 			{
 				answerProxy.setIsAnswerAcceptedAutor(true);
-			}
+			}*/
 			
 			
 			
-			req.persist().using(answerProxy).fire(new Receiver<Void>(){
+			req.persist().using(answerProxy).fire(new BMEReceiver<Void>(){
 
 				@Override
 				public void onSuccess(Void arg0) {
 					init();
 					
 				}
-		          public void onFailure(ServerFailure error){
-		        	  ErrorPanel erorPanel = new ErrorPanel();
-		        	  erorPanel.setErrorMessage(error.getMessage());
-						Log.error(error.getMessage());
-					}
-		          @Override
-					public void onViolation(Set<Violation> errors) {
-						Iterator<Violation> iter = errors.iterator();
-						String message = "";
-						while(iter.hasNext()){
-							message += iter.next().getMessage() + "<br>";
-						}
-						Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Antwort löschen -" + message);
-						
-			        	  ErrorPanel erorPanel = new ErrorPanel();
-			        	  erorPanel.setErrorMessage(message);
-						
-
-						
-					}
 			});
 		
 	}
@@ -331,33 +263,13 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 			
 			
 			
-			req.persist().using(answerProxy).fire(new Receiver<Void>(){
+			req.persist().using(answerProxy).fire(new BMEReceiver<Void>(){
 
 				@Override
 				public void onSuccess(Void arg0) {
 					init();
 					
 				}
-		          public void onFailure(ServerFailure error){
-		        	  ErrorPanel erorPanel = new ErrorPanel();
-		        	  erorPanel.setErrorMessage(error.getMessage());
-						Log.error(error.getMessage());
-					}
-		          @Override
-					public void onViolation(Set<Violation> errors) {
-						Iterator<Violation> iter = errors.iterator();
-						String message = "";
-						while(iter.hasNext()){
-							message += iter.next().getMessage() + "<br>";
-						}
-						Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Antwort löschen -" + message);
-						
-			        	  ErrorPanel erorPanel = new ErrorPanel();
-			        	  erorPanel.setErrorMessage(message);
-						
-
-						
-					}
 			});
 		}
 		
@@ -369,38 +281,31 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 			AnswerRequest req = requests.answerRequest();
 			AnswerProxy answerProxy =  (AnswerProxy)entityProxy;
 			
-			req.remove().using(answerProxy).fire(new Receiver<Void>(){
+			req.remove().using(answerProxy).fire(new BMEReceiver<Void>(){
 	
 				@Override
 				public void onSuccess(Void arg0) {
 					init();
 					
 				}
-		          public void onFailure(ServerFailure error){
-		        	  ErrorPanel erorPanel = new ErrorPanel();
-		        	  erorPanel.setErrorMessage(error.getMessage());
-						Log.error(error.getMessage());
-					}
-		          @Override
-					public void onViolation(Set<Violation> errors) {
-						Iterator<Violation> iter = errors.iterator();
-						String message = "";
-						while(iter.hasNext()){
-							message += iter.next().getMessage() + "<br>";
-						}
-						Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Antwort löschen -" + message);
-						
-			        	  ErrorPanel erorPanel = new ErrorPanel();
-			        	  erorPanel.setWarnMessage(message);
-						
-	
-						
-					}
 			});
 		}
 	}
 
+	@Override
+	public void rejectClicked(AnswerProxy answerProxy) {
+		AnswerRequest req = requests.answerRequest();
+		answerProxy =  req.edit(answerProxy);
+		
+		answerProxy.setStatus(Status.DEACTIVATED);
+		
+		req.persist().using(answerProxy).fire(new BMEReceiver<Void>(){
 
-
-
+			@Override
+			public void onSuccess(Void arg0) {
+				init();
+			}
+          
+		});
+	}
 }
