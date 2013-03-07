@@ -329,52 +329,60 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	
 	//method is overridden by sub class accept question
 	protected void initForActivity(final QuestionProxy response) {
-
-		if (!flag && !answerFlag)
+		
+		if (response.getStatus().equals(Status.ACTIVE))
 		{
-			if (((QuestionProxy) response).getAutor().getId().equals(userLoggedIn.getId()))
+			if (!flag && !answerFlag)
 			{
-				view.setInvisibleIconButton(true);
-				init((QuestionProxy) response);
+				if (((QuestionProxy) response).getAutor().getId().equals(userLoggedIn.getId()))
+				{
+					view.setInvisibleIconButton(true);
+					init((QuestionProxy) response);
+				}
+				else
+				{
+					requests.userAccessRightsRequest().checkAddAnswerRightsByQuestionAndPerson(userLoggedIn.getId(), ((QuestionProxy) response).getId()).fire(new BMEReceiver<List<UserAccessRightsProxy>>() {
+
+						@Override
+						public void onSuccess(List<UserAccessRightsProxy> rightsResponse) {
+							
+							if (rightsResponse.size() > 0)
+							{
+								for (UserAccessRightsProxy proxy : rightsResponse)
+								{
+									if (proxy.getAccRights().equals(AccessRights.AccWrite))
+									{
+										view.setInvisibleIconButton(true);
+										questionDetailsView.getAnswerListViewImpl().getNewAnswer().setVisible(false);
+									}
+									
+									if (proxy.getAccRights().equals(AccessRights.AccAddAnswers))
+									{
+										view.setInvisibleIconButton(false);
+									}	
+								}
+							}
+							else
+							{
+								view.setInvisibleIconButton(false);
+								questionDetailsView.getAnswerListViewImpl().getNewAnswer().setVisible(false);
+							}
+					
+							init((QuestionProxy) response);
+						}
+					});
+				}
 			}
 			else
 			{
-				requests.userAccessRightsRequest().checkAddAnswerRightsByQuestionAndPerson(userLoggedIn.getId(), ((QuestionProxy) response).getId()).fire(new BMEReceiver<List<UserAccessRightsProxy>>() {
-
-					@Override
-					public void onSuccess(List<UserAccessRightsProxy> rightsResponse) {
-						
-						if (rightsResponse.size() > 0)
-						{
-							for (UserAccessRightsProxy proxy : rightsResponse)
-							{
-								if (proxy.getAccRights().equals(AccessRights.AccWrite))
-								{
-									view.setInvisibleIconButton(true);
-									questionDetailsView.getAnswerListViewImpl().getNewAnswer().setVisible(false);
-								}
-								
-								if (proxy.getAccRights().equals(AccessRights.AccAddAnswers))
-								{
-									view.setInvisibleIconButton(false);
-								}	
-							}
-						}
-						else
-						{
-							view.setInvisibleIconButton(false);
-							questionDetailsView.getAnswerListViewImpl().getNewAnswer().setVisible(false);
-						}
-				
-						init((QuestionProxy) response);
-					}
-				});
+				init((QuestionProxy) response);
 			}
 		}
-		else
+		else if (response.getStatus().equals(Status.NEW))
 		{
+			view.getEdit().setVisible(false);
 			init((QuestionProxy) response);
-		}	
+		}
 	}
 	/**
 	 * 

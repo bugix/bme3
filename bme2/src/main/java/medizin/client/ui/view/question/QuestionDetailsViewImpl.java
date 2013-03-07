@@ -758,6 +758,10 @@ public class QuestionDetailsViewImpl extends Composite implements
 			MatrixAnswerListViewImpl matrixAnswerListViewImpl) {
 		this.matrixAnswerListViewImpl = matrixAnswerListViewImpl;
 	}
+
+	public IconButton getEdit() {
+		return edit;
+	}
 	
 	
 }

@@ -7,6 +7,8 @@ import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
+import medizin.client.ui.widget.dialogbox.receiver.ReceiverDialog;
+import medizin.client.util.ClientUtility;
 import medizin.shared.MultimediaType;
 import medizin.shared.QuestionTypes;
 import medizin.shared.SelectionType;
@@ -426,7 +428,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
     	
     //	delegate.saveClicked();
     	
-    	boolean flag = false;
+    	/*boolean flag = false;
     	
     	if (shortNameTxtbox.getText().equals("") || longNameTxtbox.getText().equals("") || descriptionTxtbox.getText().equals(""))
     	{
@@ -492,6 +494,11 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
         }
         
         if(flag == false)
+    	{
+    		delegate.saveClicked(proxy);
+    	}*/
+    	
+    	if (validationOfFields(questionTypeListBox.getValue()))
     	{
     		delegate.saveClicked(proxy);
     	}
@@ -632,6 +639,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 
 			@Override
 			public void onValueChange(ValueChangeEvent<QuestionTypes> event) {
+				removeStyles();
 				disableField(questionTypeListBox.getValue());
 			}
 		});
@@ -1357,5 +1365,378 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		this.maxBytesTxtbox = maxBytesTxtbox;
 	}
 	
+	private boolean validationOfFields(QuestionTypes questionType)
+	{
+		removeStyles();
+		
+		boolean flag = true;
+		StringBuilder errorString = new StringBuilder();
+		
+		if (shortNameTxtbox.getText().isEmpty())
+    	{	
+			flag = false;
+			errorString.append(constants.shortName() + " " + constants.questionTypeErroMsg()).append("<br />");
+			shortNameTxtbox.addStyleName("higlight_onViolation");
+    	}
+		
+		if (longNameTxtbox.getText().isEmpty())
+		{
+			flag = false;
+			errorString.append(constants.longName() + " " + constants.questionTypeErroMsg()).append("<br />");
+			longNameTxtbox.addStyleName("higlight_onViolation");
+		}
+		
+		if (descriptionTxtbox.getText().isEmpty())
+		{
+			flag = false;
+			errorString.append(constants.description() + " " + constants.questionTypeErroMsg()).append("<br />");
+			descriptionTxtbox.addStyleName("higlight_onViolation");
+		}		
+		
+		switch (questionType)
+		{
+			case Sort:
+			case Textual:
+			{
+				String msg = "";				
+				if ((msg = checkTextWidgetForNumber(sumAnswerTxtbox)) != "")
+				{
+					flag = false;
+					errorString.append(constants.sumAnswer() + " " + msg).append("<br />");
+					sumAnswerTxtbox.addStyleName("higlight_onViolation");
+				}
+				
+				msg = "";
+				if ((msg = checkTextWidgetForNumber(sumTrueAnswerTxtbox)) != "")
+				{
+					flag = false;
+					errorString.append(constants.sumTrueAnswer() + " " + msg).append("<br />");
+					sumTrueAnswerTxtbox.addStyleName("higlight_onViolation");
+				}
+				
+				msg = "";
+				if ((msg = checkTextWidgetForNumber(sumFalseAnswerTxtbox)) != "")
+				{
+					flag = false;
+					errorString.append(constants.sumFalseAnswer() + " " + msg).append("<br />");
+					sumFalseAnswerTxtbox.addStyleName("higlight_onViolation");
+				}
+				
+				msg = "";
+				if ((msg = checkTextWidgetForNumber(questionLengthTxtbox)) != "")
+				{
+					flag = false;
+					errorString.append(constants.questionLength() + " " + msg).append("<br />");
+					questionLengthTxtbox.addStyleName("higlight_onViolation");
+				}
+				
+				msg = "";
+				if ((msg = checkTextWidgetForNumber(answerLengthTxtbox)) != "")
+				{
+					flag = false;
+					errorString.append(constants.answerLength() + " " + msg).append("<br />");
+					answerLengthTxtbox.addStyleName("higlight_onViolation");
+				}
+				
+				msg = "";
+				if ((msg = checkTextWidgetForNumber(answerDiffTxtbox)) != "")
+				{
+					flag = false;
+					errorString.append(constants.diffAnswer() + " " + msg).append("<br />");
+					answerDiffTxtbox.addStyleName("higlight_onViolation");
+				}
+				
+				break;
+			}
+			
+			case Imgkey:
+			{
+				String msg = "";				
+				if ((msg = checkTextWidgetForNumber(keywordCountTxtbox)) != "")
+				{
+					flag = false;
+					errorString.append(constants.countKeyword() + " " + msg).append("<br />");
+					keywordCountTxtbox.addStyleName("higlight_onViolation");
+				}
+				
+				msg = "";
+				if ((msg = checkTextWidgetForNumber(minLetterForAutoCompTxtbox)) != "")
+				{
+					flag = false;
+					errorString.append(constants.minLetterAutoComplete() + " " + msg).append("<br />");
+					minLetterForAutoCompTxtbox.addStyleName("higlight_onViolation");
+				}
+				
+				msg = "";
+				if ((msg = checkTextWidgetForNumber(answerLengthTxtbox)) != "")
+				{
+					flag = false;
+					errorString.append(constants.answerLength() + " " + msg).append("<br />");
+					answerLengthTxtbox.addStyleName("higlight_onViolation");
+				}
+				
+				msg = "";
+				if ((msg = checkTextWidgetForNumber(shortAnswerLengthTxtbox)) != "")
+				{
+					flag = false;
+					errorString.append(constants.lengthShortAns() + " " + msg).append("<br />");
+					shortAnswerLengthTxtbox.addStyleName("higlight_onViolation");
+				}
+				
+				msg = "";
+				if ((msg = checkTextWidgetForNumber(imageWidthTxtbox)) != "")
+				{
+					flag = false;
+					errorString.append(constants.imgWidth() + " " + msg).append("<br />");
+					imageWidthTxtbox.addStyleName("higlight_onViolation");
+				}
+				
+				msg = "";
+				if ((msg = checkTextWidgetForNumber(imageLengthTxtbox)) != "")
+				{
+					flag = false;
+					errorString.append(constants.imgLength() + " " + msg).append("<br />");
+					imageLengthTxtbox.addStyleName("higlight_onViolation");
+				}
+				
+				msg = "";
+				if (imageProportionTxtbox.getText().isEmpty())
+				{
+					flag = false;
+					errorString.append(constants.imgProportion() + " " + constants.questionTypeErroMsg()).append("<br />");
+					imageProportionTxtbox.addStyleName("higlight_onViolation");
+				}
+				
+				break;
+			}
+			
+			case ShowInImage:
+			{
+				String msg = "";
+				if ((msg = checkTextWidgetForNumber(imageWidthTxtbox)) != "")
+				{
+					flag = false;
+					errorString.append(constants.imgWidth() + " " + msg).append("<br />");
+					imageWidthTxtbox.addStyleName("higlight_onViolation");
+				}
+				
+				msg = "";
+				if ((msg = checkTextWidgetForNumber(questionLengthTxtbox)) != "")
+				{
+					flag = false;
+					errorString.append(constants.questionLength() + " " + msg).append("<br />");
+					questionLengthTxtbox.addStyleName("higlight_onViolation");
+				}
+				
+				msg = "";
+				if ((msg = checkTextWidgetForNumber(imageLengthTxtbox)) != "")
+				{
+					flag = false;
+					errorString.append(constants.imgLength() + " " + msg).append("<br />");
+					imageLengthTxtbox.addStyleName("higlight_onViolation");
+				}
+				
+				msg = "";
+				if (imageProportionTxtbox.getText().isEmpty())
+				{
+					flag = false;
+					errorString.append(constants.imgProportion() + " " + constants.questionTypeErroMsg()).append("<br />");
+					imageProportionTxtbox.addStyleName("higlight_onViolation");
+				}
+				
+				msg = "";
+				if ((msg = checkTextWidgetForNumber(linearPercentageTxtbox)) != "")
+				{
+					flag = false;
+					errorString.append(constants.imgProportion() + " " + msg).append("<br />");
+					linearPercentageTxtbox.addStyleName("higlight_onViolation");
+				}
+				
+				break;
+			}
+			
+			case LongText:
+			{
+				String msg = "";
+				if ((msg = checkTextWidgetForNumber(minLengthTxtbox)) != "")
+				{
+					flag = false;
+					errorString.append(constants.minLength() + " " + msg).append("<br />");
+					minLengthTxtbox.addStyleName("higlight_onViolation");
+				}
+				
+				msg = "";
+				if ((msg = checkTextWidgetForNumber(maxLengthTxtbox)) != "")
+				{
+					flag = false;
+					errorString.append(constants.maxLength() + " " + msg).append("<br />");
+					maxLengthTxtbox.addStyleName("higlight_onViolation");
+				}
+				
+				msg = "";
+				if ((msg = checkTextWidgetForNumber(minWordCountTxtbox)) != "")
+				{
+					flag = false;
+					errorString.append(constants.minWordCount() + " " + msg).append("<br />");
+					minWordCountTxtbox.addStyleName("higlight_onViolation");
+				}
+				
+				msg = "";
+				if ((msg = checkTextWidgetForNumber(maxWordCountTxtbox)) != "")
+				{
+					flag = false;
+					errorString.append(constants.maxWordCount() + " " + msg).append("<br />");
+					maxWordCountTxtbox.addStyleName("higlight_onViolation");
+				}
+				
+				break;
+			}
+			
+			case Matrix:
+			{			
+				String msg = "";
+				if ((msg = checkTextWidgetForNumber(maxLengthTxtbox)) != "")
+				{
+					flag = false;
+					errorString.append(constants.maxLength() + " " + msg).append("<br />");
+					maxLengthTxtbox.addStyleName("higlight_onViolation");
+				}
+				break;
+			}
+			
+			case MCQ:
+			{
+				String msg = "";
+				if ((msg = checkTextWidgetForNumber(imageWidthTxtbox)) != "")
+				{
+					flag = false;
+					errorString.append(constants.imgWidth() + " " + msg).append("<br />");
+					imageWidthTxtbox.addStyleName("higlight_onViolation");
+				}
+				
+				msg = "";
+				if ((msg = checkTextWidgetForNumber(imageLengthTxtbox)) != "")
+				{
+					flag = false;
+					errorString.append(constants.imgLength() + " " + msg).append("<br />");
+					imageLengthTxtbox.addStyleName("higlight_onViolation");
+				}
+				
+				msg = "";
+				if (imageProportionTxtbox.getText().isEmpty())
+				{
+					flag = false;
+					errorString.append(constants.imgProportion() + " " + constants.questionTypeErroMsg()).append("<br />");
+					imageProportionTxtbox.addStyleName("higlight_onViolation");
+				}
+				
+				if (multimediaTypeListBox.getValue().equals(null))
+				{
+					flag = false;
+					errorString.append(constants.multimediaType() + " " + constants.questionTypeErroMsg()).append("<br />");
+					multimediaTypeListBox.addStyleName("higlight_onViolation");
+				}
+				
+				if (selectionTypeListBox.getValue().equals(null))
+				{
+					flag = false;
+					errorString.append(constants.selectionType() + " " + constants.questionTypeErroMsg()).append("<br />");
+					selectionTypeListBox.addStyleName("higlight_onViolation");
+				}
+				
+				msg = "";
+				if ((msg = checkTextWidgetForNumber(columnTxtbox)) != "")
+				{
+					flag = false;
+					errorString.append(constants.column() + " " + msg).append("<br />");
+					columnTxtbox.addStyleName("higlight_onViolation");
+				}
+				
+				msg = "";
+				if ((msg = checkTextWidgetForNumber(thumbWidthTxtbox)) != "")
+				{
+					flag = false;
+					errorString.append(constants.thumbWidth() + " " + msg).append("<br />");
+					thumbWidthTxtbox.addStyleName("higlight_onViolation");
+				}
+				
+				msg = "";
+				if ((msg = checkTextWidgetForNumber(thumbHeightTxtbox)) != "")
+				{
+					flag = false;
+					errorString.append(constants.thumbHeight() + " " + msg).append("<br />");
+					thumbHeightTxtbox.addStyleName("higlight_onViolation");
+				}
+
+				msg = "";
+				if ((msg = checkTextWidgetForNumber(maxBytesTxtbox)) != "")
+				{
+					flag = false;
+					errorString.append(constants.maxBytes() + " " + msg).append("<br />");
+					maxBytesTxtbox.addStyleName("higlight_onViolation");
+				}
+				break;
+			}
+			
+			default:
+				break;
+		}
+		
+		if(flag == false) {
+			ReceiverDialog.showMessageDialog(errorString.toString());
+		}
+		
+		return flag;
+	}
+
+	private String checkTextWidgetForNumber(TextBox textBox)
+	{
+		String message = "";
+		if (textBox.getText().isEmpty())
+		{
+			message = constants.questionTypeErroMsg();
+		}
+		else if (ClientUtility.isNumber(textBox.getText()))
+		{
+			message = constants.questionTypeNumErrorMsg();
+		}
+		
+		return message;
+	}
 	
+	private void removeStyles()
+	{
+		shortNameTxtbox.removeStyleName("higlight_onViolation");
+		longNameTxtbox.removeStyleName("higlight_onViolation");
+		descriptionTxtbox.removeStyleName("higlight_onViolation");
+		
+		sumAnswerTxtbox.removeStyleName("higlight_onViolation");
+		sumTrueAnswerTxtbox.removeStyleName("higlight_onViolation");
+		sumFalseAnswerTxtbox.removeStyleName("higlight_onViolation");
+		questionLengthTxtbox.removeStyleName("higlight_onViolation");
+		answerLengthTxtbox.removeStyleName("higlight_onViolation");
+		answerDiffTxtbox.removeStyleName("higlight_onViolation");
+		
+		keywordCountTxtbox.removeStyleName("higlight_onViolation");
+		minLetterForAutoCompTxtbox.removeStyleName("higlight_onViolation");
+		answerLengthTxtbox.removeStyleName("higlight_onViolation");
+		shortAnswerLengthTxtbox.removeStyleName("higlight_onViolation");
+		imageWidthTxtbox.removeStyleName("higlight_onViolation");
+		imageLengthTxtbox.removeStyleName("higlight_onViolation");
+		imageProportionTxtbox.removeStyleName("higlight_onViolation");
+		
+		linearPercentageTxtbox.removeStyleName("higlight_onViolation");
+		
+		minLengthTxtbox.removeStyleName("higlight_onViolation");
+		maxLengthTxtbox.removeStyleName("higlight_onViolation");
+		minWordCountTxtbox.removeStyleName("higlight_onViolation");
+		maxWordCountTxtbox.removeStyleName("higlight_onViolation");
+		
+		columnTxtbox.removeStyleName("higlight_onViolation");
+		maxBytesTxtbox.removeStyleName("higlight_onViolation");
+		thumbWidthTxtbox.removeStyleName("higlight_onViolation");
+		thumbHeightTxtbox.removeStyleName("higlight_onViolation");
+		selectionTypeListBox.removeStyleName("higlight_onViolation");
+		multimediaTypeListBox.removeStyleName("higlight_onViolation");
+	}
 }

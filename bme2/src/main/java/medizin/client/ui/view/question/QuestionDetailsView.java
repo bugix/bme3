@@ -3,6 +3,7 @@ package medizin.client.ui.view.question;
 import java.util.Set;
 
 import medizin.client.proxy.QuestionProxy;
+import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 
 import com.google.common.base.Function;
@@ -57,5 +58,7 @@ public interface QuestionDetailsView extends IsWidget {
 	public void setInvisibleIconButton(Boolean flag);
 	
 	public void setVisibleAcceptButton();
+	
+	public IconButton getEdit();
 
 }

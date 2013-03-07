@@ -397,4 +397,8 @@ public interface BmeConstants extends Constants {
 	public String questionTypeMayNotBeNull();
 
 	public String questionTextMayNotBeNull();
+	
+	public String questionTypeErroMsg();
+	
+	public String questionTypeNumErrorMsg();
 }
