@@ -35,10 +35,8 @@ import medizin.client.ui.view.question.MatrixAnswerView;
 import medizin.client.ui.view.question.MatrixAnswerViewImpl;
 import medizin.client.ui.view.question.QuestionDetailsView;
 import medizin.client.ui.view.question.QuestionDetailsViewImpl;
-import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.ui.widget.resource.dndview.vo.State;
-import medizin.client.util.ClientUtility;
 import medizin.client.util.Matrix;
 import medizin.client.util.MatrixValidityVO;
 import medizin.shared.QuestionTypes;
@@ -603,10 +601,10 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		answerDialogbox = new AnswerDialogboxImpl(question,eventBus,reciverMap);
 		answerDialogbox.setDelegate(this);
 		
-		if(userLoggedIn.getIsAdmin() == false) {
+		/*if(userLoggedIn.getIsAdmin() == false) {
 			answerDialogbox.getAutherSuggestBox().setSelected(userLoggedIn);
 			answerDialogbox.getAutherSuggestBox().setEnabled(false);
-		}
+		}*/
 
 		
 					
@@ -690,7 +688,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		
 	}
 
-	@Override
+	/*@Override
 	public void addAnswerClicked() {
 		
 		final AnswerRequest ansRequest = requests.answerRequest();
@@ -699,13 +697,13 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		final AnswerProxy answerProxy=ansRequest.create(AnswerProxy.class);
 		CommentProxy commentProxy=commnetRequest.create(CommentProxy.class);
 		answerDialogbox.getRichtTextArea().removeStyleName("higlight_onViolation");
-		/*this.answerProxy = ansProxy;
-		this.commentProxy=comProxy;*/
+		this.answerProxy = ansProxy;
+		this.commentProxy=comProxy;
 		
 		
         answerProxy.setQuestion(question);
         answerProxy.setDateAdded(new Date());
-        /*answerProxy.setAutor(loggedUser);
+        answerProxy.setAutor(loggedUser);
         if(loggedUser.getIsAdmin()){
 	        answerProxy.setIsAnswerAcceptedAdmin(true);
 	        answerProxy.setIsAnswerAcceptedAutor(false);
@@ -713,7 +711,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
         } else {
 	        answerProxy.setIsAnswerAcceptedAdmin(false);
 	        answerProxy.setIsAnswerAcceptedAutor(true);
-        }*/
+        }
         answerProxy.setAutor(answerDialogbox.getAutherSuggestBox().getSelected());
         answerProxy.setIsAnswerAcceptedReviewWahrer(false);
         //answerDialogbox.setRichPanelHTML(answerProxy.getAnswerText());
@@ -847,7 +845,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		
 		commnetRequest.persist().using(commentProxy).fire(new BMEReceiver<Void>(reciverMap) {
 
-			/*public void onFailure(ServerFailure error){
+			public void onFailure(ServerFailure error){
 				Log.info("on failure");
 				ErrorPanel erorPanel = new ErrorPanel();
 	        	  erorPanel.setErrorMessage(error.getMessage());
@@ -869,7 +867,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 				ErrorPanel erorPanel = new ErrorPanel();
 	        	erorPanel.setWarnMessage(message);
 	        	super.onConstraintViolation(violations);
-			}*/
+			}
 
 //	          @Override
 //				public void onViolation(Set<Violation> errors) {
@@ -899,7 +897,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		        		initAnswerView();
 		        		answerDialogbox.close();
 					}
-					/*public void onFailure(ServerFailure error){
+					public void onFailure(ServerFailure error){
 						Log.info("on failure");
 						ErrorPanel erorPanel = new ErrorPanel();
 			        	  erorPanel.setErrorMessage(error.getMessage());
@@ -919,12 +917,12 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 							ErrorPanel erorPanel = new ErrorPanel();
 				        	  erorPanel.setErrorMessage(message);
 
-						}*/
+						}
 				});
 		
 			}
 		});
-				/*answerDriver.flush().fire(new Receiver<Void>() {
+				answerDriver.flush().fire(new Receiver<Void>() {
 			
 	          @Override
 	          public void onSuccess(Void response) {
@@ -953,8 +951,8 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		        	  erorPanel.setErrorMessage(message);
 
 				}
-	      }); */
-	}
+	      }); 
+	}*/
 	
 
 	@Override
@@ -1204,6 +1202,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 				proxy.getAnswerX().setAutor(author);
 				proxy.getAnswerX().setRewiewer(rewiewer);
 				proxy.getAnswerX().setSubmitToReviewComitee(submitToReviewComitee);
+				proxy.getAnswerX().setIsAnswerAcceptedAdmin(false);
 				proxy.getAnswerX().setIsAnswerAcceptedReviewWahrer(false);
 				proxy.getAnswerX().setIsAnswerActive(false);
 				proxy.getAnswerX().getComment().setComment(comment);
@@ -1214,6 +1213,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 				proxy.getAnswerY().setAutor(author);
 				proxy.getAnswerY().setRewiewer(rewiewer);
 				proxy.getAnswerY().setSubmitToReviewComitee(submitToReviewComitee);
+				proxy.getAnswerY().setIsAnswerAcceptedAdmin(false);
 				proxy.getAnswerY().setIsAnswerAcceptedReviewWahrer(false);
 				proxy.getAnswerY().setIsAnswerActive(false);
 				proxy.getAnswerY().getComment().setComment(comment);
@@ -1238,7 +1238,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	}
 
 	@Override
-	public void saveAnswerProxy(AnswerProxy answerProxy, String answerText, PersonProxy author, PersonProxy rewiewer, Boolean submitToReviewComitee, String comment, final Function<AnswerProxy, Void> function) {
+	public void saveAnswerProxy(AnswerProxy answerProxy, String answerText, PersonProxy author, PersonProxy rewiewer, Boolean submitToReviewComitee, String comment, Validity validity, String points, String mediaPath, String additionalKeywords,Integer sequenceNumber, final Function<AnswerProxy, Void> function) {
 		
 		Log.info("in saveAnswerProxy method");
 		final AnswerRequest answerRequest = requests.answerRequest();
@@ -1257,19 +1257,25 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			editerAnswerProxy.getComment().setComment(comment);
 			editerAnswerProxy.setQuestion(question);
 			editerAnswerProxy.setStatus(Status.NEW);
-			
-			if(answerProxy.getValidity() != null) {
+			editerAnswerProxy.setValidity(validity);
+			editerAnswerProxy.setPoints(points);
+			editerAnswerProxy.setMediaPath(mediaPath);
+			editerAnswerProxy.setIsMedia(mediaPath != null && mediaPath.length() > 0);
+			editerAnswerProxy.setAdditionalKeywords(additionalKeywords);
+			editerAnswerProxy.setSequenceNumber(sequenceNumber);
+			/*if(answerProxy.getValidity() != null) {
 				editerAnswerProxy.setValidity(answerProxy.getValidity());
 			}else {
 				editerAnswerProxy.setValidity(Validity.Falsch);
-			}
+			}*/
 			
 			final AnswerProxy finalAnswerProxy = editerAnswerProxy;
 			answerRequest.persist().using(editerAnswerProxy).fire(new BMEReceiver<Void>(reciverMap) {
 
 				@Override
 				public void onSuccess(Void response) {
-					function.apply(finalAnswerProxy);	
+					function.apply(finalAnswerProxy);
+					initAnswerView();
 				}
 			});
 		}else {
@@ -1286,8 +1292,13 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			newAnswerProxy.setIsAnswerActive(false);
 			newAnswerProxy.setComment(commentProxy);
 			commentProxy.setComment(comment);
-			newAnswerProxy.setValidity(Validity.Falsch);
+			newAnswerProxy.setValidity(validity);
 			newAnswerProxy.setQuestion(question);
+			newAnswerProxy.setPoints(points);
+			newAnswerProxy.setMediaPath(mediaPath);
+			newAnswerProxy.setIsMedia(mediaPath != null && mediaPath.length() > 0);
+			newAnswerProxy.setAdditionalKeywords(additionalKeywords);
+			newAnswerProxy.setSequenceNumber(sequenceNumber);
 			
 			newAnswerProxy.setStatus(Status.NEW);
 			
@@ -1309,6 +1320,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 								public void onSuccess(Object response) {
 									if(response instanceof AnswerProxy) {
 										function.apply((AnswerProxy) response);	
+										initAnswerView();
 									}		
 								}
 							});

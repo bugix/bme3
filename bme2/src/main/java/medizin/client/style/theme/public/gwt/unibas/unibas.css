@@ -4347,3 +4347,8 @@ background: url("images/colorpicker.png");
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
+.videoSize
+{
+	width:500px !important;
+	height:500px !important;
+}

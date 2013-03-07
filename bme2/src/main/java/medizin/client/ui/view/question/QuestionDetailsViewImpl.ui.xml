@@ -125,10 +125,10 @@
 				</g:Tab>
 				<g:Tab addStyleNames="{style.ovreflowStyle}">
 					<g:TabHTML></g:TabHTML>
-					<g:VerticalPanel>
+					<g:VerticalPanel width="100%">
 						<g:HorizontalPanel ui:field="resourceUploadPanel">
 						</g:HorizontalPanel>
-						<g:HorizontalPanel ui:field="resourceViewPanel">
+						<g:HorizontalPanel ui:field="resourceViewPanel" width="100%">
 						</g:HorizontalPanel>
 					</g:VerticalPanel>
 				</g:Tab>

@@ -393,4 +393,8 @@ public interface BmeConstants extends Constants {
 	public String answerX();
 	
 	public String answerY();
+
+	public String questionTypeMayNotBeNull();
+
+	public String questionTextMayNotBeNull();
 }

@@ -475,8 +475,18 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 				boolean flag = validationOfFields(errorString);
 				
 				if(flag == true) {
-				
-					delegate.saveAnswerProxy(answer.getAnswerProxy(), text, auther.getSelected(), rewiewer.getSelected(), submitToReviewComitee.getValue(), comment.getText(), new Function<AnswerProxy,Void>() {
+
+					String points = null; 
+					String mediaPath = null;
+					String additionalKeywords = null; 
+					Integer sequenceNumber =null;
+					Validity validity = Validity.Falsch; 
+					
+					if(answer.getAnswerProxy() != null && answer.getAnswerProxy().getValidity() != null) {
+						validity = answer.getAnswerProxy().getValidity();
+					}
+					
+					delegate.saveAnswerProxy(answer.getAnswerProxy(), text, auther.getSelected(), rewiewer.getSelected(), submitToReviewComitee.getValue(), comment.getText(), validity, points, mediaPath, additionalKeywords,sequenceNumber, new Function<AnswerProxy,Void>() {
 
 						@Override
 						public Void apply(AnswerProxy input) {

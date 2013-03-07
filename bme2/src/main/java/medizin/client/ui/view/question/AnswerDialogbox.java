@@ -4,25 +4,14 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import medizin.client.proxy.AnswerProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.shared.Validity;
-import medizin.client.ui.widget.resource.audio.AudioViewer;
-import medizin.client.ui.widget.resource.image.polygon.ImagePolygonViewer;
-import medizin.client.ui.widget.resource.image.rectangle.ImageRectangleViewer;
-import medizin.client.ui.widget.resource.image.simple.SimpleImageViewer;
-import medizin.client.ui.widget.resource.video.VideoViewer;
-import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.EventHandlingValueHolderItem;
-import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
 import medizin.shared.QuestionTypes;
 
 import com.google.common.base.Function;
 import com.google.gwt.place.shared.Place;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.RichTextArea;
-import com.google.gwt.user.client.ui.TextArea;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.ValueListBox;
 
 public interface AnswerDialogbox extends IsWidget {
  
@@ -37,10 +26,11 @@ public interface AnswerDialogbox extends IsWidget {
 	 * Implemented by the owner of the view.
 	 */
 	interface Delegate {
-		void addAnswerClicked();
+		/*void addAnswerClicked();*/
 		void cancelAnswerClicked();
 		void findAllAnswersPoints(Long id,Function<List<String>, Void> function);
 		void deleteUploadedFiles(Set<String> paths);
+		void saveAnswerProxy(AnswerProxy answerProxy, String answerText, PersonProxy author, PersonProxy rewiewer, Boolean submitToReviewComitee, String comment, Validity validity, String points, String mediaPath, String additionalKeywords, Integer sequenceNumber, final Function<AnswerProxy, Void> function);
 	}
 
  
@@ -56,17 +46,17 @@ public interface AnswerDialogbox extends IsWidget {
 
 	void setRichPanelHTML(String html);
 
-	String getRichtTextHTML();
+	/*String getRichtTextHTML();
 
 	TextArea getComment();
 
 	CheckBox getSubmitToReviewerComitee();
 
-	ValueListBox<Validity> getValidity();
+	ValueListBox<Validity> getValidity();*/
 
 	void setAutherPickerValues(Collection<PersonProxy> values,PersonProxy logedUser);
 
-	DefaultSuggestBox<PersonProxy, EventHandlingValueHolderItem<PersonProxy>> getAutherSuggestBox();
+	/*DefaultSuggestBox<PersonProxy, EventHandlingValueHolderItem<PersonProxy>> getAutherSuggestBox();
 
 	ImagePolygonViewer getImagePolygonViewer();
 
@@ -84,6 +74,6 @@ public interface AnswerDialogbox extends IsWidget {
 
 	TextArea getAdditionalKeywords();
 
-	TextBox getSequenceNumber();
+	TextBox getSequenceNumber();*/
 
 }

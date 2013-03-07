@@ -93,7 +93,7 @@
 								<td>
 									<!-- <g:ValueListBox ui:field="autor" /> -->
 
-									<i:DefaultSuggestBox ui:field="auther"></i:DefaultSuggestBox>
+									<i:DefaultSuggestBox ui:field="author"></i:DefaultSuggestBox>
 
 								</td>
 							</tr>

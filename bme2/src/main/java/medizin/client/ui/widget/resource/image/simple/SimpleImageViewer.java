@@ -48,4 +48,8 @@ public class SimpleImageViewer extends Composite {
 		// TODO Auto-generated method stub
 		
 	}
+
+	public String getRelativeURL() {
+		return url.replace(GWT.getHostPageBaseURL(),"");
+	}
 }

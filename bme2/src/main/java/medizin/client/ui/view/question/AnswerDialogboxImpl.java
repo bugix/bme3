@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import medizin.client.proxy.AnswerProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.proxy.QuestionTypeProxy;
@@ -133,7 +134,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 
 	}
 
-	@Override
+	/*@Override
 	public CheckBox getSubmitToReviewerComitee() {
 		return submitToReviewComitee;
 	}
@@ -141,7 +142,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 	@Override
 	public TextArea getComment() {
 		return comment;
-	}
+	}*/
 
 	/*
 	 * interface EditorDriver extends RequestFactoryEditorDriver<AnswerProxy,
@@ -423,13 +424,13 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 		answerTextArea.setHTML(html);
 	}
 
-	@Override
+	/*@Override
 	public String getRichtTextHTML() {
 		// Log.info(questionTextArea.getHTML());
 		// Log.info(questionTextArea.getText());
 		return answerTextArea.getHTML();
 		// return new String("<b>hallo</b>");
-	}
+	}*/
 	
 	@UiField(provided = true)
 	public RichTextToolbar toolbar;
@@ -520,15 +521,15 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 																}
 															});
 
-	@Override
+	/*@Override
 	public ValueListBox<Validity> getValidity() {
 		return validity;
-	}
+	}*/
 
-	@Override
+	/*@Override
 	public DefaultSuggestBox<PersonProxy, EventHandlingValueHolderItem<PersonProxy>> getReviewerSuggestBox() {
 		return rewiewer;
-	}
+	}*/
 	
 	@Override
 	public void setAutherPickerValues(Collection<PersonProxy> values, PersonProxy logedUser) {	
@@ -552,11 +553,10 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 				}
 			}
 		});
-		//change {
+		
 		if(logedUser.getIsAdmin() == false) {
 			
 			auther.setSelected(logedUser);
-			//answerDialogbox.getAutherSuggestBox().setSelected(userLoggedIn);
 			auther.setEnabled(false);
 		}
 		auther.setWidth(150);
@@ -593,8 +593,161 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 
 	@UiHandler("save")
 	void onSave(ClickEvent event) {
-		delegate.addAnswerClicked();
+		if(validationOfFields()) {
+		
+			String points = null; 
+			String mediaPath = null;
+			String additionalKeywords = null; 
+			Integer sequenceNumber = null;
+			
+			switch (question.getQuestionType().getQuestionType()) {
+			case ShowInImage:
+			{
+				points = imagePolygonViewer.getPoints();
+				break;
+			}
+			case Imgkey: 
+			{
+				additionalKeywords = txtAdditionalKeyword.getText();
+				points = imageRectangleViewer.getPoint();
+				break;
+			}
+			case MCQ:
+			{
+				switch (question.getQuestionType().getMultimediaType()) {
+				case Image:
+				{
+					mediaPath = simpleImageViewer.getRelativeURL();
+					break;
+				}
+				case Sound:
+				{
+					mediaPath = audioViewer.getRelativeURL();
+					break;
+				}
+				case Video:
+				{
+					mediaPath = videoViewer.getRelativeURL();
+					break;
+				}
+				}
+				break;
+			}
+			case Sort:
+			{
+				additionalKeywords = txtAdditionalKeyword.getText();
+				sequenceNumber = Integer.parseInt(txtSequenceNumber.getValue(), 10);
+				break;
+			}
+			default:
+				break;
+			}
+			
+			delegate.saveAnswerProxy(null, answerTextArea.getText(), auther.getSelected(), rewiewer.getSelected(), submitToReviewComitee.getValue(), comment.getText(),validity.getValue(),points,mediaPath,additionalKeywords,sequenceNumber, new Function<AnswerProxy,Void>() {
+
+				@Override
+				public Void apply(AnswerProxy input) {
+					
+					hide();
+					return null;
+				}
+				
+			});
+
+		}else {
+			Log.info("Validation failed");
+		}
+		//delegate.addAnswerClicked();
 		// hide();
+	}
+
+	private boolean validationOfFields() {
+		
+		if(submitToReviewComitee.getValue())
+		{
+			rewiewer.setSelected(null);
+		}
+		else if(rewiewer.getSelected() != null)
+		{
+			submitToReviewComitee.setValue(false);
+		}else {
+			ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.selectReviewerOrComitee());
+			return false;
+		}
+		
+		answerTextArea.removeStyleName("higlight_onViolation");
+		if(question.getQuestionType() != null && QuestionTypes.MCQ.equals(question.getQuestionType().getQuestionType()) == false) {
+			if(answerTextArea.getText() == null || answerTextArea.getText().length() <= 0) {
+				ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.answerTextErrorMessage());
+				answerTextArea.addStyleName("higlight_onViolation");
+				return false;
+			}
+		}
+		
+		if(question.getQuestionType() != null && QuestionTypes.ShowInImage.equals(question.getQuestionType().getQuestionType()) == true ) {
+			Log.info("IN ShowInImage Question type");
+			if(imagePolygonViewer == null || imagePolygonViewer.isValidPolygon() == false) {
+				ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.polygonErrorMessage());
+				Log.error("Polygon is not property added. Try again");
+				return false;	
+			}			
+		}else if(question.getQuestionType() != null && QuestionTypes.Imgkey.equals(question.getQuestionType().getQuestionType()) == true && validity.getValue() != null && Validity.Wahr.equals(validity.getValue())) {
+			Log.info("IN Imgkey Question type");
+			if(imageRectangleViewer == null || imageRectangleViewer.getPoint() == null) {
+				ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.rectangleErrorMessage());
+				Log.error("Rectangle is not property added. Try again");
+				return false;
+			}
+		}else if(question.getQuestionType() != null && QuestionTypes.MCQ.equals(question.getQuestionType().getQuestionType()) == true) {
+			Log.info("IN MCQ Question type");
+			if(question != null && question.getQuestionType() != null && question.getQuestionType().getMultimediaType() != null) {
+			
+				switch (question.getQuestionType().getMultimediaType()) {
+				case Image:
+				{
+					if(simpleImageViewer == null || simpleImageViewer.getURL() == null || simpleImageViewer.getURL().length() <= 0) {
+						ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.imageViewerError());
+						Log.error("Error in imageview");
+						return false;
+					}
+					break;
+				}
+				case Sound:
+				{
+					if(audioViewer == null || audioViewer.getURL() == null || audioViewer.getURL().length() <= 0) {
+						ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.audioViewerError());
+						Log.error("Error in audioview.");
+						return false;
+					}
+					break;
+				}
+				case Video:
+				{	
+					if(videoViewer == null || videoViewer.getURL() == null || videoViewer.getURL().length() <= 0) {
+						ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.audioViewerError());
+						Log.error("Error in videoViewer. Try again");
+						return false;
+					}
+					break;
+				}
+				default:
+				{
+					ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.unknownMultimediaType());
+					Log.error("Error in MultimediaType. Try again");
+					return false;
+				}
+				}
+			}	
+		}else if(question.getQuestionType() != null && QuestionTypes.Sort.equals(question.getQuestionType().getQuestionType()) == true) {
+			txtSequenceNumber.removeStyleName("higlight_onViolation");
+			if(ClientUtility.isNumber(txtSequenceNumber.getValue()) == false) {
+				ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.sequenceNumberError());
+				txtSequenceNumber.addStyleName("higlight_onViolation");
+				Log.info("squence number is not valid number");
+				return false;
+			}
+		}
+		return true;
 	}
 
 	@Override
@@ -602,7 +755,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 		hide();
 	}
 
-	@Override
+	/*@Override
 	public ImagePolygonViewer getImagePolygonViewer() {
 		return imagePolygonViewer;
 	}
@@ -644,5 +797,5 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 	@Override
 	public TextBox getSequenceNumber() {
 		return txtSequenceNumber;
-	}
+	}*/
 }

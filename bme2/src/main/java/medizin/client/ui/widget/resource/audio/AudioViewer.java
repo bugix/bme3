@@ -97,4 +97,8 @@ public class AudioViewer extends Composite {
 		return url;
 	}
 
+	public String getRelativeURL() {
+		return url.replace(GWT.getHostPageBaseURL(),"");
+	}
+
 }

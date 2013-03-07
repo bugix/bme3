@@ -148,7 +148,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 
 	@UiField
 	@Ignore
-	public DefaultSuggestBox<PersonProxy, EventHandlingValueHolderItem<PersonProxy>> auther;
+	public DefaultSuggestBox<PersonProxy, EventHandlingValueHolderItem<PersonProxy>> author;
 
 	
 	/*
@@ -263,6 +263,8 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 				
 				
 			}
+		}else {
+			Log.info("Validation fail");
 		}
 		// delegate.saveClicked(false);
 	}
@@ -293,7 +295,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		reciverMap.put("questionShortName", questionShortName);
 		reciverMap.put("questionText", questionTextArea);
 		reciverMap.put("questionType", questionType);
-		reciverMap.put("autor", auther.getTextField().advancedTextBox);
+		reciverMap.put("autor", author.getTextField().advancedTextBox);
 		reciverMap.put("rewiewer", rewiewer);
 		reciverMap.put("questEvent", questEvent);
 		reciverMap.put("submitToReviewComitee", submitToReviewComitee);
@@ -358,7 +360,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		questionTextArea.setHTML(question.getQuestionText() == null ? ""
 				: question.getQuestionText());
 		//autor.setValue(question.getAutor());
-		auther.setSelected(question.getAutor());
+		author.setSelected(question.getAutor());
 		rewiewer.setSelected(question.getRewiewer());
 		//rewiewer.setValue(question.getRewiewer());
 		questEvent.setValue(question.getQuestEvent());
@@ -441,12 +443,12 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	@Override
 	public void setAutorPickerValues(Collection<PersonProxy> values) {
 		//autor.setAcceptableValues(values);
-		DefaultSuggestOracle<PersonProxy> suggestOracle1 = (DefaultSuggestOracle<PersonProxy>) auther.getSuggestOracle();
+		DefaultSuggestOracle<PersonProxy> suggestOracle1 = (DefaultSuggestOracle<PersonProxy>) author.getSuggestOracle();
 		suggestOracle1.setPossiblilities((List<PersonProxy>) values);
 		 /* Collection<MyObjectType> myCollection = ...;
 		 List<MyObjectType> list = new ArrayList<MyObjectType>(myCollection);*/
-		auther.setSuggestOracle(suggestOracle1);
-		auther.setRenderer(new AbstractRenderer<PersonProxy>() {
+		author.setSuggestOracle(suggestOracle1);
+		author.setRenderer(new AbstractRenderer<PersonProxy>() {
 
 			@Override
 			public String render(PersonProxy object) {
@@ -461,11 +463,11 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 			}
 		});
 		//change {
-		auther.setWidth(150);
+		author.setWidth(150);
 
 		if(userLoggedIn.getIsAdmin() == false) {
-			auther.setSelected(userLoggedIn);
-			auther.setEnabled(false);
+			author.setSelected(userLoggedIn);
+			author.setEnabled(false);
 		}
 
 	}
@@ -879,10 +881,10 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		
 		if(isEdit == true && withNewMajorVersion == false) {	
 			// update question with  minor new version
-			delegate.updateQuestion(questionType.getValue(),questionShortName.getText(),questionTextArea.getText(),auther.getSelected(),rewiewer.getSelected(),submitToReviewComitee.getValue(),questEvent.getValue(),mcs.getValue(),questionComment.getText(),questionVersion, picturePath,questionResourceClients);
+			delegate.updateQuestion(questionType.getValue(),questionShortName.getText(),questionTextArea.getText(),author.getSelected(),rewiewer.getSelected(),submitToReviewComitee.getValue(),questEvent.getValue(),mcs.getValue(),questionComment.getText(),questionVersion, picturePath,questionResourceClients);
 		}else {
 			// create new question or create new major version question 
-			delegate.createNewQuestion(questionType.getValue(),questionShortName.getText(),questionTextArea.getText(),auther.getSelected(),rewiewer.getSelected(),submitToReviewComitee.getValue(),questEvent.getValue(),mcs.getValue(),questionComment.getText(),questionVersion,picturePath,questionResourceClients);
+			delegate.createNewQuestion(questionType.getValue(),questionShortName.getText(),questionTextArea.getText(),author.getSelected(),rewiewer.getSelected(),submitToReviewComitee.getValue(),questEvent.getValue(),mcs.getValue(),questionComment.getText(),questionVersion,picturePath,questionResourceClients);
 		}
 	}
 
@@ -927,8 +929,10 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	
 	private boolean validationOfFields() {
 		
-		auther.removeStyleName("higlight_onViolation");
+		author.getTextField().advancedTextBox.removeStyleName("higlight_onViolation");
 		questionComment.removeStyleName("higlight_onViolation");
+		questionType.removeStyleName("higlight_onViolation");
+		questionTextArea.removeStyleName("higlight_onViolation");
 		
 		if(submitToReviewComitee.getValue() == true) 
 		{
@@ -946,10 +950,10 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		
 		boolean flag = true;
 		StringBuilder errorString = new StringBuilder();
-		if(auther.getSelected() == null) {
+		if(author.getSelected() == null) {
 			flag = false;
 			errorString.append(constants.authorMayNotBeNull()).append("<br />");
-			auther.addStyleName("higlight_onViolation");
+			author.getTextField().advancedTextBox.addStyleName("higlight_onViolation");
 		}
 		
 		if(questionComment.getText() == null || questionComment.getText().isEmpty()) {
@@ -958,6 +962,18 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 			questionComment.addStyleName("higlight_onViolation");
 		}
 		
+		if(questionType.getValue() == null) {
+			flag = false;
+			errorString.append(constants.questionTypeMayNotBeNull()).append("<br />");
+			questionType.addStyleName("higlight_onViolation");
+		}
+		
+		//TODO need to change this condition
+		if(questionTextArea.getText() == null || questionTextArea.getText().isEmpty() || questionTextArea.getText().length() <= 10) {
+			flag = false;
+			errorString.append(constants.questionTextMayNotBeNull()).append("<br />");
+			questionTextArea.addStyleName("higlight_onViolation");
+		}
 		if(flag == false) {
 			ReceiverDialog.showMessageDialog(errorString.toString());
 		}
