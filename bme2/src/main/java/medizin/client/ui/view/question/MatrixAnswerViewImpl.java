@@ -144,7 +144,7 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 	@UiHandler("closeButton")
 	public void onCloseButtonClick(ClickEvent event) {
 		hide();
-
+		delegate.closedMatrixValidityView();
 	}
 
 	@Override
@@ -177,6 +177,7 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 		matrix.setWidget(currentRow, 0, hp);
 		matrix.setWidget(currentRow + 1, 0, addAnswerX);
 
+		textBox.setFocus(true);
 		addAnswerX.setEnabled(false);
 		addAnswerY.setEnabled(false);
 
@@ -264,6 +265,7 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 		matrix.setWidget(0, currentColumn, vp);
 		matrix.setWidget(0, currentColumn + 1, addAnswerY);
 
+		textBox.setFocus(true);
 		addAnswerX.setEnabled(false);
 		addAnswerY.setEnabled(false);
 
@@ -570,6 +572,7 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 			textBox.setVisible(true);
 			edit.setVisible(false);
 			save.setVisible(true);
+			textBox.setFocus(true);
 		}
 	}
 	
@@ -646,7 +649,11 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 							}
 						});
 					}else {
-						Log.info("Error in delete operation");
+						if(isAnswerX ==  true) {
+							matrix.removeRow(matrix.getRowCount() - 2);
+						}else {
+							matrix.removeCell(0, matrix.getCellCount(0) -2);
+						}
 					}
 				}
 				
@@ -888,7 +895,10 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 
 		@Override
 		public boolean apply(MatrixValidityVO input) {
-						
+			
+			if(answerX == null) {
+				return false;
+			}
 			if(input != null && input.getAnswerX() != null && input.getAnswerX().getAnswerProxy() != null) {
 				return input.getAnswerX().getAnswerProxy().getId().equals(answerX.getId());
 			}
@@ -906,6 +916,10 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 		
 		@Override
 		public boolean apply(MatrixValidityVO input) {
+			
+			if(answerY == null) {
+				return false;
+			}
 			
 			if(input != null && input.getAnswerY() != null && input.getAnswerY().getAnswerProxy() != null) {
 				return input.getAnswerY().getAnswerProxy().getId().equals(answerY.getId());

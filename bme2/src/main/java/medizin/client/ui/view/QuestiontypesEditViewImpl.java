@@ -1696,7 +1696,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		{
 			message = constants.questionTypeErroMsg();
 		}
-		else if (ClientUtility.isNumber(textBox.getText()))
+		else if (!ClientUtility.isNumber(textBox.getText()))
 		{
 			message = constants.questionTypeNumErrorMsg();
 		}

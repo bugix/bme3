@@ -56,6 +56,8 @@ public interface AnswerDialogbox extends IsWidget {
 
 	void setAutherPickerValues(Collection<PersonProxy> values,PersonProxy logedUser);
 
+	void setValues(AnswerProxy answer);
+
 	/*DefaultSuggestBox<PersonProxy, EventHandlingValueHolderItem<PersonProxy>> getAutherSuggestBox();
 
 	ImagePolygonViewer getImagePolygonViewer();

@@ -70,8 +70,6 @@ public class MatrixAnswerListViewImpl extends Composite implements MatrixAnswerL
 
 	@UiField(provided = true)
 	public SimplePager pager;
-
-	
 	
 	@UiHandler("newAnswer")
 	void addEventClicked(ClickEvent event) {
@@ -297,21 +295,35 @@ public class MatrixAnswerListViewImpl extends Composite implements MatrixAnswerL
 //                return renderer.render(object.getQuestion());
 //            }
 //        }, "Question");
-    	addColumn(new ActionCell<MatrixValidityProxy>(constant.delete(), new ActionCell.Delegate<MatrixValidityProxy>() 
-    	{
-    	            public void execute(MatrixValidityProxy answer) {
-    	              delegate.deleteAnswerClicked(answer);
-    	            }
-    	          }), constant.delete(), new GetValue<MatrixValidityProxy>() {
-    	        public MatrixValidityProxy getValue(MatrixValidityProxy contact) {
-    	          return contact;
-    	        }
-    	      }, null);
+    	addColumn(new ActionCell<MatrixValidityProxy>(McAppConstant.EDIT_ICON, new ActionCell.Delegate<MatrixValidityProxy>() 
+    			{
+		    		public void execute(MatrixValidityProxy matrixValidity) {
+		    			delegate.editMatrixValidityClicked(matrixValidity);
+		    	            
+		    		}
+    	          
+    			}), constant.edit(), new GetValue<MatrixValidityProxy>() {
+    	        
+    		public MatrixValidityProxy getValue(MatrixValidityProxy contact) {
+    			return contact;
+    		}
+    	}, null);
     	
+    	addColumn(new ActionCell<MatrixValidityProxy>(McAppConstant.DELETE_ICON, new ActionCell.Delegate<MatrixValidityProxy>() 
+    			{
+		    		public void execute(MatrixValidityProxy matrixValidity) {
+		    			delegate.deleteMatrixValidityClicked(matrixValidity);
+		    		}
+    			}), constant.delete(), new GetValue<MatrixValidityProxy>() {
+    		public MatrixValidityProxy getValue(MatrixValidityProxy contact) {
+    			return contact;
+    		}
+    	}, null);
     	tableAnswer.addColumnStyleName(0, "iconColumn");
     	/*tableAnswer.addColumnStyleName(1, "questionTextColumn");
     	tableAnswer.addColumnStyleName(2, "questionTextColumn");*/
-    	tableAnswer.addColumnStyleName(3, "deleteColumn");
+    	tableAnswer.addColumnStyleName(3, "iconColumn");
+    	tableAnswer.addColumnStyleName(4, "iconColumn");
 
 
     }

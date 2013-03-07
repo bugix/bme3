@@ -35,6 +35,7 @@ import medizin.client.ui.view.question.MatrixAnswerView;
 import medizin.client.ui.view.question.MatrixAnswerViewImpl;
 import medizin.client.ui.view.question.QuestionDetailsView;
 import medizin.client.ui.view.question.QuestionDetailsViewImpl;
+import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.ui.widget.resource.dndview.vo.State;
 import medizin.client.util.Matrix;
@@ -465,7 +466,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		final Range range = answerTable.getVisibleRange();
 		
 		
-		requests.answerRequest().findAnswersEntriesByQuestion(question.getId(), range.getStart(), range.getLength()).fire( new BMEReceiver<List<AnswerProxy>>(){
+		requests.answerRequest().findAnswersEntriesByQuestion(question.getId(), range.getStart(), range.getLength()).with("question","rewiewer","autor","comment").fire( new BMEReceiver<List<AnswerProxy>>(){
 
 
 			@Override
@@ -558,56 +559,23 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		
 	}
 	
-	private AnswerDialogbox answerDialogbox;
+	//private AnswerDialogbox answerDialogbox;
 	/*private RequestFactoryEditorDriver<AnswerProxy, AnswerDialogboxImpl> answerDriver;*/
-	private AnswerProxy answerProxy;
-	private CommentProxy commentProxy;
+	//private AnswerProxy answerProxy;
+	//private CommentProxy commentProxy;
 
 	@Override
 	public void addNewAnswerClicked() {
 		
 		if(question.getQuestionType() != null && QuestionTypes.Matrix.equals(question.getQuestionType().getQuestionType()) == true) {
-			
-			
-			final MatrixAnswerView matrixAnswerView = new MatrixAnswerViewImpl(question);
-			matrixAnswerView.setDelegate(this);
-			
-//			matrixAnswerView.setRewiewerPickerValues(Collections.<PersonProxy>emptyList());
-	        requests.personRequest().findPersonEntries(0, 50).with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).fire(new BMEReceiver<List<PersonProxy>>() {
-
-	            public void onSuccess(List<PersonProxy> response) {
-	                List<PersonProxy> values = new ArrayList<PersonProxy>();
-	                values.add(null);
-	                values.addAll(response);
-	                matrixAnswerView.setRewiewerPickerValues(values);
-	            }
-	        });
-	        
-	       // answerDialogbox.setAutherPickerValues(Collections.<PersonProxy>emptyList());
-	        requests.personRequest().findPersonEntries(0, 50).with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).fire(new BMEReceiver<List<PersonProxy>>() {
-
-	            public void onSuccess(List<PersonProxy> response) {
-	                List<PersonProxy> values = new ArrayList<PersonProxy>();
-	                values.add(null);
-	                values.addAll(response);
-	                matrixAnswerView.setAutherPickerValues(values,userLoggedIn);
-	            }
-	        });
-			
-			requests.MatrixValidityRequest().findAllMatrixValidityForQuestion(question.getId()).with("answerX","answerY","answerX.autor","answerX.rewiewer","answerX.comment","answerY.autor","answerY.rewiewer","answerY.comment").fire(new BMEReceiver<List<MatrixValidityProxy>>() {
-
-				@Override
-				public void onSuccess(List<MatrixValidityProxy> response) {
-										
-			        matrixAnswerView.setValues(response);
-			        matrixAnswerView.display();
-				}
-			});
+			openMatrixAnswerView(null);
 			return;
+		}else {
+			openAnswerView(null);	
 		}
 		
-		answerDialogbox = new AnswerDialogboxImpl(question,eventBus,reciverMap);
-		answerDialogbox.setDelegate(this);
+		/*answerDialogbox = new AnswerDialogboxImpl(question,eventBus,reciverMap);
+		answerDialogbox.setDelegate(this);*/
 		
 		/*if(userLoggedIn.getIsAdmin() == false) {
 			answerDialogbox.getAutherSuggestBox().setSelected(userLoggedIn);
@@ -655,7 +623,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 
 	        answerDriver.flush();
 */		
-		answerDialogbox.setValidityPickerValues(Arrays.asList(Validity.values()));
+		/*answerDialogbox.setValidityPickerValues(Arrays.asList(Validity.values()));
 		answerDialogbox.setRewiewerPickerValues(Collections.<PersonProxy>emptyList());
 	        requests.personRequest().findPersonEntries(0, 50).with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).fire(new BMEReceiver<List<PersonProxy>>() {
 
@@ -678,7 +646,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	            }
 	        });
 	        
-	        /*if(userLoggedIn!=null)
+	        if(userLoggedIn!=null)
 	        {
 	        	if(userLoggedIn.getIsAdmin() == false) {
 	        		Log.info("1 " + answerDialogbox);
@@ -689,9 +657,9 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	        		//answerDialogbox.getAutherSuggestBox().setSelected(userLoggedIn);
 	        		answerDialogbox.getAutherSuggestBox().setEnabled(false);
 	        	}
-	        }*/
+	        }
 	        	
-	        answerDialogbox.display(question.getQuestionType().getQuestionType());
+	        answerDialogbox.display(question.getQuestionType().getQuestionType());*/
 
 		
 	}
@@ -979,26 +947,6 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 				initAnswerView();
 				
 			}
-	          /*public void onFailure(ServerFailure error){
-	        	  ErrorPanel erorPanel = new ErrorPanel();
-	        	  erorPanel.setErrorMessage(error.getMessage());
-					Log.error(error.getMessage());
-				}
-	          @Override
-				public void onViolation(Set<Violation> errors) {
-					Iterator<Violation> iter = errors.iterator();
-					String message = "";
-					while(iter.hasNext()){
-						message += iter.next().getMessage() + "<br>";
-					}
-					Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Antwort löschen -" + message);
-					
-		        	  ErrorPanel erorPanel = new ErrorPanel();
-		        	  erorPanel.setErrorMessage(message);
-					
-
-					
-				}*/
 		});
 		
 	}
@@ -1060,19 +1008,6 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 				public void onSuccess(Void response) {
 					Log.info("Picture path updated.");
 				}
-				
-				/*@Override
-				public void onConstraintViolation(
-						Set<ConstraintViolation<?>> violations) {
-					Log.error(violations.toString());
-					super.onConstraintViolation(violations);
-				}
-				
-				@Override
-				public void onFailure(ServerFailure error) {
-					Log.error(error.getMessage());
-					super.onFailure(error);
-				}*/
 			});
 	
 		}else {
@@ -1091,19 +1026,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 				public void onSuccess(Boolean response) {
 					Log.info("Picture deleted " + response);
 				}
-				
-				/*@Override
-				public void onConstraintViolation(
-						Set<ConstraintViolation<?>> violations) {
-					Log.error(violations.toString());
-					super.onConstraintViolation(violations);
-				}
-				
-				@Override
-				public void onFailure(ServerFailure error) {
-					Log.error(error.getMessage());
-					super.onFailure(error);
-				}*/
+
 			});
 		}else {
 			Log.error("Question is null");
@@ -1381,6 +1304,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 					}else {
 						function.apply(proxy2);		
 					}
+					initMatrixAnswerView();
 				}
 			});
 			
@@ -1502,12 +1426,6 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	}
 
 	@Override
-	public void deleteAnswerClicked(MatrixValidityProxy Answer) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void addMatrixNewAnswerClicked() {
 		
 		if(question.getQuestionType() != null && QuestionTypes.Matrix.equals(question.getQuestionType().getQuestionType()) == true) {
@@ -1548,5 +1466,112 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 				}
 			});			
 		}
+	}
+
+	private AnswerDialogbox openAnswerView(final AnswerProxy answer) {
+		
+		final AnswerDialogbox answerDialogbox = new AnswerDialogboxImpl(question,eventBus,reciverMap);
+		answerDialogbox.setDelegate(this);
+		
+		// because display need to be called after author and reviewer list.  
+		final Function<Void, Void> sync = new Function<Void, Void>() {
+			
+			private int count = 0;  
+			@Override
+			public Void apply(Void input) {
+				count++;
+				if(count == 2) {
+					if(answer != null) {
+			        	answerDialogbox.setValues(answer);
+			        }
+			        answerDialogbox.display(question.getQuestionType().getQuestionType());
+				}
+				return null;
+			}
+		}; 
+		
+		
+		answerDialogbox.setValidityPickerValues(Arrays.asList(Validity.values()));
+		answerDialogbox.setRewiewerPickerValues(Collections.<PersonProxy>emptyList());
+        requests.personRequest().findPersonEntries(0, 50).with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).fire(new BMEReceiver<List<PersonProxy>>() {
+
+            public void onSuccess(List<PersonProxy> response) {
+                List<PersonProxy> values = new ArrayList<PersonProxy>();
+                values.add(null);
+                values.addAll(response);
+                answerDialogbox.setRewiewerPickerValues(values);
+                sync.apply(null);
+            }
+        });
+        requests.personRequest().findPersonEntries(0, 50).with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).fire(new BMEReceiver<List<PersonProxy>>() {
+
+            public void onSuccess(List<PersonProxy> response) {
+                List<PersonProxy> values = new ArrayList<PersonProxy>();
+                values.add(null);
+                values.addAll(response);
+                answerDialogbox.setAutherPickerValues(values,userLoggedIn);
+                sync.apply(null);
+            }
+        });
+	                
+        return answerDialogbox;
+	}
+	
+	@Override
+	public void editAnswerClicked(AnswerProxy answer) {
+		openAnswerView(answer);
+	}
+
+	private void openMatrixAnswerView(final MatrixValidityProxy matrixValidity) {
+		final MatrixAnswerView matrixAnswerView = new MatrixAnswerViewImpl(question);
+		matrixAnswerView.setDelegate(this);
+				
+		matrixAnswerView.setRewiewerPickerValues(Collections.<PersonProxy>emptyList());
+        requests.personRequest().findPersonEntries(0, 50).with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).fire(new BMEReceiver<List<PersonProxy>>() {
+
+            public void onSuccess(List<PersonProxy> response) {
+                List<PersonProxy> values = new ArrayList<PersonProxy>();
+                values.add(null);
+                values.addAll(response);
+                matrixAnswerView.setRewiewerPickerValues(values);
+            }
+        });
+        
+       // answerDialogbox.setAutherPickerValues(Collections.<PersonProxy>emptyList());
+        requests.personRequest().findPersonEntries(0, 50).with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).fire(new BMEReceiver<List<PersonProxy>>() {
+
+            public void onSuccess(List<PersonProxy> response) {
+                List<PersonProxy> values = new ArrayList<PersonProxy>();
+                values.add(null);
+                values.addAll(response);
+                matrixAnswerView.setAutherPickerValues(values,userLoggedIn);
+            }
+        });
+		
+		requests.MatrixValidityRequest().findAllMatrixValidityForQuestion(question.getId()).with("answerX","answerY","answerX.autor","answerX.rewiewer","answerX.comment","answerY.autor","answerY.rewiewer","answerY.comment").fire(new BMEReceiver<List<MatrixValidityProxy>>() {
+
+			@Override
+			public void onSuccess(List<MatrixValidityProxy> response) {
+									
+		        matrixAnswerView.setValues(response);
+		        matrixAnswerView.display();
+			}
+		});
+	}
+	
+	@Override
+	public void editMatrixValidityClicked(MatrixValidityProxy matrixValidity) {
+		openMatrixAnswerView(matrixValidity);
+	}
+
+	@Override
+	public void deleteMatrixValidityClicked(MatrixValidityProxy matrixValidity) {
+		// TODO delete need to be implemented
+		ConfirmationDialogBox.showOkDialogBox("TODO", "Delete functionality is not implemented.");
+	}
+
+	@Override
+	public void closedMatrixValidityView() {
+		initMatrixAnswerView(); // refresh matrix list view.
 	}
 }

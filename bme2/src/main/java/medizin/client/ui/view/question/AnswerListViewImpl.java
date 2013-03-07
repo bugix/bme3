@@ -53,6 +53,8 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 	private static AnswerViewImplUiBinder uiBinder = GWT
 			.create(AnswerViewImplUiBinder.class);
 
+	private BmeConstants constants = GWT.create(BmeConstants.class);
+	
 	interface AnswerViewImplUiBinder extends
 			UiBinder<Widget, AnswerListViewImpl> {
 	}
@@ -307,12 +309,23 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 //                return renderer.render(object.getQuestion());
 //            }
 //        }, "Question");
-    	addColumn(new ActionCell<AnswerProxy>("Entf.", new ActionCell.Delegate<AnswerProxy>() 
+        addColumn(new ActionCell<AnswerProxy>(McAppConstant.EDIT_ICON, new ActionCell.Delegate<AnswerProxy>() 
+            	{
+        			public void execute(AnswerProxy answer) {
+        				delegate.editAnswerClicked(answer);
+        			}
+            	}), constants.edit(), new GetValue<AnswerProxy>() {
+        	public AnswerProxy getValue(AnswerProxy contact) {
+        		return contact;
+        	}
+        }, null);
+        
+    	addColumn(new ActionCell<AnswerProxy>(McAppConstant.DELETE_ICON, new ActionCell.Delegate<AnswerProxy>() 
     	{
     	            public void execute(AnswerProxy answer) {
     	              delegate.deleteAnswerClicked(answer);
     	            }
-    	          }), "Entfernen", new GetValue<AnswerProxy>() {
+    	          }), constants.delete(), new GetValue<AnswerProxy>() {
     	        public AnswerProxy getValue(AnswerProxy contact) {
     	          return contact;
     	        }
@@ -320,7 +333,8 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
     	
     	tableAnswer.addColumnStyleName(0, "iconColumn");
     	tableAnswer.addColumnStyleName(1, "questionTextColumn");
-    	tableAnswer.addColumnStyleName(2, "deleteColumn");
+    	tableAnswer.addColumnStyleName(2, "iconColumn");
+    	tableAnswer.addColumnStyleName(3, "iconColumn");
 
 
     }

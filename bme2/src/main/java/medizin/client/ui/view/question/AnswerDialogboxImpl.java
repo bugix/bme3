@@ -439,6 +439,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 	RichTextArea answerTextArea;
 
 	private Delegate delegate;
+	private AnswerProxy answer;
 
 	@Override
 	public void setDelegate(Delegate delegate) {
@@ -643,7 +644,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 				break;
 			}
 			
-			delegate.saveAnswerProxy(null, answerTextArea.getText(), auther.getSelected(), rewiewer.getSelected(), submitToReviewComitee.getValue(), comment.getText(),validity.getValue(),points,mediaPath,additionalKeywords,sequenceNumber, new Function<AnswerProxy,Void>() {
+			delegate.saveAnswerProxy(answer, answerTextArea.getText(), auther.getSelected(), rewiewer.getSelected(), submitToReviewComitee.getValue(), comment.getText(),validity.getValue(),points,mediaPath,additionalKeywords,sequenceNumber, new Function<AnswerProxy,Void>() {
 
 				@Override
 				public Void apply(AnswerProxy input) {
@@ -753,6 +754,20 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 	@Override
 	public void close() {
 		hide();
+	}
+
+	@Override
+	public void setValues(AnswerProxy answer) {
+		this.answer = answer;
+		answerTextArea.setHTML(answer.getAnswerText());
+		txtAdditionalKeyword.setText(answer.getAdditionalKeywords());
+		txtSequenceNumber.setText(answer.getSequenceNumber() != null ? answer.getSequenceNumber().toString() : null);
+		auther.setSelected(answer.getAutor());
+		rewiewer.setSelected(answer.getRewiewer());
+		validity.setValue(answer.getValidity());
+		submitToReviewComitee.setValue(answer.getSubmitToReviewComitee());
+		comment.setText(answer.getComment() != null?answer.getComment().getComment() : null);
+		
 	}
 
 	/*@Override

@@ -18,6 +18,7 @@ public interface AnswerListView extends IsWidget {
 		void deleteAnswerClicked(AnswerProxy Answer);
 		//void editAnswerClicked();
 		void addNewAnswerClicked();
+		void editAnswerClicked(AnswerProxy answer);
 
 	}
 
