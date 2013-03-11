@@ -3,7 +3,6 @@ package medizin.client.ui.view;
 import java.util.ArrayList;
 import java.util.List;
 
-import medizin.client.proxy.AnswerProxy;
 import medizin.client.proxy.MatrixValidityProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.style.resources.MyCellTableResources;
@@ -13,7 +12,7 @@ import medizin.client.ui.McAppConstant;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEvent;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEventHandler;
-import medizin.client.ui.widget.resource.matrix.MatrixAnswerViewer;
+import medizin.client.ui.widget.matrix.MatrixAnswerViewer;
 import medizin.shared.i18n.BmeConstants;
 
 import com.google.gwt.cell.client.AbstractCell;

@@ -1,4 +1,4 @@
-package medizin.client.ui.widget.resource.matrix;
+package medizin.client.ui.widget.matrix;
 
 import java.util.List;
 
@@ -15,7 +15,6 @@ import com.google.common.collect.FluentIterable;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.TextOverflow;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.Style.VerticalAlign;
 import com.google.gwt.dom.client.Style.WhiteSpace;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -26,7 +25,6 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.Widget;
 
 public class MatrixAnswerViewer extends Composite {

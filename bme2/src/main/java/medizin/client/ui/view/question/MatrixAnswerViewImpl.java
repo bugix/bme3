@@ -8,6 +8,8 @@ import medizin.client.proxy.MatrixValidityProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.shared.Validity;
+import medizin.client.ui.McAppConstant;
+import medizin.client.ui.widget.HtmlToggleButton;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEvent;
@@ -47,7 +49,6 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -207,9 +208,9 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 				}
 				
 				for (int columnIndex = 1; columnIndex < (totalColumn - 1); columnIndex++) {
-
-					final ToggleButton button = new ToggleButton("X", "Y");
-					button.setWidth("25px");
+					final HtmlToggleButton button = new HtmlToggleButton(McAppConstant.WRONG_ICON,McAppConstant.RIGHT_ICON);
+					button.setWidth("13px");
+					button.getElement().getStyle().setBorderWidth(0, Unit.PX);
 					matrix.setWidget(currentRow, columnIndex, button);
 					
 					final MatrixValidityVO matrixValidityVO;
@@ -294,8 +295,9 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 				}
 
 				for (int rowIndex = 1; rowIndex < (totalRows - 1); rowIndex++) {
-					final ToggleButton button = new ToggleButton("X", "Y");
-					button.setWidth("25px");
+					final HtmlToggleButton button = new HtmlToggleButton(McAppConstant.WRONG_ICON, McAppConstant.RIGHT_ICON); //new HtmlToggleButton("X", "Y");
+					button.setWidth("13px");
+					button.getElement().getStyle().setBorderWidth(0, Unit.PX);
 					matrix.setWidget(rowIndex, currentColumn, button);
 					
 					final MatrixValidityVO matrixValidityVO;
@@ -529,9 +531,9 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 	private class ButtonClickHandler implements ClickHandler {
 		
 		private final MatrixValidityVO mValidtyVO;
-		private final ToggleButton button;
+		private final HtmlToggleButton button;
 		
-		public ButtonClickHandler(MatrixValidityVO mValidtyVO, ToggleButton button) {
+		public ButtonClickHandler(MatrixValidityVO mValidtyVO, HtmlToggleButton button) {
 			this.mValidtyVO = mValidtyVO;
 			this.button = button;
 		}
@@ -886,11 +888,12 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 			int totalColumns = matrix.getCellCount(currentRow);
 			
 			if(totalRows > currentRow && totalColumns > currentColumn && matrix.getWidget(currentRow, currentColumn) != null) {
-				ToggleButton buttonX = (ToggleButton) matrix.getWidget(currentRow, currentColumn);
+				HtmlToggleButton buttonX = (HtmlToggleButton) matrix.getWidget(currentRow, currentColumn);
 				Log.info("button is " + buttonX);					
 			}else {
-				final ToggleButton button = new ToggleButton("X", "Y");
-				button.setWidth("25px");
+				final HtmlToggleButton button = new HtmlToggleButton(McAppConstant.WRONG_ICON, McAppConstant.RIGHT_ICON);
+				button.setWidth("13px");
+				button.getElement().getStyle().setBorderWidth(0, Unit.PX);
 				matrix.setWidget(currentRow, currentColumn, button);
 				button.setDown(Validity.Wahr.equals(vo.getValidity())); // for true down
 				button.addClickHandler(new ButtonClickHandler(vo, button));
