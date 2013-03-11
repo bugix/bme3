@@ -28,6 +28,10 @@ import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Overflow;
+import com.google.gwt.dom.client.Style.TextOverflow;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.dom.client.Style.WhiteSpace;
 import com.google.gwt.editor.client.Editor.Ignore;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -122,7 +126,8 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 		});
 
 		addAnswerY.addStyleName("rowRotate90");
-
+		addAnswerY.getElement().getStyle().setPaddingTop(0, Unit.PX);
+				
 		matrix.setWidget(0, 1, addAnswerY);
 		matrix.setWidget(1, 0, addAnswerX);
 
@@ -162,6 +167,11 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 		
 		final TextBox textBox = new TextBox();
 		final Label label = new Label();
+		label.setWidth("100px");
+		label.getElement().getStyle().setTextOverflow(TextOverflow.ELLIPSIS);
+		label.getElement().getStyle().setOverflow(Overflow.HIDDEN);
+		label.getElement().getStyle().setWhiteSpace(WhiteSpace.NOWRAP);
+		
 		label.setVisible(false);
 		editX.setVisible(false);
 		HorizontalPanel hp = new HorizontalPanel();
@@ -501,6 +511,7 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 							
 							label.setVisible(true);	
 							label.setText(text);
+							label.setTitle(text);
 							
 							answer.setAnswer(text);
 							
@@ -799,7 +810,13 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 		textBoxX.setVisible(false);
 		saveX.setVisible(false);
 		labelX.setText(vo.getAnswerX().getAnswer());
+		labelX.setTitle(vo.getAnswerX().getAnswer());
 		textBoxX.setText(vo.getAnswerX().getAnswer());
+		
+		labelX.setWidth("100px");
+		labelX.getElement().getStyle().setTextOverflow(TextOverflow.ELLIPSIS);
+		labelX.getElement().getStyle().setOverflow(Overflow.HIDDEN);
+		labelX.getElement().getStyle().setWhiteSpace(WhiteSpace.NOWRAP);
 		
 		final int currentRowX = matrix.getRowCount() - 1;
 				
@@ -842,8 +859,9 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 		textBoxY.setVisible(false);
 		saveY.setVisible(false);
 		labelY.setText(vo.getAnswerY().getAnswer());
+		labelY.setTitle(vo.getAnswerY().getAnswer());
 		textBoxY.setText(vo.getAnswerY().getAnswer());
-						
+		
 		int widgetAddColumnY = matrix.getCellCount(0) - 1;
 		matrix.setWidget(0, widgetAddColumnY, vp);
 		matrix.setWidget(0, widgetAddColumnY + 1, addAnswerY);

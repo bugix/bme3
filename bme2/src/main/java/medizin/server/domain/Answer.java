@@ -22,6 +22,7 @@ import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import medizin.client.proxy.AnswerProxy;
 import medizin.client.shared.Validity;
 import medizin.shared.Status;
 
@@ -121,7 +122,7 @@ public class Answer {
         TypedQuery<Answer> q = em.createQuery("SELECT ans FROM Answer ans " + 
         		" WHERE ans.question = :question", Answer.class).setFirstResult(start).setMaxResults(max);
         q.setParameter("question", question);
-        return q.getResultList();		
+        return q.getResultList();
 	}
 	
 	public static List<Answer> findAnswersByQuestion(Long id){
@@ -319,5 +320,27 @@ public class Answer {
 				QuestionResource.deleteFiles(Sets.newHashSet(this.getMediaPath()));
 			}
 		}
+	}
+	
+	public static Boolean acceptMatrixAnswer(Question question, Person userLoggedIn)
+	{
+		for (Answer answer : question.getAnswers())
+		{	
+			if(userLoggedIn.getIsAdmin()){
+				answer.setIsAnswerAcceptedAdmin(true);
+				answer.setIsAnswerActive(true);
+				answer.setStatus(Status.ACTIVE);
+			} 
+			if(answer.getRewiewer().getId() == userLoggedIn.getId()) {
+				answer.setIsAnswerAcceptedReviewWahrer(true);
+			}
+			if(answer.getAutor().getId() == userLoggedIn.getId())
+			{
+				answer.setIsAnswerAcceptedAutor(true);
+			}
+			
+			answer.persist();
+		}
+		return true;
 	}
 }

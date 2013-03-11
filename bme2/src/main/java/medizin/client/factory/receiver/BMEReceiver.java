@@ -21,11 +21,11 @@ public abstract class BMEReceiver<T> extends Receiver<T> {
 	private Map<String, Widget> localViewMap;
 	
 	public BMEReceiver() {
-		Log.info("Call BMEReceiver Constructor()");
+		//Log.info("Call BMEReceiver Constructor()");
 	}
 
 	public BMEReceiver(Map<String, Widget> viewMap) {
-		Log.info("Call BMEReceiver Constructor(Map)");
+		//Log.info("Call BMEReceiver Constructor(Map)");
 
 		
 		localViewMap = viewMap;
@@ -33,11 +33,11 @@ public abstract class BMEReceiver<T> extends Receiver<T> {
 		if (localViewMap == null || localViewMap.isEmpty()) {
 			Log.info("Map Null from constructor");
 		} else {
-			Log.info("Map Not Null  from constructor");
-			Log.info("Size of map is: " + viewMap.size());
+			//Log.info("Map Not Null  from constructor");
+			//Log.info("Size of map is: " + viewMap.size());
 			
 			for (Widget widget : localViewMap.values()) {
-				Log.info("Remove... Highlight");
+				//Log.info("Remove... Highlight");
 				widget.removeStyleName("higlight_onViolation");
 			}
 		}
@@ -59,7 +59,7 @@ public abstract class BMEReceiver<T> extends Receiver<T> {
 	public void showMessage(String error) {
 
 		final String errorMsg = error;
-		Log.info("Error Message" + errorMsg);
+		//Log.info("Error Message" + errorMsg);
 
 		ReceiverDialog.showMessageDialog(error);
 
@@ -80,7 +80,7 @@ public abstract class BMEReceiver<T> extends Receiver<T> {
 	@Override
 	public final void onConstraintViolation(Set<ConstraintViolation<?>> violations) {
 	
-		Log.info("Call onConstraintViolation");
+		//Log.info("Call onConstraintViolation");
 		
 		StringBuilder errorBuffor = new StringBuilder();
 		
@@ -97,8 +97,8 @@ public abstract class BMEReceiver<T> extends Receiver<T> {
 						   .append("<tr />");
 				
 				if(localViewMap.containsKey(path)) {
-					Log.info("Violated key: " + path);
-					Log.info("Violated value: " + localViewMap.get(path));
+					//Log.info("Violated key: " + path);
+					//Log.info("Violated value: " + localViewMap.get(path));
 					localViewMap.get(path).addStyleName("higlight_onViolation");
 				}
 			}

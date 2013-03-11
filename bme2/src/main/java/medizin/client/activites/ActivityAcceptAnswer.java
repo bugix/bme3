@@ -6,6 +6,7 @@ import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.PlaceAcceptAnswer;
 import medizin.client.proxy.AnswerProxy;
+import medizin.client.proxy.MatrixValidityProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.request.AnswerRequest;
 import medizin.client.ui.DeclineEmailPopupDelagate;
@@ -13,6 +14,10 @@ import medizin.client.ui.view.AcceptAnswerSubView;
 import medizin.client.ui.view.AcceptAnswerSubViewImpl;
 import medizin.client.ui.view.AcceptAnswerView;
 import medizin.client.ui.view.AcceptAnswerViewImpl;
+import medizin.client.ui.view.AcceptMatrixAnswerSubView;
+import medizin.client.ui.view.AcceptMatrixAnswerSubViewImpl;
+import medizin.client.ui.view.question.MatrixAnswerListView;
+import medizin.shared.QuestionTypes;
 import medizin.shared.Status;
 
 import com.allen_sauer.gwt.log.client.Log;
@@ -29,7 +34,7 @@ import com.google.web.bindery.requestfactory.shared.EntityProxy;
  * @author masterthesis
  *
  */
-public class ActivityAcceptAnswer extends AbstractActivityWrapper implements AcceptAnswerView.Delegate, AcceptAnswerSubView.Delegate, DeclineEmailPopupDelagate {
+public class ActivityAcceptAnswer extends AbstractActivityWrapper implements AcceptAnswerView.Delegate, AcceptAnswerSubView.Delegate, DeclineEmailPopupDelagate, AcceptMatrixAnswerSubView.Delegate{
 
 	private PlaceAcceptAnswer answerPlace;
 	private McAppRequestFactory requests;
@@ -145,13 +150,22 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 				{
 					QuestionProxy questionProxy = proxy;
 					
-					AcceptAnswerSubView acceptAnswerSubView = new AcceptAnswerSubViewImpl();				
-				    acceptAnswerSubView.getTable().setRowCount(questionProxy.getAnswers().size(), true);
-				    acceptAnswerSubView.setDelegate(ActivityAcceptAnswer.this);
-				    acceptAnswerSubView.setDelegatePopup(ActivityAcceptAnswer.this);
-				    acceptAnswerSubView.setProxy(questionProxy);
-				    questionPanel.add(acceptAnswerSubView);
-					
+					if (questionProxy.getQuestionType().getQuestionType().equals(QuestionTypes.Matrix))
+					{
+						AcceptMatrixAnswerSubView matrixAnswerSubView = new AcceptMatrixAnswerSubViewImpl();
+						matrixAnswerSubView.setDelegate(ActivityAcceptAnswer.this);
+						matrixAnswerSubView.setProxy(questionProxy);
+						questionPanel.add(matrixAnswerSubView);
+					}
+					else
+					{
+						AcceptAnswerSubView acceptAnswerSubView = new AcceptAnswerSubViewImpl();				
+					    acceptAnswerSubView.getTable().setRowCount(questionProxy.getAnswers().size(), true);
+					    acceptAnswerSubView.setDelegate(ActivityAcceptAnswer.this);
+					    acceptAnswerSubView.setDelegatePopup(ActivityAcceptAnswer.this);
+					    acceptAnswerSubView.setProxy(questionProxy);
+					    questionPanel.add(acceptAnswerSubView);
+					}
 				}
 				
 			}
@@ -252,6 +266,7 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 			if(userLoggedIn.getIsAdmin()){
 				answerProxy.setIsAnswerAcceptedAdmin(true);
 				answerProxy.setIsAnswerActive(true);
+				answerProxy.setStatus(Status.ACTIVE);
 			} 
 			if(answerProxy.getRewiewer().getId() == userLoggedIn.getId()) {
 				answerProxy.setIsAnswerAcceptedReviewWahrer(true);
@@ -274,12 +289,13 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 		}
 		
 	}
+	//not user
 	@Override
 	public void rejectClicked(EntityProxy entityProxy, String message) {
-		if(entityProxy instanceof AnswerProxy){
+		/*if(entityProxy instanceof AnswerProxy){
 			Log.debug("is Answer");
 			AnswerRequest req = requests.answerRequest();
-			AnswerProxy answerProxy =  (AnswerProxy)entityProxy;
+			AnswerProxy answerProxy =  (AnswerProxy)entityProxy;`
 			
 			req.remove().using(answerProxy).fire(new BMEReceiver<Void>(){
 	
@@ -289,7 +305,7 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 					
 				}
 			});
-		}
+		}*/
 	}
 
 	@Override
@@ -306,6 +322,74 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 				init();
 			}
           
+		});
+	}
+
+	@Override
+	public void onMatrixRangeChanged(final QuestionProxy questionProxy, final AbstractHasData<MatrixValidityProxy> table, final AcceptMatrixAnswerSubView matrixAnswerListView) {
+		final Range range = table.getVisibleRange();
+		
+		requests.MatrixValidityRequest().countAllMatrixValidityForQuestion(questionProxy.getId()).fire(new BMEReceiver<Long>() {
+
+			@Override
+			public void onSuccess(Long response) {
+				if (view == null)
+				{
+					return;
+				}
+				
+				table.setRowCount(response.intValue());
+				
+				findMatrixAnswersEntriesNonAcceptedAdminByQuestion(questionProxy.getId(), range.getStart(), range.getLength(), table, matrixAnswerListView);
+			}
+		});
+	}
+
+	void findMatrixAnswersEntriesNonAcceptedAdminByQuestion(Long questionId, Integer start, Integer length, final AbstractHasData<MatrixValidityProxy> table, final AcceptMatrixAnswerSubView matrixAnswerListView){
+		
+		requests.MatrixValidityRequest().findAllMatrixValidityForQuestion(questionId).with("answerX", "answerY", "answerX.rewiewer","answerX.autor", "answerX.question", "answerX.question.questionType", "answerY.rewiewer","answerY.autor", "answerY.question", "answerY.question.questionType").fire(new BMEReceiver<List<MatrixValidityProxy>>() {
+
+			@Override
+			public void onSuccess(List<MatrixValidityProxy> response) {
+				matrixAnswerListView.setMatrixAnswerList(response);
+				table.setRowData(response);
+			}
+		});
+	}
+	
+	@Override
+	public void matrixAcceptClicked(QuestionProxy questionProxy) {
+		requests.answerRequest().acceptMatrixAnswer(questionProxy, userLoggedIn).fire(new BMEReceiver<Boolean>() {
+
+			@Override
+			public void onSuccess(Boolean response) {
+				if (response)
+					init();
+			}
+		});
+	}
+
+	@Override
+	public void matrixRejectClicked(QuestionProxy questionProxy) {
+		
+		//List<AnswerProxy> ansProxyList = (List<AnswerProxy>) questionProxy.getAnswers();
+		AnswerRequest req = requests.answerRequest();
+		
+		for (AnswerProxy proxy : questionProxy.getAnswers())
+		{
+			AnswerProxy answerProxy =  req.edit(proxy);
+			
+			answerProxy.setStatus(Status.DEACTIVATED);
+			
+			req.persist().using(answerProxy);
+		}
+		
+		req.fire(new BMEReceiver<Void>() {
+
+			@Override
+			public void onSuccess(Void response) {
+				init();
+			}
 		});
 	}
 }

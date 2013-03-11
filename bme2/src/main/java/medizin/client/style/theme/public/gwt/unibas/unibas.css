@@ -4339,12 +4339,15 @@ background: url("images/colorpicker.png");
 }
 
 .rowRotate90 {
-	-webkit-transform: rotate(-90deg); 
+	/* -webkit-transform: rotate(-90deg);  */
 	-moz-transform: rotate(-90deg);	
-    width: 25px;
     white-space: nowrap;
-	height: 100%;
 	overflow: hidden;
+	-moz-transform-origin: 0 100%;
+	height: 100%;
+	width: 50px;
+	margin-left: 10px;
+	padding-top: 25px;	
 	text-overflow: ellipsis;
 }
 .videoSize
