@@ -46,8 +46,8 @@ public class MatrixAnswerViewer extends Composite {
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		matrix.setWidth("100%");
-		matrix.setCellSpacing(5);
-		matrix.setCellPadding(3);
+		matrix.setCellSpacing(10);
+		matrix.setCellPadding(5);
 		matrix.getElement().getStyle().setVerticalAlign(VerticalAlign.MIDDLE);
 		
 		this.matrixValidityList = matrixValidityList;

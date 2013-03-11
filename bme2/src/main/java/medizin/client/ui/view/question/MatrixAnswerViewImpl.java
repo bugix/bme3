@@ -33,6 +33,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.TextOverflow;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.dom.client.Style.VerticalAlign;
 import com.google.gwt.dom.client.Style.WhiteSpace;
 import com.google.gwt.editor.client.Editor.Ignore;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -182,6 +183,8 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 		hp.add(textBox);
 		hp.add(label);
 		
+		hp.setSpacing(5);
+		
 		final int currentRow = matrix.getRowCount() - 1;
 		final int totalColumn = matrix.getCellCount(0);
 		
@@ -269,6 +272,8 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 		vp.add(hp);		
 		hp.add(textBox);
 		hp.add(label);
+		
+		vp.setSpacing(2);
 		
 		final int totalRows = matrix.getRowCount();
 		final int currentColumn = matrix.getCellCount(0) - 1;
@@ -808,6 +813,8 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 		hpX.add(textBoxX);
 		hpX.add(labelX);
 		
+		hpX.setSpacing(5);
+		
 		labelX.setVisible(true);
 		textBoxX.setVisible(false);
 		saveX.setVisible(false);
@@ -851,6 +858,9 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 		textBoxY.addStyleName("rowRotate90");
 		VerticalPanel vp = new VerticalPanel();
 		HorizontalPanel hp = new HorizontalPanel();
+		
+		vp.setSpacing(2);
+		
 		vp.add(editY);
 		vp.add(saveY);
 		vp.add(deleteY);

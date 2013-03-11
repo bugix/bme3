@@ -3,8 +3,6 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:i="urn:import:medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl" xmlns:m="urn:import:medizin.client.ui.widget">
 	
 	<ui:style src="../../styles.css" >
-	
-	
 	</ui:style>
 	<ui:with type="medizin.shared.i18n.BmeConstants" field="cc"></ui:with>
 	
@@ -54,7 +52,7 @@
 			</g:HTMLPanel>
 		</g:VerticalPanel>
 		<g:VerticalPanel>
-			<g:HorizontalPanel>
+			<g:HorizontalPanel spacing="5">
 				<m:IconButton  ui:field="save" icon="disk" text="{cc.save}"></m:IconButton>
 				<m:IconButton ui:field="closeButton" icon="closethick" text="{cc.cancel}"></m:IconButton>
 			</g:HorizontalPanel>
