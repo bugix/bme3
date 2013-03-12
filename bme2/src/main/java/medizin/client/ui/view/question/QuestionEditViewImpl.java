@@ -933,6 +933,8 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		questionComment.removeStyleName("higlight_onViolation");
 		questionType.removeStyleName("higlight_onViolation");
 		questionTextArea.removeStyleName("higlight_onViolation");
+		if(imageViewer != null)
+			imageViewer.removeStyleName("higlight_onViolation");
 		
 		if(submitToReviewComitee.getValue() == true) 
 		{
@@ -974,6 +976,21 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 			errorString.append(constants.questionTextMayNotBeNull()).append("<br />");
 			questionTextArea.addStyleName("higlight_onViolation");
 		}
+		
+		switch (questionType.getValue().getQuestionType()) {
+		
+		case Imgkey:
+		case ShowInImage:
+		{
+			if(imageViewer.getImageRelativeUrl() == null || imageViewer.getImageRelativeUrl().isEmpty()) {
+				flag = false;
+				errorString.append(constants.imageMayNotBeNull()).append("<br />");
+				imageViewer.addStyleName("higlight_onViolation");
+			}
+			break;
+		}
+		
+		} 
 		if(flag == false) {
 			ReceiverDialog.showMessageDialog(errorString.toString());
 		}
