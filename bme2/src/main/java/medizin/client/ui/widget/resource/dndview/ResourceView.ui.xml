@@ -16,7 +16,7 @@
 			width: 100%;
 		}
 	</ui:style>
-	<g:HorizontalPanel addStyleNames="{style.hPanel}">
+	<g:HorizontalPanel ui:field="hPanel" addStyleNames="{style.hPanel}">
 
 		<g:VerticalPanel width="100%">
 			<g:ScrollPanel addStyleNames="{style.dragScrollPanel}">

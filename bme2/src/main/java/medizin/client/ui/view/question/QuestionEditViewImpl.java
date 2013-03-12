@@ -718,7 +718,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 						}
 					});
 				}
-				viewer = new ResourceView(eventBus,ClientUtility.getQuestionResourceClient(questionResources),questionType.getQuestionType(),questionType.getQueHaveImage(),questionType.getQueHaveSound(),questionType.getQueHaveVideo());
+				viewer = new ResourceView(eventBus,ClientUtility.getQuestionResourceClient(questionResources),questionType.getQuestionType(),questionType.getQueHaveImage(),questionType.getQueHaveSound(),questionType.getQueHaveVideo(),true);
 				
 				viewer.addResourceAddedHandler(new ResourceAddedEventHandler(){
 

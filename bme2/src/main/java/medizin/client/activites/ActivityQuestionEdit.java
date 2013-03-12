@@ -179,7 +179,9 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
                 /*List<QuestionEventProxy> values = new ArrayList<QuestionEventProxy>();
                 values.add(null);
                 values.addAll(response);*/
-                view.getQuestionEvent().setValue(response.get(0));
+            	if(response.size() > 0) {
+            		view.getQuestionEvent().setValue(response.get(0));	
+            	}
                 view.setQuestEventPickerValues(response);
             }
         });

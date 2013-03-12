@@ -66,13 +66,20 @@ public class ResourceSubView extends Composite {
 
 	private final EventBus eventBus;
 
+	private final boolean isEditable;
+	
 	interface ResourceSubViewUiBinder extends UiBinder<Widget, ResourceSubView> {
 	}
 
-	public ResourceSubView(EventBus eventBus) {
+	public ResourceSubView(EventBus eventBus, boolean isEditable) {
 		initWidget(uiBinder.createAndBindUi(this));
 		resourceSubView = this;
 		this.eventBus = eventBus;
+		this.isEditable = isEditable;
+		
+		if(isEditable == true) {
+			deleteButton.setVisible(true);
+		}
 	}
 
 	public void setDetails(final QuestionResourceClient questionResource,QuestionTypes questionType,

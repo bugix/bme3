@@ -50,7 +50,7 @@
 							</td>
 							<td align="right" style="vertical-align: middle;">
 								<m:IconButton ui:field="viewButton" addStyleNames="{style.margin}"></m:IconButton>
-								<m:IconButton ui:field="deleteButton" icon="trash" addStyleNames="{style.margin}"></m:IconButton>
+								<m:IconButton ui:field="deleteButton" icon="trash" addStyleNames="{style.margin}" visible="false"></m:IconButton>
 							</td>
 						</tr>
 					</tbody>

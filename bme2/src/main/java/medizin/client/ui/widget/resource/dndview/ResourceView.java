@@ -29,6 +29,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -52,6 +53,9 @@ public class ResourceView extends Composite implements DragHandler {
 	/*@UiField
 	AbsolutePanel absPanel;*/
 	
+	@UiField
+	HorizontalPanel hPanel;
+	
 	PickupDragController dragController1;
 	PickupDragController dragController2;
 
@@ -63,15 +67,18 @@ public class ResourceView extends Composite implements DragHandler {
 	private final Boolean queHaveImage;
 	private final Boolean queHaveSound;
 	private final Boolean queHaveVideo;
+
+	private final boolean isEditable;
 	
 	public VerticalPanelDropController getDropController2() {
 		return dropController1;
 	}
 	
-	public ResourceView(EventBus eventBus, List<QuestionResourceClient> questionResources,QuestionTypes questionType,Boolean queHaveImage, Boolean queHaveSound, Boolean queHaveVideo) {
+	public ResourceView(EventBus eventBus, List<QuestionResourceClient> questionResources,QuestionTypes questionType,Boolean queHaveImage, Boolean queHaveSound, Boolean queHaveVideo,boolean isEditable) {
 		this.eventBus = eventBus;
 		this.questionResources = questionResources;
 		this.questionType = questionType;
+		this.isEditable = isEditable;
 		
 		Collections.sort(this.questionResources, new Comparator<QuestionResourceClient>() {
 
@@ -105,6 +112,10 @@ public class ResourceView extends Composite implements DragHandler {
 		impl = this;
 		frontRowNumber = questionResources.size();
 		
+		if(isEditable == false) {
+			hPanel.getElement().getStyle().setBorderColor("#FFFFFF");
+		}
+		
 		init();
 	}
 
@@ -128,18 +139,21 @@ public class ResourceView extends Composite implements DragHandler {
 
 		// absolutePanel.add(customContentSubViewImpl);
 
-		PickupDragController dragController = new PickupDragController(resourceSubView.getAbsPanel(), false);
-		dragController.setBehaviorDragProxy(true);
-		dragController.addDragHandler(this);
-		dragController.makeDraggable(resourceSubView.asWidget(), resourceSubView.getText());
-		
-		
-		VerticalPanelDropController dropController = new VerticalPanelDropController(customContentPanel);
-		dragController.registerDropController(dropController);
-		
+		if(isEditable == true) {
+			PickupDragController dragController = new PickupDragController(resourceSubView.getAbsPanel(), false);
+			dragController.setBehaviorDragProxy(true);
+			dragController.addDragHandler(this);
+			dragController.makeDraggable(resourceSubView.asWidget(), resourceSubView.getText());
+			
+			
+			VerticalPanelDropController dropController = new VerticalPanelDropController(customContentPanel);
+			dragController.registerDropController(dropController);
+			
 
-		Log.info("Count : " + customContentPanel.getWidgetCount());
-		
+			Log.info("Count : " + customContentPanel.getWidgetCount());
+	
+		}
+				
 //		if (customContentPanel.getWidgetCount() == 0 || !isNewAdded) {
 //			customContentPanel.add(resourceSubView);
 //		} else {
@@ -175,7 +189,7 @@ public class ResourceView extends Composite implements DragHandler {
 	}
 
 	private void createResourceSubView(QuestionResourceClient proxy) {
-		ResourceSubView subView = new ResourceSubView(eventBus);
+		ResourceSubView subView = new ResourceSubView(eventBus,isEditable);
 		subView.setDetails(proxy, questionType, impl);
 		addResourceView(subView,true);
 	}
