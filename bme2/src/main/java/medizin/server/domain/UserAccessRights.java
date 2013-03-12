@@ -21,7 +21,6 @@ import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
 
-import com.allen_sauer.gwt.log.client.Log;
 import com.google.web.bindery.requestfactory.server.RequestFactoryServlet;
 
 @RooJavaBean
@@ -102,7 +101,7 @@ public class UserAccessRights {
 			   
 			   TypedQuery<UserAccessRights> query = em.createQuery(criteriaQuery);
 			   
-			   Log.info("~~QUERY : " + query.unwrap(Query.class).getQueryString());
+			   /*log.info("~~QUERY : " + query.unwrap(Query.class).getQueryString());*/
 			   
 			   return query.getResultList().size();
 		   }

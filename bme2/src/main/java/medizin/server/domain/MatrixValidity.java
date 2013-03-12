@@ -19,7 +19,6 @@ import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
 
-import com.allen_sauer.gwt.log.client.Log;
 
 @RooJavaBean
 @RooToString
@@ -81,7 +80,7 @@ public class MatrixValidity {
 				
 				matrixValidity.remove();
 				if(fullMatrixSize == matrixValidities.size()) {
-					Log.info("Delete the full matrix validity for given answerX");
+					log.info("Delete the full matrix validity for given answerX");
 					otherAnswer.remove();
 				}
 			}
