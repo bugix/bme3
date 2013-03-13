@@ -12,6 +12,8 @@ import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.request.QuestionEventRequest;
 import medizin.client.ui.view.EventView;
 import medizin.client.ui.view.EventViewImpl;
+import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
+import medizin.client.ui.widget.dialogbox.receiver.ReceiverDialog;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.shared.EventBus;
@@ -298,30 +300,14 @@ public class ActivityInstitutionEvent extends AbstractActivityWrapper implements
             	init(institution);
             	
             }
-           /* @Override
-			public void onFailure(ServerFailure error) {
-					Log.warn(McAppConstant.ERROR_WHILE_DELETE + " in Institution:Event -" + error.getMessage());
-					if(error.getMessage().contains("ConstraintViolationException")){
-						Log.debug("Fehlen beim erstellen: Doppelter name");
-						// TODO mcAppFactory.getErrorPanel().setErrorMessage(McAppConstant.EVENT_IS_REFERENCED);
-					}
-				
-			}
-			@Override
-			public void onViolation(Set<Violation> errors) {
-				Iterator<Violation> iter = errors.iterator();
-				String message = "";
-				while(iter.hasNext()){
-					message += iter.next().getMessage() + "<br>";
-				}
-				Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Event -" + message);
-				
-				ErrorPanel erorPanel = new ErrorPanel();
-			        	  erorPanel.setWarnMessage(message);
-
-				
-			}*/
             
+            @Override
+            public boolean onReceiverFailure() {
+            	
+            	ConfirmationDialogBox.showOkDialogBox(constants.error(), constants.questionEventDelError());
+            	return false;
+            }
+        
         });
 		
 	}

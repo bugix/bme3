@@ -45,15 +45,18 @@ public abstract class BMEReceiver<T> extends Receiver<T> {
 
 	@Override
 	public final void onFailure(ServerFailure error) {
-		Log.error(error.getMessage());
-		showMessage(error.getMessage());
-		onReceiverFailure();
+		
+		if(onReceiverFailure()) {
+			Log.error(error.getMessage());
+			showMessage(error.getMessage());	
+		}
+
 	}
 	
 	
-	public void onReceiverFailure() {
+	public boolean onReceiverFailure() {
 		Log.error("call bmeReceiverFailure");
-		
+		return true;
 	}
 
 	public void showMessage(String error) {

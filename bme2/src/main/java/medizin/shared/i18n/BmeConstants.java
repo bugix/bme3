@@ -403,4 +403,8 @@ public interface BmeConstants extends Constants {
 	public String questionTypeNumErrorMsg();
 
 	public String imageMayNotBeNull();
+	
+	public String instituteDelError();
+	
+	public String questionEventDelError();
 }

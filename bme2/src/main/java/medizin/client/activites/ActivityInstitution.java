@@ -14,6 +14,8 @@ import medizin.client.request.InstitutionRequest;
 import medizin.client.ui.view.InstitutionView;
 import medizin.client.ui.view.InstitutionViewImpl;
 import medizin.client.ui.widget.Sorting;
+import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
+import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxOkButtonEvent;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.activity.shared.ActivityManager;
@@ -323,35 +325,15 @@ public class ActivityInstitution extends AbstractActivityWrapper implements
 
 					public void onSuccess(Void ignore) {
 						Log.debug("Sucessfull deleted");
+						placeController.goTo(new PlaceInstitution("PlaceInstitution"));
 						init();
-
 					}
-
-					/*@Override
-					public void onFailure(ServerFailure error) {
-						Log.warn(McAppConstant.ERROR_WHILE_DELETE
-								+ " in Institution -" + error.getMessage());
-						if (error.getMessage().contains(
-								"ConstraintViolationException")) {
-							Log.debug("Fehlen beim erstellen: Doppelter name");
-							//TODO mcAppFactory.getErrorPanel().setErrorMessage(cAppConstant.INSTITUTION_IS_REFERENCED);
-						}
-
-					}
-
+					
 					@Override
-					public void onViolation(Set<Violation> errors) {
-						Iterator<Violation> iter = errors.iterator();
-						String message = "";
-						while (iter.hasNext()) {
-							message += iter.next().getMessage() + "<br>";
-						}
-						Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION
-								+ " in Institution -" + message);
-
-						//TODO mcAppFactory.getErrorPanel().setErrorMessage(message);
-
-					}*/
+					public boolean onReceiverFailure() {
+						ConfirmationDialogBox.showOkDialogBox(constants.error(), constants.instituteDelError());
+						return false;
+					}
 
 				});
 
