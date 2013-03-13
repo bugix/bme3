@@ -913,7 +913,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 	}
 
 	@Override
-	public void createNewQuestion(QuestionTypeProxy questionType, String questionShortName, String questionText, PersonProxy auther, PersonProxy rewiewer, Boolean submitToReviewComitee, QuestionEventProxy questionEvent, Set<McProxy> mcs, String questionComment, double questionVersion, String picturePath, final Set<QuestionResourceClient> questionResourceClients) {
+	public void createNewQuestion(QuestionTypeProxy questionType, String questionShortName, String questionText, PersonProxy auther, PersonProxy rewiewer, Boolean submitToReviewComitee, QuestionEventProxy questionEvent, Set<McProxy> mcs, String questionComment, double questionVersion, String picturePath, final Set<QuestionResourceClient> questionResourceClients,Status status) {
 		this.save=true;
 		Long reviewerId = rewiewer != null?rewiewer.getId():null;
 		List<Long> mcIds = Lists.newArrayList();
@@ -938,7 +938,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		}
 				
 		Long oldQuestionId = question != null ? question.getId() : null;
-		requests.questionRequest().persistNewQuestion(questionType.getId(), questionShortName, questionText, auther.getId(), reviewerId, submitToReviewComitee, questionEvent.getId(), mcIds, questionComment, questionVersion, picturePath,oldQuestionId).fire(new BMEReceiver<QuestionProxy>(reciverMap) {
+		requests.questionRequest().persistNewQuestion(questionType.getId(), questionShortName, questionText, auther.getId(), reviewerId, submitToReviewComitee, questionEvent.getId(), mcIds, questionComment, questionVersion, picturePath,status,oldQuestionId).fire(new BMEReceiver<QuestionProxy>(reciverMap) {
 
 			@Override
 			public void onSuccess(final QuestionProxy response) {
@@ -982,7 +982,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 	}
 
 	@Override
-	public void updateQuestion(QuestionTypeProxy questionType, String questionShortName, String questionText, PersonProxy auther, PersonProxy rewiewer, Boolean submitToReviewComitee, QuestionEventProxy questEvent, Set<McProxy> mcs, String questionComment, double questionVersion, String picturePath,Set<QuestionResourceClient> questionResourceClients) {
+	public void updateQuestion(QuestionTypeProxy questionType, String questionShortName, String questionText, PersonProxy auther, PersonProxy rewiewer, Boolean submitToReviewComitee, QuestionEventProxy questEvent, Set<McProxy> mcs, String questionComment, double questionVersion, String picturePath,Set<QuestionResourceClient> questionResourceClients,Status status) {
 		
 		QuestionRequest req=requests.questionRequest();
 		QuestionProxy questionEdit=req.edit(question);
@@ -1002,10 +1002,25 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		questionEdit.setPicturePath(picturePath);
 		
 		// question state change to new
-		questionEdit.setIsAcceptedAdmin(false);
+		if(Status.NEW.equals(status)) {
+			questionEdit.setIsAcceptedAdmin(false);
+			questionEdit.setIsAcceptedRewiever(false);
+			questionEdit.setIsActive(false);
+			questionEdit.setStatus(Status.NEW);
+		}else if(Status.ACCEPTED_REVIEWER.equals(status)) {
+			questionEdit.setIsAcceptedAdmin(false);
+			questionEdit.setIsAcceptedRewiever(true);
+			questionEdit.setIsActive(false);
+			questionEdit.setStatus(Status.ACCEPTED_REVIEWER);
+		}else {
+			Log.info("Do nothing");
+		}
+		
+/*		questionEdit.setIsAcceptedAdmin(false);
 		questionEdit.setIsAcceptedRewiever(false);
 		questionEdit.setIsActive(false);
 		questionEdit.setStatus(Status.NEW);
+*/		
 		
 		
 		if(questionResourceClients.isEmpty() == false) {
@@ -1052,5 +1067,27 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 	
 	protected void gotoDetailsPlace(QuestionProxy questionProxy) {
    	  	placeController.goTo(new PlaceQuestionDetails(questionProxy.stableId(),PlaceQuestionDetails.Operation.DETAILS));
+	}
+
+	@Override
+	public Status getUpdatedStatus(boolean isEdit, boolean withNewMajorVersion) {
+		
+		Status status;
+		if(isEdit == true ) {
+			if(withNewMajorVersion == true) {
+				status = Status.NEW;
+			}else {
+				status = Status.ACCEPTED_REVIEWER;
+			}
+		}else {
+			status = Status.NEW;
+		}
+		
+		return status;
+	}
+
+	@Override
+	public boolean isAcceptQuestionView() {
+		return false;
 	}
 }

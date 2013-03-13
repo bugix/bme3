@@ -641,6 +641,8 @@ public class QuestionDetailsViewImpl extends Composite implements
 		final ImageViewer imageViewer = new ImageViewer();
 		if(questionProxy.getPicturePath() != null && questionProxy.getPicturePath().length() > 0) {
 			imageViewer.setUrl(questionProxy.getPicturePath(),questionTypeProxy.getImageWidth(),questionTypeProxy.getImageHeight(), type);
+		}else {
+			return ;
 		}
 			
 			

@@ -3,6 +3,7 @@ package medizin.client.request;
 import java.util.List;
 
 import medizin.client.proxy.QuestionProxy;
+import medizin.shared.Status;
 
 import org.springframework.roo.addon.gwt.RooGwtUnmanagedRequest;
 
@@ -49,5 +50,5 @@ public interface QuestionRequest extends QuestionRequest_Roo_Gwt {
 	Request<Boolean> deleteMediaFileFromDisk(String path);
 
 	Request<QuestionProxy> persistNewQuestion(Long questionTypeId, String questionShortName, String questionText, Long autherId,Long reviewerId,
-			Boolean submitToReviewComitee,Long questionEventId, List<Long> mcIds, String questionComment, double questionVersion, String picturePath, Long oldQuestionId);
+			Boolean submitToReviewComitee,Long questionEventId, List<Long> mcIds, String questionComment, double questionVersion, String picturePath, Status status, Long oldQuestionId);
 }

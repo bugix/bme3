@@ -40,6 +40,7 @@ import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget
 import medizin.client.util.ClientUtility;
 import medizin.shared.MultimediaType;
 import medizin.shared.QuestionTypes;
+import medizin.shared.Status;
 import medizin.shared.i18n.BmeConstants;
 import medizin.shared.utils.SharedConstant;
 
@@ -249,19 +250,20 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 				saveQuestion(false,false);
 				//delegate.saveClicked(false);
 			} else {
-				
-				final ConfirmQuestionChangesPopup confirm = new ConfirmQuestionChangesPopup(new Function<Boolean, Void>() {
-					
-					@Override
-					public Void apply(Boolean input) {
-						saveQuestion(true, input);
-						//confirm.removeFromParent();
-						return null;
-					}
-				});
-				/*delegate);*/		
-				
-				
+				if(delegate.isAcceptQuestionView()) {
+					saveQuestion(edit, true);
+				}else {
+					final ConfirmQuestionChangesPopup confirm = new ConfirmQuestionChangesPopup(new Function<Boolean, Void>() {
+						
+						@Override
+						public Void apply(Boolean input) {
+							saveQuestion(true, input);
+							//confirm.removeFromParent();
+							return null;
+						}
+					});
+					/*delegate);*/
+				}
 			}
 		}else {
 			Log.info("Validation fail");
@@ -290,6 +292,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		commentToolbar = new RichTextToolbar(questionComment);
 		commentToolbar.setWidth("100%");
 */
+		
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		reciverMap.put("questionShortName", questionShortName);
@@ -851,6 +854,9 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		}else {
 			questionVersion = 1.0d;
 		}
+		
+		Status status = delegate.getUpdatedStatus(isEdit,withNewMajorVersion);
+		
 		String picturePath = null;
 		Set<QuestionResourceClient> questionResourceClients = Sets.newHashSet() ;
 		
@@ -881,10 +887,10 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		
 		if(isEdit == true && withNewMajorVersion == false) {	
 			// update question with  minor new version
-			delegate.updateQuestion(questionType.getValue(),questionShortName.getText(),questionTextArea.getText(),author.getSelected(),rewiewer.getSelected(),submitToReviewComitee.getValue(),questEvent.getValue(),mcs.getValue(),questionComment.getText(),questionVersion, picturePath,questionResourceClients);
+			delegate.updateQuestion(questionType.getValue(),questionShortName.getText(),questionTextArea.getText(),author.getSelected(),rewiewer.getSelected(),submitToReviewComitee.getValue(),questEvent.getValue(),mcs.getValue(),questionComment.getText(),questionVersion, picturePath,questionResourceClients,status);
 		}else {
 			// create new question or create new major version question 
-			delegate.createNewQuestion(questionType.getValue(),questionShortName.getText(),questionTextArea.getText(),author.getSelected(),rewiewer.getSelected(),submitToReviewComitee.getValue(),questEvent.getValue(),mcs.getValue(),questionComment.getText(),questionVersion,picturePath,questionResourceClients);
+			delegate.createNewQuestion(questionType.getValue(),questionShortName.getText(),questionTextArea.getText(),author.getSelected(),rewiewer.getSelected(),submitToReviewComitee.getValue(),questEvent.getValue(),mcs.getValue(),questionComment.getText(),questionVersion,picturePath,questionResourceClients,status);
 		}
 	}
 

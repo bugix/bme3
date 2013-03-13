@@ -4,7 +4,9 @@ import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.PlaceQuestionDetails;
 import medizin.client.place.PlaceQuestionDetails.Operation;
 import medizin.client.proxy.QuestionProxy;
+import medizin.shared.Status;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.place.shared.PlaceController;
 
 public class ActivityAcceptQuestionEdit extends ActivityQuestionEdit {
@@ -20,5 +22,34 @@ public class ActivityAcceptQuestionEdit extends ActivityQuestionEdit {
 	@Override
 	protected void gotoDetailsPlace(QuestionProxy questionProxy) {
 		goTo(new PlaceQuestionDetails(questionProxy.stableId(),PlaceQuestionDetails.Operation.DETAILS, "ACCEPT_QUESTION"));
+	}
+	
+	@Override
+	public Status getUpdatedStatus(boolean isEdit, boolean withNewMajorVersion) {
+		
+		Status status;
+		if(isEdit == true ) {
+			if(withNewMajorVersion == true) {
+				if(userLoggedIn.getIsAdmin() == true) {
+					status = Status.CORRECTION_FROM_ADMIN;
+				}else if(userLoggedIn.getId().equals(question.getRewiewer().getId())) {
+					status = Status.CORRECTION_FROM_REVIEWER;
+				}else {
+					Log.info("Error this scenario is not considered yet");
+					status = question.getStatus();
+				}
+			}else {
+				Log.info("Error this scenario is not considered yet (with minor version)");
+				status = question.getStatus();
+			}
+		}else {
+			status = Status.NEW;
+		}
+		return status;
+	}
+	
+	@Override
+	public boolean isAcceptQuestionView() {
+		return true;
 	}
 }

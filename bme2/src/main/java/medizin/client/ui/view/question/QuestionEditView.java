@@ -11,6 +11,7 @@ import medizin.client.proxy.QuestionResourceProxy;
 import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.shared.MultimediaType;
+import medizin.shared.Status;
 
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -38,9 +39,13 @@ public interface QuestionEditView extends IsWidget {
 
 		void deleteMediaFileFromDisk(String path);
 
-		void createNewQuestion(QuestionTypeProxy questionType, String questionShortName,String questionText, PersonProxy auther, PersonProxy rewiewer,Boolean submitToReviewComitee, QuestionEventProxy questEvent, Set<McProxy> mcs,String questionComment, double questionVersion, String picturePath, Set<QuestionResourceClient> questionResourceClients);
+		void createNewQuestion(QuestionTypeProxy questionType, String questionShortName,String questionText, PersonProxy auther, PersonProxy rewiewer,Boolean submitToReviewComitee, QuestionEventProxy questEvent, Set<McProxy> mcs,String questionComment, double questionVersion, String picturePath, Set<QuestionResourceClient> questionResourceClients, Status status);
 
-		void updateQuestion(QuestionTypeProxy questionType, String questionShortName,String questionText, PersonProxy auther, PersonProxy rewiewer,Boolean submitToReviewComitee, QuestionEventProxy questEvent, Set<McProxy> mcs,String questionComment, double questionVersion,String picturePath,Set<QuestionResourceClient> questionResourceClients);
+		void updateQuestion(QuestionTypeProxy questionType, String questionShortName,String questionText, PersonProxy auther, PersonProxy rewiewer,Boolean submitToReviewComitee, QuestionEventProxy questEvent, Set<McProxy> mcs,String questionComment, double questionVersion,String picturePath,Set<QuestionResourceClient> questionResourceClients, Status status);
+
+		Status getUpdatedStatus(boolean isEdit, boolean withNewMajorVersion);
+
+		boolean isAcceptQuestionView();
 
 	}
 

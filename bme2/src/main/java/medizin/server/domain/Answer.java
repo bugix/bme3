@@ -22,12 +22,10 @@ import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import medizin.client.proxy.AnswerProxy;
 import medizin.client.shared.Validity;
 import medizin.shared.Status;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.roo.addon.javabean.RooJavaBean;
@@ -120,7 +118,7 @@ public class Answer {
         if (question == null) throw new IllegalArgumentException("The question argument is required");
         EntityManager em = QuestionEvent.entityManager();
         TypedQuery<Answer> q = em.createQuery("SELECT ans FROM Answer ans " + 
-        		" WHERE ans.question = :question", Answer.class).setFirstResult(start).setMaxResults(max);
+        		" WHERE ans.question = :question AND ans.status IN( " + Status.NEW.ordinal() +"," + Status.ACTIVE.ordinal() + ")", Answer.class).setFirstResult(start).setMaxResults(max);
         q.setParameter("question", question);
         return q.getResultList();
 	}
@@ -139,7 +137,7 @@ public class Answer {
         if (question == null) throw new IllegalArgumentException("The question argument is required");
         EntityManager em = QuestionEvent.entityManager();
         TypedQuery<Long> q = em.createQuery("SELECT count(ans) FROM Answer ans " + 
-        		" WHERE ans.question = :question", Long.class);
+        		" WHERE ans.question = :question AND ans.status IN( " + Status.NEW.ordinal() +"," + Status.ACTIVE.ordinal() + ")" , Long.class);
         q.setParameter("question", question);
         return q.getSingleResult();
 	}
@@ -322,7 +320,7 @@ public class Answer {
 		}
 	}
 	
-	public static Boolean acceptMatrixAnswer(Question question, Person userLoggedIn)
+	/*public static Boolean acceptMatrixAnswer(Question question, Person userLoggedIn)
 	{
 		for (Answer answer : question.getAnswers())
 		{	
@@ -342,5 +340,47 @@ public class Answer {
 			answer.persist();
 		}
 		return true;
+	}*/
+	
+	public static Boolean acceptMatrixAnswer(Question question, Person userLoggedIn)
+	{
+		for (Answer answer : question.getAnswers())
+		{ 
+			if(userLoggedIn.getIsAdmin()){
+				answer.setIsAnswerAcceptedAdmin(true);
+				if (answer.getIsAnswerAcceptedReviewWahrer())
+				{
+					answer.setIsAnswerActive(true);
+					answer.setStatus(Status.ACTIVE);
+				}
+				else
+				{
+					answer.setStatus(Status.ACCEPTED_ADMIN);
+				}
+			} 
+	  
+			if(answer.getRewiewer().getId() == userLoggedIn.getId()) {
+				answer.setIsAnswerAcceptedReviewWahrer(true);
+				
+				if (answer.getIsAnswerAcceptedAdmin()){
+					answer.setIsAnswerActive(true);
+					answer.setStatus(Status.ACTIVE);
+				}
+				else
+				{
+					answer.setStatus(Status.ACCEPTED_REVIEWER);
+				}
+			}
+	   
+			if(answer.getAutor().getId() == userLoggedIn.getId())
+			{
+				answer.setIsAnswerAcceptedAutor(true);
+			}
+
+			answer.persist();
+		}
+	  
+		return true;
+	 
 	}
 }

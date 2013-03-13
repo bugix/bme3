@@ -35,7 +35,6 @@ import medizin.shared.Status;
 import medizin.shared.utils.SharedConstant;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.roo.addon.javabean.RooJavaBean;
@@ -328,7 +327,7 @@ public class Question {
 		// End filter fuctionality
 
 		StringBuilder queryBuilder = new StringBuilder(
-				"SELECT count(Question) FROM Question AS question WHERE ");
+				"SELECT count(Question) FROM Question AS question WHERE question.status != " + Status.DEACTIVATED.ordinal() +" AND ");
 
 		Boolean isAccepted = false;
 
@@ -337,8 +336,9 @@ public class Question {
 			queryBuilder.append("question.isAcceptedAdmin = :isAccepted ");
 
 		} else {
-			queryBuilder
-					.append("question.isAcceptedRewiever = :isAccepted AND question.rewiewer = :person");
+			/*queryBuilder
+					.append("question.isAcceptedRewiever = :isAccepted AND question.rewiewer = :person");*/
+			queryBuilder.append("(question.isAcceptedRewiever = :isAccepted AND question.rewiewer = :person) OR (question.autor = :person AND question.status IN("+ Status.CORRECTION_FROM_ADMIN.ordinal() +","+ Status.CORRECTION_FROM_REVIEWER.ordinal() +"))");
 		}
 
 		EntityManager em = Question.entityManager();
@@ -373,7 +373,7 @@ public class Question {
 		// End filter fuctionality
 
 		StringBuilder queryBuilder = new StringBuilder(
-				"SELECT Question FROM Question AS question WHERE ");
+				"SELECT Question FROM Question AS question WHERE  question.status != " + Status.DEACTIVATED.ordinal() +" AND ");
 
 		Boolean isAccepted = false;
 
@@ -382,8 +382,9 @@ public class Question {
 			queryBuilder.append("question.isAcceptedAdmin = :isAccepted ");
 
 		} else {
-			queryBuilder
-					.append("question.isAcceptedRewiever = :isAccepted AND question.rewiewer = :person");
+			/*queryBuilder
+					.append("question.isAcceptedRewiever = :isAccepted AND question.rewiewer = :person");*/
+			queryBuilder.append("(question.isAcceptedRewiever = :isAccepted AND question.rewiewer = :person) OR (question.autor = :person AND question.status IN("+ Status.CORRECTION_FROM_ADMIN.ordinal() +","+ Status.CORRECTION_FROM_REVIEWER.ordinal() +"))");
 		}
 
 		EntityManager em = Question.entityManager();
@@ -907,7 +908,7 @@ public class Question {
 	}
 	
 	public static Question persistNewQuestion(Long questionTypeId, String questionShortName, String questionText, Long autherId,Long reviewerId,
-			Boolean submitToReviewComitee,Long questionEventId, List<Long> mcIds, String questionComment, double questionVersion, String picturePath, Long oldQuestionId) {
+			Boolean submitToReviewComitee,Long questionEventId, List<Long> mcIds, String questionComment, double questionVersion, String picturePath, Status status, Long oldQuestionId) {
 		
 		Comment newComment = new Comment();
 		newComment.setComment(questionComment);
@@ -936,10 +937,29 @@ public class Question {
 		question.setQuestionVersion(questionVersion);
 		question.setComment(newComment);
 		question.setPicturePath(picturePath);
-		question.setIsAcceptedAdmin(false);
+		
+		if(Status.NEW.equals(status)) {
+			question.setIsAcceptedAdmin(false);
+			question.setIsAcceptedRewiever(false);
+			question.setIsActive(false);
+			question.setStatus(Status.NEW);
+		}else if(Status.CORRECTION_FROM_ADMIN.equals(status)) {
+			question.setIsAcceptedAdmin(true);
+			question.setIsAcceptedRewiever(false);
+			question.setIsActive(false);
+			question.setStatus(Status.CORRECTION_FROM_ADMIN);
+		}else if(Status.CORRECTION_FROM_REVIEWER.equals(status)) {
+			question.setIsAcceptedAdmin(false);
+			question.setIsAcceptedRewiever(true);
+			question.setIsActive(false);
+			question.setStatus(Status.CORRECTION_FROM_REVIEWER);
+		}else {
+			log.info("Do nothing");
+		}
+		/*question.setIsAcceptedAdmin(false);
 		question.setIsAcceptedRewiever(false);
 		question.setIsActive(false);
-		question.setStatus(Status.NEW);
+		question.setStatus(Status.NEW);*/
 		question.setPreviousVersion(Question.findQuestion(oldQuestionId));
 		question.persist();
 		

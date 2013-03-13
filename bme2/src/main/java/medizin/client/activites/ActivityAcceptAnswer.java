@@ -329,7 +329,7 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 	public void onMatrixRangeChanged(final QuestionProxy questionProxy, final AbstractHasData<MatrixValidityProxy> table, final AcceptMatrixAnswerSubView matrixAnswerListView) {
 		final Range range = table.getVisibleRange();
 		
-		requests.MatrixValidityRequest().countAllMatrixValidityForQuestion(questionProxy.getId()).fire(new BMEReceiver<Long>() {
+		requests.MatrixValidityRequest().countAllMatrixValidityForQuestionForAcceptAnswerView(questionProxy.getId()).fire(new BMEReceiver<Long>() {
 
 			@Override
 			public void onSuccess(Long response) {
@@ -347,7 +347,7 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 
 	void findMatrixAnswersEntriesNonAcceptedAdminByQuestion(Long questionId, Integer start, Integer length, final AbstractHasData<MatrixValidityProxy> table, final AcceptMatrixAnswerSubView matrixAnswerListView){
 		
-		requests.MatrixValidityRequest().findAllMatrixValidityForQuestion(questionId).with("answerX", "answerY", "answerX.rewiewer","answerX.autor", "answerX.question", "answerX.question.questionType", "answerY.rewiewer","answerY.autor", "answerY.question", "answerY.question.questionType").fire(new BMEReceiver<List<MatrixValidityProxy>>() {
+		requests.MatrixValidityRequest().findAllMatrixValidityForQuestionForAcceptAnswerView(questionId).with("answerX", "answerY", "answerX.rewiewer","answerX.autor", "answerX.question", "answerX.question.questionType", "answerY.rewiewer","answerY.autor", "answerY.question", "answerY.question.questionType").fire(new BMEReceiver<List<MatrixValidityProxy>>() {
 
 			@Override
 			public void onSuccess(List<MatrixValidityProxy> response) {

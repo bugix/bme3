@@ -38,7 +38,7 @@
 					
 					<div ui:field="questionText" class="{style.bar}" />
 					
-					<b:CellTable ui:field="table" addStyleNames="{style.standardTable}" width="98%" />	
+					<b:CellTable ui:field="table" addStyleNames="{style.standardTableIcon}" width="98%" />	
 					
 					<div class="{style.controls} {style.controlsleft}">
 						<b:SimplePager display="{table}" ui:field="pager" addStyleNames="{style.displayRight}" />

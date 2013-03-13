@@ -427,28 +427,6 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 
 					onAnswerTableRangeChanged();
 				}
-				
-		         /* public void onFailure(ServerFailure error){
-		        	  ErrorPanel erorPanel = new ErrorPanel();
-		        	  erorPanel.setErrorMessage(error.getMessage());
-						Log.error(error.getMessage());
-					}
-		          @Override
-					public void onViolation(Set<Violation> errors) {
-						Iterator<Violation> iter = errors.iterator();
-						String message = "";
-						while(iter.hasNext()){
-							message += iter.next().getMessage() + "<br>";
-						}
-						Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Antwort hinzufügen -" + message);
-						
-			        	  ErrorPanel erorPanel = new ErrorPanel();
-			        	  erorPanel.setErrorMessage(message);
-						
-
-						
-					}*/
-		      
 		});
 		
 		answerRangeChangeHandler =  answerTable.addRangeChangeHandler(new RangeChangeEvent.Handler() {
@@ -475,27 +453,6 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 				answerTable.setRowData(range.getStart(), response);
 
 			}
-			
-	        /*  public void onFailure(ServerFailure error){
-	        	  ErrorPanel erorPanel = new ErrorPanel();
-	        	  erorPanel.setErrorMessage(error.getMessage());
-					Log.error(error.getMessage());
-				}
-	          @Override
-				public void onViolation(Set<Violation> errors) {
-					Iterator<Violation> iter = errors.iterator();
-					String message = "";
-					while(iter.hasNext()){
-						message += iter.next().getMessage() + "<br>";
-					}
-					Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Antwort hinzufügen -" + message);
-					
-		        	  ErrorPanel erorPanel = new ErrorPanel();
-		        	  erorPanel.setErrorMessage(message);
-					
-					
-				}*/
-	      
 	});
 		
 	}
@@ -1325,7 +1282,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		});
 	}
 
-	@Override
+	/*@Override
 	public void acceptQuestionClicked(QuestionProxy proxy) {
 		QuestionRequest questionRequest = requests.questionRequest();
 		proxy = questionRequest.edit(proxy);
@@ -1355,6 +1312,47 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 				proxy.setStatus(Status.ACCEPTED_REVIEWER);
 		}
 		
+		questionRequest.persist().using(proxy).fire(new BMEReceiver<Void>() {
+
+			@Override
+			public void onSuccess(Void response) {
+				placeController.goTo(new PlaceAcceptQuestion(""));
+			}
+		});
+	}*/
+	
+	@Override
+	public void acceptQuestionClicked(QuestionProxy proxy) {
+		QuestionRequest questionRequest = requests.questionRequest();
+		proxy = questionRequest.edit(proxy);
+
+		if (userLoggedIn.getIsAdmin()) {
+			proxy.setIsAcceptedAdmin(true);
+
+			if (proxy.getIsAcceptedRewiever()) {
+				proxy.setStatus(Status.ACTIVE);
+				proxy.setIsActive(true);
+			} else
+				proxy.setStatus(Status.ACCEPTED_ADMIN);
+		} else if (proxy.getRewiewer().getId().equals(userLoggedIn.getId())) {
+			proxy.setIsAcceptedRewiever(true);
+
+			if (proxy.getIsAcceptedAdmin()) {
+				proxy.setStatus(Status.ACTIVE);
+				proxy.setIsActive(true);
+			} else
+				proxy.setStatus(Status.ACCEPTED_REVIEWER);
+		}
+
+		else if (proxy.getAutor().getId().equals(userLoggedIn.getId())
+				&& (proxy.getStatus().equals(Status.CORRECTION_FROM_ADMIN) || proxy
+						.getStatus().equals(Status.CORRECTION_FROM_REVIEWER))) {
+			proxy.setIsAcceptedAdmin(true);
+			proxy.setIsAcceptedRewiever(true);
+			proxy.setIsActive(true);
+			proxy.setStatus(Status.ACTIVE);
+		}
+
 		questionRequest.persist().using(proxy).fire(new BMEReceiver<Void>() {
 
 			@Override

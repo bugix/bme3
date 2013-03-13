@@ -33,9 +33,10 @@ import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.CellPreviewEvent;
+import com.google.gwt.view.client.CellPreviewEvent.Handler;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.RangeChangeEvent;
-import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 
 public class AcceptMatrixAnswerSubViewImpl extends Composite implements AcceptMatrixAnswerSubView {
@@ -83,7 +84,7 @@ public class AcceptMatrixAnswerSubViewImpl extends Composite implements AcceptMa
         selectionModel = new SingleSelectionModel<MatrixValidityProxy>(keyProvider);
         table.setSelectionModel(selectionModel);  
        
-        selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+        /*selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 			
 			@Override
 			public void onSelectionChange(SelectionChangeEvent event) {
@@ -95,8 +96,8 @@ public class AcceptMatrixAnswerSubViewImpl extends Composite implements AcceptMa
 				if (selectedObject != null) {
 					DialogBox dialogBox = new DialogBox();
 					
-				/*	dialogBox.setWidth("200px");
-					dialogBox.setHeight("200px");*/
+					dialogBox.setWidth("200px");
+					dialogBox.setHeight("200px");
 				 	VerticalPanel vp = new VerticalPanel();
 				 	vp.setWidth("98%");
 				 	vp.setHeight("100%");
@@ -110,8 +111,46 @@ public class AcceptMatrixAnswerSubViewImpl extends Composite implements AcceptMa
 					dialogBox.show();
 				}
 			}
-		});
+		});*/
 		
+        
+        table.addCellPreviewHandler(new Handler<MatrixValidityProxy>() {
+
+			@Override
+			public void onCellPreview(CellPreviewEvent<MatrixValidityProxy> event) {
+				
+				boolean isClicked="click".equals(event.getNativeEvent().getType());
+				if(isClicked){
+					if(event.getColumn()==1 || event.getColumn()==2){
+						MatrixValidityProxy selectedObject = selectionModel.getSelectedObject();
+						
+						if (selectionModel.isSelected(selectedObject))
+							selectionModel.setSelected(selectedObject, false);
+						
+						if (selectedObject != null) {
+							
+							DialogBox dialogBox = new DialogBox();
+							
+							dialogBox.setWidth("200px");
+							dialogBox.setHeight("200px");
+						 	VerticalPanel vp = new VerticalPanel();
+						 	vp.setWidth("98%");
+						 	vp.setHeight("100%");
+						 	MatrixAnswerViewer viewer = new MatrixAnswerViewer(matrixAnswerList);
+						 	vp.add(viewer);				 	
+						 	dialogBox.setWidget(vp);	
+							dialogBox.setGlassEnabled(true);
+							dialogBox.setAutoHideEnabled(true);
+							dialogBox.getElement().getStyle().setZIndex(5);
+							dialogBox.center();	
+							dialogBox.show();
+						}
+					
+					}
+				}	
+			}
+		});
+        
 		init();
 
 	}
