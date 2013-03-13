@@ -25,6 +25,8 @@ import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.cellview.client.AbstractHasData;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
+import com.google.gwt.view.client.CellPreviewEvent;
+import com.google.gwt.view.client.CellPreviewEvent.Handler;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.RangeChangeEvent;
@@ -136,7 +138,27 @@ public class ActivityInstitution extends AbstractActivityWrapper implements
 		selectionModel = new SingleSelectionModel<InstitutionProxy>(keyProvider);
 		table.setSelectionModel(selectionModel);
 
-		selectionModel
+		table.addCellPreviewHandler(new Handler<InstitutionProxy>() {
+
+			@Override
+			public void onCellPreview(CellPreviewEvent<InstitutionProxy> event) {
+				boolean isClicked="click".equals(event.getNativeEvent().getType());
+			    
+				if(isClicked){
+					if(event.getColumn()==0){
+						
+						InstitutionProxy selectedObject = selectionModel.getSelectedObject();
+						
+						if (selectedObject != null) {
+							Log.debug(selectedObject.getInstitutionName() + " selected!");
+							showDetails(selectedObject);
+						}
+			    	}
+			    }
+			}
+		});
+		
+		/*selectionModel
 				.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 					public void onSelectionChange(SelectionChangeEvent event) {
 						InstitutionProxy selectedObject = selectionModel
@@ -147,7 +169,7 @@ public class ActivityInstitution extends AbstractActivityWrapper implements
 							showDetails(selectedObject);
 						}
 					}
-				});
+				});*/
 
 		view.setDelegate(this);
 		// updateSelection(mcAppFactory.getPlaceController().getWhere());

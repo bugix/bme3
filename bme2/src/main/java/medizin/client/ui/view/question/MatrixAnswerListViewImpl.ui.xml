@@ -17,7 +17,7 @@
 			<!-- <i:DefaultSuggestBox ui:field="copiedOsce"></i:DefaultSuggestBox> -->
 		</div>
 
-		<b:CellTable ui:field="tableAnswer" addStyleNames="{style.standardTable}"
+		<b:CellTable ui:field="tableAnswer" addStyleNames="{style.standardTableIcon}"
 			width="500" />
 
 
