@@ -96,7 +96,7 @@ public class Institution {
     public static List<Institution> findAllInstitutions(Integer start,Integer end,String sortBy,Sorting sortOrder,String searchValue) 
     {
 		
-    	System.out.println("in find");
+    	//System.out.println("in find");
     	CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
  		CriteriaQuery<Institution> criteriaQuery = criteriaBuilder.createQuery(Institution.class);
  		Root<Institution> from = criteriaQuery.from(Institution.class);

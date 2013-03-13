@@ -77,7 +77,7 @@ public class FileUploadServlet extends HttpServlet {
 			
 			@SuppressWarnings("unchecked")
 			List<FileItem> items = upload.parseRequest(request);
-			System.out.println("Item Size: " + items.size());
+			//System.out.println("Item Size: " + items.size());
 			String directory = SharedConstant.getUploadBaseDIRPath();
 			for (FileItem item : items) {
 				if (item.isFormField()) {

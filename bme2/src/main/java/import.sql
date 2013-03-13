@@ -18,6 +18,11 @@ INSERT INTO `McApp2`.`mc` (`mc_name`, `version`) VALUES ('MC 5.2', '0');
 INSERT INTO `McApp2`.`mc` (`mc_name`, `version`) VALUES ('MC 6.1', '0');
 INSERT INTO `McApp2`.`mc` (`mc_name`, `version`) VALUES ('MC 6.2', '0');
 
+INSERT INTO `McApp2`.`doctor` (`email`,`gender`,`is_active`,`name`,`pre_name`,`telephone`,`title`,`version`) VALUES ('EmiSch@gmx.ch',0,1,'Schommertz','Emil','+61 422 28 47','M.D',0);
+INSERT INTO `McApp2`.`doctor` (`email`,`gender`,`is_active`,`name`,`pre_name`,`telephone`,`title`,`version`) VALUES ('JohSch@gmx.ch',0,1,'Schonbacher','Johann','+61 537 41 30','M.D',0);
+INSERT INTO `McApp2`.`doctor` (`email`,`gender`,`is_active`,`name`,`pre_name`,`telephone`,`title`,`version`) VALUES ('BasSch@gmx.ch',0,1,'Schoningddad','Bastian','+61 196 61 81','M.Dasdasda',0);
+INSERT INTO `McApp2`.`doctor` (`email`,`gender`,`is_active`,`name`,`pre_name`,`telephone`,`title`,`version`) VALUES ('BenSch@gmx.ch',0,1,'Schoo','Bennet','+61 645 80 08','M.D',0);
+
 
 
 

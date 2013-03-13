@@ -149,7 +149,7 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 					if(response instanceof QuestionTypeProxy){
 						questionType=(QuestionTypeProxy)response;
 						initEdit(questionType);
-						System.out.println("ID : " + questionType.getId());
+						//System.out.println("ID : " + questionType.getId());
 					}
 
 

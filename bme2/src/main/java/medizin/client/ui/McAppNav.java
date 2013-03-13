@@ -223,8 +223,6 @@ public class McAppNav extends Composite {
 		{
 			MC_APP_NAV.hideAllMenu();
 			
-			Log.info("INSIDE MCAPPNAV");
-			
 			if(isValiduser)
 			requests.personRequest().checkAdminRightToLoggedPerson().fire(new Receiver<Boolean>() {
 		        

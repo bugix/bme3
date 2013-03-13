@@ -564,7 +564,7 @@ public class Question {
 
 		query = entityManager().createQuery(findQuestionBySearchFilter(searchText, searchField, institution.getId(), loggedUser));
 		
-		System.out.println("~~QUERY : " + query.unwrap(Query.class).getQueryString());
+		//System.out.println("~~QUERY : " + query.unwrap(Query.class).getQueryString());
 		
 		return new Long(query.getResultList().size());
 	}

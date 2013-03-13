@@ -37,7 +37,7 @@ public class SMSoundFactory implements SoundFactory {
 		if(callback != null){                                                                                                                                                                                                                
 			sm.getDefaultOptions().onFinish(callback);                                                                                                                                  
 		}                                                                                                                                                                                                                                    
-		System.out.println("playing song "+song);                                                                                                                                                                                                                                                                                                                                             
+		//System.out.println("playing song "+song);                                                                                                                                                                                                                                                                                                                                             
 		sm.createSound(SOUND_ID, song);                                                                                                                                                                                                                                                                                                             
 		sm.play(SOUND_ID);
 		isPaused = false;
@@ -45,7 +45,7 @@ public class SMSoundFactory implements SoundFactory {
 
 	public void stopPlaying() {
 		// TODO Auto-generated method stub
-		System.out.println("Stopping all music!");
+		//System.out.println("Stopping all music!");
 		sm.stopAll();
 		//Should signal event here
 		//eventbus.fireEvent(new SongFinishedEvent(song))

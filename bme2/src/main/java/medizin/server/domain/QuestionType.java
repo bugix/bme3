@@ -193,7 +193,7 @@ public class QuestionType {
  		return result.getResultList();*/
     //	System.out.println("Call findAllQuestionType");
     	
-    	System.out.println("in find");
+    	//System.out.println("in find");
     	 CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
  		CriteriaQuery<QuestionType> criteriaQuery = criteriaBuilder.createQuery(QuestionType.class);
  		Root<QuestionType> from = criteriaQuery.from(QuestionType.class);
