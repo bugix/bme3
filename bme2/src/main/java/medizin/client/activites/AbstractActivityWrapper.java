@@ -61,17 +61,8 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 				@Override
 				public void onSuccess(PersonProxy response) {
 					userLoggedIn = response;
-					
-					if (userLoggedIn.getIsAdmin() == false)
-					{
-						newStart(panel, eventBus);
-					}
-					else
-					{
-						newStart(panel, eventBus);
-					}
-				}
-				
+					newStart(panel, eventBus);
+				}				
 			
 
 				/*public void onFailure(ServerFailure error) {
