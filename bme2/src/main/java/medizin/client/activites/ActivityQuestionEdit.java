@@ -7,8 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.hibernate.context.TenantIdentifierMismatchException;
-
 import medizin.client.events.QuestionSaveEvent;
 import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
@@ -28,8 +26,6 @@ import medizin.client.request.QuestionResourceRequest;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.question.QuestionEditView;
 import medizin.client.ui.view.question.QuestionEditViewImpl;
-import medizin.client.ui.view.question.QuestionFilterViewImpl;
-import medizin.client.ui.view.question.QuestionViewImpl;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.ui.widget.resource.dndview.vo.State;
 import medizin.shared.MultimediaType;
