@@ -919,7 +919,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 	}
 
 	@Override
-	public void createNewQuestion(QuestionTypeProxy questionType, String questionShortName, String questionText, PersonProxy auther, PersonProxy rewiewer, Boolean submitToReviewComitee, QuestionEventProxy questionEvent, Set<McProxy> mcs, String questionComment, double questionVersion, String picturePath, final Set<QuestionResourceClient> questionResourceClients,Status status) {
+	public void createNewQuestion(QuestionTypeProxy questionType, String questionShortName, String questionText, PersonProxy auther, PersonProxy rewiewer, Boolean submitToReviewComitee, QuestionEventProxy questionEvent, Set<McProxy> mcs, String questionComment, int  questionVersion, int questionSubVersion,String picturePath, final Set<QuestionResourceClient> questionResourceClients,Status status) {
 		this.save=true;
 		Long reviewerId = rewiewer != null?rewiewer.getId():null;
 		List<Long> mcIds = Lists.newArrayList();
@@ -944,7 +944,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		}
 				
 		Long oldQuestionId = question != null ? question.getId() : null;
-		requests.questionRequest().persistNewQuestion(questionType.getId(), questionShortName, questionText, auther.getId(), reviewerId, submitToReviewComitee, questionEvent.getId(), mcIds, questionComment, questionVersion, picturePath,status,oldQuestionId).fire(new BMEReceiver<QuestionProxy>(reciverMap) {
+		requests.questionRequest().persistNewQuestion(questionType.getId(), questionShortName, questionText, auther.getId(), reviewerId, submitToReviewComitee, questionEvent.getId(), mcIds, questionComment, questionVersion,questionSubVersion, picturePath,status,oldQuestionId).using(question).fire(new BMEReceiver<QuestionProxy>(reciverMap) {
 
 			@Override
 			public void onSuccess(final QuestionProxy response) {
@@ -990,7 +990,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 	}
 
 	@Override
-	public void updateQuestion(QuestionTypeProxy questionType, String questionShortName, String questionText, PersonProxy auther, PersonProxy rewiewer, Boolean submitToReviewComitee, QuestionEventProxy questEvent, Set<McProxy> mcs, String questionComment, double questionVersion, String picturePath,Set<QuestionResourceClient> questionResourceClients,Status status) {
+	public void updateQuestion(QuestionTypeProxy questionType, String questionShortName, String questionText, PersonProxy auther, PersonProxy rewiewer, Boolean submitToReviewComitee, QuestionEventProxy questEvent, Set<McProxy> mcs, String questionComment, int questionVersion, int questionSubVersion, String picturePath,Set<QuestionResourceClient> questionResourceClients,Status status) {
 		
 		QuestionRequest req=requests.questionRequest();
 		QuestionProxy questionEdit=req.edit(question);
@@ -1004,6 +1004,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		questionEdit.setDateChanged(new Date());
 		questionEdit.setMcs(mcs);
 		questionEdit.setQuestionVersion(questionVersion);
+		questionEdit.setQuestionSubVersion(questionSubVersion);
 		CommentProxy comment=req.edit(questionEdit.getComment());
 		comment.setComment(questionComment);
 		questionEdit.setComment(comment);

@@ -49,6 +49,6 @@ public interface QuestionRequest extends QuestionRequest_Roo_Gwt {
 
 	Request<Boolean> deleteMediaFileFromDisk(String path);
 
-	Request<QuestionProxy> persistNewQuestion(Long questionTypeId, String questionShortName, String questionText, Long autherId,Long reviewerId,
-			Boolean submitToReviewComitee,Long questionEventId, List<Long> mcIds, String questionComment, double questionVersion, String picturePath, Status status, Long oldQuestionId);
+	InstanceRequest<QuestionProxy,QuestionProxy> persistNewQuestion(Long questionTypeId, String questionShortName, String questionText, Long autherId,Long reviewerId,
+			Boolean submitToReviewComitee,Long questionEventId, List<Long> mcIds, String questionComment, int questionVersion, int questionSubVersion, String picturePath, Status status, Long oldQuestionId);
 }

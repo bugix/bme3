@@ -1,8 +1,12 @@
 package medizin.client.activites;
 
+import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
+import medizin.client.place.PlaceAcceptQuestion;
 import medizin.client.place.PlaceQuestionDetails;
 import medizin.client.proxy.QuestionProxy;
+import medizin.client.request.QuestionRequest;
+import medizin.shared.Status;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.place.shared.PlaceController;
@@ -42,4 +46,46 @@ public class ActivityAcceptQuestionDetails extends ActivityQuestionDetails {
 	public boolean isQuestionDetailsPlace() {
 		return false;
 	}
+	
+	@Override
+	public void acceptQuestionClicked(QuestionProxy proxy) {
+		QuestionRequest questionRequest = requests.questionRequest();
+		proxy = questionRequest.edit(proxy);
+
+		if (userLoggedIn.getIsAdmin() || personRightProxy.getIsInstitutionalAdmin()) {
+			proxy.setIsAcceptedAdmin(true);
+
+			if (proxy.getIsAcceptedRewiever()) {
+				proxy.setStatus(Status.ACTIVE);
+				proxy.setIsActive(true);
+			} else
+				proxy.setStatus(Status.ACCEPTED_ADMIN);
+		} else if (proxy.getRewiewer().getId().equals(userLoggedIn.getId())) {
+			proxy.setIsAcceptedRewiever(true);
+
+			if (proxy.getIsAcceptedAdmin()) {
+				proxy.setStatus(Status.ACTIVE);
+				proxy.setIsActive(true);
+			} else
+				proxy.setStatus(Status.ACCEPTED_REVIEWER);
+		}
+
+		else if (proxy.getAutor().getId().equals(userLoggedIn.getId())
+				&& (proxy.getStatus().equals(Status.CORRECTION_FROM_ADMIN) || proxy
+						.getStatus().equals(Status.CORRECTION_FROM_REVIEWER))) {
+			proxy.setIsAcceptedAdmin(true);
+			proxy.setIsAcceptedRewiever(true);
+			proxy.setIsActive(true);
+			proxy.setStatus(Status.ACTIVE);
+		}
+
+		questionRequest.persist().using(proxy).fire(new BMEReceiver<Void>() {
+
+			@Override
+			public void onSuccess(Void response) {
+				goTo(new PlaceAcceptQuestion(""));
+			}
+		});
+	}
+	
 }

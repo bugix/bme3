@@ -43,12 +43,20 @@ privileged aspect Question_Roo_JavaBean {
         this.picturePath = picturePath;
     }
     
-    public Double Question.getQuestionVersion() {
+    public Integer Question.getQuestionVersion() {
         return this.questionVersion;
     }
     
-    public void Question.setQuestionVersion(Double questionVersion) {
+    public void Question.setQuestionVersion(Integer questionVersion) {
         this.questionVersion = questionVersion;
+    }
+    
+    public Integer Question.getQuestionSubVersion() {
+        return this.questionSubVersion;
+    }
+    
+    public void Question.setQuestionSubVersion(Integer questionSubVersion) {
+        this.questionSubVersion = questionSubVersion;
     }
     
     public Boolean Question.getIsAcceptedRewiever() {

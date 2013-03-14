@@ -67,7 +67,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 
 	private AcceptsOneWidget widget;
 	//private QuestionDetailsView view;
-	private McAppRequestFactory requests;
+	protected McAppRequestFactory requests;
 	private PlaceController placeController;
 	private PlaceQuestionDetails questionPlace;
 	
@@ -1321,46 +1321,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		});
 	}*/
 	
-	@Override
-	public void acceptQuestionClicked(QuestionProxy proxy) {
-		QuestionRequest questionRequest = requests.questionRequest();
-		proxy = questionRequest.edit(proxy);
-
-		if (userLoggedIn.getIsAdmin() || personRightProxy.getIsInstitutionalAdmin()) {
-			proxy.setIsAcceptedAdmin(true);
-
-			if (proxy.getIsAcceptedRewiever()) {
-				proxy.setStatus(Status.ACTIVE);
-				proxy.setIsActive(true);
-			} else
-				proxy.setStatus(Status.ACCEPTED_ADMIN);
-		} else if (proxy.getRewiewer().getId().equals(userLoggedIn.getId())) {
-			proxy.setIsAcceptedRewiever(true);
-
-			if (proxy.getIsAcceptedAdmin()) {
-				proxy.setStatus(Status.ACTIVE);
-				proxy.setIsActive(true);
-			} else
-				proxy.setStatus(Status.ACCEPTED_REVIEWER);
-		}
-
-		else if (proxy.getAutor().getId().equals(userLoggedIn.getId())
-				&& (proxy.getStatus().equals(Status.CORRECTION_FROM_ADMIN) || proxy
-						.getStatus().equals(Status.CORRECTION_FROM_REVIEWER))) {
-			proxy.setIsAcceptedAdmin(true);
-			proxy.setIsAcceptedRewiever(true);
-			proxy.setIsActive(true);
-			proxy.setStatus(Status.ACTIVE);
-		}
-
-		questionRequest.persist().using(proxy).fire(new BMEReceiver<Void>() {
-
-			@Override
-			public void onSuccess(Void response) {
-				placeController.goTo(new PlaceAcceptQuestion(""));
-			}
-		});
-	}
+	
 
 	//method is overridden by sub class accept question
 	@Override
@@ -1571,5 +1532,10 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	@Override
 	public void closedMatrixValidityView() {
 		initMatrixAnswerView(); // refresh matrix list view.
+	}
+
+	// updated by subclass ActivityAcceptQuestionDetails
+	@Override
+	public void acceptQuestionClicked(QuestionProxy proxy) {
 	}
 }

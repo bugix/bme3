@@ -27,9 +27,13 @@ public interface QuestionProxy extends EntityProxy {
 
     abstract void setPicturePath(String picturePath);
 
-    abstract Double getQuestionVersion();
+    abstract Integer getQuestionVersion();
 
-    abstract void setQuestionVersion(Double questionVersion);
+    abstract void setQuestionVersion(Integer questionVersion);
+
+    abstract Integer getQuestionSubVersion();
+
+    abstract void setQuestionSubVersion(Integer questionSubVersion);
 
     abstract Boolean getIsAcceptedRewiever();
 

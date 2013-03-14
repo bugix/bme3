@@ -843,16 +843,20 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	
 	private void saveQuestion(boolean isEdit,boolean withNewMajorVersion) {
 		
-		double questionVersion = 1.0d;
+		int questionVersion = 0;
+		int questionSubVersion = 0;
 		
 		if(isEdit == true ) {
 			if(withNewMajorVersion == true) {
-				questionVersion = question.getQuestionVersion() + 1;	
+				questionVersion = question.getQuestionVersion() + 1;
+				questionSubVersion = 0; 
 			}else {
-				questionVersion = calculateSubversion(question.getQuestionVersion());
+				questionVersion = question.getQuestionVersion();
+				questionSubVersion = question.getQuestionSubVersion() + 1;
 			}
 		}else {
-			questionVersion = 1.0d;
+			questionVersion = 0;
+			questionSubVersion = 0;
 		}
 		
 		Status status = delegate.getUpdatedStatus(isEdit,withNewMajorVersion);
@@ -887,14 +891,14 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		
 		if(isEdit == true && withNewMajorVersion == false) {	
 			// update question with  minor new version
-			delegate.updateQuestion(questionType.getValue(),questionShortName.getText(),questionTextArea.getText(),author.getSelected(),rewiewer.getSelected(),submitToReviewComitee.getValue(),questEvent.getValue(),mcs.getValue(),questionComment.getText(),questionVersion, picturePath,questionResourceClients,status);
+			delegate.updateQuestion(questionType.getValue(),questionShortName.getText(),questionTextArea.getText(),author.getSelected(),rewiewer.getSelected(),submitToReviewComitee.getValue(),questEvent.getValue(),mcs.getValue(),questionComment.getText(),questionVersion, questionSubVersion, picturePath,questionResourceClients,status);
 		}else {
 			// create new question or create new major version question 
-			delegate.createNewQuestion(questionType.getValue(),questionShortName.getText(),questionTextArea.getText(),author.getSelected(),rewiewer.getSelected(),submitToReviewComitee.getValue(),questEvent.getValue(),mcs.getValue(),questionComment.getText(),questionVersion,picturePath,questionResourceClients,status);
+			delegate.createNewQuestion(questionType.getValue(),questionShortName.getText(),questionTextArea.getText(),author.getSelected(),rewiewer.getSelected(),submitToReviewComitee.getValue(),questEvent.getValue(),mcs.getValue(),questionComment.getText(),questionVersion, questionSubVersion,picturePath,questionResourceClients,status);
 		}
 	}
 
-	private Double calculateSubversion(Double questionVersion) {
+/*	private Double calculateSubversion(Double questionVersion) {
 		
 		Double subversion = questionVersion%1;
 		Double mainVersion = questionVersion-subversion;
@@ -931,7 +935,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 			return (subversion*10-subversion*10%1)/10 + incrementSubversion(Math.round(subversion*10%1*10000)/10000.0, false)/10;
 		}
 		
-	}
+	}*/
 	
 	private boolean validationOfFields() {
 		

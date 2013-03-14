@@ -58,6 +58,7 @@ privileged aspect QuestionDataOnDemand_Roo_DataOnDemand {
         setPreviousVersion(obj, index);
         setQuestEvent(obj, index);
         setQuestionShortName(obj, index);
+        setQuestionSubVersion(obj, index);
         setQuestionText(obj, index);
         setQuestionType(obj, index);
         setQuestionVersion(obj, index);
@@ -122,6 +123,11 @@ privileged aspect QuestionDataOnDemand_Roo_DataOnDemand {
         obj.setQuestionShortName(questionShortName);
     }
     
+    public void QuestionDataOnDemand.setQuestionSubVersion(Question obj, int index) {
+        Integer questionSubVersion = new Integer(index);
+        obj.setQuestionSubVersion(questionSubVersion);
+    }
+    
     public void QuestionDataOnDemand.setQuestionText(Question obj, int index) {
         String questionText = "questionText_" + index;
         if (questionText.length() > 600) {
@@ -136,7 +142,7 @@ privileged aspect QuestionDataOnDemand_Roo_DataOnDemand {
     }
     
     public void QuestionDataOnDemand.setQuestionVersion(Question obj, int index) {
-        Double questionVersion = new Integer(index).doubleValue();
+        Integer questionVersion = new Integer(index);
         obj.setQuestionVersion(questionVersion);
     }
     

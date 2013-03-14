@@ -39,9 +39,9 @@ public interface QuestionEditView extends IsWidget {
 
 		void deleteMediaFileFromDisk(String path);
 
-		void createNewQuestion(QuestionTypeProxy questionType, String questionShortName,String questionText, PersonProxy auther, PersonProxy rewiewer,Boolean submitToReviewComitee, QuestionEventProxy questEvent, Set<McProxy> mcs,String questionComment, double questionVersion, String picturePath, Set<QuestionResourceClient> questionResourceClients, Status status);
+		void createNewQuestion(QuestionTypeProxy questionType, String questionShortName,String questionText, PersonProxy auther, PersonProxy rewiewer,Boolean submitToReviewComitee, QuestionEventProxy questEvent, Set<McProxy> mcs,String questionComment, int questionVersion, int questionSubVersion, String picturePath, Set<QuestionResourceClient> questionResourceClients, Status status);
 
-		void updateQuestion(QuestionTypeProxy questionType, String questionShortName,String questionText, PersonProxy auther, PersonProxy rewiewer,Boolean submitToReviewComitee, QuestionEventProxy questEvent, Set<McProxy> mcs,String questionComment, double questionVersion,String picturePath,Set<QuestionResourceClient> questionResourceClients, Status status);
+		void updateQuestion(QuestionTypeProxy questionType, String questionShortName,String questionText, PersonProxy auther, PersonProxy rewiewer,Boolean submitToReviewComitee, QuestionEventProxy questEvent, Set<McProxy> mcs,String questionComment, int questionVersion,int questionSubVersion, String picturePath,Set<QuestionResourceClient> questionResourceClients, Status status);
 
 		Status getUpdatedStatus(boolean isEdit, boolean withNewMajorVersion);
 

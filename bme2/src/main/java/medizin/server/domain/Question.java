@@ -41,6 +41,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicates;
@@ -65,7 +66,10 @@ public class Question {
 	private String picturePath;
 
 	@NotNull
-	private Double questionVersion;
+	private Integer questionVersion;
+
+	@NotNull
+	private Integer questionSubVersion;
 
 	@NotNull
 	@Value("false")
@@ -565,18 +569,13 @@ public class Question {
 		/*criteriaQuery.where(findQuestionBySearchFilter(searchText, searchField,
 				institution.getId(), loggedUser));*/
 
-		CriteriaQuery<Question> criQuery = findQuestionBySearchFilter(searchText, searchField, institution.getId(), loggedUser);
-				
-		if (criQuery != null)
-		{
-			query = entityManager().createQuery(criQuery);
 		
-			System.out.println("~~QUERY : " + query.unwrap(Query.class).getQueryString());
+		query = entityManager().createQuery(findQuestionBySearchFilter(searchText, searchField, institution.getId(), loggedUser));
+	
+		//System.out.println("~~QUERY : " + query.unwrap(Query.class).getQueryString());
+	
+		return new Long(query.getResultList().size());
 		
-			return new Long(query.getResultList().size());
-		}
-		else
-			return 0l;
 	}
 
 	public static List<Question> findQuestionEntriesByPerson(String shibdId,
@@ -914,8 +913,15 @@ public class Question {
 		return null;
 	}
 	
-	public static Question persistNewQuestion(Long questionTypeId, String questionShortName, String questionText, Long autherId,Long reviewerId,
-			Boolean submitToReviewComitee,Long questionEventId, List<Long> mcIds, String questionComment, double questionVersion, String picturePath, Status status, Long oldQuestionId) {
+	@Transactional
+	public Question persistNewQuestion(Long questionTypeId, String questionShortName, String questionText, Long autherId,Long reviewerId,
+			Boolean submitToReviewComitee,Long questionEventId, List<Long> mcIds, String questionComment, int questionVersion, int questionSubVersion, String picturePath, Status status, Long oldQuestionId) {
+		
+		boolean flag = Question.findQuestionHasNewQuestion(oldQuestionId);
+		
+		if(flag == true) {
+			throw new IllegalStateException("This Question alreay has new status. Try refreshing the page");
+		}
 		
 		Comment newComment = new Comment();
 		newComment.setComment(questionComment);
@@ -942,6 +948,7 @@ public class Question {
 		
 		question.setMcs(Sets.newHashSet(iterator));
 		question.setQuestionVersion(questionVersion);
+		question.setQuestionSubVersion(questionSubVersion);
 		question.setComment(newComment);
 		question.setPicturePath(picturePath);
 		
@@ -998,6 +1005,24 @@ public class Question {
 		return question;
 	}
 	
+	private static boolean findQuestionHasNewQuestion(Long id) {
+		
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+		
+		Root<Question> from = criteriaQuery.from(Question.class);
+		criteriaQuery.select(criteriaBuilder.count(from));
+		Predicate p1 = criteriaBuilder.equal(from.get("previousVersion").get("id"), id);
+		criteriaQuery.where(p1);
+		
+		TypedQuery<Long> query = entityManager().createQuery(criteriaQuery);
+		log.info("Query is : " + query.unwrap(Query.class).getQueryString());
+
+		log.info("Result list size :" + query.getSingleResult());
+		
+		return query.getSingleResult() > 0;
+	}
+
 	@PostRemove
 	void onPostRemove() {
 		log.info("in post remove method of question");
