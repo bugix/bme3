@@ -7,6 +7,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.hibernate.context.TenantIdentifierMismatchException;
+
 import medizin.client.events.QuestionSaveEvent;
 import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
@@ -944,7 +946,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		}
 				
 		Long oldQuestionId = question != null ? question.getId() : null;
-		requests.questionRequest().persistNewQuestion(questionType.getId(), questionShortName, questionText, auther.getId(), reviewerId, submitToReviewComitee, questionEvent.getId(), mcIds, questionComment, questionVersion,questionSubVersion, picturePath,status,oldQuestionId).using(question).fire(new BMEReceiver<QuestionProxy>(reciverMap) {
+		requests.questionRequest().persistNewQuestion(questionType.getId(), questionShortName, questionText, auther.getId(), reviewerId, submitToReviewComitee, questionEvent.getId(), mcIds, questionComment, questionVersion,questionSubVersion, picturePath,status,oldQuestionId).fire(new BMEReceiver<QuestionProxy>(reciverMap) {
 
 			@Override
 			public void onSuccess(final QuestionProxy response) {

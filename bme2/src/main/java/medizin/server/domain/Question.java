@@ -914,7 +914,7 @@ public class Question {
 	}
 	
 	@Transactional
-	public Question persistNewQuestion(Long questionTypeId, String questionShortName, String questionText, Long autherId,Long reviewerId,
+	public static Question persistNewQuestion(Long questionTypeId, String questionShortName, String questionText, Long autherId,Long reviewerId,
 			Boolean submitToReviewComitee,Long questionEventId, List<Long> mcIds, String questionComment, int questionVersion, int questionSubVersion, String picturePath, Status status, Long oldQuestionId) {
 		
 		boolean flag = Question.findQuestionHasNewQuestion(oldQuestionId);
