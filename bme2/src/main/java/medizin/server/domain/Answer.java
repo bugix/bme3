@@ -342,11 +342,17 @@ public class Answer {
 		return true;
 	}*/
 	
-	public static Boolean acceptMatrixAnswer(Question question, Person userLoggedIn)
+	public static Boolean acceptMatrixAnswer(Question question, Boolean isAdmin, Boolean isInstitutionalAdmin)
 	{
+		Person userLoggedIn = Person.myGetLoggedPerson();
+		
+		if(userLoggedIn == null) {
+			return false;
+		}
+		
 		for (Answer answer : question.getAnswers())
 		{ 
-			if(userLoggedIn.getIsAdmin()){
+			if(isAdmin || isInstitutionalAdmin){
 				answer.setIsAnswerAcceptedAdmin(true);
 				if (answer.getIsAnswerAcceptedReviewWahrer())
 				{

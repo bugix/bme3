@@ -67,7 +67,7 @@ public class MatrixValidity {
 
 	}
 	
-	public static List<MatrixValidity> findAllMatrixValidityForQuestionForAcceptAnswerView(Long id) {
+	public static List<MatrixValidity> findAllMatrixValidityForQuestionForAcceptAnswerView(Long id, Boolean isInstitutionalAdmin) {
 		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
 		CriteriaQuery<MatrixValidity> criteriaQuery = criteriaBuilder.createQuery(MatrixValidity.class);
 		
@@ -81,7 +81,7 @@ public class MatrixValidity {
 		Person userLoggedIn = Person.myGetLoggedPerson();
 		List<Status> statusList = Lists.newArrayList(Status.NEW);
 		if(userLoggedIn != null) {
-			if(userLoggedIn.getIsAdmin()) {
+			if(userLoggedIn.getIsAdmin() || isInstitutionalAdmin == true) {
 				// it is admin
 				statusList.add(Status.ACCEPTED_REVIEWER);
 			}else {
@@ -100,7 +100,7 @@ public class MatrixValidity {
 		return query.getResultList();
 	}
 	
-	public static Long countAllMatrixValidityForQuestionForAcceptAnswerView(Long id) {
+	public static Long countAllMatrixValidityForQuestionForAcceptAnswerView(Long id,Boolean isInstitutionalAdmin) {
 		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
 		CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
 		
@@ -115,7 +115,7 @@ public class MatrixValidity {
 		Person userLoggedIn = Person.myGetLoggedPerson();
 		List<Status> statusList = Lists.newArrayList(Status.NEW);
 		if(userLoggedIn != null) {
-			if(userLoggedIn.getIsAdmin()) {
+			if(userLoggedIn.getIsAdmin() || isInstitutionalAdmin == true) {
 				// it is admin
 				statusList.add(Status.ACCEPTED_REVIEWER);
 			}else {

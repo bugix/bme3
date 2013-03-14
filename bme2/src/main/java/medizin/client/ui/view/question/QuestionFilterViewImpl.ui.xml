@@ -114,7 +114,7 @@
 							</td>
 							
 							<td>
-								<!-- <g:CheckBox ui:field="instructionText" text="{constants.instruction}"></g:CheckBox> -->
+								<g:CheckBox ui:field="showNew" text="{constants.showNew}"></g:CheckBox>
 							</td>
 						</tr>
 						
@@ -140,16 +140,15 @@
 							<g:ValueListBox ui:field="specialiationListBox" />
 							</td>
 						</tr>
-						<tr>
+						<!-- <tr>
 							<td>
-						<g:Label addStyleNames="{style.labelSize}" text="{constants.status}"></g:Label>
-							
+								<g:Label addStyleNames="{style.labelSize}" text="{constants.status}"></g:Label>
 							</td>
 							
 							<td>
 							<g:ValueListBox ui:field="status" />
 							</td>
-						</tr>
+						</tr> -->
 						
 						<tr>
 							<td>

@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import medizin.client.events.QuestionSaveEvent;
 import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.PlaceQuestion;
@@ -25,6 +26,8 @@ import medizin.client.request.QuestionResourceRequest;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.question.QuestionEditView;
 import medizin.client.ui.view.question.QuestionEditViewImpl;
+import medizin.client.ui.view.question.QuestionFilterViewImpl;
+import medizin.client.ui.view.question.QuestionViewImpl;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.ui.widget.resource.dndview.vo.State;
 import medizin.shared.MultimediaType;
@@ -57,6 +60,8 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 	private Operation operation;
 
 	protected QuestionProxy question;
+
+	private EventBus eventBus;
 
 	//private RequestFactoryEditorDriver<QuestionProxy, QuestionEditViewImpl> editorDriver;
 
@@ -111,6 +116,7 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 
 	@Override
 	public void start2(AcceptsOneWidget widget, EventBus eventBus) {
+		this.eventBus = eventBus;
 		QuestionEditView questionEditView = new QuestionEditViewImpl(reciverMap,eventBus,userLoggedIn);
 		/*questionEditView.setName("hallo");*/
 		questionEditView.setPresenter(this);
@@ -969,10 +975,12 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 						@Override
 						public void onSuccess(Void response1) {
 							Log.info("Added successfuly");
+							showNewDisplay();
 							gotoDetailsPlace(response);
 						}
 					});
 				}else {
+					showNewDisplay();
 					gotoDetailsPlace(response);
 				}
 			}
@@ -1064,9 +1072,14 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		});
 	}
 	
+	protected void showNewDisplay()
+	{
+		Log.info("Question Save Event Fired");
+		this.eventBus.fireEvent(new QuestionSaveEvent());
+	}
 	
 	protected void gotoDetailsPlace(QuestionProxy questionProxy) {
-   	  	placeController.goTo(new PlaceQuestionDetails(questionProxy.stableId(),PlaceQuestionDetails.Operation.DETAILS));
+		placeController.goTo(new PlaceQuestionDetails(questionProxy.stableId(),PlaceQuestionDetails.Operation.DETAILS));
 	}
 
 	@Override

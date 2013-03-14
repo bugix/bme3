@@ -41,7 +41,6 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 	protected PersonProxy userLoggedIn;
 	protected InstitutionProxy institutionActive;
 	private int count = 0;
-	protected Boolean isInstitutionalAdmin = false;
 	
 	protected PersonAccessRightProxy personRightProxy;
 	
@@ -62,8 +61,15 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 				@Override
 				public void onSuccess(PersonProxy response) {
 					userLoggedIn = response;
-					newStart(panel, eventBus);
-
+					
+					if (userLoggedIn.getIsAdmin() == false)
+					{
+						newStart(panel, eventBus);
+					}
+					else
+					{
+						newStart(panel, eventBus);
+					}
 				}
 				
 			

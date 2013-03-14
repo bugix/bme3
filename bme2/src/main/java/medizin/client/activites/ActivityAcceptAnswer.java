@@ -34,7 +34,7 @@ import com.google.web.bindery.requestfactory.shared.EntityProxy;
  * @author masterthesis
  *
  */
-public class ActivityAcceptAnswer extends AbstractActivityWrapper implements AcceptAnswerView.Delegate, AcceptAnswerSubView.Delegate, DeclineEmailPopupDelagate, AcceptMatrixAnswerSubView.Delegate{
+public class ActivityAcceptAnswer extends AbstractActivityWrapper implements AcceptAnswerView.Delegate, AcceptAnswerSubView.Delegate, AcceptMatrixAnswerSubView.Delegate{
 
 	private PlaceAcceptAnswer answerPlace;
 	private McAppRequestFactory requests;
@@ -162,7 +162,6 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 						AcceptAnswerSubView acceptAnswerSubView = new AcceptAnswerSubViewImpl();				
 					    acceptAnswerSubView.getTable().setRowCount(questionProxy.getAnswers().size(), true);
 					    acceptAnswerSubView.setDelegate(ActivityAcceptAnswer.this);
-					    acceptAnswerSubView.setDelegatePopup(ActivityAcceptAnswer.this);
 					    acceptAnswerSubView.setProxy(questionProxy);
 					    questionPanel.add(acceptAnswerSubView);
 					}
@@ -212,7 +211,7 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 
 			AnswerRequest req = requests.answerRequest();
 			AnswerProxy answerProxy =  req.edit((AnswerProxy)answerProxy2);
-			if(userLoggedIn.getIsAdmin()){
+			if(userLoggedIn.getIsAdmin() || personRightProxy.getIsInstitutionalAdmin()){
 				answerProxy.setIsAnswerAcceptedAdmin(true);
 				
 				if (answerProxy.getIsAnswerAcceptedReviewWahrer())
@@ -257,7 +256,7 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 			});
 		
 	}
-	@Override
+	/*@Override
 	public void acceptClicked(EntityProxy entityProxy) {
 		if(entityProxy instanceof AnswerProxy){
 			Log.debug("is AnswerProxy");
@@ -288,11 +287,11 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 			});
 		}
 		
-	}
+	}*/
 	//not user
-	@Override
+	/*@Override
 	public void rejectClicked(EntityProxy entityProxy, String message) {
-		/*if(entityProxy instanceof AnswerProxy){
+		if(entityProxy instanceof AnswerProxy){
 			Log.debug("is Answer");
 			AnswerRequest req = requests.answerRequest();
 			AnswerProxy answerProxy =  (AnswerProxy)entityProxy;`
@@ -305,8 +304,8 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 					
 				}
 			});
-		}*/
-	}
+		}
+	}*/
 
 	@Override
 	public void rejectClicked(AnswerProxy answerProxy) {
@@ -329,7 +328,7 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 	public void onMatrixRangeChanged(final QuestionProxy questionProxy, final AbstractHasData<MatrixValidityProxy> table, final AcceptMatrixAnswerSubView matrixAnswerListView) {
 		final Range range = table.getVisibleRange();
 		
-		requests.MatrixValidityRequest().countAllMatrixValidityForQuestionForAcceptAnswerView(questionProxy.getId()).fire(new BMEReceiver<Long>() {
+		requests.MatrixValidityRequest().countAllMatrixValidityForQuestionForAcceptAnswerView(questionProxy.getId(), personRightProxy.getIsInstitutionalAdmin()).fire(new BMEReceiver<Long>() {
 
 			@Override
 			public void onSuccess(Long response) {
@@ -347,7 +346,7 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 
 	void findMatrixAnswersEntriesNonAcceptedAdminByQuestion(Long questionId, Integer start, Integer length, final AbstractHasData<MatrixValidityProxy> table, final AcceptMatrixAnswerSubView matrixAnswerListView){
 		
-		requests.MatrixValidityRequest().findAllMatrixValidityForQuestionForAcceptAnswerView(questionId).with("answerX", "answerY", "answerX.rewiewer","answerX.autor", "answerX.question", "answerX.question.questionType", "answerY.rewiewer","answerY.autor", "answerY.question", "answerY.question.questionType").fire(new BMEReceiver<List<MatrixValidityProxy>>() {
+		requests.MatrixValidityRequest().findAllMatrixValidityForQuestionForAcceptAnswerView(questionId, personRightProxy.getIsInstitutionalAdmin()).with("answerX", "answerY", "answerX.rewiewer","answerX.autor", "answerX.question", "answerX.question.questionType", "answerY.rewiewer","answerY.autor", "answerY.question", "answerY.question.questionType").fire(new BMEReceiver<List<MatrixValidityProxy>>() {
 
 			@Override
 			public void onSuccess(List<MatrixValidityProxy> response) {
@@ -359,7 +358,8 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 	
 	@Override
 	public void matrixAcceptClicked(QuestionProxy questionProxy) {
-		requests.answerRequest().acceptMatrixAnswer(questionProxy, userLoggedIn).fire(new BMEReceiver<Boolean>() {
+
+		requests.answerRequest().acceptMatrixAnswer(questionProxy, userLoggedIn.getIsAdmin(), personRightProxy.getIsInstitutionalAdmin()).fire(new BMEReceiver<Boolean>() {
 
 			@Override
 			public void onSuccess(Boolean response) {

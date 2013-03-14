@@ -89,8 +89,11 @@ public class QuestionFilterViewImpl extends PopupPanel implements QuestionView {
 	
 	@UiField
 	CheckBox keywordText;
+	
+	@UiField
+	CheckBox showNew;
 
-	@UiField(provided = true)
+	/*@UiField(provided = true)
 	public ValueListBox<Status> status=new ValueListBox<Status>(new AbstractRenderer<Status>() {
 
 		@Override
@@ -98,7 +101,7 @@ public class QuestionFilterViewImpl extends PopupPanel implements QuestionView {
 			// TODO Auto-generated method stub
 			return object==null ?" ": String.valueOf(object);
 		}
-	});
+	});*/
 	
 	@UiField(provided = true)
 	public ValueListBox<InstitutionProxy> institutionListBox=new ValueListBox<InstitutionProxy>(new AbstractRenderer<InstitutionProxy>() {
@@ -161,8 +164,21 @@ public class QuestionFilterViewImpl extends PopupPanel implements QuestionView {
 		 * 
 		 * }
 		 */
-		auther.setChecked(false);
-		reviewer.setChecked(false);
+		auther.setValue(false);
+		reviewer.setValue(false);
+		questionText.setValue(false);
+		instructionText.setValue(false);
+		keywordText.setValue(false);
+		showNew.setValue(false);
+		
+		institutionListBox.setValue(null);
+		specialiationListBox.setValue(null);
+		
+		createStartDate.getTextBox().setText("");
+		createEndDate.getTextBox().setText("");
+		
+		usedMcStartDate.getTextBox().setText("");
+		usedMcEndDate.getTextBox().setText("");
 		//status.setSelectedIndex(status.getItemCount()-1);
 		
 	}
@@ -253,10 +269,8 @@ public class QuestionFilterViewImpl extends PopupPanel implements QuestionView {
 		status.addItem("   ");*/
 
 		BmeConstants constants = GWT.create(BmeConstants.class);
-		resetButton.setText("Reset");
+		resetButton.setText(constants.reset());
 
-		
-		status.setAcceptableValues(Arrays.asList(Status.values()));
 		
 		/*auther.setText("Author");
 		reviewer.setText("Reviwer");

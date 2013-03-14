@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import medizin.client.events.QuestionSaveEvent;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.QuestionEventProxy;
@@ -30,6 +31,9 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -44,6 +48,8 @@ import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.PopupListener;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.Tree;
@@ -178,6 +184,7 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 	Map<String, Object> serachField;
 	
 	List<String> searchField = new ArrayList<String>();
+	private final EventBus eventBus;
 
 	@Override
 	public void setInstitutionFilter(List<InstitutionProxy> values)
@@ -192,7 +199,9 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 	}
 
 	
-	public QuestionViewImpl(Boolean flag) {
+	public QuestionViewImpl(EventBus eventBus,Boolean flag) {
+		this.eventBus = eventBus;
+		
 		CellTable.Resources tableResources = GWT
 				.create(MyCellTableResources.class);
 		table = new CellTable<QuestionProxy>(McAppConstant.TABLE_PAGE_SIZE,
@@ -203,47 +212,74 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 		pager = new SimplePager(SimplePager.TextLocation.RIGHT, pagerResources,
 				true, McAppConstant.TABLE_JUMP_SIZE, true);
 
+		Log.info("Question Save Event Register");
+		QuestionSaveEvent.register(this.eventBus, new QuestionSaveEvent.Handler() {
+			
+			@Override
+			public void onSaveClicked(QuestionSaveEvent event) {
+				Log.info("Question Save Event Clicked");
+				filterPanel.showNew.setValue(true);
+				setFieldForSearchBox();
+			}
+		});
+		
+		filterPanel.addCloseHandler(new CloseHandler<PopupPanel>() {
+			
+			@Override
+			public void onClose(CloseEvent<PopupPanel> event) {
+				setFieldForSearchBox();
+			}
+		});
+
 		searchBox = new QuickSearchBox(new QuickSearchBox.Delegate() {
 			@Override
 			public void performAction() {
 				// delegate.performSearch(searchBox.getValue());
 				Log.info("serach click");
 				
-				searchField.clear();
+				setFieldForSearchBox();
 				
-				if (filterPanel.auther.isChecked())
+				/*searchField.clear();
+				
+				if (filterPanel.auther.getValue())
 				{	
 					searchField.add("author");
-					searchField.add(filterPanel.auther.isChecked() ? "true" : "false");
+					searchField.add(filterPanel.auther.getValue() ? "true" : "false");
 					//searchFileds.add(new SearchValue("author", filterPanel.auther.isChecked() ? "true" : "false"));
 				}
 				
-				if (filterPanel.reviewer.isChecked())
+				if (filterPanel.reviewer.getValue())
 				{
 					searchField.add("reviewer");
-					searchField.add(filterPanel.reviewer.isChecked()? "true" : "false");
+					searchField.add(filterPanel.reviewer.getValue()? "true" : "false");
 					//searchFileds.add(new SearchValue("reviewer", filterPanel.reviewer.isChecked()? "true" : "false"));
 				}
 				
-				if (filterPanel.questionText.isChecked())
+				if (filterPanel.questionText.getValue())
 				{
 					searchField.add("quesitontext");
-					searchField.add(filterPanel.questionText.isChecked()? "true" : "false");
+					searchField.add(filterPanel.questionText.getValue()? "true" : "false");
 					//searchFileds.add(new SearchValue("quesitontext", filterPanel.questionText.isChecked()? "true" : "false"));
 				}
 				
-				if (filterPanel.instructionText.isChecked())
+				if (filterPanel.instructionText.getValue())
 				{
 					searchField.add("instruction");
-					searchField.add(filterPanel.instructionText.isChecked()? "true" : "false");
+					searchField.add(filterPanel.instructionText.getValue()? "true" : "false");
 					//searchFileds.add(new SearchValue("instruction", filterPanel.instructionText.isChecked()? "true" : "false"));
 				}
 				
-				if (filterPanel.keywordText.isChecked())
+				if (filterPanel.keywordText.getValue())
 				{
 					searchField.add("keyword");
-					searchField.add(filterPanel.keywordText.isChecked()? "true" : "false");
+					searchField.add(filterPanel.keywordText.getValue()? "true" : "false");
 					//searchFileds.add(new SearchValue("keyword", filterPanel.keywordText.isChecked()? "true" : "false"));
+				}
+				
+				if (filterPanel.showNew.getValue())
+				{
+					searchField.add("showNew");
+					searchField.add(filterPanel.showNew.getValue() ? "true" : "false");
 				}
 				
 				if (filterPanel.institutionListBox.getValue() != null)
@@ -295,7 +331,7 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 					//searchFileds.add(new SearchValue("usedMcTo", filterPanel.usedMcEndDate.getValue().toString()));
 				}
 				
-				delegate.performSearch(searchBox.getValue());
+				delegate.performSearch(searchBox.getValue());*/
 			}
 		});
 
@@ -707,14 +743,14 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 
 	}
 
-	@Inject
+	/*@Inject
 	public QuestionViewImpl(McAppRequestFactory requests,
 			PlaceController placeController) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.requests = requests;
 		this.placeController = placeController;
 
-	}
+	}*/
 
 	@Override
 	public void setName(String helloName) {
@@ -787,5 +823,102 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 	@Override
 	public List<String> getSearchValue() {
 		return searchField;
+	}
+	
+	private void setFieldForSearchBox()
+	{
+		searchField.clear();
+		
+		if (filterPanel.auther.getValue())
+		{	
+			searchField.add("author");
+			searchField.add(filterPanel.auther.getValue() ? "true" : "false");
+			//searchFileds.add(new SearchValue("author", filterPanel.auther.isChecked() ? "true" : "false"));
+		}
+		
+		if (filterPanel.reviewer.getValue())
+		{
+			searchField.add("reviewer");
+			searchField.add(filterPanel.reviewer.getValue()? "true" : "false");
+			//searchFileds.add(new SearchValue("reviewer", filterPanel.reviewer.isChecked()? "true" : "false"));
+		}
+		
+		if (filterPanel.questionText.getValue())
+		{
+			searchField.add("quesitontext");
+			searchField.add(filterPanel.questionText.getValue()? "true" : "false");
+			//searchFileds.add(new SearchValue("quesitontext", filterPanel.questionText.isChecked()? "true" : "false"));
+		}
+		
+		if (filterPanel.instructionText.getValue())
+		{
+			searchField.add("instruction");
+			searchField.add(filterPanel.instructionText.getValue()? "true" : "false");
+			//searchFileds.add(new SearchValue("instruction", filterPanel.instructionText.isChecked()? "true" : "false"));
+		}
+		
+		if (filterPanel.keywordText.getValue())
+		{
+			searchField.add("keyword");
+			searchField.add(filterPanel.keywordText.getValue()? "true" : "false");
+			//searchFileds.add(new SearchValue("keyword", filterPanel.keywordText.isChecked()? "true" : "false"));
+		}
+		
+		if (filterPanel.showNew.getValue())
+		{
+			searchField.add("showNew");
+			searchField.add(filterPanel.showNew.getValue() ? "true" : "false");
+		}
+		
+		if (filterPanel.institutionListBox.getValue() != null)
+		{
+			searchField.add("institution");
+			searchField.add(filterPanel.institutionListBox.getValue().getId().toString());
+			//searchFileds.add(new SearchValue("institution", filterPanel.institutionListBox.getValue().getId().toString()));
+		}
+		
+		if (filterPanel.specialiationListBox.getValue() != null)
+		{
+			searchField.add("specialiation");
+			searchField.add(filterPanel.specialiationListBox.getValue().getId().toString());
+			//searchFileds.add(new SearchValue("specialiation", filterPanel.specialiationListBox.getValue().getId().toString()));
+		}
+		
+		/*if (filterPanel.status.getValue() != null)
+		{
+			searchField.add("status");
+			searchField.add(filterPanel.status.getValue().toString());
+			//searchFileds.add(new SearchValue("status", filterPanel.status.getValue().toString()));
+		}*/
+		
+		if (filterPanel.createStartDate.getValue() != null)
+		{
+			searchField.add("createdDateFrom");
+			searchField.add(DateTimeFormat.getFormat("dd-MM-yyyy").format(filterPanel.createStartDate.getValue()));
+			//searchFileds.add(new SearchValue("createdDateFrom", filterPanel.createStartDate.getValue().toString()));
+		}
+		
+		if (filterPanel.createEndDate.getValue() != null)
+		{
+			searchField.add("createdDateTo");
+			searchField.add(DateTimeFormat.getFormat("dd-MM-yyyy").format(filterPanel.createEndDate.getValue()));
+			//searchFileds.add(new SearchValue("createdDateTo", filterPanel.createEndDate.getValue().toString()));
+		}
+		
+		if (filterPanel.usedMcStartDate.getValue() != null)
+		{
+			searchField.add("usedMcFrom");
+			searchField.add(DateTimeFormat.getFormat("dd-MM-yyyy").format(filterPanel.usedMcStartDate.getValue()));
+			//searchFileds.add(new SearchValue("usedMcFrom", filterPanel.usedMcStartDate.getValue().toString()));
+		}
+		
+		if (filterPanel.usedMcEndDate.getValue() != null)
+		{
+			searchField.add("usedMcTo");
+			searchField.add(DateTimeFormat.getFormat("dd-MM-yyyy").format(filterPanel.usedMcEndDate.getValue()));
+			//searchFileds.add(new SearchValue("usedMcTo", filterPanel.usedMcEndDate.getValue().toString()));
+		}
+		
+		delegate.performSearch(searchBox.getValue());
 	}
 }

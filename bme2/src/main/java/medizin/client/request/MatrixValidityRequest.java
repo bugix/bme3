@@ -19,7 +19,7 @@ public interface MatrixValidityRequest extends MatrixValidityRequest_Roo_Gwt {
 
 	Request<Long> countAllMatrixValidityForQuestion(Long id);
 	
-	Request<Long> countAllMatrixValidityForQuestionForAcceptAnswerView(Long id);
+	Request<Long> countAllMatrixValidityForQuestionForAcceptAnswerView(Long id, Boolean isInstitutionalAdmin);
 	
-	Request<List<MatrixValidityProxy>> findAllMatrixValidityForQuestionForAcceptAnswerView(Long id);
+	Request<List<MatrixValidityProxy>> findAllMatrixValidityForQuestionForAcceptAnswerView(Long id,Boolean isInstitutionalAdmin);
 }

@@ -30,7 +30,7 @@ public class ActivityAcceptQuestionEdit extends ActivityQuestionEdit {
 		Status status;
 		if(isEdit == true ) {
 			if(withNewMajorVersion == true) {
-				if(userLoggedIn.getIsAdmin() == true) {
+				if(userLoggedIn.getIsAdmin() == true || personRightProxy.getIsInstitutionalAdmin() == true) {
 					status = Status.CORRECTION_FROM_ADMIN;
 				}else if(userLoggedIn.getId().equals(question.getRewiewer().getId())) {
 					status = Status.CORRECTION_FROM_REVIEWER;
@@ -51,5 +51,10 @@ public class ActivityAcceptQuestionEdit extends ActivityQuestionEdit {
 	@Override
 	public boolean isAcceptQuestionView() {
 		return true;
+	}
+	
+	@Override
+	protected void showNewDisplay() {
+		//do nothing
 	}
 }

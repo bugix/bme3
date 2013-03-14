@@ -140,7 +140,7 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 		}
 		
 		Log.debug("start()");
-		QuestionView questionView = new QuestionViewImpl(flag);
+		QuestionView questionView = new QuestionViewImpl(eventBus,flag);
 		Log.debug("start()");
 		// questionView.setName("hallo");
 		questionView.setPresenter(this);

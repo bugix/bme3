@@ -35,6 +35,7 @@ import medizin.shared.Status;
 import medizin.shared.utils.SharedConstant;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.roo.addon.javabean.RooJavaBean;
@@ -458,14 +459,15 @@ public class Question {
 			
 		subQuery.select(answerRoot.get("question").get("id")).where(subPre1);
 		
+		Predicate mainPre1 = criteriaBuilder.equal(from.get("status"), Status.ACTIVE);
 		Predicate mainPre2 = criteriaBuilder.equal(from.get("questEvent").get("institution").get("id"), institution.getId());
-		Predicate mainpre = criteriaBuilder.and(mainPre2, criteriaBuilder.in(from.get("id")).value(subQuery));
+		Predicate mainpre = criteriaBuilder.and(mainPre1, mainPre2, criteriaBuilder.in(from.get("id")).value(subQuery));
 		
 		criteriaQuery.where(mainpre);
 		
 		TypedQuery<Question> q = entityManager().createQuery(criteriaQuery);
 		
-		//System.out.println("Q : " + q.unwrap(Query.class).getQueryString());
+		System.out.println("Q : " + q.unwrap(Query.class).getQueryString());
 		
 		return q.getResultList();
 	}
@@ -563,11 +565,18 @@ public class Question {
 		/*criteriaQuery.where(findQuestionBySearchFilter(searchText, searchField,
 				institution.getId(), loggedUser));*/
 
-		query = entityManager().createQuery(findQuestionBySearchFilter(searchText, searchField, institution.getId(), loggedUser));
+		CriteriaQuery<Question> criQuery = findQuestionBySearchFilter(searchText, searchField, institution.getId(), loggedUser);
+				
+		if (criQuery != null)
+		{
+			query = entityManager().createQuery(criQuery);
 		
-		//System.out.println("~~QUERY : " + query.unwrap(Query.class).getQueryString());
+			System.out.println("~~QUERY : " + query.unwrap(Query.class).getQueryString());
 		
-		return new Long(query.getResultList().size());
+			return new Long(query.getResultList().size());
+		}
+		else
+			return 0l;
 	}
 
 	public static List<Question> findQuestionEntriesByPerson(String shibdId,
@@ -777,7 +786,7 @@ public class Question {
 			
 			Predicate statusActivePredicate = criteriaBuilder.equal(from.get("isActive"), Boolean.TRUE);
 			//Predicate statusNewPredicate = criteriaBuilder.equal(from.get("status"),Status.NEW);
-			Predicate statusNewPredicate = from.get("status").in(Status.ACTIVE, Status.NEW);
+			Predicate statusNewPredicate = criteriaBuilder.equal(from.get("status"),Status.ACTIVE);
 			
 			andAdminPredicate = criteriaBuilder.and(criteriaBuilder.or(statusNewPredicate, statusActivePredicate), andAdminPredicate);
 
@@ -787,7 +796,7 @@ public class Question {
 				andPredicate = pre1;
 			}
 			
-			if (searchField.size() > 0 && (!searchText.equals(""))) {
+			if (searchField.size() > 0) {
 				
 				Date dt1 = null;
 				Date dt2 = null;
@@ -796,37 +805,30 @@ public class Question {
 				
 				while (ctr < searchField.size())
 				{
-					if (searchField.get(ctr).equals("quesitontext")) {
+					if (searchField.get(ctr).equals("quesitontext") && !searchText.equals("")) {
 						Expression<String> exp2 = from.get("questionText");
-						Predicate pre2 = criteriaBuilder.like(exp2, "%"
-								+ searchText + "%");
+						Predicate pre2 = criteriaBuilder.like(exp2, "%" + searchText + "%");
 						andPredicate = criteriaBuilder.and(andPredicate, pre2);
 						ctr += 1;
 					}
 
-					if (searchField.get(ctr).equals("author")) {
-						Expression<String> authorExp = from.get("autor")
-								.get("name");
-						Predicate pre3 = criteriaBuilder.equal(authorExp, "%"
-								+ searchText + "%");
+					if (searchField.get(ctr).equals("author") && !searchText.equals("")) {
+						Expression<String> authorExp = from.get("autor").get("name");
+						Predicate pre3 = criteriaBuilder.equal(authorExp, "%" + searchText + "%");
 						andPredicate = criteriaBuilder.and(andPredicate, pre3);
 						ctr += 1;
 					}
 
-					if (searchField.get(ctr).equals("reviewer")) {
-						Expression<String> reviwerExp = from.get("rewiewer").get(
-								"name");
-						Predicate pre4 = criteriaBuilder.equal(reviwerExp, "%"
-								+ searchText + "%");
+					if (searchField.get(ctr).equals("reviewer") && !searchText.equals("")) {
+						Expression<String> reviwerExp = from.get("rewiewer").get("name");
+						Predicate pre4 = criteriaBuilder.equal(reviwerExp, "%" + searchText + "%");
 						andPredicate = criteriaBuilder.and(andPredicate, pre4);
 						ctr += 1;
 					}
 
-					if (searchField.get(ctr).equals("instruction")) {
-						Expression<String> exp3 = from.get("comment")
-								.get("comment");
-						Predicate pre5 = criteriaBuilder.like(exp3, "%"
-								+ searchText + "%");
+					if (searchField.get(ctr).equals("instruction") && !searchText.equals("")) {
+						Expression<String> exp3 = from.get("comment").get("comment");
+						Predicate pre5 = criteriaBuilder.like(exp3, "%" + searchText + "%");
 						andPredicate = criteriaBuilder.and(andPredicate, pre5);
 						ctr += 1;
 					}
@@ -834,32 +836,35 @@ public class Question {
 					if (searchField.get(ctr).equals("keyword")) {
 						ctr += 1;
 					}
+					
+					if (searchField.get(ctr).equals("showNew")) {
+						ctr += 1;						
+						Predicate showNewPre = criteriaBuilder.equal(from.get("status"),Status.NEW);
+						andAdminPredicate = criteriaBuilder.or(andAdminPredicate, showNewPre);
+					}
 
 					if (searchField.get(ctr).equals("institution")) {
 						ctr += 1;
 						Long selectInstitutionId = Long.parseLong(searchField.get(ctr));
-						Predicate pre7 = criteriaBuilder
-								.equal(from.get("questEvent").get("institution")
-										.get("id"), selectInstitutionId);
-						andPredicate = criteriaBuilder.and(andPredicate, pre7);
+						Predicate pre7 = criteriaBuilder.equal(from.get("questEvent").get("institution").get("id"), selectInstitutionId);
+						
+						if (andPredicate == null)
+							andPredicate = pre7;
+						else
+							andPredicate = criteriaBuilder.and(andPredicate, pre7);
+						
 						ctr += 1;
 					}
 
 					if (searchField.get(ctr).equals("specialiation")) {
 						ctr += 1;
 						Long questionEventId = Long.parseLong(searchField.get(ctr));
-						Predicate pre8 = criteriaBuilder.equal(
-								from.get("questEvent").get("id"),
-								questionEventId);
-						andPredicate = criteriaBuilder.and(andPredicate, pre8);
-					}
-
-					if (searchField.get(ctr).equals("status")) {
-						ctr += 1;
-						Status statusVal = Status.valueOf(searchField.get(ctr));
-						Predicate pre9 = criteriaBuilder.equal(from.get("status"),
-								statusVal);
-						andPredicate = criteriaBuilder.and(andPredicate, pre9);
+						Predicate pre8 = criteriaBuilder.equal(from.get("questEvent").get("id"),questionEventId);
+						
+						if (andPredicate == null)
+							andPredicate = pre8;
+						else
+							andPredicate = criteriaBuilder.and(andPredicate, pre8);
 					}
 
 					if (searchField.get(ctr).equals("createdDateFrom"))
@@ -878,7 +883,11 @@ public class Question {
 						{
 							Expression<Date> createdDateExp = from.get("dateAdded");
 							Predicate pre10 = criteriaBuilder.between(createdDateExp, dt1, dt2);
-							andPredicate = criteriaBuilder.and(andPredicate, pre10);
+							
+							if (andPredicate == null)
+								andPredicate = pre10;
+							else
+								andPredicate = criteriaBuilder.and(andPredicate, pre10);
 						}
 					}
 
@@ -901,8 +910,6 @@ public class Question {
 		catch (Exception e)
 		{
 			e.printStackTrace();
-			
-			
 		}	
 		return null;
 	}

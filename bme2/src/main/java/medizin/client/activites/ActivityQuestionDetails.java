@@ -1326,7 +1326,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		QuestionRequest questionRequest = requests.questionRequest();
 		proxy = questionRequest.edit(proxy);
 
-		if (userLoggedIn.getIsAdmin()) {
+		if (userLoggedIn.getIsAdmin() || personRightProxy.getIsInstitutionalAdmin()) {
 			proxy.setIsAcceptedAdmin(true);
 
 			if (proxy.getIsAcceptedRewiever()) {

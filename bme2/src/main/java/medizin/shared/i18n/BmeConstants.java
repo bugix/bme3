@@ -407,4 +407,8 @@ public interface BmeConstants extends Constants {
 	public String instituteDelError();
 	
 	public String questionEventDelError();
+	
+	public String showNew();
+	
+	public String reset();
 }
