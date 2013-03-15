@@ -112,6 +112,9 @@ public class ActivityAcceptQuestion extends AbstractActivityWrapper implements A
 						if (place instanceof PlaceQuestionDetails) {
 							init();
 						}
+						if(place instanceof PlaceAcceptQuestion) {
+							init();
+						}
 					}
 				});
 

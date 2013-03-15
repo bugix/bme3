@@ -1066,7 +1066,8 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 	          public void onSuccess(Void response) {
 	        	  Log.info("question update successful");
 	        	  save=true; // save done for question
-	        	  gotoDetailsPlace(qpoxy);
+	        	  //gotoDetailsPlace(qpoxy);
+	        	  gotoUpdateDetailsPlace();
 	          }
 		});
 	}
@@ -1081,6 +1082,10 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		placeController.goTo(new PlaceQuestionDetails(questionProxy.stableId(),PlaceQuestionDetails.Operation.DETAILS));
 	}
 
+	protected void gotoUpdateDetailsPlace() {
+		placeController.goTo(new PlaceQuestion("PlaceQuestion"));
+	}
+	
 	@Override
 	public Status getUpdatedStatus(boolean isEdit, boolean withNewMajorVersion) {
 		

@@ -967,6 +967,18 @@ public class Question {
 			question.setIsAcceptedRewiever(true);
 			question.setIsActive(false);
 			question.setStatus(Status.CORRECTION_FROM_REVIEWER);
+		}else if(Status.ACCEPTED_ADMIN.equals(status)) {
+			if(question.getIsAcceptedRewiever() == true) {
+				question.setIsActive(true);	
+			}
+			question.setIsAcceptedAdmin(true);
+			question.setStatus(Status.ACCEPTED_ADMIN);
+		}else if(Status.ACCEPTED_REVIEWER.equals(status)) {
+			question.setIsAcceptedRewiever(true);
+			if(question.getIsAcceptedAdmin() == true) {
+				question.setIsActive(true);	
+			}
+			question.setStatus(Status.ACCEPTED_REVIEWER);
 		}else {
 			log.info("Do nothing");
 		}

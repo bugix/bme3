@@ -15,6 +15,9 @@
 			overflow: auto !important;
 			width: 100%;
 		}
+		.whiteSpace {
+			white-space: normal;
+		}
 	</ui:style>
 		
 	<g:HTMLPanel>
@@ -72,7 +75,7 @@
 												<g:Label styleName="{style.label}" ui:field="lblQuestionText"></g:Label>
 											</td>
 											<td>
-											<g:HTML ui:field="lblQuestionTextValue"></g:HTML>
+											<g:HTML ui:field="lblQuestionTextValue" styleName="{style.whiteSpace}" ></g:HTML>
 												<!-- <g:Label ui:field="lblQuestionTextValue"></g:Label> -->
 											</td>
 										</tr>

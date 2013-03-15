@@ -9,7 +9,6 @@ import java.util.Set;
 
 import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
-import medizin.client.place.PlaceAcceptQuestion;
 import medizin.client.place.PlaceQuestion;
 import medizin.client.place.PlaceQuestionDetails;
 import medizin.client.proxy.AnswerProxy;

@@ -1,6 +1,7 @@
 package medizin.client.activites;
 
 import medizin.client.factory.request.McAppRequestFactory;
+import medizin.client.place.PlaceAcceptQuestion;
 import medizin.client.place.PlaceQuestionDetails;
 import medizin.client.place.PlaceQuestionDetails.Operation;
 import medizin.client.proxy.QuestionProxy;
@@ -21,7 +22,7 @@ public class ActivityAcceptQuestionEdit extends ActivityQuestionEdit {
 
 	@Override
 	protected void gotoDetailsPlace(QuestionProxy questionProxy) {
-		goTo(new PlaceQuestionDetails(questionProxy.stableId(),PlaceQuestionDetails.Operation.DETAILS, "ACCEPT_QUESTION"));
+		goTo(new PlaceAcceptQuestion("PlaceAcceptQuestion"));
 	}
 	
 	@Override
@@ -34,6 +35,15 @@ public class ActivityAcceptQuestionEdit extends ActivityQuestionEdit {
 					status = Status.CORRECTION_FROM_ADMIN;
 				}else if(userLoggedIn.getId().equals(question.getRewiewer().getId())) {
 					status = Status.CORRECTION_FROM_REVIEWER;
+				}else if(userLoggedIn.getId().equals(question.getAutor().getId())) {
+					if(question.getStatus().equals(Status.CORRECTION_FROM_ADMIN)){
+						status = Status.ACCEPTED_ADMIN;	
+					}else if(question.getStatus().equals(Status.CORRECTION_FROM_REVIEWER)) {
+						status = Status.ACCEPTED_REVIEWER;
+					}else {
+						Log.info("Error this scenario is not considered yet");
+						status = question.getStatus();
+					}
 				}else {
 					Log.info("Error this scenario is not considered yet");
 					status = question.getStatus();
@@ -56,5 +66,10 @@ public class ActivityAcceptQuestionEdit extends ActivityQuestionEdit {
 	@Override
 	protected void showNewDisplay() {
 		//do nothing
+	}
+	
+	@Override
+	protected void gotoUpdateDetailsPlace() {
+		goTo(new PlaceAcceptQuestion("PlaceAcceptQuestion"));
 	}
 }

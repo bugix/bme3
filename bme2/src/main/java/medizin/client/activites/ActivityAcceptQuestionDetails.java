@@ -68,9 +68,23 @@ public class ActivityAcceptQuestionDetails extends ActivityQuestionDetails {
 				proxy.setIsActive(true);
 			} else
 				proxy.setStatus(Status.ACCEPTED_REVIEWER);
+		}else if (proxy.getAutor().getId().equals(userLoggedIn.getId())) {
+			
+			if(proxy.getStatus().equals(Status.CORRECTION_FROM_ADMIN)) {
+				proxy.setIsAcceptedAdmin(true);
+				proxy.setStatus(Status.ACCEPTED_ADMIN);	
+			}else if (proxy.getStatus().equals(Status.CORRECTION_FROM_REVIEWER)) {
+				proxy.setIsAcceptedRewiever(true);
+				proxy.setStatus(Status.ACCEPTED_REVIEWER);	
+			}else if (proxy.getStatus().equals(Status.ACCEPTED_ADMIN)) {
+				proxy.setStatus(Status.ACTIVE);
+				proxy.setIsActive(true);
+			}else if (proxy.getStatus().equals(Status.ACCEPTED_REVIEWER)) {
+				proxy.setStatus(Status.ACTIVE);
+				proxy.setIsActive(true);
+			}
 		}
-
-		else if (proxy.getAutor().getId().equals(userLoggedIn.getId())
+/*		else if (proxy.getAutor().getId().equals(userLoggedIn.getId())
 				&& (proxy.getStatus().equals(Status.CORRECTION_FROM_ADMIN) || proxy
 						.getStatus().equals(Status.CORRECTION_FROM_REVIEWER))) {
 			proxy.setIsAcceptedAdmin(true);
@@ -78,7 +92,7 @@ public class ActivityAcceptQuestionDetails extends ActivityQuestionDetails {
 			proxy.setIsActive(true);
 			proxy.setStatus(Status.ACTIVE);
 		}
-
+*/
 		questionRequest.persist().using(proxy).fire(new BMEReceiver<Void>() {
 
 			@Override
