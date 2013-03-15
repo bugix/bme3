@@ -287,7 +287,8 @@ public class QuestionDetailsViewImpl extends Composite implements
 	public void setValue(QuestionProxy proxy) {
 		this.proxy = proxy;
 		
-		displayRenderer.setInnerText(proxy.getQuestionShortName()==null?proxy.getId().toString():proxy.getQuestionShortName());
+		String version = "(" + proxy.getQuestionVersion() == null ? "0" : proxy.getQuestionVersion() + "." + proxy.getQuestionSubVersion() == null ? "0" : proxy.getQuestionSubVersion() + ")";
+		displayRenderer.setInnerText(proxy.getQuestionShortName()==null?proxy.getId().toString():proxy.getQuestionShortName() + " " + version);
 		lblQuestionTypeValue.setText(proxy.getQuestionType()==null?"":proxy.getQuestionType().getShortName());
 		lblQuestionShortNameValue.setText(proxy.getQuestionShortName()==null?"":proxy.getQuestionShortName());
 		//lblQuestionTextValue.setText(proxy.getQuestionText()==null?"":proxy.getQuestionText());

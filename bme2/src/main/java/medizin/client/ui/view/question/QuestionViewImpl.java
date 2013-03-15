@@ -368,7 +368,7 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 
 		filterPanel.setPopupPosition(x, y);
 		filterPanel.show();
-		filterPanel.setSize("415px", "300px");
+		filterPanel.setSize("415px", "255px");
 		// Log.info(filterPanel.getSpecialisationBox().getValue());
 
 	}
