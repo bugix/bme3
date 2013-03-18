@@ -286,8 +286,9 @@ public class QuestionDetailsViewImpl extends Composite implements
 	@Override
 	public void setValue(QuestionProxy proxy) {
 		this.proxy = proxy;
-		
-		String version = "(" + proxy.getQuestionVersion() == null ? "0" : proxy.getQuestionVersion() + "." + proxy.getQuestionSubVersion() == null ? "0" : proxy.getQuestionSubVersion() + ")";
+		String qVersion = proxy.getQuestionVersion() == null ? "0" : proxy.getQuestionVersion().toString();
+		String qSubVersion = proxy.getQuestionSubVersion() == null ? "0" : proxy.getQuestionSubVersion().toString();
+		String version = "(" + qVersion + "." + qSubVersion + ")";
 		displayRenderer.setInnerText(proxy.getQuestionShortName()==null?proxy.getId().toString():proxy.getQuestionShortName() + " " + version);
 		lblQuestionTypeValue.setText(proxy.getQuestionType()==null?"":proxy.getQuestionType().getShortName());
 		lblQuestionShortNameValue.setText(proxy.getQuestionShortName()==null?"":proxy.getQuestionShortName());

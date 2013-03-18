@@ -973,11 +973,13 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 						@Override
 						public void onSuccess(Void response1) {
 							Log.info("Added successfuly");
+							save = true;
 							showNewDisplay();
 							gotoDetailsPlace(response);
 						}
 					});
 				}else {
+					save = true;
 					showNewDisplay();
 					gotoDetailsPlace(response);
 				}

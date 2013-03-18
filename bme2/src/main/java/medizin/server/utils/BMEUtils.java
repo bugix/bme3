@@ -4,11 +4,17 @@ import ij.ImagePlus;
 import ij.io.Opener;
 
 import java.io.File;
+import java.lang.reflect.Method;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
+import org.springframework.util.ReflectionUtils;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Lists;
 import com.google.web.bindery.requestfactory.server.RequestFactoryServlet;
 
 public final class BMEUtils {
@@ -69,4 +75,51 @@ public final class BMEUtils {
 		return size;
 	}
 
+	public static final Predicate<Method> getMethodFilter = new Predicate<Method>() {
+
+		@Override
+		public boolean apply(Method method) {
+			 if(!method.getName().startsWith("get"))      
+				 return false;
+			  if(method.getParameterTypes().length != 0)   
+				  return false;  
+			  if(void.class.equals(method.getReturnType())) 
+					  return false;
+			  if(method.getName().equals("getId") || method.getName().equals("getVersion") || method.getName().equals("getClass")) {
+				  return false;
+			  }
+			  return true;
+		}
+	};
+	
+	
+	public static <T> void copyValues(final T copyFrom,final T copyTo,Class<?> leafClass) {
+		Method[] methods = ReflectionUtils.getUniqueDeclaredMethods(leafClass);
+		FluentIterable<Method> methodIterable = FluentIterable.from(Lists.newArrayList(methods));
+		FluentIterable<Method> onlyGetMethods = methodIterable.filter(getMethodFilter);
+		
+		for (Method method : onlyGetMethods) {
+
+			final String name = "set" + method.getName().substring(3);
+			Optional<Method> optional = methodIterable.firstMatch(new Predicate<Method>() {
+
+				@Override
+				public boolean apply(Method input) {
+					return input.getName().equals(name);
+				}
+			});
+
+			if(optional.isPresent() == false) {
+				log.error("Method is null");
+				log.error("Name is : " + name);
+			}else {
+				try {
+					Object obj = method.invoke(copyFrom);
+					optional.get().invoke(copyTo, obj);	
+				} catch (Exception e) {
+					log.error("Error in object copy", e);
+				}
+			}
+		}
+	}
 }

@@ -203,4 +203,12 @@ privileged aspect Question_Roo_JavaBean {
         this.autor = autor;
     }
     
+    public Boolean Question.getIsReadOnly() {
+        return this.isReadOnly;
+    }
+    
+    public void Question.setIsReadOnly(Boolean isReadOnly) {
+        this.isReadOnly = isReadOnly;
+    }
+    
 }

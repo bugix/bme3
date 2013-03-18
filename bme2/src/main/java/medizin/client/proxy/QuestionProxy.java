@@ -107,5 +107,9 @@ public interface QuestionProxy extends EntityProxy {
 
     abstract void setAutor(PersonProxy autor);
 
+    abstract Boolean getIsReadOnly();
+
+    abstract void setIsReadOnly(Boolean isReadOnly);
+
     abstract Integer getVersion();
 }

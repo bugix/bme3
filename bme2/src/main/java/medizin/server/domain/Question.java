@@ -141,6 +141,11 @@ public class Question {
 	@ManyToOne
 	private Person autor;
 
+	@NotNull
+	@Value("false")
+	@Column(columnDefinition="BIT", length = 1)
+	private Boolean isReadOnly;
+	
 	public static long countQuestionAccessByPersonNonRoo(java.lang.Long personId) {
 		Person person = Person.findPerson(personId);
 		if (person == null)
@@ -994,23 +999,34 @@ public class Question {
 		if(oldQuestion != null) {
 			
 			for(Answer answer : oldQuestion.getAnswers()) {
-				answer.setQuestion(question);
-				answer.persist();
+				Answer newAnswer = new Answer();
+				BMEUtils.copyValues(answer, newAnswer, Answer.class);
+				newAnswer.setQuestion(question);
+				newAnswer.persist();
 			}
 			
 			List<UserAccessRights> userAccessRights = UserAccessRights.findUserAccessRightsByQuestion(oldQuestion.getId());
 			for (UserAccessRights userAccessRight : userAccessRights) {
-				userAccessRight.setQuestion(question);
-				userAccessRight.persist();
+				UserAccessRights newUserAccessRights = new UserAccessRights();
+				BMEUtils.copyValues(userAccessRight, newUserAccessRights, UserAccessRights.class);
+				newUserAccessRights.setQuestion(question);
+				newUserAccessRights.persist();
 			}
 			
 			List<AssesmentQuestion> assesmentQuestions = AssesmentQuestion.findAssesmentQuestionsByQuestion(oldQuestion.getId());
 			for (AssesmentQuestion assesmentQuestion : assesmentQuestions) {
-				assesmentQuestion.setQuestion(question);
-				assesmentQuestion.persist();
+				AssesmentQuestion newAssesmentQuestion = new AssesmentQuestion();
+				BMEUtils.copyValues(assesmentQuestion, newAssesmentQuestion, AssesmentQuestion.class);
+				newAssesmentQuestion.setQuestion(question);
+				newAssesmentQuestion.persist();
 			}
 			
-			oldQuestion.setStatus(Status.DEACTIVATED);
+			if(Status.ACTIVE.equals(oldQuestion.status) == false) {
+				oldQuestion.setStatus(Status.DEACTIVATED);
+			}else {
+				oldQuestion.setIsReadOnly(true);
+			}
+				
 			oldQuestion.persist();
 		}
 		
@@ -1033,6 +1049,65 @@ public class Question {
 		log.info("Result list size :" + query.getSingleResult());
 		
 		return query.getSingleResult() > 0;
+	}
+
+	
+	public static void questionAccepted(Question question, Boolean isAdminOrInstitutionalAdmin) {
+		Person userLoggedIn = Person.myGetLoggedPerson();
+
+		if (userLoggedIn == null)
+			return;
+
+		if (isAdminOrInstitutionalAdmin) {
+			question.setIsAcceptedAdmin(true);
+
+			if (question.getIsAcceptedRewiever()) {
+				question.setStatus(Status.ACTIVE);
+				question.setIsActive(true);
+			} else
+				question.setStatus(Status.ACCEPTED_ADMIN);
+		} else if (question.getRewiewer().getId().equals(userLoggedIn.getId())) {
+			question.setIsAcceptedRewiever(true);
+
+			if (question.getIsAcceptedAdmin()) {
+				question.setStatus(Status.ACTIVE);
+				question.setIsActive(true);
+			} else
+				question.setStatus(Status.ACCEPTED_REVIEWER);
+		} else if (question.getAutor().getId().equals(userLoggedIn.getId())) {
+
+			if (question.getStatus().equals(Status.CORRECTION_FROM_ADMIN)) {
+				question.setIsAcceptedAdmin(true);
+				question.setStatus(Status.ACCEPTED_ADMIN);
+			} else if (question.getStatus().equals(Status.CORRECTION_FROM_REVIEWER)) {
+				question.setIsAcceptedRewiever(true);
+				question.setStatus(Status.ACCEPTED_REVIEWER);
+			} else if (question.getStatus().equals(Status.ACCEPTED_ADMIN)) {
+				question.setStatus(Status.ACTIVE);
+				question.setIsActive(true);
+			} else if (question.getStatus().equals(Status.ACCEPTED_REVIEWER)) {
+				question.setStatus(Status.ACTIVE);
+				question.setIsActive(true);
+			}
+		}
+
+		if (Status.ACTIVE.equals(question.getStatus()) && question.getIsActive())
+			inActivePreviousQuestion(question.getPreviousVersion());
+
+		question.persist();
+	}
+
+	private static void inActivePreviousQuestion(Question tempQuestion) {
+		if (tempQuestion == null)
+			return;
+
+		do {
+			tempQuestion.setIsActive(false);
+			tempQuestion.setStatus(Status.DEACTIVATED);
+			tempQuestion.persist();
+
+			tempQuestion = tempQuestion.getPreviousVersion();
+		} while (tempQuestion != null);
 	}
 
 	@PostRemove

@@ -234,6 +234,10 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			public void onSuccess(final Object response) {
 				if(response instanceof QuestionProxy){
 					Log.info(((QuestionProxy) response).getQuestionText());
+					
+					if (((QuestionProxy) response).getIsReadOnly() == true)
+						view.setInvisibleIconButton(false);
+						
 					initForActivity((QuestionProxy) response);
 					/*if (questionPlace.getFromPlace().equals("ACCEPT_QUESTION"))
 					{
