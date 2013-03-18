@@ -39,7 +39,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.Place;
-import com.google.gwt.place.shared.PlaceChangeEvent;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
@@ -216,13 +215,13 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
         widget.setWidget(questionEditView.asWidget());
 	//	setTable(view.getTable());
         
-		eventBus.addHandler(PlaceChangeEvent.TYPE, new PlaceChangeEvent.Handler() {
+		/*eventBus.addHandler(PlaceChangeEvent.TYPE, new PlaceChangeEvent.Handler() {
 			public void onPlaceChange(PlaceChangeEvent event) {
 				
 				//updateSelection(event.getNewPlace());
 				// TODO implement
 			}
-		});
+		});*/
 		//init();
 		
 		view.setDelegate(this);
@@ -1108,5 +1107,11 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 	@Override
 	public boolean isAcceptQuestionView() {
 		return false;
+	}
+
+	@Override
+	public void placeChanged(Place place) {
+		//updateSelection(event.getNewPlace());
+		// TODO implement
 	}
 }

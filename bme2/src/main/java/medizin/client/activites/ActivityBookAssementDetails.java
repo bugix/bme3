@@ -1,18 +1,28 @@
 package medizin.client.activites;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
+import medizin.client.factory.request.McAppRequestFactory;
+import medizin.client.place.PlaceBookAssesmentDetails;
+import medizin.client.proxy.AnswerProxy;
+import medizin.client.proxy.AnswerToAssQuestionProxy;
+import medizin.client.proxy.AssesmentProxy;
+import medizin.client.proxy.AssesmentQuestionProxy;
+import medizin.client.proxy.QuestionEventProxy;
+import medizin.client.proxy.QuestionSumPerPersonProxy;
+import medizin.client.proxy.QuestionTypeCountPerExamProxy;
+import medizin.client.proxy.QuestionTypeProxy;
+import medizin.client.request.AnswerToAssQuestionRequest;
+import medizin.client.request.AssesmentQuestionRequest;
+import medizin.client.request.QuestionSumPerPersonRequest;
 import medizin.client.ui.AssesmenBookDialogbox;
 import medizin.client.ui.AssesmenBookDialogboxImpl;
-import medizin.client.ui.ErrorPanel;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.dnd3.ui.AnswerView;
 import medizin.client.ui.dnd3.ui.AnswerViewImpl;
@@ -23,19 +33,6 @@ import medizin.client.ui.dnd3.ui.QuestionTypeDNDViewImpl;
 import medizin.client.ui.dnd3.ui.QuestionViewImpl;
 import medizin.client.ui.view.BookAssesmentDetailsView;
 import medizin.client.ui.view.BookAssesmentDetailsViewImpl;
-import medizin.client.place.PlaceBookAssesmentDetails;
-import medizin.client.factory.request.McAppRequestFactory;
-import medizin.client.request.AnswerToAssQuestionRequest;
-import medizin.client.proxy.AssesmentProxy;
-import medizin.client.request.AssesmentQuestionRequest;
-import medizin.client.proxy.QuestionEventProxy;
-import medizin.client.proxy.AnswerProxy;
-import medizin.client.proxy.AnswerToAssQuestionProxy;
-import medizin.client.proxy.QuestionSumPerPersonProxy;
-import medizin.client.request.QuestionSumPerPersonRequest;
-import medizin.client.proxy.QuestionTypeCountPerExamProxy;
-import medizin.client.proxy.QuestionTypeProxy;
-import medizin.client.proxy.AssesmentQuestionProxy;
 
 import com.allen_sauer.gwt.dnd.client.DragEndEvent;
 import com.allen_sauer.gwt.dnd.client.DragHandler;
@@ -44,27 +41,22 @@ import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.allen_sauer.gwt.dnd.client.VetoDragException;
 import com.allen_sauer.gwt.dnd.client.drop.VerticalPanelDropController;
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.activity.shared.AbstractActivity;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.Place;
-import com.google.gwt.place.shared.PlaceChangeEvent;
 import com.google.gwt.place.shared.PlaceController;
-import com.google.web.bindery.requestfactory.gwt.client.RequestFactoryEditorDriver;
-import com.google.web.bindery.requestfactory.shared.EntityProxyId;
-import com.google.web.bindery.requestfactory.shared.Receiver;
-import com.google.web.bindery.requestfactory.shared.Request;
-import com.google.web.bindery.requestfactory.shared.RequestContext;
-import com.google.web.bindery.requestfactory.shared.ServerFailure;
-import com.google.web.bindery.requestfactory.shared.Violation;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
+import com.google.web.bindery.requestfactory.shared.EntityProxyId;
+import com.google.web.bindery.requestfactory.shared.Receiver;
+import com.google.web.bindery.requestfactory.shared.Request;
+import com.google.web.bindery.requestfactory.shared.ServerFailure;
+import com.google.web.bindery.requestfactory.shared.Violation;
 /**
  * Provides Activity for BookAssemsentDetailsView, makes extensive use of  gwt-dnd ( <a href="http://code.google.com/p/gwt-dnd">Drag-and-drop Library for Google-Web-toolkit</a>). Allows to
  * sort elements of an assesment-book. All the design elemnts of draggable Elements (questiontype counts(Fragetypen), question events(Themengebiete),questions and answers are excluded in view-classes. 
@@ -138,11 +130,11 @@ public class ActivityBookAssementDetails extends AbstractActivityWrapper impleme
         widget.setWidget(bookAssesmentViewDetails.asWidget());
         DOM.setElementAttribute(bookAssesmentViewDetails.getScrollContainer().getElement(), "style", "position: absolute; overflow: auto; left: 0px; top: 25px; right: 50px; bottom: 0px;width: 820px");
         
-        eventBus.addHandler(PlaceChangeEvent.TYPE, new PlaceChangeEvent.Handler() {
+        /*eventBus.addHandler(PlaceChangeEvent.TYPE, new PlaceChangeEvent.Handler() {
 			public void onPlaceChange(PlaceChangeEvent event) {
 
 			}
-		});
+		});*/
         /**
          * Requests AssesmentProxy for this assesment-book.
          */
@@ -985,6 +977,12 @@ public void moveQuestionTypeCountPerExamRequestUp(QuestionTypeCountPerExamProxy 
 		Log.debug("moveQuestionTypeCountPerExamRequestDown aus Activity proxy: "+questionTypeCount.stableId());
 		moveQuestionTypeCountPerExamRequestDown(questionTypeCount);
 		view.reload(assesment);
+	}
+
+	@Override
+	public void placeChanged(Place place) {
+		// TODO Auto-generated method stub
+		
 	}
 
 

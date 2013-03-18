@@ -9,26 +9,23 @@ import medizin.client.proxy.AnswerProxy;
 import medizin.client.proxy.MatrixValidityProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.request.AnswerRequest;
-import medizin.client.ui.DeclineEmailPopupDelagate;
 import medizin.client.ui.view.AcceptAnswerSubView;
 import medizin.client.ui.view.AcceptAnswerSubViewImpl;
 import medizin.client.ui.view.AcceptAnswerView;
 import medizin.client.ui.view.AcceptAnswerViewImpl;
 import medizin.client.ui.view.AcceptMatrixAnswerSubView;
 import medizin.client.ui.view.AcceptMatrixAnswerSubViewImpl;
-import medizin.client.ui.view.question.MatrixAnswerListView;
 import medizin.shared.QuestionTypes;
 import medizin.shared.Status;
 
-import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.cellview.client.AbstractHasData;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.view.client.Range;
 import com.google.inject.Inject;
-import com.google.web.bindery.requestfactory.shared.EntityProxy;
 /**
  * Activity for accepting answers.
  * @author masterthesis
@@ -391,5 +388,11 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 				init();
 			}
 		});
+	}
+
+	@Override
+	public void placeChanged(Place place) {
+		// TODO add place changed code here
+		
 	}
 }

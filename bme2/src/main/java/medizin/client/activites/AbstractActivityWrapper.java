@@ -1,7 +1,5 @@
 package medizin.client.activites;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import medizin.client.factory.receiver.BMEReceiver;
@@ -9,9 +7,9 @@ import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.PersonAccessRightProxy;
 import medizin.client.proxy.PersonProxy;
-import medizin.client.proxy.UserAccessRightsProxy;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.shared.i18n.BmeConstants;
+
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.collect.Maps;
 import com.google.gwt.activity.shared.AbstractActivity;
@@ -19,6 +17,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.Place;
+import com.google.gwt.place.shared.PlaceChangeEvent;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.user.client.ui.Widget;
@@ -63,30 +62,6 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 					userLoggedIn = response;
 					newStart(panel, eventBus);
 				}				
-			
-
-				/*public void onFailure(ServerFailure error) {
-					ErrorPanel erorPanel = new ErrorPanel();
-					erorPanel.setErrorMessage(error.getMessage());
-					Log.error(error.getMessage());
-					//onStop();
-				}
-
-				@Override
-				public void onViolation(Set<Violation> errors) {
-					Iterator<Violation> iter = errors.iterator();
-					String message = "";
-					while (iter.hasNext()) {
-						message += iter.next().getMessage() + "<br>";
-					}
-					Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION
-							+ " in Antwort löschen -" + message);
-
-					ErrorPanel erorPanel = new ErrorPanel();
-					erorPanel.setErrorMessage(message);
-					//onStop();
-
-				}*/
 
 			});
 			
@@ -97,30 +72,6 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 					institutionActive = response;
 					newStart(panel, eventBus);
 				}
-
-				/*public void onFailure(ServerFailure error) {
-					ErrorPanel erorPanel = new ErrorPanel();
-					erorPanel.setErrorMessage(error.getMessage());
-					Log.error(error.getMessage());
-					//onStop();
-				}
-
-				@Override
-				public void onViolation(Set<Violation> errors) {
-					Iterator<Violation> iter = errors.iterator();
-					String message = "";
-					while (iter.hasNext()) {
-						message += iter.next().getMessage() + "<br>";
-					}
-					Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION
-							+ " in Antwort löschen -" + message);
-
-					ErrorPanel erorPanel = new ErrorPanel();
-					erorPanel.setErrorMessage(message);
-					//onStop();
-					
-
-				}*/
 
 			});
 	}
@@ -164,10 +115,15 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 			}
 		});
 		
-		
-		
+		eventBus.addHandler(PlaceChangeEvent.TYPE,new PlaceChangeEvent.Handler() {
+			public void onPlaceChange(PlaceChangeEvent event) {
+				Place place = event.getNewPlace();
+				placeChanged(place);
+			}
+		});
 	}
 	
 	public abstract void start2(AcceptsOneWidget panel, EventBus eventBus);
-
+	public abstract void placeChanged(Place place);
+	
 }

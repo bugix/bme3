@@ -1,47 +1,33 @@
 package medizin.client.activites;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import medizin.client.factory.request.McAppRequestFactory;
+import medizin.client.place.PlaceAsignAssQuestion;
+import medizin.client.proxy.AnswerProxy;
+import medizin.client.proxy.AnswerToAssQuestionProxy;
+import medizin.client.proxy.AssesmentProxy;
+import medizin.client.proxy.AssesmentQuestionProxy;
+import medizin.client.proxy.QuestionProxy;
+import medizin.client.request.AssesmentQuestionRequest;
 import medizin.client.ui.ErrorPanel;
 import medizin.client.ui.McAppConstant;
-import medizin.client.ui.view.AcceptPersonViewImpl;
-import medizin.client.ui.view.SystemOverviewView;
-import medizin.client.ui.view.SystemOverviewViewImpl;
 import medizin.client.ui.view.assignquestion.AddQuestionsTabPanel;
-import medizin.client.ui.view.assignquestion.AddQuestionsTabPanelImpl;
 import medizin.client.ui.view.assignquestion.AnswerView;
 import medizin.client.ui.view.assignquestion.AnswerViewImpl;
 import medizin.client.ui.view.assignquestion.AsignAssQuestionView;
 import medizin.client.ui.view.assignquestion.AsignAssQuestionViewImpl;
 import medizin.client.ui.view.assignquestion.AssesmentQuestionPanel;
-import medizin.client.ui.view.assignquestion.AssesmentQuestionPanelImpl;
 import medizin.client.ui.view.assignquestion.AssesmentQuestionView;
 import medizin.client.ui.view.assignquestion.AssesmentQuestionViewImpl;
 import medizin.client.ui.view.assignquestion.AssesmentTabPanel;
-import medizin.client.ui.view.assignquestion.AssesmentTabPanelImpl;
 import medizin.client.ui.view.assignquestion.QuestionPanel;
-import medizin.client.ui.view.assignquestion.QuestionPanelImpl;
 import medizin.client.ui.view.assignquestion.QuestionView;
 import medizin.client.ui.view.assignquestion.QuestionViewImpl;
-
-import medizin.client.place.PlaceAcceptPerson;
-import medizin.client.place.PlaceAsignAssQuestion;
-import medizin.client.place.PlaceSystemOverview;
-import medizin.client.factory.request.McAppRequestFactory;
-import medizin.client.proxy.AnswerProxy;
-import medizin.client.proxy.AnswerToAssQuestionProxy;
-import medizin.client.request.AnswerToAssQuestionRequest;
-import medizin.client.proxy.AssesmentProxy;
-import medizin.client.proxy.AssesmentQuestionProxy;
-import medizin.client.request.AssesmentQuestionRequest;
-import medizin.client.proxy.QuestionProxy;
-import medizin.server.domain.Answer;
-import medizin.server.domain.AnswerToAssQuestion;
 
 import com.allen_sauer.gwt.dnd.client.DragEndEvent;
 import com.allen_sauer.gwt.dnd.client.DragHandler;
@@ -50,12 +36,9 @@ import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.allen_sauer.gwt.dnd.client.VetoDragException;
 import com.allen_sauer.gwt.dnd.client.drop.VerticalPanelDropController;
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.activity.shared.AbstractActivity;
-import com.google.gwt.activity.shared.Activity;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -704,6 +687,12 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 	@Override
 	public void addQuestionClicked() {
 		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void placeChanged(Place place) {
+		// TODO add place changed code here
 		
 	}
 

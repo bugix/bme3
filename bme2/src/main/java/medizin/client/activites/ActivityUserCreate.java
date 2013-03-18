@@ -19,7 +19,6 @@ import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.Place;
-import com.google.gwt.place.shared.PlaceChangeEvent;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
@@ -108,13 +107,13 @@ public class ActivityUserCreate  extends AbstractActivityWrapper  implements Use
         widget.setWidget(userEditView.asWidget());
 		//setTable(view.getTable());
         
-		eventBus.addHandler(PlaceChangeEvent.TYPE, new PlaceChangeEvent.Handler() {
+		/*eventBus.addHandler(PlaceChangeEvent.TYPE, new PlaceChangeEvent.Handler() {
 			public void onPlaceChange(PlaceChangeEvent event) {
 				
 				//updateSelection(event.getNewPlace());
 				// TODO implement
 			}
-		});
+		});*/
 		//init();
 		
 		requests.personRequest().myGetLoggedPerson().fire(new BMEReceiver<PersonProxy>() {
@@ -319,6 +318,12 @@ public class ActivityUserCreate  extends AbstractActivityWrapper  implements Use
 			}
       }); */
 		
+	}
+
+	@Override
+	public void placeChanged(Place place) {
+		//updateSelection(event.getNewPlace());
+		// TODO implement
 	}
 
 }

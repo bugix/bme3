@@ -1,43 +1,23 @@
 package medizin.client.activites;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import medizin.client.ui.SlidingPanel;
-import medizin.client.ui.view.AcceptPersonView;
-import medizin.client.ui.view.AcceptPersonViewImpl;
-import medizin.client.ui.view.SystemOverviewView;
-import medizin.client.ui.view.SystemOverviewViewImpl;
+import medizin.client.factory.request.McAppRequestFactory;
+import medizin.client.place.PlaceAssesment;
+import medizin.client.place.PlaceAssesmentDetails;
+import medizin.client.proxy.AssesmentProxy;
+import medizin.client.proxy.PersonProxy;
 import medizin.client.ui.view.assesment.AssesmentView;
 import medizin.client.ui.view.assesment.AssesmentViewImpl;
 
-import medizin.client.place.PlaceAcceptPerson;
-import medizin.client.place.PlaceAssesment;
-import medizin.client.place.PlaceAssesmentDetails;
-import medizin.client.place.PlaceSystemOverview;
-import medizin.client.place.PlaceUserDetails;
-import medizin.client.factory.request.McAppRequestFactory;
-import medizin.client.proxy.AssesmentProxy;
-import medizin.client.proxy.PersonProxy;
-
-
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.activity.shared.AbstractActivity;
-import com.google.gwt.activity.shared.Activity;
 import com.google.gwt.activity.shared.ActivityManager;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.place.shared.Place;
-import com.google.gwt.place.shared.PlaceChangeEvent;
 import com.google.gwt.place.shared.PlaceController;
-import com.google.web.bindery.requestfactory.shared.Receiver;
-import com.google.web.bindery.requestfactory.shared.Request;
-import com.google.web.bindery.requestfactory.shared.ServerFailure;
-import com.google.web.bindery.requestfactory.shared.Violation;
 import com.google.gwt.user.cellview.client.AbstractHasData;
 import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.Range;
@@ -45,6 +25,8 @@ import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
+import com.google.web.bindery.requestfactory.shared.Receiver;
+import com.google.web.bindery.requestfactory.shared.Request;
 
 public class ActivityAssesment extends AbstractActivityWrapper implements AssesmentView.Presenter, AssesmentView.Delegate {
 
@@ -123,7 +105,7 @@ public class ActivityAssesment extends AbstractActivityWrapper implements Assesm
         table=view.getTable();
 
         
-        eventBus.addHandler(PlaceChangeEvent.TYPE, new PlaceChangeEvent.Handler() {
+        /*eventBus.addHandler(PlaceChangeEvent.TYPE, new PlaceChangeEvent.Handler() {
 			public void onPlaceChange(PlaceChangeEvent event) {
 
 				Place place = event.getNewPlace();
@@ -131,7 +113,7 @@ public class ActivityAssesment extends AbstractActivityWrapper implements Assesm
 					init();
 				}
 			}
-		});
+		});*/
 		init();
 		
 		activityManger.setDisplay(view.getDetailsPanel());
@@ -252,6 +234,13 @@ public class ActivityAssesment extends AbstractActivityWrapper implements Assesm
 		public void newClicked() {
 			placeController.goTo(new PlaceAssesmentDetails(PlaceAssesmentDetails.Operation.CREATE));
 			
+		}
+
+		@Override
+		public void placeChanged(Place place) {
+			if(place instanceof PlaceAssesmentDetails){
+				init();
+			}
 		}
 
 

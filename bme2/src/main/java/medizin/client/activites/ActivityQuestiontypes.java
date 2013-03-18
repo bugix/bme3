@@ -2,22 +2,21 @@ package medizin.client.activites;
 
 import java.util.List;
 
-import medizin.client.ui.view.QuestiontypesView;
-import medizin.client.ui.view.QuestiontypesViewImpl;
-import medizin.client.ui.widget.Sorting;
+import medizin.client.factory.receiver.BMEReceiver;
+import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.PlaceQuestiontypes;
 import medizin.client.place.PlaceQuestiontypesDetails;
 import medizin.client.place.PlaceQuestiontypesDetails.Operation;
-import medizin.client.factory.receiver.BMEReceiver;
-import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.proxy.QuestionTypeProxy;
+import medizin.client.ui.view.QuestiontypesView;
+import medizin.client.ui.view.QuestiontypesViewImpl;
+import medizin.client.ui.widget.Sorting;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.activity.shared.ActivityManager;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.place.shared.Place;
-import com.google.gwt.place.shared.PlaceChangeEvent;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.cellview.client.AbstractHasData;
 import com.google.gwt.user.cellview.client.CellTable;
@@ -43,7 +42,7 @@ public class ActivityQuestiontypes extends AbstractActivityWrapper implements Qu
 	private QuestiontypesView view;
 	private SingleSelectionModel<QuestionTypeProxy> selectionModel;
 	private HandlerRegistration rangeChangeHandler;
-	private HandlerRegistration placeChangeHandlerRegistration;
+	/*private HandlerRegistration placeChangeHandlerRegistration;*/
 
 	private McAppRequestFactory requests;
 	private PlaceController placeController;
@@ -102,9 +101,9 @@ public class ActivityQuestiontypes extends AbstractActivityWrapper implements Qu
 		
 		//rangeChangeHandler = null;
 		
-		if (placeChangeHandlerRegistration != null) {
+		/*if (placeChangeHandlerRegistration != null) {
 			placeChangeHandlerRegistration.removeHandler();
-		}
+		}*/
 	}
 	private QuestionTypeProxy questionType;
 		
@@ -173,7 +172,7 @@ public class ActivityQuestiontypes extends AbstractActivityWrapper implements Qu
 		init();
 		view.setDelegate(this);
         
-		placeChangeHandlerRegistration = eventBus.addHandler(PlaceChangeEvent.TYPE, new PlaceChangeEvent.Handler() {
+		/*placeChangeHandlerRegistration = eventBus.addHandler(PlaceChangeEvent.TYPE, new PlaceChangeEvent.Handler() {
 			@Override
 			public void onPlaceChange(PlaceChangeEvent event) {
 				if (event.getNewPlace() instanceof PlaceQuestiontypesDetails) {
@@ -187,7 +186,7 @@ public class ActivityQuestiontypes extends AbstractActivityWrapper implements Qu
 					}
 				}				
 			}
-		});
+		});*/
 		
 	}//End start()
 	
@@ -457,6 +456,20 @@ public class ActivityQuestiontypes extends AbstractActivityWrapper implements Qu
 				}
 			});*/
 			
+		}
+
+		@Override
+		public void placeChanged(Place place) {
+			if (place instanceof PlaceQuestiontypesDetails) {
+				
+				
+				
+				PlaceQuestiontypesDetails placeDetails = (PlaceQuestiontypesDetails) place;
+				if (placeDetails.getOperation() == Operation.DETAILS) {
+					init();
+					//requests.getEventBus().fireEvent(new ApplicationLoadingScreenEvent(false));
+				}
+			}	
 		}
 	
 		

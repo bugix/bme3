@@ -5,41 +5,22 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import medizin.client.ui.SlidingPanel;
-import medizin.client.ui.view.AcceptPersonView;
-import medizin.client.ui.view.AcceptPersonViewImpl;
+import medizin.client.factory.request.McAppRequestFactory;
+import medizin.client.place.PlaceBookAssesment;
+import medizin.client.proxy.AssesmentProxy;
 import medizin.client.ui.view.BookAssesmentView;
 import medizin.client.ui.view.BookAssesmentViewImpl;
-import medizin.client.ui.view.SystemOverviewView;
-import medizin.client.ui.view.SystemOverviewViewImpl;
-
-import medizin.client.place.PlaceAcceptPerson;
-import medizin.client.place.PlaceBookAssesment;
-import medizin.client.place.PlaceInstitution;
-import medizin.client.place.PlaceSystemOverview;
-import medizin.client.factory.request.McAppRequestFactory;
-import medizin.client.proxy.AssesmentProxy;
 
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.activity.shared.AbstractActivity;
-import com.google.gwt.activity.shared.Activity;
 import com.google.gwt.activity.shared.ActivityManager;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.Place;
-import com.google.gwt.place.shared.PlaceChangeEvent;
 import com.google.gwt.place.shared.PlaceController;
-import com.google.web.bindery.requestfactory.gwt.client.RequestFactoryEditorDriver;
+import com.google.gwt.user.client.ui.AcceptsOneWidget;
+import com.google.inject.Inject;
 import com.google.web.bindery.requestfactory.shared.EntityProxyId;
 import com.google.web.bindery.requestfactory.shared.Receiver;
 import com.google.web.bindery.requestfactory.shared.Request;
-import com.google.web.bindery.requestfactory.shared.RequestContext;
-import com.google.web.bindery.requestfactory.shared.ServerFailure;
-import com.google.web.bindery.requestfactory.shared.Violation;
-import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.AcceptsOneWidget;
-import com.google.gwt.view.client.Range;
-import com.google.inject.Inject;
 
 public class ActivityBookAssesment extends AbstractActivityWrapper implements BookAssesmentView.Presenter {
 
@@ -110,12 +91,12 @@ public class ActivityBookAssesment extends AbstractActivityWrapper implements Bo
         widget.setWidget(bookAssesmentView.asWidget());
         
         
-        eventBus.addHandler(PlaceChangeEvent.TYPE, new PlaceChangeEvent.Handler() {
+        /*eventBus.addHandler(PlaceChangeEvent.TYPE, new PlaceChangeEvent.Handler() {
 			public void onPlaceChange(PlaceChangeEvent event) {
 				//updateSelection(event.getNewPlace());
 				// TODO implement
 			}
-		});
+		});*/
         /*
          * Start Loading tabs for Assements
          */
@@ -196,5 +177,15 @@ public class ActivityBookAssesment extends AbstractActivityWrapper implements Bo
 					//selectionModel.setSelected(selectMe, true);
 				}
 			}
+		}
+
+
+
+
+
+		@Override
+		public void placeChanged(Place place) {
+			//updateSelection(event.getNewPlace());
+			// TODO implement
 		}
 }

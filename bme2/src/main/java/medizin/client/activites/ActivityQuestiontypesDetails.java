@@ -12,7 +12,6 @@ import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.place.shared.Place;
-import com.google.gwt.place.shared.PlaceChangeEvent;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
@@ -76,12 +75,12 @@ public class ActivityQuestiontypesDetails extends AbstractActivityWrapper implem
         widget.setWidget(questionTypeDetailsView.asWidget());
 		//setTable(view.getTable());
         
-		eventBus.addHandler(PlaceChangeEvent.TYPE, new PlaceChangeEvent.Handler() {
+		/*eventBus.addHandler(PlaceChangeEvent.TYPE, new PlaceChangeEvent.Handler() {
 			public void onPlaceChange(PlaceChangeEvent event) {
 				//updateSelection(event.getNewPlace());
 				// TODO implement
 			}
-		});
+		});*/
 		//init();
 		
 		view.setDelegate(this);
@@ -208,6 +207,14 @@ public class ActivityQuestiontypesDetails extends AbstractActivityWrapper implem
 	public void newClicked(String institutionName) {
 		// TODO Auto-generated method stub
 		
+	}
+
+
+
+	@Override
+	public void placeChanged(Place place) {
+		//updateSelection(event.getNewPlace());
+		// TODO implement
 	}
 
 

@@ -1,24 +1,13 @@
 package medizin.client.activites;
 
-import medizin.client.ui.SlidingPanel;
-import medizin.client.ui.view.AcceptPersonView;
-import medizin.client.ui.view.AcceptPersonViewImpl;
+import medizin.client.factory.request.McAppRequestFactory;
+import medizin.client.place.PlaceOpenDemand;
 import medizin.client.ui.view.OpenDemandView;
 import medizin.client.ui.view.OpenDemandViewImpl;
-import medizin.client.ui.view.SystemOverviewView;
-import medizin.client.ui.view.SystemOverviewViewImpl;
 
-import medizin.client.place.PlaceAcceptPerson;
-import medizin.client.place.PlaceOpenDemand;
-import medizin.client.place.PlaceSystemOverview;
-import medizin.client.factory.request.McAppRequestFactory;
-
-import com.google.gwt.activity.shared.AbstractActivity;
-import com.google.gwt.activity.shared.Activity;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 
@@ -81,6 +70,12 @@ public class ActivityOpenDemand extends AbstractActivityWrapper implements OpenD
 	@Override
 	public void goTo(Place place) {
 		  placeController.goTo(place);
+	}
+
+	@Override
+	public void placeChanged(Place place) {
+		// TODO add place changed code here
+		
 	}
 
 }

@@ -30,7 +30,6 @@ import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.place.shared.Place;
-import com.google.gwt.place.shared.PlaceChangeEvent;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
@@ -124,12 +123,12 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
         widget.setWidget(assesmentDetailsView.asWidget());
 		//setTable(view.getTable());
         
-		eventBus.addHandler(PlaceChangeEvent.TYPE, new PlaceChangeEvent.Handler() {
+		/*eventBus.addHandler(PlaceChangeEvent.TYPE, new PlaceChangeEvent.Handler() {
 			public void onPlaceChange(PlaceChangeEvent event) {
 				//updateSelection(event.getNewPlace());
 				// TODO implement
 			}
-		});
+		});*/
 		//init();
 		
 		view.setDelegate(this);
@@ -892,6 +891,12 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 				}
 	      });
 		
+	}
+
+	@Override
+	public void placeChanged(Place place) {
+		//updateSelection(event.getNewPlace());
+		// TODO implement
 	}
 
 

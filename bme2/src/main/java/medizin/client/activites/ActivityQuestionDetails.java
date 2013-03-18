@@ -155,12 +155,12 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
         widget.setWidget(questionDetailsView.asWidget());
 		//setTable(view.getTable());
         
-		eventBus.addHandler(PlaceChangeEvent.TYPE, new PlaceChangeEvent.Handler() {
+		/*eventBus.addHandler(PlaceChangeEvent.TYPE, new PlaceChangeEvent.Handler() {
 			public void onPlaceChange(PlaceChangeEvent event) {
 				//updateSelection(event.getNewPlace());
 				// TODO implement
 			}
-		});
+		});*/
 		//init();
 		
 		view.setDelegate(this);
@@ -1540,5 +1540,11 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	// updated by subclass ActivityAcceptQuestionDetails
 	@Override
 	public void acceptQuestionClicked(QuestionProxy proxy) {
+	}
+
+	@Override
+	public void placeChanged(Place place) {
+		//updateSelection(event.getNewPlace());
+		// TODO implement
 	}
 }

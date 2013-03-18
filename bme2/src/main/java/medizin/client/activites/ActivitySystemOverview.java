@@ -99,4 +99,10 @@ public class ActivitySystemOverview extends AbstractActivityWrapper implements S
 		
 	}
 
+	@Override
+	public void placeChanged(Place place) {
+		// TODO add place changed code here
+		
+	}
+
 }

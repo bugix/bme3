@@ -1,17 +1,14 @@
 package medizin.client.activites;
 
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
+import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.PlaceAcceptQuestion;
 import medizin.client.place.PlaceQuestionDetails;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.request.QuestionRequest;
 import medizin.client.ui.DeclineEmailPopupDelagate;
-import medizin.client.ui.ErrorPanel;
-import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.AcceptQuestionView;
 import medizin.client.ui.view.AcceptQuestionViewImpl;
 
@@ -20,7 +17,6 @@ import com.google.gwt.activity.shared.ActivityManager;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.place.shared.Place;
-import com.google.gwt.place.shared.PlaceChangeEvent;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.cellview.client.AbstractHasData;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
@@ -31,9 +27,6 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
 import com.google.web.bindery.requestfactory.shared.EntityProxy;
-import com.google.web.bindery.requestfactory.shared.Receiver;
-import com.google.web.bindery.requestfactory.shared.ServerFailure;
-import com.google.web.bindery.requestfactory.shared.Violation;
 
 public class ActivityAcceptQuestion extends AbstractActivityWrapper implements AcceptQuestionView.Presenter, DeclineEmailPopupDelagate {
 
@@ -104,7 +97,7 @@ public class ActivityAcceptQuestion extends AbstractActivityWrapper implements A
         
         table=view.getTable();
         
-        eventBus.addHandler(PlaceChangeEvent.TYPE,
+        /*eventBus.addHandler(PlaceChangeEvent.TYPE,
 				new PlaceChangeEvent.Handler() {
 					public void onPlaceChange(PlaceChangeEvent event) {
 
@@ -116,7 +109,7 @@ public class ActivityAcceptQuestion extends AbstractActivityWrapper implements A
 							init();
 						}
 					}
-				});
+				});*/
 
 		activityManger.setDisplay(view.getDetailsPanel());
         
@@ -198,7 +191,7 @@ public class ActivityAcceptQuestion extends AbstractActivityWrapper implements A
 			rangeChangeHandler=null;
 		}
 		
-		requests.questionRequest().countQuestionsNonAcceptedAdmin().fire(new Receiver<Long>() {
+		requests.questionRequest().countQuestionsNonAcceptedAdmin().fire(new BMEReceiver<Long>() {
 			@Override
 			public void onSuccess(Long response) {
 				if (view == null) {
@@ -222,7 +215,7 @@ public class ActivityAcceptQuestion extends AbstractActivityWrapper implements A
 	protected void onRangeChanged() {
 		final Range range = table.getVisibleRange();
 
-		requests.questionRequest().findQuestionsEntriesNonAcceptedAdmin(range.getStart(), range.getLength()).with(view.getPaths()).fire(new Receiver<List<QuestionProxy>>() {
+		requests.questionRequest().findQuestionsEntriesNonAcceptedAdmin(range.getStart(), range.getLength()).with(view.getPaths()).fire(new BMEReceiver<List<QuestionProxy>>() {
 			@Override
 			public void onSuccess(List<QuestionProxy> values) {
 				if (view == null) {
@@ -259,33 +252,14 @@ public class ActivityAcceptQuestion extends AbstractActivityWrapper implements A
 			}
 			
 			questionProxy.setIsActive(true);
-			req.persistAndSetPreviousInactive().using(questionProxy).fire(new Receiver<Void>(){
+			req.persistAndSetPreviousInactive().using(questionProxy).fire(new BMEReceiver<Void>(){
 
 				@Override
 				public void onSuccess(Void arg0) {
 					init();
 					
 				}
-		          public void onFailure(ServerFailure error){
-		        	  ErrorPanel erorPanel = new ErrorPanel();
-		        	  erorPanel.setErrorMessage(error.getMessage());
-						Log.error(error.getMessage());
-					}
-		          @Override
-					public void onViolation(Set<Violation> errors) {
-						Iterator<Violation> iter = errors.iterator();
-						String message = "";
-						while(iter.hasNext()){
-							message += iter.next().getMessage() + "<br>";
-						}
-						Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Antwort löschen -" + message);
-						
-			        	  ErrorPanel erorPanel = new ErrorPanel();
-			        	  erorPanel.setErrorMessage(message);
-						
-
-						
-					}
+		          
 			});
 		}
 		
@@ -298,36 +272,25 @@ public class ActivityAcceptQuestion extends AbstractActivityWrapper implements A
 			QuestionRequest req = requests.questionRequest();
 			QuestionProxy questionProxy =  (QuestionProxy)entityProxy;
 			
-			req.remove().using(questionProxy).fire(new Receiver<Void>(){
+			req.remove().using(questionProxy).fire(new BMEReceiver<Void>(){
 
 				@Override
 				public void onSuccess(Void arg0) {
 					init();
 					
 				}
-		          public void onFailure(ServerFailure error){
-		        	  ErrorPanel erorPanel = new ErrorPanel();
-		        	  erorPanel.setErrorMessage(error.getMessage());
-						Log.error(error.getMessage());
-					}
-		          @Override
-					public void onViolation(Set<Violation> errors) {
-						Iterator<Violation> iter = errors.iterator();
-						String message = "";
-						while(iter.hasNext()){
-							message += iter.next().getMessage() + "<br>";
-						}
-						Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Antwort löschen -" + message);
-						
-			        	  ErrorPanel erorPanel = new ErrorPanel();
-			        	  erorPanel.setErrorMessage(message);
-						
-
-						
-					}
+		         
 			});
 		}
 		
+	}
+
+	@Override
+	public void placeChanged(Place place) {
+		
+		if (place instanceof PlaceQuestionDetails || place instanceof PlaceAcceptQuestion) {
+			init();
+		}
 	}
 
 }

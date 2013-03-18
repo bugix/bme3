@@ -1,6 +1,5 @@
 package medizin.client.activites;
 
-import java.util.Iterator;
 import java.util.List;
 
 import medizin.client.factory.receiver.BMEReceiver;
@@ -9,11 +8,9 @@ import medizin.client.place.PlaceUser;
 import medizin.client.place.PlaceUserDetails;
 import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.PersonProxy;
-import medizin.client.proxy.UserAccessRightsProxy;
-
 import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
-
+import medizin.client.proxy.UserAccessRightsProxy;
 import medizin.client.request.UserAccessRightsRequest;
 import medizin.client.shared.AccessRights;
 import medizin.client.ui.view.user.EventAccessDialogbox;
@@ -34,7 +31,6 @@ import com.google.gwt.activity.shared.ActivityManager;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.place.shared.Place;
-import com.google.gwt.place.shared.PlaceChangeEvent;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.user.cellview.client.CellTable;
@@ -133,12 +129,12 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
         widget.setWidget(userDetailsView.asWidget());
 		//setTable(view.getTable());
         
-		eventBus.addHandler(PlaceChangeEvent.TYPE, new PlaceChangeEvent.Handler() {
+		/*eventBus.addHandler(PlaceChangeEvent.TYPE, new PlaceChangeEvent.Handler() {
 			public void onPlaceChange(PlaceChangeEvent event) {
 				//updateSelection(event.getNewPlace());
 				// TODO implement
 			}
-		});
+		});*/
 		//init();
 		
 		view.setDelegate(this);
@@ -1460,5 +1456,11 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 		public void filterInstituteChanged(String text) {
 			instituteSearchText = text;
 			initInstituteAccessDialogBox();
+		}
+
+		@Override
+		public void placeChanged(Place place) {
+			//updateSelection(event.getNewPlace());
+			// TODO implement
 		}
 }

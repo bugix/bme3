@@ -6,41 +6,27 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import medizin.client.factory.request.McAppRequestFactory;
+import medizin.client.place.PlaceAssesment;
+import medizin.client.place.PlaceAssesmentDetails;
+import medizin.client.proxy.AssesmentProxy;
+import medizin.client.proxy.McProxy;
+import medizin.client.request.AssesmentRequest;
 import medizin.client.ui.ErrorPanel;
 import medizin.client.ui.McAppConstant;
-
 import medizin.client.ui.view.assesment.AssesmentEditView;
 import medizin.client.ui.view.assesment.AssesmentEditViewImpl;
 
-import medizin.client.place.PlaceAssesment;
-import medizin.client.place.PlaceAssesmentDetails;
-import medizin.client.place.PlaceUser;
-import medizin.client.place.PlaceUserDetails;
-import medizin.client.place.PlaceAssesmentDetails.Operation;
-import medizin.client.factory.request.McAppRequestFactory;
-import medizin.client.proxy.AnswerProxy;
-import medizin.client.request.AnswerRequest;
-import medizin.client.proxy.AssesmentProxy;
-import medizin.client.request.AssesmentRequest;
-import medizin.client.proxy.McProxy;
-import medizin.client.proxy.PersonProxy;
-import medizin.client.request.PersonRequest;
-
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.activity.shared.AbstractActivity;
-import com.google.gwt.activity.shared.Activity;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.Place;
-import com.google.gwt.place.shared.PlaceChangeEvent;
 import com.google.gwt.place.shared.PlaceController;
+import com.google.gwt.user.client.ui.AcceptsOneWidget;
+import com.google.inject.Inject;
 import com.google.web.bindery.requestfactory.gwt.client.RequestFactoryEditorDriver;
 import com.google.web.bindery.requestfactory.shared.Receiver;
 import com.google.web.bindery.requestfactory.shared.ServerFailure;
 import com.google.web.bindery.requestfactory.shared.Violation;
-import com.google.gwt.user.client.ui.AcceptsOneWidget;
-
-import com.google.inject.Inject;
 
 public class ActivityAssesmentCreate  extends AbstractActivityWrapper  implements AssesmentEditView.Presenter, AssesmentEditView.Delegate {
 	
@@ -148,13 +134,13 @@ public class ActivityAssesmentCreate  extends AbstractActivityWrapper  implement
         widget.setWidget(assesmentEditView.asWidget());
 		//setTable(view.getTable());
         
-		eventBus.addHandler(PlaceChangeEvent.TYPE, new PlaceChangeEvent.Handler() {
+		/*eventBus.addHandler(PlaceChangeEvent.TYPE, new PlaceChangeEvent.Handler() {
 			public void onPlaceChange(PlaceChangeEvent event) {
 				
 				//updateSelection(event.getNewPlace());
 				// TODO implement
 			}
-		});
+		});*/
 		//init();
 		
 		view.setDelegate(this);
@@ -277,6 +263,13 @@ public class ActivityAssesmentCreate  extends AbstractActivityWrapper  implement
 				
 			}
       }); 
+		
+	}
+
+	@Override
+	public void placeChanged(Place place) {
+		//updateSelection(event.getNewPlace());
+		// TODO implement
 		
 	}
 

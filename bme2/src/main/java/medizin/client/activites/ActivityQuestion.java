@@ -20,7 +20,6 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.place.shared.Place;
-import com.google.gwt.place.shared.PlaceChangeEvent;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.cellview.client.AbstractHasData;
 import com.google.gwt.user.cellview.client.CellTable;
@@ -153,7 +152,7 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 		table = view.getTable();
 
 		Log.debug("start2()");
-		eventBus.addHandler(PlaceChangeEvent.TYPE,
+		/*eventBus.addHandler(PlaceChangeEvent.TYPE,
 				new PlaceChangeEvent.Handler() {
 					public void onPlaceChange(PlaceChangeEvent event) {
 
@@ -167,7 +166,7 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 						}
 						
 					}
-				});
+				});*/
 
 		activityManger.setDisplay(view.getDetailsPanel());
 
@@ -410,6 +409,17 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 				System.out.println("ERRORS SIZE : " + errors.size());
 			}*/
 		});
+	}
+
+	@Override
+	public void placeChanged(Place place) {
+		if (place instanceof PlaceQuestionDetails) {
+			init();
+		}
+		
+		if (place instanceof PlaceQuestion) {
+			init();
+		}
 	}
 
 }

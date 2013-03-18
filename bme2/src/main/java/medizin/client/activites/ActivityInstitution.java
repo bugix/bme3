@@ -9,20 +9,17 @@ import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.PlaceInstitution;
 import medizin.client.place.PlaceInstitutionEvent;
 import medizin.client.proxy.InstitutionProxy;
-import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.request.InstitutionRequest;
 import medizin.client.ui.view.InstitutionView;
 import medizin.client.ui.view.InstitutionViewImpl;
 import medizin.client.ui.widget.Sorting;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
-import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxOkButtonEvent;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.activity.shared.ActivityManager;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.place.shared.Place;
-import com.google.gwt.place.shared.PlaceChangeEvent;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.cellview.client.AbstractHasData;
 import com.google.gwt.user.cellview.client.CellTable;
@@ -32,7 +29,6 @@ import com.google.gwt.view.client.CellPreviewEvent.Handler;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.RangeChangeEvent;
-import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
 import com.google.web.bindery.requestfactory.shared.EntityProxyId;
@@ -123,13 +119,13 @@ public class ActivityInstitution extends AbstractActivityWrapper implements
 		widget.setWidget(institutionView.asWidget());
 		setTable(view.getTable());
 
-		eventBus.addHandler(PlaceChangeEvent.TYPE,
+	/*	eventBus.addHandler(PlaceChangeEvent.TYPE,
 				new PlaceChangeEvent.Handler() {
 					public void onPlaceChange(PlaceChangeEvent event) {
 						// updateSelection(event.getNewPlace());
 						// TODO implement
 					}
-				});
+				});*/
 		init();
 
 		activityManger.setDisplay(view.getDetailsPanel());
@@ -422,5 +418,11 @@ public class ActivityInstitution extends AbstractActivityWrapper implements
 		tableRangeChangeCall();*/
 		this.searchValue = searchValue;
 		init();
+	}
+
+	@Override
+	public void placeChanged(Place place) {
+		// updateSelection(event.getNewPlace());
+		// TODO implement
 	}
 }

@@ -15,7 +15,6 @@ import com.google.gwt.activity.shared.ActivityManager;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.place.shared.Place;
-import com.google.gwt.place.shared.PlaceChangeEvent;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.cellview.client.AbstractHasData;
 import com.google.gwt.user.cellview.client.CellTable;
@@ -149,7 +148,7 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 		setTable(view.getTable());
 		SplitLayoutPanel splitLayoutPanel= view.getSplitLayoutPanel();
 		
-		eventBus.addHandler(PlaceChangeEvent.TYPE,
+		/*eventBus.addHandler(PlaceChangeEvent.TYPE,
 				new PlaceChangeEvent.Handler() {
 					public void onPlaceChange(PlaceChangeEvent event) {
 
@@ -159,7 +158,7 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 						}
 						
 					}
-				});
+				});*/
 		init();
 
 		activityManger.setDisplay(view.getDetailsPanel());
@@ -339,6 +338,13 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 	public void newClicked() {
 		placeController.goTo(new PlaceUserDetails(PlaceUserDetails.Operation.CREATE));
 		
+	}
+
+	@Override
+	public void placeChanged(Place place) {
+		if(place instanceof PlaceUserDetails){
+			init();
+		}
 	}
 
 }
