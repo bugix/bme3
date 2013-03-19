@@ -21,14 +21,6 @@ privileged aspect Answer_Roo_JavaBean {
         this.answerText = answerText;
     }
     
-    public Boolean Answer.getIsAnswerActive() {
-        return this.isAnswerActive;
-    }
-    
-    public void Answer.setIsAnswerActive(Boolean isAnswerActive) {
-        this.isAnswerActive = isAnswerActive;
-    }
-    
     public Boolean Answer.getIsMedia() {
         return this.isMedia;
     }

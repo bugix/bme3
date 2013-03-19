@@ -213,7 +213,7 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 				
 				if (answerProxy.getIsAnswerAcceptedReviewWahrer())
 				{
-					answerProxy.setIsAnswerActive(true);
+					//answerProxy.setIsAnswerActive(true);
 					answerProxy.setStatus(Status.ACTIVE);
 				}
 				else
@@ -228,7 +228,7 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 				
 				if (answerProxy.getIsAnswerAcceptedAdmin())
 				{
-					answerProxy.setIsAnswerActive(true);
+					//answerProxy.setIsAnswerActive(true);
 					answerProxy.setStatus(Status.ACTIVE);
 				}
 				else

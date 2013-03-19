@@ -51,7 +51,6 @@ privileged aspect AnswerDataOnDemand_Roo_DataOnDemand {
         setIsAnswerAcceptedAdmin(obj, index);
         setIsAnswerAcceptedAutor(obj, index);
         setIsAnswerAcceptedReviewWahrer(obj, index);
-        setIsAnswerActive(obj, index);
         setIsMedia(obj, index);
         setMediaPath(obj, index);
         setPoints(obj, index);
@@ -103,11 +102,6 @@ privileged aspect AnswerDataOnDemand_Roo_DataOnDemand {
     public void AnswerDataOnDemand.setIsAnswerAcceptedReviewWahrer(Answer obj, int index) {
         Boolean isAnswerAcceptedReviewWahrer = Boolean.TRUE;
         obj.setIsAnswerAcceptedReviewWahrer(isAnswerAcceptedReviewWahrer);
-    }
-    
-    public void AnswerDataOnDemand.setIsAnswerActive(Answer obj, int index) {
-        Boolean isAnswerActive = Boolean.TRUE;
-        obj.setIsAnswerActive(isAnswerActive);
     }
     
     public void AnswerDataOnDemand.setIsMedia(Answer obj, int index) {

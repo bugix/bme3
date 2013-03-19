@@ -1094,10 +1094,11 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 				proxy.getAnswerX().setSubmitToReviewComitee(submitToReviewComitee);
 				proxy.getAnswerX().setIsAnswerAcceptedAdmin(false);
 				proxy.getAnswerX().setIsAnswerAcceptedReviewWahrer(false);
-				proxy.getAnswerX().setIsAnswerActive(false);
+				//proxy.getAnswerX().setIsAnswerActive(false);
 				proxy.getAnswerX().getComment().setComment(comment);
 				proxy.getAnswerX().setQuestion(question);
 				proxy.getAnswerX().setValidity(vo.getValidity());
+				proxy.getAnswerX().setStatus(Status.NEW);
 				
 				proxy.getAnswerY().setDateChanged(new Date());
 				proxy.getAnswerY().setAutor(author);
@@ -1105,10 +1106,11 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 				proxy.getAnswerY().setSubmitToReviewComitee(submitToReviewComitee);
 				proxy.getAnswerY().setIsAnswerAcceptedAdmin(false);
 				proxy.getAnswerY().setIsAnswerAcceptedReviewWahrer(false);
-				proxy.getAnswerY().setIsAnswerActive(false);
+				//proxy.getAnswerY().setIsAnswerActive(false);
 				proxy.getAnswerY().getComment().setComment(comment);
 				proxy.getAnswerY().setQuestion(question);
 				proxy.getAnswerY().setValidity(vo.getValidity());
+				proxy.getAnswerY().setStatus(Status.NEW);
 				
 				validityRequest.persist().using(proxy);
 			}
@@ -1143,7 +1145,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			editerAnswerProxy.setSubmitToReviewComitee(submitToReviewComitee);
 			editerAnswerProxy.setIsAnswerAcceptedAdmin(false);
 			editerAnswerProxy.setIsAnswerAcceptedReviewWahrer(false);
-			editerAnswerProxy.setIsAnswerActive(false);
+			//editerAnswerProxy.setIsAnswerActive(false);
 			editerAnswerProxy.getComment().setComment(comment);
 			editerAnswerProxy.setQuestion(question);
 			editerAnswerProxy.setStatus(Status.NEW);
@@ -1179,7 +1181,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			newAnswerProxy.setSubmitToReviewComitee(submitToReviewComitee);
 			newAnswerProxy.setIsAnswerAcceptedAdmin(false);
 			newAnswerProxy.setIsAnswerAcceptedReviewWahrer(false);
-			newAnswerProxy.setIsAnswerActive(false);
+			//newAnswerProxy.setIsAnswerActive(false);
 			newAnswerProxy.setComment(commentProxy);
 			commentProxy.setComment(comment);
 			newAnswerProxy.setValidity(validity);

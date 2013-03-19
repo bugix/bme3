@@ -13,6 +13,7 @@ import medizin.client.ui.McAppConstant;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.proxy.AnswerProxy;
 import medizin.client.proxy.QuestionProxy;
+import medizin.shared.Status;
 import medizin.shared.i18n.BmeConstants;
 
 
@@ -410,7 +411,8 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 			      if(!value.getIsAnswerAcceptedReviewWahrer()){
 			    	  beginn += "font-style:italic; ";			    	  
 			      }
-			      if(!value.getIsAnswerActive()){
+			      //if(!value.getIsAnswerActive()){
+			      if(!Status.ACTIVE.equals(value.getStatus())){
 			    	  beginn += "text-decoration: line-through; ";		    	  
 			      }
 

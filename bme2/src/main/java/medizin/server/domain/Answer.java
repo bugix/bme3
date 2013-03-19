@@ -45,9 +45,9 @@ public class Answer {
     @Size(min = 0, max = 999)
     private String answerText;
 
-    @NotNull
+   /* @NotNull
     @Column(columnDefinition="BIT", length = 1)
-    private Boolean isAnswerActive;
+    private Boolean isAnswerActive;*/
 
     @NotNull
     @Value("false")
@@ -146,7 +146,8 @@ public class Answer {
   	  List<AnswerToAssQuestion> answerToAssQuestion = Collections.emptyList();
 	  answerToAssQuestion = AnswerToAssQuestion.findAnswerToAssQuestionByAnswer(this.getId());
 	  if (answerToAssQuestion.size()>0){
-		  this.isAnswerActive = false;
+		  //this.isAnswerActive = false;
+		  this.status = Status.DEACTIVATED;
 		  this.persist();
 	  }
 	  else{
@@ -356,7 +357,7 @@ public class Answer {
 				answer.setIsAnswerAcceptedAdmin(true);
 				if (answer.getIsAnswerAcceptedReviewWahrer())
 				{
-					answer.setIsAnswerActive(true);
+					//answer.setIsAnswerActive(true);
 					answer.setStatus(Status.ACTIVE);
 				}
 				else
@@ -369,7 +370,7 @@ public class Answer {
 				answer.setIsAnswerAcceptedReviewWahrer(true);
 				
 				if (answer.getIsAnswerAcceptedAdmin()){
-					answer.setIsAnswerActive(true);
+					//answer.setIsAnswerActive(true);
 					answer.setStatus(Status.ACTIVE);
 				}
 				else

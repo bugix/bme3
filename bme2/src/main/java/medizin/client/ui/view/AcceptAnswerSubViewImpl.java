@@ -21,6 +21,7 @@ import medizin.client.util.Point;
 import medizin.client.util.PolygonPath;
 import medizin.shared.MultimediaType;
 import medizin.shared.QuestionTypes;
+import medizin.shared.Status;
 import medizin.shared.i18n.BmeConstants;
 
 import com.google.common.collect.Lists;
@@ -423,7 +424,8 @@ DivElement questionText;*/
 			      if(!value.getIsAnswerAcceptedReviewWahrer()){
 			    	  beginn += "font-style:italic; ";			    	  
 			      }
-			      if(!value.getIsAnswerActive()){
+			      //if(!value.getIsAnswerActive()){
+			      if(!Status.ACTIVE.equals(value.getStatus())){
 			    	  beginn += "text-decoration: line-through; ";		    	  
 			      }
 

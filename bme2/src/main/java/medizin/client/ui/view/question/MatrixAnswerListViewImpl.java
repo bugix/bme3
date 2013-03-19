@@ -10,6 +10,7 @@ import medizin.client.style.resources.MyCellTableResources;
 import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.widget.IconButton;
+import medizin.shared.Status;
 import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
@@ -399,7 +400,8 @@ public class MatrixAnswerListViewImpl extends Composite implements MatrixAnswerL
 			      if(!value.getAnswerX().getIsAnswerAcceptedReviewWahrer()){
 			    	  beginn += "font-style:italic; ";			    	  
 			      }
-			      if(!value.getAnswerX().getIsAnswerActive()){
+			      //if(!value.getAnswerX().getIsAnswerActive()){
+			      if(!Status.ACTIVE.equals(value.getAnswerX().getStatus())){
 			    	  beginn += "text-decoration: line-through; ";		    	  
 			      }
 
@@ -431,7 +433,8 @@ public class MatrixAnswerListViewImpl extends Composite implements MatrixAnswerL
 			      if(!value.getAnswerY().getIsAnswerAcceptedReviewWahrer()){
 			    	  beginn += "font-style:italic; ";			    	  
 			      }
-			      if(!value.getAnswerY().getIsAnswerActive()){
+			      //if(!value.getAnswerY().getIsAnswerActive()){
+			      if(!Status.ACTIVE.equals(value.getAnswerY().getStatus())){
 			    	  beginn += "text-decoration: line-through; ";		    	  
 			      }
 

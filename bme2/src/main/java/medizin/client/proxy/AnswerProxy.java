@@ -19,10 +19,6 @@ public interface AnswerProxy extends EntityProxy {
 
     abstract void setAnswerText(String answerText);
 
-    abstract Boolean getIsAnswerActive();
-
-    abstract void setIsAnswerActive(Boolean isAnswerActive);
-
     abstract Boolean getIsMedia();
 
     abstract void setIsMedia(Boolean isMedia);
