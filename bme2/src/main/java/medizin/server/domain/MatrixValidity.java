@@ -152,13 +152,17 @@ public class MatrixValidity {
 					otherAnswer = matrixValidity.answerX;
 				}
 				
-				matrixValidity.remove();
+				//matrixValidity.remove();
 				if(fullMatrixSize == matrixValidities.size()) {
 					log.info("Delete the full matrix validity for given answerX");
-					otherAnswer.remove();
+					otherAnswer.setStatus(Status.DEACTIVATED);
+					otherAnswer.persist();
+					//otherAnswer.remove();
 				}
 			}
-			answer.remove();
+			answer.setStatus(Status.DEACTIVATED);
+			answer.persist();
+			//answer.remove();
 			return fullMatrixSize == matrixValidities.size();
 		}else {
 			log.error("Answer is null");
