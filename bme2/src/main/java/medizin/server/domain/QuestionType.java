@@ -9,6 +9,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import medizin.client.ui.widget.Sorting;
@@ -16,6 +17,8 @@ import medizin.shared.MultimediaType;
 import medizin.shared.QuestionTypes;
 import medizin.shared.SelectionType;
 
+import org.apache.log4j.Logger;
+import org.hibernate.Query;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
@@ -25,6 +28,8 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooJpaActiveRecord
 public class QuestionType {
 
+	private static Logger log = Logger.getLogger(QuestionType.class);
+	
     /*@NotNull
     @Column(unique = true)
     @Size(min = 1, max = 20)
@@ -233,5 +238,21 @@ public class QuestionType {
     	
     }
    
-    
+    public static Long countQuestionsForQuestionType(Long questionTypeId) {
+    	CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+		
+		Root<Question> from = criteriaQuery.from(Question.class);
+		criteriaQuery.select(criteriaBuilder.count(from));
+		
+		Predicate p1 = criteriaBuilder.equal(from.get("questionType").get("id"), questionTypeId);
+	
+		criteriaQuery.where(p1);
+		TypedQuery<Long> query = entityManager().createQuery(criteriaQuery);
+
+		log.info("Query is : " + query.unwrap(Query.class).getQueryString());
+
+		log.info("Result list size :" + query.getSingleResult() );
+		return query.getSingleResult();
+    }
 }

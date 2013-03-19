@@ -1,20 +1,15 @@
 package medizin.client.ui.view;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
-import medizin.client.ui.McAppConstant;
-import medizin.client.ui.widget.IconButton;
-import medizin.client.ui.widget.QuickSearchBox;
 
 import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.style.resources.MyCellTableResources;
 import medizin.client.style.resources.MySimplePagerResources;
+import medizin.client.ui.McAppConstant;
+import medizin.client.ui.widget.IconButton;
+import medizin.client.ui.widget.QuickSearchBox;
 import medizin.shared.i18n.BmeConstants;
-
-
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;

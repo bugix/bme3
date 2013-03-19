@@ -18,6 +18,7 @@ public interface QuestionTypeRequest extends QuestionTypeRequest_Roo_Gwt {
 	abstract Request<List<QuestionTypeProxy>> findAllQuestionType(Integer start,Integer end,String sortBy,Sorting sortOrder,String searchValue);
 	
 	Request<List<QuestionTypeProxy>> findAllQuestionTypesByAssesment(Long assesmentId);
+	abstract Request<Long> countQuestionsForQuestionType(Long questionTypeId);
 	
 	//    Request<java.lang.Long> countQuestionEventsByInstitutionNonRoo(java.lang.Long institutionId);
 //    

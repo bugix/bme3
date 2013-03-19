@@ -9,6 +9,7 @@ import medizin.client.ui.view.QuestiontypesDetailsView;
 import medizin.client.ui.view.QuestiontypesDetailsViewImpl;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.common.base.Function;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.place.shared.Place;
@@ -215,6 +216,24 @@ public class ActivityQuestiontypesDetails extends AbstractActivityWrapper implem
 	public void placeChanged(Place place) {
 		//updateSelection(event.getNewPlace());
 		// TODO implement
+	}
+
+
+
+	@Override
+	public void getQuestionCount(QuestionTypeProxy proxy, final Function<Long, Void> function) {
+		
+		requests.questionTypeRequest().countQuestionsForQuestionType(proxy.getId()).fire(new BMEReceiver<Long>() {
+
+			@Override
+			public void onSuccess(Long response) {
+				
+				if(function != null) {
+					function.apply(response);
+				}
+			}
+			
+		});
 	}
 
 

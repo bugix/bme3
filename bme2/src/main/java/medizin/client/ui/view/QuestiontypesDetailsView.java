@@ -2,6 +2,7 @@ package medizin.client.ui.view;
 
 import medizin.client.proxy.QuestionTypeProxy;
 
+import com.google.common.base.Function;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.ui.IsWidget;
 
@@ -26,5 +27,7 @@ public interface QuestiontypesDetailsView extends IsWidget {
 		void newClicked(String institutionName);
 
 		void newClicked();
+
+		void getQuestionCount(QuestionTypeProxy proxy, Function<Long, Void> function);
 	}
 }

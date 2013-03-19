@@ -1,36 +1,23 @@
 package medizin.client.ui.view;
 
+import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.TabPanelHelper;
-import medizin.client.proxy.InstitutionProxy;
-import medizin.client.proxy.QuestionTypeProxy;
-import medizin.shared.MultimediaType;
 import medizin.shared.QuestionTypes;
-import medizin.shared.SelectionType;
 import medizin.shared.i18n.BmeConstants;
 
+import com.google.common.base.Function;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.DisclosurePanel;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabPanel;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.ValueListBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class QuestiontypesDetailsViewImpl extends Composite implements QuestiontypesDetailsView  {
@@ -337,6 +324,17 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 	    }
 
 	    public void setValue(QuestionTypeProxy proxy) {
+	    	
+	    	delegate.getQuestionCount(proxy,new Function<Long, Void>() {
+
+				@Override
+				public Void apply(Long input) {
+					if(input != null && input > 0) {
+						delete.setEnabled(false);	
+					}
+					return null;
+				}
+			});
 	    	
 	    	displayRenderer.setInnerText(proxy.getShortName());
 	    	shortNameValLbl.setText(proxy.getShortName());
