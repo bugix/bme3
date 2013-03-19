@@ -1114,4 +1114,9 @@ public class Question {
 			}
 		}
 	}
+	
+	public void deactivatedQuestion() {
+		this.status = Status.DEACTIVATED;
+		this.persist();
+	}
 }

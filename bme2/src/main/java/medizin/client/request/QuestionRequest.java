@@ -53,4 +53,6 @@ public interface QuestionRequest extends QuestionRequest_Roo_Gwt {
 			Boolean submitToReviewComitee,Long questionEventId, List<Long> mcIds, String questionComment, int questionVersion, int questionSubVersion, String picturePath, Status status, Long oldQuestionId);
 	
 	Request<Void> questionAccepted(QuestionProxy question, Boolean isAdminOrInstitutionalAdmin);
+
+	InstanceRequest<QuestionProxy, Void> deactivatedQuestion();
 }

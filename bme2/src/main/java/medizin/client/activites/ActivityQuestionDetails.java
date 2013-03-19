@@ -50,7 +50,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.place.shared.Place;
-import com.google.gwt.place.shared.PlaceChangeEvent;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
@@ -468,7 +467,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 
 	@Override
 	public void deleteClicked() {
-		requests.questionRequest().remove().using(question).fire(new BMEReceiver<Void>(reciverMap) {
+		requests.questionRequest().deactivatedQuestion().using(question).fire(new BMEReceiver<Void>(reciverMap) {
 
             public void onSuccess(Void ignore) {
             	Log.debug("Sucessfull deleted");
