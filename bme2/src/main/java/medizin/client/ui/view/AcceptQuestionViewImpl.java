@@ -3,18 +3,14 @@ package medizin.client.ui.view;
 import java.util.HashSet;
 import java.util.Set;
 
-
+import medizin.client.proxy.QuestionProxy;
 import medizin.client.style.resources.MyCellTableResources;
 import medizin.client.style.resources.MySimplePagerResources;
-import medizin.client.ui.DeclineEmailPopup;
-import medizin.client.ui.DeclineEmailPopupDelagate;
 import medizin.client.ui.McAppConstant;
-import medizin.client.proxy.QuestionProxy;
 import medizin.client.ui.view.roo.McProxyRenderer;
 import medizin.shared.i18n.BmeConstants;
 
 import com.google.gwt.cell.client.AbstractCell;
-import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
@@ -170,12 +166,7 @@ public class AcceptQuestionViewImpl extends Composite implements AcceptQuestionV
 }
 
 
-	@Override
-	public void setDelegate(DeclineEmailPopupDelagate delegate) {
-		this.delegate= delegate;
-
-		
-	}
+	
 
 	  
 	  private static class SimpleAttributeCell extends AbstractCell<QuestionProxy> {
@@ -233,7 +224,7 @@ public class AcceptQuestionViewImpl extends Composite implements AcceptQuestionV
     
 	protected Set<String> paths = new HashSet<String>();
 
-	private DeclineEmailPopupDelagate delegate;
+	/*private DeclineEmailPopupDelagate delegate;*/
 
 	
 	

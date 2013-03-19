@@ -1,8 +1,6 @@
 package medizin.client.ui.view.question;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -18,17 +16,12 @@ import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.QuickSearchBox;
-
 import medizin.shared.Status;
 import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.cell.client.AbstractCell;
-import com.google.gwt.cell.client.Cell;
-import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.logical.shared.CloseEvent;
@@ -48,14 +41,10 @@ import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.PopupListener;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.user.client.ui.Tree;
-import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.inject.Inject;
 
 public class QuestionViewImpl extends Composite implements QuestionView {
 
@@ -808,7 +797,8 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 			if (!value.getIsAcceptedRewiever()) {
 				beginn += "font-style:italic; ";
 			}
-			if (!value.getIsActive()) {
+			//if (!value.getIsActive()) {
+			if (!Status.ACTIVE.equals(value.getStatus())) {
 				beginn += "text-decoration: line-through; ";
 			}
 

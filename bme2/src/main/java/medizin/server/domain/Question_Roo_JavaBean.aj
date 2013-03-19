@@ -83,14 +83,6 @@ privileged aspect Question_Roo_JavaBean {
         this.isAcceptedAdmin = isAcceptedAdmin;
     }
     
-    public Boolean Question.getIsActive() {
-        return this.isActive;
-    }
-    
-    public void Question.setIsActive(Boolean isActive) {
-        this.isActive = isActive;
-    }
-    
     public Question Question.getPreviousVersion() {
         return this.previousVersion;
     }

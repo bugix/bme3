@@ -1013,12 +1013,12 @@ QuestionEditView.Presenter, QuestionEditView.Delegate {
 		if(Status.NEW.equals(status)) {
 			questionEdit.setIsAcceptedAdmin(false);
 			questionEdit.setIsAcceptedRewiever(false);
-			questionEdit.setIsActive(false);
+			//questionEdit.setIsActive(false);
 			questionEdit.setStatus(Status.NEW);
 		}else if(Status.ACCEPTED_REVIEWER.equals(status)) {
 			questionEdit.setIsAcceptedAdmin(false);
 			questionEdit.setIsAcceptedRewiever(true);
-			questionEdit.setIsActive(false);
+			//questionEdit.setIsActive(false);
 			questionEdit.setStatus(Status.ACCEPTED_REVIEWER);
 		}else {
 			Log.info("Do nothing");

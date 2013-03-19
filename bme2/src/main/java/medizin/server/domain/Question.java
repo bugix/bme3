@@ -86,10 +86,10 @@ public class Question {
 	@Column(columnDefinition="BIT", length = 1)
 	private Boolean isAcceptedAdmin;
 
-	@NotNull
+	/*@NotNull
 	@Value("false")
 	@Column(columnDefinition="BIT", length = 1)
-	private Boolean isActive;
+	private Boolean isActive;*/
 
 	@OneToOne
 	private medizin.server.domain.Question previousVersion;
@@ -307,13 +307,13 @@ public class Question {
 			throw new IllegalArgumentException("The mcs argument is required");
 		EntityManager em = Question.entityManager();
 		StringBuilder queryBuilder = new StringBuilder(
-				"SELECT Question FROM Question AS question WHERE question.isAcceptedAdmin = :isAcceptedAdmin AND question.isActive = :isActive AND"
+				"SELECT Question FROM Question AS question WHERE question.isAcceptedAdmin = :isAcceptedAdmin AND question.status = :isActive AND"
 						+ " :mcs_item MEMBER OF question.mcs");
 
 		TypedQuery<Question> q = em.createQuery(queryBuilder.toString(),
 				Question.class);
 		q.setParameter("isAcceptedAdmin", isAcceptedAdmin);
-		q.setParameter("isActive", isActive);
+		q.setParameter("isActive", Status.ACTIVE);
 
 		q.setParameter("mcs_item", mc);
 
@@ -701,7 +701,8 @@ public class Question {
 			this.entityManager = entityManager();
 
 		if (this.getPreviousVersion() != null) {
-			this.previousVersion.isActive = false;
+			this.previousVersion.status = Status.DEACTIVATED;
+			/*this.previousVersion.isActive = false;*/
 			// this.entityManager.persist(previousVersion);
 			// this.previousVersion.flush();
 		}
@@ -749,29 +750,19 @@ public class Question {
 				Predicate p1 = criteriaBuilder.equal(from.get("autor").get("id"), loggedUser.getId());
 				Predicate p2 = criteriaBuilder.equal(from.get("rewiewer").get("id"), loggedUser.getId());
 								
-				Predicate mainpre1 = criteriaBuilder.equal(from.get("questEvent")
-						.get("institution").get("id"), institutionId);
+				Predicate mainpre1 = criteriaBuilder.equal(from.get("questEvent").get("institution").get("id"), institutionId);
 
 				mainpre1 = criteriaBuilder.and(criteriaBuilder.or(p2, p1), mainpre1);
 				
-				Subquery<UserAccessRights> subQry = criteriaQuery
-						.subquery(UserAccessRights.class);
+				Subquery<UserAccessRights> subQry = criteriaQuery.subquery(UserAccessRights.class);
 				Root queAccRoot = subQry.from(UserAccessRights.class);
-				subQry.select(queAccRoot.get("question").get("id")).where(
-						criteriaBuilder.equal(queAccRoot.get("person").get("id"),
-								loggedUser.getId()));
-				Predicate mainpre2 = criteriaBuilder.in(from.get("id")).value(
-						subQry);
+				subQry.select(queAccRoot.get("question").get("id")).where(criteriaBuilder.equal(queAccRoot.get("person").get("id"), loggedUser.getId()));
+				Predicate mainpre2 = criteriaBuilder.in(from.get("id")).value(subQry);
 
-				Subquery<UserAccessRights> subQuery = criteriaQuery
-						.subquery(UserAccessRights.class);
+				Subquery<UserAccessRights> subQuery = criteriaQuery.subquery(UserAccessRights.class);
 				Root questionAccessRoot = subQuery.from(UserAccessRights.class);
-				subQuery.select(questionAccessRoot.get("questionEvent").get("id"))
-						.where(criteriaBuilder.equal(
-								questionAccessRoot.get("person").get("id"),
-								loggedUser.getId()));
-				Predicate mainpre3 = criteriaBuilder.in(
-						from.get("questEvent").get("id")).value(subQuery);
+				subQuery.select(questionAccessRoot.get("questionEvent").get("id")).where(criteriaBuilder.equal(questionAccessRoot.get("person").get("id"),loggedUser.getId()));
+				Predicate mainpre3 = criteriaBuilder.in(from.get("questEvent").get("id")).value(subQuery);
 				
 				Subquery<UserAccessRights> instSubQuery = criteriaQuery.subquery(UserAccessRights.class);
 				Root instAccessRoot = instSubQuery.from(UserAccessRights.class);
@@ -780,19 +771,18 @@ public class Question {
 				instSubQuery.select(instAccessRoot.get("institution").get("id")).where(criteriaBuilder.and(instP1, instP2));
 				Predicate mainpre4 = criteriaBuilder.in(from.get("questEvent").get("institution").get("id")).value(instSubQuery);
 
-				andAdminPredicate = criteriaBuilder.or(mainpre1,
-						criteriaBuilder.or(mainpre2, mainpre3, mainpre4));
+				andAdminPredicate = criteriaBuilder.or(mainpre1, criteriaBuilder.or(mainpre2, mainpre3, mainpre4));
 			} else {
 				Predicate adminpre1 = criteriaBuilder.equal(from.get("questEvent")
 						.get("institution").get("id"), institutionId);
 				andAdminPredicate = adminpre1;
 			}
 			
-			Predicate statusActivePredicate = criteriaBuilder.equal(from.get("isActive"), Boolean.TRUE);
+			//Predicate statusActivePredicate = criteriaBuilder.equal(from.get("isActive"), Boolean.TRUE);
 			//Predicate statusNewPredicate = criteriaBuilder.equal(from.get("status"),Status.NEW);
 			Predicate statusNewPredicate = criteriaBuilder.equal(from.get("status"),Status.ACTIVE);
 			
-			andAdminPredicate = criteriaBuilder.and(criteriaBuilder.or(statusNewPredicate, statusActivePredicate), andAdminPredicate);
+			//andAdminPredicate = criteriaBuilder.and(statusNewPredicate, andAdminPredicate);
 
 			if (!searchText.equals("")) {
 				Expression<String> exp1 = from.get("questionShortName");
@@ -842,9 +832,10 @@ public class Question {
 					}
 					
 					if (searchField.get(ctr).equals("showNew")) {
-						ctr += 1;						
-						Predicate showNewPre = criteriaBuilder.equal(from.get("status"),Status.NEW);
-						andAdminPredicate = criteriaBuilder.or(andAdminPredicate, showNewPre);
+						ctr += 1;	
+						statusNewPredicate = from.get("status").in(Status.NEW, Status.ACTIVE);
+						//Predicate showNewPre = criteriaBuilder.equal(from.get("status"),Status.NEW);
+						//andAdminPredicate = criteriaBuilder.or(andAdminPredicate, showNewPre);
 					}
 
 					if (searchField.get(ctr).equals("institution")) {
@@ -904,6 +895,8 @@ public class Question {
 				}
 			}
 
+			andAdminPredicate = criteriaBuilder.and(statusNewPredicate, andAdminPredicate);
+			
 			if (andPredicate == null)
 				criteriaQuery.where(andAdminPredicate);
 			else
@@ -960,30 +953,32 @@ public class Question {
 		if(Status.NEW.equals(status)) {
 			question.setIsAcceptedAdmin(false);
 			question.setIsAcceptedRewiever(false);
-			question.setIsActive(false);
+			//question.setIsActive(false);
 			question.setStatus(Status.NEW);
 		}else if(Status.CORRECTION_FROM_ADMIN.equals(status)) {
 			question.setIsAcceptedAdmin(true);
 			question.setIsAcceptedRewiever(false);
-			question.setIsActive(false);
+			//question.setIsActive(false);
 			question.setStatus(Status.CORRECTION_FROM_ADMIN);
 		}else if(Status.CORRECTION_FROM_REVIEWER.equals(status)) {
 			question.setIsAcceptedAdmin(false);
 			question.setIsAcceptedRewiever(true);
-			question.setIsActive(false);
+			//question.setIsActive(false);
 			question.setStatus(Status.CORRECTION_FROM_REVIEWER);
 		}else if(Status.ACCEPTED_ADMIN.equals(status)) {
-			if(question.getIsAcceptedRewiever() == true) {
-				question.setIsActive(true);	
-			}
 			question.setIsAcceptedAdmin(true);
 			question.setStatus(Status.ACCEPTED_ADMIN);
+			if(question.getIsAcceptedRewiever() == true) {
+				//question.setIsActive(true);
+				question.setStatus(Status.ACTIVE);
+			}			
 		}else if(Status.ACCEPTED_REVIEWER.equals(status)) {
 			question.setIsAcceptedRewiever(true);
-			if(question.getIsAcceptedAdmin() == true) {
-				question.setIsActive(true);	
-			}
 			question.setStatus(Status.ACCEPTED_REVIEWER);
+			if(question.getIsAcceptedAdmin() == true) {
+				//question.setIsActive(true);
+				question.setStatus(Status.ACTIVE);
+			}			
 		}else {
 			log.info("Do nothing");
 		}
@@ -1063,7 +1058,7 @@ public class Question {
 
 			if (question.getIsAcceptedRewiever()) {
 				question.setStatus(Status.ACTIVE);
-				question.setIsActive(true);
+				//question.setIsActive(true);
 			} else
 				question.setStatus(Status.ACCEPTED_ADMIN);
 		} else if (question.getRewiewer().getId().equals(userLoggedIn.getId())) {
@@ -1071,7 +1066,7 @@ public class Question {
 
 			if (question.getIsAcceptedAdmin()) {
 				question.setStatus(Status.ACTIVE);
-				question.setIsActive(true);
+				//question.setIsActive(true);
 			} else
 				question.setStatus(Status.ACCEPTED_REVIEWER);
 		} else if (question.getAutor().getId().equals(userLoggedIn.getId())) {
@@ -1084,14 +1079,14 @@ public class Question {
 				question.setStatus(Status.ACCEPTED_REVIEWER);
 			} else if (question.getStatus().equals(Status.ACCEPTED_ADMIN)) {
 				question.setStatus(Status.ACTIVE);
-				question.setIsActive(true);
+				//question.setIsActive(true);
 			} else if (question.getStatus().equals(Status.ACCEPTED_REVIEWER)) {
 				question.setStatus(Status.ACTIVE);
-				question.setIsActive(true);
+				//question.setIsActive(true);
 			}
 		}
 
-		if (Status.ACTIVE.equals(question.getStatus()) && question.getIsActive())
+		if (Status.ACTIVE.equals(question.getStatus()))
 			inActivePreviousQuestion(question.getPreviousVersion());
 
 		question.persist();
@@ -1102,7 +1097,7 @@ public class Question {
 			return;
 
 		do {
-			tempQuestion.setIsActive(false);
+			//tempQuestion.setIsActive(false);
 			tempQuestion.setStatus(Status.DEACTIVATED);
 			tempQuestion.persist();
 

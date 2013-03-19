@@ -7,8 +7,6 @@ import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.PlaceAcceptQuestion;
 import medizin.client.place.PlaceQuestionDetails;
 import medizin.client.proxy.QuestionProxy;
-import medizin.client.request.QuestionRequest;
-import medizin.client.ui.DeclineEmailPopupDelagate;
 import medizin.client.ui.view.AcceptQuestionView;
 import medizin.client.ui.view.AcceptQuestionViewImpl;
 
@@ -26,9 +24,8 @@ import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
-import com.google.web.bindery.requestfactory.shared.EntityProxy;
 
-public class ActivityAcceptQuestion extends AbstractActivityWrapper implements AcceptQuestionView.Presenter, DeclineEmailPopupDelagate {
+public class ActivityAcceptQuestion extends AbstractActivityWrapper implements AcceptQuestionView.Presenter {
 
 	private PlaceAcceptQuestion questionPlace;
 
@@ -90,7 +87,7 @@ public class ActivityAcceptQuestion extends AbstractActivityWrapper implements A
 		AcceptQuestionView acceptQuestionView = new AcceptQuestionViewImpl();
 		
 		acceptQuestionView.setPresenter(this);
-		acceptQuestionView.setDelegate(this);
+		//acceptQuestionView.setDelegate(this);
 		this.widget = widget;
 		this.view = acceptQuestionView;
         widget.setWidget(acceptQuestionView.asWidget());
@@ -231,60 +228,10 @@ public class ActivityAcceptQuestion extends AbstractActivityWrapper implements A
 				}
 			}
 		});
-
-		
-		
 	}
+	
 
-
-	@Override
-	public void acceptClicked(EntityProxy entityProxy) {
-		Log.debug("acceptClicked" + entityProxy.toString());
-		if(entityProxy instanceof QuestionProxy){
-			Log.debug("is QUestionProxy");
-			QuestionRequest req = requests.questionRequest();
-			QuestionProxy questionProxy =  req.edit((QuestionProxy)entityProxy);
-			/*if(loggedUser.getIsAdmin()){*/
-			if(userLoggedIn.getIsAdmin()){
-				questionProxy.setIsAcceptedAdmin(true);
-			} else {
-				questionProxy.setIsAcceptedRewiever(true);
-			}
-			
-			questionProxy.setIsActive(true);
-			req.persistAndSetPreviousInactive().using(questionProxy).fire(new BMEReceiver<Void>(){
-
-				@Override
-				public void onSuccess(Void arg0) {
-					init();
-					
-				}
-		          
-			});
-		}
-		
-	}
-
-	@Override
-	public void rejectClicked(EntityProxy entityProxy, String message) {
-		if(entityProxy instanceof QuestionProxy){
-			Log.debug("is QUestionProxy");
-			QuestionRequest req = requests.questionRequest();
-			QuestionProxy questionProxy =  (QuestionProxy)entityProxy;
-			
-			req.remove().using(questionProxy).fire(new BMEReceiver<Void>(){
-
-				@Override
-				public void onSuccess(Void arg0) {
-					init();
-					
-				}
-		         
-			});
-		}
-		
-	}
-
+	
 	@Override
 	public void placeChanged(Place place) {
 		
