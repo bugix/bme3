@@ -55,8 +55,8 @@ public class MatrixValidity {
 		Predicate p2 = criteriaBuilder.equal(from.get("answerY").get("question").get("id"), id);
 		Expression<String> exp1 = from.get("answerX").get("status");
 		Expression<String> exp2 = from.get("answerY").get("status");
-		Predicate p3 = exp1.in(Lists.newArrayList(Status.NEW,Status.ACTIVE));
-		Predicate p4 = exp2.in(Lists.newArrayList(Status.NEW,Status.ACTIVE));
+		Predicate p3 = criteriaBuilder.notEqual(exp1, Status.DEACTIVATED);
+		Predicate p4 = criteriaBuilder.notEqual(exp2, Status.DEACTIVATED);
 		criteriaQuery.where(criteriaBuilder.and(p1, p2, p3, p4));
 		TypedQuery<MatrixValidity> query = entityManager().createQuery(criteriaQuery);
 
@@ -203,8 +203,8 @@ public class MatrixValidity {
 		Predicate p2 = criteriaBuilder.equal(from.get("answerY").get("question").get("id"), id);
 		Expression<String> exp1 = from.get("answerX").get("status");
 		Expression<String> exp2 = from.get("answerY").get("status");
-		Predicate p3 = exp1.in(Lists.newArrayList(Status.NEW,Status.ACTIVE));
-		Predicate p4 = exp2.in(Lists.newArrayList(Status.NEW,Status.ACTIVE));
+		Predicate p3 = criteriaBuilder.notEqual(exp1,Status.DEACTIVATED);
+		Predicate p4 = criteriaBuilder.notEqual(exp2,Status.DEACTIVATED);
 		criteriaQuery.where(criteriaBuilder.and(p1, p2, p3, p4));
 		TypedQuery<Long> query = entityManager().createQuery(criteriaQuery);
 

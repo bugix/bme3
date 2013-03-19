@@ -118,7 +118,7 @@ public class Answer {
         if (question == null) throw new IllegalArgumentException("The question argument is required");
         EntityManager em = QuestionEvent.entityManager();
         TypedQuery<Answer> q = em.createQuery("SELECT ans FROM Answer ans " + 
-        		" WHERE ans.question = :question AND ans.status IN( " + Status.NEW.ordinal() +"," + Status.ACTIVE.ordinal() + ")", Answer.class).setFirstResult(start).setMaxResults(max);
+        		" WHERE ans.question = :question AND ans.status != " + Status.DEACTIVATED.ordinal() , Answer.class).setFirstResult(start).setMaxResults(max);
         q.setParameter("question", question);
         return q.getResultList();
 	}
@@ -137,7 +137,7 @@ public class Answer {
         if (question == null) throw new IllegalArgumentException("The question argument is required");
         EntityManager em = QuestionEvent.entityManager();
         TypedQuery<Long> q = em.createQuery("SELECT count(ans) FROM Answer ans " + 
-        		" WHERE ans.question = :question AND ans.status IN( " + Status.NEW.ordinal() +"," + Status.ACTIVE.ordinal() + ")" , Long.class);
+        		" WHERE ans.question = :question AND ans.status != " + Status.DEACTIVATED.ordinal()   , Long.class);
         q.setParameter("question", question);
         return q.getSingleResult();
 	}

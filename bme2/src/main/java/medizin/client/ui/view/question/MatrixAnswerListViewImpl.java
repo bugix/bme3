@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import medizin.client.proxy.AnswerProxy;
 import medizin.client.proxy.MatrixValidityProxy;
 import medizin.client.style.resources.MyCellTableResources;
 import medizin.client.style.resources.MySimplePagerResources;
@@ -21,6 +22,7 @@ import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -296,7 +298,7 @@ public class MatrixAnswerListViewImpl extends Composite implements MatrixAnswerL
 //                return renderer.render(object.getQuestion());
 //            }
 //        }, "Question");
-    	addColumn(new ActionCell<MatrixValidityProxy>(McAppConstant.EDIT_ICON, new ActionCell.Delegate<MatrixValidityProxy>() 
+    	addColumn(new EditIconCell(McAppConstant.EDIT_ICON, new ActionCell.Delegate<MatrixValidityProxy>() 
     			{
 		    		public void execute(MatrixValidityProxy matrixValidity) {
 		    			delegate.editMatrixValidityClicked(matrixValidity);
@@ -310,7 +312,7 @@ public class MatrixAnswerListViewImpl extends Composite implements MatrixAnswerL
     		}
     	}, null);
     	
-    	addColumn(new ActionCell<MatrixValidityProxy>(McAppConstant.DELETE_ICON, new ActionCell.Delegate<MatrixValidityProxy>() 
+    	addColumn(new DeleteIconCell(McAppConstant.DELETE_ICON, new ActionCell.Delegate<MatrixValidityProxy>() 
     			{
 		    		public void execute(MatrixValidityProxy matrixValidity) {
 		    			delegate.deleteMatrixValidityClicked(matrixValidity);
@@ -496,6 +498,38 @@ public class MatrixAnswerListViewImpl extends Composite implements MatrixAnswerL
 			}
 		  }
 
+	  private static class EditIconCell extends ActionCell<MatrixValidityProxy>{
+			
+		  public EditIconCell(SafeHtml message, com.google.gwt.cell.client.ActionCell.Delegate<MatrixValidityProxy> delegate) {
+			super(message, delegate);
+		 }
+
+		@Override
+		public void render(com.google.gwt.cell.client.Cell.Context context,
+				MatrixValidityProxy value, SafeHtmlBuilder sb) {
+			if (Status.ACTIVE.equals(value.getAnswerX().getStatus()) || Status.NEW.equals(value.getAnswerX().getStatus()) || Status.ACTIVE.equals(value.getAnswerY().getStatus()) || Status.NEW.equals(value.getAnswerY().getStatus())){
+				sb.append(McAppConstant.EDIT_ICON);
+			}
+		}
+		  
+	  }
+	  
+	  private static class DeleteIconCell extends ActionCell<MatrixValidityProxy>{
+			
+		  public DeleteIconCell(SafeHtml message, com.google.gwt.cell.client.ActionCell.Delegate<MatrixValidityProxy> delegate) {
+			super(message, delegate);
+		 }
+
+		@Override
+		public void render(com.google.gwt.cell.client.Cell.Context context,
+				MatrixValidityProxy value, SafeHtmlBuilder sb) {
+			if (Status.ACTIVE.equals(value.getAnswerX().getStatus()) || Status.NEW.equals(value.getAnswerX().getStatus()) || Status.ACTIVE.equals(value.getAnswerY().getStatus()) || Status.NEW.equals(value.getAnswerY().getStatus())){
+				sb.append(McAppConstant.DELETE_ICON);
+			}
+		}
+		  
+	  }
+	  
 	public IconButton getNewAnswer() {
 		return newAnswer;
 	}

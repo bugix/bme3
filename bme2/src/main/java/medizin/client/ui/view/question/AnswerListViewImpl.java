@@ -310,18 +310,18 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 //                return renderer.render(object.getQuestion());
 //            }
 //        }, "Question");
-        addColumn(new ActionCell<AnswerProxy>(McAppConstant.EDIT_ICON, new ActionCell.Delegate<AnswerProxy>() 
+        addColumn(new EditIconCell(McAppConstant.EDIT_ICON, new ActionCell.Delegate<AnswerProxy>() 
             	{
-        			public void execute(AnswerProxy answer) {
-        				delegate.editAnswerClicked(answer);
-        			}
-            	}), constants.edit(), new GetValue<AnswerProxy>() {
+            public void execute(AnswerProxy answer) {
+              delegate.editAnswerClicked(answer);
+            }
+          }), constants.edit(), new GetValue<AnswerProxy>() {
         	public AnswerProxy getValue(AnswerProxy contact) {
         		return contact;
         	}
         }, null);
         
-    	addColumn(new ActionCell<AnswerProxy>(McAppConstant.DELETE_ICON, new ActionCell.Delegate<AnswerProxy>() 
+    	addColumn(new DeleteIconCell(McAppConstant.DELETE_ICON, new ActionCell.Delegate<AnswerProxy>() 
     	{
     	            public void execute(AnswerProxy answer) {
     	              delegate.deleteAnswerClicked(answer);
@@ -473,7 +473,40 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 			      
 				
 			}
-		  }
+		  
+	  }
+	  
+	  private static class EditIconCell extends ActionCell<AnswerProxy>{
+		
+		  public EditIconCell(SafeHtml message, com.google.gwt.cell.client.ActionCell.Delegate<AnswerProxy> delegate) {
+			super(message, delegate);
+		 }
+
+		@Override
+		public void render(com.google.gwt.cell.client.Cell.Context context,
+				AnswerProxy value, SafeHtmlBuilder sb) {
+			if (Status.ACTIVE.equals(value.getStatus()) || Status.NEW.equals(value.getStatus())){
+				sb.append(McAppConstant.EDIT_ICON);
+			}
+		}
+		  
+	  }
+	  
+	  private static class DeleteIconCell extends ActionCell<AnswerProxy>{
+			
+		  public DeleteIconCell(SafeHtml message, com.google.gwt.cell.client.ActionCell.Delegate<AnswerProxy> delegate) {
+			super(message, delegate);
+		 }
+
+		@Override
+		public void render(com.google.gwt.cell.client.Cell.Context context,
+				AnswerProxy value, SafeHtmlBuilder sb) {
+			if (Status.ACTIVE.equals(value.getStatus()) || Status.NEW.equals(value.getStatus())){
+				sb.append(McAppConstant.DELETE_ICON);
+			}
+		}
+		  
+	  }
 
 	public IconButton getNewAnswer() {
 		return newAnswer;
