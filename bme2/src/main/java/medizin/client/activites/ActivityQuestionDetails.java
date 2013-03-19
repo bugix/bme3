@@ -333,7 +333,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	//method is overridden by sub class accept question
 	protected void initForActivity(final QuestionProxy response) {
 		
-		if (response.getStatus().equals(Status.ACTIVE))
+		if (response.getStatus().equals(Status.ACTIVE) || response.getStatus().equals(Status.NEW))
 		{
 			if (!flag && !answerFlag)
 			{
