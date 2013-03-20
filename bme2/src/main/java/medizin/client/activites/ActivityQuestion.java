@@ -413,9 +413,9 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 
 	@Override
 	public void placeChanged(Place place) {
-		if (place instanceof PlaceQuestionDetails) {
+		/*if (place instanceof PlaceQuestionDetails) {
 			init();
-		}
+		}*/
 		
 		if (place instanceof PlaceQuestion) {
 			init();

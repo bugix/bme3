@@ -1,9 +1,10 @@
 package medizin.client.activites;
 
 import medizin.client.factory.request.McAppRequestFactory;
+import medizin.client.place.AbstractDetailsPlace.Operation;
 import medizin.client.place.PlaceAcceptQuestion;
+import medizin.client.place.PlaceAcceptQuestionDetails;
 import medizin.client.place.PlaceQuestionDetails;
-import medizin.client.place.PlaceQuestionDetails.Operation;
 import medizin.client.proxy.QuestionProxy;
 import medizin.shared.Status;
 
@@ -12,17 +13,28 @@ import com.google.gwt.place.shared.PlaceController;
 
 public class ActivityAcceptQuestionEdit extends ActivityQuestionEdit {
 
-	public ActivityAcceptQuestionEdit(PlaceQuestionDetails place,McAppRequestFactory requests, PlaceController placeController) {
-		super(place, requests, placeController);
+	public ActivityAcceptQuestionEdit(PlaceAcceptQuestionDetails place,McAppRequestFactory requests, PlaceController placeController) {
+		super(createNewPlace(place), requests, placeController);
 	}
 
-	public ActivityAcceptQuestionEdit(PlaceQuestionDetails place,McAppRequestFactory requests, PlaceController placeController,Operation edit) {
-		super(place, requests, placeController, edit);
+	public ActivityAcceptQuestionEdit(PlaceAcceptQuestionDetails place,McAppRequestFactory requests, PlaceController placeController,Operation edit) {
+		super(createNewPlace(place), requests, placeController, edit);
 	}
 
+	private static PlaceQuestionDetails createNewPlace(PlaceAcceptQuestionDetails place) {
+		PlaceQuestionDetails details;
+		
+		if(place.getOperation() != PlaceAcceptQuestionDetails.Operation.CREATE) {
+			details = new PlaceQuestionDetails(place.getProxyId(),place.getOperation());	
+		}else {
+			details = new PlaceQuestionDetails(place.getOperation());
+		}
+		
+		return details;
+	}
 	@Override
 	protected void gotoDetailsPlace(QuestionProxy questionProxy) {
-		goTo(new PlaceAcceptQuestion("PlaceAcceptQuestion"));
+		goTo(new PlaceAcceptQuestionDetails(questionProxy.stableId(),Operation.DETAILS));
 	}
 	
 	@Override
@@ -70,6 +82,6 @@ public class ActivityAcceptQuestionEdit extends ActivityQuestionEdit {
 	
 	@Override
 	protected void gotoUpdateDetailsPlace() {
-		goTo(new PlaceAcceptQuestion("PlaceAcceptQuestion"));
+		goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));
 	}
 }

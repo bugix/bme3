@@ -55,7 +55,7 @@ public interface QuestionDetailsView extends IsWidget {
 	
 	public MatrixAnswerListViewImpl getMatrixAnswerListViewImpl();
 
-	public void setInvisibleIconButton(Boolean flag);
+	public void setVisibleIconButton(Boolean flag);
 	
 	public void setVisibleAcceptButton();
 	

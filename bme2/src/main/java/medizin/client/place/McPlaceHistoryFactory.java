@@ -30,7 +30,7 @@ private final PlaceInstitutionEvent.Tokenizer placeInstitutionEventTokenizer ;
 private final PlaceBookAssesmentDetails.Tokenizer placeBookAssesmentDetailsTokenizer ;
 private final PlaceUserDetailsEvent.Tokenizer placeUserDetailsEventTokenizer ;
 private final PlaceAssesmentDetails.Tokenizer placeAssesmentDetails ;
-
+private final PlaceAcceptQuestionDetails.Tokenizer placeAcceptQuestionDetails ;
 
 public PlaceUserDetailsEvent.Tokenizer getPlaceUserDetailsEventTokenizer() {
 	return placeUserDetailsEventTokenizer;
@@ -139,6 +139,9 @@ public  PlaceAssesmentDetails.Tokenizer getPlaceAssesmentDetailsTokenizer() {
 	return placeAssesmentDetails;
 }
 
+public  PlaceAcceptQuestionDetails.Tokenizer getPlaceAcceptQuestionDetailsTokenizer() {
+	return placeAcceptQuestionDetails;
+}
 //	private final NationalityPlace.Tokenizer nationalityPlaceTokenizer;
 //	private final NationalityDetailsPlace.Tokenizer nationalityDetailsPlaceTokenizer;
 
@@ -169,6 +172,7 @@ public  PlaceAssesmentDetails.Tokenizer getPlaceAssesmentDetailsTokenizer() {
 //		this.nationalityPlaceTokenizer = new NationalityPlace.Tokenizer(requestFactory);
 //		this.nationalityDetailsPlaceTokenizer = new NationalityDetailsPlace.Tokenizer(requestFactory);
 		this.placeAssesmentDetails = new PlaceAssesmentDetails.Tokenizer(requestFactory);
+		this.placeAcceptQuestionDetails = new PlaceAcceptQuestionDetails.Tokenizer(requestFactory);
 	}
 
 //	public PlaceTokenizer<NationalityPlace> getNationalityPlaceTokenizer() {

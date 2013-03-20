@@ -235,7 +235,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 					Log.info(((QuestionProxy) response).getQuestionText());
 					
 					if (((QuestionProxy) response).getIsReadOnly() == true)
-						view.setInvisibleIconButton(false);
+						view.setVisibleIconButton(false);
 						
 					initForActivity((QuestionProxy) response);
 					/*if (questionPlace.getFromPlace().equals("ACCEPT_QUESTION"))
@@ -339,7 +339,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			{
 				if (((QuestionProxy) response).getAutor().getId().equals(userLoggedIn.getId()))
 				{
-					view.setInvisibleIconButton(true);
+					view.setVisibleIconButton(true);
 					init((QuestionProxy) response);
 				}
 				else
@@ -355,19 +355,19 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 								{
 									if (proxy.getAccRights().equals(AccessRights.AccWrite))
 									{
-										view.setInvisibleIconButton(true);
+										view.setVisibleIconButton(true);
 										questionDetailsView.getAnswerListViewImpl().getNewAnswer().setVisible(false);
 									}
 									
 									if (proxy.getAccRights().equals(AccessRights.AccAddAnswers))
 									{
-										view.setInvisibleIconButton(false);
+										view.setVisibleIconButton(false);
 									}	
 								}
 							}
 							else
 							{
-								view.setInvisibleIconButton(false);
+								view.setVisibleIconButton(false);
 								questionDetailsView.getAnswerListViewImpl().getNewAnswer().setVisible(false);
 							}
 					

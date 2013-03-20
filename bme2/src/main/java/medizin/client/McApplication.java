@@ -1,23 +1,21 @@
 package medizin.client;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import medizin.client.activites.FilterForMainPlaces;
 import medizin.client.activites.McAppActivityMapper;
+import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.McAppPlaceHistoryMapper;
 import medizin.client.place.McPlaceHistoryFactory;
-import medizin.client.place.PlaceSystemOverview;
 import medizin.client.proxy.PersonProxy;
-import medizin.client.ui.ErrorPanel;
-import medizin.client.ui.McAppConstant;
 import medizin.client.ui.McAppNav;
 import medizin.client.ui.TopPanel;
+import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
+import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.activity.shared.ActivityManager;
@@ -27,15 +25,13 @@ import com.google.gwt.activity.shared.FilteredActivityMapper;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.logging.client.LogConfiguration;
+import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.place.shared.PlaceHistoryHandler;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.inject.Inject;
 import com.google.web.bindery.requestfactory.gwt.client.RequestFactoryLogHandler;
 import com.google.web.bindery.requestfactory.shared.LoggingRequest;
-import com.google.web.bindery.requestfactory.shared.Receiver;
-import com.google.web.bindery.requestfactory.shared.ServerFailure;
-import com.google.web.bindery.requestfactory.shared.Violation;
 /**
  * The applications core. Is instantiated by GIN.
  * @author masterthesis
@@ -51,7 +47,7 @@ public class McApplication {
 	private final PlaceController placeController;
 	private final McPlaceHistoryFactory mcPlaceHistoryFactory;
 	private final McAppActivityMapper mcAppActivitiesMapper;
-
+	private final BmeConstants constants = GWT.create(BmeConstants.class);
 
 	@Inject
 	public McApplication(McAppShell shell, McAppRequestFactory requestFactory, EventBus eventBus,
@@ -149,7 +145,7 @@ public class McApplication {
 		mapper.setFactory(mcPlaceHistoryFactory);
 		PlaceHistoryHandler placeHistoryHandler = new PlaceHistoryHandler(mapper);
 //		ProxyListPlace defaultPlace = getTopPlaces().iterator().next();
-		placeHistoryHandler.register(placeController, eventBus, new PlaceSystemOverview("PlaceSystemOverview"));
+		placeHistoryHandler.register(placeController, eventBus,Place.NOWHERE);
 		placeHistoryHandler.handleCurrentHistory();
 		
 		McAppNav nav = new McAppNav(requestFactory, placeController, shell);
@@ -159,7 +155,7 @@ public class McApplication {
 		final TopPanel topPanel = TopPanel.instance(requestFactory, placeController);
 		shell.setTopPanel(topPanel);
 		topPanel.setShell(shell);
-		requestFactory.personRequest().findAllPeople().fire(new Receiver<List<PersonProxy>>(){
+		requestFactory.personRequest().findAllPeople().fire(new BMEReceiver<List<PersonProxy>>(){
 
 			@Override
 			public void onSuccess(List<PersonProxy> response) {
@@ -168,26 +164,6 @@ public class McApplication {
 				
 				
 			}
-	          public void onFailure(ServerFailure error){
-	        	  ErrorPanel erorPanel = new ErrorPanel();
-	        	  erorPanel.setErrorMessage(error.getMessage());
-					Log.error(error.getMessage());
-				}
-	          @Override
-				public void onViolation(Set<Violation> errors) {
-					Iterator<Violation> iter = errors.iterator();
-					String message = "";
-					while(iter.hasNext()){
-						message += iter.next().getMessage() + "<br>";
-					}
-					Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Antwort löschen -" + message);
-					
-		        	  ErrorPanel erorPanel = new ErrorPanel();
-		        	  erorPanel.setErrorMessage(message);
-					
-
-					
-				}
 		});
 		
 		/*requestFactory.institutionRequest().findAllInstitutions().fire(new Receiver<List<InstitutionProxy>>(){
@@ -218,6 +194,18 @@ public class McApplication {
 					
 				}
 		});*/
+		
+		requestFactory.personRequest().myGetLoggedPerson().fire(new BMEReceiver<PersonProxy>() {
+
+			@Override
+			public void onSuccess(PersonProxy response) {
+				if (response==null) {
+					ConfirmationDialogBox.showOkDialogBox(constants.information(),constants.loginInformation());
+					return;
+				}
+			}				
+
+		});
 		
 		Log.debug("McApp.initAfter");
 	}

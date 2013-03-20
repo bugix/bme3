@@ -3,28 +3,14 @@ package medizin.client.place;
 import medizin.client.factory.request.McAppRequestFactory;
 
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.place.shared.Place;
-import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.web.bindery.requestfactory.shared.EntityProxyId;
 
-public class PlaceUserDetails extends Place {
+public class PlaceUserDetails extends AbstractDetailsPlace {
 
-	public enum Operation {
-		DETAILS, CREATE, EDIT
-	}
-
-	private static final String SEPARATOR = "!";
-	private String placeName;
-
-	private EntityProxyId<?> proxyId;
-	private Operation operation = null;
-
-	public EntityProxyId<?> getProxyId() {
-		return proxyId;
-	}
-
+	public static final String PLACE_USER_DETAILS = "PlaceUserDetails";
+	
 	private PlaceUserDetails(String placeName) {
-		this.placeName = placeName;
+		super(placeName);
 	}
 
 	public PlaceUserDetails(EntityProxyId<?> record) {
@@ -32,51 +18,19 @@ public class PlaceUserDetails extends Place {
 	}
 
 	public PlaceUserDetails(Operation operation) {
+		super(operation);
 		Log.debug("PlaceUserDetails will be created");
-		this.operation = operation;
 	}
 
 	public PlaceUserDetails(EntityProxyId<?> stableId, Operation operation) {
+		super(stableId, operation);
 		Log.debug("PlaceUserDetails will be created");
-		this.operation = operation;
-		proxyId = stableId;
-		assert (operation != operation.CREATE);
 	}
 
-	public String getPlaceName() {
-		return placeName;
-	}
-
-	public Operation getOperation() {
-		Log.debug("PlaceUserDetails.getOperation: " + operation);
-		return operation;
-	}
-
-	public static class Tokenizer implements PlaceTokenizer<PlaceUserDetails> {
-
-		private McAppRequestFactory requestFactory;
+	public static class Tokenizer extends AbstractDetailsPlace.AbstractTokenizer<PlaceUserDetails> {
 
 		public Tokenizer(McAppRequestFactory requestFactory) {
-			this.requestFactory = requestFactory;
-		}
-
-		@Override
-		public String getToken(PlaceUserDetails place) {
-			Log.debug("Im PlaceInstitution.getToken: Placename -"
-					+ place.getProxyId());
-
-			// if (requests==null)
-			// Log.warn("requests null");
-
-			if (Operation.DETAILS == place.getOperation()) {
-				return requestFactory.getHistoryToken(place.getProxyId()) + SEPARATOR + PlaceUserDetails.Operation.DETAILS;
-			} else if (Operation.CREATE == place.getOperation()) {
-				return /* place.getProxyId() + SEPARATOR + */SEPARATOR + PlaceUserDetails.Operation.CREATE;
-			} else if (Operation.EDIT == place.getOperation()) { 
-				return requestFactory.getHistoryToken(place.getProxyId()) + SEPARATOR + PlaceUserDetails.Operation.EDIT;
-			}
-
-			return place.getPlaceName();
+			super(requestFactory);
 		}
 
 		@Override
@@ -86,18 +40,13 @@ public class PlaceUserDetails extends Place {
 			String bits[] = token.split(SEPARATOR);
 			Operation operation = Operation.valueOf(bits[1]);
 			if (Operation.DETAILS == operation) {
-				return new PlaceUserDetails(requestFactory.getProxyId(bits[0]),
-						Operation.DETAILS);
+				return new PlaceUserDetails(requestFactory.getProxyId(bits[0]), Operation.DETAILS);
 			}
 			if (Operation.EDIT == operation) {
-				return new PlaceUserDetails(requestFactory.getProxyId(bits[0]),
-						Operation.EDIT);
+				return new PlaceUserDetails(requestFactory.getProxyId(bits[0]), Operation.EDIT);
 			}
 			if (Operation.CREATE == operation) {
-				return new PlaceUserDetails(/*
-											 * requestFactory.getProxyId(bits[0])
-											 * ,
-											 */Operation.CREATE);
+				return new PlaceUserDetails(/*requestFactory.getProxyId(bits[0]),*/Operation.CREATE);
 			}
 
 			return new PlaceUserDetails(token);

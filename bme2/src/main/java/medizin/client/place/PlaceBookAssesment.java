@@ -2,61 +2,41 @@ package medizin.client.place;
 
 import medizin.client.factory.request.McAppRequestFactory;
 
-import com.google.gwt.place.shared.Place;
-import com.google.gwt.place.shared.PlaceTokenizer;
-import com.google.web.bindery.requestfactory.shared.EntityProxyId;
+public class PlaceBookAssesment extends AbstractPlace {
 
-public class PlaceBookAssesment extends Place {
+	public static final String PLACE_BOOK_ASSESMENT = "PlaceBookAssesment";
+	
+	public PlaceBookAssesment(String placeName) {
+		super(placeName);
+	}
 
-	 private String placeName;
-	private EntityProxyId<?> proxyType;
+	public static class Tokenizer extends AbstractPlace.AbstractTokenizer<PlaceBookAssesment> {
 
-	    public PlaceBookAssesment(String placeName) {
-	        this.placeName = placeName;
-	    }
-
-	    public PlaceBookAssesment(EntityProxyId<?> proxyId) {
-			this.proxyType = proxyId;
+		public Tokenizer(McAppRequestFactory requestFactory) {
+			super(requestFactory);
 		}
 
-		public String getPlaceName() {
-	        return placeName;
-	    }
-
-	    public static class Tokenizer implements PlaceTokenizer<PlaceBookAssesment> {
-	        private McAppRequestFactory requestFactory;
-
-			public Tokenizer(McAppRequestFactory requestFactory) {
-	        	this.requestFactory = requestFactory;
-			}
-
-			@Override
-	        public String getToken(PlaceBookAssesment place) {
-	            return place.getPlaceName();
-	        }
-
-	        @Override
-	        public PlaceBookAssesment getPlace(String token) {
-	            return new PlaceBookAssesment(token);
-	        }
-	    }
-
-	    
 		@Override
-		public boolean equals(Object obj) {
-			if (this == obj) {
-				return true;
-			}
-			if (obj == null) {
-				return false;
-			}
-			if (getClass() != obj.getClass()) {
-				return false;
-			}
-//			ProxyListPlace other = (ProxyListPlace) obj;
-//			if (!proxyType.equals(other.proxyType)) {
-//				return false;
-//			}
+		public PlaceBookAssesment getPlace(String token) {
+			return new PlaceBookAssesment(token);
+		}
+	}
+
+	/*@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
 			return true;
 		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		// ProxyListPlace other = (ProxyListPlace) obj;
+		// if (!proxyType.equals(other.proxyType)) {
+		// return false;
+		// }
+		return true;
+	}*/
 }

@@ -3,94 +3,48 @@ package medizin.client.place;
 import medizin.client.factory.request.McAppRequestFactory;
 
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.place.shared.Place;
-import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.web.bindery.requestfactory.shared.EntityProxyId;
 
-public class PlaceBookAssesmentDetails extends Place {
+public class PlaceBookAssesmentDetails extends AbstractDetailsPlace {
 
-	public enum Operation {
-		DETAILS
-	}
-	private static final String SEPARATOR = "!";
-	private String placeName;
+	// here details operation only.
+	// public enum Operation { DETAILS }
 
-	private EntityProxyId<?> proxyId;
-	private Operation operation = null;
+	public static final String PLACE_BOOK_ASSESMENT_DETAILS = "PlaceBookAssesmentDetails";
 	
-	
-	public EntityProxyId<?> getProxyId() {
-		return proxyId;
+	public PlaceBookAssesmentDetails(String placeName) {
+		super(placeName);
 	}
 
-	    public PlaceBookAssesmentDetails(String placeName) {
-	        this.placeName = placeName;
-	    }
-	    
-		public PlaceBookAssesmentDetails(EntityProxyId<?> record) {
-			this(record, Operation.DETAILS);
-			
+	public PlaceBookAssesmentDetails(EntityProxyId<?> record) {
+		this(record, Operation.DETAILS);
+
+	}
+
+	public PlaceBookAssesmentDetails(EntityProxyId<?> stableId, Operation operation) {
+		super(stableId, Operation.DETAILS); // as only details operation is allowed
+		Log.debug("PlaceBookAssesmentEvent wird erstellt");
+	}
+
+	public static class Tokenizer extends AbstractDetailsPlace.AbstractTokenizer<PlaceBookAssesmentDetails> {
+
+		public Tokenizer(McAppRequestFactory requestFactory) {
+			super(requestFactory);
 		}
 
+		@Override
+		public PlaceBookAssesmentDetails getPlace(String token) {
+			Log.debug("Im PlaceBookAssesmentEvent.getPlace: Token -" + token);
 
-	    public PlaceBookAssesmentDetails(EntityProxyId<?> stableId, Operation operation) {
-	    	Log.debug("PlaceBookAssesmentEvent wird erstellt");
-			this.operation = operation;
-			proxyId = stableId;
-		}
-
-		public String getPlaceName() {
-	        return placeName;
-	    }
-		public Operation getOperation() {
-			return operation;
-		}
-
-
-	    public static class Tokenizer implements PlaceTokenizer<PlaceBookAssesmentDetails> {
-	    	
-private McAppRequestFactory requestFactory;
-
-//			private final McAppFactory mcAppFactory;
-//
-//			public Tokenizer(McAppFactory mcAppFactory) {
-//				this.mcAppFactory = mcAppFactory;
-//			}
-			
-	        public Tokenizer(McAppRequestFactory requestFactory) {
-	        	this.requestFactory = requestFactory;
+			String bits[] = token.split(SEPARATOR);
+			Operation operation = Operation.valueOf(bits[1]);
+			if (Operation.DETAILS == operation) {
+				return new PlaceBookAssesmentDetails(token);
 			}
 
-			@Override
-	        public String getToken(PlaceBookAssesmentDetails place) {
-	        	Log.debug("Im PlaceBookAssesment.getToken: Placename -" + place.getProxyId());
-	        	
-//	        	if (requests==null)
-//	        	Log.warn("requests null");
-	        	
-				if (Operation.DETAILS == place.getOperation()) {
-					return requestFactory.getHistoryToken(place.getProxyId()) + SEPARATOR + PlaceBookAssesmentDetails.Operation.DETAILS;
-				}
+			return new PlaceBookAssesmentDetails(token);
 
-	        	
-	            return place.getPlaceName();
-	        }
-
-	        @Override
-	        public PlaceBookAssesmentDetails getPlace(String token) {
-	        	Log.debug("Im PlaceBookAssesmentEvent.getPlace: Token -" + token);
-	        	
-				String bits[] = token.split(SEPARATOR);
-				Operation operation = Operation.valueOf(bits[1]);
-				if (Operation.DETAILS == operation) {
-					return new PlaceBookAssesmentDetails(token);
-				}
-
-				
-	            return new PlaceBookAssesmentDetails(token);
-	            
-	            
-	        }
-	    }
+		}
+	}
 
 }

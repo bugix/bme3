@@ -2,72 +2,54 @@ package medizin.client.place;
 
 import medizin.client.factory.request.McAppRequestFactory;
 
-import com.google.gwt.place.shared.Place;
-import com.google.gwt.place.shared.PlaceTokenizer;
-import com.google.web.bindery.requestfactory.shared.EntityProxyId;
+public class PlaceAssesment extends AbstractPlace {
 
-public class PlaceAssesment extends Place {
+	public static final String PLACE_ASSESMENT = "PlaceAssesment";
+	
+	public PlaceAssesment(String placeName) {
+		super(placeName);
+	}
 
-	 private String placeName;
-		private EntityProxyId<?> proxyId;
+	public static class Tokenizer extends AbstractPlace.AbstractTokenizer<PlaceAssesment> {
 
-	    public PlaceAssesment(String placeName) {
-	        this.placeName = placeName;
-	    }
-
-	    public PlaceAssesment(EntityProxyId<?> proxyId) {
-			this.proxyId=proxyId;
+		public Tokenizer(McAppRequestFactory requestFactory) {
+			super(requestFactory);
 		}
 
-		public String getPlaceName() {
-	        return placeName;
-	    }
-
-	    public static class Tokenizer implements PlaceTokenizer<PlaceAssesment> {
-	    	private final McAppRequestFactory requestFactory;
-	        public Tokenizer(McAppRequestFactory requestFactory) {
-	        	this.requestFactory = requestFactory;
-			}
-
-			@Override
-	        public String getToken(PlaceAssesment place) {
-	            return place.getPlaceName();
-	        }
-
-	        @Override
-	        public PlaceAssesment getPlace(String token) {
-	            return new PlaceAssesment(token);
-	        }
-	    }
-	    
 		@Override
-		public boolean equals(Object obj) {
-			if (this == obj) {
-				return true;
-			}
-			if (obj == null) {
-				return false;
-			}
-			if (getClass() != obj.getClass()) {
-				return false;
-			}
-			//bei Löschaktion neu laden
-			if(this.getPlaceName()!=null){
-				if(this.getPlaceName().contains("PlaceAssesment!DELETED") || this.getPlaceName().contains("PlaceAssesment!CANCEL")){
-					return false;
-				}
-			}
-		
-//			//wenn ProxyId nicht gesetzt war es eine Löschaktion
-//			if (this.proxyId==null){
-//				return false;
-//			}
+		public PlaceAssesment getPlace(String token) {
+			return new PlaceAssesment(token);
+		}
+	}
 
-//			ProxyListPlace other = (ProxyListPlace) obj;
-//			if (!proxyType.equals(other.proxyType)) {
-//				return false;
-//			}
+	/*@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
 			return true;
 		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		// bei Löschaktion neu laden
+		if (this.getPlaceName() != null) {
+			if (this.getPlaceName().contains("PlaceAssesment!DELETED") || this.getPlaceName().contains("PlaceAssesment!CANCEL")) {
+				return false;
+			}
+		}
+
+		// //wenn ProxyId nicht gesetzt war es eine Löschaktion
+		// if (this.proxyId==null){
+		// return false;
+		// }
+
+		// ProxyListPlace other = (ProxyListPlace) obj;
+		// if (!proxyType.equals(other.proxyType)) {
+		// return false;
+		// }
+		return true;
+	}*/
 
 }

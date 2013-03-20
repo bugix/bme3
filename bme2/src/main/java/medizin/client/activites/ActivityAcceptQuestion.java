@@ -5,6 +5,7 @@ import java.util.List;
 import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.PlaceAcceptQuestion;
+import medizin.client.place.PlaceAcceptQuestionDetails;
 import medizin.client.place.PlaceQuestionDetails;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.ui.view.AcceptQuestionView;
@@ -166,9 +167,9 @@ public class ActivityAcceptQuestion extends AbstractActivityWrapper implements A
 
 	}
 
-	protected void showDetails(QuestionProxy question) {
+	private void showDetails(QuestionProxy question) {
 		Log.debug("Question Stable id: " + question.stableId() + " " + PlaceQuestionDetails.Operation.DETAILS);
-		placeController.goTo(new PlaceQuestionDetails(question.stableId(), "ACCEPT_QUESTION"));
+		placeController.goTo(new PlaceAcceptQuestionDetails(question.stableId()));
 	}
 	
 

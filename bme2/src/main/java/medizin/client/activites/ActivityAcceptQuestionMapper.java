@@ -1,6 +1,7 @@
 package medizin.client.activites;
 
 
+import medizin.client.place.PlaceAcceptQuestionDetails;
 import medizin.client.place.PlaceQuestionDetails;
 import medizin.client.factory.request.McAppRequestFactory;
 
@@ -28,19 +29,19 @@ public class ActivityAcceptQuestionMapper implements ActivityMapper {
 	@Override
 	public Activity getActivity(Place place) {
 		Log.debug("im ActivityQuestionMapper.getActivity");
-		 if (place instanceof PlaceQuestionDetails){
-			 PlaceQuestionDetails myPlace = (PlaceQuestionDetails) place;
+		 if (place instanceof PlaceAcceptQuestionDetails){
+			 PlaceAcceptQuestionDetails myPlace = (PlaceAcceptQuestionDetails) place;
 			 if(myPlace.getOperation() == PlaceQuestionDetails.Operation.DETAILS){
 				 // for activityAcceptQuestionDetails 
-				return new ActivityAcceptQuestionDetails((PlaceQuestionDetails) place, requests, placeController);
+				return new ActivityAcceptQuestionDetails((PlaceAcceptQuestionDetails) place, requests, placeController);
 			 }
 				
 			 else if (myPlace.getOperation() == PlaceQuestionDetails.Operation.CREATE){
-				 return new ActivityAcceptQuestionEdit((PlaceQuestionDetails) place,  requests, placeController);
+				 return new ActivityAcceptQuestionEdit((PlaceAcceptQuestionDetails) place,  requests, placeController);
 			 }
 			 
 			 else if (myPlace.getOperation() == PlaceQuestionDetails.Operation.EDIT){
-				 return new ActivityAcceptQuestionEdit((PlaceQuestionDetails) place,  requests, placeController, PlaceQuestionDetails.Operation.EDIT);
+				 return new ActivityAcceptQuestionEdit((PlaceAcceptQuestionDetails) place,  requests, placeController, PlaceQuestionDetails.Operation.EDIT);
 			 }
 		 }
 		 return null;

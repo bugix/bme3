@@ -4,9 +4,9 @@ import java.util.List;
 
 import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
+import medizin.client.place.AbstractDetailsPlace.Operation;
 import medizin.client.place.PlaceQuestiontypes;
 import medizin.client.place.PlaceQuestiontypesDetails;
-import medizin.client.place.PlaceQuestiontypesDetails.Operation;
 import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.ui.view.QuestiontypesView;
 import medizin.client.ui.view.QuestiontypesViewImpl;

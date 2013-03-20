@@ -7,6 +7,7 @@ import medizin.client.place.PlaceAcceptAnswer;
 import medizin.client.place.PlaceAcceptAssQuestion;
 import medizin.client.place.PlaceAcceptPerson;
 import medizin.client.place.PlaceAcceptQuestion;
+import medizin.client.place.PlaceAcceptQuestionDetails;
 import medizin.client.place.PlaceAsignAssQuestion;
 import medizin.client.place.PlaceAssesment;
 import medizin.client.place.PlaceAssesmentDetails;
@@ -23,10 +24,8 @@ import medizin.client.place.PlaceStaticContent;
 import medizin.client.place.PlaceSystemOverview;
 import medizin.client.place.PlaceUser;
 import medizin.client.place.PlaceUserDetails;
-import medizin.client.proxy.PersonProxy;
 import medizin.shared.i18n.BmeConstants;
 
-import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.place.shared.Place;
@@ -109,60 +108,60 @@ public class McAppNav extends Composite {
 
 	@UiHandler("systemOverview")
 		void systemOverviewClicked(ClickEvent event) {
-			placeController.goTo(new PlaceSystemOverview("PlaceSystemOverview"));
+			placeController.goTo(new PlaceSystemOverview(PlaceSystemOverview.PLACE_SYSTEM_OVERVIEW));
 		}
 	@UiHandler("acceptPerson")
 	void acceptPersonClicked(ClickEvent event) {
-		placeController.goTo(new PlaceAcceptPerson("PlaceAcceptPerson"));
+		placeController.goTo(new PlaceAcceptPerson(PlaceAcceptPerson.PLACE_ACCEPT_PERSON));
 	}
 	
 	@UiHandler("acceptQuestion")
 	void acceptQuestionClicked(ClickEvent event) {
-		placeController.goTo(new PlaceAcceptQuestion("PlaceAcceptQuestion"));
+		placeController.goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));
 	}
 	@UiHandler("acceptAnswer")
 	void PlaceAcceptAnswerClicked(ClickEvent event) {
-		placeController.goTo(new PlaceAcceptAnswer("PlaceAcceptAnswer"));
+		placeController.goTo(new PlaceAcceptAnswer(PlaceAcceptAnswer.PLACE_ACCEPT_ANSWER));
 	}
 	@UiHandler("acceptAssQuestion")
 	void acceptAssQuestionClicked(ClickEvent event) {
-		placeController.goTo(new PlaceAcceptAssQuestion("PlaceAcceptAssQuestion"));
+		placeController.goTo(new PlaceAcceptAssQuestion(PlaceAcceptAssQuestion.PLACE_ACCEPT_ASS_QUESTION));
 	}
 	@UiHandler("openDemand")
 	void openDemandClicked(ClickEvent event) {
-		placeController.goTo(new PlaceOpenDemand("PlaceOpenDemand"));
+		placeController.goTo(new PlaceOpenDemand(PlaceOpenDemand.PLACE_OPEN_DEMAND));
 	}
 	@UiHandler("user")
 	void userClicked(ClickEvent event) {
-		placeController.goTo(new PlaceUser("PlaceUser"));
+		placeController.goTo(new PlaceUser(PlaceUser.PLACE_USER));
 	}
 	@UiHandler("question")
 	void questionClicked(ClickEvent event) {
-		placeController.goTo(new PlaceQuestion("PlaceQuestion"));
+		placeController.goTo(new PlaceQuestion(PlaceQuestion.PLACE_QUESTION));
 	}
 	@UiHandler("questionType")
 	void questionTypeClicked(ClickEvent event) {
-		placeController.goTo(new PlaceQuestiontypes("PlaceQuestiontypes"));
+		placeController.goTo(new PlaceQuestiontypes(PlaceQuestiontypes.PLACE_QUESTIONTYPES));
 	}
 	@UiHandler("institution")
 	void institutionClicked(ClickEvent event) {
-		placeController.goTo(new PlaceInstitution("PlaceInstitution"));
+		placeController.goTo(new PlaceInstitution(PlaceInstitution.PLACE_INSTITUTION));
 	}
 	@UiHandler("assesment")
 	void assesmentClicked(ClickEvent event) {
-		placeController.goTo(new PlaceAssesment("PlaceAssesment"));
+		placeController.goTo(new PlaceAssesment(PlaceAssesment.PLACE_ASSESMENT));
 	}
 	@UiHandler("asignAssQuestion")
 	void asignAssQuestionClicked(ClickEvent event) {
-		placeController.goTo(new PlaceAsignAssQuestion("PlaceAssAsignQuestion"));
+		placeController.goTo(new PlaceAsignAssQuestion(PlaceAsignAssQuestion.PLACE_ASIGN_ASS_QUESTION));
 	}
 	@UiHandler("bookAssesment")
 	void bookAssesmentClicked(ClickEvent event) {
-		placeController.goTo(new PlaceBookAssesment("PlaceBookAssesment"));
+		placeController.goTo(new PlaceBookAssesment(PlaceBookAssesment.PLACE_BOOK_ASSESMENT));
 	}
 	@UiHandler("staticContent")
 	void staticContentClicked(ClickEvent event) {
-		placeController.goTo(new PlaceStaticContent("PlaceStaticContent"));
+		placeController.goTo(new PlaceStaticContent(PlaceStaticContent.PLACE_STATIC_CONTENT));
 	}
 	
 //	public McAppNav() {
@@ -240,7 +239,7 @@ public class McAppNav extends Composite {
 		}
 	}
 	
-	private PersonProxy loggedUser;
+	//private PersonProxy loggedUser;
 	
 	private int both = 0;
 	
@@ -290,10 +289,13 @@ public class McAppNav extends Composite {
 			}
 		});
         
-        /*Place place = placeController.getWhere();
-        changeMenue(place);*/
-        
-        placeController.goTo( new PlaceSystemOverview("PlaceSystemOverview"));
+        Place place = placeController.getWhere();
+        if(place == null || place.equals(Place.NOWHERE)) {
+        	place =  new PlaceSystemOverview(PlaceSystemOverview.PLACE_SYSTEM_OVERVIEW);
+        }
+        changeMenue(place);
+        placeController.goTo(new PlaceSystemOverview(PlaceSystemOverview.PLACE_SYSTEM_OVERVIEW));
+        placeController.goTo(place);
 	}
 	
 	protected void changeMenue(Place place){
@@ -343,7 +345,7 @@ public class McAppNav extends Composite {
             questionPanel.setOpen(false);
 		//	acceptPerson.addStyleName("gwt-AnchorSelected");
         }
-        if (place instanceof PlaceAcceptQuestion){
+        if (place instanceof PlaceAcceptQuestion || place instanceof PlaceAcceptQuestionDetails){
             systemOweviewPanel.setOpen(true);
             managementPanel.setOpen(false);
             assementPanel.setOpen(false);
@@ -378,7 +380,7 @@ public class McAppNav extends Composite {
             questionPanel.setOpen(false);		
 	//		user.addStyleName("gwt-AnchorSelected");
         }
-        if (place instanceof PlaceQuestion /*|| place instanceof PlaceQuestionDetails*/){
+        if (place instanceof PlaceQuestion || place instanceof PlaceQuestionDetails){
             systemOweviewPanel.setOpen(false);
             managementPanel.setOpen(false);
             assementPanel.setOpen(false);

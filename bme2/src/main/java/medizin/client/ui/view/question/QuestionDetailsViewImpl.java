@@ -2,6 +2,7 @@ package medizin.client.ui.view.question;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -11,6 +12,7 @@ import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.TabPanelHelper;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.resource.dndview.ResourceView;
+import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.ui.widget.resource.event.ResourceAddedEvent;
 import medizin.client.ui.widget.resource.event.ResourceAddedEventHandler;
 import medizin.client.ui.widget.resource.event.ResourceDeletedEvent;
@@ -47,14 +49,11 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class QuestionDetailsViewImpl extends Composite implements
-		QuestionDetailsView {
+public class QuestionDetailsViewImpl extends Composite implements QuestionDetailsView {
 
-	private static AssesmentDetailsViewImplUiBinder uiBinder = GWT
-			.create(AssesmentDetailsViewImplUiBinder.class);
+	private static QuestionDetailsViewImplUiBinder uiBinder = GWT.create(QuestionDetailsViewImplUiBinder.class);
 
-	interface AssesmentDetailsViewImplUiBinder extends
-			UiBinder<Widget, QuestionDetailsViewImpl> {
+	interface QuestionDetailsViewImplUiBinder extends UiBinder<Widget, QuestionDetailsViewImpl> {
 	}
 
 	public BmeConstants constants = GWT.create(BmeConstants.class);
@@ -234,7 +233,7 @@ public class QuestionDetailsViewImpl extends Composite implements
 	@UiHandler("previous")
 	public void onPreviousClicked(ClickEvent e) {
 		//remove edit and delete btn
-		setInvisibleIconButton(false);
+		setVisibleIconButton(false);
 		
 		if(proxy != null && proxy.getPreviousVersion() != null) {
 			delegate.getQuestionDetails(proxy.getPreviousVersion() ,new Function<QuestionProxy, Void>() {
@@ -259,7 +258,7 @@ public class QuestionDetailsViewImpl extends Composite implements
 		//remove edit and delete btn
 		
 		if(delegate.isQuestionDetailsPlace()) {
-			setInvisibleIconButton(true);	
+			setVisibleIconButton(true);	
 		}else {
 			setVisibleAcceptButton();
 		}
@@ -391,6 +390,11 @@ public class QuestionDetailsViewImpl extends Composite implements
 		
 		resourceUploadPanel.clear();
 		resourceViewPanel.clear();
+		boolean isAdded = false;
+		List<QuestionResourceClient> questionResourceClients = new ArrayList<QuestionResourceClient>();
+		boolean haveImage = false;
+		boolean haveSound = false;
+		boolean haveVideo = false;
 		
 		if(proxy != null && proxy.getQuestionType() != null  && proxy.getQuestionType().getQuestionType() != null) {
 			
@@ -400,7 +404,12 @@ public class QuestionDetailsViewImpl extends Composite implements
 			case Textual:
 			{
 				if(proxy != null && proxy.getQuestionType()!= null && proxy.getQuestionType().getQueHaveImage() != null &&  proxy.getQuestionType().getQueHaveSound() != null && proxy.getQuestionType().getQueHaveVideo() != null) {
-					setResourceUploadAndResourceViewer(proxy.getQuestionType(),proxy);
+					//setResourceUploadAndResourceViewer(proxy.getQuestionType(),proxy);
+					questionResourceClients = ClientUtility.getQuestionResourceClient(proxy.getQuestionResources());
+					haveImage = proxy.getQuestionType().getQueHaveImage();
+					haveSound = proxy.getQuestionType().getQueHaveSound();
+					haveVideo = proxy.getQuestionType().getQueHaveVideo();
+					isAdded = true;
 				}
 				
 				break;
@@ -408,8 +417,13 @@ public class QuestionDetailsViewImpl extends Composite implements
 				
 			case Imgkey:
 			{
-				if(proxy != null && proxy.getQuestionType()!= null && proxy.getQuestionType().getQuestionType() != null) {
-					imageViewer(proxy.getQuestionType(),proxy,QuestionTypes.Imgkey);
+				if(proxy != null && proxy.getQuestionType()!= null && proxy.getQuestionType().getQuestionType() != null && proxy.getPicturePath() != null) {
+					//imageViewer(proxy.getQuestionType(),proxy,QuestionTypes.Imgkey);
+					QuestionResourceClient client = new QuestionResourceClient();
+					client.setPath(proxy.getPicturePath());
+					questionResourceClients.add(client);
+					haveImage = true;
+					isAdded = true;
 				}
 				
 				break;
@@ -417,8 +431,13 @@ public class QuestionDetailsViewImpl extends Composite implements
 				
 			case ShowInImage:
 			{
-				if(proxy != null && proxy.getQuestionType()!= null && proxy.getQuestionType().getQuestionType() != null) {
-					imageViewer(proxy.getQuestionType(),proxy,QuestionTypes.ShowInImage);
+				if(proxy != null && proxy.getQuestionType()!= null && proxy.getQuestionType().getQuestionType() != null && proxy.getPicturePath() != null) {
+					//imageViewer(proxy.getQuestionType(),proxy,QuestionTypes.ShowInImage);
+					QuestionResourceClient client = new QuestionResourceClient();
+					client.setPath(proxy.getPicturePath());
+					questionResourceClients.add(client);
+					haveImage = true;
+					isAdded = true;
 				}
 				
 				break;
@@ -427,7 +446,12 @@ public class QuestionDetailsViewImpl extends Composite implements
 			case Sort:
 			{
 				if(proxy != null && proxy.getQuestionType()!= null && proxy.getQuestionType().getQueHaveImage() != null &&  proxy.getQuestionType().getQueHaveSound() != null && proxy.getQuestionType().getQueHaveVideo() != null) {
-					setResourceUploadAndResourceViewer(proxy.getQuestionType(),proxy);
+					//setResourceUploadAndResourceViewer(proxy.getQuestionType(),proxy);
+					questionResourceClients = ClientUtility.getQuestionResourceClient(proxy.getQuestionResources());
+					haveImage = proxy.getQuestionType().getQueHaveImage();
+					haveSound = proxy.getQuestionType().getQueHaveSound();
+					haveVideo = proxy.getQuestionType().getQueHaveVideo();
+					isAdded = true;
 				}
 				
 				break;
@@ -437,18 +461,16 @@ public class QuestionDetailsViewImpl extends Composite implements
 			{
 				Log.info("Error");
 				questionTypeDetailPanel.remove(1);
+				isAdded = false;
 				break;	
 			}
-			
 			}
 			
-			
+			if(isAdded == true && (haveImage != false || haveSound != false || haveVideo != false) ) {
+				final ResourceView resourceView = new ResourceView(eventBus,questionResourceClients, proxy.getQuestionType().getQuestionType(),haveImage,haveSound,haveVideo,false);
+				resourceViewPanel.add(resourceView);
+			}
 		}
-		
-		
-		
-		
-		
 	}
 
 	public QuestionDetailsViewImpl(EventBus eventBus, Boolean flag) {
@@ -732,7 +754,7 @@ public class QuestionDetailsViewImpl extends Composite implements
 		resourceViewPanel.add(imageViewer);
 	}
 	
-	public void setInvisibleIconButton(Boolean flag)
+	public void setVisibleIconButton(Boolean flag)
 	{
 		edit.setVisible(flag);
 		delete.setVisible(flag);

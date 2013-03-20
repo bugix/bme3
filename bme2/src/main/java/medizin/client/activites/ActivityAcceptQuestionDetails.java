@@ -3,6 +3,7 @@ package medizin.client.activites;
 import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.PlaceAcceptQuestion;
+import medizin.client.place.PlaceAcceptQuestionDetails;
 import medizin.client.place.PlaceQuestionDetails;
 import medizin.client.proxy.QuestionProxy;
 
@@ -11,9 +12,23 @@ import com.google.gwt.place.shared.PlaceController;
 
 public class ActivityAcceptQuestionDetails extends ActivityQuestionDetails {
 
-	public ActivityAcceptQuestionDetails(PlaceQuestionDetails place,McAppRequestFactory requests, PlaceController placeController) {
-		super(place, requests, placeController);
+	public ActivityAcceptQuestionDetails(PlaceAcceptQuestionDetails place,McAppRequestFactory requests, PlaceController placeController) {
+		super(createNewPlace(place), requests, placeController);
 	}
+
+	private static PlaceQuestionDetails createNewPlace(PlaceAcceptQuestionDetails place) {
+		PlaceQuestionDetails details;
+		
+		if(place.getOperation() != PlaceAcceptQuestionDetails.Operation.CREATE) {
+			details = new PlaceQuestionDetails(place.getProxyId(),place.getOperation());	
+		}else {
+			details = new PlaceQuestionDetails(place.getOperation());
+		}
+		
+		return details;
+	}
+
+
 
 	@Override
 	protected void startForAccessRights() {
@@ -37,7 +52,7 @@ public class ActivityAcceptQuestionDetails extends ActivityQuestionDetails {
 	
 	@Override
 	public void editClicked() {
-		goTo(new PlaceQuestionDetails(question.stableId(), PlaceQuestionDetails.Operation.EDIT, "ACCEPT_QUESTION"));
+		goTo(new PlaceAcceptQuestionDetails(question.stableId(), PlaceQuestionDetails.Operation.EDIT));
 	}
 	
 	@Override

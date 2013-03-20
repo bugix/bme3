@@ -2,37 +2,24 @@ package medizin.client.place;
 
 import medizin.client.factory.request.McAppRequestFactory;
 
-import com.google.gwt.place.shared.Place;
-import com.google.gwt.place.shared.PlaceTokenizer;
+public class PlaceStaticContent extends AbstractPlace {
 
-public class PlaceStaticContent extends Place {
+	public static final String PLACE_STATIC_CONTENT = "PlaceStaticContent";
+	
+	public PlaceStaticContent(String placeName) {
+		super(placeName);
+	}
 
-	 private String placeName;
+	public static class Tokenizer extends AbstractPlace.AbstractTokenizer<PlaceStaticContent> {
 
-	    public PlaceStaticContent(String placeName) {
-	        this.placeName = placeName;
-	    }
+		public Tokenizer(McAppRequestFactory requestFactory) {
+			super(requestFactory);
+		}
 
-	    public String getPlaceName() {
-	        return placeName;
-	    }
-
-	    public static class Tokenizer implements PlaceTokenizer<PlaceStaticContent> {
-	        private McAppRequestFactory requestFactory;
-
-			public Tokenizer(McAppRequestFactory requestFactory) {
-	        	this.requestFactory = requestFactory;
-			}
-
-			@Override
-	        public String getToken(PlaceStaticContent place) {
-	            return place.getPlaceName();
-	        }
-
-	        @Override
-	        public PlaceStaticContent getPlace(String token) {
-	            return new PlaceStaticContent(token);
-	        }
-	    }
+		@Override
+		public PlaceStaticContent getPlace(String token) {
+			return new PlaceStaticContent(token);
+		}
+	}
 
 }
