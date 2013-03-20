@@ -18,6 +18,10 @@
 		.whiteSpace {
 			white-space: normal;
 		}
+		.answerVp{
+			width: 100%;
+			margin-top: 10px;
+		}
 	</ui:style>
 		
 	<g:HTMLPanel>
@@ -136,8 +140,10 @@
 					</g:VerticalPanel>
 				</g:Tab>
 			</g:TabPanel>
-		<m:AnswerListViewImpl ui:field="answerListViewImpl"></m:AnswerListViewImpl> 
-		<m:MatrixAnswerListViewImpl ui:field="matrixAnswerListViewImpl"></m:MatrixAnswerListViewImpl>
+			<g:VerticalPanel ui:field="answerVerticalPanel" addStyleNames="{style.answerVp}">
+				<m:AnswerListViewImpl ui:field="answerListViewImpl"></m:AnswerListViewImpl> 
+				<m:MatrixAnswerListViewImpl ui:field="matrixAnswerListViewImpl"></m:MatrixAnswerListViewImpl>
+			</g:VerticalPanel>
 		</g:VerticalPanel>
 	</g:HTMLPanel>
 </ui:UiBinder>

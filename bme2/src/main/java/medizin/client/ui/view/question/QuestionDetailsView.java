@@ -9,6 +9,7 @@ import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import com.google.common.base.Function;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 public interface QuestionDetailsView extends IsWidget {
     /*void setName(String helloName);*/
@@ -61,4 +62,5 @@ public interface QuestionDetailsView extends IsWidget {
 	
 	public IconButton getEdit();
 
+	public VerticalPanel getAnswerVerticalPanel();
 }

@@ -390,4 +390,65 @@ public class Answer {
 		return true;
 	 
 	}
+	
+	public static Long countAnswerForAcceptQuestion(Long questionId)
+	{
+		HttpSession session = RequestFactoryServlet.getThreadLocalRequest().getSession();
+		
+		String shibdId2 = (String) session.getAttribute("shibdId");
+		long institutionId2 = (Long) session.getAttribute("institutionId");
+		Question question = Question.findQuestion(questionId);
+		
+		Person loggedUser = Person.findPersonByShibId(shibdId2);
+		Institution institution = Institution.findInstitution(institutionId2);
+		if (loggedUser == null || institution == null) throw new IllegalArgumentException("The person and institution arguments are required");
+		
+		CriteriaBuilder cb = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+		Root<Answer> from = cq.from(Answer.class);
+		
+		cq.select(cb.count(from));
+		
+		Predicate pre1 = cb.equal(from.get("question").get("id"), questionId);
+		Predicate pre2 = cb.notEqual(from.get("status"), Status.DEACTIVATED);
+		pre1 = cb.and(pre2, pre1);
+		
+		cq.where(pre1);
+		
+        TypedQuery<Long> q = entityManager().createQuery(cq);
+        
+        //System.out.println("Q1 : " + q.unwrap(Query.class).getQueryString());
+        
+        return q.getSingleResult();
+	}
+	
+	public static List<Answer> findAnswerForAcceptQuestion(Long questionId, Integer start, Integer length)
+	{
+		HttpSession session = RequestFactoryServlet.getThreadLocalRequest().getSession();
+		
+		String shibdId2 = (String) session.getAttribute("shibdId");
+		long institutionId2 = (Long) session.getAttribute("institutionId");
+		Question question = Question.findQuestion(questionId);
+		
+		Person loggedUser = Person.findPersonByShibId(shibdId2);
+		Institution institution = Institution.findInstitution(institutionId2);
+		if (loggedUser == null || institution == null) throw new IllegalArgumentException("The person and institution arguments are required");
+		
+		CriteriaBuilder cb = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Answer> cq = cb.createQuery(Answer.class);
+		Root<Answer> from = cq.from(Answer.class);
+		
+		Predicate pre1 = cb.equal(from.get("question").get("id"), questionId);
+		Predicate pre2 = cb.notEqual(from.get("status"), Status.DEACTIVATED);
+		pre1 = cb.and(pre2, pre1);
+		
+		cq.where(pre1);
+		
+        TypedQuery<Answer> q = entityManager().createQuery(cq);
+        q.setFirstResult(start);
+        q.setMaxResults(length);        
+        //System.out.println("Q1 : " + q.unwrap(Query.class).getQueryString());
+        
+        return q.getResultList();
+	}
 }

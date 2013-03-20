@@ -85,7 +85,11 @@ public class AcceptAnswerSubViewImpl extends Composite implements AcceptAnswerSu
 	
 	DialogBox dialogBox;
 	
-	public AcceptAnswerSubViewImpl() {
+	private Boolean flag = false;
+	
+	public AcceptAnswerSubViewImpl(Boolean flag) {
+		
+		this.flag = flag;
 		
 		CellTable.Resources tableResources = GWT.create(MyCellTableResources.class);
 		table = new CellTable<AnswerProxy>(McAppConstant.TABLE_PAGE_SIZE, tableResources);
@@ -265,14 +269,14 @@ public class AcceptAnswerSubViewImpl extends Composite implements AcceptAnswerSu
 			}
 		});   */     
         
-		init();
+		init(flag);
 
 	}
 
 	private DeclineEmailPopupDelagate delegatePopup;
 
 
-	private void init() {
+	private void init(Boolean flag) {
 
 		table.addColumn(new Column<AnswerProxy, AnswerProxy>(new ValidityTextCell()) {
     	      @Override
@@ -296,48 +300,52 @@ public class AcceptAnswerSubViewImpl extends Composite implements AcceptAnswerSu
   	      }
   	    },  constants.answerText());
         
+		table.addColumnStyleName(0, "iconColumn");
+		table.addColumnStyleName(1, "questionTextColumn");
 
-		addColumn(new ActionCell<AnswerProxy>( McAppConstant.DECLINE_ICON, new ActionCell.Delegate<AnswerProxy>() {
-            
+		if (flag)
+		{
+			addColumn(new ActionCell<AnswerProxy>( McAppConstant.DECLINE_ICON, new ActionCell.Delegate<AnswerProxy>() {
 
-			public void execute(final AnswerProxy answerProxy) {
-            	/*DeclineEmailPopup popup = new DeclineEmailPopup(answerProxy);
-            	popup.setDelegate(delegatePopup);*/
-//            	Log.debug("hinterPupup");
-             // delegate.rejectClicked(answerProxy, "verweigert");
-				
-				ConfirmationDialogBox.showYesNoDialogBox(constants.warning(), constants.rejectAnswerMsg(), new ConfirmDialogBoxYesNoButtonEventHandler() {
+				public void execute(final AnswerProxy answerProxy) {
+	            	/*DeclineEmailPopup popup = new DeclineEmailPopup(answerProxy);
+	            	popup.setDelegate(delegatePopup);*/
+//	            	Log.debug("hinterPupup");
+	             // delegate.rejectClicked(answerProxy, "verweigert");
 					
-					@Override
-					public void onYesButtonClicked(ConfirmDialogBoxYesNoButtonEvent event) {
-						delegate.rejectClicked(answerProxy);
-					}
-					
-					@Override
-					public void onNoButtonClicked(ConfirmDialogBoxYesNoButtonEvent event) {
-					}
-				});				
-            }
-          }), constants.reject(), new GetValue<AnswerProxy>() {
-        public AnswerProxy getValue(AnswerProxy answerProxy) {
-          return answerProxy;
-        }
-      }, null);
+					ConfirmationDialogBox.showYesNoDialogBox(constants.warning(), constants.rejectAnswerMsg(), new ConfirmDialogBoxYesNoButtonEventHandler() {
+						
+						@Override
+						public void onYesButtonClicked(ConfirmDialogBoxYesNoButtonEvent event) {
+							delegate.rejectClicked(answerProxy);
+						}
+						
+						@Override
+						public void onNoButtonClicked(ConfirmDialogBoxYesNoButtonEvent event) {
+						}
+					});				
+	            }
+	          }), constants.reject(), new GetValue<AnswerProxy>() {
+	        public AnswerProxy getValue(AnswerProxy answerProxy) {
+	          return answerProxy;
+	        }
+	      }, null);
 
-		addColumn(new ActionCell<AnswerProxy>( McAppConstant.ACCEPT_ICON, new ActionCell.Delegate<AnswerProxy>() {
-		    public void execute(AnswerProxy answerProxy) {
-		      delegate.acceptClicked(answerProxy);
-		    }
-		  }), constants.accept(), new GetValue<AnswerProxy>() {
-		public AnswerProxy getValue(AnswerProxy answerProxy) {
-		  return answerProxy;
+			addColumn(new ActionCell<AnswerProxy>( McAppConstant.ACCEPT_ICON, new ActionCell.Delegate<AnswerProxy>() {
+			    public void execute(AnswerProxy answerProxy) {
+			      delegate.acceptClicked(answerProxy);
+			    }
+			  }), constants.accept(), new GetValue<AnswerProxy>() {
+			public AnswerProxy getValue(AnswerProxy answerProxy) {
+			  return answerProxy;
+			}
+			}, null);
+	    	
+	    	
+	    	//table.addColumnStyleName(1, "questionTextColumn");
+	    	table.addColumnStyleName(2, "deleteColumn");
 		}
-		}, null);
-    	
-    	table.addColumnStyleName(0, "iconColumn");
-    	table.addColumnStyleName(1, "questionTextColumn");
-    	table.addColumnStyleName(2, "deleteColumn");
-		
+				
 	}
 
 	  /**
@@ -399,7 +407,9 @@ DivElement questionText;*/
 		delegate.onRangeChanged(questionProxy, table);
 		
 		//questionText.setInnerHTML(questionProxy.getQuestionText());
-		questionDisclosurePanel.getHeaderTextAccessor().setText(questionProxy.getQuestionText());
+		
+		if (flag)
+			questionDisclosurePanel.getHeaderTextAccessor().setText(questionProxy.getQuestionText());
 		
 	}
 
@@ -508,8 +518,12 @@ DivElement questionText;*/
 		
 	}
 
+	public DisclosurePanel getQuestionDisclosurePanel() {
+		return questionDisclosurePanel;
+	}
 
-
-
+	public void setQuestionDisclosurePanel(DisclosurePanel questionDisclosurePanel) {
+		this.questionDisclosurePanel = questionDisclosurePanel;
+	}
 
 }

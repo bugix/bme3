@@ -48,6 +48,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class QuestionDetailsViewImpl extends Composite implements QuestionDetailsView {
@@ -213,6 +214,9 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 	// public EventAccessViewImpl getEventAccessView(){
 	// return eventAccessView;
 	// }
+
+	@UiField
+	VerticalPanel answerVerticalPanel;
 
 	@Override
 	public AnswerListViewImpl getAnswerListViewImpl() {
@@ -794,6 +798,14 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 
 	public IconButton getEdit() {
 		return edit;
+	}
+	
+	public VerticalPanel getAnswerVerticalPanel() {
+		return answerVerticalPanel;
+	}
+
+	public void setAnswerVerticalPanel(VerticalPanel answerVerticalPanel) {
+		this.answerVerticalPanel = answerVerticalPanel;
 	}
 	
 	

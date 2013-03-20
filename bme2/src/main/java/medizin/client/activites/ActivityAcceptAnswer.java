@@ -149,14 +149,14 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 					
 					if (questionProxy.getQuestionType().getQuestionType().equals(QuestionTypes.Matrix))
 					{
-						AcceptMatrixAnswerSubView matrixAnswerSubView = new AcceptMatrixAnswerSubViewImpl();
+						AcceptMatrixAnswerSubView matrixAnswerSubView = new AcceptMatrixAnswerSubViewImpl(true);
 						matrixAnswerSubView.setDelegate(ActivityAcceptAnswer.this);
 						matrixAnswerSubView.setProxy(questionProxy);
 						questionPanel.add(matrixAnswerSubView);
 					}
 					else
 					{
-						AcceptAnswerSubView acceptAnswerSubView = new AcceptAnswerSubViewImpl();				
+						AcceptAnswerSubView acceptAnswerSubView = new AcceptAnswerSubViewImpl(true);				
 					    acceptAnswerSubView.getTable().setRowCount(questionProxy.getAnswers().size(), true);
 					    acceptAnswerSubView.setDelegate(ActivityAcceptAnswer.this);
 					    acceptAnswerSubView.setProxy(questionProxy);
@@ -343,7 +343,7 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 
 	void findMatrixAnswersEntriesNonAcceptedAdminByQuestion(Long questionId, Integer start, Integer length, final AbstractHasData<MatrixValidityProxy> table, final AcceptMatrixAnswerSubView matrixAnswerListView){
 		
-		requests.MatrixValidityRequest().findAllMatrixValidityForQuestionForAcceptAnswerView(questionId, personRightProxy.getIsInstitutionalAdmin()).with("answerX", "answerY", "answerX.rewiewer","answerX.autor", "answerX.question", "answerX.question.questionType", "answerY.rewiewer","answerY.autor", "answerY.question", "answerY.question.questionType").fire(new BMEReceiver<List<MatrixValidityProxy>>() {
+		requests.MatrixValidityRequest().findAllMatrixValidityForQuestionForAcceptAnswerView(questionId, personRightProxy.getIsInstitutionalAdmin(), start, length).with("answerX", "answerY", "answerX.rewiewer","answerX.autor", "answerX.question", "answerX.question.questionType", "answerY.rewiewer","answerY.autor", "answerY.question", "answerY.question.questionType").fire(new BMEReceiver<List<MatrixValidityProxy>>() {
 
 			@Override
 			public void onSuccess(List<MatrixValidityProxy> response) {

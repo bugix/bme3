@@ -26,4 +26,8 @@ public interface AnswerRequest extends AnswerRequest_Roo_Gwt {
 	Request<List<String>> findAllAnswersPoints(Long id);
 
 	Request<Boolean> acceptMatrixAnswer(QuestionProxy questionProxy, Boolean isAdmin, Boolean isInstitutionalAdmin);
+	
+	Request<Long> countAnswerForAcceptQuestion(Long questionId);
+	
+	Request<List<AnswerProxy>> findAnswerForAcceptQuestion(Long questionId, Integer start, Integer length);
 }

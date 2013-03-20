@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -31,6 +32,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import medizin.server.utils.BMEUtils;
+import medizin.shared.QuestionTypes;
 import medizin.shared.Status;
 import medizin.shared.utils.SharedConstant;
 
@@ -46,6 +48,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.web.bindery.requestfactory.server.RequestFactoryServlet;
 
@@ -991,13 +994,43 @@ public class Question {
 		
 		
 		Question oldQuestion = Question.findQuestion(oldQuestionId);
+		Map<Answer,Answer> answerMap = Maps.newHashMap();
 		if(oldQuestion != null) {
 			
 			for(Answer answer : oldQuestion.getAnswers()) {
 				Answer newAnswer = new Answer();
+				// copy answer comment
+				Comment newCommentAnswer = answer.getComment();
+				if(answer.getComment() != null) {
+					newCommentAnswer = new Comment();
+					newCommentAnswer.setComment(answer.getComment().getComment());
+					newCommentAnswer.persist();
+				}	
+				
 				BMEUtils.copyValues(answer, newAnswer, Answer.class);
 				newAnswer.setQuestion(question);
 				newAnswer.persist();
+				
+				if(QuestionTypes.Matrix.equals(oldQuestion.getQuestionType().getQuestionType()) == true) {
+					answerMap.put(answer, newAnswer);	
+				}
+			}
+			
+			// for user matrix validity
+			if(QuestionTypes.Matrix.equals(oldQuestion.getQuestionType().getQuestionType()) == true && answerMap.isEmpty() == false) {
+				
+				List<MatrixValidity> matrixValiditys = MatrixValidity.findAllMatrixValidityForQuestionWithAnyStatus(oldQuestionId);
+
+				for (MatrixValidity oldMatrixValidity : matrixValiditys) {
+					
+					if(answerMap.containsKey(oldMatrixValidity.getAnswerX()) && answerMap.containsKey(oldMatrixValidity.getAnswerY())) {
+						MatrixValidity newMatrixValidity = new MatrixValidity();
+						newMatrixValidity.setValidity(oldMatrixValidity.getValidity());
+						newMatrixValidity.setAnswerX(answerMap.get(oldMatrixValidity.getAnswerX()));
+						newMatrixValidity.setAnswerY(answerMap.get(oldMatrixValidity.getAnswerY()));
+						newMatrixValidity.persist();
+					}
+				}
 			}
 			
 			List<UserAccessRights> userAccessRights = UserAccessRights.findUserAccessRightsByQuestion(oldQuestion.getId());

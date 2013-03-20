@@ -71,7 +71,11 @@ public class AcceptMatrixAnswerSubViewImpl extends Composite implements AcceptMa
 	
 	DialogBox dialogBox;
 	
-	public AcceptMatrixAnswerSubViewImpl() {
+	private Boolean flag = false;
+	
+	public AcceptMatrixAnswerSubViewImpl(Boolean flag) {
+		
+		this.flag = flag;
 		
 		CellTable.Resources tableResources = GWT.create(MyCellTableResources.class);
 		table = new CellTable<MatrixValidityProxy>(McAppConstant.TABLE_PAGE_SIZE, tableResources);
@@ -132,8 +136,8 @@ public class AcceptMatrixAnswerSubViewImpl extends Composite implements AcceptMa
 							
 							DialogBox dialogBox = new DialogBox();
 							
-							dialogBox.setWidth("200px");
-							dialogBox.setHeight("200px");
+							/*dialogBox.setWidth("200px");
+							dialogBox.setHeight("200px");*/
 						 	VerticalPanel vp = new VerticalPanel();
 						 	vp.setWidth("98%");
 						 	vp.setHeight("100%");
@@ -152,14 +156,14 @@ public class AcceptMatrixAnswerSubViewImpl extends Composite implements AcceptMa
 			}
 		});
         
-		init();
+		init(flag);
 
 	}
 
 	private DeclineEmailPopupDelagate delegatePopup;
 
 
-	private void init() {
+	private void init(Boolean flag) {
 
 		table.addColumn(new Column<MatrixValidityProxy, MatrixValidityProxy>(new ValidityTextCell()) {
     	      @Override
@@ -190,48 +194,50 @@ public class AcceptMatrixAnswerSubViewImpl extends Composite implements AcceptMa
 	  	      }
 	  	    },  constants.answerText());
         
-
-		addColumn(new ActionCell<MatrixValidityProxy>( McAppConstant.DECLINE_ICON, new ActionCell.Delegate<MatrixValidityProxy>() {
-            
-
-			public void execute(final MatrixValidityProxy answerProxy) {
-            	/*DeclineEmailPopup popup = new DeclineEmailPopup(answerProxy);
-            	popup.setDelegate(delegatePopup);*/
-//            	Log.debug("hinterPupup");
-             // delegate.rejectClicked(answerProxy, "verweigert");
-				
-				ConfirmationDialogBox.showYesNoDialogBox(constants.warning(), constants.rejectAnswerMsg(), new ConfirmDialogBoxYesNoButtonEventHandler() {
-					
-					@Override
-					public void onYesButtonClicked(ConfirmDialogBoxYesNoButtonEvent event) {
-						delegate.matrixRejectClicked(questionProxy);
-					}
-					
-					@Override
-					public void onNoButtonClicked(ConfirmDialogBoxYesNoButtonEvent event) {
-					}
-				});				
-            }
-          }), constants.reject(), new GetValue<MatrixValidityProxy>() {
-        public MatrixValidityProxy getValue(MatrixValidityProxy answerProxy) {
-          return answerProxy;
-        }
-      }, null);
-
-		addColumn(new ActionCell<MatrixValidityProxy>( McAppConstant.ACCEPT_ICON, new ActionCell.Delegate<MatrixValidityProxy>() {
-		    public void execute(MatrixValidityProxy answerProxy) {
-		      delegate.matrixAcceptClicked(questionProxy);
-		    }
-		  }), constants.accept(), new GetValue<MatrixValidityProxy>() {
-		public MatrixValidityProxy getValue(MatrixValidityProxy answerProxy) {
-		  return answerProxy;
-		}
-		}, null);
-    	
-    	table.addColumnStyleName(0, "deleteColumn");
-    	table.addColumnStyleName(3, "deleteColumn");
-    	table.addColumnStyleName(4, "deleteColumn");
+		table.addColumnStyleName(0, "deleteColumn");
 		
+		if (flag)
+		{
+			addColumn(new ActionCell<MatrixValidityProxy>( McAppConstant.DECLINE_ICON, new ActionCell.Delegate<MatrixValidityProxy>() {
+	            
+				public void execute(final MatrixValidityProxy answerProxy) {
+	            	/*DeclineEmailPopup popup = new DeclineEmailPopup(answerProxy);
+	            	popup.setDelegate(delegatePopup);*/
+//	            	Log.debug("hinterPupup");
+	             // delegate.rejectClicked(answerProxy, "verweigert");
+					
+					ConfirmationDialogBox.showYesNoDialogBox(constants.warning(), constants.rejectAnswerMsg(), new ConfirmDialogBoxYesNoButtonEventHandler() {
+						
+						@Override
+						public void onYesButtonClicked(ConfirmDialogBoxYesNoButtonEvent event) {
+							delegate.matrixRejectClicked(questionProxy);
+						}
+						
+						@Override
+						public void onNoButtonClicked(ConfirmDialogBoxYesNoButtonEvent event) {
+						}
+					});				
+	            }
+	          }), constants.reject(), new GetValue<MatrixValidityProxy>() {
+	        public MatrixValidityProxy getValue(MatrixValidityProxy answerProxy) {
+	          return answerProxy;
+	        }
+	      }, null);
+
+			addColumn(new ActionCell<MatrixValidityProxy>( McAppConstant.ACCEPT_ICON, new ActionCell.Delegate<MatrixValidityProxy>() {
+			    public void execute(MatrixValidityProxy answerProxy) {
+			      delegate.matrixAcceptClicked(questionProxy);
+			    }
+			  }), constants.accept(), new GetValue<MatrixValidityProxy>() {
+			public MatrixValidityProxy getValue(MatrixValidityProxy answerProxy) {
+			  return answerProxy;
+			}
+			}, null);
+	    	
+	    	
+	    	table.addColumnStyleName(3, "deleteColumn");
+	    	table.addColumnStyleName(4, "deleteColumn");
+		}		
 	}
 
 	  /**
@@ -293,7 +299,8 @@ DivElement questionText;*/
 		delegate.onMatrixRangeChanged(questionProxy, table, AcceptMatrixAnswerSubViewImpl.this);
 		
 		//questionText.setInnerHTML(questionProxy.getQuestionText());
-		questionDisclosurePanel.getHeaderTextAccessor().setText(questionProxy.getQuestionText());
+		if (flag)
+			questionDisclosurePanel.getHeaderTextAccessor().setText(questionProxy.getQuestionText());
 		
 	}
 
@@ -428,6 +435,14 @@ DivElement questionText;*/
 
 	public void setMatrixAnswerList(List<MatrixValidityProxy> matrixAnswerList) {
 		this.matrixAnswerList = matrixAnswerList;
+	}
+
+	public DisclosurePanel getQuestionDisclosurePanel() {
+		return questionDisclosurePanel;
+	}
+
+	public void setQuestionDisclosurePanel(DisclosurePanel questionDisclosurePanel) {
+		this.questionDisclosurePanel = questionDisclosurePanel;
 	}
 	
 	

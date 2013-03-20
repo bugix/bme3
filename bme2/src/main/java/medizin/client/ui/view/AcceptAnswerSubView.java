@@ -5,6 +5,7 @@ import medizin.client.proxy.QuestionProxy;
 import medizin.client.ui.DeclineEmailPopupDelagate;
 
 import com.google.gwt.user.cellview.client.AbstractHasData;
+import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.IsWidget;
 
 public interface AcceptAnswerSubView extends IsWidget {
@@ -25,10 +26,9 @@ public interface AcceptAnswerSubView extends IsWidget {
 
 	AbstractHasData<AnswerProxy> getTable();
 
-
 	void setProxy(QuestionProxy questionProxy);
-
 
 	void setDelegatePopup(DeclineEmailPopupDelagate delegate);
 
+	public DisclosurePanel getQuestionDisclosurePanel();
 }

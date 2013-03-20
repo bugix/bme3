@@ -21,5 +21,9 @@ public interface MatrixValidityRequest extends MatrixValidityRequest_Roo_Gwt {
 	
 	Request<Long> countAllMatrixValidityForQuestionForAcceptAnswerView(Long id, Boolean isInstitutionalAdmin);
 	
-	Request<List<MatrixValidityProxy>> findAllMatrixValidityForQuestionForAcceptAnswerView(Long id,Boolean isInstitutionalAdmin);
+	Request<List<MatrixValidityProxy>> findAllMatrixValidityForQuestionForAcceptAnswerView(Long id,Boolean isInstitutionalAdmin, Integer start, Integer length);
+	
+	Request<Long> countAllMatrixValidityForAcceptQuestion(Long id);
+	
+	Request<List<MatrixValidityProxy>> findAllMatrixValidityForAcceptQuestion(Long id, Integer start, Integer length);
 }

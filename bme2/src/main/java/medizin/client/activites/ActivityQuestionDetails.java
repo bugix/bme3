@@ -224,7 +224,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		/*if(loggedUser==null) return;*/
 		if(userLoggedIn==null) return;
 		
-		requests.find(questionPlace.getProxyId()).with("previousVersion","keywords","questEvent","comment","questionType","mcs", "rewiewer", "autor","questionResources").fire(new BMEReceiver<Object>() {
+		requests.find(questionPlace.getProxyId()).with("previousVersion","keywords","questEvent","comment","questionType","mcs", "rewiewer", "autor","questionResources","answers").fire(new BMEReceiver<Object>() {
 
 			/*public void onFailure(ServerFailure error){
 				Log.error(error.getMessage());

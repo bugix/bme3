@@ -8,6 +8,7 @@ import medizin.client.ui.DeclineEmailPopupDelagate;
 import medizin.client.ui.view.question.MatrixAnswerListView;
 
 import com.google.gwt.user.cellview.client.AbstractHasData;
+import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.IsWidget;
 
 public interface AcceptMatrixAnswerSubView extends IsWidget {
@@ -32,5 +33,6 @@ public interface AcceptMatrixAnswerSubView extends IsWidget {
 		public List<MatrixValidityProxy> getMatrixAnswerList();
 		
 		public void setMatrixAnswerList(List<MatrixValidityProxy> matrixAnswerList);
-		
+
+		public DisclosurePanel getQuestionDisclosurePanel();
 }
