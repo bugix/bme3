@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 
+import medizin.client.style.resources.MyCellTableResources;
+import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.assesment.AssesmentView.Delegate;
 
@@ -26,6 +28,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Composite;
@@ -50,6 +53,17 @@ public class AssesmentViewImpl extends Composite implements AssesmentView  {
 	SplitLayoutPanel splitLayoutPanel;
 
 	public AssesmentViewImpl() {
+		
+		CellTable.Resources tableResources = GWT
+				.create(MyCellTableResources.class);
+		table = new CellTable<AssesmentProxy>(McAppConstant.TABLE_PAGE_SIZE,
+				tableResources);
+
+		SimplePager.Resources pagerResources = GWT
+				.create(MySimplePagerResources.class);
+		pager = new SimplePager(SimplePager.TextLocation.RIGHT, pagerResources,
+				true, McAppConstant.TABLE_JUMP_SIZE, true);
+
 		initWidget(uiBinder.createAndBindUi(this));
 		DOM.setElementAttribute(splitLayoutPanel.getElement(), "style", "position: absolute; left: 0px; top: 0px; right: 5px; bottom: 0px;");
 		init();
@@ -77,10 +91,13 @@ public class AssesmentViewImpl extends Composite implements AssesmentView  {
 		this.presenter = presenter;
 		
 	}
-    @UiField
+    @UiField(provided = true)
     CellTable<AssesmentProxy> table;
 	
-
+    
+    @UiField(provided = true)
+	public SimplePager pager;
+    
 	protected Set<String> paths = new HashSet<String>();
 
 	private Delegate delegate;

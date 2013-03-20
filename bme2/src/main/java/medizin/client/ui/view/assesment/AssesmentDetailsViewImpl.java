@@ -3,6 +3,8 @@ package medizin.client.ui.view.assesment;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.proxy.AssesmentProxy;
 import medizin.client.proxy.PersonProxy;
+import medizin.client.ui.widget.TabPanelHelper;
+import medizin.shared.i18n.BmeConstants;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.SpanElement;
@@ -14,6 +16,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class AssesmentDetailsViewImpl extends Composite implements AssesmentDetailsView  {
@@ -25,10 +28,13 @@ public class AssesmentDetailsViewImpl extends Composite implements AssesmentDeta
 			UiBinder<Widget, AssesmentDetailsViewImpl> {
 	}
 	
-
+	public BmeConstants constants = GWT.create(BmeConstants.class);
 
 	private Presenter presenter;
 
+	
+	@UiField
+	TabPanel assessmentDetailPanel;
 	
     @UiField
     HasClickHandlers edit;
@@ -108,6 +114,10 @@ public class AssesmentDetailsViewImpl extends Composite implements AssesmentDeta
 
     public void setValue(AssesmentProxy proxy) {
         this.proxy = proxy;
+        
+        assessmentDetailPanel.selectTab(0);
+        assessmentDetailPanel.getTabBar().setTabText(0, constants.manageAssessment());
+		TabPanelHelper.moveTabBarToBottom(assessmentDetailPanel);
         
         name.setInnerText(proxy.getName() == null ? "" : String.valueOf(proxy.getName()));
         dateOfAssesment.setInnerText(proxy.getDateOfAssesment() == null ? "" : DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_SHORT).format(proxy.getDateOfAssesment()));

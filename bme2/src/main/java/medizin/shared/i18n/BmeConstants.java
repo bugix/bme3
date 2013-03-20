@@ -411,4 +411,8 @@ public interface BmeConstants extends Constants {
 	public String showNew();
 	
 	public String reset();
+	
+	public String manageAssessment();
+	
+	
 }

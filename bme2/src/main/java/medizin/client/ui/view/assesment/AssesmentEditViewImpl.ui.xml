@@ -2,73 +2,72 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:n="urn:import:medizin.client.ui"
-	xmlns:d="urn:import:com.google.gwt.user.datepicker.client" >
+	xmlns:d="urn:import:com.google.gwt.user.datepicker.client" 
+	 xmlns:m="urn:import:medizin.client.ui.widget" 
+	>
 	<ui:style src="../../styles.css" />
     
- <g:HTMLPanel>
- 
- <div class="{style.boundary}">
-			<table class="{style.details}" cellpadding="0" cellspacing="0">
+
+ <g:VerticalPanel addStyleNames="{style.tabStyle}">
 
 
+		<g:HTMLPanel styleName="{style.patientControls}">
 
-				<tr>
-					<td class="{style.header}">
+			<div class="{style.controlsright}">
 
-						<div class="{style.header}" visible="false" ui:field="editTitle">
-							<ui:msg>Prüfung bearbeiten</ui:msg>
-						</div>
-						<div class="{style.header}" visible="false" ui:field="createTitle">
-							<ui:msg>Neue Prüfung erstellen</ui:msg>
-						</div>
+				<h3 class="{style.header}" style="display:inline">
+					<span ui:field="title"></span>
+				</h3>
 
-					</td>
-					<td class="{style.bar}">
-						<div>
+				<m:IconButton ui:field="save" icon="disk">Prüfung speichern</m:IconButton>
+				<m:IconButton ui:field="cancel" icon="closethick">Bearbeiten abbrechen</m:IconButton>
 
-							<g:Button addStyleNames="{style.button}" ui:field="save">
-								<span class="ui-icon ui-icon-disk" style="float: left; margin-right: 0.3em;"></span>
-								Prüfung speichern
-							</g:Button>
-							<g:Button addStyleNames="{style.button}" ui:field="cancel">
-								<span class="ui-icon ui-icon-closethick" style="float: left; margin-right: 0.3em;"></span>
-								Bearbeiten abbrechen
-							</g:Button>
+			</div>
+		</g:HTMLPanel>
+		
+				<g:HTMLPanel>
+			<g:TabPanel ui:field="assessmentTabPanel" width="100%">
+				<g:Tab>
+					<g:TabHTML></g:TabHTML>
 
-						</div>
-					</td>
-				</tr>
-				<tr>
-					<td colspan="2">
-						 <table class="{style.fields}" id="boundElementHolder">
-						      <tr id="name">
+					<g:HTMLPanel>
+						<table>
+							<tr id="name">
+								<td>
+									<g:Label styleName="{style.label}" ui:field="lblQuestionShortName">Name der Prüfung:</g:Label>
+								</td>
+								<td>
+									 <g:TextBox ui:field="name"/>
+
+
+								</td>
+							</tr>
+							
+							<tr id="dateOfAssesment">
 						                <td>
-						                    <div class="{style.label}">Name der Prüfung:</div>
-						                </td>
-						                <td>
-						                    <g:TextBox ui:field="name"/>
-						                </td>
-						            </tr>
-						      <tr id="dateOfAssesment">
-						                <td>
-						                    <div class="{style.label}">Findet statt am:</div>
+						                	<g:Label styleName="{style.label}" ui:field="lbldateOfAssesment">Findet statt am:</g:Label>
+						                   
 						                </td>
 						                <td>
 						                    <d:DateBox ui:field="dateOfAssesment"/>
 						                </td>
 						                
-						            </tr>
-						      <tr id="dateOpen">
+						      </tr>
+							
+								<tr id="dateOpen">
 						                <td>
-						                    <div class="{style.label}">Geöffnet ab:</div>
+						               	 <g:Label styleName="{style.label}" ui:field="lbldateOpen">Geöffnet ab:</g:Label>
+						                   
 						                </td>
 						                <td>
 						                    <d:DateBox ui:field="dateOpen"/>
 						                </td>
 						            </tr>
+						            
 						      <tr id="dateClosed">
 						                <td>
-						                    <div class="{style.label}">Geschlossen ab:</div>
+						                <g:Label styleName="{style.label}" ui:field="lbldateClosed">Geschlossen ab:</g:Label>
+						                   
 						                </td>
 						                <td>
 						                    <d:DateBox ui:field="dateClosed"/>
@@ -76,7 +75,8 @@
 						            </tr>
 						      <tr id="place">
 						                <td>
-						                    <div class="{style.label}">Findet statt in:</div>
+						                 <g:Label styleName="{style.label}" ui:field="lblplace">Findet statt in:</g:Label>
+						                 
 						                </td>
 						                <td>
 						                    <g:TextBox ui:field="place"/>
@@ -85,7 +85,8 @@
 
 						      <tr id="isClosed">
 						                <td>
-						                    <div class="{style.label}">Ist geschlossen:</div>
+						                 <g:Label styleName="{style.label}" ui:field="lblisClosed">Ist geschlossen:</g:Label>
+						                    
 						                </td>
 						                <td>
 						                    <g:CheckBox ui:field="isClosed"/>
@@ -94,7 +95,8 @@
 	
 						      <tr id="mc">
 						                <td>
-						                    <div class="{style.label}">Gehört zu MC:</div>
+						                 <g:Label styleName="{style.label}" ui:field="lblmc">Gehört zu MC:</g:Label>
+						                   
 						                </td>
 						                <td>
 						                    <g:ValueListBox ui:field="mc"/>
@@ -102,7 +104,8 @@
 						            </tr>
 						      <tr id="repeFor">
 						                <td>
-						                    <div class="{style.label}">Repeprüfung für:</div>
+						                 <g:Label styleName="{style.label}" ui:field="lblrepeFor">Repeprüfung für:</g:Label>
+						                   
 						                </td>
 						                <td>
 						                    <g:ValueListBox ui:field="repeFor"/>
@@ -110,27 +113,51 @@
 						            </tr>
 						      <tr id="percentSameQuestion">
 						                <td>
-						                    <div class="{style.label}">Prozent gleicher Frage:</div>
+						                 <g:Label styleName="{style.label}" ui:field="lblpercentSameQuestion">Prozent gleicher Frage:</g:Label>
+						                    
 						                </td>
 						                <td>
 						                    <g:IntegerBox ui:field="percentSameQuestion"/>
 						                </td>
 						            </tr>
 						            
-						            <tr id="logo">
-                <td>
-                    <div class="{style.label}">Logo:</div>
-                </td>
-                <td>
-                    <g:TextBox ui:field="logo"/>
-                </td>
-            </tr>
-						    </table>
-					</td>
-				</tr>
-			</table>
-			
-			</div>
+						       <tr id="logo">
+                						<td>
+                							 <g:Label styleName="{style.label}" ui:field="lbllogo">Logo:</g:Label>
+                  
+               							 </td>
+              							  <td>
+                   								 <g:TextBox ui:field="logo"/>
+               							 </td>
+          						  </tr>
 
-  </g:HTMLPanel>
+
+							<!-- <tr id="questionText"> <td colspan="2"> <div class="{style.label}">Text 
+								der Frage:</div> </td> </tr> <tr> <td colspan="2"> <g:SimplePanel ui:field="toolbarPanel" 
+								addStyleNames="{style.nav}"></g:SimplePanel> <t:RichTextToolbar ui:field="toolbar"></t:RichTextToolbar> 
+								<g:RichTextArea ui:field="questionTextArea" addStyleNames="{style.textarea}"></g:RichTextArea> 
+								</td> </tr> <tr id="rewiewer"> <td> <div class="{style.label}">Reviewer:</div> 
+								</td> <td> <g:ValueListBox ui:field="rewiewer" /> </td> </tr> <tr id="picturePath"> 
+								<td> <div class="{style.label}">Picture Path:</div> </td> <td> <g:TextBox 
+								ui:field="picturePath" /> </td> </tr> <tr id="questEvent"> <td> <div class="{style.label}">Themenbereich:</div> 
+								</td> <td> <g:ValueListBox ui:field="questEvent" /> </td> </tr> <tr id="questionType"> 
+								<td> <div class="{style.label}">Fragetyp:</div> </td> <td> <g:ValueListBox 
+								ui:field="questionType" /> </td> </tr> <tr id="mcs"> <td> <div class="{style.label}">Mcs:</div> 
+								</td> <td> <r:McSetEditor ui:field="mcs"></r:McSetEditor> </td> </tr> -->
+						</table>
+						<!-- </td> </tr> </table> <g:ValueListBox ui:field="autor" /> </div> 
+							</table> -->
+
+						<!-- </div> -->
+
+					</g:HTMLPanel>
+				</g:Tab>
+
+			</g:TabPanel>
+
+		</g:HTMLPanel>
+		
+</g:VerticalPanel>
+
+
 </ui:UiBinder> 

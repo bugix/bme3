@@ -10,11 +10,13 @@ import medizin.client.proxy.McProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.request.PersonRequest;
 import medizin.client.ui.view.roo.QuestionAccessSetEditor;
+import medizin.shared.i18n.BmeConstants;
 
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -25,6 +27,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.IntegerBox;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.ValueListBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -50,7 +53,9 @@ public class AssesmentEditViewImpl extends Composite implements AssesmentEditVie
         driver.initialize(this);
         return driver;
     }
-
+    
+    public BmeConstants constants = GWT.create(BmeConstants.class);
+    
 	private Presenter presenter;
 
 	
@@ -133,9 +138,10 @@ public class AssesmentEditViewImpl extends Composite implements AssesmentEditVie
 //    SpanElement displayRenderer;
 
 
-
 	public AssesmentEditViewImpl() {
 		initWidget(uiBinder.createAndBindUi(this));
+		assessmentTabPanel.selectTab(0);
+		assessmentTabPanel.getTabBar().setTabText(0, constants.manageAssessment());
 
 	}
 
@@ -161,23 +167,28 @@ public class AssesmentEditViewImpl extends Composite implements AssesmentEditVie
 	}
 
 	@UiField
-	Element  editTitle;
-	@UiField
-	Element  createTitle;
+	SpanElement title;
 
+	@UiField
+	TabPanel assessmentTabPanel;
+	
+	private boolean edit;
+	
 	@Override
 	public void setEditTitle(boolean edit) {
-	      if (edit) {
-	            editTitle.getStyle().clearDisplay();
-	            createTitle.getStyle().setDisplay(Display.NONE);
-	        } else {
+		this.edit = edit;
+		if (edit) {
+			title.setInnerText(constants.edit());
+			// questionTypePanel.getTabBar().setTabText(0, "Edit Question");
+			// editTitle.getStyle().clearDisplay();
+			// createTitle.getStyle().setDisplay(Display.NONE);
+		} else {
+			title.setInnerText(constants.create());
+			// questionTypePanel.getTabBar().setTabText(0, "New Question");
+			// editTitle.getStyle().setDisplay(Display.NONE);
+			// createTitle.getStyle().clearDisplay();
+		}
 
-	            editTitle.getStyle().setDisplay(Display.NONE);
-	            createTitle.getStyle().clearDisplay();
-	        }
-		
 	}
-
-
 
 }

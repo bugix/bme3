@@ -5,14 +5,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import medizin.client.ui.McAppConstant;
-import medizin.client.ui.view.EventView.Delegate;
-import medizin.client.ui.view.EventView.Presenter;
-
-import medizin.client.ui.view.user.QuestionAccessView;
 import medizin.client.proxy.QuestionSumPerPersonProxy;
-
-
+import medizin.client.style.resources.MyCellTableResources;
+import medizin.client.style.resources.MySimplePagerResources;
+import medizin.client.ui.McAppConstant;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.cell.client.AbstractCell;
@@ -31,13 +27,10 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.Header;
+import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.HasText;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class QuestionSumPerPersonViewImpl extends Composite implements  QuestionSumPerPersonView {
@@ -50,6 +43,17 @@ public class QuestionSumPerPersonViewImpl extends Composite implements  Question
 	}
 
 	public QuestionSumPerPersonViewImpl() {
+		
+		CellTable.Resources tableResources = GWT
+				.create(MyCellTableResources.class);
+		tableQuestionSumPerPerson = new CellTable<QuestionSumPerPersonProxy>(5,
+				tableResources);
+
+		SimplePager.Resources pagerResources = GWT
+				.create(MySimplePagerResources.class);
+		pager = new SimplePager(SimplePager.TextLocation.RIGHT, pagerResources,
+				true, McAppConstant.TABLE_JUMP_SIZE, true);
+		
 		initWidget(uiBinder.createAndBindUi(this));
 		init();
 	}
@@ -90,8 +94,12 @@ public class QuestionSumPerPersonViewImpl extends Composite implements  Question
 		
 	}
 	
-    @UiField
+    @UiField(provided = true)
     CellTable<QuestionSumPerPersonProxy> tableQuestionSumPerPerson;
+    
+	@UiField(provided = true)
+	public SimplePager pager;
+    
     
     protected Set<String> paths = new HashSet<String>();
 
@@ -204,6 +212,10 @@ public class QuestionSumPerPersonViewImpl extends Composite implements  Question
     	tableQuestionSumPerPerson.addColumnStyleName(4, "iconColumn");
     	tableQuestionSumPerPerson.addColumnStyleName(5, "iconColumn");
     	tableQuestionSumPerPerson.addColumnStyleName(6, "iconColumn");
+
+    	tableQuestionSumPerPerson.getColumn(4).setCellStyleNames("cellStyleWithTransparentButton");
+    	tableQuestionSumPerPerson.getColumn(5).setCellStyleNames("cellStyleWithTransparentButton");
+    	tableQuestionSumPerPerson.getColumn(6).setCellStyleNames("cellStyleWithTransparentButton");
     	
     }
 	@Override
@@ -240,10 +252,12 @@ public class QuestionSumPerPersonViewImpl extends Composite implements  Question
 	      }
 	    };
 	    column.setFieldUpdater(fieldUpdater);
+	    
 	    if (cell instanceof AbstractEditableCell<?, ?>) {
 	      editableCells.add((AbstractEditableCell<?, ?>) cell);
 	    }
 	    tableQuestionSumPerPerson.addColumn(column, headerText);
+	    
 	  }
 
 	  /**

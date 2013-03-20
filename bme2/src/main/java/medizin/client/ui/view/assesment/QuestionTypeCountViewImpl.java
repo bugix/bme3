@@ -5,7 +5,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import medizin.client.proxy.QuestionProxy;
 import medizin.client.proxy.QuestionTypeCountPerExamProxy;
+import medizin.client.style.resources.MyCellTableResources;
+import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
 
 import com.allen_sauer.gwt.log.client.Log;
@@ -25,6 +28,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.Header;
+import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
@@ -40,6 +44,16 @@ public class QuestionTypeCountViewImpl extends Composite implements QuestionType
 	}
 
 	public QuestionTypeCountViewImpl() {
+		CellTable.Resources tableResources = GWT
+				.create(MyCellTableResources.class);
+		tableQuestionTypeCount = new CellTable<QuestionTypeCountPerExamProxy>(5,
+				tableResources);
+
+		SimplePager.Resources pagerResources = GWT
+				.create(MySimplePagerResources.class);
+		pager = new SimplePager(SimplePager.TextLocation.RIGHT, pagerResources,
+				true, McAppConstant.TABLE_JUMP_SIZE, true);
+		
 		initWidget(uiBinder.createAndBindUi(this));
 		init();
 	}
@@ -79,8 +93,12 @@ public class QuestionTypeCountViewImpl extends Composite implements QuestionType
 		
 	}
 	
-    @UiField
+    @UiField(provided=true)
     CellTable<QuestionTypeCountPerExamProxy> tableQuestionTypeCount;
+    
+
+	@UiField(provided = true)
+	public SimplePager pager;
     
     protected Set<String> paths = new HashSet<String>();
 
@@ -191,8 +209,14 @@ public class QuestionTypeCountViewImpl extends Composite implements QuestionType
 
     	tableQuestionTypeCount.addColumnStyleName(2, "iconColumn");	
     	tableQuestionTypeCount.addColumnStyleName(3, "iconColumn");
+
     	tableQuestionTypeCount.addColumnStyleName(4, "iconColumn");
     	tableQuestionTypeCount.addColumnStyleName(5, "iconColumn");
+    	
+    	tableQuestionTypeCount.getColumn(3).setCellStyleNames("cellStyleWithTransparentButton");
+    	tableQuestionTypeCount.getColumn(4).setCellStyleNames("cellStyleWithTransparentButton");
+    	tableQuestionTypeCount.getColumn(5).setCellStyleNames("cellStyleWithTransparentButton");
+    	
     }
 	@Override
 	public CellTable<QuestionTypeCountPerExamProxy> getTable() {

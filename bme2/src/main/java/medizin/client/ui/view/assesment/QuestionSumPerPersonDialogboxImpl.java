@@ -56,6 +56,8 @@ public class QuestionSumPerPersonDialogboxImpl extends DialogBox implements Ques
 		setWidget(uiBinder.createAndBindUi(this));
 	    setGlassEnabled(true);
 	    setAnimationEnabled(true);
+	    super.getCaption().asWidget().addStyleName("confirmbox");
+		this.getElement().getStyle().setZIndex(3);
 	    setTitle("Anzahl Fragentypen pro Prüfung hinzufügen");
 	    setText("Anzahl Fragentypen pro Prüfung hinzufügen");
 

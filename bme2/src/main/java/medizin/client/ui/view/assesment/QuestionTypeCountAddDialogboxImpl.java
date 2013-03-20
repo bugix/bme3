@@ -86,6 +86,9 @@ public class QuestionTypeCountAddDialogboxImpl extends DialogBox implements Ques
 	    setTitle("Anzahl Fragentypen pro Prüfung hinzufügen");
 	    setText("Anzahl Fragentypen pro Prüfung hinzufügen");
 	    
+		super.getCaption().asWidget().addStyleName("confirmbox");
+		this.getElement().getStyle().setZIndex(3);
+	    
 	    init();
 	    
 	}

@@ -4355,3 +4355,10 @@ background: url("images/colorpicker.png");
 	width:500px !important;
 	height:500px !important;
 }
+.cellStyleWithTransparentButton button
+{
+	border-width:0px !important; 
+	background-color: transparent !important;
+	background-image:  none !important;
+	width: 10px;
+}
