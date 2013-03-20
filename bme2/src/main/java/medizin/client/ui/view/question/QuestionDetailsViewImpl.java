@@ -13,6 +13,7 @@ import medizin.client.ui.widget.TabPanelHelper;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.resource.dndview.ResourceView;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
+import medizin.client.ui.widget.resource.dndview.vo.State;
 import medizin.client.ui.widget.resource.event.ResourceAddedEvent;
 import medizin.client.ui.widget.resource.event.ResourceAddedEventHandler;
 import medizin.client.ui.widget.resource.event.ResourceDeletedEvent;
@@ -421,6 +422,9 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 					//imageViewer(proxy.getQuestionType(),proxy,QuestionTypes.Imgkey);
 					QuestionResourceClient client = new QuestionResourceClient();
 					client.setPath(proxy.getPicturePath());
+					client.setSequenceNumber(0);
+					client.setState(State.CREATED);
+					client.setType(MultimediaType.Image);
 					questionResourceClients.add(client);
 					haveImage = true;
 					isAdded = true;
@@ -435,6 +439,9 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 					//imageViewer(proxy.getQuestionType(),proxy,QuestionTypes.ShowInImage);
 					QuestionResourceClient client = new QuestionResourceClient();
 					client.setPath(proxy.getPicturePath());
+					client.setSequenceNumber(0);
+					client.setState(State.CREATED);
+					client.setType(MultimediaType.Image);
 					questionResourceClients.add(client);
 					haveImage = true;
 					isAdded = true;

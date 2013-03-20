@@ -43,6 +43,8 @@ import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.editor.client.Editor.Ignore;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -264,6 +266,26 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 					viewContainer.add(imageRectangleViewer);
 				}
 				
+				validity.addValueChangeHandler(new ValueChangeHandler<Validity>() {
+					
+					@Override
+					public void onValueChange(ValueChangeEvent<Validity> event) {
+						Validity value = event.getValue();
+						
+						if(Validity.Wahr.equals(value) == true) {
+							viewContainer.setVisible(true);	
+						}else {
+							viewContainer.setVisible(false);
+						}
+						
+					}
+				});
+				
+				if(Validity.Wahr.equals(validity.getValue()) == true) {
+					viewContainer.setVisible(true);
+				}else {
+					viewContainer.setVisible(false);
+				}
 				return null;
 			}
 		});
@@ -610,7 +632,9 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 			case Imgkey: 
 			{
 				additionalKeywords = txtAdditionalKeyword.getText();
-				points = imageRectangleViewer.getPoint();
+				if(Validity.Wahr.equals(validity.getValue()) == true) {
+					points = imageRectangleViewer.getPoint();	
+				}
 				break;
 			}
 			case MCQ:
