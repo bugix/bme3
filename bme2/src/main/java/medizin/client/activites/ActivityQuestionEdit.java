@@ -23,7 +23,6 @@ import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.request.CommentRequest;
 import medizin.client.request.QuestionRequest;
 import medizin.client.request.QuestionResourceRequest;
-import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.question.QuestionEditView;
 import medizin.client.ui.view.question.QuestionEditViewImpl;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
@@ -82,9 +81,9 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 
 	@Override
 	public String mayStop() {
-		if (!save)
+		/*if (!save)
 			return McAppConstant.DO_NOT_SAVE_CHANGES;
-		else
+		else*/
 			return null;
 	}
 
@@ -375,7 +374,8 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 		deleteUploadedFiles(paths);
 
 		if (question.getId() != null) {
-			gotoDetailsPlace(question);
+			cancelClickedGoto(question);
+			//gotoDetailsPlace(question);
 		} else {
 			goTo(new PlaceQuestion("PlaceQuestion!DELETED"));
 		}
@@ -851,16 +851,16 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 			mcIds = Lists.newArrayList(iterator);
 
 		}
-
+		final Set<QuestionResourceProxy> proxies = Sets.newHashSet();
 		Long oldQuestionId = question != null ? question.getId() : null;
-		requests.questionRequest().persistNewQuestion(questionType.getId(), questionShortName, questionText, auther.getId(), reviewerId, submitToReviewComitee, questionEvent.getId(), mcIds, questionComment, questionVersion, questionSubVersion, picturePath, status, oldQuestionId).fire(new BMEReceiver<QuestionProxy>(reciverMap) {
+		requests.questionRequest().persistNewQuestion(questionType.getId(), questionShortName, questionText, auther.getId(), reviewerId, submitToReviewComitee, questionEvent.getId(), mcIds, questionComment, questionVersion, questionSubVersion, picturePath, status,proxies, oldQuestionId).fire(new BMEReceiver<QuestionProxy>(reciverMap) {
 
 			@Override
 			public void onSuccess(final QuestionProxy response) {
 
 				save = true; // save done for question
 
-				Set<QuestionResourceProxy> proxies = Sets.newHashSet();
+				
 
 				if (questionResourceClients.isEmpty() == false) {
 
@@ -886,13 +886,15 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 							Log.info("Added successfuly");
 							save = true;
 							showNewDisplay();
-							gotoDetailsPlace(response);
+							createQuestionGoto(response);
+							//gotoDetailsPlace(response);
 						}
 					});
 				} else {
 					save = true;
 					showNewDisplay();
-					gotoDetailsPlace(response);
+					createQuestionGoto(response);
+					//gotoDetailsPlace(response);
 				}
 			}
 
@@ -932,7 +934,13 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 			questionEdit.setIsAcceptedRewiever(true);
 			// questionEdit.setIsActive(false);
 			questionEdit.setStatus(Status.ACCEPTED_REVIEWER);
-		} else {
+		} else if(Status.EDITED_BY_ADMIN.equals(status)){
+			questionEdit.setIsAcceptedAdmin(false);
+			questionEdit.setStatus(Status.EDITED_BY_ADMIN);
+		}else if(Status.EDITED_BY_REVIEWER.equals(status)) {
+			questionEdit.setIsAcceptedRewiever(false);
+			questionEdit.setStatus(Status.EDITED_BY_REVIEWER);
+		}else {
 			Log.info("Do nothing");
 		}
 
@@ -970,7 +978,7 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 
 		}
 
-		final QuestionProxy qpoxy = questionEdit;
+		//final QuestionProxy qpoxy = questionEdit;
 		req.persist().using(questionEdit).fire(new BMEReceiver<Void>(reciverMap) {
 
 			@Override
@@ -988,14 +996,23 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 		this.eventBus.fireEvent(new QuestionSaveEvent());
 	}
 
-	protected void gotoDetailsPlace(QuestionProxy questionProxy) {
+	/*protected void gotoDetailsPlace(QuestionProxy questionProxy) {
 		placeController.goTo(new PlaceQuestionDetails(questionProxy.stableId(), PlaceQuestionDetails.Operation.DETAILS));
-	}
+	}*/
 
 	protected void gotoUpdateDetailsPlace() {
 		placeController.goTo(new PlaceQuestion("PlaceQuestion"));
 	}
 
+	// also overriden in subclass 
+	protected void cancelClickedGoto(QuestionProxy questionProxy) {
+		goTo(new PlaceQuestionDetails(questionProxy.stableId(), Operation.DETAILS));
+	}
+		
+	// also overriden in subclass
+	protected void createQuestionGoto(QuestionProxy questionProxy) {
+		placeController.goTo(new PlaceQuestionDetails(questionProxy.stableId(), PlaceQuestionDetails.Operation.DETAILS));
+	}
 	@Override
 	public Status getUpdatedStatus(boolean isEdit, boolean withNewMajorVersion) {
 

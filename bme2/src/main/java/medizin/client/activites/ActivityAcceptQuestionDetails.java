@@ -195,16 +195,6 @@ public class ActivityAcceptQuestionDetails extends ActivityQuestionDetails imple
 	}
 
 	@Override
-	public void acceptClicked(AnswerProxy answerProxy) {
-		
-	}
-
-	@Override
-	public void rejectClicked(AnswerProxy answerProxy) {
-		
-	}
-
-	@Override
 	public void onMatrixRangeChanged(final QuestionProxy questionProxy, final AbstractHasData<MatrixValidityProxy> table, final AcceptMatrixAnswerSubView matrixAnswerListView) {
 		final Range range = table.getVisibleRange();
 		
@@ -236,13 +226,34 @@ public class ActivityAcceptQuestionDetails extends ActivityQuestionDetails imple
 		});
 	}
 
+	// unused method
 	@Override
 	public void matrixAcceptClicked(QuestionProxy questionProxy) {
-		
 	}
 
+	// unused method
 	@Override
 	public void matrixRejectClicked(QuestionProxy questionProxy) {
-		
+	}
+
+	// unused method
+	@Override
+	public void acceptClicked(AnswerProxy answerProxy) {
+	}
+
+	// unused method
+	@Override
+	public void rejectClicked(AnswerProxy answerProxy) {
+	}
+	
+	@Override
+	public void onResendToReviewClicked(QuestionProxy proxy) {
+		requests.questionRequest().questionResendToReviewWithMajorVersion((userLoggedIn.getIsAdmin() || personRightProxy.getIsInstitutionalAdmin())).using(question).fire(new BMEReceiver<Void>() {
+
+			@Override
+			public void onSuccess(Void response) {
+				goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));
+			}
+		});
 	}
 }

@@ -50,6 +50,8 @@ public interface QuestionDetailsView extends IsWidget {
 		void getQuestionDetails(QuestionProxy previousVersion,Function<QuestionProxy, Void> function);
 
 		void getLatestQuestionDetails(Function<QuestionProxy, Void> function);
+
+		void onResendToReviewClicked(QuestionProxy proxy);
 	}
 
 	AnswerListViewImpl getAnswerListViewImpl();

@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.proxy.McProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionEventProxy;
@@ -98,8 +97,8 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 
 	private Presenter presenter;
 	private Delegate delegate;
-	private QuestionProxy proxy;
-	private McAppRequestFactory requests;
+	/*private QuestionProxy proxy;
+	private McAppRequestFactory requests;*/
 	public BmeConstants constants = GWT.create(BmeConstants.class);
 
 	@UiField
@@ -107,7 +106,10 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 
 	@UiField
 	public IconButton save;
-
+	
+	@UiField
+	public IconButton resendToReview;
+	
 	@UiField
 	TabPanel questionTypePanel;
 
@@ -241,6 +243,13 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	void onCancel(ClickEvent event) {
 		delegate.cancelClicked();
 	}
+	
+	@UiHandler("resendToReview")
+	void onResendToReview(ClickEvent event) {
+		if(validationOfFields()) {
+			saveQuestion(true, true);
+		}
+	}
 
 	@UiHandler("save")
 	void onSave(ClickEvent event) {
@@ -251,7 +260,8 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 				//delegate.saveClicked(false);
 			} else {
 				if(delegate.isAcceptQuestionView()) {
-					saveQuestion(edit, true);
+					// with minor version
+					saveQuestion(edit, false);
 				}else {
 					final ConfirmQuestionChangesPopup confirm = new ConfirmQuestionChangesPopup(new Function<Boolean, Void>() {
 						
@@ -384,6 +394,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 
 		// question is not null
 		setMediaView(question.getQuestionType(), question);
+		resendToReview.setVisible(delegate.isAcceptQuestionView());
 	}
 
 	/*@Override

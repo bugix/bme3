@@ -48,6 +48,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.web.bindery.requestfactory.server.RequestFactoryServlet;
@@ -916,7 +917,8 @@ public class Question {
 	
 	@Transactional
 	public static Question persistNewQuestion(Long questionTypeId, String questionShortName, String questionText, Long autherId,Long reviewerId,
-			Boolean submitToReviewComitee,Long questionEventId, List<Long> mcIds, String questionComment, int questionVersion, int questionSubVersion, String picturePath, Status status, Long oldQuestionId) {
+			Boolean submitToReviewComitee,Long questionEventId, List<Long> mcIds, String questionComment, int questionVersion, int questionSubVersion, 
+			String picturePath, Status status, Set<QuestionResource> questionResources, Long oldQuestionId) {
 		
 		boolean flag = Question.findQuestionHasNewQuestion(oldQuestionId);
 		
@@ -992,6 +994,10 @@ public class Question {
 		question.setPreviousVersion(Question.findQuestion(oldQuestionId));
 		question.persist();
 		
+		for (QuestionResource questionResource : questionResources) {
+			questionResource.setQuestion(question);
+			questionResource.persist();
+		}
 		
 		Question oldQuestion = Question.findQuestion(oldQuestionId);
 		Map<Answer,Answer> answerMap = Maps.newHashMap();
@@ -1009,6 +1015,7 @@ public class Question {
 				
 				BMEUtils.copyValues(answer, newAnswer, Answer.class);
 				newAnswer.setQuestion(question);
+				newAnswer.setComment(newCommentAnswer);
 				newAnswer.persist();
 				
 				if(QuestionTypes.Matrix.equals(oldQuestion.getQuestionType().getQuestionType()) == true) {
@@ -1151,5 +1158,50 @@ public class Question {
 	public void deactivatedQuestion() {
 		this.status = Status.DEACTIVATED;
 		this.persist();
+	}
+	
+	public void questionResendToReviewWithMajorVersion(boolean isAdmin) {
+		log.info("save with major version here");
+		
+		Person userLoggedIn = Person.myGetLoggedPerson();
+		if(userLoggedIn == null) {
+			return;
+		}
+		
+		if(isAdmin == true) {
+			this.status = Status.CORRECTION_FROM_ADMIN;
+		}else if(userLoggedIn.getId().equals(this.rewiewer.getId()) == true){
+			this.status = Status.CORRECTION_FROM_REVIEWER;
+		}else if(userLoggedIn.getId().equals(this.autor.getId()) == true) {
+			log.error("Author cannnot see this button.");
+		}else {
+			log.error("Error in logic");
+		}
+		
+		Iterator<Long> mcIds = FluentIterable.from(mcs).filter(Predicates.notNull()).transform(new Function<Mc, Long>() {
+
+			@Override
+			public Long apply(Mc input) {
+				return input.getId();
+			}
+		}).iterator();
+				
+		
+		Iterator<QuestionResource> newQuestionResources = FluentIterable.from(this.questionResources).filter(Predicates.notNull()).transform(new Function<QuestionResource, QuestionResource>() {
+
+			@Override
+			public QuestionResource apply(QuestionResource input) {
+				QuestionResource r = new QuestionResource();
+				r.setPath(input.getPath());
+				r.setSequenceNumber(input.getSequenceNumber());
+				r.setType(input.getType());
+				return r;
+			}
+			
+		}).iterator();
+		
+		persistNewQuestion(this.questionType.getId(), this.questionShortName, this.questionText, this.autor.getId(), this.rewiewer.getId(), this.submitToReviewComitee, 
+				this.questEvent.getId(), Lists.newArrayList(mcIds), this.comment.getComment(), this.questionVersion, this.questionSubVersion, this.picturePath, this.status, 
+				Sets.newHashSet(newQuestionResources), this.getId());
 	}
 }

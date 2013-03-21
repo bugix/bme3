@@ -32,10 +32,10 @@ public class ActivityAcceptQuestionEdit extends ActivityQuestionEdit {
 		
 		return details;
 	}
-	@Override
+	/*@Override
 	protected void gotoDetailsPlace(QuestionProxy questionProxy) {
-		goTo(new PlaceAcceptQuestionDetails(questionProxy.stableId(),Operation.DETAILS));
-	}
+		goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));
+	}*/
 	
 	@Override
 	public Status getUpdatedStatus(boolean isEdit, boolean withNewMajorVersion) {
@@ -61,8 +61,17 @@ public class ActivityAcceptQuestionEdit extends ActivityQuestionEdit {
 					status = question.getStatus();
 				}
 			}else {
-				Log.info("Error this scenario is not considered yet (with minor version)");
-				status = question.getStatus();
+				Log.info("temparory save (with minor version)");
+				if(userLoggedIn.getIsAdmin() == true || personRightProxy.getIsInstitutionalAdmin() == true) {
+					status = Status.EDITED_BY_ADMIN;
+				}else if(userLoggedIn.getId().equals(question.getRewiewer().getId())) {
+					status = Status.EDITED_BY_REVIEWER;
+				}else if(userLoggedIn.getId().equals(question.getAutor().getId())) {
+					status = Status.NEW;
+				}else {
+					Log.info("Error this scenario is not considered yet");
+					status = question.getStatus();
+				}
 			}
 		}else {
 			status = Status.NEW;
@@ -82,6 +91,16 @@ public class ActivityAcceptQuestionEdit extends ActivityQuestionEdit {
 	
 	@Override
 	protected void gotoUpdateDetailsPlace() {
+		goTo(new PlaceAcceptQuestionDetails(question.stableId(),Operation.DETAILS));
+	}
+	
+	@Override
+	protected void cancelClickedGoto(QuestionProxy questionProxy) {
+		goTo(new PlaceAcceptQuestionDetails(question.stableId(),Operation.DETAILS));
+	}
+	
+	@Override
+	protected void createQuestionGoto(QuestionProxy questionProxy) {
 		goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));
 	}
 }

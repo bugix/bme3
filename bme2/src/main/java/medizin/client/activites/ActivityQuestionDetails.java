@@ -1548,4 +1548,9 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		//updateSelection(event.getNewPlace());
 		// TODO implement
 	}
+
+	// updated by subclass ActivityAcceptQuestionDetails
+	@Override
+	public void onResendToReviewClicked(QuestionProxy proxy) {
+	}
 }

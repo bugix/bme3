@@ -5,7 +5,8 @@
 	xmlns:r="urn:import:medizin.client.ui.view.roo" xmlns:m="urn:import:medizin.client.ui.widget"
 	xmlns:i="urn:import:medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl">
 	<ui:style src="../../styles.css" />
-		
+	<ui:with type="medizin.shared.i18n.BmeConstants" field="constants"></ui:with>
+	
 	<g:VerticalPanel addStyleNames="{style.tabStyle}">
 
 
@@ -16,10 +17,10 @@
 				<h3 class="{style.header}" style="display:inline">
 					<span ui:field="title"></span>
 				</h3>
-
+				
 				<m:IconButton ui:field="save" icon="disk"></m:IconButton>
 				<m:IconButton ui:field="cancel" icon="closethick"></m:IconButton>
-
+				<m:IconButton ui:field="resendToReview" icon="check" text="{constants.resendToReview}" visible="false"></m:IconButton>
 			</div>
 		</g:HTMLPanel>
 

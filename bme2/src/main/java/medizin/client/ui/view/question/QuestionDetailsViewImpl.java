@@ -27,6 +27,7 @@ import medizin.client.ui.widget.resource.upload.event.ResourceUploadEventHandler
 import medizin.client.util.ClientUtility;
 import medizin.shared.MultimediaType;
 import medizin.shared.QuestionTypes;
+import medizin.shared.Status;
 import medizin.shared.i18n.BmeConstants;
 import medizin.shared.utils.SharedConstant;
 import medizin.shared.utils.SharedUtility;
@@ -74,6 +75,9 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 
 	@UiField
 	IconButton accept;
+	
+	@UiField
+	IconButton resendToReview;
 	
 	@UiField
 	SpanElement displayRenderer;
@@ -314,7 +318,10 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 			previous.setEnabled(false);
 		}
 		
-		
+		if(Status.EDITED_BY_ADMIN.equals(proxy.getStatus()) == true || Status.EDITED_BY_REVIEWER.equals(proxy.getStatus()) == true) {
+			resendToReview.setVisible(true);
+			accept.setVisible(false);
+		}
 		
 		/*mcs.setInnerText(proxy.getMcs() == null ? ""
 				: medizin.client.ui.view.roo.CollectionRenderer.of(
@@ -782,6 +789,12 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 	public void onAcceptClicked(ClickEvent e) {
 		if (proxy != null)
 			delegate.acceptQuestionClicked(proxy);
+	}
+	
+	@UiHandler("resendToReview")
+	public void onResendToReviewClicked(ClickEvent e) {
+		if (proxy != null)
+			delegate.onResendToReviewClicked(proxy);
 	}
 	
 	@UiField
