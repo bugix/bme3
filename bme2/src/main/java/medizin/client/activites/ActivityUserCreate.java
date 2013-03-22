@@ -9,7 +9,6 @@ import medizin.client.place.PlaceUserDetails;
 import medizin.client.proxy.DoctorProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.request.PersonRequest;
-import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.user.UserEditView;
 import medizin.client.ui.view.user.UserEditViewImpl;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.simple.DefaultSuggestOracle;
@@ -67,9 +66,9 @@ public class ActivityUserCreate  extends AbstractActivityWrapper  implements Use
 
 	@Override
 	public String mayStop() {
-		if(!save)
+	/*	if(!save)
 			return McAppConstant.DO_NOT_SAVE_CHANGES;
-		else
+		else*/
 			return null;
 	}
 

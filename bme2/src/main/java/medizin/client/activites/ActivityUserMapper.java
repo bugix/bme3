@@ -1,24 +1,8 @@
 package medizin.client.activites;
 
 
-import medizin.client.place.PlaceAcceptAnswer;
-import medizin.client.place.PlaceAcceptAssQuestion;
-import medizin.client.place.PlaceAcceptPerson;
-import medizin.client.place.PlaceAcceptQuestion;
-import medizin.client.place.PlaceAsignAssQuestion;
-import medizin.client.place.PlaceAssesment;
-import medizin.client.place.PlaceBookAssesment;
-import medizin.client.place.PlaceInstitution;
-import medizin.client.place.PlaceInstitutionEvent;
-import medizin.client.place.PlaceOpenDemand;
-import medizin.client.place.PlaceQuestion;
-import medizin.client.place.PlaceQuestionDetails;
-import medizin.client.place.PlaceQuestiontypes;
-import medizin.client.place.PlaceStaticContent;
-import medizin.client.place.PlaceSystemOverview;
-import medizin.client.place.PlaceUser;
-import medizin.client.place.PlaceUserDetails;
 import medizin.client.factory.request.McAppRequestFactory;
+import medizin.client.place.PlaceUserDetails;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.activity.shared.Activity;

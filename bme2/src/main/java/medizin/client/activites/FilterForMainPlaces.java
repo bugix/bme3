@@ -118,11 +118,13 @@ public class FilterForMainPlaces implements FilteredActivityMapper.Filter {
 			 
 		 }
 		 if (place instanceof PlaceUserDetails){
-			 PlaceUserDetails placeUserDetails= (PlaceUserDetails)place;
-			 if(placeUserDetails.getOperation()!=PlaceUserDetails.Operation.CREATE)
+			 //PlaceUserDetails placeUserDetails= (PlaceUserDetails)place;
+			 /*if(placeUserDetails.getOperation()!=PlaceUserDetails.Operation.CREATE)
 				 return  new PlaceUser(placeUserDetails.getProxyId());
 			 else
-				 return  new PlaceUser(placeUserDetails.getOperation().toString());
+				 return  new PlaceUser(placeUserDetails.getOperation().toString());*/
+			 
+			 return new PlaceUser(PlaceUser.PLACE_USER);
 			 
 		 }
 		 if (place instanceof PlaceQuestiontypesDetails){
