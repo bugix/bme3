@@ -9,6 +9,7 @@ import medizin.client.proxy.QuestionSumPerPersonProxy;
 import medizin.client.style.resources.MyCellTableResources;
 import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
+import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.cell.client.AbstractCell;
@@ -42,6 +43,8 @@ public class QuestionSumPerPersonViewImpl extends Composite implements  Question
 			UiBinder<Widget, QuestionSumPerPersonViewImpl> {
 	}
 
+	public BmeConstants constants = GWT.create(BmeConstants.class);
+	
 	public QuestionSumPerPersonViewImpl() {
 		
 		CellTable.Resources tableResources = GWT
@@ -55,6 +58,7 @@ public class QuestionSumPerPersonViewImpl extends Composite implements  Question
 				true, McAppConstant.TABLE_JUMP_SIZE, true);
 		
 		initWidget(uiBinder.createAndBindUi(this));
+		newQuestionSumPerPerson.setText(constants.newQuestionSumsPerPersonRecord());
 		init();
 	}
 

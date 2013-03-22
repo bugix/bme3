@@ -20,7 +20,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooJpaActiveRecord
 public class QuestionTypeCountPerExam {
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     private Set<QuestionType> questionTypesAssigned = new HashSet<QuestionType>();
 
     @NotNull

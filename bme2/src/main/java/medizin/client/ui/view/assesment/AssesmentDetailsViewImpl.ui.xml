@@ -56,14 +56,14 @@
 					     
 					      <tr id="dateOfAssesment">
 					                <td style="width: 200px;">
-					                    <span class="{style.label}">Prüfung am:</span>
+					                    <span class="{style.label}" ui:field="exam">Prüfung am:</span>
 					                </td>
 					                <td style="width: 50%;">
 					                    <span ui:field="dateOfAssesment"/>
 					                </td>
 					      
 					                <td style="width: 200px;">
-					                    <span class="{style.label}">Mc:</span>
+					                    <span class="{style.label}" ui:field="mclbl">Mc:</span>
 					                </td>
 					                <td style="width: 50%;">
 					                    <span ui:field="mc"/>
@@ -71,14 +71,14 @@
 					            </tr>
 					      <tr id="dateOpen">
 					                <td>
-					                    <span class="{style.label}">Offen ab:</span>
+					                    <span class="{style.label}" ui:field="openFromLbl">Offen ab:</span>
 					                </td>
 					                <td>
 					                    <span ui:field="dateOpen"/>
 					                </td>
 		
 					                <td>
-					                    <span class="{style.label}">Geschlossen ab:</span>
+					                    <span class="{style.label}"  ui:field="closedFromLbl">Geschlossen ab:</span>
 					                </td>
 					                <td>
 					                    <span ui:field="dateClosed"/>
@@ -86,14 +86,14 @@
 					            </tr>
 					      <tr id="place">
 					                <td>
-					                    <span class="{style.label}">Veranstalungsort:</span>
+					                    <span class="{style.label}" ui:field="venueLbl">Veranstaltungsort:</span>
 					                </td>
 					                <td>
 					                    <span ui:field="place"/>
 					                </td>
 
 					                <td>
-					                    <span class="{style.label}">Abgeschlossen:</span>
+					                    <span class="{style.label}" ui:field="completedLbl">Abgeschlossen:</span>
 					                </td>
 					                <td>
 					                    <span ui:field="isClosed"/>
@@ -101,7 +101,7 @@
 					            </tr>
 					      <tr id="logo">
 					                <td>
-					                    <span class="{style.label}">Logo für Titelblatt:</span>
+					                    <span class="{style.label}" ui:field="logoForTitlePageLbl">Logo für Titelblatt:</span>
 					                </td>
 					                <td colspan="3">
 					                    <span ui:field="logo"/>
@@ -112,14 +112,14 @@
 					     
 					      <tr id="repeFor">
 					                <td>
-					                    <span class="{style.label}">Repeprüfung für:</span>
+					                    <span class="{style.label}" ui:field="repeForLbl">Repeprüfung für:</span>
 					                </td>
 					                <td>
 					                    <span ui:field="repeFor"/>
 					                </td>
 
 					                <td>
-					                    <span class="{style.label}">% gleiche Fragen:</span>
+					                    <span class="{style.label}"  ui:field="percentSameQuestionLbl">% gleiche Fragen:</span>
 					                </td>
 					                <td>
 					                    <span ui:field="percentSameQuestion"/>

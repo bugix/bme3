@@ -51,7 +51,7 @@
       
     <tr id="responsiblePerson">
                 <td>
-                    <div class="{style.label}">Responsible Person:</div>
+                    <div class="{style.label}" ui:field="responsiblePersonlbl">Responsible Person:</div>
                 </td>
                 <td>
                     <g:ValueListBox ui:field="responsiblePerson"/>
@@ -59,7 +59,7 @@
             </tr>
             <tr id="questionEvent">
                 <td>
-                    <div class="{style.label}">Question Event:</div>
+                    <div class="{style.label}" ui:field="questionEventlbl">Question Event:</div>
                 </td>
                 <td>
                     <g:ValueListBox ui:field="questionEvent"/>
@@ -68,7 +68,7 @@
 
             <tr id="questionSum">
                 <td>
-                    <div class="{style.label}">Question Sum:</div>
+                    <div class="{style.label}" ui:field="questionSumlbl">Question Sum:</div>
                 </td>
                 <td>
                     <g:IntegerBox ui:field="questionSum"/>

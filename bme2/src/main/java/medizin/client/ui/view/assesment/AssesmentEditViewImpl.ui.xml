@@ -34,7 +34,7 @@
 						<table>
 							<tr id="name">
 								<td>
-									<g:Label styleName="{style.label}" ui:field="lblQuestionShortName">Name der Prüfung:</g:Label>
+									<div class="{style.label}" ui:field="lblQuestionShortName">Name der Prüfung:</div>
 								</td>
 								<td>
 									 <g:TextBox ui:field="name"/>
@@ -45,7 +45,7 @@
 							
 							<tr id="dateOfAssesment">
 						                <td>
-						                	<g:Label styleName="{style.label}" ui:field="lbldateOfAssesment">Findet statt am:</g:Label>
+						                	<div class="{style.label}" ui:field="lbldateOfAssesment">Findet statt am:</div>
 						                   
 						                </td>
 						                <td>
@@ -56,7 +56,7 @@
 							
 								<tr id="dateOpen">
 						                <td>
-						               	 <g:Label styleName="{style.label}" ui:field="lbldateOpen">Geöffnet ab:</g:Label>
+						               	 <div class="{style.label}" ui:field="lbldateOpen">Geöffnet ab:</div>
 						                   
 						                </td>
 						                <td>
@@ -66,7 +66,7 @@
 						            
 						      <tr id="dateClosed">
 						                <td>
-						                <g:Label styleName="{style.label}" ui:field="lbldateClosed">Geschlossen ab:</g:Label>
+						                <div class="{style.label}" ui:field="lbldateClosed">Geschlossen ab:</div>
 						                   
 						                </td>
 						                <td>
@@ -75,7 +75,7 @@
 						            </tr>
 						      <tr id="place">
 						                <td>
-						                 <g:Label styleName="{style.label}" ui:field="lblplace">Findet statt in:</g:Label>
+						                 <div class="{style.label}" ui:field="lblplace">Findet statt im:</div>
 						                 
 						                </td>
 						                <td>
@@ -85,7 +85,7 @@
 
 						      <tr id="isClosed">
 						                <td>
-						                 <g:Label styleName="{style.label}" ui:field="lblisClosed">Ist geschlossen:</g:Label>
+						                 <div class="{style.label}" ui:field="lblisClosed">Ist geschlossen:</div>
 						                    
 						                </td>
 						                <td>
@@ -95,7 +95,7 @@
 	
 						      <tr id="mc">
 						                <td>
-						                 <g:Label styleName="{style.label}" ui:field="lblmc">Gehört zu MC:</g:Label>
+						                 <div class="{style.label}" ui:field="lblmc">Gehört zu MC:</div>
 						                   
 						                </td>
 						                <td>
@@ -104,7 +104,7 @@
 						            </tr>
 						      <tr id="repeFor">
 						                <td>
-						                 <g:Label styleName="{style.label}" ui:field="lblrepeFor">Repeprüfung für:</g:Label>
+						                 <div class="{style.label}" ui:field="lblrepeFor">Repeprüfung für:</div>
 						                   
 						                </td>
 						                <td>
@@ -113,7 +113,7 @@
 						            </tr>
 						      <tr id="percentSameQuestion">
 						                <td>
-						                 <g:Label styleName="{style.label}" ui:field="lblpercentSameQuestion">Prozent gleicher Frage:</g:Label>
+						                 <div class="{style.label}" ui:field="lblpercentSameQuestion">Prozent gleicher Frage:</div>
 						                    
 						                </td>
 						                <td>
@@ -123,7 +123,7 @@
 						            
 						       <tr id="logo">
                 						<td>
-                							 <g:Label styleName="{style.label}" ui:field="lbllogo">Logo:</g:Label>
+                							 <div class="{style.label}" ui:field="lbllogo">Logo:</div>
                   
                							 </td>
               							  <td>

@@ -10,11 +10,13 @@ import medizin.client.proxy.McProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.request.PersonRequest;
 import medizin.client.ui.view.roo.QuestionAccessSetEditor;
+import medizin.client.ui.widget.IconButton;
 import medizin.shared.i18n.BmeConstants;
 
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.dom.client.Style.Display;
@@ -27,6 +29,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.IntegerBox;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.ValueListBox;
@@ -60,10 +63,10 @@ public class AssesmentEditViewImpl extends Composite implements AssesmentEditVie
 
 	
     @UiField
-    Button cancel;
+    IconButton cancel;
 
     @UiField
-    Button save;
+    IconButton save;
 
     private Delegate delegate;
 	
@@ -137,12 +140,56 @@ public class AssesmentEditViewImpl extends Composite implements AssesmentEditVie
 //    @UiField
 //    SpanElement displayRenderer;
 
-
+    
+    @UiField
+    DivElement lblQuestionShortName;
+    
+    @UiField
+    DivElement lbldateOfAssesment;
+    
+    @UiField
+    DivElement lbldateOpen;
+    
+    
+    @UiField
+    DivElement lbldateClosed;
+    
+    @UiField
+    DivElement lblplace;
+    
+    
+    @UiField 
+    DivElement lblisClosed;
+    
+    @UiField
+    DivElement lblmc;
+    
+    @UiField
+    DivElement lblrepeFor;
+    
+    @UiField
+    DivElement lblpercentSameQuestion;
+    
+    @UiField
+    DivElement lbllogo;
+    
 	public AssesmentEditViewImpl() {
 		initWidget(uiBinder.createAndBindUi(this));
 		assessmentTabPanel.selectTab(0);
 		assessmentTabPanel.getTabBar().setTabText(0, constants.manageAssessment());
-
+		save.setText(constants.saveTest());
+		cancel.setText(constants.cancelEdit());
+		//lblQuestionShortName.setText(constants.nameOfTest());
+		lbldateOfAssesment.setInnerText(constants.willBeHeldOn());
+		lbldateOpen.setInnerText(constants.openFrom());
+		lbldateClosed.setInnerText(constants.closedFrom());
+		lblplace.setInnerText(constants.willTakePlaceIn());
+		lblisClosed.setInnerText(constants.isClosed());
+		lblmc.setInnerText(constants.mCisOneOf());
+		lblrepeFor.setInnerText(constants.repeFor());
+		lblpercentSameQuestion.setInnerText(constants.percentSameQuestion());
+		lbllogo.setInnerText(constants.logo());
+		
 	}
 
 

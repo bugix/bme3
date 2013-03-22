@@ -3,6 +3,7 @@ package medizin.client.ui.view.assesment;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.proxy.AssesmentProxy;
 import medizin.client.proxy.PersonProxy;
+import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.TabPanelHelper;
 import medizin.shared.i18n.BmeConstants;
 
@@ -37,17 +38,20 @@ public class AssesmentDetailsViewImpl extends Composite implements AssesmentDeta
 	TabPanel assessmentDetailPanel;
 	
     @UiField
-    HasClickHandlers edit;
+    IconButton edit;
 
     @UiField
-    HasClickHandlers delete;
+    IconButton delete;
 
     private Delegate delegate;
 	
 
     @UiField
     SpanElement name;
-
+    
+    @UiField
+    SpanElement exam;
+    
     @UiField
     SpanElement dateOfAssesment;
 
@@ -134,10 +138,44 @@ public class AssesmentDetailsViewImpl extends Composite implements AssesmentDeta
        
        
     }
-
+    
+    @UiField
+    SpanElement mclbl;
+    
+    @UiField
+    SpanElement openFromLbl;
+    
+    @UiField
+    SpanElement closedFromLbl;
+    
+    @UiField
+    SpanElement venueLbl;
+    
+    @UiField
+    SpanElement completedLbl;
+    
+    @UiField
+    SpanElement logoForTitlePageLbl;
+    
+    @UiField
+    SpanElement repeForLbl;
+    
+    @UiField
+    SpanElement percentSameQuestionLbl;
+    
 	public AssesmentDetailsViewImpl() {
 		initWidget(uiBinder.createAndBindUi(this));
-
+		edit.setText(constants.assessmentProcess());
+		delete.setText(constants.assessmentDelete());
+		exam.setInnerText(constants.exam());
+		mclbl.setInnerText(constants.mc());
+		openFromLbl.setInnerText(constants.openFrom());
+		closedFromLbl.setInnerText(constants.closedFrom());
+		venueLbl.setInnerText(constants.venue());
+		completedLbl.setInnerText(constants.completed());
+		logoForTitlePageLbl.setInnerText(constants.logoForTitlePage());
+		repeForLbl.setInnerText(constants.repeFor());
+		percentSameQuestionLbl.setInnerText(constants.percentSameQuestion());
 	}
 
 

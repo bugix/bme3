@@ -9,9 +9,11 @@ import medizin.client.style.resources.MyCellTableResources;
 import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.assesment.AssesmentView.Delegate;
+import medizin.client.ui.widget.IconButton;
 
 import medizin.client.proxy.AssesmentProxy;
 import medizin.client.proxy.QuestionProxy;
+import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.cell.client.AbstractCell;
@@ -44,7 +46,9 @@ public class AssesmentViewImpl extends Composite implements AssesmentView  {
 	interface AssesmentViewImplUiBinder extends
 			UiBinder<Widget, AssesmentViewImpl> {
 	}
-
+	
+	public BmeConstants constants = GWT.create(BmeConstants.class);
+	
 	private Presenter presenter;
 
 	private String name;
@@ -66,6 +70,8 @@ public class AssesmentViewImpl extends Composite implements AssesmentView  {
 
 		initWidget(uiBinder.createAndBindUi(this));
 		DOM.setElementAttribute(splitLayoutPanel.getElement(), "style", "position: absolute; left: 0px; top: 0px; right: 5px; bottom: 0px;");
+		
+		newButton.setText(constants.createNewTest());
 		init();
 
 	}
@@ -78,7 +84,7 @@ public class AssesmentViewImpl extends Composite implements AssesmentView  {
 	}
 
 	@UiField
-	HasClickHandlers newButton;
+	IconButton newButton;
 	
 	@UiHandler(value = { "newButton" })
 	public void newButtonClicked(ClickEvent e){

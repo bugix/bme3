@@ -5,8 +5,10 @@ import java.util.Collection;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionSumPerPersonProxy;
+import medizin.shared.i18n.BmeConstants;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.web.bindery.requestfactory.gwt.client.RequestFactoryEditorDriver;
@@ -30,10 +32,21 @@ public class QuestionSumPerPersonDialogboxImpl extends DialogBox implements Ques
 			UiBinder<Widget, QuestionSumPerPersonDialogboxImpl> {
 	}
 
+	public BmeConstants constants = GWT.create(BmeConstants.class);
+	
 	private Presenter presenter;
 	
 	@UiField
 	Button closeButton;
+	
+	@UiField
+	DivElement responsiblePersonlbl;
+	
+	@UiField 
+	DivElement questionEventlbl;
+	
+	@UiField
+	DivElement questionSumlbl;
 	
 	@UiHandler ("closeButton")
 	public void onCloseButtonClick(ClickEvent event) {
@@ -60,7 +73,11 @@ public class QuestionSumPerPersonDialogboxImpl extends DialogBox implements Ques
 		this.getElement().getStyle().setZIndex(3);
 	    setTitle("Anzahl Fragentypen pro Prüfung hinzufügen");
 	    setText("Anzahl Fragentypen pro Prüfung hinzufügen");
-
+	    responsiblePersonlbl.setInnerText(constants.responsiblePerson());
+	    questionEventlbl.setInnerText(constants.questionEvent());
+	    questionSumlbl.setInnerText(constants.questionSum());
+	    save.setText(constants.save());
+	    closeButton.setText(constants.close());
 	}
 
 

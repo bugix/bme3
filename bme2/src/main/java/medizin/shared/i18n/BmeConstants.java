@@ -417,4 +417,53 @@ public interface BmeConstants extends Constants {
 	public String resendToReview();
 	
 	public String newAnswer();
+	
+	public String createNewTest();
+	
+	public String saveTest();
+	
+	public String cancelEdit();
+	
+	public String nameOfTest();
+	
+	public String willBeHeldOn();
+	
+	public String openFrom();
+	
+	public String closedFrom();
+	
+	public String willTakePlaceIn();
+	
+	public String isClosed();
+	
+	public String mCisOneOf();
+	
+	public String repeFor();
+	
+	public String percentSameQuestion();
+	
+	public String logo();
+	
+	public String assessmentProcess();
+	
+	public String assessmentDelete();
+	
+	public String exam();
+	
+	public String mc();
+	
+	public String venue();
+	
+	public String completed();
+	
+	public String logoForTitlePage();
+	
+	public String newQuestionTypeCount();
+	
+	public String newQuestionSumsPerPersonRecord();
+	
+	public String responsiblePerson();
+	
+	public String questionSum();
+	
 }
