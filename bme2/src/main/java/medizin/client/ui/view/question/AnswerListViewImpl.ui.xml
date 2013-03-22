@@ -4,14 +4,15 @@
 	xmlns:m="urn:import:medizin.client.ui.widget">
 
 	<ui:style src="../../styles.css" />
-		
+	<ui:with type="medizin.shared.i18n.BmeConstants" field="cc"></ui:with>
+			
 	<g:HTMLPanel>
 	
 	
 
 		<div class="{style.controls} {style.controlsleft}">
 
-			<m:IconButton ui:field="newAnswer" icon="plusthick">New Answer</m:IconButton>
+			<m:IconButton ui:field="newAnswer" icon="plusthick" text="${cc.newAnswer}"></m:IconButton>
 			<b:SimplePager ui:field="pager" display="{tableAnswer}" />
 
 			<!-- <i:DefaultSuggestBox ui:field="copiedOsce"></i:DefaultSuggestBox> -->

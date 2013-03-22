@@ -1201,7 +1201,7 @@ public class Question {
 		}).iterator();
 		
 		persistNewQuestion(this.questionType.getId(), this.questionShortName, this.questionText, this.autor.getId(), this.rewiewer.getId(), this.submitToReviewComitee, 
-				this.questEvent.getId(), Lists.newArrayList(mcIds), this.comment.getComment(), this.questionVersion, this.questionSubVersion, this.picturePath, this.status, 
+				this.questEvent.getId(), Lists.newArrayList(mcIds), this.comment.getComment(), this.questionVersion+1, 0, this.picturePath, this.status, 
 				Sets.newHashSet(newQuestionResources), this.getId());
 	}
 }

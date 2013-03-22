@@ -409,8 +409,6 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			initAnswerView();
 		}
 	}
-	
-	
 
 	private void initAnswerView() {
 		
@@ -1552,5 +1550,10 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	// updated by subclass ActivityAcceptQuestionDetails
 	@Override
 	public void onResendToReviewClicked(QuestionProxy proxy) {
+	}
+	
+	//updated by subclass
+	@Override
+	public void checkForResendToReview() {		
 	}
 }

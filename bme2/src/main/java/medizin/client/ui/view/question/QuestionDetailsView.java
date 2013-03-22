@@ -52,6 +52,8 @@ public interface QuestionDetailsView extends IsWidget {
 		void getLatestQuestionDetails(Function<QuestionProxy, Void> function);
 
 		void onResendToReviewClicked(QuestionProxy proxy);
+
+		void checkForResendToReview();
 	}
 
 	AnswerListViewImpl getAnswerListViewImpl();
@@ -65,4 +67,8 @@ public interface QuestionDetailsView extends IsWidget {
 	public IconButton getEdit();
 
 	public VerticalPanel getAnswerVerticalPanel();
+	
+	IconButton getResendToReviewBtn();
+	
+	IconButton getAcceptBtn();
 }

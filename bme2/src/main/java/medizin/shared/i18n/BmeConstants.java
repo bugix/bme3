@@ -415,4 +415,6 @@ public interface BmeConstants extends Constants {
 	public String manageAssessment();
 	
 	public String resendToReview();
+	
+	public String newAnswer();
 }

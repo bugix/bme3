@@ -15,6 +15,7 @@ import medizin.client.ui.view.AcceptAnswerSubViewImpl;
 import medizin.client.ui.view.AcceptMatrixAnswerSubView;
 import medizin.client.ui.view.AcceptMatrixAnswerSubViewImpl;
 import medizin.shared.QuestionTypes;
+import medizin.shared.Status;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.place.shared.PlaceController;
@@ -255,5 +256,36 @@ public class ActivityAcceptQuestionDetails extends ActivityQuestionDetails imple
 				goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));
 			}
 		});
+	}
+	
+	// check for resendToReview
+	@Override
+	public void checkForResendToReview() {
+		
+		if(question != null && userLoggedIn != null) {
+			
+			if(Status.EDITED_BY_ADMIN.equals(question.getStatus()) == true) {
+				if((userLoggedIn.getIsAdmin() || personRightProxy.getIsInstitutionalAdmin())) {
+					view.getResendToReviewBtn().setVisible(true);
+					view.getAcceptBtn().setVisible(false);
+				}else {
+					view.getResendToReviewBtn().setVisible(false);
+					view.getAcceptBtn().setVisible(false);
+					view.getEdit().setVisible(false);
+				}
+			}else if(Status.EDITED_BY_REVIEWER.equals(question.getStatus()) == true) {
+				if(question.getRewiewer() != null && userLoggedIn.getId().equals(question.getRewiewer().getId()) == true) {
+					view.getResendToReviewBtn().setVisible(true);
+					view.getAcceptBtn().setVisible(false);
+				}else {
+					view.getResendToReviewBtn().setVisible(false);
+					view.getAcceptBtn().setVisible(false);
+					view.getEdit().setVisible(false);
+				}
+			}else {
+				//TODO for review committee 
+			}
+			
+		}
 	}
 }

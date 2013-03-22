@@ -259,9 +259,12 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 				saveQuestion(false,false);
 				//delegate.saveClicked(false);
 			} else {
-				if(delegate.isAcceptQuestionView()) {
+				if(delegate.isAcceptQuestionView() && delegate.isAdminOrReviewer()) {
 					// with minor version
 					saveQuestion(edit, false);
+				}else if(delegate.isAuthor()){
+					// with major version
+					saveQuestion(edit, true);
 				}else {
 					final ConfirmQuestionChangesPopup confirm = new ConfirmQuestionChangesPopup(new Function<Boolean, Void>() {
 						
@@ -394,7 +397,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 
 		// question is not null
 		setMediaView(question.getQuestionType(), question);
-		resendToReview.setVisible(delegate.isAcceptQuestionView());
+		resendToReview.setVisible(delegate.isAdminOrReviewer() && delegate.isAcceptQuestionView());
 	}
 
 	/*@Override
@@ -902,10 +905,10 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		
 		if(isEdit == true && withNewMajorVersion == false) {	
 			// update question with  minor new version
-			delegate.updateQuestion(questionType.getValue(),questionShortName.getText(),questionTextArea.getText(),author.getSelected(),rewiewer.getSelected(),submitToReviewComitee.getValue(),questEvent.getValue(),mcs.getValue(),questionComment.getText(),questionVersion, questionSubVersion, picturePath,questionResourceClients,status);
+			delegate.updateQuestion(questionType.getValue(),questionShortName.getText(),questionTextArea.getHTML(),author.getSelected(),rewiewer.getSelected(),submitToReviewComitee.getValue(),questEvent.getValue(),mcs.getValue(),questionComment.getText(),questionVersion, questionSubVersion, picturePath,questionResourceClients,status);
 		}else {
 			// create new question or create new major version question 
-			delegate.createNewQuestion(questionType.getValue(),questionShortName.getText(),questionTextArea.getText(),author.getSelected(),rewiewer.getSelected(),submitToReviewComitee.getValue(),questEvent.getValue(),mcs.getValue(),questionComment.getText(),questionVersion, questionSubVersion,picturePath,questionResourceClients,status);
+			delegate.createNewQuestion(questionType.getValue(),questionShortName.getText(),questionTextArea.getHTML(),author.getSelected(),rewiewer.getSelected(),submitToReviewComitee.getValue(),questEvent.getValue(),mcs.getValue(),questionComment.getText(),questionVersion, questionSubVersion,picturePath,questionResourceClients,status);
 		}
 	}
 

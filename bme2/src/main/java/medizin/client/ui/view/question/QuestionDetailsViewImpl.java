@@ -27,7 +27,6 @@ import medizin.client.ui.widget.resource.upload.event.ResourceUploadEventHandler
 import medizin.client.util.ClientUtility;
 import medizin.shared.MultimediaType;
 import medizin.shared.QuestionTypes;
-import medizin.shared.Status;
 import medizin.shared.i18n.BmeConstants;
 import medizin.shared.utils.SharedConstant;
 import medizin.shared.utils.SharedUtility;
@@ -318,11 +317,7 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 			previous.setEnabled(false);
 		}
 		
-		if(Status.EDITED_BY_ADMIN.equals(proxy.getStatus()) == true || Status.EDITED_BY_REVIEWER.equals(proxy.getStatus()) == true) {
-			resendToReview.setVisible(true);
-			accept.setVisible(false);
-		}
-		
+		delegate.checkForResendToReview();
 		/*mcs.setInnerText(proxy.getMcs() == null ? ""
 				: medizin.client.ui.view.roo.CollectionRenderer.of(
 						medizin.client.ui.view.roo.McProxyRenderer.instance())
@@ -819,6 +814,16 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 
 	public void setAnswerVerticalPanel(VerticalPanel answerVerticalPanel) {
 		this.answerVerticalPanel = answerVerticalPanel;
+	}
+
+	@Override
+	public IconButton getResendToReviewBtn() {
+		return resendToReview;
+	}
+
+	@Override
+	public IconButton getAcceptBtn() {
+		return accept;
 	}
 	
 	

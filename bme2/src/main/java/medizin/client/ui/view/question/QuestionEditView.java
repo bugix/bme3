@@ -47,6 +47,10 @@ public interface QuestionEditView extends IsWidget {
 
 		boolean isAcceptQuestionView();
 
+		boolean isAdminOrReviewer();
+
+		boolean isAuthor();
+
 	}
 
 	//RequestFactoryEditorDriver<QuestionProxy, QuestionEditViewImpl> createEditorDriver();

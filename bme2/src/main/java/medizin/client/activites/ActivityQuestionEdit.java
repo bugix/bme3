@@ -1040,4 +1040,27 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 		// updateSelection(event.getNewPlace());
 		// TODO implement
 	}
+
+	@Override
+	public boolean isAdminOrReviewer() {
+		
+		// for admin 
+		if((userLoggedIn.getIsAdmin() || personRightProxy.getIsInstitutionalAdmin())) {
+			return true;
+		}
+		
+		// Reviewer
+		if(question != null && question.getRewiewer() != null && question.getRewiewer().getId().equals(userLoggedIn.getId())) {
+			return true;
+		}
+		return  false;
+	}
+
+	@Override
+	public boolean isAuthor() {
+		if(question != null && userLoggedIn != null && question.getAutor() != null && question.getAutor().getId().equals(userLoggedIn.getId())) {
+			return true;
+		}
+		return false;
+	}
 }
