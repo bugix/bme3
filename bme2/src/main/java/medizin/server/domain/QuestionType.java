@@ -171,6 +171,11 @@ public class QuestionType {
     //	EntityManager em = QuestionEvent.entityManager();
     //	System.out.println("countAllQuestionType call");
     	
+    	Institution institution = Institution.myGetInstitutionToWorkWith();
+    	
+    	if (institution == null)
+    		return 0l;
+    	
     	CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
 		CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
 		Root<QuestionType> from = criteriaQuery.from(QuestionType.class);
@@ -178,7 +183,8 @@ public class QuestionType {
 		
 		Expression<String> shortNameExp = from.get("shortName");
  		Expression<String> longNameExp = from.get("longName");
- 		criteriaQuery.where(criteriaBuilder.or(criteriaBuilder.like(shortNameExp, "%" + searchValue + "%"), criteriaBuilder.like(longNameExp, "%" + searchValue + "%")));
+ 		
+ 		criteriaQuery.where(criteriaBuilder.and(criteriaBuilder.equal(from.get("institution").get("id"), institution.getId()) ,criteriaBuilder.or(criteriaBuilder.like(shortNameExp, "%" + searchValue + "%"), criteriaBuilder.like(longNameExp, "%" + searchValue + "%"))));
  		
 		//criteriaQuery.where(criteriaBuilder.equal(from.get("topic"), topicId));
 		TypedQuery<Long> result = entityManager().createQuery(criteriaQuery);
@@ -201,6 +207,12 @@ public class QuestionType {
     //	System.out.println("Call findAllQuestionType");
     	
     	//System.out.println("in find");
+    	
+    	Institution institution = Institution.myGetInstitutionToWorkWith();
+    	
+    	if (institution == null)
+    		return Lists.newArrayList();
+    	
     	 CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
  		CriteriaQuery<QuestionType> criteriaQuery = criteriaBuilder.createQuery(QuestionType.class);
  		Root<QuestionType> from = criteriaQuery.from(QuestionType.class);
@@ -217,7 +229,7 @@ public class QuestionType {
  		
  		Expression<String> shortNameExp = from.get("shortName");
  		Expression<String> longNameExp = from.get("longName");
- 		criteriaQuery.where(criteriaBuilder.or(criteriaBuilder.like(shortNameExp, "%" + searchValue + "%"), criteriaBuilder.like(longNameExp, "%" + searchValue + "%")));
+ 		criteriaQuery.where(criteriaBuilder.and(criteriaBuilder.equal(from.get("institution").get("id"), institution.getId()), criteriaBuilder.or(criteriaBuilder.like(shortNameExp, "%" + searchValue + "%"), criteriaBuilder.like(longNameExp, "%" + searchValue + "%"))));
  		
  		
  		TypedQuery<QuestionType> q = entityManager().createQuery(criteriaQuery);

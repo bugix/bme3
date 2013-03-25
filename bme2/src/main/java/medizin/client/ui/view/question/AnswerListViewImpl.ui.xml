@@ -12,7 +12,7 @@
 
 		<div class="{style.controls} {style.controlsleft}">
 
-			<m:IconButton ui:field="newAnswer" icon="plusthick" text="${cc.newAnswer}"></m:IconButton>
+			<m:IconButton ui:field="newAnswer" icon="plusthick" text="{cc.newAnswer}"></m:IconButton>
 			<b:SimplePager ui:field="pager" display="{tableAnswer}" />
 
 			<!-- <i:DefaultSuggestBox ui:field="copiedOsce"></i:DefaultSuggestBox> -->

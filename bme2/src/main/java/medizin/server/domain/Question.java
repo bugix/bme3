@@ -326,21 +326,14 @@ public class Question {
 
 	public static Long countQuestionsNonAcceptedAdmin() {
 		// Gets the Sessionattributes
-		HttpSession session = RequestFactoryServlet.getThreadLocalRequest()
-				.getSession();
-		log.info(session.getAttribute("shibdId"));
-		log.info(session.getAttribute("institutionId"));
-		String shibdId2 = (String) session.getAttribute("shibdId");
-		long institutionId2 = (Long) session.getAttribute("institutionId");
-
-		Person loggedUser = Person.findPersonByShibId(shibdId2);
-		Institution institution = Institution.findInstitution(institutionId2);
+		Person loggedUser = Person.myGetLoggedPerson();
+		Institution institution = Institution.myGetInstitutionToWorkWith();
 		if (loggedUser == null || institution == null)
 			throw new IllegalArgumentException(
 					"The person and institution arguments are required");
 		// End filter fuctionality
 
-		StringBuilder queryBuilder = new StringBuilder(
+		/*StringBuilder queryBuilder = new StringBuilder(
 				"SELECT count(Question) FROM Question AS question WHERE question.status != " + Status.DEACTIVATED.ordinal() +" AND ");
 
 		Boolean isAccepted = false;
@@ -350,21 +343,33 @@ public class Question {
 			queryBuilder.append("question.isAcceptedAdmin = :isAccepted ");
 
 		} else {
-			/*queryBuilder
-					.append("question.isAcceptedRewiever = :isAccepted AND question.rewiewer = :person");*/
+			queryBuilder
+					.append("question.isAcceptedRewiever = :isAccepted AND question.rewiewer = :person");
 			queryBuilder.append("(question.isAcceptedRewiever = :isAccepted AND question.rewiewer = :person) OR (question.autor = :person AND question.status IN("+ Status.CORRECTION_FROM_ADMIN.ordinal() +","+ Status.CORRECTION_FROM_REVIEWER.ordinal() +"))");
+		}*/
+		
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+		Root<Question> from = criteriaQuery.from(Question.class);
+		criteriaQuery.select(criteriaBuilder.count(from));	
+
+		Predicate pre1 = criteriaBuilder.and(criteriaBuilder.equal(from.get("questEvent").get("institution").get("id"), institution.getId()), criteriaBuilder.notEqual(from.get("status"), Status.DEACTIVATED));
+
+		if (loggedUser.getIsAdmin())
+		{
+			pre1 = criteriaBuilder.and(pre1, criteriaBuilder.equal(from.get("isAcceptedAdmin"), false));
+		}
+		else
+		{
+			Predicate pre2 = criteriaBuilder.and(criteriaBuilder.equal(from.get("isAcceptedRewiever"), false), criteriaBuilder.equal(from.get("rewiewer").get("id"), loggedUser.getId()));
+			Predicate pre3 = criteriaBuilder.and(criteriaBuilder.equal(from.get("autor").get("id"), loggedUser.getId()), from.get("status").in(Status.CORRECTION_FROM_ADMIN, Status.CORRECTION_FROM_REVIEWER));
+
+			pre1 = criteriaBuilder.and(pre1, criteriaBuilder.or(pre2, pre3));
 		}
 
-		EntityManager em = Question.entityManager();
-
-		TypedQuery<Long> q = em
-				.createQuery(queryBuilder.toString(), Long.class);
-
-		if (!loggedUser.getIsAdmin()) {
-			q.setParameter("person", loggedUser);
-		}
-
-		q.setParameter("isAccepted", isAccepted);
+		criteriaQuery.where(pre1);
+		
+		TypedQuery<Long> q = entityManager().createQuery(criteriaQuery);
 
 		return q.getSingleResult();
 	}
@@ -372,21 +377,14 @@ public class Question {
 	public static List<Question> findQuestionsEntriesNonAcceptedAdmin(
 			int start, int length) {
 		// Gets the Sessionattributes
-		HttpSession session = RequestFactoryServlet.getThreadLocalRequest()
-				.getSession();
-		log.info(session.getAttribute("shibdId"));
-		log.info(session.getAttribute("institutionId"));
-		String shibdId2 = (String) session.getAttribute("shibdId");
-		long institutionId2 = (Long) session.getAttribute("institutionId");
-
-		Person loggedUser = Person.findPersonByShibId(shibdId2);
-		Institution institution = Institution.findInstitution(institutionId2);
+		Person loggedUser = Person.myGetLoggedPerson();
+		Institution institution = Institution.myGetInstitutionToWorkWith();
 		if (loggedUser == null || institution == null)
 			throw new IllegalArgumentException(
 					"The person and institution arguments are required");
 		// End filter fuctionality
 
-		StringBuilder queryBuilder = new StringBuilder(
+		/*StringBuilder queryBuilder = new StringBuilder(
 				"SELECT Question FROM Question AS question WHERE  question.status != " + Status.DEACTIVATED.ordinal() +" AND ");
 
 		Boolean isAccepted = false;
@@ -396,21 +394,36 @@ public class Question {
 			queryBuilder.append("question.isAcceptedAdmin = :isAccepted ");
 
 		} else {
-			/*queryBuilder
-					.append("question.isAcceptedRewiever = :isAccepted AND question.rewiewer = :person");*/
+			queryBuilder
+					.append("question.isAcceptedRewiever = :isAccepted AND question.rewiewer = :person");
 			queryBuilder.append("(question.isAcceptedRewiever = :isAccepted AND question.rewiewer = :person) OR (question.autor = :person AND question.status IN("+ Status.CORRECTION_FROM_ADMIN.ordinal() +","+ Status.CORRECTION_FROM_REVIEWER.ordinal() +"))");
 		}
 
-		EntityManager em = Question.entityManager();
+		EntityManager em = Question.entityManager();*/
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Question> criteriaQuery = criteriaBuilder.createQuery(Question.class);
+		Root<Question> from = criteriaQuery.from(Question.class);
+		
+		Predicate pre1 = criteriaBuilder.and(criteriaBuilder.equal(from.get("questEvent").get("institution").get("id"), institution.getId()), criteriaBuilder.notEqual(from.get("status"), Status.DEACTIVATED));
 
-		TypedQuery<Question> q = em.createQuery(queryBuilder.toString(),
-				Question.class);
+		if (loggedUser.getIsAdmin())
+		{
+			pre1 = criteriaBuilder.and(pre1, criteriaBuilder.equal(from.get("isAcceptedAdmin"), false));
+		}
+		else
+		{
+			Predicate pre2 = criteriaBuilder.and(criteriaBuilder.equal(from.get("isAcceptedRewiever"), false), criteriaBuilder.equal(from.get("rewiewer").get("id"), loggedUser.getId()));
+			Predicate pre3 = criteriaBuilder.and(criteriaBuilder.equal(from.get("autor").get("id"), loggedUser.getId()), from.get("status").in(Status.CORRECTION_FROM_ADMIN, Status.CORRECTION_FROM_REVIEWER));
 
-		if (!loggedUser.getIsAdmin()) {
-			q.setParameter("person", loggedUser);
+			pre1 = criteriaBuilder.and(pre1, criteriaBuilder.or(pre2, pre3));
 		}
 
-		q.setParameter("isAccepted", isAccepted);
+		criteriaQuery.where(pre1);
+
+		TypedQuery<Question> q = entityManager().createQuery(criteriaQuery);
+
+		q.setFirstResult(start);
+		q.setMaxResults(length);
 
 		return q.getResultList();
 	}

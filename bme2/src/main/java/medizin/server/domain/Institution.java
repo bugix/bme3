@@ -49,7 +49,12 @@ public class Institution {
 
     public static Institution myGetInstitutionToWorkWith(){
     	HttpSession session = RequestFactoryServlet.getThreadLocalRequest().getSession();
-		Long instId = (Long) session.getAttribute("institutionId");
+		Long instId = null;
+		if(session.getAttribute("institutionId") != null)
+			instId  = (Long) session.getAttribute("institutionId");
+		else
+			return null;
+					
 		return Institution.findInstitution(instId);
     }
     
