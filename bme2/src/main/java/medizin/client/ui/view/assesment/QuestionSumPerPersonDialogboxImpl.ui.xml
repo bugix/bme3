@@ -35,9 +35,7 @@
 	</ui:style>
 	<g:HTMLPanel>
      <div class="{style.underline}">    
-      <h3 class="{style.header}" ui:field="editTitle">
-        <ui:msg>Edit QuestionSumPerPerson</ui:msg>
-      </h3>
+     
       <h3 class="{style.header}" ui:field="createTitle">
                 <ui:msg>New QuestionSumPerPerson</ui:msg>
             </h3>
