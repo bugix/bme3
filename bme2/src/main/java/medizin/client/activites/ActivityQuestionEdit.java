@@ -192,7 +192,7 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 		});
 
 		view.setQuestionTypePickerValues(Collections.<QuestionTypeProxy> emptyList());
-		requests.questionTypeRequest().findQuestionTypeEntries(0, 50).with(medizin.client.ui.view.roo.QuestionTypeProxyRenderer.instance().getPaths()).fire(new BMEReceiver<List<QuestionTypeProxy>>() {
+		requests.questionTypeRequest().findAllQuestionTypesForInstituteInSession().fire(new BMEReceiver<List<QuestionTypeProxy>>() {
 
 			public void onSuccess(List<QuestionTypeProxy> response) {
 				List<QuestionTypeProxy> values = new ArrayList<QuestionTypeProxy>();

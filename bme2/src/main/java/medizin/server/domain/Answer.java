@@ -159,15 +159,11 @@ public class Answer {
 	
 	public static long countAnswersNonAcceptedAdminByQuestion(Long questionId){
 		
-		HttpSession session = RequestFactoryServlet.getThreadLocalRequest().getSession();
+		Person loggedUser = Person.myGetLoggedPerson();
+		Institution institution = Institution.myGetInstitutionToWorkWith();
+		if (loggedUser == null || institution == null)
+			throw new IllegalArgumentException("The person and institution arguments are required");
 		
-		String shibdId2 = (String) session.getAttribute("shibdId");
-		long institutionId2 = (Long) session.getAttribute("institutionId");
-		Question question = Question.findQuestion(questionId);
-		
-		Person loggedUser = Person.findPersonByShibId(shibdId2);
-		Institution institution = Institution.findInstitution(institutionId2);
-		if (loggedUser == null || institution == null) throw new IllegalArgumentException("The person and institution arguments are required");
 		// End filter fuctionality
 		
 		 /*StringBuilder queryBuilder = new StringBuilder("SELECT count(ans) FROM Answer ans INNER JOIN ans.question as question  WHERE  ans.question = :question  AND  ");
@@ -200,6 +196,7 @@ public class Answer {
 		
 		cq.select(cb.count(from));
 		
+		Predicate pre0 = cb.equal(from.get("question").get("questEvent").get("institution"), institution);
 		Predicate pre1 = cb.equal(from.get("question").get("id"), questionId);
 		
 		if (!loggedUser.getIsAdmin())
@@ -212,7 +209,7 @@ public class Answer {
 			pre1 = cb.and(from.get("status").in(Status.NEW, Status.ACCEPTED_REVIEWER), pre1);
 		}
 		
-		cq.where(pre1);
+		cq.where(cb.and(pre0,pre1));
 		
         TypedQuery<Long> q = entityManager().createQuery(cq);
         
@@ -243,15 +240,11 @@ public class Answer {
 //	        q.setParameter("question", question);
 //	        q.setParameter("isAnswerAcceptedAdmin", isAnswerAcceptedAdmin);
 		
-		HttpSession session = RequestFactoryServlet.getThreadLocalRequest().getSession();
+		Person loggedUser = Person.myGetLoggedPerson();
+		Institution institution = Institution.myGetInstitutionToWorkWith();
+		if (loggedUser == null || institution == null)
+			throw new IllegalArgumentException("The person and institution arguments are required");
 		
-		String shibdId2 = (String) session.getAttribute("shibdId");
-		long institutionId2 = (Long) session.getAttribute("institutionId");
-		Question question = Question.findQuestion(questionId);
-		
-		Person loggedUser = Person.findPersonByShibId(shibdId2);
-		Institution institution = Institution.findInstitution(institutionId2);
-		if (loggedUser == null || institution == null) throw new IllegalArgumentException("The person and institution arguments are required");
 		// End filter fuctionality
 		
 		 /*StringBuilder queryBuilder = new StringBuilder("SELECT ans FROM Answer ans INNER JOIN ans.question as question  WHERE  ans.question = :question  AND  ");
@@ -282,6 +275,7 @@ public class Answer {
 		CriteriaQuery<Answer> cq = cb.createQuery(Answer.class);
 		Root<Answer> from = cq.from(Answer.class);
 		
+		Predicate pre0 = cb.equal(from.get("question").get("questEvent").get("institution"), institution);
 		Predicate pre1 = cb.equal(from.get("question").get("id"), questionId);
 		
 		if (!loggedUser.getIsAdmin())
@@ -294,7 +288,7 @@ public class Answer {
 			pre1 = cb.and(from.get("status").in(Status.NEW, Status.ACCEPTED_REVIEWER), pre1);
 		}
 		
-		cq.where(pre1);
+		cq.where(cb.and(pre0,pre1));
 		
         TypedQuery<Answer> q = entityManager().createQuery(cq);
         return q.getResultList();

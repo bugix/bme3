@@ -28,6 +28,7 @@ import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
 
+import com.google.common.collect.Lists;
 import com.google.web.bindery.requestfactory.server.RequestFactoryServlet;
 
 @RooJavaBean
@@ -178,20 +179,26 @@ public class Person {
     
     public static List<Person> getAllPersons(int start,int end){
     	log.info("inside getAllPersons");
-    	Person currentuser =myGetLoggedPerson();
-    	List<Person> resultList =null;
+    	Person userLoggedIn =myGetLoggedPerson();
+    	Institution institution = Institution.myGetInstitutionToWorkWith();
+    	List<Person> resultList = Lists.newArrayList();
+    	
+		if(userLoggedIn == null || institution == null) {
+			return resultList;
+		}
     	
     	CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
     	CriteriaQuery<Person> criteriaQuery = criteriaBuilder.createQuery(Person.class);
     	Root<Person> from = criteriaQuery.from(Person.class);
     	
     	try{
-	    	if(currentuser.getIsAdmin()){
-	    		Predicate pre1 = criteriaBuilder.notEqual(from.get("id"),currentuser.getId());
+
+	    	if(userLoggedIn.getIsAdmin()){
+	    		Predicate pre1 = criteriaBuilder.notEqual(from.get("id"),userLoggedIn.getId());
 		    	criteriaQuery.where(pre1);
 	    	}
 	    	else{
-		    	Predicate pre1 = criteriaBuilder.notEqual(from.get("id"),currentuser.getId());
+		    	Predicate pre1 = criteriaBuilder.notEqual(from.get("id"),userLoggedIn.getId());
 		    	Predicate pre2 = criteriaBuilder.notEqual(from.get("isAdmin"),Boolean.TRUE);
 		    	
 		    	criteriaQuery.where(criteriaBuilder.and(pre1,pre2));
@@ -216,31 +223,39 @@ public class Person {
 		Long value=0l;
 		
 		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
-		CriteriaQuery<Person> criteriaQuery = criteriaBuilder.createQuery(Person.class);
+		CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
 		Root<Person> from = criteriaQuery.from(Person.class);
 		
 		try{
-			Person currentuser =myGetLoggedPerson();
-	    	if(currentuser.getIsAdmin()){
-	    		Predicate pre1 = criteriaBuilder.notEqual(from.get("id"),currentuser.getId());
+			Person userLoggedIn = myGetLoggedPerson();
+			Institution institution = Institution.myGetInstitutionToWorkWith();
+			
+			if(userLoggedIn == null || institution == null) {
+				return 0l;
+			}
+			
+			criteriaQuery.select(criteriaBuilder.count(from));
+	    	if(userLoggedIn.getIsAdmin()){
+	    		Predicate pre1 = criteriaBuilder.notEqual(from.get("id"),userLoggedIn.getId());
 		    	criteriaQuery.where(pre1);
 	    	}
 	    	else{
-		    	Predicate pre1 = criteriaBuilder.notEqual(from.get("id"),currentuser.getId());
+		    	Predicate pre1 = criteriaBuilder.notEqual(from.get("id"),userLoggedIn.getId());
 		    	Predicate pre2 = criteriaBuilder.notEqual(from.get("isAdmin"),Boolean.TRUE);
 		    	
 		    	criteriaQuery.where(criteriaBuilder.and(pre1,pre2));
-	    }
+	    	}
 	    	
-	    	TypedQuery<Person> query =entityManager().createQuery(criteriaQuery);
+	    	TypedQuery<Long> query =entityManager().createQuery(criteriaQuery);
 	    	
-	    	value= (long)query.getResultList().size();
+	    	value= query.getSingleResult();
 	    	
 		}catch (Exception e) {
 			e.printStackTrace();
 			log.info("Error Whil getting person count" + e.getStackTrace().toString());
 			return value;
-	}
+		}
+		
 		return value;
 	}
 

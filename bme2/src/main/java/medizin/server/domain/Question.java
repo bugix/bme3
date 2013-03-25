@@ -416,19 +416,12 @@ public class Question {
 	}
 
 	public static List<Question> findQuestionsAnswersNonAcceptedAdmin() {
-		Boolean isAcceptedAdmin = false;
-
-		HttpSession session = RequestFactoryServlet.getThreadLocalRequest()
-				.getSession();
-		;
-		String shibdId2 = (String) session.getAttribute("shibdId");
-		long institutionId2 = (Long) session.getAttribute("institutionId");
-
-		Person loggedUser = Person.findPersonByShibId(shibdId2);
-		Institution institution = Institution.findInstitution(institutionId2);
+		//Boolean isAcceptedAdmin = false;
+		
+		Person loggedUser = Person.myGetLoggedPerson();
+		Institution institution = Institution.myGetInstitutionToWorkWith();
 		if (loggedUser == null || institution == null)
-			throw new IllegalArgumentException(
-					"The person and institution arguments are required");
+			throw new IllegalArgumentException("The person and institution arguments are required");
 
 		/*EntityManager em = Question.entityManager();
 		StringBuilder queryBuilder;

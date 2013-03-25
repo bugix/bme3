@@ -23,6 +23,8 @@ import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
 
+import com.google.common.collect.Lists;
+
 @RooJavaBean
 @RooToString
 @RooJpaActiveRecord
@@ -254,5 +256,28 @@ public class QuestionType {
 
 		log.info("Result list size :" + query.getSingleResult() );
 		return query.getSingleResult();
+    }
+    
+    public static List<QuestionType> findAllQuestionTypesForInstituteInSession() {
+    	Person userLoggedIn = Person.myGetLoggedPerson();
+		Institution institution = Institution.myGetInstitutionToWorkWith();
+		if (userLoggedIn == null || institution == null)
+			return Lists.newArrayList();
+
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<QuestionType> criteriaQuery = criteriaBuilder.createQuery(QuestionType.class);
+		Root<QuestionType> from = criteriaQuery.from(QuestionType.class);
+    	return allQuestionTypesForInstitute(institution, criteriaBuilder, criteriaQuery, from).getResultList();
+    }
+    
+    private final static <T> TypedQuery<T> allQuestionTypesForInstitute(Institution institution,CriteriaBuilder criteriaBuilder,CriteriaQuery<T> criteriaQuery,Root<QuestionType> from) {
+    	
+		Predicate p1 = criteriaBuilder.equal(from.get("institution"),institution);	
+		criteriaQuery.where(p1);
+		TypedQuery<T> query = entityManager().createQuery(criteriaQuery);
+
+		log.info("Query is : " + query.unwrap(Query.class).getQueryString());
+
+		return query;
     }
 }
