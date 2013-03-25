@@ -469,7 +469,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 
             public void onSuccess(Void ignore) {
             	Log.debug("Sucessfull deleted");
-            	placeController.goTo(new PlaceQuestion("PlaceQuestion!DELETED"));
+            	placeController.goTo(new PlaceQuestion(PlaceQuestion.PLACE_QUESTION));
             	
             }
            /* @Override

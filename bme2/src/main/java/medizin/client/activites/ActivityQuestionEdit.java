@@ -377,7 +377,7 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 			cancelClickedGoto(question);
 			//gotoDetailsPlace(question);
 		} else {
-			goTo(new PlaceQuestion("PlaceQuestion!DELETED"));
+			goTo(new PlaceQuestion(PlaceQuestion.PLACE_QUESTION));
 		}
 
 	}
