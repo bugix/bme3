@@ -467,7 +467,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 
             public void onSuccess(Void ignore) {
             	Log.debug("Sucessfull deleted");
-            	placeController.goTo(new PlaceUser("PlaceUser!DELETED"));
+            	placeController.goTo(new PlaceUser(PlaceUser.PLACE_USER));
             	
             }
             /* @Override

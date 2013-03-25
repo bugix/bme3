@@ -22,8 +22,8 @@
 						<h3 class="{style.header}" style="display:inline">
 							 <span ui:field="displayRenderer"></span> 
 						</h3>
-						<m:IconButton ui:field="edit" icon="pencil">Edit</m:IconButton>
-						<m:IconButton ui:field="delete" icon="trash">Delete</m:IconButton>
+						<m:IconButton ui:field="edit" icon="pencil" text="{constants.edit}"></m:IconButton>
+						<m:IconButton ui:field="delete" icon="trash" text="{constants.delete}"></m:IconButton>
 					</div>
 				</g:HTMLPanel>
 			</g:HorizontalPanel>

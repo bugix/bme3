@@ -17,6 +17,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import medizin.shared.utils.PersonAccessRight;
@@ -50,11 +51,13 @@ public class Person {
     @NotNull
     @Column(unique = true)
     @Size(min = 7, max = 50)
+    @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}$")
     private String email;
 
     @NotNull
     @Column(unique = true)
     @Size(min = 7, max = 50)
+    @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}$")
     private String alternativEmail;
 
     @Size(min = 5, max = 50)

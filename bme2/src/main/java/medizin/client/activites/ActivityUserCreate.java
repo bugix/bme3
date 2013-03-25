@@ -238,7 +238,7 @@ public class ActivityUserCreate  extends AbstractActivityWrapper  implements Use
 		if(this.operation==PlaceUserDetails.Operation.EDIT)
 			placeController.goTo(new PlaceUserDetails(person.stableId(), PlaceUserDetails.Operation.DETAILS));
 		else
-			placeController.goTo(new PlaceUser("PlaceUser!CANCEL"));
+			placeController.goTo(new PlaceUser(PlaceUser.PLACE_USER));
 		
 	}
 
@@ -287,6 +287,7 @@ public class ActivityUserCreate  extends AbstractActivityWrapper  implements Use
 
 			@Override
 			public void onSuccess(Void response) {
+				placeController.goTo(new PlaceUser(PlaceUser.PLACE_USER));
 				placeController.goTo(new PlaceUserDetails(finalPersonProxy.stableId(), PlaceUserDetails.Operation.DETAILS));
 			}
 			

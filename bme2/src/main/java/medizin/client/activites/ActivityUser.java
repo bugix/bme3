@@ -342,7 +342,11 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 
 	@Override
 	public void placeChanged(Place place) {
-		if(place instanceof PlaceUserDetails){
+		/*if(place instanceof PlaceUserDetails){
+			init();
+		}*/
+		
+		if(place instanceof PlaceUser) {
 			init();
 		}
 	}

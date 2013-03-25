@@ -90,6 +90,10 @@ public abstract class AbstractDetailsPlace extends AbstractPlace {
 		}
 		final AbstractDetailsPlace other = (AbstractDetailsPlace) obj;
 
+		// every create operation is new
+		if(Operation.CREATE.equals(other.getOperation())) {
+			return false;
+		}
 		return Objects.equal(getPlaceName(), other.getPlaceName()) 
 				&& Objects.equal(getOperation(), other.getOperation()) 
 				&& Objects.equal(getProxyId(), other.getProxyId());
