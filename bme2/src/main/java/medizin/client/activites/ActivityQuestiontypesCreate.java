@@ -12,9 +12,6 @@ import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.request.QuestionTypeRequest;
 import medizin.client.ui.view.QuestiontypesEditView;
 import medizin.client.ui.view.QuestiontypesEditViewImpl;
-import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
-import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxOkButtonEvent;
-import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxOkButtonEventHandler;
 import medizin.shared.QuestionTypes;
 import medizin.shared.i18n.BmeConstants;
 
@@ -37,9 +34,6 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 	private PlaceUserDetails userPlace;
 
 	private PlaceQuestiontypesDetails.Operation operation;
-
-
-
 
 	private HandlerRegistration rangeChangeHandler;
 
@@ -204,7 +198,7 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 			goTo(new PlaceQuestiontypesDetails(questionType.stableId(),PlaceQuestiontypesDetails.Operation.DETAILS));
 		}
 		else {			
-			goTo(new PlaceQuestiontypes("PlaceQuestiontypes!DELETED"));
+			goTo(new PlaceQuestiontypes(PlaceQuestiontypes.PLACE_QUESTIONTYPES));
 		}
 	}
 
@@ -306,14 +300,7 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 
 					public void onSuccess(Void response) {
 						view.setNullValue(selectedQuestionType);
-						//Window.alert("Record Inserted Successfully...");
-						ConfirmationDialogBox.showOkDialogBox(constants.success(), constants.questionTypeSaveMsg(), new ConfirmDialogBoxOkButtonEventHandler() {
-
-							@Override
-							public void onOkButtonClicked(ConfirmDialogBoxOkButtonEvent event) {
-								placeController.goTo(new PlaceQuestiontypesDetails(finalQuestionTypeProxy.stableId(),PlaceQuestiontypesDetails.Operation.DETAILS));
-							}
-						});
+						placeController.goTo(new PlaceQuestiontypesDetails(finalQuestionTypeProxy.stableId(),PlaceQuestiontypesDetails.Operation.DETAILS));
 					}
 				});
 			/*}

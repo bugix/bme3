@@ -160,33 +160,9 @@ public class ActivityQuestiontypesDetails extends AbstractActivityWrapper implem
 
             public void onSuccess(Void ignore) {
             	Log.debug("Sucessfull deleted");
-            	placeController.goTo(new PlaceQuestiontypes("PlaceQuestiontypes!DELETED"));
-            	
-            }
-            
-          /*  @Override
-            public void onFailure(ServerFailure error){
-          	  ErrorPanel errorPanel = new ErrorPanel();
-          	  errorPanel.setErrorMessage(error.getMessage());
-  				Log.error(error.getMessage());
-  			}
-            @Override
-  			public void onViolation(Set<Violation> errors) {
-  				Iterator<Violation> iter = errors.iterator();
-  				String message = "";
-  				while(iter.hasNext()){
-  					message += iter.next().getMessage() + "<br>";
-  				}
-  				Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Fragetyp löschen -" + message);
-  				
-  	        	  ErrorPanel errorPanel = new ErrorPanel();
-  	        	  errorPanel.setWarnMessage(message);
-  				
-
-  				
-  			}*/
-            
-        });
+            	placeController.goTo(new PlaceQuestiontypes(PlaceQuestiontypes.PLACE_QUESTIONTYPES));
+           }
+       });
 		
 	}
 
@@ -235,12 +211,4 @@ public class ActivityQuestiontypesDetails extends AbstractActivityWrapper implem
 			
 		});
 	}
-
-
-
-
-
-
-
-
 }

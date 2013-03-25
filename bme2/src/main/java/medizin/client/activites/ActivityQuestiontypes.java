@@ -470,6 +470,9 @@ public class ActivityQuestiontypes extends AbstractActivityWrapper implements Qu
 					//requests.getEventBus().fireEvent(new ApplicationLoadingScreenEvent(false));
 				}
 			}	
+			
+			if (place instanceof PlaceQuestiontypes)
+				init();
 		}
 	
 		

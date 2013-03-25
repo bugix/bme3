@@ -91,6 +91,7 @@ public class ActivityAcceptQuestionEdit extends ActivityQuestionEdit {
 	
 	@Override
 	protected void gotoUpdateDetailsPlace() {
+		goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));
 		goTo(new PlaceAcceptQuestionDetails(question.stableId(),Operation.DETAILS));
 	}
 	
