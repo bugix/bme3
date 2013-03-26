@@ -3,6 +3,7 @@ package medizin.client.place;
 import medizin.client.factory.request.McAppRequestFactory;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.place.shared.Prefix;
 import com.google.web.bindery.requestfactory.shared.EntityProxyId;
 
 public class PlaceQuestiontypesDetails extends AbstractDetailsPlace {
@@ -28,6 +29,7 @@ public class PlaceQuestiontypesDetails extends AbstractDetailsPlace {
 		Log.debug("PlaceQuestiontypesDetails wird erstellt");
 	}
 
+	@Prefix(PLACE_QUESTIONTYPES_DETAILS)
 	public static class Tokenizer extends AbstractDetailsPlace.AbstractTokenizer<PlaceQuestiontypesDetails> {
 
 		public Tokenizer(McAppRequestFactory requestFactory) {

@@ -8,6 +8,9 @@
 	.padleft5 {
 			padding-left: 5px;
 		}
+		.valueHeight {
+			min-height: 25px;
+		}
 		</ui:style>
 		
 	<g:HTMLPanel >
@@ -15,7 +18,7 @@
 	<g:VerticalPanel addStyleNames="{style.tabStyle} {style.patientTopContainer}">
 			<g:HorizontalPanel styleName="{style.patientControls} {style.tabStyle}">
 				<g:Image ui:field="arrow" styleName="{style.padleft5}"
-					url="/application/gwt/unibas/images/up.png"></g:Image>
+					url="/application/gwt/unibas/images/down.png"></g:Image>
 				<g:Label addStyleNames="{style.label}" ui:field="labelLongNameHeader"></g:Label>
 				<g:HTMLPanel>
 					<div class="{style.controlsright}">
@@ -63,7 +66,7 @@
 									<g:Label styleName="{style.label}" text="{constants.name}"></g:Label>
 								</td>
 								<td>
-									<g:Label ui:field="name" />
+									<g:Label addStyleNames="{style.valueHeight}" ui:field="name" />
 								</td>
 							</tr>
 							<tr id="prename">
@@ -71,7 +74,7 @@
 									<g:Label styleName="{style.label}" text="{constants.prename}"></g:Label>
 								</td>
 								<td>
-									<g:Label ui:field="prename" />
+									<g:Label addStyleNames="{style.valueHeight}" ui:field="prename" />
 								</td>
 							</tr>
 							<tr id="email">
@@ -79,7 +82,7 @@
 									<g:Label styleName="{style.label}" text="{constants.email}"></g:Label>
 								</td>
 								<td>
-									<g:Label ui:field="email" />
+									<g:Label addStyleNames="{style.valueHeight}" ui:field="email" />
 								</td>
 							</tr>
 							<tr id="alternativEmail">
@@ -87,7 +90,7 @@
 									<g:Label styleName="{style.label}" text="{constants.alternativeEmail}"></g:Label>
 								</td>
 								<td>
-									<g:Label ui:field="alternativEmail" />
+									<g:Label addStyleNames="{style.valueHeight}" ui:field="alternativEmail" />
 								</td>
 							</tr>
 							<tr id="phoneNumber">
@@ -95,7 +98,7 @@
 									<g:Label styleName="{style.label}" text="{constants.phoneNo}"></g:Label>
 								</td>
 								<td>
-									<g:Label ui:field="phoneNumber" />
+									<g:Label addStyleNames="{style.valueHeight}" ui:field="phoneNumber" />
 								</td>
 							</tr>
 							<tr id="isAdmin">
@@ -103,7 +106,7 @@
 									<g:Label styleName="{style.label}" text="{constants.adminRights}"></g:Label>
 								</td>
 								<td>
-									<g:Label ui:field="isAdmin" />
+									<g:Label addStyleNames="{style.valueHeight}" ui:field="isAdmin" />
 								</td>
 							</tr>
 							<tr id="isAccepted">
@@ -111,7 +114,7 @@
 									<g:Label styleName="{style.label}" text="{constants.accessRights}"></g:Label>
 								</td>
 								<td>
-									<g:Label ui:field="isAccepted" />
+									<g:Label addStyleNames="{style.valueHeight}" ui:field="isAccepted" />
 								</td>
 							</tr>
 							<tr id="isDoctor">
@@ -119,7 +122,7 @@
 									<g:Label styleName="{style.label}" text="{constants.doctorRights}"></g:Label>
 								</td>
 								<td>
-									<g:Label ui:field="isDoctor" />
+									<g:Label addStyleNames="{style.valueHeight}" ui:field="isDoctor" />
 								</td>
 							</tr>
 							<tr id="doctorDisplay">
@@ -127,7 +130,7 @@
 									<g:Label styleName="{style.label}" text="{constants.doctor}"></g:Label>
 								</td>
 								<td>
-									<g:Label ui:field="doctorLbl" />
+									<g:Label addStyleNames="{style.valueHeight}" ui:field="doctorLbl" />
 								</td>
 							</tr>
 						</table>

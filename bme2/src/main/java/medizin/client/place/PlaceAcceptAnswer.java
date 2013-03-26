@@ -1,5 +1,7 @@
 package medizin.client.place;
 
+import com.google.gwt.place.shared.Prefix;
+
 import medizin.client.factory.request.McAppRequestFactory;
 
 public class PlaceAcceptAnswer extends AbstractPlace {
@@ -10,6 +12,7 @@ public class PlaceAcceptAnswer extends AbstractPlace {
 		super(placeName);
 	}
 
+	@Prefix(PLACE_ACCEPT_ANSWER)
 	public static class Tokenizer extends AbstractPlace.AbstractTokenizer<PlaceAcceptAnswer> {
 
 		public Tokenizer(McAppRequestFactory requestFactory) {

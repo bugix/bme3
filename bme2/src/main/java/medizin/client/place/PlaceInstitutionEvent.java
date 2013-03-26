@@ -3,6 +3,7 @@ package medizin.client.place;
 import medizin.client.factory.request.McAppRequestFactory;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.place.shared.Prefix;
 import com.google.web.bindery.requestfactory.shared.EntityProxyId;
 
 public class PlaceInstitutionEvent extends AbstractDetailsPlace {
@@ -25,6 +26,7 @@ public class PlaceInstitutionEvent extends AbstractDetailsPlace {
 		Log.debug("PlaceInstitutionEvent wird erstellt");
 	}
 
+	@Prefix(PLACE_INSTITUTION_EVENT)
 	public static class Tokenizer extends AbstractDetailsPlace.AbstractTokenizer<PlaceInstitutionEvent> {
 
 		public Tokenizer(McAppRequestFactory requestFactory) {

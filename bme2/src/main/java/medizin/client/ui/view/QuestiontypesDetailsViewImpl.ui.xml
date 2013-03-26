@@ -66,6 +66,10 @@
 		.padleft5 {
 			padding-left: 5px;
 		}
+		
+		.valueHeight {
+			min-height: 25px;
+		}
 	</ui:style>
 	<g:HTMLPanel>
 		<g:VerticalPanel addStyleNames="{style.tabStyle}">
@@ -119,7 +123,7 @@
 												<g:Label styleName="{style.label}" ui:field="shortNameLbl"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="shortNameValLbl"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="shortNameValLbl"></g:Label>
 											</td>
 										</tr>
 										<tr id="longName">
@@ -127,7 +131,7 @@
 												<g:Label styleName="{style.label}" ui:field="longNameLbl"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="longNameValLbl"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="longNameValLbl"></g:Label>
 											</td>
 										</tr>
 										<tr id="description">
@@ -135,7 +139,7 @@
 												<g:Label styleName="{style.label}" ui:field="descriptionLbl"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="descriptionValLbl"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="descriptionValLbl"></g:Label>
 											</td>
 										</tr>
 
@@ -144,7 +148,7 @@
 												<g:Label styleName="{style.label}" ui:field="instituteLbl"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="instituteValLbl"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="instituteValLbl"></g:Label>
 											</td>
 										</tr>
 
@@ -153,7 +157,7 @@
 												<g:Label styleName="{style.label}" ui:field="questionTypeLbl"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="questionTypeValLbl"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="questionTypeValLbl"></g:Label>
 											</td>
 										</tr>
 
@@ -162,7 +166,7 @@
 												<g:Label styleName="{style.label}" ui:field="sumAnswerLbl"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="sumAnswerValLbl"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="sumAnswerValLbl"></g:Label>
 											</td>
 										</tr>
 
@@ -171,7 +175,7 @@
 												<g:Label styleName="{style.label}" ui:field="sumTrueAnswerLbl"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="sumTrueAnswerValLbl"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="sumTrueAnswerValLbl"></g:Label>
 											</td>
 										</tr>
 
@@ -180,7 +184,7 @@
 												<g:Label styleName="{style.label}" ui:field="sumFalseAnswerLbl"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="sumFalseAnswerValLbl"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="sumFalseAnswerValLbl"></g:Label>
 											</td>
 										</tr>
 
@@ -189,7 +193,7 @@
 												<g:Label styleName="{style.label}" ui:field="questionLengthLbl"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="questionLengthValLbl"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="questionLengthValLbl"></g:Label>
 											</td>
 										</tr>
 
@@ -198,7 +202,7 @@
 												<g:Label styleName="{style.label}" ui:field="answerLengthLbl"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="answerLengthValLbl"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="answerLengthValLbl"></g:Label>
 											</td>
 										</tr>
 
@@ -207,7 +211,7 @@
 												<g:Label styleName="{style.label}" ui:field="answerDiffLbl"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="answerDiffValLbl"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="answerDiffValLbl"></g:Label>
 											</td>
 										</tr>
 
@@ -216,7 +220,7 @@
 												<g:Label styleName="{style.label}" ui:field="queHaveImgLbl"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="queHaveImgValLbl"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="queHaveImgValLbl"></g:Label>
 											</td>
 										</tr>
 
@@ -225,7 +229,7 @@
 												<g:Label styleName="{style.label}" ui:field="queHaveVideoLbl"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="queHaveVideoValLbl"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="queHaveVideoValLbl"></g:Label>
 											</td>
 										</tr>
 
@@ -234,7 +238,7 @@
 												<g:Label styleName="{style.label}" ui:field="queHaveSoundLbl"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="queHaveSoundValLbl"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="queHaveSoundValLbl"></g:Label>
 											</td>
 										</tr>
 
@@ -245,7 +249,7 @@
 												<g:Label styleName="{style.label}" ui:field="keywordCountLbl"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="keywordCountValLbl"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="keywordCountValLbl"></g:Label>
 											</td>
 										</tr>
 
@@ -254,7 +258,7 @@
 												<g:Label styleName="{style.label}" ui:field="showAutoCompleteLbl"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="showAutoCompleteValLbl"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="showAutoCompleteValLbl"></g:Label>
 											</td>
 										</tr>
 
@@ -263,7 +267,7 @@
 												<g:Label styleName="{style.label}" ui:field="isDictionaryKeywordLbl"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="isDictionaryKeywordValLbl"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="isDictionaryKeywordValLbl"></g:Label>
 											</td>
 										</tr>
 
@@ -272,7 +276,7 @@
 												<g:Label styleName="{style.label}" ui:field="allowTypingLbl"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="allowTypingValLbl"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="allowTypingValLbl"></g:Label>
 											</td>
 										</tr>
 
@@ -281,7 +285,7 @@
 												<g:Label styleName="{style.label}" ui:field="minLetterForAutoCompLbl"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="minLetterForAutoCompValLbl"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="minLetterForAutoCompValLbl"></g:Label>
 											</td>
 										</tr>
 
@@ -290,7 +294,7 @@
 												<g:Label styleName="{style.label}" ui:field="acceptNonKeywordLbl"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="acceptNonKeywordValLbl"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="acceptNonKeywordValLbl"></g:Label>
 											</td>
 										</tr>
 
@@ -299,7 +303,7 @@
 												<g:Label styleName="{style.label}" ui:field="shortAnswerLengthLbl"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="shortAnswerLengthValLbl"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="shortAnswerLengthValLbl"></g:Label>
 											</td>
 										</tr>
 
@@ -308,7 +312,7 @@
 												<g:Label styleName="{style.label}" ui:field="imageWidthLbl"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="imageWidthValLbl"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="imageWidthValLbl"></g:Label>
 											</td>
 										</tr>
 
@@ -317,7 +321,7 @@
 												<g:Label styleName="{style.label}" ui:field="imageLengthLbl"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="imageLengthValLbl"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="imageLengthValLbl"></g:Label>
 											</td>
 										</tr>
 
@@ -326,7 +330,7 @@
 												<g:Label styleName="{style.label}" ui:field="imageProportionLbl"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="imageProportionValLbl"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="imageProportionValLbl"></g:Label>
 											</td>
 										</tr>
 
@@ -338,7 +342,7 @@
 											</td>
 											<td>
 
-												<g:Label ui:field="linearPointValLbl"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="linearPointValLbl"></g:Label>
 											</td>
 										</tr>
 
@@ -347,7 +351,7 @@
 												<g:Label styleName="{style.label}" ui:field="linearPercentageLbl"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="linearPercentageValLbl"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="linearPercentageValLbl"></g:Label>
 											</td>
 										</tr>
 
@@ -358,7 +362,7 @@
 												<g:Label styleName="{style.label}" ui:field="keywordHighlightLbl"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="keywordHighlightValLbl"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="keywordHighlightValLbl"></g:Label>
 											</td>
 										</tr>
 
@@ -367,7 +371,7 @@
 												<g:Label styleName="{style.label}" ui:field="richTextLbl"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="richTextValLbl"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="richTextValLbl"></g:Label>
 											</td>
 										</tr>
 
@@ -376,7 +380,7 @@
 												<g:Label styleName="{style.label}" ui:field="minLengthLbl"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="minLengthValLbl"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="minLengthValLbl"></g:Label>
 											</td>
 										</tr>
 
@@ -385,7 +389,7 @@
 												<g:Label styleName="{style.label}" ui:field="maxLengthLbl"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="maxLengthValLbl"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="maxLengthValLbl"></g:Label>
 											</td>
 										</tr>
 
@@ -394,7 +398,7 @@
 												<g:Label styleName="{style.label}" ui:field="minWordCountLbl"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="minWordCountValLbl"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="minWordCountValLbl"></g:Label>
 											</td>
 										</tr>
 
@@ -403,7 +407,7 @@
 												<g:Label styleName="{style.label}" ui:field="maxWordCountLbl"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="maxWordCountValLbl"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="maxWordCountValLbl"></g:Label>
 											</td>
 										</tr>
 
@@ -414,7 +418,7 @@
 												<g:Label styleName="{style.label}" ui:field="oneToOneAssLbl"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="oneToOneAssValLbl"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="oneToOneAssValLbl"></g:Label>
 											</td>
 										</tr>
 
@@ -425,7 +429,7 @@
 												<g:Label styleName="{style.label}" ui:field="multimediaTypeLbl"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="multimediaTypeValLbl"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="multimediaTypeValLbl"></g:Label>
 											</td>
 										</tr>
 
@@ -434,7 +438,7 @@
 												<g:Label styleName="{style.label}" ui:field="selectionTypeLbl"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="selectionTypeValLbl"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="selectionTypeValLbl"></g:Label>
 											</td>
 										</tr>
 
@@ -443,7 +447,7 @@
 												<g:Label styleName="{style.label}" ui:field="columnLbl"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="columnValLbl"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="columnValLbl"></g:Label>
 											</td>
 										</tr>
 
@@ -452,7 +456,7 @@
 												<g:Label styleName="{style.label}" ui:field="thumbWidthLbl"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="thumbWidthValLbl"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="thumbWidthValLbl"></g:Label>
 											</td>
 										</tr>
 
@@ -461,7 +465,7 @@
 												<g:Label styleName="{style.label}" ui:field="thumbHeightLbl"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="thumbHeightValLbl"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="thumbHeightValLbl"></g:Label>
 											</td>
 										</tr>
 
@@ -470,7 +474,7 @@
 												<g:Label styleName="{style.label}" ui:field="allowZoomOutLbl"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="allowZoomOutValLbl"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="allowZoomOutValLbl"></g:Label>
 											</td>
 										</tr>
 
@@ -479,7 +483,7 @@
 												<g:Label styleName="{style.label}" ui:field="allowZoomInLbl"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="allowZoomInValLbl"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="allowZoomInValLbl"></g:Label>
 											</td>
 										</tr>
 
@@ -488,7 +492,7 @@
 												<g:Label styleName="{style.label}" ui:field="maxBytesLbl"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="maxBytesValLbl"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="maxBytesValLbl"></g:Label>
 											</td>
 										</tr>
 									</table>

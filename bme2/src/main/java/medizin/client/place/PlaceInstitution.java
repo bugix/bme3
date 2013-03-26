@@ -3,6 +3,7 @@ package medizin.client.place;
 import medizin.client.factory.request.McAppRequestFactory;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.place.shared.Prefix;
 
 public class PlaceInstitution extends AbstractPlace {
 
@@ -12,6 +13,7 @@ public class PlaceInstitution extends AbstractPlace {
 		super(placeName);
 	}
 
+	@Prefix(PLACE_INSTITUTION)
 	public static class Tokenizer extends AbstractPlace.AbstractTokenizer<PlaceInstitution> {
 
 		public Tokenizer(McAppRequestFactory requestFactory) {

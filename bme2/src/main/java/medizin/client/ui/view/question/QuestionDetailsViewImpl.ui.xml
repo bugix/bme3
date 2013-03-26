@@ -22,6 +22,9 @@
 			width: 100%;
 			margin-top: 10px;
 		}
+		.valueHeight {
+			min-height: 25px;
+		}
 	</ui:style>
 		
 	<g:HTMLPanel>
@@ -64,7 +67,7 @@
 												<g:Label styleName="{style.label}" ui:field="lblQuestionShortName"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="lblQuestionShortNameValue"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="lblQuestionShortNameValue"></g:Label>
 											</td>
 										</tr>
 										<tr id="questionType">
@@ -72,7 +75,7 @@
 												<g:Label styleName="{style.label}" ui:field="lblQuestionType"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="lblQuestionTypeValue"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="lblQuestionTypeValue"></g:Label>
 											</td>
 										</tr>
 										<tr id="questionText">
@@ -89,7 +92,7 @@
 												<g:Label styleName="{style.label}" ui:field="lblAuther"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="lblAutherValue"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="lblAutherValue"></g:Label>
 											</td>
 										</tr>
 										<tr id="reviewer">
@@ -97,7 +100,7 @@
 												<g:Label styleName="{style.label}" ui:field="lblReviewer"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="lblReviewerValue"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="lblReviewerValue"></g:Label>
 											</td>
 										</tr>
 										<tr id="questionEvent">
@@ -105,7 +108,7 @@
 												<g:Label styleName="{style.label}" ui:field="lblQuestionEvent"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="lblQuestionEventValue"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="lblQuestionEventValue"></g:Label>
 											</td>
 										</tr>
 										<tr id="comment">
@@ -113,7 +116,7 @@
 												<g:Label styleName="{style.label}" ui:field="lblComment"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="lblCommentValue"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="lblCommentValue"></g:Label>
 											</td>
 										</tr>
 										<tr id="mcs">
@@ -121,7 +124,7 @@
 												<g:Label styleName="{style.label}" ui:field="lblMcs"></g:Label>
 											</td>
 											<td>
-												<g:Label ui:field="lblMcsValue"></g:Label>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="lblMcsValue"></g:Label>
 											</td>
 										</tr>
 
