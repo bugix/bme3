@@ -258,6 +258,7 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 			});	
 		}else {
 			previous.setEnabled(false);
+			latest.setEnabled(true);
 		}
 	}
 
@@ -472,8 +473,9 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 				
 			default:
 			{
-				Log.info("Error");
-				questionTypeDetailPanel.remove(1);
+				Log.info("in default case");
+				if(questionTypeDetailPanel.getTabBar().getTabCount() > 1) 
+					questionTypeDetailPanel.remove(1);
 				isAdded = false;
 				break;	
 			}
