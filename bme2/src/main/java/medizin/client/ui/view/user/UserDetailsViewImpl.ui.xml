@@ -18,7 +18,7 @@
 	<g:VerticalPanel addStyleNames="{style.tabStyle} {style.patientTopContainer}">
 			<g:HorizontalPanel styleName="{style.patientControls} {style.tabStyle}">
 				<g:Image ui:field="arrow" styleName="{style.padleft5}"
-					url="/application/gwt/unibas/images/down.png"></g:Image>
+					url="application/gwt/unibas/images/down.png"></g:Image>
 				<g:Label addStyleNames="{style.label}" ui:field="labelLongNameHeader"></g:Label>
 				<g:HTMLPanel>
 					<div class="{style.controlsright}">

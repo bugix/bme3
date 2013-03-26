@@ -242,7 +242,8 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 	public void onPreviousClicked(ClickEvent e) {
 		//remove edit and delete btn
 		setVisibleIconButton(false);
-		
+		resendToReview.setVisible(false);
+		accept.setVisible(false);
 		if(proxy != null && proxy.getPreviousVersion() != null) {
 			delegate.getQuestionDetails(proxy.getPreviousVersion() ,new Function<QuestionProxy, Void>() {
 
@@ -250,6 +251,8 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 				public Void apply(QuestionProxy input) {
 					setValue(input);
 					latest.setEnabled(true);
+					resendToReview.setVisible(false);
+					accept.setVisible(false);
 					if(input.getPreviousVersion() == null) {
 						previous.setEnabled(false);	
 					}

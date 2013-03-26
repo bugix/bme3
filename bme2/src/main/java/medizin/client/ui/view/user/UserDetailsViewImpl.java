@@ -174,7 +174,7 @@ public class UserDetailsViewImpl extends Composite implements UserDetailsView
 			///bme2/src/main/java/medizin/client/style/theme/public/gwt/unibas/images/arrowdownselect.png
 			
 			//arrow.setUrl("/application/gwt/unibas/images/arrowdownselect.png");// set
-			arrow.setUrl("/application/gwt/unibas/images/right.png");// set
+			arrow.setUrl("application/gwt/unibas/images/right.png");// set
 																				// url
 																				// of
 																				// up
@@ -182,7 +182,7 @@ public class UserDetailsViewImpl extends Composite implements UserDetailsView
 
 		} else {
 			userDisclosurePanel.setOpen(true);
-			arrow.setUrl("/application/gwt/unibas/images/down.png");// set
+			arrow.setUrl("application/gwt/unibas/images/down.png");// set
 																				// url
 																				// of
 																				// down
