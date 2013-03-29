@@ -89,6 +89,11 @@ public class Question {
 	@Value("false")
 	@Column(columnDefinition="BIT", length = 1)
 	private Boolean isAcceptedAdmin;
+	
+	@NotNull
+	@Value("false")
+	@Column(columnDefinition="BIT", length = 1)
+	private Boolean isAcceptedAuthor;
 
 	/*@NotNull
 	@Value("false")
@@ -362,7 +367,7 @@ public class Question {
 		else
 		{
 			Predicate pre2 = criteriaBuilder.and(criteriaBuilder.equal(from.get("isAcceptedRewiever"), false), criteriaBuilder.equal(from.get("rewiewer").get("id"), loggedUser.getId()));
-			Predicate pre3 = criteriaBuilder.and(criteriaBuilder.equal(from.get("autor").get("id"), loggedUser.getId()), from.get("status").in(Status.CORRECTION_FROM_ADMIN, Status.CORRECTION_FROM_REVIEWER));
+			Predicate pre3 = criteriaBuilder.and(criteriaBuilder.equal(from.get("autor").get("id"), loggedUser.getId()), criteriaBuilder.equal(from.get("isAcceptedAuthor"), false));
 
 			pre1 = criteriaBuilder.and(pre1, criteriaBuilder.or(pre2, pre3));
 		}
@@ -413,7 +418,8 @@ public class Question {
 		else
 		{
 			Predicate pre2 = criteriaBuilder.and(criteriaBuilder.equal(from.get("isAcceptedRewiever"), false), criteriaBuilder.equal(from.get("rewiewer").get("id"), loggedUser.getId()));
-			Predicate pre3 = criteriaBuilder.and(criteriaBuilder.equal(from.get("autor").get("id"), loggedUser.getId()), from.get("status").in(Status.CORRECTION_FROM_ADMIN, Status.CORRECTION_FROM_REVIEWER));
+			//Predicate pre3 = criteriaBuilder.and(criteriaBuilder.equal(from.get("autor").get("id"), loggedUser.getId()), from.get("status").in(Status.CORRECTION_FROM_ADMIN, Status.CORRECTION_FROM_REVIEWER));
+			Predicate pre3 = criteriaBuilder.and(criteriaBuilder.equal(from.get("autor").get("id"), loggedUser.getId()), criteriaBuilder.equal(from.get("isAcceptedAuthor"), false));
 
 			pre1 = criteriaBuilder.and(pre1, criteriaBuilder.or(pre2, pre3));
 		}
@@ -964,29 +970,32 @@ public class Question {
 		if(Status.NEW.equals(status)) {
 			question.setIsAcceptedAdmin(false);
 			question.setIsAcceptedRewiever(false);
+			question.setIsAcceptedAuthor(true);
 			//question.setIsActive(false);
 			question.setStatus(Status.NEW);
 		}else if(Status.CORRECTION_FROM_ADMIN.equals(status)) {
 			question.setIsAcceptedAdmin(true);
 			question.setIsAcceptedRewiever(false);
+			question.setIsAcceptedAuthor(false);
 			//question.setIsActive(false);
 			question.setStatus(Status.CORRECTION_FROM_ADMIN);
 		}else if(Status.CORRECTION_FROM_REVIEWER.equals(status)) {
 			question.setIsAcceptedAdmin(false);
 			question.setIsAcceptedRewiever(true);
+			question.setIsAcceptedAuthor(false);
 			//question.setIsActive(false);
 			question.setStatus(Status.CORRECTION_FROM_REVIEWER);
 		}else if(Status.ACCEPTED_ADMIN.equals(status)) {
 			question.setIsAcceptedAdmin(true);
 			question.setStatus(Status.ACCEPTED_ADMIN);
-			if(question.getIsAcceptedRewiever() == true) {
+			if(question.getIsAcceptedRewiever() && question.getIsAcceptedAuthor()) {
 				//question.setIsActive(true);
 				question.setStatus(Status.ACTIVE);
 			}			
 		}else if(Status.ACCEPTED_REVIEWER.equals(status)) {
 			question.setIsAcceptedRewiever(true);
 			question.setStatus(Status.ACCEPTED_REVIEWER);
-			if(question.getIsAcceptedAdmin() == true) {
+			if(question.getIsAcceptedAdmin() && question.getIsAcceptedAuthor()) {
 				//question.setIsActive(true);
 				question.setStatus(Status.ACTIVE);
 			}			
@@ -1102,7 +1111,7 @@ public class Question {
 		if (isAdminOrInstitutionalAdmin) {
 			question.setIsAcceptedAdmin(true);
 
-			if (question.getIsAcceptedRewiever()) {
+			if (question.getIsAcceptedRewiever() && question.getIsAcceptedAuthor()) {
 				question.setStatus(Status.ACTIVE);
 				//question.setIsActive(true);
 			} else
@@ -1110,14 +1119,18 @@ public class Question {
 		} else if (question.getRewiewer().getId().equals(userLoggedIn.getId())) {
 			question.setIsAcceptedRewiever(true);
 
-			if (question.getIsAcceptedAdmin()) {
+			if (question.getIsAcceptedAdmin() && question.getIsAcceptedAuthor()) {
 				question.setStatus(Status.ACTIVE);
 				//question.setIsActive(true);
 			} else
 				question.setStatus(Status.ACCEPTED_REVIEWER);
 		} else if (question.getAutor().getId().equals(userLoggedIn.getId())) {
-
-			if (question.getStatus().equals(Status.CORRECTION_FROM_ADMIN)) {
+			question.setIsAcceptedAuthor(true);
+			
+			if (question.getIsAcceptedAdmin() && question.getIsAcceptedRewiever())
+				question.setStatus(Status.ACTIVE);
+				
+			/*if (question.getStatus().equals(Status.CORRECTION_FROM_ADMIN)) {
 				question.setIsAcceptedAdmin(true);
 				question.setStatus(Status.ACCEPTED_ADMIN);
 			} else if (question.getStatus().equals(Status.CORRECTION_FROM_REVIEWER)) {
@@ -1129,7 +1142,7 @@ public class Question {
 			} else if (question.getStatus().equals(Status.ACCEPTED_REVIEWER)) {
 				question.setStatus(Status.ACTIVE);
 				//question.setIsActive(true);
-			}
+			}*/
 		}
 
 		if (Status.ACTIVE.equals(question.getStatus()))

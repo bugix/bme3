@@ -83,6 +83,14 @@ privileged aspect Question_Roo_JavaBean {
         this.isAcceptedAdmin = isAcceptedAdmin;
     }
     
+    public Boolean Question.getIsAcceptedAuthor() {
+        return this.isAcceptedAuthor;
+    }
+    
+    public void Question.setIsAcceptedAuthor(Boolean isAcceptedAuthor) {
+        this.isAcceptedAuthor = isAcceptedAuthor;
+    }
+    
     public Question Question.getPreviousVersion() {
         return this.previousVersion;
     }

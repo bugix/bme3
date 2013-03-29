@@ -80,6 +80,9 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 	
 	@UiField
 	SpanElement displayRenderer;
+	
+	@UiField
+	SpanElement displayVersionRenderer;
 
 	@UiField
 	Label lblQuestionType;
@@ -267,19 +270,36 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 
 	@UiHandler("latest")
 	public void onlatestClicked(ClickEvent e) {
-		//remove edit and delete btn
+		/*//remove edit and delete btn
 		
-		if(delegate.isQuestionDetailsPlace()) {
+		if(delegate.isQuestionDetailsPlace() && proxy != null && proxy.getIsReadOnly() == false) {
 			setVisibleIconButton(true);	
-		}else {
-			setVisibleAcceptButton();
 		}
+		else if(delegate.isQuestionDetailsPlace() && proxy != null && proxy.getIsReadOnly() == true) {
+			setVisibleIconButton(false);
+		}
+		else  if(delegate.isQuestionDetailsPlace() == false){
+			setVisibleAcceptButton();
+		}*/
 		
 		delegate.getLatestQuestionDetails(new Function<QuestionProxy, Void>() {
 
 			@Override
 			public Void apply(QuestionProxy input) {
 				setValue(input);
+				
+				//remove edit and delete btn
+				
+				if(delegate.isQuestionDetailsPlace() && proxy != null && proxy.getIsReadOnly() == false) {
+					setVisibleIconButton(true);	
+				}
+				else if(delegate.isQuestionDetailsPlace() && proxy != null && proxy.getIsReadOnly() == true) {
+					setVisibleIconButton(false);
+				}
+				else  if(delegate.isQuestionDetailsPlace() == false){
+					setVisibleAcceptButton();
+				}
+				
 				latest.setEnabled(false);
 				if(input.getPreviousVersion()== null) {
 					previous.setEnabled(false);	
@@ -300,7 +320,12 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 		String qVersion = proxy.getQuestionVersion() == null ? "0" : proxy.getQuestionVersion().toString();
 		String qSubVersion = proxy.getQuestionSubVersion() == null ? "0" : proxy.getQuestionSubVersion().toString();
 		String version = "(" + qVersion + "." + qSubVersion + ")";
-		displayRenderer.setInnerText(proxy.getQuestionShortName()==null?proxy.getId().toString():proxy.getQuestionShortName() + " " + version);
+		
+		displayRenderer.setInnerText(proxy.getQuestionShortName()==null?proxy.getId().toString():proxy.getQuestionShortName());
+		displayRenderer.setTitle(proxy.getQuestionShortName()==null?proxy.getId().toString():proxy.getQuestionShortName());
+		
+		displayVersionRenderer.setInnerText(version);
+		
 		lblQuestionTypeValue.setText(proxy.getQuestionType()==null?"":proxy.getQuestionType().getShortName());
 		lblQuestionShortNameValue.setText(proxy.getQuestionShortName()==null?"":proxy.getQuestionShortName());
 		//lblQuestionTextValue.setText(proxy.getQuestionText()==null?"":proxy.getQuestionText());

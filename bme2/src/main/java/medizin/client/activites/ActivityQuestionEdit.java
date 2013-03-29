@@ -927,11 +927,13 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 		if (Status.NEW.equals(status)) {
 			questionEdit.setIsAcceptedAdmin(false);
 			questionEdit.setIsAcceptedRewiever(false);
+			questionEdit.setIsAcceptedAuthor(true);
 			// questionEdit.setIsActive(false);
 			questionEdit.setStatus(Status.NEW);
 		} else if (Status.ACCEPTED_REVIEWER.equals(status)) {
 			questionEdit.setIsAcceptedAdmin(false);
 			questionEdit.setIsAcceptedRewiever(true);
+		
 			// questionEdit.setIsActive(false);
 			questionEdit.setStatus(Status.ACCEPTED_REVIEWER);
 		} else if(Status.EDITED_BY_ADMIN.equals(status)){

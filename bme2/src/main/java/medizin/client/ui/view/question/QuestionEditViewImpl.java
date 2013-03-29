@@ -259,12 +259,16 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 				saveQuestion(false,false);
 				//delegate.saveClicked(false);
 			} else {
-				if(delegate.isAcceptQuestionView() && delegate.isAdminOrReviewer()) {
-					// with minor version
-					saveQuestion(edit, false);
-				}else if(delegate.isAuthor()){
-					// with major version
-					saveQuestion(edit, true);
+				if(delegate.isAcceptQuestionView()) {
+					if(delegate.isAdminOrReviewer()) {
+						// with minor version
+						saveQuestion(edit, false);
+					}else if(delegate.isAuthor()){
+						// with major version
+						saveQuestion(edit, true);
+					}else {
+						Log.info("Do nothing");
+					}
 				}else {
 					final ConfirmQuestionChangesPopup confirm = new ConfirmQuestionChangesPopup(new Function<Boolean, Void>() {
 						

@@ -48,14 +48,15 @@ public class ActivityAcceptQuestionEdit extends ActivityQuestionEdit {
 				}else if(userLoggedIn.getId().equals(question.getRewiewer().getId())) {
 					status = Status.CORRECTION_FROM_REVIEWER;
 				}else if(userLoggedIn.getId().equals(question.getAutor().getId())) {
-					if(question.getStatus().equals(Status.CORRECTION_FROM_ADMIN)){
+					status = Status.NEW;
+					/*if(question.getStatus().equals(Status.CORRECTION_FROM_ADMIN)){
 						status = Status.ACCEPTED_ADMIN;	
 					}else if(question.getStatus().equals(Status.CORRECTION_FROM_REVIEWER)) {
 						status = Status.ACCEPTED_REVIEWER;
 					}else {
 						Log.info("Error this scenario is not considered yet");
 						status = question.getStatus();
-					}
+					}*/
 				}else {
 					Log.info("Error this scenario is not considered yet");
 					status = question.getStatus();

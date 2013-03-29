@@ -25,6 +25,19 @@
 		.valueHeight {
 			min-height: 25px;
 		}
+		.headerText{
+			max-width: 170px;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			display: inline-block;
+			min-height: 15px;
+			vertical-align: middle;
+		}
+		.headerVersionText{
+			min-height: 15px;
+			vertical-align: middle;
+		}
 	</ui:style>
 		
 	<g:HTMLPanel>
@@ -36,7 +49,8 @@
 				<g:HTMLPanel>
 					<div class="{style.controlsright}">
 						<h3 class="{style.header}" style="display:inline">
-							<span ui:field="displayRenderer"></span>
+							<span ui:field="displayRenderer" class="{style.headerText}"></span>
+							<span ui:field="displayVersionRenderer" class="{style.headerVersionText}"></span>
 						</h3>
 						<g:HorizontalPanel addStyleNames="{style.rightside}">
 							<medizin:IconButton ui:field="previous" icon="seek-prev" text="{constants.previousVersion}"></medizin:IconButton>
