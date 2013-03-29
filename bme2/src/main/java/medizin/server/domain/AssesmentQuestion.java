@@ -21,6 +21,8 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.validation.constraints.NotNull;
 
+import medizin.shared.Status;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -93,17 +95,17 @@ public class AssesmentQuestion {
     
     public static List<AssesmentQuestion> findAssesmentQuestionsByMc(Long id){
         Boolean isAcceptedAdmin = true;
-        Boolean isActive = true;
+        
         Mc mc = Mc.findMc(id);
         if (mc == null) throw new IllegalArgumentException("The mcs argument is required");
         EntityManager em = Question.entityManager();
         StringBuilder queryBuilder = new StringBuilder("SELECT assesmentauestion FROM AssesmentQuestion AS assesmentauestion " +
         		"INNER JOIN assesmentauestion.question AS quest WHERE assesmentauestion.isAssQuestionAcceptedAdmin = :isAcceptedAdmin AND"+
-        		" quest.isActive = :isActive AND :mcs_item MEMBER OF quest.mcs");
+        		" quest.status = :status AND :mcs_item MEMBER OF quest.mcs");
         
         TypedQuery<AssesmentQuestion> q = em.createQuery(queryBuilder.toString(), AssesmentQuestion.class);
         q.setParameter("isAcceptedAdmin", isAcceptedAdmin);
-        q.setParameter("isActive", isActive);
+        q.setParameter("status", Status.ACTIVE);
 
         q.setParameter("mcs_item", mc);
         
@@ -129,17 +131,17 @@ public class AssesmentQuestion {
     
     public static List<AssesmentQuestion> findAssesmentQuestionsByMcProposal(Long id){
         Boolean isAssQuestionAdminProposal = true;
-        Boolean isActive = true;
+       
         Mc mc = Mc.findMc(id);
         if (mc == null) throw new IllegalArgumentException("The mcs argument is required");
         EntityManager em = Question.entityManager();
         StringBuilder queryBuilder = new StringBuilder("SELECT assesmentauestion FROM AssesmentQuestion AS assesmentauestion " +
         		"INNER JOIN assesmentauestion.question AS quest WHERE assesmentauestion.isAssQuestionAdminProposal = :isAssQuestionAdminProposal AND"+
-        		" quest.isActive = :isActive AND :mcs_item MEMBER OF quest.mcs");
+        		" quest.status = :status AND :mcs_item MEMBER OF quest.mcs");
         
         TypedQuery<AssesmentQuestion> q = em.createQuery(queryBuilder.toString(), AssesmentQuestion.class);
         q.setParameter("isAssQuestionAdminProposal", isAssQuestionAdminProposal);
-        q.setParameter("isActive", isActive);
+        q.setParameter("status", Status.ACTIVE);
 
          q.setParameter("mcs_item", mc);
         
