@@ -493,5 +493,9 @@ public interface BmeConstants extends Constants , ConstantsWithLookup {
 	
 	public String phoneNumberMinMaxSize();
 
+	public String sumOfAnsMsg();
 	
+	public String sumOfTrueAnsMsg();
+	
+	public String sumOfFalseAnsMsg();
 }

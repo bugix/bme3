@@ -1,5 +1,6 @@
 package medizin.client.ui.view;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -14,6 +15,7 @@ import medizin.shared.QuestionTypes;
 import medizin.shared.SelectionType;
 import medizin.shared.i18n.BmeConstants;
 
+import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.SpanElement;
@@ -375,27 +377,6 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 	 
 	@UiField
 	TextBox maxBytesTxtbox;
-    /*@UiHandler ("isWeil")
-    public void onWeilSelected(ClickEvent event){
-    	if(isWeil.getValue()){
-    		Document.get().getElementById("trueAnswers").getStyle().setVisibility(Visibility.HIDDEN);
-    		Document.get().getElementById("falseAnswers").getStyle().setVisibility(Visibility.HIDDEN);
-    		Document.get().getElementById("sumAnswers").getStyle().setVisibility(Visibility.HIDDEN);
-    		Document.get().getElementById("maxLetters").getStyle().setVisibility(Visibility.HIDDEN);
-    	} else {
-    		Document.get().getElementById("trueAnswers").getStyle().setVisibility(Visibility.VISIBLE);
-    		Document.get().getElementById("falseAnswers").getStyle().setVisibility(Visibility.VISIBLE);
-    		Document.get().getElementById("sumAnswers").getStyle().setVisibility(Visibility.VISIBLE);
-    		Document.get().getElementById("maxLetters").getStyle().setVisibility(Visibility.VISIBLE);
-    	}
-    	
-    }*/
-    
-//
-//    @UiField
-//    TextBox displayRenderer;
-//	
-	
 
     @UiField
     IconButton cancel;
@@ -415,97 +396,24 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 
     @UiHandler("save")
     void onSave(ClickEvent event) {
-        //delegate.saveClicked(questionTypeName.getText(), isWeil.getValue(), trueAnswers.getValue(), falseAnswers.getValue(), sumAnswers.getValue(), maxLetters.getValue());
-    
-//    	
-//    	String text = questionTypeName.getText();
-//    	Boolean value = isWeil.getValue();
-//    	Integer value2 = trueAnswers.getValue();
-//    	Integer value3 = falseAnswers.getValue();
-//    	Integer value4 = sumAnswers.getValue();
-//    	Integer value5 = maxLetters.getValue(); 
-//    	
-    	
-    //	delegate.saveClicked();
-    	
-    	/*boolean flag = false;
-    	
-    	if (shortNameTxtbox.getText().equals("") || longNameTxtbox.getText().equals("") || descriptionTxtbox.getText().equals(""))
-    	{
-    		flag = true;
-    		ConfirmationDialogBox.showOkDialogBox(constants.warning(),constants.enterAllValue());
-    		return;
-    	}
-    	
-    	if (questionTypeListBox.getValue().equals(QuestionTypes.Textual) || questionTypeListBox.getValue().equals(QuestionTypes.Sort))
-        {
-     	   if (sumAnswerTxtbox.getText().equals("") || sumTrueAnswerTxtbox.getText().equals("") || sumFalseAnswerTxtbox.getText().equals("") ||
-     			   questionLengthTxtbox.getText().equals("") || answerLengthTxtbox.getText().equals("") || answerDiffTxtbox.getText().equals(""))
-     	   {
-     		  flag = true;
-     		 ConfirmationDialogBox.showOkDialogBox(constants.warning(),constants.enterAllValue());     		  
-     	   }
-        }
-        if (questionTypeListBox.getValue().equals(QuestionTypes.Imgkey))
-        {
-        	if(keywordCountTxtbox.getText().equals("") || minLetterForAutoCompTxtbox.getText().equals("") || answerLengthTxtbox.getText().equals("") ||
-        			shortAnswerLengthTxtbox.getText().equals("") || imageWidthTxtbox.getText().equals("") ||
-        			imageLengthTxtbox.getText().equals("") || imageProportionTxtbox.getText().equals(""))
-        	{
-        		flag = true;
-        		ConfirmationDialogBox.showOkDialogBox(constants.warning(),constants.enterAllImageKeyValue());        		
-        	}
-     	   
-        }
-        if (questionTypeListBox.getValue().equals(QuestionTypes.ShowInImage))
-        {
-        	if (imageWidthTxtbox.getText().equals("") || imageLengthTxtbox.getText().equals("") || imageProportionTxtbox.getText().equals("") ||
-        			linearPercentageTxtbox.getText().equals(""))
-        	{
-        		flag = true;
-        		ConfirmationDialogBox.showOkDialogBox(constants.warning(),constants.enterAllAreaValue());        		
-        	}
-        }
-        if (questionTypeListBox.getValue().equals(QuestionTypes.LongText))
-        {
-        	if(minLengthTxtbox.getText().equals("") || maxLengthTxtbox.getText().equals("") || minWordCountTxtbox.getText().equals("") || maxWordCountTxtbox.getText().equals(""))
-        	{
-        		flag = true;
-        		ConfirmationDialogBox.showOkDialogBox(constants.warning(),constants.enterAllLongTextValue());         		
-        	}
-        }
-        if (questionTypeListBox.getValue().equals(QuestionTypes.Matrix))
-        {
-     	   if (maxLengthTxtbox.getText().equals(""))
-     	   {
-     		  flag = true;
-     		 ConfirmationDialogBox.showOkDialogBox(constants.warning(),constants.enterAllMatrixValue());     		  
-     	   }
-        }
-        if (questionTypeListBox.getValue().equals(QuestionTypes.MCQ))
-        {
-     	   if (imageWidthTxtbox.getText().equals("") || imageLengthTxtbox.getText().equals("") || imageProportionTxtbox.getText().equals("") ||
-     			 multimediaTypeListBox.getValue().equals(null) || selectionTypeListBox.getValue().equals(null) || columnTxtbox.getText().equals("") ||
-     			 thumbWidthTxtbox.getText().equals("") || thumbHeightTxtbox.getText().equals("") || maxBytesTxtbox.getText().equals(""))
-     	   {
-     		  flag = true;
-     		 ConfirmationDialogBox.showOkDialogBox(constants.warning(),constants.enterAllMCQValue());     		  
-     	   }
-        }
-        
-        if(flag == false)
-    	{
-    		delegate.saveClicked(proxy);
-    	}*/
-    	
     	if (validationOfFields(questionTypeListBox.getValue()))
     	{
     		delegate.saveClicked(proxy);
     	}
-    
     }
 
+    private static final ArrayList<String> textualSortList = Lists.newArrayList("sumAnswer","sumTrueAnswer","sumFalseAnswer","questionLength","answerLength","answerDiff","queHaveImg","queHaveVideo","queHaveSound");
+	
+	private static final ArrayList<String> imgKeyList = Lists.newArrayList("questionLength","keywordCount","showAutoComplete","isDictionaryKeyword","allowTyping","minLetterForAutoComp","answerLength","acceptNonKeyword","shortAnswerLength","imageWidth","imageLength","imageProportion");
 
+	private static final ArrayList<String> showInImgList = Lists.newArrayList("questionLength","answerLength","imageWidth","imageLength","imageProportion","linearPoint","linearPercentage");
+	
+	private static final ArrayList<String> longTextList = Lists.newArrayList("keywordHighlight","richText","minLength","maxLength","minWordCount","maxWordCount");
+	
+	private static final ArrayList<String> matrixList = Lists.newArrayList("questionLength","answerLength","oneToOneAss");
+	
+	private static final ArrayList<String> mcqList = Lists.newArrayList("imageWidth","imageLength","imageProportion","multimediaType","selectionType","column","thumbWidth","thumbHeight","richText","allowZoomOut","allowZoomIn","maxBytes");
+	
 //    @UiField
 //    SpanElement displayRenderer;
 
@@ -533,6 +441,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
        }
        else if (proxy.getQuestionType().equals(QuestionTypes.Imgkey))
        {
+    	   questionLengthTxtbox.setValue(proxy.getQuestionLength().toString());
     	   keywordCountTxtbox.setValue(proxy.getKeywordCount().toString());
     	   showAutoCompleteChkBox.setValue(proxy.getShowAutocomplete());
     	   isDictionaryKeywordChkBox.setValue(proxy.getIsDictionaryKeyword());
@@ -547,6 +456,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
        }
        else if (proxy.getQuestionType().equals(QuestionTypes.ShowInImage))
        {
+    	   answerLengthTxtbox.setValue(proxy.getAnswerLength().toString());
     	   questionLengthTxtbox.setValue(proxy.getQuestionLength().toString());
     	   imageWidthTxtbox.setValue(proxy.getImageWidth().toString());
     	   imageLengthTxtbox.setValue(proxy.getImageHeight().toString());
@@ -565,7 +475,9 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
        }
        else if (proxy.getQuestionType().equals(QuestionTypes.Matrix))
        {
-    	   maxLengthTxtbox.setValue(proxy.getMaxLength().toString());
+    	   questionLengthTxtbox.setValue(proxy.getQuestionLength().toString());
+    	   answerLengthTxtbox.setValue(proxy.getAnswerLength().toString());
+    	   //maxLengthTxtbox.setValue(proxy.getMaxLength().toString());
     	   oneToOneAssChkBox.setValue(proxy.getAllowOneToOneAss());
        }
        else if (proxy.getQuestionType().equals(QuestionTypes.MCQ))
@@ -699,147 +611,21 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		allowZoomInLbl.setText(constants.allowZoomIn());
 		maxBytesLbl.setText(constants.maxBytes());
 	}
-
-
-	public void showTextualField()
+	
+	public void showField(ArrayList<String> list)
 	{
-		Document.get().getElementById("sumAnswer").getStyle().clearDisplay();
-		Document.get().getElementById("sumTrueAnswer").getStyle().clearDisplay();
-		Document.get().getElementById("sumFalseAnswer").getStyle().clearDisplay();
-		Document.get().getElementById("questionLength").getStyle().clearDisplay();
-		Document.get().getElementById("answerLength").getStyle().clearDisplay();
-		Document.get().getElementById("answerDiff").getStyle().clearDisplay();
-		Document.get().getElementById("queHaveImg").getStyle().clearDisplay();
-		Document.get().getElementById("queHaveVideo").getStyle().clearDisplay();
-		Document.get().getElementById("queHaveSound").getStyle().clearDisplay();
-		
+		for(String str : list)
+		{
+			Document.get().getElementById(str).getStyle().clearDisplay();
+		}
 	}
 	
-	public void disableTextualField()
+	public void disableQuestionField(ArrayList<String> list)
 	{
-		Document.get().getElementById("sumAnswer").getStyle().setDisplay(Display.NONE);
-		Document.get().getElementById("sumTrueAnswer").getStyle().setDisplay(Display.NONE);
-		Document.get().getElementById("sumFalseAnswer").getStyle().setDisplay(Display.NONE);
-		Document.get().getElementById("questionLength").getStyle().setDisplay(Display.NONE);
-		Document.get().getElementById("answerLength").getStyle().setDisplay(Display.NONE);
-		Document.get().getElementById("answerDiff").getStyle().setDisplay(Display.NONE);
-		Document.get().getElementById("queHaveImg").getStyle().setDisplay(Display.NONE);
-		Document.get().getElementById("queHaveVideo").getStyle().setDisplay(Display.NONE);
-		Document.get().getElementById("queHaveSound").getStyle().setDisplay(Display.NONE);
-	}
-	
-	public void showImgKeyField()
-	{
-		Document.get().getElementById("keywordCount").getStyle().clearDisplay();
-		Document.get().getElementById("showAutoComplete").getStyle().clearDisplay();
-		Document.get().getElementById("isDictionaryKeyword").getStyle().clearDisplay();
-		Document.get().getElementById("allowTyping").getStyle().clearDisplay();
-		Document.get().getElementById("minLetterForAutoComp").getStyle().clearDisplay();
-		Document.get().getElementById("answerLength").getStyle().clearDisplay();
-		Document.get().getElementById("acceptNonKeyword").getStyle().clearDisplay();
-		Document.get().getElementById("shortAnswerLength").getStyle().clearDisplay();
-		Document.get().getElementById("imageWidth").getStyle().clearDisplay();
-		Document.get().getElementById("imageLength").getStyle().clearDisplay();
-		Document.get().getElementById("imageProportion").getStyle().clearDisplay();
-	}
-	
-	public void disableImgKeyField()
-	{
-		Document.get().getElementById("keywordCount").getStyle().setDisplay(Display.NONE);
-		Document.get().getElementById("showAutoComplete").getStyle().setDisplay(Display.NONE);
-		Document.get().getElementById("isDictionaryKeyword").getStyle().setDisplay(Display.NONE);
-		Document.get().getElementById("allowTyping").getStyle().setDisplay(Display.NONE);
-		Document.get().getElementById("minLetterForAutoComp").getStyle().setDisplay(Display.NONE);
-		Document.get().getElementById("answerLength").getStyle().setDisplay(Display.NONE);
-		Document.get().getElementById("acceptNonKeyword").getStyle().setDisplay(Display.NONE);
-		Document.get().getElementById("shortAnswerLength").getStyle().setDisplay(Display.NONE);
-		Document.get().getElementById("imageWidth").getStyle().setDisplay(Display.NONE);
-		Document.get().getElementById("imageLength").getStyle().setDisplay(Display.NONE);
-		Document.get().getElementById("imageProportion").getStyle().setDisplay(Display.NONE);
-	}
-	
-	public void showShowInImageField()
-	{
-		Document.get().getElementById("questionLength").getStyle().clearDisplay();
-		Document.get().getElementById("imageWidth").getStyle().clearDisplay();
-		Document.get().getElementById("imageLength").getStyle().clearDisplay();
-		Document.get().getElementById("imageProportion").getStyle().clearDisplay();
-		Document.get().getElementById("linearPoint").getStyle().clearDisplay();
-		Document.get().getElementById("linearPercentage").getStyle().clearDisplay();
-	}
-	
-	public void disableShowInImageField()
-	{
-		Document.get().getElementById("questionLength").getStyle().setDisplay(Display.NONE);
-		Document.get().getElementById("imageWidth").getStyle().setDisplay(Display.NONE);
-		Document.get().getElementById("imageLength").getStyle().setDisplay(Display.NONE);
-		Document.get().getElementById("imageProportion").getStyle().setDisplay(Display.NONE);
-		Document.get().getElementById("linearPoint").getStyle().setDisplay(Display.NONE);
-		Document.get().getElementById("linearPercentage").getStyle().setDisplay(Display.NONE);
-	}
-
-	public void showLongtextField()
-	{
-		Document.get().getElementById("keywordHighlight").getStyle().clearDisplay();
-		Document.get().getElementById("richText").getStyle().clearDisplay();
-		Document.get().getElementById("minLength").getStyle().clearDisplay();
-		Document.get().getElementById("maxLength").getStyle().clearDisplay();
-		Document.get().getElementById("minWordCount").getStyle().clearDisplay();
-		Document.get().getElementById("maxWordCount").getStyle().clearDisplay();
-	}
-	
-	public void disableLongtextField()
-	{
-		Document.get().getElementById("keywordHighlight").getStyle().setDisplay(Display.NONE);
-		Document.get().getElementById("richText").getStyle().setDisplay(Display.NONE);
-		Document.get().getElementById("minLength").getStyle().setDisplay(Display.NONE);
-		Document.get().getElementById("maxLength").getStyle().setDisplay(Display.NONE);
-		Document.get().getElementById("minWordCount").getStyle().setDisplay(Display.NONE);
-		Document.get().getElementById("maxWordCount").getStyle().setDisplay(Display.NONE);
-	}
-	
-	public void showMatrixField()
-	{
-		Document.get().getElementById("maxLength").getStyle().clearDisplay();
-		Document.get().getElementById("oneToOneAss").getStyle().clearDisplay();
-	}
-	
-	public void disableMatrixFied()
-	{
-		Document.get().getElementById("maxLength").getStyle().setDisplay(Display.NONE);
-		Document.get().getElementById("oneToOneAss").getStyle().setDisplay(Display.NONE);
-	}
-	
-	public void showMCQField()
-	{
-		Document.get().getElementById("imageWidth").getStyle().clearDisplay();
-		Document.get().getElementById("imageLength").getStyle().clearDisplay();
-		Document.get().getElementById("imageProportion").getStyle().clearDisplay();
-		Document.get().getElementById("multimediaType").getStyle().clearDisplay();
-		Document.get().getElementById("selectionType").getStyle().clearDisplay();
-		Document.get().getElementById("column").getStyle().clearDisplay();
-		Document.get().getElementById("thumbWidth").getStyle().clearDisplay();
-		Document.get().getElementById("thumbHeight").getStyle().clearDisplay();
-		Document.get().getElementById("richText").getStyle().clearDisplay();
-		Document.get().getElementById("allowZoomOut").getStyle().clearDisplay();
-		Document.get().getElementById("allowZoomIn").getStyle().clearDisplay();
-		Document.get().getElementById("maxBytes").getStyle().clearDisplay();
-	}
-	
-	public void disableMCQField()
-	{
-		Document.get().getElementById("imageWidth").getStyle().setDisplay(Display.NONE);
-		Document.get().getElementById("imageLength").getStyle().setDisplay(Display.NONE);
-		Document.get().getElementById("imageProportion").getStyle().setDisplay(Display.NONE);
-		Document.get().getElementById("multimediaType").getStyle().setDisplay(Display.NONE);
-		Document.get().getElementById("selectionType").getStyle().setDisplay(Display.NONE);
-		Document.get().getElementById("column").getStyle().setDisplay(Display.NONE);
-		Document.get().getElementById("thumbWidth").getStyle().setDisplay(Display.NONE);
-		Document.get().getElementById("thumbHeight").getStyle().setDisplay(Display.NONE);
-		Document.get().getElementById("richText").getStyle().setDisplay(Display.NONE);
-		Document.get().getElementById("allowZoomOut").getStyle().setDisplay(Display.NONE);
-		Document.get().getElementById("allowZoomIn").getStyle().setDisplay(Display.NONE);
-		Document.get().getElementById("maxBytes").getStyle().setDisplay(Display.NONE);
+		for(String str : list)
+		{
+			Document.get().getElementById(str).getStyle().setDisplay(Display.NONE);
+		}
 	}
 
 	@Override
@@ -884,66 +670,66 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 	{
 		if (questionTypes.equals(QuestionTypes.Textual) || questionTypes.equals(QuestionTypes.Sort))
 		{
-			disableImgKeyField();
-			disableShowInImageField();
-			disableLongtextField();
-			disableMatrixFied();
-			disableMCQField();
-			showTextualField();					
+			disableQuestionField(mcqList);
+			disableQuestionField(imgKeyList);
+			disableQuestionField(matrixList);
+			disableQuestionField(longTextList);
+			disableQuestionField(showInImgList);
+			showField(textualSortList);				
 		}
 		else if (questionTypes.equals(QuestionTypes.Imgkey))
 		{
-			disableTextualField();
-			disableShowInImageField();
-			disableLongtextField();
-			disableMatrixFied();
-			disableMCQField();
-			showImgKeyField();					
+			disableQuestionField(mcqList);
+			disableQuestionField(textualSortList);
+			disableQuestionField(matrixList);
+			disableQuestionField(longTextList);
+			disableQuestionField(showInImgList);
+			showField(imgKeyList);		
 		}
 		else if (questionTypes.equals(QuestionTypes.ShowInImage))
 		{
-			disableTextualField();
-			disableImgKeyField();
-			disableLongtextField();
-			disableMatrixFied();
-			disableMCQField();
-			showShowInImageField();
+			disableQuestionField(mcqList);
+			disableQuestionField(textualSortList);
+			disableQuestionField(imgKeyList);
+			disableQuestionField(matrixList);
+			disableQuestionField(longTextList);
+			showField(showInImgList);
 		}
 		else if (questionTypes.equals(QuestionTypes.LongText))
 		{
-			disableTextualField();
-			disableImgKeyField();
-			disableShowInImageField();
-			disableMatrixFied();
-			disableMCQField();
-			showLongtextField();
+			disableQuestionField(mcqList);
+			disableQuestionField(textualSortList);
+			disableQuestionField(imgKeyList);
+			disableQuestionField(matrixList);
+			disableQuestionField(showInImgList);
+			showField(longTextList);
 		}
 		else if (questionTypes.equals(QuestionTypes.Matrix))
 		{
-			disableTextualField();
-			disableImgKeyField();
-			disableShowInImageField();
-			disableLongtextField();
-			disableMCQField();
-			showMatrixField();
+			disableQuestionField(mcqList);
+			disableQuestionField(textualSortList);
+			disableQuestionField(imgKeyList);
+			disableQuestionField(longTextList);
+			disableQuestionField(showInImgList);
+			showField(matrixList);
 		} 
 		else if (questionTypes.equals(QuestionTypes.MCQ))
 		{
-			disableTextualField();
-			disableImgKeyField();
-			disableShowInImageField();
-			disableLongtextField();
-			disableMatrixFied();
-			showMCQField();
+			disableQuestionField(textualSortList);
+			disableQuestionField(imgKeyList);
+			disableQuestionField(matrixList);
+			disableQuestionField(longTextList);
+			disableQuestionField(showInImgList);
+			showField(mcqList);
 		} 
 		else
 		{
-			disableTextualField();
-			disableImgKeyField();
-			disableShowInImageField();
-			disableLongtextField();
-			disableMatrixFied();
-			disableMCQField();
+			disableQuestionField(mcqList);
+			disableQuestionField(textualSortList);
+			disableQuestionField(imgKeyList);
+			disableQuestionField(matrixList);
+			disableQuestionField(longTextList);
+			disableQuestionField(showInImgList);
 		}
 	}
 	
@@ -973,15 +759,18 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 	    	   isDictionaryKeywordChkBox.setValue(false);
 	    	   allowTypingChkBox.setValue(false);
 	    	   minLetterForAutoCompTxtbox.setValue("");
+	    	   questionLengthTxtbox.setValue("");
 	    	   answerLengthTxtbox.setValue("");
 	    	   acceptNonKeywordChkBox.setValue(false);
 	    	   shortAnswerLengthTxtbox.setValue("");
 	    	   imageWidthTxtbox.setValue("");
 	    	   imageLengthTxtbox.setValue("");
 	    	   imageProportionTxtbox.setValue("");
+	    	   
 	       }
 	       else if (questionTypes.equals(QuestionTypes.ShowInImage))
 	       {
+	    	   answerLengthTxtbox.setValue("");
 	    	   questionLengthTxtbox.setValue("");
 	    	   imageWidthTxtbox.setValue("");
 	    	   imageLengthTxtbox.setValue("");
@@ -1000,7 +789,9 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 	       }
 	       else if (questionTypes.equals(QuestionTypes.Matrix))
 	       {
-	    	   maxLengthTxtbox.setValue("");
+	    	  //maxLengthTxtbox.setValue("");
+	    	   answerLengthTxtbox.setValue("");
+	    	   questionLengthTxtbox.setValue("");
 	    	   oneToOneAssChkBox.setValue(false);
 	       }
 	       else if (questionTypes.equals(QuestionTypes.MCQ))
@@ -1405,6 +1196,12 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 					errorString.append(constants.sumAnswer() + " " + msg).append("<br />");
 					sumAnswerTxtbox.addStyleName("higlight_onViolation");
 				}
+				else if (Integer.parseInt(sumAnswerTxtbox.getValue()) < 2)
+				{
+					flag = false;
+					errorString.append(constants.sumOfAnsMsg()).append("<br />");
+					sumAnswerTxtbox.addStyleName("higlight_onViolation");
+				}
 				
 				msg = "";
 				if ((msg = checkTextWidgetForNumber(sumTrueAnswerTxtbox)) != "")
@@ -1413,12 +1210,24 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 					errorString.append(constants.sumTrueAnswer() + " " + msg).append("<br />");
 					sumTrueAnswerTxtbox.addStyleName("higlight_onViolation");
 				}
+				else if (Integer.parseInt(sumTrueAnswerTxtbox.getValue()) < 0)
+				{
+					flag = false;
+					errorString.append(constants.sumOfTrueAnsMsg()).append("<br />");
+					sumTrueAnswerTxtbox.addStyleName("higlight_onViolation");
+				}
 				
 				msg = "";
 				if ((msg = checkTextWidgetForNumber(sumFalseAnswerTxtbox)) != "")
 				{
 					flag = false;
 					errorString.append(constants.sumFalseAnswer() + " " + msg).append("<br />");
+					sumFalseAnswerTxtbox.addStyleName("higlight_onViolation");
+				}
+				else if (Integer.parseInt(sumFalseAnswerTxtbox.getValue()) < 0)
+				{
+					flag = false;
+					errorString.append(constants.sumOfFalseAnsMsg()).append("<br />");
 					sumFalseAnswerTxtbox.addStyleName("higlight_onViolation");
 				}
 				
@@ -1465,6 +1274,14 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 					flag = false;
 					errorString.append(constants.minLetterAutoComplete() + " " + msg).append("<br />");
 					minLetterForAutoCompTxtbox.addStyleName("higlight_onViolation");
+				}
+				
+				msg = "";
+				if ((msg = checkTextWidgetForNumber(questionLengthTxtbox)) != "")
+				{
+					flag = false;
+					errorString.append(constants.questionLength() + " " + msg).append("<br />");
+					questionLengthTxtbox.addStyleName("higlight_onViolation");
 				}
 				
 				msg = "";
@@ -1518,6 +1335,14 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 					flag = false;
 					errorString.append(constants.imgWidth() + " " + msg).append("<br />");
 					imageWidthTxtbox.addStyleName("higlight_onViolation");
+				}
+				
+				msg = "";
+				if ((msg = checkTextWidgetForNumber(answerLengthTxtbox)) != "")
+				{
+					flag = false;
+					errorString.append(constants.answerLength() + " " + msg).append("<br />");
+					answerLengthTxtbox.addStyleName("higlight_onViolation");
 				}
 				
 				msg = "";
@@ -1594,12 +1419,27 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 			
 			case Matrix:
 			{			
-				String msg = "";
+				/*String msg = "";
 				if ((msg = checkTextWidgetForNumber(maxLengthTxtbox)) != "")
 				{
 					flag = false;
 					errorString.append(constants.maxLength() + " " + msg).append("<br />");
 					maxLengthTxtbox.addStyleName("higlight_onViolation");
+				}*/
+				String msg = "";
+				if ((msg = checkTextWidgetForNumber(questionLengthTxtbox)) != "")
+				{
+					flag = false;
+					errorString.append(constants.questionLength() + " " + msg).append("<br />");
+					questionLengthTxtbox.addStyleName("higlight_onViolation");
+				}
+				
+				msg = "";
+				if ((msg = checkTextWidgetForNumber(answerLengthTxtbox)) != "")
+				{
+					flag = false;
+					errorString.append(constants.answerLength() + " " + msg).append("<br />");
+					answerLengthTxtbox.addStyleName("higlight_onViolation");
 				}
 				break;
 			}

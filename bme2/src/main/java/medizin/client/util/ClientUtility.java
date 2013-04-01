@@ -166,4 +166,8 @@ public final class ClientUtility {
 		  
 		  return true;  
 	}
+	
+	public static String toStringUtility(Object object){
+		return object == null ? "" : object.toString();
+	} 
 }

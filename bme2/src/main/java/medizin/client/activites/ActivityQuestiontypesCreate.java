@@ -254,9 +254,11 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 					questionTypeProxy.setImageWidth(Integer.parseInt(view.getImageWidthTxtbox().getValue()));
 					questionTypeProxy.setImageHeight(Integer.parseInt(view.getImageLengthTxtbox().getValue()));
 					questionTypeProxy.setImageProportion(view.getImageProportionTxtbox().getValue());
+					questionTypeProxy.setQuestionLength(Integer.parseInt(view.getQuestionLengthTxtbox().getValue()));
 				}
 				else if (selectedQuestionType.equals(QuestionTypes.ShowInImage))
 				{
+					questionTypeProxy.setAnswerLength(Integer.parseInt(view.getAnswerLengthTxtbox().getValue()));
 					questionTypeProxy.setQuestionLength(Integer.parseInt(view.getQuestionLengthTxtbox().getValue()));
 					questionTypeProxy.setImageWidth(Integer.parseInt(view.getImageWidthTxtbox().getValue()));
 					questionTypeProxy.setImageHeight(Integer.parseInt(view.getImageLengthTxtbox().getValue()));
@@ -276,7 +278,9 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 				else if (selectedQuestionType.equals(QuestionTypes.Matrix))
 				{
 					questionTypeProxy.setAllowOneToOneAss(view.getOneToOneAssChkBox().getValue());
-					questionTypeProxy.setMaxLength(Integer.parseInt(view.getMaxLengthTxtbox().getValue()));
+					//questionTypeProxy.setMaxLength(Integer.parseInt(view.getMaxLengthTxtbox().getValue()));
+					questionTypeProxy.setQuestionLength(Integer.parseInt(view.getQuestionLengthTxtbox().getValue()));
+					questionTypeProxy.setAnswerLength(Integer.parseInt(view.getAnswerLengthTxtbox().getValue()));
 				}
 				else if (selectedQuestionType.equals(QuestionTypes.MCQ))
 				{
