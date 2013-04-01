@@ -6,6 +6,7 @@ package medizin.server.domain;
 import java.util.Date;
 import java.util.Set;
 import medizin.server.domain.Answer;
+import medizin.server.domain.AssesmentQuestion;
 import medizin.server.domain.Comment;
 import medizin.server.domain.Keyword;
 import medizin.server.domain.Mc;
@@ -209,6 +210,14 @@ privileged aspect Question_Roo_JavaBean {
     
     public void Question.setIsReadOnly(Boolean isReadOnly) {
         this.isReadOnly = isReadOnly;
+    }
+    
+    public Set<AssesmentQuestion> Question.getAssesmentQuestionSet() {
+        return this.assesmentQuestionSet;
+    }
+    
+    public void Question.setAssesmentQuestionSet(Set<AssesmentQuestion> assesmentQuestionSet) {
+        this.assesmentQuestionSet = assesmentQuestionSet;
     }
     
 }

@@ -52,6 +52,7 @@ privileged aspect QuestionDataOnDemand_Roo_DataOnDemand {
         setDateAdded(obj, index);
         setDateChanged(obj, index);
         setIsAcceptedAdmin(obj, index);
+        setIsAcceptedAuthor(obj, index);
         setIsAcceptedRewiever(obj, index);
         setIsReadOnly(obj, index);
         setPicturePath(obj, index);
@@ -85,6 +86,11 @@ privileged aspect QuestionDataOnDemand_Roo_DataOnDemand {
     public void QuestionDataOnDemand.setIsAcceptedAdmin(Question obj, int index) {
         Boolean isAcceptedAdmin = Boolean.TRUE;
         obj.setIsAcceptedAdmin(isAcceptedAdmin);
+    }
+    
+    public void QuestionDataOnDemand.setIsAcceptedAuthor(Question obj, int index) {
+        Boolean isAcceptedAuthor = Boolean.TRUE;
+        obj.setIsAcceptedAuthor(isAcceptedAuthor);
     }
     
     public void QuestionDataOnDemand.setIsAcceptedRewiever(Question obj, int index) {

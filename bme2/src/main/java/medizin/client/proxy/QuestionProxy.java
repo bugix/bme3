@@ -111,5 +111,9 @@ public interface QuestionProxy extends EntityProxy {
 
     abstract void setIsReadOnly(Boolean isReadOnly);
 
+    abstract Set<medizin.client.proxy.AssesmentQuestionProxy> getAssesmentQuestionSet();
+
+    abstract void setAssesmentQuestionSet(Set<medizin.client.proxy.AssesmentQuestionProxy> assesmentQuestionSet);
+
     abstract Integer getVersion();
 }

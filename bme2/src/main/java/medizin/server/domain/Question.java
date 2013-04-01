@@ -24,8 +24,10 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.SetJoin;
 import javax.persistence.criteria.Subquery;
 import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
@@ -154,6 +156,9 @@ public class Question {
 	@Value("false")
 	@Column(columnDefinition="BIT", length = 1)
 	private Boolean isReadOnly;
+	
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "question")
+	private Set<AssesmentQuestion> assesmentQuestionSet = new HashSet<AssesmentQuestion>();
 	
 	public static long countQuestionAccessByPersonNonRoo(java.lang.Long personId) {
 		Person person = Person.findPerson(personId);
@@ -492,7 +497,7 @@ public class Question {
 		
 		TypedQuery<Question> q = entityManager().createQuery(criteriaQuery);
 		
-		System.out.println("Q : " + q.unwrap(Query.class).getQueryString());
+		//System.out.println("Q : " + q.unwrap(Query.class).getQueryString());
 		
 		return q.getResultList();
 	}
@@ -810,6 +815,8 @@ public class Question {
 				
 				Date dt1 = null;
 				Date dt2 = null;
+				Date usedMcDt1 = null;
+				Date usedMcDt2 = null;
 				DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
 				int ctr = 0;
 				
@@ -843,7 +850,11 @@ public class Question {
 						ctr += 1;
 					}
 
-					if (searchField.get(ctr).equals("keyword")) {
+					if (searchField.get(ctr).equals("keyword") && !searchText.equals("")) {
+						SetJoin<Question, Keyword> join1 = from.joinSet("keywords", JoinType.LEFT);
+						Expression<String> exp4 = join1.get("name");
+						Predicate pre6 = criteriaBuilder.like(exp4, "%" + searchText + "%");
+						andPredicate = criteriaBuilder.and(andPredicate, pre6);
 						ctr += 1;
 					}
 					
@@ -902,9 +913,26 @@ public class Question {
 						}
 					}
 
-					if (searchField.get(ctr).equals("usedMcFrom")
-							&& searchField.get(ctr).equals("usedMcTo")) {
+					if (searchField.get(ctr).equals("usedMcFrom")) {
 						ctr += 1;
+						usedMcDt1 = df.parse(searchField.get(ctr));
+					}
+					
+					if (searchField.get(ctr).equals("usedMcTo")){
+						ctr += 1;
+						usedMcDt2 = df.parse(searchField.get(ctr));
+						
+						if (usedMcDt1 != null && usedMcDt2 != null)
+						{
+							SetJoin<Question, AssesmentQuestion> join2 = from.joinSet("assesmentQuestionSet", JoinType.LEFT);
+							Expression<Date> assessmentDate = join2.get("assesment").get("dateOfAssesment");
+							Predicate pre11 = criteriaBuilder.between(assessmentDate, usedMcDt1, usedMcDt2);
+							
+							if (andPredicate == null)
+								andPredicate = pre11;
+							else
+								andPredicate = criteriaBuilder.and(andPredicate, pre11);
+						}
 					}
 					
 					ctr += 1;
