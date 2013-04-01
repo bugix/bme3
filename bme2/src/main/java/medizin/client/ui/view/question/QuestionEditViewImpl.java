@@ -21,7 +21,6 @@ import medizin.client.ui.richtext.RichTextToolbar;
 import medizin.client.ui.view.roo.McSetEditor;
 import medizin.client.ui.view.roo.QuestionTypeProxyRenderer;
 import medizin.client.ui.widget.IconButton;
-import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.dialogbox.receiver.ReceiverDialog;
 import medizin.client.ui.widget.resource.dndview.ResourceView;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
@@ -45,6 +44,7 @@ import medizin.shared.utils.SharedConstant;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.gwt.core.client.GWT;
@@ -955,6 +955,9 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		
 	}*/
 	
+	//TODO may need to change 
+	private static final ArrayList<QuestionTypes> questionMaxFieldValiation = Lists.newArrayList(QuestionTypes.Textual,QuestionTypes.Imgkey,QuestionTypes.Matrix,QuestionTypes.ShowInImage,QuestionTypes.Sort);
+	
 	private boolean validationOfFields() {
 		
 		author.getTextField().advancedTextBox.removeStyleName("higlight_onViolation");
@@ -963,6 +966,11 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		questionTextArea.removeStyleName("higlight_onViolation");
 		if(imageViewer != null)
 			imageViewer.removeStyleName("higlight_onViolation");
+		rewiewer.getTextField().advancedTextBox.removeStyleName("higlight_onViolation");
+		submitToReviewComitee.removeStyleName("higlight_onViolation");
+		
+		ArrayList<String> messages = Lists.newArrayList();
+		boolean flag = true;
 		
 		if(submitToReviewComitee.getValue() == true) 
 		{
@@ -974,53 +982,70 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		}
 		else 
 		{
-			ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.selectReviewerOrComitee());
-			return false;
+			flag = false;
+			messages.add(constants.selectReviewerOrComitee());
+			rewiewer.getTextField().advancedTextBox.addStyleName("higlight_onViolation");
+			submitToReviewComitee.addStyleName("higlight_onViolation");
+			//ConfirmationDialogBox.showOkDialogBox(constants.warning(), );
+			//return false;
 		}
 		
-		boolean flag = true;
-		StringBuilder errorString = new StringBuilder();
 		if(author.getSelected() == null) {
 			flag = false;
-			errorString.append(constants.authorMayNotBeNull()).append("<br />");
+			//errorString.append(constants.authorMayNotBeNull()).append("<br />");
+			messages.add(constants.authorMayNotBeNull());
 			author.getTextField().advancedTextBox.addStyleName("higlight_onViolation");
 		}
 		
 		if(questionComment.getText() == null || questionComment.getText().isEmpty()) {
 			flag = false;
-			errorString.append(constants.commentMayNotBeNull()).append("<br />");
+			//errorString.append(constants.commentMayNotBeNull()).append("<br />");
+			messages.add(constants.commentMayNotBeNull());
 			questionComment.addStyleName("higlight_onViolation");
 		}
 		
 		if(questionType.getValue() == null) {
 			flag = false;
-			errorString.append(constants.questionTypeMayNotBeNull()).append("<br />");
+			//errorString.append(constants.questionTypeMayNotBeNull()).append("<br />");
+			messages.add(constants.questionTypeMayNotBeNull());
 			questionType.addStyleName("higlight_onViolation");
 		}
 		
 		//TODO need to change this condition
-		if(questionTextArea.getText() == null || questionTextArea.getText().isEmpty() || questionTextArea.getText().length() <= 10) {
+		if(questionTextArea.getText() == null || questionTextArea.getText().isEmpty()) {
 			flag = false;
-			errorString.append(constants.questionTextMayNotBeNull()).append("<br />");
+			//errorString.append(constants.questionTextMayNotBeNull()).append("<br />");
+			messages.add(constants.questionTextMayNotBeNull());
 			questionTextArea.addStyleName("higlight_onViolation");
-		}
-		
-		switch (questionType.getValue().getQuestionType()) {
-		
-		case Imgkey:
-		case ShowInImage:
-		{
-			if(imageViewer.getImageRelativeUrl() == null || imageViewer.getImageRelativeUrl().isEmpty()) {
+		}else {
+			// question text is not null
+			
+			if(questionType.getValue() != null && questionMaxFieldValiation.contains(questionType.getValue()) == true && questionType.getValue().getQuestionLength()  != null &&questionType.getValue().getQuestionLength() < questionTextArea.getText().length()) {
 				flag = false;
-				errorString.append(constants.imageMayNotBeNull()).append("<br />");
-				imageViewer.addStyleName("higlight_onViolation");
+				messages.add(constants.questionTextMaxLength());
+				questionTextArea.addStyleName("higlight_onViolation");
 			}
-			break;
 		}
 		
+		if(questionType.getValue() != null) {
+			switch (questionType.getValue().getQuestionType()) {
+			
+			case Imgkey:
+			case ShowInImage:
+			{
+				if(imageViewer.getImageRelativeUrl() == null || imageViewer.getImageRelativeUrl().isEmpty()) {
+					flag = false;
+					//errorString.append(constants.imageMayNotBeNull()).append("<br />");
+					messages.add(constants.imageMayNotBeNull());
+					imageViewer.addStyleName("higlight_onViolation");
+				}
+				break;
+			}
+			}
 		} 
+		
 		if(flag == false) {
-			ReceiverDialog.showMessageDialog(errorString.toString());
+			ReceiverDialog.showMessageDialog(constants.pleaseEnterWarning(),messages);
 		}
 		
 		return flag;

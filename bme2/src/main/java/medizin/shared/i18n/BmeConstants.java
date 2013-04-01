@@ -498,4 +498,6 @@ public interface BmeConstants extends Constants , ConstantsWithLookup {
 	public String sumOfTrueAnsMsg();
 	
 	public String sumOfFalseAnsMsg();
+
+	public String questionTextMaxLength();
 }

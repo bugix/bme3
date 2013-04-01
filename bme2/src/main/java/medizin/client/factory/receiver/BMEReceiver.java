@@ -1,5 +1,6 @@
 package medizin.client.factory.receiver;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -81,6 +82,11 @@ public abstract class BMEReceiver<T> extends Receiver<T> {
 
 	}
 
+	public void showMessage(ArrayList<String> messages){
+		
+		ReceiverDialog.showMessageDialog(bmeConstants.pleaseEnterWarning(), messages);
+	}
+	
 	@Override
 	public abstract void onSuccess(T response);
 
@@ -88,13 +94,10 @@ public abstract class BMEReceiver<T> extends Receiver<T> {
 	public final void onConstraintViolation(Set<ConstraintViolation<?>> violations) {
 	
 		//Log.info("Call onConstraintViolation");
-		
-		StringBuilder errorBuffor = new StringBuilder();
-		
+				
 		// Constraint Violation
 		if (localViewMap != null && violations.isEmpty() == false) {
 			
-
 			List<ConstraintViolation<?>> violationsWithOrder  = Lists.newArrayList(violations);
 			
 			Collections.sort(violationsWithOrder, new Comparator<ConstraintViolation<?>>() {
@@ -105,9 +108,8 @@ public abstract class BMEReceiver<T> extends Receiver<T> {
 					return o1.getPropertyPath().toString().compareToIgnoreCase(o2.getPropertyPath().toString());
 				}
 			});
-						
-			errorBuffor.append("<b>" + bmeConstants.pleaseEnterWarning() + "</b>" + "<br/><br/>");
-			errorBuffor.append("<ul style=\"padding:0px; margin:0px; list-style-type:none;\">");		
+			
+			ArrayList<String> messages = Lists.newArrayList();
 			
 			for (ConstraintViolation<?> constraintViolation : violationsWithOrder) {
 				String path = constraintViolation.getPropertyPath().toString();
@@ -118,10 +120,7 @@ public abstract class BMEReceiver<T> extends Receiver<T> {
 					message = path + " " + constraintViolation.getMessage();
 				}
 				
-				errorBuffor.append("<li style=\"text-align:left; line-height: 10px; padding:0px 0px 10px 0px;margin-left: 10px;\">")
-					.append("<span class=\"ui-icon ui-icon-check\" style=\"float: left; margin-top: 1px; margin-right: 6px;\"></span>")
-					.append(message)
-				.append("</li>");
+				messages.add(message);
 				
 				if(localViewMap.containsKey(path)) {
 					//Log.info("Violated key: " + path);
@@ -129,9 +128,8 @@ public abstract class BMEReceiver<T> extends Receiver<T> {
 					localViewMap.get(path).addStyleName("higlight_onViolation");
 				}
 			}
-			errorBuffor.append("<table>");
-			showMessage(errorBuffor.toString());
-
+			
+			showMessage(messages);
 		}
 		onReceiverFailure();
 	}

@@ -1,5 +1,7 @@
 package medizin.client.ui.widget.dialogbox.receiver;
 
+import java.util.ArrayList;
+
 import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
@@ -70,6 +72,24 @@ public class ReceiverDialog extends DialogBox {
 	
 	public static void showMessageDialog(final String message) {
 		receiverDialog.showMessage(message);
+	}
+	
+	public static void showMessageDialog(final String header,final ArrayList<String> messages) {
+		if(messages != null && messages.isEmpty() == false) {
+			final StringBuilder errorBuffor = new StringBuilder();
+			errorBuffor.append("<b>" + header + "</b>" + "<br/><br/>");
+			errorBuffor.append("<ul style=\"padding:0px; margin:0px; list-style-type:none;\">");
+			
+			for (String msg : messages) {
+				errorBuffor.append("<li style=\"text-align:left; line-height: 10px; padding:0px 0px 10px 0px;margin-left: 10px;\">")
+				.append("<span class=\"ui-icon ui-icon-check\" style=\"float: left; margin-top: 1px; margin-right: 6px;\"></span>")
+				.append(msg)
+				.append("</li>");
+			}
+			errorBuffor.append("</ul>");
+			showMessageDialog(errorBuffor.toString());
+		}
+		
 	}
 	/*
 	 * public void setDelegate(Delegate delegate) { this.delegate = delegate; }
