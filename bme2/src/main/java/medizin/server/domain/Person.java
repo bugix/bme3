@@ -1,7 +1,6 @@
 package medizin.server.domain;
 
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -38,30 +37,31 @@ public class Person {
 
     private static Logger log = Logger.getLogger(Person.class);
 
-    @NotNull
-    @Size(min=1,max = 50)
+    @NotNull(message="nameNotNull")
+    @Size(min=1,max = 50,message="nameMaxSize")
     private String name;
 
-    @NotNull
-    @Size(min=1,max = 50)
+    @NotNull(message="prenameNotNull")
+    @Size(min=1,max = 50,message="prenameMaxSize")
     private String prename;
 
-    @Size(max = 50)
+    @Size(max = 50,message="shibbolethMaxSize")
     private String shidId;
 
-    @NotNull
+    @NotNull(message="emailNotNull")
     @Column(unique = true)
-    @Size(min = 7, max = 50)
-    @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}$")
+    @Size(min = 7, max = 50,message="emailMinMaxSize")
+    @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}$",message="emailNotValid")
     private String email;
 
-    @NotNull
+    @NotNull(message="alternativeEmailNotNull")
     @Column(unique = true)
-    @Size(min = 7, max = 50)
-    @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}$")
+    @Size(min = 7, max = 50,message="alternativeEmailMinMaxSize")
+    @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}$",message="alternativeEmailNotValid")
     private String alternativEmail;
 
-    @Size(min = 5, max = 50)
+    @NotNull(message="phoneNumberNotNull")
+    @Size(min = 5, max = 50,message="phoneNumberMinMaxSize")
     private String phoneNumber;
 
     @NotNull
@@ -105,10 +105,10 @@ public class Person {
 
     public static medizin.server.domain.Person myGetLoggedPerson() {
         HttpSession session = RequestFactoryServlet.getThreadLocalRequest().getSession();
-        Enumeration attNames = session.getAttributeNames();
+       /* Enumeration attNames = session.getAttributeNames();
         while (attNames.hasMoreElements()) {
             log.info(attNames.nextElement().toString());
-        }
+        }*/
         //log.info("ShibdId" + session.getAttribute("shibdId"));
         /*if (session.getAttribute("shibdId") == null) {
             session.setAttribute("shibdId", "LHDAHSDFHDKJFH747835");

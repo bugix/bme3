@@ -12,6 +12,6 @@ import org.springframework.roo.addon.tostring.RooToString;
 public class Comment {
 
     @NotNull
-    @Size(min = 3, max = 9000)
+    @Size(min = 3, max = 9000,message="commentMayNotBeNull")
     private String comment;
 }

@@ -65,7 +65,7 @@ public class Question {
 	@Size(max = 255)
 	private String questionShortName;
 
-	@Size(min = 10, max = 600)
+	@Size(min = 1, max = 9000)
 	private String questionText;
 
 	@Size(min = 2, max = 255)
@@ -119,6 +119,7 @@ public class Question {
 	@ManyToOne
 	private QuestionType questionType;
 
+	@NotNull
 	private Status status;
 
 	@NotNull

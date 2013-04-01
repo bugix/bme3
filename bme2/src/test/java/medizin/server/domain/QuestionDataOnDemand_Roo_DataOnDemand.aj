@@ -136,8 +136,8 @@ privileged aspect QuestionDataOnDemand_Roo_DataOnDemand {
     
     public void QuestionDataOnDemand.setQuestionText(Question obj, int index) {
         String questionText = "questionText_" + index;
-        if (questionText.length() > 600) {
-            questionText = questionText.substring(0, 600);
+        if (questionText.length() > 9000) {
+            questionText = questionText.substring(0, 9000);
         }
         obj.setQuestionText(questionText);
     }

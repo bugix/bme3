@@ -1,8 +1,9 @@
 package medizin.shared.i18n;
 
 import com.google.gwt.i18n.client.Constants;
+import com.google.gwt.i18n.client.ConstantsWithLookup;
 
-public interface BmeConstants extends Constants {
+public interface BmeConstants extends Constants , ConstantsWithLookup {
 	
 	public String selectLang();
 	
@@ -465,5 +466,32 @@ public interface BmeConstants extends Constants {
 	public String responsiblePerson();
 	
 	public String questionSum();
+
+	public String nameNotNull();
+	
+	public String nameMaxSize();
+	
+	public String prenameNotNull();
+	
+	public String prenameMaxSize();
+	
+	public String shibbolethMaxSize();
+	
+	public String emailNotNull();
+	
+	public String emailMinMaxSize();
+	
+	public String emailNotValid();
+	
+	public String alternativeEmailNotNull();
+			
+	public String alternativeEmailMinMaxSize();
+			
+	public String  alternativeEmailNotValid();
+	
+	public String  phoneNumberNotNull();
+	
+	public String phoneNumberMinMaxSize();
+
 	
 }

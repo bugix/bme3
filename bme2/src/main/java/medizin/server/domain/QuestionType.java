@@ -11,6 +11,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.validation.constraints.NotNull;
 
 import medizin.client.ui.widget.Sorting;
 import medizin.shared.MultimediaType;
@@ -69,6 +70,7 @@ public class QuestionType {
     @ManyToOne
     private Institution institution;
     
+    @NotNull
     private QuestionTypes questionType;
     
     private Integer sumAnswer;

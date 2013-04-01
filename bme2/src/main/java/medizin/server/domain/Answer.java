@@ -42,7 +42,7 @@ public class Answer {
 
 	private static Logger log = Logger.getLogger(Answer.class);
 
-    @Size(min = 0, max = 999)
+    @Size(min = 0, max = 5000,message="answerTextErrorMessage")
     private String answerText;
 
    /* @NotNull
@@ -69,7 +69,7 @@ public class Answer {
     @Column(columnDefinition="BIT", length = 1)
     private Boolean isAnswerAcceptedAdmin;
 
-    @NotNull
+    @NotNull(message="questionTypeMayNotBeNull")
     @Enumerated
     private Validity validity;
 
@@ -111,6 +111,7 @@ public class Answer {
     
 	private Integer sequenceNumber;
 	
+	@NotNull
 	private Status status;
     
 	public static List<Answer> findAnswersEntriesByQuestion(Long id, int start, int max){

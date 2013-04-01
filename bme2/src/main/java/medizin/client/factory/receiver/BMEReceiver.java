@@ -1,5 +1,8 @@
 package medizin.client.factory.receiver;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -9,6 +12,7 @@ import medizin.client.ui.widget.dialogbox.receiver.ReceiverDialog;
 import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.requestfactory.shared.Receiver;
@@ -61,7 +65,7 @@ public abstract class BMEReceiver<T> extends Receiver<T> {
 
 	public void showMessage(String error) {
 
-		final String errorMsg = error;
+		//final String errorMsg = error;
 		//Log.info("Error Message" + errorMsg);
 
 		ReceiverDialog.showMessageDialog(error);
@@ -90,14 +94,34 @@ public abstract class BMEReceiver<T> extends Receiver<T> {
 		// Constraint Violation
 		if (localViewMap != null && violations.isEmpty() == false) {
 			
+
+			List<ConstraintViolation<?>> violationsWithOrder  = Lists.newArrayList(violations);
+			
+			Collections.sort(violationsWithOrder, new Comparator<ConstraintViolation<?>>() {
+
+				@Override
+				public int compare(ConstraintViolation<?> o1, ConstraintViolation<?> o2) {
+					
+					return o1.getPropertyPath().toString().compareToIgnoreCase(o2.getPropertyPath().toString());
+				}
+			});
+						
 			errorBuffor.append("<b>" + bmeConstants.pleaseEnterWarning() + "</b>" + "<br/><br/>");
-			errorBuffor.append("<table>");
-			for (ConstraintViolation<?> constraintViolation : violations) {
+			errorBuffor.append("<ul style=\"padding:0px; margin:0px; list-style-type:none;\">");		
+			
+			for (ConstraintViolation<?> constraintViolation : violationsWithOrder) {
 				String path = constraintViolation.getPropertyPath().toString();
-				errorBuffor.append("<tr>")
-								.append("<td>").append(path).append("</td>")
-								.append("<td>").append(" : ").append(constraintViolation.getMessage()).append("</td>")
-						   .append("<tr />");
+				String message;
+				try {
+					message = bmeConstants.getString(constraintViolation.getMessage());	
+				}catch (Exception e) {
+					message = path + " " + constraintViolation.getMessage();
+				}
+				
+				errorBuffor.append("<li style=\"text-align:left; line-height: 10px; padding:0px 0px 10px 0px;margin-left: 10px;\">")
+					.append("<span class=\"ui-icon ui-icon-check\" style=\"float: left; margin-top: 1px; margin-right: 6px;\"></span>")
+					.append(message)
+				.append("</li>");
 				
 				if(localViewMap.containsKey(path)) {
 					//Log.info("Violated key: " + path);
