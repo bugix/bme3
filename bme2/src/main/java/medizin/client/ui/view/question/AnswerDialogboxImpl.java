@@ -669,7 +669,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 				break;
 			}
 			
-			delegate.saveAnswerProxy(answer, answerTextArea.getText(), auther.getSelected(), rewiewer.getSelected(), submitToReviewComitee.getValue(), comment.getText(),validity.getValue(),points,mediaPath,additionalKeywords,sequenceNumber, new Function<AnswerProxy,Void>() {
+			delegate.saveAnswerProxy(answer, answerTextArea.getHTML(), auther.getSelected(), rewiewer.getSelected(), submitToReviewComitee.getValue(), comment.getText(),validity.getValue(),points,mediaPath,additionalKeywords,sequenceNumber, new Function<AnswerProxy,Void>() {
 
 				@Override
 				public Void apply(AnswerProxy input) {
@@ -720,7 +720,12 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 				flag = false;
 				messages.add(constants.answerTextErrorMessage());
 				answerTextArea.addStyleName("higlight_onViolation");
+			}else if(question.getQuestionType().getAnswerLength() != null && answerTextArea.getText().length() >= question.getQuestionType().getAnswerLength()) {
+				flag = false;
+				messages.add(constants.answerTextMaxLength());
+				answerTextArea.addStyleName("higlight_onViolation");
 			}
+			
 		}
 		
 		if(question.getQuestionType() != null && QuestionTypes.ShowInImage.equals(question.getQuestionType().getQuestionType()) == true ) {
