@@ -1020,7 +1020,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		}else {
 			// question text is not null
 			
-			if(questionType.getValue() != null && questionMaxFieldValiation.contains(questionType.getValue()) == true && questionType.getValue().getQuestionLength()  != null &&questionType.getValue().getQuestionLength() < questionTextArea.getText().length()) {
+			if(questionType.getValue() != null && questionMaxFieldValiation.contains(questionType.getValue().getQuestionType()) == true && questionType.getValue().getQuestionLength()  != null && questionType.getValue().getQuestionLength() < questionTextArea.getText().length()) {
 				flag = false;
 				messages.add(constants.questionTextMaxLength());
 				questionTextArea.addStyleName("higlight_onViolation");
