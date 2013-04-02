@@ -500,4 +500,6 @@ public interface BmeConstants extends Constants , ConstantsWithLookup {
 	public String sumOfFalseAnsMsg();
 
 	public String questionTextMaxLength();
+
+	public String validityMayNotBeNull();
 }

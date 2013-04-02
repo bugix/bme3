@@ -14,6 +14,7 @@ import medizin.client.shared.Validity;
 import medizin.client.ui.richtext.RichTextToolbar;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
+import medizin.client.ui.widget.dialogbox.receiver.ReceiverDialog;
 import medizin.client.ui.widget.resource.audio.AudioViewer;
 import medizin.client.ui.widget.resource.image.polygon.ImagePolygonViewer;
 import medizin.client.ui.widget.resource.image.rectangle.ImageRectangleViewer;
@@ -688,40 +689,55 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 
 	private boolean validationOfFields() {
 		
-		if(submitToReviewComitee.getValue())
-		{
-			rewiewer.setSelected(null);
-		}
-		else if(rewiewer.getSelected() != null)
-		{
-			submitToReviewComitee.setValue(false);
-		}else {
-			ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.selectReviewerOrComitee());
-			return false;
-		}
+		ArrayList<String> messages = Lists.newArrayList();
+		boolean flag = true;
 		
 		answerTextArea.removeStyleName("higlight_onViolation");
+		rewiewer.getTextField().advancedTextBox.removeStyleName("higlight_onViolation");
+		auther.getTextField().advancedTextBox.removeStyleName("higlight_onViolation");
+		submitToReviewComitee.removeStyleName("higlight_onViolation");
+		comment.removeStyleName("higlight_onViolation");
+		validity.removeStyleName("higlight_onViolation");
+		if(imagePolygonViewer != null) imagePolygonViewer.removeStyleName("higlight_onViolation");
+		if(imageRectangleViewer != null) imageRectangleViewer.removeStyleName("higlight_onViolation");
+		if(simpleImageViewer != null) simpleImageViewer.removeStyleName("higlight_onViolation");
+		if(audioViewer != null) audioViewer.removeStyleName("higlight_onViolation");
+		if(videoViewer != null) videoViewer.removeStyleName("higlight_onViolation");
+	
+		if(submitToReviewComitee.getValue()){
+			rewiewer.setSelected(null);
+		}else if(rewiewer.getSelected() != null){
+			submitToReviewComitee.setValue(false);
+		}else {
+			flag = false;
+			messages.add(constants.selectReviewerOrComitee());
+			rewiewer.getTextField().advancedTextBox.addStyleName("higlight_onViolation");
+			submitToReviewComitee.addStyleName("higlight_onViolation");
+		}
+		
 		if(question.getQuestionType() != null && QuestionTypes.MCQ.equals(question.getQuestionType().getQuestionType()) == false) {
 			if(answerTextArea.getText() == null || answerTextArea.getText().length() <= 0) {
-				ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.answerTextErrorMessage());
+				flag = false;
+				messages.add(constants.answerTextErrorMessage());
 				answerTextArea.addStyleName("higlight_onViolation");
-				return false;
 			}
 		}
 		
 		if(question.getQuestionType() != null && QuestionTypes.ShowInImage.equals(question.getQuestionType().getQuestionType()) == true ) {
 			Log.info("IN ShowInImage Question type");
 			if(imagePolygonViewer == null || imagePolygonViewer.isValidPolygon() == false) {
-				ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.polygonErrorMessage());
+				flag = false;
 				Log.error("Polygon is not property added. Try again");
-				return false;	
+				messages.add(constants.polygonErrorMessage());
+				imagePolygonViewer.addStyleName("higlight_onViolation");
 			}			
 		}else if(question.getQuestionType() != null && QuestionTypes.Imgkey.equals(question.getQuestionType().getQuestionType()) == true && validity.getValue() != null && Validity.Wahr.equals(validity.getValue())) {
 			Log.info("IN Imgkey Question type");
 			if(imageRectangleViewer == null || imageRectangleViewer.getPoint() == null) {
-				ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.rectangleErrorMessage());
+				flag = false;
+				messages.add(constants.rectangleErrorMessage());
+				imageRectangleViewer.removeStyleName("higlight_onViolation");
 				Log.error("Rectangle is not property added. Try again");
-				return false;
 			}
 		}else if(question.getQuestionType() != null && QuestionTypes.MCQ.equals(question.getQuestionType().getQuestionType()) == true) {
 			Log.info("IN MCQ Question type");
@@ -731,27 +747,27 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 				case Image:
 				{
 					if(simpleImageViewer == null || simpleImageViewer.getURL() == null || simpleImageViewer.getURL().length() <= 0) {
-						ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.imageViewerError());
+						flag = false;
+						messages.add(constants.imageViewerError());
 						Log.error("Error in imageview");
-						return false;
 					}
 					break;
 				}
 				case Sound:
 				{
 					if(audioViewer == null || audioViewer.getURL() == null || audioViewer.getURL().length() <= 0) {
-						ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.audioViewerError());
+						flag = false;
+						messages.add(constants.audioViewerError());
 						Log.error("Error in audioview.");
-						return false;
 					}
 					break;
 				}
 				case Video:
 				{	
 					if(videoViewer == null || videoViewer.getURL() == null || videoViewer.getURL().length() <= 0) {
-						ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.audioViewerError());
+						flag = false;
+						messages.add(constants.videoViewerError());
 						Log.error("Error in videoViewer. Try again");
-						return false;
 					}
 					break;
 				}
@@ -759,20 +775,41 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 				{
 					ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.unknownMultimediaType());
 					Log.error("Error in MultimediaType. Try again");
-					return false;
+					//return false;
 				}
 				}
 			}	
 		}else if(question.getQuestionType() != null && QuestionTypes.Sort.equals(question.getQuestionType().getQuestionType()) == true) {
 			txtSequenceNumber.removeStyleName("higlight_onViolation");
 			if(ClientUtility.isNumber(txtSequenceNumber.getValue()) == false) {
-				ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.sequenceNumberError());
+				messages.add(constants.sequenceNumberError());
+				flag = false;
 				txtSequenceNumber.addStyleName("higlight_onViolation");
 				Log.info("squence number is not valid number");
-				return false;
 			}
 		}
-		return true;
+		
+		if(auther.getSelected() == null) {
+			flag = false;
+			messages.add(constants.authorMayNotBeNull());
+			auther.getTextField().advancedTextBox.addStyleName("higlight_onViolation");
+		}
+		
+		if(comment.getText() == null || comment.getText().isEmpty()) {
+			flag = false;
+			messages.add(constants.commentMayNotBeNull());
+			comment.addStyleName("higlight_onViolation");
+		}
+		
+		if(validity.getValue() == null) {
+			flag = false;
+			messages.add(constants.validityMayNotBeNull());
+			validity.addStyleName("higlight_onViolation");
+		}
+		if(flag == false) {
+			ReceiverDialog.showMessageDialog(constants.pleaseEnterWarning(),messages);
+		}
+		return flag;
 	}
 
 	@Override
