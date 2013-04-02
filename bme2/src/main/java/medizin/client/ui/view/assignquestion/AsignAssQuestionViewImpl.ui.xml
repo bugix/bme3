@@ -11,13 +11,13 @@
 	.panelLeft{
  		height: auto;
  		width: 100%;
- 		padding: 5px;
+ 		/*padding: 5px;*/
 		
 	}
 	.panelRight{
 		height: auto;
 		width: 100%;
-		padding: 5px;
+		/*padding: 5px;*/
 	}
 
 		

@@ -4362,3 +4362,40 @@ background: url("images/colorpicker.png");
 	background-image:  none !important;
 	width: 10px;
 }
+.questionTable-close
+	{
+		width: 100%;	
+		
+		-moz-border-radius:5px; /* Firefox */
+		-webkit-border-radius:5px; /* Safari, Chrome */
+		-khtml-border-radius:5px; /* Konqueror */
+		/* CSS3 */
+
+		
+		border-radius: 7px;
+		background: url("images/ui-bg_glass_65_d3ae50_1x400.png") repeat-x scroll 50% 50% #D3AE50;
+  	    color: #454545;
+  	    font-weight: bold;
+  	        height: 25px;
+    padding-top: 3px;
+    vertical-align: middle;
+	
+	}
+		.questionTable-open{
+		width: 100%;	
+		
+		-moz-border-radius:5px; /* Firefox */
+		-webkit-border-radius:5px; /* Safari, Chrome */
+		-khtml-border-radius:5px; /* Konqueror */
+		/* CSS3 */
+
+		background: url("images/ui-bg_glass_65_d3ae50_1x400.png") repeat-x scroll 50% 50% #D3AE50;
+   	 color: #454545;
+		border-top-left-radius: 7px;
+		border-top-right-radius:7px;
+		font-weight: bold;
+		    height: 25px;
+    padding-top: 3px;
+    vertical-align: middle;
+
+	}

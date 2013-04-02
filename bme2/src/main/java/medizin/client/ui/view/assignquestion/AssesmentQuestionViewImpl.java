@@ -7,8 +7,10 @@ import medizin.client.ui.view.roo.CollectionRenderer;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.SpanElement;
+import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
@@ -46,6 +48,8 @@ public class AssesmentQuestionViewImpl extends Composite implements AssesmentQue
 	@UiField
 	Label addToAssesment;
 	
+	@UiField
+	TableElement questionTable;
 	
 	  @UiField
 	    SpanElement rewiewer;
@@ -93,6 +97,7 @@ public class AssesmentQuestionViewImpl extends Composite implements AssesmentQue
 		twistieClose.setVisible(false);	
 		answersVisible=false;	
 		detailsTablePanel.setVisible(false);
+		questionTable.setClassName("questionTable-close");
 
 	}
 
@@ -106,15 +111,29 @@ public class AssesmentQuestionViewImpl extends Composite implements AssesmentQue
 		twistieClose.setVisible(true);
 		answersVisible=true;
 		detailsTablePanel.setVisible(true);
+		questionTable.setClassName("questionTable-open");
 	}
 
 	public AssesmentQuestionViewImpl() {
 		initWidget(uiBinder.createAndBindUi(this));
 		twistieClose.setVisible(false);
 		answers.setVisible(false);
+		questionTable.setClassName("questionTable-close");
 		
 	}
-
+	
+	@UiHandler("header")
+	public void headerClicked(ClickEvent event)
+	{
+		if(answersVisible==false){
+			open();
+		}
+		else {
+			close();
+		}
+		
+	}
+	
 	@Override
 	public void setProxy(AssesmentQuestionProxy assesmentQuestion, boolean delOrAdd) {
 		this.issInAssement=delOrAdd;
