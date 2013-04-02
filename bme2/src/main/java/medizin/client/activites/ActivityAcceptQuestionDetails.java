@@ -136,7 +136,7 @@ public class ActivityAcceptQuestionDetails extends ActivityQuestionDetails imple
 
 			@Override
 			public void onSuccess(Void response) {
-				goTo(new PlaceAcceptQuestion(""));				
+				goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));				
 			}
 		});
 	}

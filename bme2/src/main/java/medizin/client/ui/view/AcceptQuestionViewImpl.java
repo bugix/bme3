@@ -80,7 +80,7 @@ public class AcceptQuestionViewImpl extends Composite implements AcceptQuestionV
 
 	            @Override
 	            public String getValue(QuestionProxy object) {
-	                return renderer.render(object.getId());
+	                return renderer.render(object == null ? 0L : object.getId());
 	            }
 	        }, constants.id());
 	       
