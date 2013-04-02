@@ -1156,9 +1156,13 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		this.maxBytesTxtbox = maxBytesTxtbox;
 	}
 	
+	
+	
 	private boolean validationOfFields(QuestionTypes questionType)
 	{
 		removeStyles();
+		
+		ArrayList<String> errorMessage = Lists.newArrayList();
 		
 		boolean flag = true;
 		StringBuilder errorString = new StringBuilder();
@@ -1166,21 +1170,24 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		if (shortNameTxtbox.getText().isEmpty())
     	{	
 			flag = false;
-			errorString.append(constants.shortName() + " " + constants.questionTypeErroMsg()).append("<br />");
+			//errorString.append(constants.shortName() + " " + constants.questionTypeErroMsg()).append("<br />");
+			errorMessage.add(constants.shortName() + " " + constants.questionTypeErroMsg());
 			shortNameTxtbox.addStyleName("higlight_onViolation");
     	}
 		
 		if (longNameTxtbox.getText().isEmpty())
 		{
 			flag = false;
-			errorString.append(constants.longName() + " " + constants.questionTypeErroMsg()).append("<br />");
+			//errorString.append(constants.longName() + " " + constants.questionTypeErroMsg()).append("<br />");
+			errorMessage.add(constants.longName() + " " + constants.questionTypeErroMsg());
 			longNameTxtbox.addStyleName("higlight_onViolation");
 		}
 		
 		if (descriptionTxtbox.getText().isEmpty())
 		{
 			flag = false;
-			errorString.append(constants.description() + " " + constants.questionTypeErroMsg()).append("<br />");
+			//errorString.append(constants.description() + " " + constants.questionTypeErroMsg()).append("<br />");
+			errorMessage.add(constants.description() + " " + constants.questionTypeErroMsg());
 			descriptionTxtbox.addStyleName("higlight_onViolation");
 		}		
 		
@@ -1193,13 +1200,15 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(sumAnswerTxtbox)) != "")
 				{
 					flag = false;
-					errorString.append(constants.sumAnswer() + " " + msg).append("<br />");
+					//errorString.append(constants.sumAnswer() + " " + msg).append("<br />");
+					errorMessage.add(constants.sumAnswer() + " " + msg);
 					sumAnswerTxtbox.addStyleName("higlight_onViolation");
 				}
 				else if (Integer.parseInt(sumAnswerTxtbox.getValue()) < 2)
 				{
 					flag = false;
-					errorString.append(constants.sumOfAnsMsg()).append("<br />");
+					//errorString.append(constants.sumOfAnsMsg()).append("<br />");
+					errorMessage.add(constants.sumOfAnsMsg());
 					sumAnswerTxtbox.addStyleName("higlight_onViolation");
 				}
 				
@@ -1207,13 +1216,15 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(sumTrueAnswerTxtbox)) != "")
 				{
 					flag = false;
-					errorString.append(constants.sumTrueAnswer() + " " + msg).append("<br />");
+					//errorString.append(constants.sumTrueAnswer() + " " + msg).append("<br />");
+					errorMessage.add(constants.sumTrueAnswer() + " " + msg);
 					sumTrueAnswerTxtbox.addStyleName("higlight_onViolation");
 				}
 				else if (Integer.parseInt(sumTrueAnswerTxtbox.getValue()) < 0)
 				{
 					flag = false;
-					errorString.append(constants.sumOfTrueAnsMsg()).append("<br />");
+					//errorString.append(constants.sumOfTrueAnsMsg()).append("<br />");
+					errorMessage.add(constants.sumOfTrueAnsMsg());
 					sumTrueAnswerTxtbox.addStyleName("higlight_onViolation");
 				}
 				
@@ -1221,13 +1232,15 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(sumFalseAnswerTxtbox)) != "")
 				{
 					flag = false;
-					errorString.append(constants.sumFalseAnswer() + " " + msg).append("<br />");
+					//errorString.append(constants.sumFalseAnswer() + " " + msg).append("<br />");
+					errorMessage.add(constants.sumFalseAnswer() + " " + msg);
 					sumFalseAnswerTxtbox.addStyleName("higlight_onViolation");
 				}
 				else if (Integer.parseInt(sumFalseAnswerTxtbox.getValue()) < 0)
 				{
 					flag = false;
-					errorString.append(constants.sumOfFalseAnsMsg()).append("<br />");
+					//errorString.append(constants.sumOfFalseAnsMsg()).append("<br />");
+					errorMessage.add(constants.sumOfFalseAnsMsg());
 					sumFalseAnswerTxtbox.addStyleName("higlight_onViolation");
 				}
 				
@@ -1235,7 +1248,8 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(questionLengthTxtbox)) != "")
 				{
 					flag = false;
-					errorString.append(constants.questionLength() + " " + msg).append("<br />");
+					//errorString.append(constants.questionLength() + " " + msg).append("<br />");
+					errorMessage.add(constants.questionLength() + " " + msg);
 					questionLengthTxtbox.addStyleName("higlight_onViolation");
 				}
 				
@@ -1243,7 +1257,8 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(answerLengthTxtbox)) != "")
 				{
 					flag = false;
-					errorString.append(constants.answerLength() + " " + msg).append("<br />");
+					//errorString.append(constants.answerLength() + " " + msg).append("<br />");
+					errorMessage.add(constants.answerLength() + " " + msg);
 					answerLengthTxtbox.addStyleName("higlight_onViolation");
 				}
 				
@@ -1251,7 +1266,8 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(answerDiffTxtbox)) != "")
 				{
 					flag = false;
-					errorString.append(constants.diffAnswer() + " " + msg).append("<br />");
+					//errorString.append(constants.diffAnswer() + " " + msg).append("<br />");
+					errorMessage.add(constants.diffAnswer() + " " + msg);
 					answerDiffTxtbox.addStyleName("higlight_onViolation");
 				}
 				
@@ -1264,7 +1280,8 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(keywordCountTxtbox)) != "")
 				{
 					flag = false;
-					errorString.append(constants.countKeyword() + " " + msg).append("<br />");
+					//errorString.append(constants.countKeyword() + " " + msg).append("<br />");
+					errorMessage.add(constants.countKeyword() + " " + msg);
 					keywordCountTxtbox.addStyleName("higlight_onViolation");
 				}
 				
@@ -1272,7 +1289,8 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(minLetterForAutoCompTxtbox)) != "")
 				{
 					flag = false;
-					errorString.append(constants.minLetterAutoComplete() + " " + msg).append("<br />");
+					//errorString.append(constants.minLetterAutoComplete() + " " + msg).append("<br />");
+					errorMessage.add(constants.minLetterAutoComplete() + " " + msg);
 					minLetterForAutoCompTxtbox.addStyleName("higlight_onViolation");
 				}
 				
@@ -1280,7 +1298,8 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(questionLengthTxtbox)) != "")
 				{
 					flag = false;
-					errorString.append(constants.questionLength() + " " + msg).append("<br />");
+					//errorString.append(constants.questionLength() + " " + msg).append("<br />");
+					errorMessage.add(constants.questionLength() + " " + msg);
 					questionLengthTxtbox.addStyleName("higlight_onViolation");
 				}
 				
@@ -1288,7 +1307,8 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(answerLengthTxtbox)) != "")
 				{
 					flag = false;
-					errorString.append(constants.answerLength() + " " + msg).append("<br />");
+					//errorString.append(constants.answerLength() + " " + msg).append("<br />");
+					errorMessage.add(constants.answerLength() + " " + msg);
 					answerLengthTxtbox.addStyleName("higlight_onViolation");
 				}
 				
@@ -1296,7 +1316,8 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(shortAnswerLengthTxtbox)) != "")
 				{
 					flag = false;
-					errorString.append(constants.lengthShortAns() + " " + msg).append("<br />");
+					//errorString.append(constants.lengthShortAns() + " " + msg).append("<br />");
+					errorMessage.add(constants.lengthShortAns() + " " + msg);
 					shortAnswerLengthTxtbox.addStyleName("higlight_onViolation");
 				}
 				
@@ -1304,7 +1325,8 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(imageWidthTxtbox)) != "")
 				{
 					flag = false;
-					errorString.append(constants.imgWidth() + " " + msg).append("<br />");
+					//errorString.append(constants.imgWidth() + " " + msg).append("<br />");
+					errorMessage.add(constants.imgWidth() + " " + msg);
 					imageWidthTxtbox.addStyleName("higlight_onViolation");
 				}
 				
@@ -1312,7 +1334,8 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(imageLengthTxtbox)) != "")
 				{
 					flag = false;
-					errorString.append(constants.imgLength() + " " + msg).append("<br />");
+					//errorString.append(constants.imgLength() + " " + msg).append("<br />");
+					errorMessage.add(constants.imgLength() + " " + msg);
 					imageLengthTxtbox.addStyleName("higlight_onViolation");
 				}
 				
@@ -1320,7 +1343,8 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if (imageProportionTxtbox.getText().isEmpty())
 				{
 					flag = false;
-					errorString.append(constants.imgProportion() + " " + constants.questionTypeErroMsg()).append("<br />");
+					//errorString.append(constants.imgProportion() + " " + constants.questionTypeErroMsg()).append("<br />");
+					errorMessage.add(constants.imgProportion() + " " + constants.questionTypeErroMsg());
 					imageProportionTxtbox.addStyleName("higlight_onViolation");
 				}
 				
@@ -1333,7 +1357,8 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(imageWidthTxtbox)) != "")
 				{
 					flag = false;
-					errorString.append(constants.imgWidth() + " " + msg).append("<br />");
+					//errorString.append(constants.imgWidth() + " " + msg).append("<br />");
+					errorMessage.add(constants.imgWidth() + " " + msg);
 					imageWidthTxtbox.addStyleName("higlight_onViolation");
 				}
 				
@@ -1341,7 +1366,8 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(answerLengthTxtbox)) != "")
 				{
 					flag = false;
-					errorString.append(constants.answerLength() + " " + msg).append("<br />");
+					//errorString.append(constants.answerLength() + " " + msg).append("<br />");
+					errorMessage.add(constants.answerLength() + " " + msg);
 					answerLengthTxtbox.addStyleName("higlight_onViolation");
 				}
 				
@@ -1349,7 +1375,8 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(questionLengthTxtbox)) != "")
 				{
 					flag = false;
-					errorString.append(constants.questionLength() + " " + msg).append("<br />");
+					//errorString.append(constants.questionLength() + " " + msg).append("<br />");
+					errorMessage.add(constants.questionLength() + " " + msg);
 					questionLengthTxtbox.addStyleName("higlight_onViolation");
 				}
 				
@@ -1357,7 +1384,8 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(imageLengthTxtbox)) != "")
 				{
 					flag = false;
-					errorString.append(constants.imgLength() + " " + msg).append("<br />");
+					//errorString.append(constants.imgLength() + " " + msg).append("<br />");
+					errorMessage.add(constants.imgLength() + " " + msg);
 					imageLengthTxtbox.addStyleName("higlight_onViolation");
 				}
 				
@@ -1365,7 +1393,8 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if (imageProportionTxtbox.getText().isEmpty())
 				{
 					flag = false;
-					errorString.append(constants.imgProportion() + " " + constants.questionTypeErroMsg()).append("<br />");
+					//errorString.append(constants.imgProportion() + " " + constants.questionTypeErroMsg()).append("<br />");
+					errorMessage.add(constants.imgProportion() + " " + constants.questionTypeErroMsg());
 					imageProportionTxtbox.addStyleName("higlight_onViolation");
 				}
 				
@@ -1373,7 +1402,8 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(linearPercentageTxtbox)) != "")
 				{
 					flag = false;
-					errorString.append(constants.imgProportion() + " " + msg).append("<br />");
+					//errorString.append(constants.imgProportion() + " " + msg).append("<br />");
+					errorMessage.add(constants.imgProportion() + " " + msg);
 					linearPercentageTxtbox.addStyleName("higlight_onViolation");
 				}
 				
@@ -1386,7 +1416,8 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(minLengthTxtbox)) != "")
 				{
 					flag = false;
-					errorString.append(constants.minLength() + " " + msg).append("<br />");
+					//errorString.append(constants.minLength() + " " + msg).append("<br />");
+					errorMessage.add(constants.minLength() + " " + msg);
 					minLengthTxtbox.addStyleName("higlight_onViolation");
 				}
 				
@@ -1394,7 +1425,8 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(maxLengthTxtbox)) != "")
 				{
 					flag = false;
-					errorString.append(constants.maxLength() + " " + msg).append("<br />");
+					//errorString.append(constants.maxLength() + " " + msg).append("<br />");
+					errorMessage.add(constants.maxLength() + " " + msg);
 					maxLengthTxtbox.addStyleName("higlight_onViolation");
 				}
 				
@@ -1402,7 +1434,8 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(minWordCountTxtbox)) != "")
 				{
 					flag = false;
-					errorString.append(constants.minWordCount() + " " + msg).append("<br />");
+					//errorString.append(constants.minWordCount() + " " + msg).append("<br />");
+					errorMessage.add(constants.minWordCount() + " " + msg);
 					minWordCountTxtbox.addStyleName("higlight_onViolation");
 				}
 				
@@ -1410,7 +1443,8 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(maxWordCountTxtbox)) != "")
 				{
 					flag = false;
-					errorString.append(constants.maxWordCount() + " " + msg).append("<br />");
+					//errorString.append(constants.maxWordCount() + " " + msg).append("<br />");
+					errorMessage.add(constants.maxWordCount() + " " + msg);
 					maxWordCountTxtbox.addStyleName("higlight_onViolation");
 				}
 				
@@ -1430,7 +1464,8 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(questionLengthTxtbox)) != "")
 				{
 					flag = false;
-					errorString.append(constants.questionLength() + " " + msg).append("<br />");
+					//errorString.append(constants.questionLength() + " " + msg).append("<br />");
+					errorMessage.add(constants.questionLength() + " " + msg);
 					questionLengthTxtbox.addStyleName("higlight_onViolation");
 				}
 				
@@ -1438,7 +1473,8 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(answerLengthTxtbox)) != "")
 				{
 					flag = false;
-					errorString.append(constants.answerLength() + " " + msg).append("<br />");
+					//errorString.append(constants.answerLength() + " " + msg).append("<br />");
+					errorMessage.add(constants.answerLength() + " " + msg);
 					answerLengthTxtbox.addStyleName("higlight_onViolation");
 				}
 				break;
@@ -1450,7 +1486,8 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(imageWidthTxtbox)) != "")
 				{
 					flag = false;
-					errorString.append(constants.imgWidth() + " " + msg).append("<br />");
+					//errorString.append(constants.imgWidth() + " " + msg).append("<br />");
+					errorMessage.add(constants.imgWidth() + " " + msg);
 					imageWidthTxtbox.addStyleName("higlight_onViolation");
 				}
 				
@@ -1458,7 +1495,8 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(imageLengthTxtbox)) != "")
 				{
 					flag = false;
-					errorString.append(constants.imgLength() + " " + msg).append("<br />");
+					//errorString.append(constants.imgLength() + " " + msg).append("<br />");
+					errorMessage.add(constants.imgLength() + " " + msg);
 					imageLengthTxtbox.addStyleName("higlight_onViolation");
 				}
 				
@@ -1466,21 +1504,24 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if (imageProportionTxtbox.getText().isEmpty())
 				{
 					flag = false;
-					errorString.append(constants.imgProportion() + " " + constants.questionTypeErroMsg()).append("<br />");
+					//errorString.append(constants.imgProportion() + " " + constants.questionTypeErroMsg()).append("<br />");
+					errorMessage.add(constants.imgProportion() + " " + constants.questionTypeErroMsg());
 					imageProportionTxtbox.addStyleName("higlight_onViolation");
 				}
 				
 				if (multimediaTypeListBox.getValue().equals(null))
 				{
 					flag = false;
-					errorString.append(constants.multimediaType() + " " + constants.questionTypeErroMsg()).append("<br />");
+					//errorString.append(constants.multimediaType() + " " + constants.questionTypeErroMsg()).append("<br />");
+					errorMessage.add(constants.multimediaType() + " " + constants.questionTypeErroMsg());
 					multimediaTypeListBox.addStyleName("higlight_onViolation");
 				}
 				
 				if (selectionTypeListBox.getValue().equals(null))
 				{
 					flag = false;
-					errorString.append(constants.selectionType() + " " + constants.questionTypeErroMsg()).append("<br />");
+					//errorString.append(constants.selectionType() + " " + constants.questionTypeErroMsg()).append("<br />");
+					errorMessage.add(constants.selectionType() + " " + constants.questionTypeErroMsg());
 					selectionTypeListBox.addStyleName("higlight_onViolation");
 				}
 				
@@ -1488,7 +1529,8 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(columnTxtbox)) != "")
 				{
 					flag = false;
-					errorString.append(constants.column() + " " + msg).append("<br />");
+					//errorString.append(constants.column() + " " + msg).append("<br />");
+					errorMessage.add(constants.column() + " " + msg);
 					columnTxtbox.addStyleName("higlight_onViolation");
 				}
 				
@@ -1496,7 +1538,8 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(thumbWidthTxtbox)) != "")
 				{
 					flag = false;
-					errorString.append(constants.thumbWidth() + " " + msg).append("<br />");
+					//errorString.append(constants.thumbWidth() + " " + msg).append("<br />");
+					errorMessage.add(constants.thumbWidth() + " " + msg);
 					thumbWidthTxtbox.addStyleName("higlight_onViolation");
 				}
 				
@@ -1504,7 +1547,8 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(thumbHeightTxtbox)) != "")
 				{
 					flag = false;
-					errorString.append(constants.thumbHeight() + " " + msg).append("<br />");
+					//errorString.append(constants.thumbHeight() + " " + msg).append("<br />");
+					errorMessage.add(constants.thumbHeight() + " " + msg);
 					thumbHeightTxtbox.addStyleName("higlight_onViolation");
 				}
 
@@ -1512,7 +1556,8 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(maxBytesTxtbox)) != "")
 				{
 					flag = false;
-					errorString.append(constants.maxBytes() + " " + msg).append("<br />");
+					//errorString.append(constants.maxBytes() + " " + msg).append("<br />");
+					errorMessage.add(constants.maxBytes() + " " + msg);
 					maxBytesTxtbox.addStyleName("higlight_onViolation");
 				}
 				break;
@@ -1523,7 +1568,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		}
 		
 		if(flag == false) {
-			ReceiverDialog.showMessageDialog(errorString.toString());
+			ReceiverDialog.showMessageDialog(constants.pleaseEnterWarning(),errorMessage);
 		}
 		
 		return flag;

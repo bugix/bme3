@@ -6,11 +6,15 @@ import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Float;
+import com.google.gwt.dom.client.Style.TextAlign;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -37,10 +41,18 @@ public class ReceiverDialog extends DialogBox {
 		// setWidth("500px");
 		// setVisible(false);
 		this.hide();
-		HPbtn.setHorizontalAlignment(HorizontalPanel.ALIGN_CENTER);
-		btnOk.setText(constants.okBtn());
-		btnOk.addStyleName("marginTop15");
+		
+		HPbtn.setWidth("100%");
+		HPbtn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		
+		btnOk.setText(constants.close());
+		//btnOk.addStyleName("marginTop15");
+		btnOk.setWidth("100px");
+		btnOk.getElement().getStyle().setMarginBottom(5, Unit.PX);
+		btnOk.getElement().getStyle().setMarginRight(10, Unit.PX);
+		
 		HPbtn.add(btnOk);
+		
 		this.getElement().getStyle().setZIndex(1);
 		btnOk.addClickHandler(new ClickHandler() {
 
