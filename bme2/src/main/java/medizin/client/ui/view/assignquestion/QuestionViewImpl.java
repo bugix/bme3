@@ -5,6 +5,7 @@ import medizin.client.ui.view.roo.CollectionRenderer;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.SpanElement;
+import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -61,6 +62,10 @@ public class QuestionViewImpl extends Composite implements QuestionView {
 	    @UiField
 	    HTMLPanel detailsTablePanel;
 	    
+	    @UiField
+		TableElement questionTable;
+		
+	    
 	
 	boolean answersVisible=false;
 	boolean answersLoaded=false;
@@ -68,30 +73,53 @@ public class QuestionViewImpl extends Composite implements QuestionView {
 	@UiHandler(value = { "twistieOpen", "twistieClose" })
 	void twistieClicked(ClickEvent event) {
 		if(answersVisible==false){
-			if(answersLoaded==false){
-				delegate.twistieOpenQuestionClicked(this);
-				answersLoaded=true;
-			}
-			twistieOpen.setVisible(false);
-			answers.setVisible(true);
-			twistieClose.setVisible(true);
-			detailsTablePanel.setVisible(true);
-			answersVisible=true;
+			open();
 		}
 		else {
-			twistieOpen.setVisible(true);
-			answers.setVisible(false);
-			twistieClose.setVisible(false);	
-			detailsTablePanel.setVisible(false);
-			answersVisible=false;
+			close();
 		}
 		
 	}
 	
+	@UiHandler("header")
+	public void headerClicked(ClickEvent event)
+	{
+		if(answersVisible==false){
+			open();
+		}
+		else {
+			close();
+		}
+		
+	}
+	
+	private void close() {
+		twistieOpen.setVisible(true);
+		answers.setVisible(false);
+		twistieClose.setVisible(false);	
+		answersVisible=false;	
+		detailsTablePanel.setVisible(false);
+		questionTable.setClassName("questionTable-close");
+
+	}
+
+	private void open() {
+		if(answersLoaded==false){
+			delegate.twistieOpenQuestionClicked(this);
+			answersLoaded=true;
+		}
+		twistieOpen.setVisible(false);
+		answers.setVisible(true);
+		twistieClose.setVisible(true);
+		answersVisible=true;
+		detailsTablePanel.setVisible(true);
+		questionTable.setClassName("questionTable-open");
+	}
 	public QuestionViewImpl() {
 		initWidget(uiBinder.createAndBindUi(this));
 		twistieClose.setVisible(false);
 		answers.setVisible(false);
+		questionTable.setClassName("questionTable-close");
 	}
 
 	@Override
