@@ -16,7 +16,7 @@
 		<g:HTMLPanel> -->
 
 		<table id="boundElementHolder">
-			<tr id="text">
+			<tr id="answerDialogText">
 
 				<td colspan="2">
 

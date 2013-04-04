@@ -41,6 +41,8 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.DivElement;
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.editor.client.Editor.Ignore;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -296,12 +298,12 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 		lblUploadText.setVisible(true);
 		lblUploadText.setStyleName("label");
 		ResourceUpload upload = null;
+		Map<MultimediaType,String> paths = Maps.newHashMap();
 		
 		switch (question.getQuestionType().getMultimediaType()) {
 		case Image:
 		{
 			ArrayList<String> allowedExt = Lists.newArrayList();
-			Map<MultimediaType,String> paths = Maps.newHashMap();
 			allowedExt.addAll(Arrays.asList(SharedConstant.IMAGE_EXTENSIONS));
 			paths.put(MultimediaType.Image, SharedConstant.UPLOAD_MEDIA_IMAGES_PATH);
 			upload = new ResourceUpload(allowedExt,paths, eventBus);
@@ -357,7 +359,6 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 		case Sound:
 		{	
 			ArrayList<String> allowedExt = Lists.newArrayList();
-			Map<MultimediaType,String> paths = Maps.newHashMap();
 			allowedExt.addAll(Arrays.asList(SharedConstant.SOUND_EXTENSIONS));
 			paths.put(MultimediaType.Sound, SharedConstant.UPLOAD_MEDIA_SOUND_PATH);
 			
@@ -395,7 +396,6 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 		case Video:
 		{	
 			ArrayList<String> allowedExt = Lists.newArrayList();
-			Map<MultimediaType,String> paths = Maps.newHashMap();
 			allowedExt.addAll(Arrays.asList(SharedConstant.VIDEO_EXTENSIONS));
 			paths.put(MultimediaType.Video, SharedConstant.UPLOAD_MEDIA_VIDEO_PATH);
 			
@@ -437,6 +437,8 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 		}
 		
 		if(upload != null) {
+			
+			lblUploadText.setText(ClientUtility.getUploadLabel(paths.keySet()));
 			uploadContainer.clear();
 			uploadContainer.add(upload);
 		}
@@ -472,11 +474,6 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 
 	@Override
 	public void display(QuestionTypes types) {
-		
-		if(QuestionTypes.MCQ.equals(types)) {
-			answerTextArea.setVisible(false);
-			toolbar.setVisible(false);
-		}
 		
 		// for addtional keyword
 		if(question != null && question.getQuestionType() != null && question.getQuestionType().getQuestionType() != null) {
@@ -528,6 +525,12 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 		}
 		center();
 		show();
+		
+		if(QuestionTypes.MCQ.equals(types)) {
+			Document.get().getElementById("answerDialogText").getStyle().setDisplay(Display.NONE);
+			/*answerTextArea.setVisible(false);
+			toolbar.setVisible(false);*/
+		}
 
 	}
 

@@ -506,4 +506,16 @@ public interface BmeConstants extends Constants , ConstantsWithLookup {
 	public String answerTextMaxLength();
 
 	public String errorInMatrixOneToOneAss();
+
+	public String uploadImages();
+
+	public String uploadVideos();
+
+	public String uploadSounds();
+
+	public String uploadImagesOrSounds();
+
+	public String uploadImagesOrVideos();
+
+	public String uploadSoundsOrVideos();
 }

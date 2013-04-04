@@ -715,7 +715,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 			}
 		});
 		
-		setMediaContainer(resourceUpload, imageViewer);
+		setMediaContainer(resourceUpload,paths.keySet(), imageViewer);
 	}
 
 	private void setResourceUploadAndResourceViewer(QuestionTypeProxy questionType, QuestionProxy question) {	
@@ -807,7 +807,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 				});
 				
 				// added to container
-				setMediaContainer(resourceUpload, viewer);
+				setMediaContainer(resourceUpload,paths.keySet(), viewer);
 		}
 	}
 	
@@ -819,13 +819,14 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		viewerContainer.clear();		
 	}
 	
-	private void setMediaContainer(Widget upload,Widget viewer) {
+	private void setMediaContainer(Widget upload,Set<MultimediaType> set, Widget viewer) {
 		lblUploadText.addStyleName("label");
-		lblUploadText.setText(constants.uploadResource());
+		lblUploadText.setText(ClientUtility.getUploadLabel(set));
 		uploaderContainer.add(upload);
 		viewerContainer.add(viewer);
 	}
-	
+
+		
 //	@Override
 //	public ImageViewer getImageViewer() {
 //		return viewer;

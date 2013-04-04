@@ -12,10 +12,12 @@ import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.ui.widget.resource.dndview.vo.State;
 import medizin.shared.MultimediaType;
 import medizin.shared.UserType;
+import medizin.shared.i18n.BmeConstants;
 import medizin.shared.utils.SharedConstant;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.base.Function;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeUri;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Image;
@@ -154,7 +156,7 @@ public final class ClientUtility {
 		
 		  try  
 		  {  
-		    int d = Integer.parseInt(value);  
+		    Integer.parseInt(value);  
 		  }  
 		  catch(NumberFormatException nfe)  
 		  {  
@@ -169,5 +171,20 @@ public final class ClientUtility {
 	
 	public static String toStringUtility(Object object){
 		return object == null ? "" : object.toString();
-	} 
+	}
+	
+	private static BmeConstants constants = GWT.create(BmeConstants.class);
+
+	public static String getUploadLabel(Set<MultimediaType> set) {
+		String label=constants.uploadResource();
+		if(set.contains(MultimediaType.Image)) label = constants.uploadImages();
+		if(set.contains(MultimediaType.Sound)) label = constants.uploadSounds();
+		if(set.contains(MultimediaType.Video)) label = constants.uploadVideos();
+		if(set.contains(MultimediaType.Image) && set.contains(MultimediaType.Sound)) label = constants.uploadImagesOrSounds();
+		if(set.contains(MultimediaType.Image) && set.contains(MultimediaType.Video)) label = constants.uploadImagesOrVideos();
+		if(set.contains(MultimediaType.Sound) && set.contains(MultimediaType.Video)) label = constants.uploadSoundsOrVideos();
+		if(set.contains(MultimediaType.Image) && set.contains(MultimediaType.Sound) && set.contains(MultimediaType.Video)) label = constants.uploadResource();
+		return label;
+	}
+
 }
