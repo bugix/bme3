@@ -150,13 +150,9 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 		 
 		@UiField
 		Label keywordCountValLbl;
-		
-	
-		
-		
+			
 		@UiField
 		TabPanel questionTypeDetailPanel;
-		
 		
 		@UiField
 		Label showAutoCompleteLbl;
@@ -320,11 +316,11 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 
 		private static final ArrayList<String> showInImgList = Lists.newArrayList("questionLength","answerLength","imageWidth","imageLength","imageProportion","linearPoint","linearPercentage");
 		
-		private static final ArrayList<String> longTextList = Lists.newArrayList("keywordHighlight","richText","minLength","maxLength","minWordCount","maxWordCount");
+		private static final ArrayList<String> longTextList = Lists.newArrayList("questionLength","keywordHighlight","richText","minLength","maxLength","minWordCount","maxWordCount");
 		
 		private static final ArrayList<String> matrixList = Lists.newArrayList("questionLength","answerLength","oneToOneAss");
 		
-		private static final ArrayList<String> mcqList = Lists.newArrayList("imageWidth","imageLength","imageProportion","multimediaType","selectionType","column","thumbWidth","thumbHeight","richText","allowZoomOut","allowZoomIn","maxBytes");
+		private static final ArrayList<String> mcqList = Lists.newArrayList("questionLength","imageWidth","imageLength","imageProportion","multimediaType","selectionType","column","thumbWidth","thumbHeight","richText","allowZoomOut","allowZoomIn","maxBytes");
 		
 	    @UiHandler("edit")
 	    public void onEditClicked(ClickEvent e) {
@@ -397,6 +393,7 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 	       }
 	       else if (proxy.getQuestionType().equals(QuestionTypes.LongText))
 	       {
+	    	   questionLengthValLbl.setText(toStringUtility(proxy.getQuestionLength()));
 	    	   keywordHighlightValLbl.setText(toStringUtility(proxy.getKeywordHighlight()));
 	    	   richTextValLbl.setText(toStringUtility(proxy.getRichText()));
 	    	   minLengthValLbl.setText(toStringUtility(proxy.getMinLength()));
@@ -413,6 +410,7 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 	       }
 	       else if (proxy.getQuestionType().equals(QuestionTypes.MCQ))
 	       {
+	    	   questionLengthValLbl.setText(toStringUtility(proxy.getQuestionLength()));
 	    	   imageWidthValLbl.setText(toStringUtility(proxy.getImageWidth()));
 	    	   imageLengthValLbl.setText(toStringUtility(proxy.getImageHeight()));
 	    	   imageProportionValLbl.setText(toStringUtility(proxy.getImageProportion()));

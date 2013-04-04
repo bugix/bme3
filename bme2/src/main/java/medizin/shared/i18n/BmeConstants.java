@@ -504,4 +504,6 @@ public interface BmeConstants extends Constants , ConstantsWithLookup {
 	public String validityMayNotBeNull();
 
 	public String answerTextMaxLength();
+
+	public String errorInMatrixOneToOneAss();
 }

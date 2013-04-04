@@ -1,7 +1,9 @@
 package medizin.client.ui.view.question;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import medizin.client.proxy.AnswerProxy;
 import medizin.client.proxy.MatrixValidityProxy;
@@ -29,6 +31,8 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Table.Cell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.TextOverflow;
@@ -76,7 +80,7 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 
 	@UiField
 	@Ignore
-	public DefaultSuggestBox<PersonProxy, EventHandlingValueHolderItem<PersonProxy>> auther;
+	public DefaultSuggestBox<PersonProxy, EventHandlingValueHolderItem<PersonProxy>> author;
 
 	@UiField
 	@Ignore
@@ -341,10 +345,10 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 	@Override
 	public void setAutherPickerValues(Collection<PersonProxy> values,PersonProxy logedUser) {
 
-		DefaultSuggestOracle<PersonProxy> suggestOracle1 = (DefaultSuggestOracle<PersonProxy>) auther.getSuggestOracle();
+		DefaultSuggestOracle<PersonProxy> suggestOracle1 = (DefaultSuggestOracle<PersonProxy>) author.getSuggestOracle();
 		suggestOracle1.setPossiblilities((List<PersonProxy>) values);
-		auther.setSuggestOracle(suggestOracle1);
-		auther.setRenderer(new AbstractRenderer<PersonProxy>() {
+		author.setSuggestOracle(suggestOracle1);
+		author.setRenderer(new AbstractRenderer<PersonProxy>() {
 
 			@Override
 			public String render(PersonProxy object) {
@@ -358,10 +362,10 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 		// change {
 		if (logedUser.getIsAdmin() == false) {
 
-			auther.setSelected(logedUser);
-			auther.setEnabled(false);
+			author.setSelected(logedUser);
+			author.setEnabled(false);
 		}
-		auther.setWidth(150);
+		author.setWidth(150);
 	}
 
 	@Override
@@ -394,7 +398,7 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 	@UiHandler("save")
 	public void onSaveButtonClick(ClickEvent event) {
 		Log.info("IN save");
-		Log.info("Size " + matrixList.size());
+		//Log.info("Size " + matrixList.size());
 		
 		for (MatrixValidityVO vo : matrixList) {
 			Log.info("Vo : " + vo);
@@ -402,41 +406,27 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 		
 		if(questionProxy!= null && questionProxy.getQuestionType() != null ) {
 			
-			int size = FluentIterable.from(matrixList).filter(new Predicate<MatrixValidityVO>() {
-
-				@Override
-				public boolean apply(MatrixValidityVO input) {
-					return input.getAnswerX() == null || input.getAnswerY() == null;
-				}
-			}).size();
+//			StringBuilder errorString = new StringBuilder();
 			
-			if(size > 0) {
-				ConfirmationDialogBox.showOkDialogBox(constants.error(), constants.errorInMatrixList());
-				return;
-			}
 			
-			if(questionProxy.getQuestionType().getAllowOneToOneAss() != null && questionProxy.getQuestionType().getAllowOneToOneAss().equals(true)) {
-				// TODO add logic 
-				
-			}
-			
-			StringBuilder errorString = new StringBuilder();
-			boolean flag = validationOfFields(errorString);
-			
-			if(flag == true) {
-				delegate.saveMatrixAnswer(currentMatrixValidityProxy,matrixList, auther.getSelected(), rewiewer.getSelected(), submitToReviewComitee.getValue(), comment.getText());
+			if(validationOfFields(true,null) == true) {
+				delegate.saveMatrixAnswer(currentMatrixValidityProxy,matrixList, author.getSelected(), rewiewer.getSelected(), submitToReviewComitee.getValue(), comment.getText());
 				hide();
-			}else {
-				ReceiverDialog.showMessageDialog(errorString.toString());
 			}
 		}
 		
 		
 	}
 	
-	private boolean validationOfFields(StringBuilder errorString) {
-		auther.removeStyleName("higlight_onViolation");
+	private boolean validationOfFields(boolean addMatrixValidation, String answerText) {
+
 		comment.removeStyleName("higlight_onViolation");
+		rewiewer.getTextField().advancedTextBox.removeStyleName("higlight_onViolation");
+		author.getTextField().advancedTextBox.removeStyleName("higlight_onViolation");
+		submitToReviewComitee.removeStyleName("higlight_onViolation");
+		
+		ArrayList<String> messages = Lists.newArrayList();
+		boolean flag = true;
 		
 		if(submitToReviewComitee.getValue())
 		{
@@ -446,23 +436,90 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 		{
 			submitToReviewComitee.setValue(false);
 		}else {
-			ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.selectReviewerOrComitee());
-			return false;
+			//ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.selectReviewerOrComitee());
+			//return false;
+			flag = false;
+			messages.add(constants.selectReviewerOrComitee());
+			rewiewer.getTextField().advancedTextBox.addStyleName("higlight_onViolation");
+			submitToReviewComitee.addStyleName("higlight_onViolation");
 		}
 		
-		boolean flag = true;
-		
-		if(auther.getSelected() == null) {
+		if(author.getSelected() == null) {
 			flag = false;
-			errorString.append(constants.authorMayNotBeNull()).append("<br />");
-			auther.addStyleName("higlight_onViolation");
+			//errorString.append(constants.authorMayNotBeNull()).append("<br />");
+			messages.add(constants.authorMayNotBeNull());
+			author.getTextField().advancedTextBox.addStyleName("higlight_onViolation");
 		}
 		
 		if(comment.getText() == null || comment.getText().isEmpty()) {
 			flag = false;
-			errorString.append(constants.commentMayNotBeNull()).append("<br />");
+			//errorString.append(constants.commentMayNotBeNull()).append("<br />");
+			messages.add(constants.commentMayNotBeNull());
 			comment.addStyleName("higlight_onViolation");
-		}	
+		}
+		
+		// Validate answer Max Length
+		if(answerText != null && questionProxy.getQuestionType().getAnswerLength() != null && answerText.length() > questionProxy.getQuestionType().getAnswerLength()) {
+			flag = false;
+			messages.add(constants.answerTextMaxLength());
+		}
+		
+		if(addMatrixValidation == true) {
+			int size = FluentIterable.from(matrixList).filter(new Predicate<MatrixValidityVO>() {
+
+				@Override
+				public boolean apply(MatrixValidityVO input) {
+					return input.getAnswerX() == null || input.getAnswerY() == null;
+				}
+			}).size();
+			
+			if(size > 0) {
+				flag = false;
+				messages.add(constants.errorInMatrixList());
+				//ConfirmationDialogBox.showOkDialogBox(constants.error(), constants.errorInMatrixList());
+				//return;
+			}
+			
+			if(questionProxy.getQuestionType().getAllowOneToOneAss() != null && questionProxy.getQuestionType().getAllowOneToOneAss().equals(true)) {
+								
+				Set<Cell<Integer,Integer,MatrixValidityVO>> setOfTrueValidity = matrixList.filter(new Predicate<MatrixValidityVO>() {
+
+					@Override
+					public boolean apply(MatrixValidityVO input) {
+						return input.getValidity() != null && Validity.Wahr.equals(input.getValidity());
+					}
+				});
+		
+				for (Cell<Integer, Integer, MatrixValidityVO> cell : setOfTrueValidity) {
+					
+					if(cell.getRowKey() != null && cell.getColumnKey() != null) {
+						int count = 0;
+						
+						Log.info("Current Row : " + cell.getRowKey() + " current Column : " + cell.getColumnKey());
+						
+						for(Cell<Integer, Integer, MatrixValidityVO> cell2 : setOfTrueValidity) {
+							
+							if(cell.getRowKey().equals(cell2.getRowKey()) || cell.getColumnKey().equals(cell2.getColumnKey())) {
+								count += 1;
+								Log.info("Row : " + cell2.getRowKey() + " Column : " + cell2.getColumnKey());
+							}
+						}
+						
+						if(count > 1) {
+							Log.info("For this row and column there are " + count);
+							flag = false;
+							messages.add(constants.errorInMatrixOneToOneAss());
+							break;
+						}
+					}
+				}
+			}
+
+		}
+				
+		if(flag == false) {
+			ReceiverDialog.showMessageDialog(constants.pleaseEnterWarning(),messages);
+		}
 		return flag;
 	}
 
@@ -489,8 +546,7 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 			final String text = textBox.getText();
 			if (text != null && text.isEmpty() == false) {
 	
-				StringBuilder errorString = new StringBuilder();
-				boolean flag = validationOfFields(errorString);
+				boolean flag = validationOfFields(false,text);
 				
 				if(flag == true) {
 
@@ -504,7 +560,7 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 						validity = answer.getAnswerProxy().getValidity();
 					}
 					
-					delegate.saveAnswerProxy(answer.getAnswerProxy(), text, auther.getSelected(), rewiewer.getSelected(), submitToReviewComitee.getValue(), comment.getText(), validity, points, mediaPath, additionalKeywords,sequenceNumber, new Function<AnswerProxy,Void>() {
+					delegate.saveAnswerProxy(answer.getAnswerProxy(), text, author.getSelected(), rewiewer.getSelected(), submitToReviewComitee.getValue(), comment.getText(), validity, points, mediaPath, additionalKeywords,sequenceNumber, new Function<AnswerProxy,Void>() {
 
 						@Override
 						public Void apply(AnswerProxy input) {
@@ -627,7 +683,7 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 								if(input == true) {
 									//delete the full answer
 									matrix.clear();
-									auther.setSelected(null);
+									author.setSelected(null);
 									rewiewer.setSelected(null);
 									comment.setText("");
 									submitToReviewComitee.setValue(false);
@@ -785,7 +841,7 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 		
 		if(response.size() > 0) {
 			AnswerProxy proxy = response.get(0).getAnswerX();
-			auther.setSelected(proxy.getAutor());
+			author.setSelected(proxy.getAutor());
 			rewiewer.setSelected(proxy.getRewiewer());
 			submitToReviewComitee.setValue(proxy.getSubmitToReviewComitee());
 			if(proxy.getComment() != null) {

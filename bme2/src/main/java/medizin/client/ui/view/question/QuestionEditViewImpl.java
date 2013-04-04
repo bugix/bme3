@@ -955,9 +955,6 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		
 	}*/
 	
-	//TODO may need to change 
-	private static final ArrayList<QuestionTypes> questionMaxFieldValiation = Lists.newArrayList(QuestionTypes.Textual,QuestionTypes.Imgkey,QuestionTypes.Matrix,QuestionTypes.ShowInImage,QuestionTypes.Sort);
-	
 	private boolean validationOfFields() {
 		
 		author.getTextField().advancedTextBox.removeStyleName("higlight_onViolation");
@@ -1020,7 +1017,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		}else {
 			// question text is not null
 			
-			if(questionType.getValue() != null && questionMaxFieldValiation.contains(questionType.getValue().getQuestionType()) == true && questionType.getValue().getQuestionLength()  != null && questionType.getValue().getQuestionLength() < questionTextArea.getText().length()) {
+			if(questionType.getValue() != null && questionType.getValue().getQuestionLength()  != null && questionType.getValue().getQuestionLength() < questionTextArea.getText().length()) {
 				flag = false;
 				messages.add(constants.questionTextMaxLength());
 				questionTextArea.addStyleName("higlight_onViolation");

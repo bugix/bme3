@@ -1,20 +1,22 @@
 package medizin.client.util;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.RandomAccess;
+import java.util.Set;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Sets;
+import com.google.common.collect.Table.Cell;
+import com.google.common.collect.TreeBasedTable;
 
 public class Matrix<E>  implements Iterable<E>, RandomAccess, Cloneable, java.io.Serializable{
 
 	private static final long serialVersionUID = 1L;
-	private ArrayList<ArrayList<E>> matrix  = Lists.newArrayList();
-	private int[] size = new int[20];
-	private int rows = 0;
+	
+	private TreeBasedTable <Integer,Integer,E> table = TreeBasedTable .create();
 	
 	private final Predicate<E> NOT_NULL = new Predicate<E>() {
 
@@ -25,53 +27,20 @@ public class Matrix<E>  implements Iterable<E>, RandomAccess, Cloneable, java.io
 	};
 
 	public Matrix() {
-		init();
+		clear();
 	}
 	
-	private void init() {
-		for(int rowIndex=0;rowIndex<20;rowIndex++) {
-			ArrayList<E> row = Lists.newArrayList();
-			for(int columnIndex=0;columnIndex<20;columnIndex++) {
-				row.add(null);
-			}
-			matrix.add(row);
-			size[rowIndex] = 0;
-			rows = 0;
-		}
-		
-		Log.info("Matrix size : " +  matrix.size());
-	}
-	public int size() {
-		int total = 0;
-		
-		for (int rowSize : size) {
-			total += rowSize;
-		}
-		return total;
-	}
-
 	public boolean isEmpty() {
-		return matrix.isEmpty();
+		return table.isEmpty();
 	}
 
 	public boolean contains(E o) {
-		for (ArrayList<E> row: matrix) {
-			if(row.contains(0)) {
-				return true;
-			}
-		}	
-		return false;
+		return table.containsValue(o);
 	}
 
 	@Override
 	public Iterator<E> iterator() {
-		final ArrayList<E> list = Lists.newArrayList();
-		for (ArrayList<E> row : matrix) {
-			if(row != null) {
-				list.addAll(Lists.newArrayList(Iterables.filter(row,NOT_NULL)));	
-			}
-		}
-		return list.iterator();
+		return FluentIterable.from(table.values()).filter(NOT_NULL).iterator();
 	}
 
 
@@ -81,172 +50,131 @@ public class Matrix<E>  implements Iterable<E>, RandomAccess, Cloneable, java.io
 			Log.info("row or column negative : row " + row + " column " + column);
 			return false;
 		}
-		if(rowExists(row) && column < matrix.get(row).size()) {
-			if(row < size.length && size[row] <= column) {
-				size[row] = column + 1;
-			}
-			
-			if(rows < row) {
-				rows = row + 1;
-			}
-			//Log.info("set method : Element (row*column): (" +row +"*" + column+ ") "+ e!=null?e.toString():"null");
-			matrix.get(row).set(column,e);
-		}else {
-			return false;
-		}
 		
+		table.put(row, column, e);
 		return true;
 	}
 
-	public E remove(int row,int column, E e) {
-		
-		if(exists(row,column)) {
-			if(set(row,column,null)) {
-				
-				for(int i=0;i<size[row];i++) {
-					if(get(row,i) != null) {
-						return e;		
-					}
-				}
-				
-				rows--;
-				return e;
-			}
-		}
-		return null;
+	public E remove(int row,int column) {
+		return table.remove(row, column);
 	}
 	
 	public void clear() {
-		init();
+		table.clear();
 	}
 
 	public E get(int row, int column) {
-		if(exists(row, column)) {
-			Log.info("get method :Element (row*column): (" +row +"*" + column+ ") "+ matrix.get(row).get(column));
-			return matrix.get(row).get(column);
-		}else {
-			return null;
-		}
+		return table.get(row, column);
 	}
 
 	public  boolean rowExists(int row) {
-		if(row < matrix.size() && matrix.get(row) !=null) {
-			return true;
-		}
-		return false;
+		return table.containsRow(row);
 	}
 	
 	public boolean exists(int row, int column) {
-		 
-		if(rowExists(row) && column < matrix.get(row).size() && matrix.get(row).get(column) != null) {
-			return true;
-		}
-			
-		return false;
+		return table.contains(row, column); 
 	}
 
 	public int getRows() {
-		return rows;
+		if(table.rowKeySet().isEmpty()){
+			return 0;
+		}else {
+			return table.rowKeySet().last() + 1;
+		}
 	}
 
 	public int getColumns(int row) {
-		if(row < size.length) {
-			return size[row];
+		if(table.row(row).isEmpty()) {
+			return 0;
 		}
-		return 0;
+		else {
+			return table.row(row).lastKey()+1;
+		}
 	}
 
 	public boolean addColumn(int row,int startFromColumn, E e) {
-		if(rowExists(row) && size[row] < matrix.get(row).size()) {
-			
-			if(size[row] < startFromColumn) {
-				size[row] = startFromColumn;
-			}
-			
-			Log.info("addColumn: Element (row*column): (" +row +"*" + size[row] + ") "+ e.toString());
-			return set(row, size[row], e);
-		}
-		
-		return false;
-		
+		int column = getColumns(row) < startFromColumn ? startFromColumn: getColumns(row);
+		return set(row,column,e);	
 	}
 
-	public boolean addRow(int startFrom, int currentColumn, E e) {
+	public boolean addRow(int startFrom, int currentColumn, E e) {	
 		int row = getNextRow(startFrom);
 		Log.info("addRow: Element (row*column): (" +row +"*" + currentColumn + ") "+ e.toString());
 		return set(row, currentColumn, e);
 	}
 
-	
-
 	public boolean add(int startFromRow,int startFromColumn, E e) {
 		int row = getNextRow(startFromRow); 
-		Log.info("addRow: Element (row*column): (" +row +"* unknow ) "+ e.toString());
+		Log.info("addRow: Element (row*column): (" +row +"* unknow(startFromColumn:"+startFromColumn+") ) "+ e.toString());
 		return addColumn(row, startFromColumn, e);
 	}
 
 	private int getNextRow(int startFrom) {
-		
-		for (int row = startFrom; row <size.length; row++) {
-			if(size[row] == 0) {
-				return row;
-			}
-		}
-		return 20;
+		return getRows() < startFrom ? startFrom : getRows(); 
 	}
 
-	public int getColumnForObject(E e) {
+	public int getColumnForObject(final E e) {
+		Optional<Cell<Integer, Integer, E>> optional = getCellForValue(e);
 		
-		for (ArrayList<E> rows : matrix) {
-			
-			if(rows.contains(e)) {
-				int currentColumn = 0;
-				for(E obj : rows) {
-					
-					if(e.equals(obj)) {
-						return currentColumn;
-					}
-					currentColumn++;
-				}
-				 
-			}
+		if(optional.isPresent()) {
+			return optional.get().getColumnKey();
+		}else {
+			return -1;
 		}
-		
-		return -1;
 	}
 
 	public int getRowForObject(E e) {
-		int currentRow = 0;
-		for (ArrayList<E> rows : matrix) {
-			
-			if(rows.contains(e)) {
-				return currentRow;
+		Optional<Cell<Integer, Integer, E>> optional = getCellForValue(e);
+		
+		if(optional.isPresent()) {
+			return optional.get().getRowKey();
+		}else {
+			return -1;
+		}		
+	}
+	
+	private Optional<Cell<Integer, Integer, E>> getCellForValue(final E e) { 
+		return FluentIterable.from(table.cellSet()).filter(new Predicate<Cell<Integer, Integer, E>> () {
+
+			@Override
+			public boolean apply(Cell<Integer, Integer, E> input) {
+				
+				return e.equals(input.getValue());
 			}
-			currentRow++;
-		}
-		return -1;
+		}).first();
 	}
 
-	public boolean removeRow(int currentRow) {
-		
-		if(rowExists(currentRow)) {
-			ArrayList<E> newColumn = Lists.newArrayList();
-			for(int columnIndex=0 ; columnIndex < 20 ; columnIndex++) {
-				newColumn.add(null);
-			}
-			matrix.set(currentRow, newColumn);
-			size[currentRow] = 0;
-			return true;
-		}
-		
-		return false;
+	public boolean removeRow(int currentRow) {	
+		table.row(currentRow).clear();
+		return true;
+	}
+	
+	public boolean removeColumn(int currentColumn) {
+		table.column(currentColumn).clear();
+		return true;
 	}
 
 	public boolean removeCell(int row, int column) {
-		
-		if(exists(row, column)) {
-			return set(row, column, null);
+		return table.remove(row, column) != null;
+	}
+
+	public Set<Cell<Integer, Integer, E>> filter(final Predicate<E> predicate) {
+		Set<Cell<Integer, Integer, E>> filterSeted = null;
+
+		if(predicate != null) {
+			Iterator<Cell<Integer, Integer, E>>  iterator = FluentIterable.from(table.cellSet()).filter(new Predicate<Cell<Integer,Integer,E>>() {
+
+				@Override
+				public boolean apply(Cell<Integer, Integer, E> input) {
+					return predicate.apply(input.getValue());
+				}
+			}).iterator();
+			
+			filterSeted = Sets.newHashSet(iterator);
+		}else {
+			filterSeted = Sets.newHashSet();
 		}
-		return false;
+		
+		return filterSeted;
 	}
 }

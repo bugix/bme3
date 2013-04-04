@@ -268,6 +268,7 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 				}
 				else if (selectedQuestionType.equals(QuestionTypes.LongText))
 				{
+					questionTypeProxy.setQuestionLength(Integer.parseInt(view.getQuestionLengthTxtbox().getValue()));
 					questionTypeProxy.setKeywordHighlight(view.getKeywordHighlightChkBox().getValue());
 					questionTypeProxy.setRichText(view.getRichTextChkBox().getValue());
 					questionTypeProxy.setMinLength(Integer.parseInt(view.getMinLengthTxtbox().getValue()));
@@ -284,6 +285,7 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 				}
 				else if (selectedQuestionType.equals(QuestionTypes.MCQ))
 				{
+					questionTypeProxy.setQuestionLength(Integer.parseInt(view.getQuestionLengthTxtbox().getValue()));
 					questionTypeProxy.setMultimediaType(view.getMultimediaTypeListBox().getValue());
 					questionTypeProxy.setSelectionType(view.getSelectionTypeListBox().getValue());
 					questionTypeProxy.setColumns(Integer.parseInt(view.getColumnTxtbox().getValue()));

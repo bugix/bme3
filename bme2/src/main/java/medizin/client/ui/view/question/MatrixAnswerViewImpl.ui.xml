@@ -19,7 +19,7 @@
 						<g:Label styleName="{style.label}" text="{cc.auther}" ></g:Label>
 					</td>
 					<td>
-						<i:DefaultSuggestBox ui:field="auther"></i:DefaultSuggestBox>
+						<i:DefaultSuggestBox ui:field="author"></i:DefaultSuggestBox>
 					</td>
 				</tr>
 				<tr id="rewiewer">
