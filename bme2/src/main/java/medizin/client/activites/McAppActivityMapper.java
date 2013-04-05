@@ -12,6 +12,7 @@ import medizin.client.place.PlaceAsignAssQuestion;
 import medizin.client.place.PlaceAssesment;
 import medizin.client.place.PlaceBookAssesment;
 import medizin.client.place.PlaceInstitution;
+import medizin.client.place.PlaceNotActivatedQuestion;
 import medizin.client.place.PlaceOpenDemand;
 import medizin.client.place.PlaceQuestion;
 import medizin.client.place.PlaceQuestiontypes;
@@ -77,6 +78,9 @@ public class McAppActivityMapper implements ActivityMapper {
 		 
 		 if (place instanceof PlaceQuestion)
 	            return new ActivityQuestion((PlaceQuestion) place, requests, placeController);
+		 
+		 if (place instanceof PlaceNotActivatedQuestion)
+	            return new ActivityNotActivatedQuestion((PlaceNotActivatedQuestion) place, requests, placeController);
 		 
 		 if (place instanceof PlaceQuestiontypes)
 	            return new ActivityQuestiontypes((PlaceQuestiontypes) place, requests, placeController);

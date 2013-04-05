@@ -144,7 +144,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			}
 		}*/		
 		
-		questionDetailsView = new QuestionDetailsViewImpl(eventBus, flag);
+		QuestionDetailsViewImpl questionDetailsView = new QuestionDetailsViewImpl(eventBus, flag,true);
 		
 		/*questionDetailsView.setName("hallo");*/
 		questionDetailsView.setPresenter(this);
@@ -1580,5 +1580,10 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	//updated by subclass
 	@Override
 	public void checkForResendToReview() {		
+	}
+
+	@Override
+	public void forcedActiveClicked() {
+		// not to implement here this is for ActivityNotActivatedQuestionDetails.class
 	}
 }

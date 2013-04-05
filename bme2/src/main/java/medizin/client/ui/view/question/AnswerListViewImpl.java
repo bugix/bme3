@@ -44,7 +44,7 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 			UiBinder<Widget, AnswerListViewImpl> {
 	}
 
-	public AnswerListViewImpl() {
+	public AnswerListViewImpl(boolean isEditable) {
 		CellTable.Resources tableResources = GWT
 				.create(MyCellTableResources.class);
 		tableAnswer = new CellTable<AnswerProxy>(McAppConstant.TABLE_PAGE_SIZE,
@@ -56,7 +56,9 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 				true, McAppConstant.TABLE_JUMP_SIZE, true);
 
 		initWidget(uiBinder.createAndBindUi(this));
-		init();
+		
+		newAnswer.setVisible(isEditable);
+		init(isEditable);
 	}
 
 
@@ -87,7 +89,7 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 	//private String name;
     protected Set<String> paths = new HashSet<String>();
 
-    public void init() {
+    public void init(boolean isEditable) {
     	
     	Log.debug("Im AnswerListView.init() ");
     	
@@ -294,34 +296,38 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 //                return renderer.render(object.getQuestion());
 //            }
 //        }, "Question");
-        addColumn(new EditIconCell(McAppConstant.EDIT_ICON, new ActionCell.Delegate<AnswerProxy>() 
-            	{
-            public void execute(AnswerProxy answer) {
-              delegate.editAnswerClicked(answer);
-            }
-          }), constants.edit(), new GetValue<AnswerProxy>() {
-        	public AnswerProxy getValue(AnswerProxy contact) {
-        		return contact;
-        	}
-        }, null);
         
-    	addColumn(new DeleteIconCell(McAppConstant.DELETE_ICON, new ActionCell.Delegate<AnswerProxy>() 
-    	{
-    	            public void execute(AnswerProxy answer) {
-    	              delegate.deleteAnswerClicked(answer);
-    	            }
-    	          }), constants.delete(), new GetValue<AnswerProxy>() {
-    	        public AnswerProxy getValue(AnswerProxy contact) {
-    	          return contact;
-    	        }
-    	      }, null);
-    	
+        if(isEditable == true) {
+        
+        	addColumn(new EditIconCell(McAppConstant.EDIT_ICON, new ActionCell.Delegate<AnswerProxy>() 
+                	{
+                public void execute(AnswerProxy answer) {
+                  delegate.editAnswerClicked(answer);
+                }
+              }), constants.edit(), new GetValue<AnswerProxy>() {
+            	public AnswerProxy getValue(AnswerProxy contact) {
+            		return contact;
+            	}
+            }, null);
+            
+        	addColumn(new DeleteIconCell(McAppConstant.DELETE_ICON, new ActionCell.Delegate<AnswerProxy>() 
+        	{
+        	            public void execute(AnswerProxy answer) {
+        	              delegate.deleteAnswerClicked(answer);
+        	            }
+        	          }), constants.delete(), new GetValue<AnswerProxy>() {
+        	        public AnswerProxy getValue(AnswerProxy contact) {
+        	          return contact;
+        	        }
+        	      }, null);
+        	
+        	tableAnswer.addColumnStyleName(2, "iconColumn");
+        	tableAnswer.addColumnStyleName(3, "iconColumn");
+        }
+            	
     	tableAnswer.addColumnStyleName(0, "iconColumn");
     	tableAnswer.addColumnStyleName(1, "questionTextColumn");
-    	tableAnswer.addColumnStyleName(2, "iconColumn");
-    	tableAnswer.addColumnStyleName(3, "iconColumn");
-
-
+    	
     }
 	@Override
 	public CellTable<AnswerProxy> getTable() {

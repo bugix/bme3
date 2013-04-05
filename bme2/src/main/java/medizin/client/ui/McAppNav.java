@@ -15,6 +15,8 @@ import medizin.client.place.PlaceBookAssesment;
 import medizin.client.place.PlaceBookAssesmentDetails;
 import medizin.client.place.PlaceInstitution;
 import medizin.client.place.PlaceInstitutionEvent;
+import medizin.client.place.PlaceNotActivatedQuestion;
+import medizin.client.place.PlaceNotActivatedQuestionDetails;
 import medizin.client.place.PlaceOpenDemand;
 import medizin.client.place.PlaceQuestion;
 import medizin.client.place.PlaceQuestionDetails;
@@ -94,6 +96,8 @@ public class McAppNav extends Composite {
 	@UiField
 	Anchor question;
 	@UiField
+	Anchor notActivatedQuestion;
+	@UiField
 	Anchor questionType;
 	@UiField
 	Anchor institution;
@@ -138,6 +142,10 @@ public class McAppNav extends Composite {
 	@UiHandler("question")
 	void questionClicked(ClickEvent event) {
 		placeController.goTo(new PlaceQuestion(PlaceQuestion.PLACE_QUESTION));
+	}
+	@UiHandler("notActivatedQuestion")
+	void notActivatedQuestionClicked(ClickEvent event) {
+		placeController.goTo(new PlaceNotActivatedQuestion(PlaceNotActivatedQuestion.PLACE_NOT_ACTIVATED_QUESTION));
 	}
 	@UiHandler("questionType")
 	void questionTypeClicked(ClickEvent event) {
@@ -387,6 +395,12 @@ public class McAppNav extends Composite {
             questionPanel.setOpen(true);		
 		//	question.addStyleName("gwt-AnchorSelected");
         }
+        if (place instanceof PlaceNotActivatedQuestion || place instanceof PlaceNotActivatedQuestionDetails){
+            systemOweviewPanel.setOpen(false);
+            managementPanel.setOpen(false);
+            assementPanel.setOpen(false);
+            questionPanel.setOpen(true);		
+        }
         if (place instanceof PlaceQuestiontypes || place instanceof PlaceQuestiontypesDetails){
             systemOweviewPanel.setOpen(false);
             managementPanel.setOpen(false);
@@ -448,6 +462,7 @@ public class McAppNav extends Composite {
 		
 		questionPanel.getHeaderTextAccessor().setText(constants.questionPanel());
 		question.setText(constants.question());
+		notActivatedQuestion.setText(constants.notActivatedQuestion());
 		questionType.setText(constants.questionType());
 		institution.setText(constants.institution());
 		
@@ -475,6 +490,8 @@ public class McAppNav extends Composite {
 		questionPanel.setVisible(true);
 		assementPanel.setVisible(true);
 		
+		
+		notActivatedQuestion.setVisible(true);
 		questionType.setVisible(true);
 		institution.setVisible(true);
 		assesment.setVisible(true);
@@ -489,6 +506,7 @@ public class McAppNav extends Composite {
 		questionPanel.setVisible(true);
 		assementPanel.setVisible(true);
 		
+		notActivatedQuestion.setVisible(false);
 		questionType.setVisible(false);
 		institution.setVisible(false);
 		assesment.setVisible(false);

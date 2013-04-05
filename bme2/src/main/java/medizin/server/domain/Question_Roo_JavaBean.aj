@@ -92,6 +92,14 @@ privileged aspect Question_Roo_JavaBean {
         this.isAcceptedAuthor = isAcceptedAuthor;
     }
     
+    public Boolean Question.getIsForcedActive() {
+        return this.isForcedActive;
+    }
+    
+    public void Question.setIsForcedActive(Boolean isForcedActive) {
+        this.isForcedActive = isForcedActive;
+    }
+    
     public Question Question.getPreviousVersion() {
         return this.previousVersion;
     }

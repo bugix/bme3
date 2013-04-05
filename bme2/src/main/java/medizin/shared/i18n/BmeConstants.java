@@ -520,4 +520,8 @@ public interface BmeConstants extends Constants , ConstantsWithLookup {
 	public String uploadSoundsOrVideos();
 
 	public String answerTextMinMax();
+
+	public String notActivatedQuestion();
+	
+	public String forcedActive();
 }

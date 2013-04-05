@@ -2,6 +2,7 @@ package medizin.server.domain;
 
 import java.io.File;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
@@ -96,6 +97,11 @@ public class Question {
 	@Value("false")
 	@Column(columnDefinition="BIT", length = 1)
 	private Boolean isAcceptedAuthor;
+	
+	@NotNull
+	@Value("false")
+	@Column(columnDefinition="BIT", length = 1)
+	private Boolean isForcedActive;
 
 	/*@NotNull
 	@Value("false")
@@ -1251,5 +1257,224 @@ public class Question {
 		persistNewQuestion(this.questionType.getId(), this.questionShortName, this.questionText, this.autor.getId(), this.rewiewer.getId(), this.submitToReviewComitee, 
 				this.questEvent.getId(), Lists.newArrayList(mcIds), this.comment.getComment(), this.questionVersion+1, 0, this.picturePath, this.status, 
 				Sets.newHashSet(newQuestionResources), this.getId());
+	}
+	
+	public static Long countNotActivatedQuestionsByPerson(String searchText, List<String> searchField) {
+		
+		Person loggedUser = Person.myGetLoggedPerson();
+		Institution institution = Institution.myGetInstitutionToWorkWith();
+		if (loggedUser == null || institution == null)
+			throw new IllegalArgumentException("The person and institution arguments are required");
+		
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+		Root<Question> from = criteriaQuery.from(Question.class);
+		criteriaQuery.select(criteriaBuilder.count(from));	
+		
+		TypedQuery<Long> q = notActivatedQuestionsByPerson(institution.getId(), searchText, searchField, criteriaBuilder, criteriaQuery, from);
+
+		return q.getSingleResult();
+	}
+	
+	public static List<Question> findAllNotActivatedQuestionsByPerson(String searchText, List<String> searchField, int start, int length) {
+		
+		Person loggedUser = Person.myGetLoggedPerson();
+		Institution institution = Institution.myGetInstitutionToWorkWith();
+		if (loggedUser == null || institution == null)
+			throw new IllegalArgumentException("The person and institution arguments are required");
+		
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Question> criteriaQuery = criteriaBuilder.createQuery(Question.class);
+		Root<Question> from = criteriaQuery.from(Question.class);
+		TypedQuery<Question> q = notActivatedQuestionsByPerson(institution.getId(), searchText, searchField, criteriaBuilder, criteriaQuery, from);
+		q.setFirstResult(start);
+		q.setMaxResults(length);
+		return q.getResultList();
+	}
+	
+	private static <T> TypedQuery<T> notActivatedQuestionsByPerson(Long institutionId, String searchText, List<String> searchField, CriteriaBuilder cb, CriteriaQuery<T> cq, Root<Question> from) {
+		
+		Predicate preIns1 = cb.equal(from.get("questEvent").get("institution").get("id"), institutionId);
+		Predicate preStatus2 = from.get("status").in(Status.ACCEPTED_ADMIN,Status.ACCEPTED_REVIEWER,Status.CORRECTION_FROM_ADMIN,Status.CORRECTION_FROM_REVIEWER,Status.NEW); 		
+		Predicate andPredicate = null;
+		Predicate statusNewPredicate = null;
+		
+		if (!searchText.equals("")) {
+			Expression<String> exp1 = from.get("questionShortName");
+			Predicate pre1 = cb.like(exp1, "%" + searchText + "%");
+			andPredicate = pre1;
+		}
+		
+		if (searchField.size() > 0) {
+			
+			Date dt1 = null;
+			Date dt2 = null;
+			Date usedMcDt1 = null;
+			Date usedMcDt2 = null;
+			DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+			int ctr = 0;
+			
+			while (ctr < searchField.size())
+			{
+				if (searchField.get(ctr).equals("quesitontext") && !searchText.equals("")) {
+					Expression<String> exp2 = from.get("questionText");
+					Predicate pre2 = cb.like(exp2, "%" + searchText + "%");
+					andPredicate = cb.and(andPredicate, pre2);
+					ctr += 1;
+				}
+
+				if (searchField.get(ctr).equals("author") && !searchText.equals("")) {
+					Expression<String> authorExp = from.get("autor").get("name");
+					Predicate pre3 = cb.equal(authorExp, "%" + searchText + "%");
+					andPredicate = cb.and(andPredicate, pre3);
+					ctr += 1;
+				}
+
+				if (searchField.get(ctr).equals("reviewer") && !searchText.equals("")) {
+					Expression<String> reviwerExp = from.get("rewiewer").get("name");
+					Predicate pre4 = cb.equal(reviwerExp, "%" + searchText + "%");
+					andPredicate = cb.and(andPredicate, pre4);
+					ctr += 1;
+				}
+
+				if (searchField.get(ctr).equals("instruction") && !searchText.equals("")) {
+					Expression<String> exp3 = from.get("comment").get("comment");
+					Predicate pre5 = cb.like(exp3, "%" + searchText + "%");
+					andPredicate = cb.and(andPredicate, pre5);
+					ctr += 1;
+				}
+
+				if (searchField.get(ctr).equals("keyword") && !searchText.equals("")) {
+					SetJoin<Question, Keyword> join1 = from.joinSet("keywords", JoinType.LEFT);
+					Expression<String> exp4 = join1.get("name");
+					Predicate pre6 = cb.like(exp4, "%" + searchText + "%");
+					andPredicate = cb.and(andPredicate, pre6);
+					ctr += 1;
+				}
+				
+				if (searchField.get(ctr).equals("showNew")) {
+					ctr += 1;	
+					statusNewPredicate = from.get("status").in(Status.NEW);
+				}
+
+				if (searchField.get(ctr).equals("institution")) {
+					ctr += 1;
+					Long selectInstitutionId = Long.parseLong(searchField.get(ctr));
+					Predicate pre7 = cb.equal(from.get("questEvent").get("institution").get("id"), selectInstitutionId);
+					
+					if (andPredicate == null)
+						andPredicate = pre7;
+					else
+						andPredicate = cb.and(andPredicate, pre7);
+					
+					ctr += 1;
+				}
+
+				if (searchField.get(ctr).equals("specialiation")) {
+					ctr += 1;
+					Long questionEventId = Long.parseLong(searchField.get(ctr));
+					Predicate pre8 = cb.equal(from.get("questEvent").get("id"),questionEventId);
+					
+					if (andPredicate == null)
+						andPredicate = pre8;
+					else
+						andPredicate = cb.and(andPredicate, pre8);
+				}
+
+				if (searchField.get(ctr).equals("createdDateFrom"))
+				{
+					ctr += 1;
+					log.info("DATE VALUE : " + searchField.get(ctr));
+					
+					try {
+						dt1 = df.parse(searchField.get(ctr));
+					} catch (ParseException e) {
+						log.error("Error in creatdDateFrom Field",e);
+					}
+				}
+				
+				if (searchField.get(ctr).equals("createdDateTo")) {
+					ctr += 1;
+					try {
+						dt2 = df.parse(searchField.get(ctr));
+					} catch (ParseException e) {
+						log.error("Error in createdDateTo Field",e);
+					}
+					
+					if (dt1 != null && dt2 != null)
+					{
+						Expression<Date> createdDateExp = from.get("dateAdded");
+						Predicate pre10 = cb.between(createdDateExp, dt1, dt2);
+						
+						if (andPredicate == null)
+							andPredicate = pre10;
+						else
+							andPredicate = cb.and(andPredicate, pre10);
+					}
+				}
+
+				if (searchField.get(ctr).equals("usedMcFrom")) {
+					ctr += 1;
+					try {
+						usedMcDt1 = df.parse(searchField.get(ctr));
+					} catch (ParseException e) {
+						log.error("Error in usedMcFrom Field",e);
+					}
+				}
+				
+				if (searchField.get(ctr).equals("usedMcTo")){
+					ctr += 1;
+					try {
+						usedMcDt2 = df.parse(searchField.get(ctr));
+					} catch (ParseException e) {
+						log.error("Error in usedMcTo Field",e);
+					}
+					
+					if (usedMcDt1 != null && usedMcDt2 != null)
+					{
+						SetJoin<Question, AssesmentQuestion> join2 = from.joinSet("assesmentQuestionSet", JoinType.LEFT);
+						Expression<Date> assessmentDate = join2.get("assesment").get("dateOfAssesment");
+						Predicate pre11 = cb.between(assessmentDate, usedMcDt1, usedMcDt2);
+						
+						if (andPredicate == null)
+							andPredicate = pre11;
+						else
+							andPredicate = cb.and(andPredicate, pre11);
+					}
+				}
+				
+				ctr += 1;
+			}
+		}
+		
+		if(andPredicate != null) preIns1 = cb.and(preIns1,andPredicate);
+		
+		if(statusNewPredicate != null) preIns1 = cb.and(preIns1,statusNewPredicate);
+		
+		cq.where(cb.and(preIns1,preStatus2));
+		
+		return entityManager().createQuery(cq);
+	}
+	
+	public static void forcedActiveQuestion(Long questionId) {
+		
+		Person userLoggedIn = Person.myGetLoggedPerson();
+
+		if (userLoggedIn == null)
+			return;
+
+		Question question = Question.findQuestion(questionId);
+		if(question == null){
+			log.error("Question is null");
+			return;
+		}
+			
+		question.setStatus(Status.ACTIVE);
+		question.setIsForcedActive(true);
+				
+		if (Status.ACTIVE.equals(question.getStatus()))
+			inActivePreviousQuestion(question.getPreviousVersion());
+
+		question.persist();	
 	}
 }

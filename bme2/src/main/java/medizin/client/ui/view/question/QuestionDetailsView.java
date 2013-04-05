@@ -54,6 +54,8 @@ public interface QuestionDetailsView extends IsWidget {
 		void onResendToReviewClicked(QuestionProxy proxy);
 
 		void checkForResendToReview();
+
+		void forcedActiveClicked();
 	}
 
 	AnswerListViewImpl getAnswerListViewImpl();
@@ -71,4 +73,6 @@ public interface QuestionDetailsView extends IsWidget {
 	IconButton getResendToReviewBtn();
 	
 	IconButton getAcceptBtn();
+	
+	IconButton getForcedActiveBtn();
 }

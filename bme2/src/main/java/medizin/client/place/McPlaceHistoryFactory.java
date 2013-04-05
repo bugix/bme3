@@ -31,6 +31,9 @@ private final PlaceBookAssesmentDetails.Tokenizer placeBookAssesmentDetailsToken
 private final PlaceUserDetailsEvent.Tokenizer placeUserDetailsEventTokenizer ;
 private final PlaceAssesmentDetails.Tokenizer placeAssesmentDetails ;
 private final PlaceAcceptQuestionDetails.Tokenizer placeAcceptQuestionDetails ;
+private final PlaceNotActivatedQuestion.Tokenizer placeNotActivatedQuestion ;
+private final PlaceNotActivatedQuestionDetails.Tokenizer placeNotActivatedQuestionDetails ;
+
 
 public PlaceUserDetailsEvent.Tokenizer getPlaceUserDetailsEventTokenizer() {
 	return placeUserDetailsEventTokenizer;
@@ -142,6 +145,14 @@ public  PlaceAssesmentDetails.Tokenizer getPlaceAssesmentDetailsTokenizer() {
 public  PlaceAcceptQuestionDetails.Tokenizer getPlaceAcceptQuestionDetailsTokenizer() {
 	return placeAcceptQuestionDetails;
 }
+
+public  PlaceNotActivatedQuestion.Tokenizer getPlaceNotActivatedQuestionTokenizer() {
+	return placeNotActivatedQuestion;
+}
+
+public  PlaceNotActivatedQuestionDetails.Tokenizer getPlaceNotActivatedQuestionDetailsTokenizer() {
+	return placeNotActivatedQuestionDetails;
+}
 //	private final NationalityPlace.Tokenizer nationalityPlaceTokenizer;
 //	private final NationalityDetailsPlace.Tokenizer nationalityDetailsPlaceTokenizer;
 
@@ -173,6 +184,8 @@ public  PlaceAcceptQuestionDetails.Tokenizer getPlaceAcceptQuestionDetailsTokeni
 //		this.nationalityDetailsPlaceTokenizer = new NationalityDetailsPlace.Tokenizer(requestFactory);
 		this.placeAssesmentDetails = new PlaceAssesmentDetails.Tokenizer(requestFactory);
 		this.placeAcceptQuestionDetails = new PlaceAcceptQuestionDetails.Tokenizer(requestFactory);
+		this.placeNotActivatedQuestion= new PlaceNotActivatedQuestion.Tokenizer(requestFactory);
+		this.placeNotActivatedQuestionDetails = new PlaceNotActivatedQuestionDetails.Tokenizer(requestFactory);
 	}
 
 //	public PlaceTokenizer<NationalityPlace> getNationalityPlaceTokenizer() {

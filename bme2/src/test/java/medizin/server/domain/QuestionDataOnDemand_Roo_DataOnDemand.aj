@@ -54,6 +54,7 @@ privileged aspect QuestionDataOnDemand_Roo_DataOnDemand {
         setIsAcceptedAdmin(obj, index);
         setIsAcceptedAuthor(obj, index);
         setIsAcceptedRewiever(obj, index);
+        setIsForcedActive(obj, index);
         setIsReadOnly(obj, index);
         setPicturePath(obj, index);
         setPreviousVersion(obj, index);
@@ -96,6 +97,11 @@ privileged aspect QuestionDataOnDemand_Roo_DataOnDemand {
     public void QuestionDataOnDemand.setIsAcceptedRewiever(Question obj, int index) {
         Boolean isAcceptedRewiever = Boolean.TRUE;
         obj.setIsAcceptedRewiever(isAcceptedRewiever);
+    }
+    
+    public void QuestionDataOnDemand.setIsForcedActive(Question obj, int index) {
+        Boolean isForcedActive = Boolean.TRUE;
+        obj.setIsForcedActive(isForcedActive);
     }
     
     public void QuestionDataOnDemand.setIsReadOnly(Question obj, int index) {

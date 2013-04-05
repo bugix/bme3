@@ -51,6 +51,10 @@ public interface QuestionProxy extends EntityProxy {
 
     abstract void setIsAcceptedAuthor(Boolean isAcceptedAuthor);
 
+    abstract Boolean getIsForcedActive();
+
+    abstract void setIsForcedActive(Boolean isForcedActive);
+
     abstract medizin.client.proxy.QuestionProxy getPreviousVersion();
 
     abstract void setPreviousVersion(medizin.client.proxy.QuestionProxy previousVersion);

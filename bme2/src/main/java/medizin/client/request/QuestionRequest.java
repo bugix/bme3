@@ -59,4 +59,10 @@ public interface QuestionRequest extends QuestionRequest_Roo_Gwt {
 	InstanceRequest<QuestionProxy, Void> deactivatedQuestion();
 
 	InstanceRequest<QuestionProxy, Void> questionResendToReviewWithMajorVersion(boolean b);
+
+	Request<Long> countNotActivatedQuestionsByPerson(String searchText, List<String> searchField);
+
+	Request<List<QuestionProxy>> findAllNotActivatedQuestionsByPerson(String searchText, List<String> searchField, int start, int length);
+
+	Request<Void> forcedActiveQuestion(Long questionId);
 }

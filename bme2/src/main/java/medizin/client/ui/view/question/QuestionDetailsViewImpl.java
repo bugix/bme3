@@ -143,10 +143,14 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 	IconButton latest;
 
 	@UiField
+	IconButton forcedActive;
+	
+	@UiField
 	HorizontalPanel resourceUploadPanel;
 	
 	@UiField
 	HorizontalPanel resourceViewPanel;
+	
 	// @UiField
 	// SpanElement id;
 	//
@@ -206,7 +210,7 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 
 	
 
-	@UiField
+	@UiField(provided=true)
 	AnswerListViewImpl answerListViewImpl;
 	private EventBus eventBus;
 
@@ -311,6 +315,10 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 		});	
 	}
 
+	@UiHandler("forcedActive")
+	public void onForcedActiveClicked(ClickEvent e) {
+		delegate.forcedActiveClicked();
+	}
 	// @UiField
 	// SpanElement displayRenderer;
 
@@ -516,7 +524,9 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 		}
 	}
 
-	public QuestionDetailsViewImpl(EventBus eventBus, Boolean flag) {
+	public QuestionDetailsViewImpl(EventBus eventBus, Boolean flag, boolean isAnswerEditable) {
+		answerListViewImpl = new AnswerListViewImpl(isAnswerEditable);
+		matrixAnswerListViewImpl = new MatrixAnswerListViewImpl(isAnswerEditable);
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		if (flag)
@@ -551,7 +561,7 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 
 	/*@Override
 	public void setName(String helloName) {
-		// TODO Auto-generated method stub
+		// todo Auto-generated method stub
 
 	}*/
 
@@ -822,7 +832,7 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 			delegate.onResendToReviewClicked(proxy);
 	}
 	
-	@UiField
+	@UiField(provided=true)
 	MatrixAnswerListViewImpl matrixAnswerListViewImpl;
 
 	public MatrixAnswerListViewImpl getMatrixAnswerListViewImpl() {
@@ -854,6 +864,11 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 	@Override
 	public IconButton getAcceptBtn() {
 		return accept;
+	}
+	
+	@Override
+	public IconButton getForcedActiveBtn() {
+		return forcedActive;
 	}
 	
 	
