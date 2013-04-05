@@ -58,6 +58,8 @@ public interface AnswerDialogbox extends IsWidget {
 
 	void setValues(AnswerProxy answer);
 
+	void setMaxDifferenceBetween(long diff1, long diff2);
+
 	/*DefaultSuggestBox<PersonProxy, EventHandlingValueHolderItem<PersonProxy>> getAutherSuggestBox();
 
 	ImagePolygonViewer getImagePolygonViewer();

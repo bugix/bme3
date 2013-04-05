@@ -26,12 +26,18 @@ import medizin.client.shared.Validity;
 import medizin.shared.Status;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Query;
+import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
 
+import com.google.common.base.Function;
+import com.google.common.base.Objects;
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.web.bindery.requestfactory.server.RequestFactoryServlet;
 
@@ -445,5 +451,59 @@ public class Answer {
         //System.out.println("Q1 : " + q.unwrap(Query.class).getQueryString());
         
         return q.getResultList();
+	}
+	
+	public static List<Long> maxDifferenceBetweenAnswerForQuestion(Long answerId, Long questionId) {
+		List<Long> range = Lists.newArrayList();
+		
+		if(questionId == null) {
+			return range;
+		}
+		
+		CriteriaBuilder cb = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Answer> cq = cb.createQuery(Answer.class);
+		Root<Answer> from = cq.from(Answer.class);
+		
+		Predicate pre1 = cb.equal(from.get("question").get("id"), questionId);
+		Predicate pre2 = cb.notEqual(from.get("status"), Status.DEACTIVATED);
+		if(answerId != null) {
+			Predicate pre3 = cb.notEqual(from.get("id"), answerId);
+			pre1 = cb.and(pre3,pre1);
+		}
+		pre1 = cb.and(pre2, pre1);
+		
+		cq.where(pre1);
+		
+        TypedQuery<Answer> q = entityManager().createQuery(cq);
+        
+        log.info("Q1 : " + q.unwrap(Query.class).getQueryString());
+        List<String> allAnswerText = FluentIterable.from(q.getResultList()).filter(com.google.common.base.Predicates.notNull()).transform(new Function<Answer, String>() {
+
+			@Override
+			public String apply(Answer input) {
+			
+				return input.getAnswerText();
+			}			
+		}).toImmutableList();
+        
+        if(allAnswerText.isEmpty() == false) {
+        	int total = 0;
+            for (String answerText : allAnswerText) {
+            	log.info("Answer Text length : " + Jsoup.parse(answerText).text().length());
+            	total += Jsoup.parse(answerText).text().length();
+    		}
+            double mean = total / ((double) allAnswerText.size());
+            Double diff = Question.findQuestion(questionId).getQuestionType().getDiffBetAnswer();
+            double max;
+            double min;
+            if(diff != null) {
+            	max = mean + ((mean*diff) / 100.0);
+            	min = mean - ((mean*diff) / 100.0);
+            	range.add(Math.round(max));
+            	range.add(Math.round(min));
+            	log.info(Objects.toStringHelper("Answer Diff").add("Max", range.get(0)).add("Min", range.get(1)).add("Total", total).add("Diff", diff).toString());
+            }
+        } 
+		return range;
 	}
 }

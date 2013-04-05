@@ -3,7 +3,6 @@ package medizin.client.request;
 import java.util.List;
 
 import medizin.client.proxy.AnswerProxy;
-import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionProxy;
 
 import org.springframework.roo.addon.gwt.RooGwtUnmanagedRequest;
@@ -30,4 +29,6 @@ public interface AnswerRequest extends AnswerRequest_Roo_Gwt {
 	Request<Long> countAnswerForAcceptQuestion(Long questionId);
 	
 	Request<List<AnswerProxy>> findAnswerForAcceptQuestion(Long questionId, Integer start, Integer length);
+	
+	Request<List<Long>> maxDifferenceBetweenAnswerForQuestion(Long answerId, Long questionId);
 }

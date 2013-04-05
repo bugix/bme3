@@ -1474,7 +1474,32 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
                 sync.apply(null);
             }
         });
-	                
+	      
+        Long answerId = answer != null ? answer.getId() : null;
+        Long questionId = question!= null ? question.getId() : null;
+        if(question != null && question.getQuestionType()!= null && question.getQuestionType().getQuestionType() != null) {
+        	if(QuestionTypes.Textual.equals(question.getQuestionType().getQuestionType()) || QuestionTypes.Sort.equals(question.getQuestionType().getQuestionType())) {
+        		
+        		requests.answerRequest().maxDifferenceBetweenAnswerForQuestion(answerId,questionId).fire(new BMEReceiver<List<Long>>() {
+
+        			@Override
+        			public void onSuccess(List<Long> response) {
+        				
+        				if(response.size() == 2) {
+        					long diff1 = response.get(0);
+        					long diff2 = response.get(1);
+        					if(diff1 > diff2) {
+        						answerDialogbox.setMaxDifferenceBetween(diff1,diff2);	
+        					}else {
+        						answerDialogbox.setMaxDifferenceBetween(diff2,diff1);
+        					}
+        						
+        				}
+        				
+        			}
+        		});
+        	}
+        }
         return answerDialogbox;
 	}
 	

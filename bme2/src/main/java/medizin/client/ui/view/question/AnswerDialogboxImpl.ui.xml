@@ -69,14 +69,14 @@
 				</td>
 			</tr>
 			
-			<tr id="auther">
+			<tr id="author">
 				<td>
 					<g:Label styleName="{style.label}" text="{cc.auther}" ></g:Label>
 				</td>
 				<td>
 					<!-- <g:ValueListBox ui:field="autor" /> -->
 					
-					<i:DefaultSuggestBox ui:field="auther"></i:DefaultSuggestBox>
+					<i:DefaultSuggestBox ui:field="author"></i:DefaultSuggestBox>
 
 				</td>
 			</tr>

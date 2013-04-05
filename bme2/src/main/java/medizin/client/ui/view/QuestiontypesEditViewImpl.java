@@ -1268,7 +1268,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				}
 				
 				msg = "";
-				if ((msg = checkTextWidgetForNumber(answerDiffTxtbox)) != "")
+				if ((msg = checkTextWidgetForDouble(answerDiffTxtbox)) != "")
 				{
 					flag = false;
 					//errorString.append(constants.diffAnswer() + " " + msg).append("<br />");
@@ -1612,6 +1612,20 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		return message;
 	}
 	
+	private String checkTextWidgetForDouble(TextBox textBox)
+	{
+		String message = "";
+		if (textBox.getText().isEmpty())
+		{
+			message = constants.questionTypeErroMsg();
+		}
+		else if (!ClientUtility.isDouble(textBox.getText()))
+		{
+			message = constants.questionTypeNumErrorMsg();
+		}
+		
+		return message;
+	}
 	private void removeStyles()
 	{
 		shortNameTxtbox.removeStyleName("higlight_onViolation");

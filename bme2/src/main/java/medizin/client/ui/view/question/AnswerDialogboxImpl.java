@@ -104,7 +104,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 	
 	@UiField
 	@Ignore
-	public DefaultSuggestBox<PersonProxy, EventHandlingValueHolderItem<PersonProxy>> auther;
+	public DefaultSuggestBox<PersonProxy, EventHandlingValueHolderItem<PersonProxy>> author;
 	
 	@UiField
 	@Ignore
@@ -132,6 +132,8 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 	private SimpleImageViewer simpleImageViewer;
 	private AudioViewer audioViewer;
 	private VideoViewer videoViewer;
+	private Long answerTextMaxDiff = null;
+	private Long answerTextMinDiff = null;
 
 	@UiHandler("closeButton")
 	public void onCloseButtonClick(ClickEvent event) {
@@ -171,6 +173,15 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 	@UiField
 	public DivElement descriptionValue;
 	
+	@UiField(provided = true)
+	public RichTextToolbar toolbar;
+	
+	@UiField(provided = true)
+	RichTextArea answerTextArea;
+
+	private Delegate delegate;
+	private AnswerProxy answer;
+	
     private final QuestionProxy question;
 
 	private final EventBus eventBus;
@@ -187,9 +198,8 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 		setWidget(uiBinder.createAndBindUi(this));
 		
 		reciverMap.put("answerText",answerTextArea);
-		reciverMap.put("autor", auther.getTextField().advancedTextBox);
+		reciverMap.put("autor", author.getTextField().advancedTextBox);
 		reciverMap.put("rewiewer", rewiewer.getTextField().advancedTextBox);
-		//reciverMap.put("rewiewer", rewiewer);
 		reciverMap.put("validity", validity);
 		reciverMap.put("submitToReviewComitee", submitToReviewComitee);
 		reciverMap.put("comment", comment);
@@ -230,7 +240,6 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 
 		save.setText(constants.save());
 		closeButton.setText(constants.cancel());
-		
 	}
 	
 	private void addForShowInImage() {
@@ -457,15 +466,6 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 		// return new String("<b>hallo</b>");
 	}*/
 	
-	@UiField(provided = true)
-	public RichTextToolbar toolbar;
-	
-	@UiField(provided = true)
-	RichTextArea answerTextArea;
-
-	private Delegate delegate;
-	private AnswerProxy answer;
-
 	@Override
 	public void setDelegate(Delegate delegate) {
 		this.delegate = delegate;
@@ -548,6 +548,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 																}
 															});
 
+
 	/*@Override
 	public ValueListBox<Validity> getValidity() {
 		return validity;
@@ -561,12 +562,12 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 	@Override
 	public void setAutherPickerValues(Collection<PersonProxy> values, PersonProxy logedUser) {	
 		
-		DefaultSuggestOracle<PersonProxy> suggestOracle1 = (DefaultSuggestOracle<PersonProxy>) auther.getSuggestOracle();
+		DefaultSuggestOracle<PersonProxy> suggestOracle1 = (DefaultSuggestOracle<PersonProxy>) author.getSuggestOracle();
 		suggestOracle1.setPossiblilities((List<PersonProxy>) values);
 		 /* Collection<MyObjectType> myCollection = ...;
 		 List<MyObjectType> list = new ArrayList<MyObjectType>(myCollection);*/
-		auther.setSuggestOracle(suggestOracle1);
-		auther.setRenderer(new AbstractRenderer<PersonProxy>() {
+		author.setSuggestOracle(suggestOracle1);
+		author.setRenderer(new AbstractRenderer<PersonProxy>() {
 	
 			@Override
 			public String render(PersonProxy object) {
@@ -583,10 +584,10 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 		
 		if(logedUser.getIsAdmin() == false) {
 			
-			auther.setSelected(logedUser);
-			auther.setEnabled(false);
+			author.setSelected(logedUser);
+			author.setEnabled(false);
 		}
-		auther.setWidth(150);
+		author.setWidth(150);
 		rewiewer.setWidth(150);
 	}
 	
@@ -672,7 +673,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 				break;
 			}
 			
-			delegate.saveAnswerProxy(answer, answerTextArea.getHTML(), auther.getSelected(), rewiewer.getSelected(), submitToReviewComitee.getValue(), comment.getText(),validity.getValue(),points,mediaPath,additionalKeywords,sequenceNumber, new Function<AnswerProxy,Void>() {
+			delegate.saveAnswerProxy(answer, answerTextArea.getHTML(), author.getSelected(), rewiewer.getSelected(), submitToReviewComitee.getValue(), comment.getText(),validity.getValue(),points,mediaPath,additionalKeywords,sequenceNumber, new Function<AnswerProxy,Void>() {
 
 				@Override
 				public Void apply(AnswerProxy input) {
@@ -697,7 +698,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 		
 		answerTextArea.removeStyleName("higlight_onViolation");
 		rewiewer.getTextField().advancedTextBox.removeStyleName("higlight_onViolation");
-		auther.getTextField().advancedTextBox.removeStyleName("higlight_onViolation");
+		author.getTextField().advancedTextBox.removeStyleName("higlight_onViolation");
 		submitToReviewComitee.removeStyleName("higlight_onViolation");
 		comment.removeStyleName("higlight_onViolation");
 		validity.removeStyleName("higlight_onViolation");
@@ -718,7 +719,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 			submitToReviewComitee.addStyleName("higlight_onViolation");
 		}
 		
-		if(question.getQuestionType() != null && QuestionTypes.MCQ.equals(question.getQuestionType().getQuestionType()) == false) {
+		if(question.getQuestionType() != null && (QuestionTypes.MCQ.equals(question.getQuestionType().getQuestionType()) == false && QuestionTypes.LongText.equals(question.getQuestionType().getQuestionType()) == false)) {
 			if(answerTextArea.getText() == null || answerTextArea.getText().length() <= 0) {
 				flag = false;
 				messages.add(constants.answerTextErrorMessage());
@@ -727,6 +728,14 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 				flag = false;
 				messages.add(constants.answerTextMaxLength());
 				answerTextArea.addStyleName("higlight_onViolation");
+			}
+			
+			if(question.getQuestionType().getAnswerLength() != null  && answerTextMaxDiff != null && answerTextMinDiff != null) {
+				if(answerTextArea.getText().length() < answerTextMinDiff || answerTextArea.getText().length() > answerTextMaxDiff) {
+					flag = false;
+					messages.add(constants.answerTextMinMax().replace("{0}", answerTextMinDiff.toString()).replace("{1}", answerTextMaxDiff.toString()));
+					answerTextArea.addStyleName("higlight_onViolation");
+				}
 			}
 			
 		}
@@ -797,10 +806,10 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 			}
 		}
 		
-		if(auther.getSelected() == null) {
+		if(author.getSelected() == null) {
 			flag = false;
 			messages.add(constants.authorMayNotBeNull());
-			auther.getTextField().advancedTextBox.addStyleName("higlight_onViolation");
+			author.getTextField().advancedTextBox.addStyleName("higlight_onViolation");
 		}
 		
 		if(comment.getText() == null || comment.getText().isEmpty()) {
@@ -831,11 +840,18 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 		answerTextArea.setHTML(answer.getAnswerText());
 		txtAdditionalKeyword.setText(answer.getAdditionalKeywords());
 		txtSequenceNumber.setText(answer.getSequenceNumber() != null ? answer.getSequenceNumber().toString() : null);
-		auther.setSelected(answer.getAutor());
+		author.setSelected(answer.getAutor());
 		rewiewer.setSelected(answer.getRewiewer());
 		validity.setValue(answer.getValidity());
 		submitToReviewComitee.setValue(answer.getSubmitToReviewComitee());
 		comment.setText(answer.getComment() != null?answer.getComment().getComment() : null);
+		
+	}
+
+	@Override
+	public void setMaxDifferenceBetween(long max, long min) {
+		this.answerTextMaxDiff = max;
+		this.answerTextMinDiff = min;
 		
 	}
 

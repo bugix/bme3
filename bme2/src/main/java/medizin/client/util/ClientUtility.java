@@ -169,6 +169,23 @@ public final class ClientUtility {
 		  return true;  
 	}
 	
+	public static boolean isDouble(String value) {
+
+		  try  
+		  {  
+			  Double.parseDouble(value);  
+		  }  
+		  catch(NumberFormatException nfe)  
+		  {  
+		    return false;  
+		  }  
+		  catch (Exception e) {
+			  return false;
+		  }
+		  
+		  return true;  
+	}
+	
 	public static String toStringUtility(Object object){
 		return object == null ? "" : object.toString();
 	}
