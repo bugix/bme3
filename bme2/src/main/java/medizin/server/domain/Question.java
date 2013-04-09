@@ -889,7 +889,10 @@ public class Question {
 				if (searchField.get(ctr).equals("showNew")) {
 					ctr += 1;	
 					Predicate showNewPre = criteriaBuilder.equal(from.get("status"),Status.NEW);
-					orPredicate = criteriaBuilder.or(orPredicate, showNewPre);
+					if (orPredicate == null)
+						orPredicate = showNewPre;
+					else
+						orPredicate = criteriaBuilder.or(orPredicate, showNewPre);
 				}
 
 				if (searchField.get(ctr).equals("institution")) {
