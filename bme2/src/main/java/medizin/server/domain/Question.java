@@ -812,7 +812,7 @@ public class Question {
 			
 			//andAdminPredicate = criteriaBuilder.and(statusNewPredicate, andAdminPredicate);
 
-			Predicate andPredicate = searchFilter(searchText, searchField, criteriaBuilder, from);
+			Predicate andPredicate = searchFilter(searchText, BMEUtils.convertToMap(searchField), criteriaBuilder, from);
 
 			//andAdminPredicate = criteriaBuilder.and(statusNewPredicate, andAdminPredicate);
 			
@@ -830,8 +830,8 @@ public class Question {
 		return null;
 	}
 
-	private static Predicate searchFilter(String searchText, List<String> searchField, CriteriaBuilder criteriaBuilder, Root<Question> from) {
-		 Predicate orPredicate = null;
+	private static Predicate searchFilter(String searchText, Map<String,String> searchField, CriteriaBuilder criteriaBuilder, Root<Question> from) {
+		 Predicate orPredicate = criteriaBuilder.conjunction();
 		 
 		if (!searchText.equals("")) {
 			Expression<String> exp1 = from.get("questionShortName");
@@ -846,9 +846,107 @@ public class Question {
 			Date usedMcDt1 = null;
 			Date usedMcDt2 = null;
 			DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
-			int ctr = 0;
+//			int ctr = 0;
+				
+			if (searchField.containsKey("quesitontext") && !searchText.equals("")) {
+				Expression<String> exp2 = from.get("questionText");
+				Predicate pre2 = criteriaBuilder.like(exp2, "%" + searchText + "%");
+				orPredicate = criteriaBuilder.or(orPredicate, pre2);
+			}
+
+			if (searchField.containsKey("author") && !searchText.equals("")) {
+				Expression<String> authorExp = from.get("autor").get("name");
+				Predicate pre3 = criteriaBuilder.like(authorExp, "%" + searchText + "%");
+				orPredicate = criteriaBuilder.or(orPredicate, pre3);
+			}
+
+			if (searchField.containsKey("reviewer") && !searchText.equals("")) {
+				Expression<String> reviwerExp = from.get("rewiewer").get("name");
+				Predicate pre4 = criteriaBuilder.like(reviwerExp, "%" + searchText + "%");
+				orPredicate = criteriaBuilder.or(orPredicate, pre4);
+			}
+
+			if (searchField.containsKey("instruction") && !searchText.equals("")) {
+				Expression<String> exp3 = from.get("comment").get("comment");
+				Predicate pre5 = criteriaBuilder.like(exp3, "%" + searchText + "%");
+				orPredicate = criteriaBuilder.or(orPredicate, pre5);
+			}
+
+			if (searchField.containsKey("keyword") && !searchText.equals("")) {
+				SetJoin<Question, Keyword> join1 = from.joinSet("keywords", JoinType.LEFT);
+				Expression<String> exp4 = join1.get("name");
+				Predicate pre6 = criteriaBuilder.like(exp4, "%" + searchText + "%");
+				orPredicate = criteriaBuilder.or(orPredicate, pre6);
+			}
 			
-			while (ctr < searchField.size())
+			if (searchField.containsKey("showNew")) {
+				Predicate showNewPre = criteriaBuilder.equal(from.get("status"),Status.NEW);
+				orPredicate = criteriaBuilder.or(orPredicate, showNewPre);
+			}
+
+			if (searchField.containsKey("institution")) {
+				Long selectInstitutionId = Long.parseLong(searchField.get("institution"));
+				Predicate pre7 = criteriaBuilder.equal(from.get("questEvent").get("institution").get("id"), selectInstitutionId);
+				orPredicate = criteriaBuilder.or(orPredicate, pre7);
+			}
+
+			if (searchField.containsKey("specialiation")) {
+				Long questionEventId = Long.parseLong(searchField.get("specialiation"));
+				Predicate pre8 = criteriaBuilder.equal(from.get("questEvent").get("id"),questionEventId);
+				orPredicate = criteriaBuilder.or(orPredicate, pre8);
+			}
+
+			if (searchField.containsKey("createdDateFrom"))
+			{
+				log.info("DATE VALUE : " + searchField.get("createdDateFrom"));
+				
+				try {
+					dt1 = df.parse(searchField.get("createdDateFrom"));
+				} catch (ParseException e) {
+					log.error("Error in createdDateFrom ",e);
+				}
+			}
+			
+			if (searchField.containsKey("createdDateTo")) {
+				try {
+					dt2 = df.parse(searchField.get("createdDateTo"));
+				} catch (ParseException e) {
+					log.error("Error in createdDateTo ",e);
+				}
+			}
+
+			if (searchField.containsKey("usedMcFrom")) {
+				try {
+					usedMcDt1 = df.parse(searchField.get("usedMcFrom"));
+				} catch (ParseException e) {
+					log.error("Error in usedMcFrom ",e);
+				}
+			}
+			
+			if (searchField.containsKey("usedMcTo")){
+				try {
+					usedMcDt2 = df.parse(searchField.get("usedMcTo"));
+				} catch (ParseException e) {
+					log.error("Error in usedMcTo ",e);
+				}
+			}
+			
+			if (dt1 != null && dt2 != null)
+			{
+				Expression<Date> createdDateExp = from.get("dateAdded");
+				Predicate pre10 = criteriaBuilder.between(createdDateExp, dt1, dt2);
+				orPredicate = criteriaBuilder.or(orPredicate, pre10);
+			}
+			
+			if (usedMcDt1 != null && usedMcDt2 != null)
+			{
+				SetJoin<Question, AssesmentQuestion> join2 = from.joinSet("assesmentQuestionSet", JoinType.LEFT);
+				Expression<Date> assessmentDate = join2.get("assesment").get("dateOfAssesment");
+				Predicate pre11 = criteriaBuilder.between(assessmentDate, usedMcDt1, usedMcDt2);
+				orPredicate = criteriaBuilder.or(orPredicate, pre11);
+			}
+			
+			/*while (ctr < searchField.size())
 			{
 				if (searchField.get(ctr).equals("quesitontext") && !searchText.equals("")) {
 					Expression<String> exp2 = from.get("questionText");
@@ -893,6 +991,8 @@ public class Question {
 						orPredicate = showNewPre;
 					else
 						orPredicate = criteriaBuilder.or(orPredicate, showNewPre);
+					
+//					ctr += 1;
 				}
 
 				if (searchField.get(ctr).equals("institution")) {
@@ -905,7 +1005,7 @@ public class Question {
 					else
 						orPredicate = criteriaBuilder.or(orPredicate, pre7);
 					
-					ctr += 1;
+//					ctr += 1;
 				}
 
 				if (searchField.get(ctr).equals("specialiation")) {
@@ -982,7 +1082,7 @@ public class Question {
 				}
 				
 				ctr += 1;
-			}
+			}*/
 		}
 		return orPredicate;
 	}
@@ -1323,7 +1423,7 @@ public class Question {
 		Predicate preStatus2 = from.get("status").in(Status.ACCEPTED_ADMIN,Status.ACCEPTED_REVIEWER,Status.CORRECTION_FROM_ADMIN,Status.CORRECTION_FROM_REVIEWER,Status.NEW); 		
 		Predicate andPredicate = null;
 		
-		andPredicate = searchFilter(searchText, searchField, cb, from);
+		andPredicate = searchFilter(searchText, BMEUtils.convertToMap(searchField), cb, from);
 		
 		if(andPredicate != null) preIns1 = cb.and(preIns1,andPredicate);
 		

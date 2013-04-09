@@ -5,6 +5,8 @@ import ij.io.Opener;
 
 import java.io.File;
 import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -15,6 +17,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.web.bindery.requestfactory.server.RequestFactoryServlet;
 
 public final class BMEUtils {
@@ -121,5 +124,19 @@ public final class BMEUtils {
 				}
 			}
 		}
+	}
+
+	public static Map<String, String> convertToMap(List<String> values) {
+		Map<String, String> map = Maps.newHashMap();		
+		
+		if(values != null && values.size() % 2 == 0){
+			for (int i=0;i<values.size();i+=2) {
+				map.put(values.get(i), values.get(i+1));
+			}	
+		}else {
+			log.error("List is not properly added");
+		}
+		
+		return map;
 	}
 }

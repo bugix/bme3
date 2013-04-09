@@ -4400,7 +4400,7 @@ background: url("images/colorpicker.png");
 
 }
 	
-.answerTextColumn {
+.answerTextColumn div div{
 	max-width : 500px !important;
 	overflow: hidden !important;
 	text-overflow: ellipsis !important;

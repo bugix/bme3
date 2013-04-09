@@ -14,16 +14,18 @@ import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.requestfactory.shared.Receiver;
 import com.google.web.bindery.requestfactory.shared.ServerFailure;
 import com.google.web.bindery.requestfactory.shared.Violation;
 
+@SuppressWarnings("deprecation")
 public abstract class BMEReceiver<T> extends Receiver<T> {
 	private final BmeConstants bmeConstants = GWT.create(BmeConstants.class);
 
-	private Map<String, Widget> localViewMap;
+	private Map<String, Widget> localViewMap = Maps.newHashMap();
 	
 	public BMEReceiver() {
 		//Log.info("Call BMEReceiver Constructor()");
@@ -96,42 +98,38 @@ public abstract class BMEReceiver<T> extends Receiver<T> {
 		//Log.info("Call onConstraintViolation");
 				
 		// Constraint Violation
-		if (localViewMap != null && violations.isEmpty() == false) {
-			
-			List<ConstraintViolation<?>> violationsWithOrder  = Lists.newArrayList(violations);
-			
-			Collections.sort(violationsWithOrder, new Comparator<ConstraintViolation<?>>() {
+		List<ConstraintViolation<?>> violationsWithOrder  = Lists.newArrayList(violations);
+		
+		Collections.sort(violationsWithOrder, new Comparator<ConstraintViolation<?>>() {
 
-				@Override
-				public int compare(ConstraintViolation<?> o1, ConstraintViolation<?> o2) {
-					
-					return o1.getPropertyPath().toString().compareToIgnoreCase(o2.getPropertyPath().toString());
-				}
-			});
-			
-			ArrayList<String> messages = Lists.newArrayList();
-			
-			for (ConstraintViolation<?> constraintViolation : violationsWithOrder) {
-				String path = constraintViolation.getPropertyPath().toString();
-				String message;
-				try {
-					message = bmeConstants.getString(constraintViolation.getMessage());	
-				}catch (Exception e) {
-					message = path + " " + constraintViolation.getMessage();
-				}
+			@Override
+			public int compare(ConstraintViolation<?> o1, ConstraintViolation<?> o2) {
 				
-				messages.add(message);
-				
-				if(localViewMap.containsKey(path)) {
-					//Log.info("Violated key: " + path);
-					//Log.info("Violated value: " + localViewMap.get(path));
-					localViewMap.get(path).addStyleName("higlight_onViolation");
-				}
+				return o1.getPropertyPath().toString().compareToIgnoreCase(o2.getPropertyPath().toString());
+			}
+		});
+		
+		ArrayList<String> messages = Lists.newArrayList();
+		
+		for (ConstraintViolation<?> constraintViolation : violationsWithOrder) {
+			String path = constraintViolation.getPropertyPath().toString();
+			String message;
+			try {
+				message = bmeConstants.getString(constraintViolation.getMessage());	
+			}catch (Exception e) {
+				message = path + " " + constraintViolation.getMessage();
 			}
 			
-			showMessage(messages);
+			messages.add(message);
+			
+			if(localViewMap.containsKey(path)) {
+				//Log.info("Violated key: " + path);
+				//Log.info("Violated value: " + localViewMap.get(path));
+				localViewMap.get(path).addStyleName("higlight_onViolation");
+			}
 		}
-		onReceiverFailure();
+		
+		showMessage(messages);
 	}
 	
 	@Override
