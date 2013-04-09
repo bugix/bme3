@@ -995,6 +995,13 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 			author.getTextField().advancedTextBox.addStyleName("higlight_onViolation");
 		}
 		
+		if(author.getSelected() != null && rewiewer.getSelected() != null && author.getSelected().getId().equals(rewiewer.getSelected().getId()) == true) {
+			flag = false;
+			messages.add(constants.authorReviewerMayNotBeSame());
+			author.getTextField().advancedTextBox.addStyleName("higlight_onViolation");
+			rewiewer.getTextField().advancedTextBox.addStyleName("higlight_onViolation");
+		}
+		
 		if(questionComment.getText() == null || questionComment.getText().isEmpty()) {
 			flag = false;
 			//errorString.append(constants.commentMayNotBeNull()).append("<br />");

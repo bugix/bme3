@@ -83,55 +83,27 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 	
 	@UiField
 	SpanElement displayVersionRenderer;
-
-	@UiField
-	Label lblQuestionType;
 	
 	@UiField
 	Label lblQuestionTypeValue;
 	
 	@UiField
-	Label lblQuestionShortName;
-	
-	@UiField
 	Label lblQuestionShortNameValue;
 
-
-	@UiField
-	Label lblQuestionText;
-
-	/*@UiField
-	Label lblQuestionTextValue;*/
-	
 	@UiField
 	HTML lblQuestionTextValue;
 	
 	@UiField
-	Label lblAuther;
-
-	@UiField
 	Label lblAutherValue;
-
-	@UiField
-	Label lblReviewer;
 
 	@UiField
 	Label lblReviewerValue;
 
 	@UiField
-	Label lblQuestionEvent; 
-	
-	@UiField
 	Label lblQuestionEventValue;
 
 	@UiField
-	Label lblComment;
-
-	@UiField
 	Label lblCommentValue;
-
-	@UiField
-	Label lblMcs;
 
 	@UiField
 	Label lblMcsValue;
@@ -248,7 +220,7 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 	@UiHandler("previous")
 	public void onPreviousClicked(ClickEvent e) {
 		//remove edit and delete btn
-		setVisibleIconButton(false);
+		setVisibleEditAndDeleteBtn(false);
 		resendToReview.setVisible(false);
 		accept.setVisible(false);
 		if(proxy != null && proxy.getPreviousVersion() != null) {
@@ -260,6 +232,7 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 					latest.setEnabled(true);
 					resendToReview.setVisible(false);
 					accept.setVisible(false);
+					forcedActive.setVisible(false);
 					if(input.getPreviousVersion() == null) {
 						previous.setEnabled(false);	
 					}
@@ -294,7 +267,8 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 				
 				//remove edit and delete btn
 				
-				if(delegate.isQuestionDetailsPlace() && proxy != null && proxy.getIsReadOnly() == false) {
+				delegate.enableBtnOnLatestClicked();
+				/*if(delegate.isQuestionDetailsPlace() && proxy != null && proxy.getIsReadOnly() == false) {
 					setVisibleIconButton(true);	
 				}
 				else if(delegate.isQuestionDetailsPlace() && proxy != null && proxy.getIsReadOnly() == true) {
@@ -302,7 +276,7 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 				}
 				else  if(delegate.isQuestionDetailsPlace() == false){
 					setVisibleAcceptButton();
-				}
+				}*/
 				
 				latest.setEnabled(false);
 				if(input.getPreviousVersion()== null) {
@@ -355,6 +329,10 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 		}
 		
 		delegate.checkForResendToReview();
+		
+		if(proxy.getIsReadOnly() == true) {
+			setVisibleEditAndDeleteBtn(false);
+		}
 		/*mcs.setInnerText(proxy.getMcs() == null ? ""
 				: medizin.client.ui.view.roo.CollectionRenderer.of(
 						medizin.client.ui.view.roo.McProxyRenderer.instance())
@@ -529,18 +507,7 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 		matrixAnswerListViewImpl = new MatrixAnswerListViewImpl(isAnswerEditable);
 		initWidget(uiBinder.createAndBindUi(this));
 		
-		if (flag)
-		{
-			edit.setVisible(true);
-			delete.setVisible(true);
-		}
-		else
-		{
-			edit.setVisible(false);
-			delete.setVisible(false);
-		}
-		
-		
+		setVisibleEditAndDeleteBtn(flag);
 		
 		this.eventBus = eventBus;
 		
@@ -548,14 +515,6 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 		questionTypeDetailPanel.getTabBar().setTabText(0, constants.manageQuestion());
 		questionTypeDetailPanel.getTabBar().setTabText(1, constants.resources());
 		TabPanelHelper.moveTabBarToBottom(questionTypeDetailPanel);
-		lblQuestionShortName.setText(constants.questionShortName());
-		lblQuestionType.setText(constants.questionType());
-		lblQuestionText.setText(constants.questionText());
-		lblAuther.setText(constants.auther()); 
-		lblReviewer.setText(constants.reviewer());
-		lblComment.setText(constants.comment());
-		lblQuestionEvent.setText(constants.questionEvent());
-		lblMcs.setText(constants.mcs());
 		
 	}
 
@@ -807,7 +766,7 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 		resourceViewPanel.add(imageViewer);
 	}
 	
-	public void setVisibleIconButton(Boolean flag)
+	public void setVisibleEditAndDeleteBtn(Boolean flag)
 	{
 		edit.setVisible(flag);
 		delete.setVisible(flag);

@@ -37,10 +37,10 @@
 	
 	<g:DisclosurePanel ui:field="questionPanel" width="100%" open="false" addStyleNames='{style.mainNavPanel}' visible="false">
 		<g:header></g:header>
-		<g:VerticalPanel addStyleNames='{style.mainNavPanelContent}' width="100%">
+		<g:VerticalPanel addStyleNames='{style.mainNavPanelContent}' width="100%">		
+			<g:Anchor ui:field="questionType"></g:Anchor>
 			<g:Anchor ui:field="question"></g:Anchor>
 			<g:Anchor ui:field="notActivatedQuestion"></g:Anchor>
-			<g:Anchor ui:field="questionType"></g:Anchor>
 			<g:Anchor ui:field="institution"></g:Anchor>
 		</g:VerticalPanel>
 	</g:DisclosurePanel>

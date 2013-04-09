@@ -288,4 +288,15 @@ public class ActivityAcceptQuestionDetails extends ActivityQuestionDetails imple
 			
 		}
 	}
+	
+	@Override
+	public void enableBtnOnLatestClicked() {
+			
+		if(question.getStatus().equals(Status.EDITED_BY_REVIEWER) || question.getStatus().equals(Status.EDITED_BY_ADMIN)) {
+			checkForResendToReview();
+			view.getEdit().setVisible(true);
+		}else {
+			view.setVisibleAcceptButton();
+		}	
+	}
 }

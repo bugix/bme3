@@ -95,7 +95,7 @@ public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper
 					Log.info(((QuestionProxy) response).getQuestionText());
 					
 					if (((QuestionProxy) response).getIsReadOnly() == true)
-						view.setVisibleIconButton(false);
+						view.setVisibleEditAndDeleteBtn(false);
 					
 					init((QuestionProxy) response);
 				}				
@@ -219,6 +219,28 @@ public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper
 		});
 	}
 
+	@Override
+	public void getQuestionDetails(QuestionProxy previousVersion, final Function<QuestionProxy, Void> function) {
+		requests.questionRequest().findQuestion(previousVersion.getId()).with("previousVersion","keywords","questEvent","comment","questionType","mcs", "rewiewer", "autor","questionResources").fire(new BMEReceiver<Object>() {
+
+			@Override
+			public void onSuccess(Object response) {
+				function.apply((QuestionProxy) response);
+			}
+		});
+	}
+	
+	@Override
+	public void getLatestQuestionDetails(Function<QuestionProxy, Void> function) {
+		function.apply(question);
+	}
+	
+	@Override
+	public void enableBtnOnLatestClicked() {
+		view.setVisibleEditAndDeleteBtn(false);
+		view.getAcceptBtn().setVisible(false);
+		view.getForcedActiveBtn().setVisible(true);
+	}
 	
 	@Override
 	public void addMatrixNewAnswerClicked() {}
@@ -288,12 +310,6 @@ public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper
 
 	@Override
 	public void acceptQuestionClicked(QuestionProxy proxy) {}
-
-	@Override
-	public void getQuestionDetails(QuestionProxy previousVersion, Function<QuestionProxy, Void> function) {}
-
-	@Override
-	public void getLatestQuestionDetails(Function<QuestionProxy, Void> function) {}
 
 	@Override
 	public void onResendToReviewClicked(QuestionProxy proxy) {}

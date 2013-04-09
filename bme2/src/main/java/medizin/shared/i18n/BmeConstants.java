@@ -524,4 +524,8 @@ public interface BmeConstants extends Constants , ConstantsWithLookup {
 	public String notActivatedQuestion();
 	
 	public String forcedActive();
+
+	public String authorReviewerMayNotBeSame();
+
+	public String mayNotHaveRights();
 }

@@ -56,13 +56,15 @@ public interface QuestionDetailsView extends IsWidget {
 		void checkForResendToReview();
 
 		void forcedActiveClicked();
+
+		void enableBtnOnLatestClicked();
 	}
 
 	AnswerListViewImpl getAnswerListViewImpl();
 	
 	public MatrixAnswerListViewImpl getMatrixAnswerListViewImpl();
 
-	public void setVisibleIconButton(Boolean flag);
+	public void setVisibleEditAndDeleteBtn(Boolean flag);
 	
 	public void setVisibleAcceptButton();
 	
