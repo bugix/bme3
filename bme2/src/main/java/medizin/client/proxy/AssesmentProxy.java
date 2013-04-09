@@ -5,6 +5,7 @@ package medizin.client.proxy;
 import com.google.web.bindery.requestfactory.shared.EntityProxy;
 import com.google.web.bindery.requestfactory.shared.ProxyForName;
 import java.util.Date;
+import java.util.Set;
 import org.springframework.roo.addon.gwt.RooGwtProxy;
 
 @ProxyForName(value = "medizin.server.domain.Assesment", locator = "medizin.server.locator.AssesmentLocator")
@@ -56,6 +57,10 @@ public interface AssesmentProxy extends EntityProxy {
     abstract Integer getPercentSameQuestion();
 
     abstract void setPercentSameQuestion(Integer percentSameQuestion);
+
+    abstract Set<medizin.client.proxy.QuestionSumPerPersonProxy> getQuestionSumPerPerson();
+
+    abstract void setQuestionSumPerPerson(Set<medizin.client.proxy.QuestionSumPerPersonProxy> questionSumPerPerson);
 
     abstract Integer getVersion();
 }

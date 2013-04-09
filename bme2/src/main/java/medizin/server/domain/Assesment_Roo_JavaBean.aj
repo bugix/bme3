@@ -4,8 +4,10 @@
 package medizin.server.domain;
 
 import java.util.Date;
+import java.util.Set;
 import medizin.server.domain.Assesment;
 import medizin.server.domain.Mc;
+import medizin.server.domain.QuestionSumPerPerson;
 
 privileged aspect Assesment_Roo_JavaBean {
     
@@ -95,6 +97,14 @@ privileged aspect Assesment_Roo_JavaBean {
     
     public void Assesment.setPercentSameQuestion(Integer percentSameQuestion) {
         this.percentSameQuestion = percentSameQuestion;
+    }
+    
+    public Set<QuestionSumPerPerson> Assesment.getQuestionSumPerPerson() {
+        return this.questionSumPerPerson;
+    }
+    
+    public void Assesment.setQuestionSumPerPerson(Set<QuestionSumPerPerson> questionSumPerPerson) {
+        this.questionSumPerPerson = questionSumPerPerson;
     }
     
 }
