@@ -3,6 +3,7 @@ package medizin.client.ui.view.assignquestion;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.assesment.AssesmentDetailsView.Presenter;
 import medizin.client.ui.view.assignquestion.AddQuestionsTabPanel.Delegate;
+import medizin.shared.i18n.BmeConstants;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -26,7 +27,7 @@ public class AddQuestionsTabPanelImpl extends TabBar implements  AddQuestionsTab
 
 	private Delegate delegate;
 	
-
+	public BmeConstants constants = GWT.create(BmeConstants.class);
 
 
 	public AddQuestionsTabPanelImpl() {
@@ -35,10 +36,10 @@ public class AddQuestionsTabPanelImpl extends TabBar implements  AddQuestionsTab
 	}
 
 	private void init() {
-		addTab(McAppConstant.QUESTION_TAB_PROPOSAL);
+		addTab(constants.proposedQuestion());
 		
-		addTab(McAppConstant.QUESTION_TAB_ASSEMENTQUESTION);
-		addTab(McAppConstant.QUESTION_TAB_NEWQUESTION);
+		addTab(constants.pastQuestion());
+		addTab(constants.newQuestion());
 		
 		selectTab(0);
 		

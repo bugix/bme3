@@ -528,4 +528,12 @@ public interface BmeConstants extends Constants , ConstantsWithLookup {
 	public String authorReviewerMayNotBeSame();
 
 	public String mayNotHaveRights();
+	
+	public String proposedQuestion();
+	
+	public String pastQuestion();
+	
+	public String newQuestion();
+	
+	public String noTestsAssigned();
 }

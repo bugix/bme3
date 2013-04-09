@@ -28,6 +28,7 @@ import medizin.client.ui.view.assignquestion.AssesmentTabPanel;
 import medizin.client.ui.view.assignquestion.QuestionPanel;
 import medizin.client.ui.view.assignquestion.QuestionView;
 import medizin.client.ui.view.assignquestion.QuestionViewImpl;
+import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 
 import com.allen_sauer.gwt.dnd.client.DragEndEvent;
 import com.allen_sauer.gwt.dnd.client.DragHandler;
@@ -162,9 +163,16 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 	
 	private void initQuestionPanel(int action, AssesmentProxy assesment) {
 
+		
+		if(assesment==null)
+		{
+			ConfirmationDialogBox.showOkDialogBox(constants.noTestsAssigned(), constants.noTestsAssigned());
+			return;
+		}
+		
 		Log.debug("Assesmet selected " + assesment.getName());
 		
-
+		//proposed Question
 		if (action==0){
 			requests.assesmentQuestionRequest().findAssesmentQuestionsByMcProposal(assesment.getMc().getId()).with("question.rewiewer","question.autor","question.keywords","question.questEvent","question.comment","question.questionType").fire(new Receiver<List<AssesmentQuestionProxy>>() {
 
@@ -207,7 +215,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 						
 					}
 			});
-		}
+		}//past Question
 		else if (action == 1){
 			requests.assesmentQuestionRequest().findAssesmentQuestionsByMc(assesment.getMc().getId()).with("question.rewiewer","question.autor","question.keywords","question.questEvent","question.comment","question.questionType").fire(new Receiver<List<AssesmentQuestionProxy>>() {
 
@@ -250,7 +258,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 						
 					}
 			});
-		}
+		}//new Question
 		else if (action == 2){
 			requests.questionRequest().findQuestionsByMc(assesment.getMc().getId()).with("rewiewer", "questEvent", "autor", "questionType", "keywords").fire(new Receiver<List<QuestionProxy>>() {
 
