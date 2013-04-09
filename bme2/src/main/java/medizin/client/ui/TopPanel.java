@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import medizin.client.McAppShell;
+import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.PersonProxy;
@@ -107,8 +108,8 @@ public class TopPanel extends Composite {
 		
 	}
 	
-	private McAppRequestFactory requests;
-	private PlaceController placeController;
+	private final McAppRequestFactory requests;
+	//private final PlaceController placeController;
 
 	/**
 	 * Because this class has a default constructor, it can
@@ -127,85 +128,24 @@ public class TopPanel extends Composite {
 	@Inject
 	public TopPanel(final McAppRequestFactory requests, final PlaceController placeController) {
         this.requests = requests;
-        this.placeController = placeController;
+        //this.placeController = placeController;
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		loggedUser.addValueChangeHandler(new ValueChangeHandler<PersonProxy>() {
 		
 			@Override
 			public void onValueChange(ValueChangeEvent<PersonProxy> event) {
-				if(event.getValue()!=null)
-				{	
-					
-					List<InstitutionProxy> temp = new ArrayList<InstitutionProxy>();
-					institutionListBox.setValue(null);
-					institutionListBox.setAcceptableValues(temp);
-					
-					Log.info("Overall Admin :" + event.getValue().getIsAdmin());
-					
-					if (event.getValue().getIsAdmin())
-					{
-						
-						requests.institutionRequest().findAllInstitutions().fire(new Receiver<List<InstitutionProxy>>() {
-	
-							@Override
-							public void onSuccess(List<InstitutionProxy> response) {
-								if (response.size() > 0)
-								{
-									Log.info("ADMIN IS SELECTED");
-									institutionListBox.setValue(response.get(0));
-									institutionListBox.setAcceptableValues(response);
-									TopPanel.this.requests.institutionRequest().mySetCurrentInstitution().using(institutionListBox.getValue()).fire();
-									McAppNav.checkAdminRights(requests,true);
-								}
-								else
-								{
-									McAppNav.checkAdminRights(requests,true);
-									ConfirmationDialogBox.showOkDialogBox(constants.information(),constants.noInstitutionaccssMessage());
-								}
-							}
-						});
-					}
-					else
-					{
-						
-						TopPanel.this.requests.userAccessRightsRequest().findInstituionFromQuestionAccessByPerson(event.getValue().getId()).fire(new Receiver<List<InstitutionProxy>>() {
-	
-							@Override
-							public void onSuccess(List<InstitutionProxy> response) {
-								
-								
-								if(response==null){
-									ConfirmationDialogBox.showOkDialogBox(constants.error(),constants.institutionAccessError());
-								}		
-								
-								if (response!=null && response.size() > 0)
-								{
-									
-									institutionListBox.setValue(response.get(0));
-									institutionListBox.setAcceptableValues(response);
-									TopPanel.this.requests.institutionRequest().mySetCurrentInstitution().using(institutionListBox.getValue()).fire();
-									McAppNav.checkAdminRights(requests,true);
-								}
-								else
-								{
-									requests.institutionRequest().fillCurrentInstitutionNull().fire();
-									McAppNav.checkAdminRights(requests,true);
-									ConfirmationDialogBox.showOkDialogBox(constants.information(),constants.noInstitutionaccssMessage());	
-								}
-							}
-						});
-					}
-				}
-				else
-				{
-					requests.institutionRequest().fillCurrentInstitutionNull().fire();
-					List<InstitutionProxy> temp = new ArrayList<InstitutionProxy>();
-					institutionListBox.setValue(null);
-					institutionListBox.setAcceptableValues(temp);
-					McAppNav.checkAdminRights(requests,false);
-				}
+				setInstitutionValue(requests, event.getValue());
 			}	
+		});
+		
+		requests.personRequest().myGetLoggedPerson().fire(new BMEReceiver<PersonProxy>() {
+
+			@Override
+			public void onSuccess(PersonProxy response) {
+				setInstitutionValue(requests, response);
+			}				
+
 		});
 		
 		Locale[] locales = Locale.values();
@@ -250,5 +190,80 @@ public class TopPanel extends Composite {
 		}
 		Window.open(url, "_self", "");
 	}
+	
+	private void setInstitutionValue(final McAppRequestFactory requests, PersonProxy userLoggedIn) {
+		if(userLoggedIn!=null)
+		{	
+			
+			List<InstitutionProxy> temp = new ArrayList<InstitutionProxy>();
+			institutionListBox.setValue(null);
+			institutionListBox.setAcceptableValues(temp);
+			
+			Log.info("Overall Admin :" + userLoggedIn.getIsAdmin());
+			
+			if (userLoggedIn.getIsAdmin())
+			{
+				
+				requests.institutionRequest().findAllInstitutions().fire(new Receiver<List<InstitutionProxy>>() {
+
+					@Override
+					public void onSuccess(List<InstitutionProxy> response) {
+						if (response.size() > 0)
+						{
+							Log.info("ADMIN IS SELECTED");
+							institutionListBox.setValue(response.get(0));
+							institutionListBox.setAcceptableValues(response);
+							TopPanel.this.requests.institutionRequest().mySetCurrentInstitution().using(institutionListBox.getValue()).fire();
+							McAppNav.checkAdminRights(requests,true);
+						}
+						else
+						{
+							McAppNav.checkAdminRights(requests,true);
+							ConfirmationDialogBox.showOkDialogBox(constants.information(),constants.noInstitutionaccssMessage());
+						}
+					}
+				});
+			}
+			else
+			{
+				
+				TopPanel.this.requests.userAccessRightsRequest().findInstituionFromQuestionAccessByPerson(userLoggedIn.getId()).fire(new Receiver<List<InstitutionProxy>>() {
+
+					@Override
+					public void onSuccess(List<InstitutionProxy> response) {
+						
+						
+						if(response==null){
+							ConfirmationDialogBox.showOkDialogBox(constants.error(),constants.institutionAccessError());
+						}		
+						
+						if (response!=null && response.size() > 0)
+						{
+							
+							institutionListBox.setValue(response.get(0));
+							institutionListBox.setAcceptableValues(response);
+							TopPanel.this.requests.institutionRequest().mySetCurrentInstitution().using(institutionListBox.getValue()).fire();
+							McAppNav.checkAdminRights(requests,true);
+						}
+						else
+						{
+							requests.institutionRequest().fillCurrentInstitutionNull().fire();
+							McAppNav.checkAdminRights(requests,true);
+							ConfirmationDialogBox.showOkDialogBox(constants.information(),constants.noInstitutionaccssMessage());	
+						}
+					}
+				});
+			}
+		}
+		else
+		{
+			requests.institutionRequest().fillCurrentInstitutionNull().fire();
+			List<InstitutionProxy> temp = new ArrayList<InstitutionProxy>();
+			institutionListBox.setValue(null);
+			institutionListBox.setAcceptableValues(temp);
+			McAppNav.checkAdminRights(requests,false);
+		}
+	}	
+
 
 }

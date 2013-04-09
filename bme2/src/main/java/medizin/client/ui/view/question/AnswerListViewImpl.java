@@ -326,7 +326,8 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
         }
             	
     	tableAnswer.addColumnStyleName(0, "iconColumn");
-    	tableAnswer.addColumnStyleName(1, "questionTextColumn");
+    	//tableAnswer.addColumnStyleName(1, "questionTextColumn");
+    	tableAnswer.getColumn(1).setCellStyleNames("answerTextColumn");
     	
     }
 	@Override

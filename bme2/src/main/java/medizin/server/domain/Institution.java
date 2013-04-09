@@ -14,17 +14,14 @@ import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import medizin.client.proxy.InstitutionProxy;
 import medizin.client.shared.AccessRights;
 import medizin.client.ui.widget.Sorting;
 
-import org.hibernate.Query;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
 
 import com.google.web.bindery.requestfactory.server.RequestFactoryServlet;
-import com.google.web.bindery.requestfactory.shared.Request;
 
 @RooJavaBean
 @RooToString
