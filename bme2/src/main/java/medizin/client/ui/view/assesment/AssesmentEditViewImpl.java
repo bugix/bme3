@@ -1,6 +1,7 @@
 package medizin.client.ui.view.assesment;
 
 import java.util.Collection;
+import java.util.Map;
 
 import medizin.client.place.PlaceUserDetails;
 import medizin.client.factory.request.McAppRequestFactory;
@@ -173,7 +174,7 @@ public class AssesmentEditViewImpl extends Composite implements AssesmentEditVie
     @UiField
     DivElement lbllogo;
     
-	public AssesmentEditViewImpl() {
+	public AssesmentEditViewImpl(Map<String, Widget> reciverMap) {
 		initWidget(uiBinder.createAndBindUi(this));
 		assessmentTabPanel.selectTab(0);
 		assessmentTabPanel.getTabBar().setTabText(0, constants.manageAssessment());
@@ -189,6 +190,14 @@ public class AssesmentEditViewImpl extends Composite implements AssesmentEditVie
 		lblrepeFor.setInnerText(constants.repeFor());
 		lblpercentSameQuestion.setInnerText(constants.percentSameQuestion());
 		lbllogo.setInnerText(constants.logo());
+		
+		
+		reciverMap.put("name", name);
+		reciverMap.put("dateOfAssesment", dateOfAssesment);
+		reciverMap.put("dateOpen", dateOpen);
+		reciverMap.put("dateClosed", dateClosed);
+		reciverMap.put("place", place);
+		reciverMap.put("logo", logo);
 		
 	}
 

@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.PlaceAssesment;
 import medizin.client.place.PlaceAssesmentDetails;
@@ -101,7 +102,7 @@ public class ActivityAssesmentCreate  extends AbstractActivityWrapper  implement
 	}*/
 	@Override
 	public void start2(AcceptsOneWidget widget, EventBus eventBus) {
-		AssesmentEditView assesmentEditView = new AssesmentEditViewImpl();
+		AssesmentEditView assesmentEditView = new AssesmentEditViewImpl(reciverMap);
 		assesmentEditView.setName("hallo");
 		assesmentEditView.setPresenter(this);
 		this.widget = widget;
@@ -235,7 +236,7 @@ public class ActivityAssesmentCreate  extends AbstractActivityWrapper  implement
 	@Override
 	public void saveClicked() {
 
-		editorDriver.flush().fire(new Receiver<Void>() {
+		editorDriver.flush().fire(new BMEReceiver<Void>(reciverMap) {
 			
           @Override
           public void onSuccess(Void response) {
@@ -245,23 +246,6 @@ public class ActivityAssesmentCreate  extends AbstractActivityWrapper  implement
           //	goTo(new PlaceAssesment(person.stableId()));
           }
           
-          public void onFailure(ServerFailure error){
-				Log.error(error.getMessage());
-			}
-          @Override
-			public void onViolation(Set<Violation> errors) {
-				Iterator<Violation> iter = errors.iterator();
-				String message = "";
-				while(iter.hasNext()){
-					message += iter.next().getMessage() + "<br>";
-				}
-				Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Event -" + message);
-				
-				ErrorPanel erorPanel = new ErrorPanel();
-			        	  erorPanel.setWarnMessage(message);
-
-				
-			}
       }); 
 		
 	}
