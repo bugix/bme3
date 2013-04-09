@@ -4,10 +4,24 @@ import java.util.Map;
 
 import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
+import medizin.client.place.PlaceAssesment;
+import medizin.client.place.PlaceAssesmentDetails;
+import medizin.client.place.PlaceBookAssesment;
+import medizin.client.place.PlaceBookAssesmentDetails;
+import medizin.client.place.PlaceInstitution;
+import medizin.client.place.PlaceInstitutionEvent;
+import medizin.client.place.PlaceNotActivatedQuestion;
+import medizin.client.place.PlaceNotActivatedQuestionDetails;
+import medizin.client.place.PlaceQuestiontypes;
+import medizin.client.place.PlaceQuestiontypesDetails;
+import medizin.client.place.PlaceStaticContent;
+import medizin.client.place.PlaceSystemOverview;
 import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.PersonAccessRightProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
+import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxOkButtonEvent;
+import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxOkButtonEventHandler;
 import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
@@ -31,7 +45,7 @@ import com.google.web.bindery.requestfactory.shared.Receiver;
 abstract public class AbstractActivityWrapper extends AbstractActivity {
 
 	private McAppRequestFactory requests;
-	private PlaceController placeController;
+	private final PlaceController placeController;
 	private Place place;
 	protected Map<String, Widget> reciverMap = Maps.newHashMap();
 	
@@ -111,7 +125,17 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 			public void onSuccess(PersonAccessRightProxy response) {
 				personRightProxy = response;		
 				
-				start2(panel, eventBus);
+				if(checkIfUserHasRightsToMenu() == true) {
+					start2(panel, eventBus);	
+				}else {
+					ConfirmationDialogBox.showOkDialogBox(constants.information(), constants.mayNotHaveRights(),new ConfirmDialogBoxOkButtonEventHandler(){
+
+						@Override
+						public void onOkButtonClicked(ConfirmDialogBoxOkButtonEvent event) {
+							placeController.goTo(new PlaceSystemOverview(PlaceSystemOverview.PLACE_SYSTEM_OVERVIEW));
+						}
+					});
+				}
 			}
 		});
 		
@@ -121,6 +145,40 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 				placeChanged(place);
 			}
 		});
+	}
+	
+	private final boolean checkIfUserHasRightsToMenu() {
+		boolean flag = false;
+		
+		if(userLoggedIn != null && personRightProxy != null) {
+			
+			if(isAdminOrInstitutionalAdmin() == true) {
+				flag = true;
+			}else {
+				
+				if(place instanceof PlaceNotActivatedQuestion  	|| place instanceof PlaceNotActivatedQuestionDetails
+						|| place instanceof PlaceQuestiontypes 	|| place instanceof PlaceQuestiontypesDetails
+						|| place instanceof PlaceInstitution 	|| place instanceof PlaceInstitutionEvent
+						|| place instanceof PlaceAssesment 		|| place instanceof PlaceAssesmentDetails
+						|| place instanceof PlaceBookAssesment	|| place instanceof PlaceBookAssesmentDetails
+						|| place instanceof PlaceStaticContent
+				) {
+					flag = false;
+				}else {
+					flag = true;
+				}
+			}
+		}
+		
+		return flag;
+	}
+	
+	public final boolean isAdminOrInstitutionalAdmin() {
+		if(userLoggedIn == null || personRightProxy == null) {
+			return false;
+		}
+		
+		return  userLoggedIn.getIsAdmin() || personRightProxy.getIsInstitutionalAdmin();
 	}
 	
 	public abstract void start2(AcceptsOneWidget panel, EventBus eventBus);

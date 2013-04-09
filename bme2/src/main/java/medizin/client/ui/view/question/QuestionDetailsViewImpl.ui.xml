@@ -79,7 +79,7 @@
 
 										<tr id="questionShortName">
 											<td>
-												<g:Label styleName="{style.label}" ui:field="lblQuestionShortName"></g:Label>
+												<g:Label styleName="{style.label}" text="{constants.questionShortName}"></g:Label>
 											</td>
 											<td>
 												<g:Label addStyleNames="{style.valueHeight}" ui:field="lblQuestionShortNameValue"></g:Label>
@@ -87,7 +87,7 @@
 										</tr>
 										<tr id="questionType">
 											<td>
-												<g:Label styleName="{style.label}" ui:field="lblQuestionType"></g:Label>
+												<g:Label styleName="{style.label}" text="{constants.questionType}"></g:Label>
 											</td>
 											<td>
 												<g:Label addStyleNames="{style.valueHeight}" ui:field="lblQuestionTypeValue"></g:Label>
@@ -95,7 +95,7 @@
 										</tr>
 										<tr id="questionText">
 											<td>
-												<g:Label styleName="{style.label}" ui:field="lblQuestionText"></g:Label>
+												<g:Label styleName="{style.label}" text="{constants.questionText}"></g:Label>
 											</td>
 											<td>
 											<g:HTML ui:field="lblQuestionTextValue" styleName="{style.whiteSpace}" ></g:HTML>
@@ -104,7 +104,7 @@
 										</tr>
 										<tr id="auther">
 											<td>
-												<g:Label styleName="{style.label}" ui:field="lblAuther"></g:Label>
+												<g:Label styleName="{style.label}" text="{constants.auther}"></g:Label>
 											</td>
 											<td>
 												<g:Label addStyleNames="{style.valueHeight}" ui:field="lblAutherValue"></g:Label>
@@ -112,7 +112,7 @@
 										</tr>
 										<tr id="reviewer">
 											<td>
-												<g:Label styleName="{style.label}" ui:field="lblReviewer"></g:Label>
+												<g:Label styleName="{style.label}" text="{constants.reviewer}"></g:Label>
 											</td>
 											<td>
 												<g:Label addStyleNames="{style.valueHeight}" ui:field="lblReviewerValue"></g:Label>
@@ -120,7 +120,7 @@
 										</tr>
 										<tr id="questionEvent">
 											<td>
-												<g:Label styleName="{style.label}" ui:field="lblQuestionEvent"></g:Label>
+												<g:Label styleName="{style.label}" text="{constants.questionEvent}"></g:Label>
 											</td>
 											<td>
 												<g:Label addStyleNames="{style.valueHeight}" ui:field="lblQuestionEventValue"></g:Label>
@@ -128,7 +128,7 @@
 										</tr>
 										<tr id="comment">
 											<td>
-												<g:Label styleName="{style.label}" ui:field="lblComment"></g:Label>
+												<g:Label styleName="{style.label}" text="{constants.comment}"></g:Label>
 											</td>
 											<td>
 												<g:Label addStyleNames="{style.valueHeight}" ui:field="lblCommentValue"></g:Label>
@@ -136,7 +136,7 @@
 										</tr>
 										<tr id="mcs">
 											<td>
-												<g:Label styleName="{style.label}" ui:field="lblMcs"></g:Label>
+												<g:Label styleName="{style.label}" text="{constants.mcs}"></g:Label>
 											</td>
 											<td>
 												<g:Label addStyleNames="{style.valueHeight}" ui:field="lblMcsValue"></g:Label>

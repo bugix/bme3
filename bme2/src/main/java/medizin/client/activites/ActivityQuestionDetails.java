@@ -41,12 +41,10 @@ import medizin.client.util.Matrix;
 import medizin.client.util.MatrixValidityVO;
 import medizin.shared.QuestionTypes;
 import medizin.shared.Status;
-import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.base.Function;
 import com.google.common.collect.Sets;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.place.shared.Place;
@@ -70,12 +68,11 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	private PlaceQuestionDetails questionPlace;
 	
 	protected QuestionProxy question;
-	private QuestionDetailsView questionDetailsView;
 	protected QuestionDetailsView view;
 	private AnswerListViewImpl answerListView;
 	private CellTable<AnswerProxy> answerTable;
 	
-	private BmeConstants constants = GWT.create(BmeConstants.class);
+	//private BmeConstants constants = GWT.create(BmeConstants.class);
 	
 	public ActivityQuestionDetails(PlaceQuestionDetails place,
 			McAppRequestFactory requests, PlaceController placeController) {
@@ -87,20 +84,15 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 
 	@Override
 	public String mayStop() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void onCancel() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void onStop() {
-		// TODO Auto-generated method stub
-
 	}
 	
 	/*private PersonProxy loggedUser;*/
@@ -235,7 +227,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 					Log.info(((QuestionProxy) response).getQuestionText());
 					
 					if (((QuestionProxy) response).getIsReadOnly() == true)
-						view.setVisibleIconButton(false);
+						view.setVisibleEditAndDeleteBtn(false);
 						
 					initForActivity((QuestionProxy) response);
 					/*if (questionPlace.getFromPlace().equals("ACCEPT_QUESTION"))
@@ -339,7 +331,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			{
 				if (((QuestionProxy) response).getAutor().getId().equals(userLoggedIn.getId()))
 				{
-					view.setVisibleIconButton(true);
+					view.setVisibleEditAndDeleteBtn(true);
 					init((QuestionProxy) response);
 				}
 				else
@@ -355,20 +347,20 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 								{
 									if (proxy.getAccRights().equals(AccessRights.AccWrite))
 									{
-										view.setVisibleIconButton(true);
-										questionDetailsView.getAnswerListViewImpl().getNewAnswer().setVisible(false);
+										view.setVisibleEditAndDeleteBtn(true);
+										view.getAnswerListViewImpl().getNewAnswer().setVisible(false);
 									}
 									
 									if (proxy.getAccRights().equals(AccessRights.AccAddAnswers))
 									{
-										view.setVisibleIconButton(false);
+										view.setVisibleEditAndDeleteBtn(false);
 									}	
 								}
 							}
 							else
 							{
-								view.setVisibleIconButton(false);
-								questionDetailsView.getAnswerListViewImpl().getNewAnswer().setVisible(false);
+								view.setVisibleEditAndDeleteBtn(false);
+								view.getAnswerListViewImpl().getNewAnswer().setVisible(false);
 							}
 					
 							init((QuestionProxy) response);
@@ -1561,6 +1553,15 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		initMatrixAnswerView(); // refresh matrix list view.
 	}
 
+	@Override
+	public void enableBtnOnLatestClicked() {
+		if(isQuestionDetailsPlace() && question != null && question.getIsReadOnly() == false) {
+			view.setVisibleEditAndDeleteBtn(true);	
+		}
+		else if(isQuestionDetailsPlace() && question != null && question.getIsReadOnly() == true) {
+			view.setVisibleEditAndDeleteBtn(false);
+		}
+	}
 	// updated by subclass ActivityAcceptQuestionDetails
 	@Override
 	public void acceptQuestionClicked(QuestionProxy proxy) {

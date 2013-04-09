@@ -605,7 +605,7 @@ public class Question {
 		
 		query = entityManager().createQuery(findQuestionBySearchFilter(searchText, searchField, institution.getId(), loggedUser));
 	
-		//System.out.println("~~QUERY : " + query.unwrap(Query.class).getQueryString());
+		log.info("~~QUERY : " + query.unwrap(Query.class).getQueryString());
 	
 		return new Long(query.getResultList().size());
 		
@@ -771,7 +771,6 @@ public class Question {
 			CriteriaQuery<Question> select = criteriaQuery.select(from);
 
 			Predicate andAdminPredicate = null;
-			Predicate andPredicate = null;
 
 			if (!loggedUser.getIsAdmin()) {
 				
@@ -809,144 +808,13 @@ public class Question {
 			//Predicate statusActivePredicate = criteriaBuilder.equal(from.get("isActive"), Boolean.TRUE);
 			//Predicate statusNewPredicate = criteriaBuilder.equal(from.get("status"),Status.NEW);
 			Predicate statusNewPredicate = criteriaBuilder.equal(from.get("status"),Status.ACTIVE);
+			andAdminPredicate = criteriaBuilder.and(statusNewPredicate, andAdminPredicate);
 			
 			//andAdminPredicate = criteriaBuilder.and(statusNewPredicate, andAdminPredicate);
 
-			if (!searchText.equals("")) {
-				Expression<String> exp1 = from.get("questionShortName");
-				Predicate pre1 = criteriaBuilder.like(exp1, "%" + searchText + "%");
-				andPredicate = pre1;
-			}
-			
-			if (searchField.size() > 0) {
-				
-				Date dt1 = null;
-				Date dt2 = null;
-				Date usedMcDt1 = null;
-				Date usedMcDt2 = null;
-				DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
-				int ctr = 0;
-				
-				while (ctr < searchField.size())
-				{
-					if (searchField.get(ctr).equals("quesitontext") && !searchText.equals("")) {
-						Expression<String> exp2 = from.get("questionText");
-						Predicate pre2 = criteriaBuilder.like(exp2, "%" + searchText + "%");
-						andPredicate = criteriaBuilder.and(andPredicate, pre2);
-						ctr += 1;
-					}
+			Predicate andPredicate = searchFilter(searchText, searchField, criteriaBuilder, from);
 
-					if (searchField.get(ctr).equals("author") && !searchText.equals("")) {
-						Expression<String> authorExp = from.get("autor").get("name");
-						Predicate pre3 = criteriaBuilder.equal(authorExp, "%" + searchText + "%");
-						andPredicate = criteriaBuilder.and(andPredicate, pre3);
-						ctr += 1;
-					}
-
-					if (searchField.get(ctr).equals("reviewer") && !searchText.equals("")) {
-						Expression<String> reviwerExp = from.get("rewiewer").get("name");
-						Predicate pre4 = criteriaBuilder.equal(reviwerExp, "%" + searchText + "%");
-						andPredicate = criteriaBuilder.and(andPredicate, pre4);
-						ctr += 1;
-					}
-
-					if (searchField.get(ctr).equals("instruction") && !searchText.equals("")) {
-						Expression<String> exp3 = from.get("comment").get("comment");
-						Predicate pre5 = criteriaBuilder.like(exp3, "%" + searchText + "%");
-						andPredicate = criteriaBuilder.and(andPredicate, pre5);
-						ctr += 1;
-					}
-
-					if (searchField.get(ctr).equals("keyword") && !searchText.equals("")) {
-						SetJoin<Question, Keyword> join1 = from.joinSet("keywords", JoinType.LEFT);
-						Expression<String> exp4 = join1.get("name");
-						Predicate pre6 = criteriaBuilder.like(exp4, "%" + searchText + "%");
-						andPredicate = criteriaBuilder.and(andPredicate, pre6);
-						ctr += 1;
-					}
-					
-					if (searchField.get(ctr).equals("showNew")) {
-						ctr += 1;	
-						statusNewPredicate = from.get("status").in(Status.NEW, Status.ACTIVE);
-						//Predicate showNewPre = criteriaBuilder.equal(from.get("status"),Status.NEW);
-						//andAdminPredicate = criteriaBuilder.or(andAdminPredicate, showNewPre);
-					}
-
-					if (searchField.get(ctr).equals("institution")) {
-						ctr += 1;
-						Long selectInstitutionId = Long.parseLong(searchField.get(ctr));
-						Predicate pre7 = criteriaBuilder.equal(from.get("questEvent").get("institution").get("id"), selectInstitutionId);
-						
-						if (andPredicate == null)
-							andPredicate = pre7;
-						else
-							andPredicate = criteriaBuilder.and(andPredicate, pre7);
-						
-						ctr += 1;
-					}
-
-					if (searchField.get(ctr).equals("specialiation")) {
-						ctr += 1;
-						Long questionEventId = Long.parseLong(searchField.get(ctr));
-						Predicate pre8 = criteriaBuilder.equal(from.get("questEvent").get("id"),questionEventId);
-						
-						if (andPredicate == null)
-							andPredicate = pre8;
-						else
-							andPredicate = criteriaBuilder.and(andPredicate, pre8);
-					}
-
-					if (searchField.get(ctr).equals("createdDateFrom"))
-					{
-						ctr += 1;
-						log.info("DATE VALUE : " + searchField.get(ctr));
-						
-						dt1 = df.parse(searchField.get(ctr));
-					}
-					
-					if (searchField.get(ctr).equals("createdDateTo")) {
-						ctr += 1;
-						dt2 = df.parse(searchField.get(ctr));
-						
-						if (dt1 != null && dt2 != null)
-						{
-							Expression<Date> createdDateExp = from.get("dateAdded");
-							Predicate pre10 = criteriaBuilder.between(createdDateExp, dt1, dt2);
-							
-							if (andPredicate == null)
-								andPredicate = pre10;
-							else
-								andPredicate = criteriaBuilder.and(andPredicate, pre10);
-						}
-					}
-
-					if (searchField.get(ctr).equals("usedMcFrom")) {
-						ctr += 1;
-						usedMcDt1 = df.parse(searchField.get(ctr));
-					}
-					
-					if (searchField.get(ctr).equals("usedMcTo")){
-						ctr += 1;
-						usedMcDt2 = df.parse(searchField.get(ctr));
-						
-						if (usedMcDt1 != null && usedMcDt2 != null)
-						{
-							SetJoin<Question, AssesmentQuestion> join2 = from.joinSet("assesmentQuestionSet", JoinType.LEFT);
-							Expression<Date> assessmentDate = join2.get("assesment").get("dateOfAssesment");
-							Predicate pre11 = criteriaBuilder.between(assessmentDate, usedMcDt1, usedMcDt2);
-							
-							if (andPredicate == null)
-								andPredicate = pre11;
-							else
-								andPredicate = criteriaBuilder.and(andPredicate, pre11);
-						}
-					}
-					
-					ctr += 1;
-				}
-			}
-
-			andAdminPredicate = criteriaBuilder.and(statusNewPredicate, andAdminPredicate);
+			//andAdminPredicate = criteriaBuilder.and(statusNewPredicate, andAdminPredicate);
 			
 			if (andPredicate == null)
 				criteriaQuery.where(andAdminPredicate);
@@ -957,9 +825,163 @@ public class Question {
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			log.error("Error in Question filter",e);
 		}	
 		return null;
+	}
+
+	private static Predicate searchFilter(String searchText, List<String> searchField, CriteriaBuilder criteriaBuilder, Root<Question> from) {
+		 Predicate orPredicate = null;
+		 
+		if (!searchText.equals("")) {
+			Expression<String> exp1 = from.get("questionShortName");
+			Predicate pre1 = criteriaBuilder.like(exp1, "%" + searchText + "%");
+			orPredicate = pre1;
+		}
+		
+		if (searchField.size() > 0) {
+			
+			Date dt1 = null;
+			Date dt2 = null;
+			Date usedMcDt1 = null;
+			Date usedMcDt2 = null;
+			DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+			int ctr = 0;
+			
+			while (ctr < searchField.size())
+			{
+				if (searchField.get(ctr).equals("quesitontext") && !searchText.equals("")) {
+					Expression<String> exp2 = from.get("questionText");
+					Predicate pre2 = criteriaBuilder.like(exp2, "%" + searchText + "%");
+					orPredicate = criteriaBuilder.or(orPredicate, pre2);
+					ctr += 1;
+				}
+
+				if (searchField.get(ctr).equals("author") && !searchText.equals("")) {
+					Expression<String> authorExp = from.get("autor").get("name");
+					Predicate pre3 = criteriaBuilder.like(authorExp, "%" + searchText + "%");
+					orPredicate = criteriaBuilder.or(orPredicate, pre3);
+					ctr += 1;
+				}
+
+				if (searchField.get(ctr).equals("reviewer") && !searchText.equals("")) {
+					Expression<String> reviwerExp = from.get("rewiewer").get("name");
+					Predicate pre4 = criteriaBuilder.like(reviwerExp, "%" + searchText + "%");
+					orPredicate = criteriaBuilder.or(orPredicate, pre4);
+					ctr += 1;
+				}
+
+				if (searchField.get(ctr).equals("instruction") && !searchText.equals("")) {
+					Expression<String> exp3 = from.get("comment").get("comment");
+					Predicate pre5 = criteriaBuilder.like(exp3, "%" + searchText + "%");
+					orPredicate = criteriaBuilder.or(orPredicate, pre5);
+					ctr += 1;
+				}
+
+				if (searchField.get(ctr).equals("keyword") && !searchText.equals("")) {
+					SetJoin<Question, Keyword> join1 = from.joinSet("keywords", JoinType.LEFT);
+					Expression<String> exp4 = join1.get("name");
+					Predicate pre6 = criteriaBuilder.like(exp4, "%" + searchText + "%");
+					orPredicate = criteriaBuilder.or(orPredicate, pre6);
+					ctr += 1;
+				}
+				
+				if (searchField.get(ctr).equals("showNew")) {
+					ctr += 1;	
+					Predicate showNewPre = criteriaBuilder.equal(from.get("status"),Status.NEW);
+					orPredicate = criteriaBuilder.or(orPredicate, showNewPre);
+				}
+
+				if (searchField.get(ctr).equals("institution")) {
+					ctr += 1;
+					Long selectInstitutionId = Long.parseLong(searchField.get(ctr));
+					Predicate pre7 = criteriaBuilder.equal(from.get("questEvent").get("institution").get("id"), selectInstitutionId);
+					
+					if (orPredicate == null)
+						orPredicate = pre7;
+					else
+						orPredicate = criteriaBuilder.or(orPredicate, pre7);
+					
+					ctr += 1;
+				}
+
+				if (searchField.get(ctr).equals("specialiation")) {
+					ctr += 1;
+					Long questionEventId = Long.parseLong(searchField.get(ctr));
+					Predicate pre8 = criteriaBuilder.equal(from.get("questEvent").get("id"),questionEventId);
+					
+					if (orPredicate == null)
+						orPredicate = pre8;
+					else
+						orPredicate = criteriaBuilder.or(orPredicate, pre8);
+				}
+
+				if (searchField.get(ctr).equals("createdDateFrom"))
+				{
+					ctr += 1;
+					log.info("DATE VALUE : " + searchField.get(ctr));
+					
+					try {
+						dt1 = df.parse(searchField.get(ctr));
+					} catch (ParseException e) {
+						log.error("Error in createdDateFrom ",e);
+					}
+				}
+				
+				if (searchField.get(ctr).equals("createdDateTo")) {
+					ctr += 1;
+					try {
+						dt2 = df.parse(searchField.get(ctr));
+					} catch (ParseException e) {
+						log.error("Error in createdDateTo ",e);
+					}
+					
+					if (dt1 != null && dt2 != null)
+					{
+						Expression<Date> createdDateExp = from.get("dateAdded");
+						Predicate pre10 = criteriaBuilder.between(createdDateExp, dt1, dt2);
+						
+						if (orPredicate == null)
+							orPredicate = pre10;
+						else
+							orPredicate = criteriaBuilder.or(orPredicate, pre10);
+					}
+				}
+
+				if (searchField.get(ctr).equals("usedMcFrom")) {
+					ctr += 1;
+					try {
+						usedMcDt1 = df.parse(searchField.get(ctr));
+					} catch (ParseException e) {
+						log.error("Error in usedMcFrom ",e);
+					}
+				}
+				
+				if (searchField.get(ctr).equals("usedMcTo")){
+					ctr += 1;
+					try {
+						usedMcDt2 = df.parse(searchField.get(ctr));
+					} catch (ParseException e) {
+						log.error("Error in usedMcTo ",e);
+					}
+					
+					if (usedMcDt1 != null && usedMcDt2 != null)
+					{
+						SetJoin<Question, AssesmentQuestion> join2 = from.joinSet("assesmentQuestionSet", JoinType.LEFT);
+						Expression<Date> assessmentDate = join2.get("assesment").get("dateOfAssesment");
+						Predicate pre11 = criteriaBuilder.between(assessmentDate, usedMcDt1, usedMcDt2);
+						
+						if (orPredicate == null)
+							orPredicate = pre11;
+						else
+							orPredicate = criteriaBuilder.or(orPredicate, pre11);
+					}
+				}
+				
+				ctr += 1;
+			}
+		}
+		return orPredicate;
 	}
 	
 	@Transactional
@@ -1297,159 +1319,10 @@ public class Question {
 		Predicate preIns1 = cb.equal(from.get("questEvent").get("institution").get("id"), institutionId);
 		Predicate preStatus2 = from.get("status").in(Status.ACCEPTED_ADMIN,Status.ACCEPTED_REVIEWER,Status.CORRECTION_FROM_ADMIN,Status.CORRECTION_FROM_REVIEWER,Status.NEW); 		
 		Predicate andPredicate = null;
-		Predicate statusNewPredicate = null;
 		
-		if (!searchText.equals("")) {
-			Expression<String> exp1 = from.get("questionShortName");
-			Predicate pre1 = cb.like(exp1, "%" + searchText + "%");
-			andPredicate = pre1;
-		}
-		
-		if (searchField.size() > 0) {
-			
-			Date dt1 = null;
-			Date dt2 = null;
-			Date usedMcDt1 = null;
-			Date usedMcDt2 = null;
-			DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
-			int ctr = 0;
-			
-			while (ctr < searchField.size())
-			{
-				if (searchField.get(ctr).equals("quesitontext") && !searchText.equals("")) {
-					Expression<String> exp2 = from.get("questionText");
-					Predicate pre2 = cb.like(exp2, "%" + searchText + "%");
-					andPredicate = cb.and(andPredicate, pre2);
-					ctr += 1;
-				}
-
-				if (searchField.get(ctr).equals("author") && !searchText.equals("")) {
-					Expression<String> authorExp = from.get("autor").get("name");
-					Predicate pre3 = cb.equal(authorExp, "%" + searchText + "%");
-					andPredicate = cb.and(andPredicate, pre3);
-					ctr += 1;
-				}
-
-				if (searchField.get(ctr).equals("reviewer") && !searchText.equals("")) {
-					Expression<String> reviwerExp = from.get("rewiewer").get("name");
-					Predicate pre4 = cb.equal(reviwerExp, "%" + searchText + "%");
-					andPredicate = cb.and(andPredicate, pre4);
-					ctr += 1;
-				}
-
-				if (searchField.get(ctr).equals("instruction") && !searchText.equals("")) {
-					Expression<String> exp3 = from.get("comment").get("comment");
-					Predicate pre5 = cb.like(exp3, "%" + searchText + "%");
-					andPredicate = cb.and(andPredicate, pre5);
-					ctr += 1;
-				}
-
-				if (searchField.get(ctr).equals("keyword") && !searchText.equals("")) {
-					SetJoin<Question, Keyword> join1 = from.joinSet("keywords", JoinType.LEFT);
-					Expression<String> exp4 = join1.get("name");
-					Predicate pre6 = cb.like(exp4, "%" + searchText + "%");
-					andPredicate = cb.and(andPredicate, pre6);
-					ctr += 1;
-				}
-				
-				if (searchField.get(ctr).equals("showNew")) {
-					ctr += 1;	
-					statusNewPredicate = from.get("status").in(Status.NEW);
-				}
-
-				if (searchField.get(ctr).equals("institution")) {
-					ctr += 1;
-					Long selectInstitutionId = Long.parseLong(searchField.get(ctr));
-					Predicate pre7 = cb.equal(from.get("questEvent").get("institution").get("id"), selectInstitutionId);
-					
-					if (andPredicate == null)
-						andPredicate = pre7;
-					else
-						andPredicate = cb.and(andPredicate, pre7);
-					
-					ctr += 1;
-				}
-
-				if (searchField.get(ctr).equals("specialiation")) {
-					ctr += 1;
-					Long questionEventId = Long.parseLong(searchField.get(ctr));
-					Predicate pre8 = cb.equal(from.get("questEvent").get("id"),questionEventId);
-					
-					if (andPredicate == null)
-						andPredicate = pre8;
-					else
-						andPredicate = cb.and(andPredicate, pre8);
-				}
-
-				if (searchField.get(ctr).equals("createdDateFrom"))
-				{
-					ctr += 1;
-					log.info("DATE VALUE : " + searchField.get(ctr));
-					
-					try {
-						dt1 = df.parse(searchField.get(ctr));
-					} catch (ParseException e) {
-						log.error("Error in creatdDateFrom Field",e);
-					}
-				}
-				
-				if (searchField.get(ctr).equals("createdDateTo")) {
-					ctr += 1;
-					try {
-						dt2 = df.parse(searchField.get(ctr));
-					} catch (ParseException e) {
-						log.error("Error in createdDateTo Field",e);
-					}
-					
-					if (dt1 != null && dt2 != null)
-					{
-						Expression<Date> createdDateExp = from.get("dateAdded");
-						Predicate pre10 = cb.between(createdDateExp, dt1, dt2);
-						
-						if (andPredicate == null)
-							andPredicate = pre10;
-						else
-							andPredicate = cb.and(andPredicate, pre10);
-					}
-				}
-
-				if (searchField.get(ctr).equals("usedMcFrom")) {
-					ctr += 1;
-					try {
-						usedMcDt1 = df.parse(searchField.get(ctr));
-					} catch (ParseException e) {
-						log.error("Error in usedMcFrom Field",e);
-					}
-				}
-				
-				if (searchField.get(ctr).equals("usedMcTo")){
-					ctr += 1;
-					try {
-						usedMcDt2 = df.parse(searchField.get(ctr));
-					} catch (ParseException e) {
-						log.error("Error in usedMcTo Field",e);
-					}
-					
-					if (usedMcDt1 != null && usedMcDt2 != null)
-					{
-						SetJoin<Question, AssesmentQuestion> join2 = from.joinSet("assesmentQuestionSet", JoinType.LEFT);
-						Expression<Date> assessmentDate = join2.get("assesment").get("dateOfAssesment");
-						Predicate pre11 = cb.between(assessmentDate, usedMcDt1, usedMcDt2);
-						
-						if (andPredicate == null)
-							andPredicate = pre11;
-						else
-							andPredicate = cb.and(andPredicate, pre11);
-					}
-				}
-				
-				ctr += 1;
-			}
-		}
+		andPredicate = searchFilter(searchText, searchField, cb, from);
 		
 		if(andPredicate != null) preIns1 = cb.and(preIns1,andPredicate);
-		
-		if(statusNewPredicate != null) preIns1 = cb.and(preIns1,statusNewPredicate);
 		
 		cq.where(cb.and(preIns1,preStatus2));
 		
