@@ -1388,9 +1388,23 @@ public class Question {
 			
 		}).iterator();
 		
-		persistNewQuestion(this.questionType.getId(), this.questionShortName, this.questionText, this.autor.getId(), this.rewiewer.getId(), this.submitToReviewComitee, 
+		Question question = persistNewQuestion(this.questionType.getId(), this.questionShortName, this.questionText, this.autor.getId(), this.rewiewer.getId(), this.submitToReviewComitee, 
 				this.questEvent.getId(), Lists.newArrayList(mcIds), this.comment.getComment(), this.questionVersion+1, 0, this.picturePath, this.status, 
 				Sets.newHashSet(newQuestionResources), this.getId());
+		
+		if(question != null && isAdmin == true) {
+			if(userLoggedIn.getId().equals(this.rewiewer.getId()) == true){
+				question.isAcceptedRewiever = true;
+			}
+			if(userLoggedIn.getId().equals(this.autor.getId()) == true) {
+				question.isAcceptedAuthor = true;
+			}
+			if(question.isAcceptedAdmin && question.isAcceptedAuthor && question.isAcceptedRewiever) {
+				question.status = Status.ACTIVE;
+				inActivePreviousQuestion(question.previousVersion);
+			}
+			question.persist();
+		}
 	}
 	
 	public static Long countNotActivatedQuestionsByPerson(String searchText, List<String> searchField) {

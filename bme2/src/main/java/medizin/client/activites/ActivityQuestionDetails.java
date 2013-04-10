@@ -105,7 +105,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		super.start(widget, eventBus);
 
 	}*/
-	Boolean flag = false;
+	Boolean editDeleteBtnFlag = false;
 	Boolean answerFlag = false;
 	@Override
 	public void start2(AcceptsOneWidget panel, EventBus eventBus) {
@@ -136,7 +136,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			}
 		}*/		
 		
-		QuestionDetailsViewImpl questionDetailsView = new QuestionDetailsViewImpl(eventBus, flag,true);
+		QuestionDetailsViewImpl questionDetailsView = new QuestionDetailsViewImpl(eventBus, editDeleteBtnFlag,true);
 		
 		/*questionDetailsView.setName("hallo");*/
 		questionDetailsView.setPresenter(this);
@@ -299,12 +299,12 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 
 		if (personRightProxy.getIsAdmin())
 		{
-			flag = true;
+			editDeleteBtnFlag = true;
 			answerFlag = true;
 		}
 		else if (personRightProxy.getIsInstitutionalAdmin())
 		{
-			flag = true;
+			editDeleteBtnFlag = true;
 			answerFlag = true;
 		}
 		else
@@ -313,7 +313,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			{
 				if (proxy.getAccRights().equals(AccessRights.AccWrite))
 				{
-					flag = true;
+					editDeleteBtnFlag = true;
 					answerFlag = false;
 					break;
 				}
@@ -327,7 +327,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		
 		if (response.getStatus().equals(Status.ACTIVE) || response.getStatus().equals(Status.NEW))
 		{
-			if (!flag && !answerFlag)
+			if (!editDeleteBtnFlag && !answerFlag)
 			{
 				if (((QuestionProxy) response).getAutor().getId().equals(userLoggedIn.getId()))
 				{
@@ -1555,10 +1555,12 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 
 	@Override
 	public void enableBtnOnLatestClicked() {
-		if(isQuestionDetailsPlace() && question != null && question.getIsReadOnly() == false) {
+		if(isQuestionDetailsPlace() && question != null && question.getIsReadOnly() == false && this.editDeleteBtnFlag == true) {
 			view.setVisibleEditAndDeleteBtn(true);	
 		}
 		else if(isQuestionDetailsPlace() && question != null && question.getIsReadOnly() == true) {
+			view.setVisibleEditAndDeleteBtn(false);
+		}else if(this.editDeleteBtnFlag == false) {
 			view.setVisibleEditAndDeleteBtn(false);
 		}
 	}
