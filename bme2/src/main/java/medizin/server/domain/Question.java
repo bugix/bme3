@@ -808,11 +808,15 @@ public class Question {
 			//Predicate statusActivePredicate = criteriaBuilder.equal(from.get("isActive"), Boolean.TRUE);
 			//Predicate statusNewPredicate = criteriaBuilder.equal(from.get("status"),Status.NEW);
 			Predicate statusNewPredicate = criteriaBuilder.equal(from.get("status"),Status.ACTIVE);
+			//andAdminPredicate = criteriaBuilder.and(statusNewPredicate, andAdminPredicate);
+			
+			Map<String, String> searchFilterMap = BMEUtils.convertToMap(searchField);
+			if (searchFilterMap.containsKey("showNew")) {
+				statusNewPredicate =  from.get("status").in(Status.NEW,Status.ACTIVE);
+			}
 			andAdminPredicate = criteriaBuilder.and(statusNewPredicate, andAdminPredicate);
 			
-			//andAdminPredicate = criteriaBuilder.and(statusNewPredicate, andAdminPredicate);
-
-			Predicate andPredicate = searchFilter(searchText, BMEUtils.convertToMap(searchField), criteriaBuilder, from);
+			Predicate andPredicate = searchFilter(searchText,searchFilterMap , criteriaBuilder, from);
 
 			//andAdminPredicate = criteriaBuilder.and(statusNewPredicate, andAdminPredicate);
 			
@@ -879,10 +883,11 @@ public class Question {
 				orPredicate = criteriaBuilder.or(orPredicate, pre6);
 			}
 			
-			if (searchField.containsKey("showNew")) {
+			//should be maintain in own method.
+			/*if (searchField.containsKey("showNew")) {
 				Predicate showNewPre = criteriaBuilder.equal(from.get("status"),Status.NEW);
 				orPredicate = criteriaBuilder.or(orPredicate, showNewPre);
-			}
+			}*/
 
 			if (searchField.containsKey("institution")) {
 				Long selectInstitutionId = Long.parseLong(searchField.get("institution"));
@@ -1276,7 +1281,9 @@ public class Question {
 				//question.setIsActive(true);
 			} else
 				question.setStatus(Status.ACCEPTED_ADMIN);
-		} else if (question.getRewiewer().getId().equals(userLoggedIn.getId())) {
+		}
+		
+		if (question.getRewiewer().getId().equals(userLoggedIn.getId())) {
 			question.setIsAcceptedRewiever(true);
 
 			if (question.getIsAcceptedAdmin() && question.getIsAcceptedAuthor()) {
@@ -1284,7 +1291,9 @@ public class Question {
 				//question.setIsActive(true);
 			} else
 				question.setStatus(Status.ACCEPTED_REVIEWER);
-		} else if (question.getAutor().getId().equals(userLoggedIn.getId())) {
+		} 
+		
+		if (question.getAutor().getId().equals(userLoggedIn.getId())) {
 			question.setIsAcceptedAuthor(true);
 			
 			if (question.getIsAcceptedAdmin() && question.getIsAcceptedRewiever())
