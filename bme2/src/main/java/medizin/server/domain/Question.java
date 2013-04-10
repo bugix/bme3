@@ -4,6 +4,7 @@ import java.io.File;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -320,26 +321,137 @@ public class Question {
 
 	}
 
+	
+	/*
+	 * Find New Question for assesment Question
+	 * 
+	 * Business: 
+	 * For Examiner :an examiner may see only questions of specialization where he has access.
+		+ Question Status : active
+	 * 
+	 * For Admin + Institutional Admin : can see all new question with status active
+	 */
 	public static List<Question> findQuestionsByMc(Long mcId) {
-		Boolean isAcceptedAdmin = true;
-		Boolean isActive = true;
+		
+		
 		Mc mc = Mc.findMc(mcId);
 		if (mc == null)
 			throw new IllegalArgumentException("The mcs argument is required");
 		EntityManager em = Question.entityManager();
-		StringBuilder queryBuilder = new StringBuilder(
-				"SELECT Question FROM Question AS question WHERE question.isAcceptedAdmin = :isAcceptedAdmin AND question.status = :isActive AND"
-						+ " :mcs_item MEMBER OF question.mcs");
+		
+		Person userLoggedIn=Person.myGetLoggedPerson();
+		if(userLoggedIn == null)
+		{
+			return new ArrayList<Question>();
+		}
+		
+		 //get institution
+        HttpSession session1 = RequestFactoryServlet.getThreadLocalRequest().getSession();
+        Long instId = (Long) session1.getAttribute("institutionId");
+		Institution institution = Institution.findInstitution(instId);
+		
+        /*Boolean isAdmin=userLoggedIn.getIsAdmin();
+        PersonAccessRight accessRights=userLoggedIn.getLoggedPersonAccessRights();
+        Boolean isInstitutionAdmin=accessRights.getIsInstitutionalAdmin();
+        
+        Set<UserAccessRights> access=userLoggedIn.getQuestionAccesses();
+        List<QuestionEvent> questionEvents=new ArrayList<QuestionEvent>();
+        
+        for(UserAccessRights u:access)
+        {
+        	questionEvents.add(u.getQuestionEvent());
+        }
+        
+       
+		
+		
+		//get Question Event of particular selected institution
+		List<QuestionEvent> questionEvents=QuestionEvent.findQuestionEventByInstitution(institution);
+		//find userAccessRight for institution
+	//	UserAccessRights institutionRight=UserAccessRights.findUserAccessRightsByPersonAndInstitution(userLoggedIn,institution);
+		
+		
+       // userLoggedIn.getQuestionAccesses()
+        //For Admin and Institutional Admin user
+        StringBuilder queryBuilder=null;
+        if(isAdmin || (isInstitutionAdmin))
+        {
+		 queryBuilder = new StringBuilder(
+				"SELECT Question FROM Question AS question WHERE  question.status = :isActive AND"
+						+ " :mcs_item MEMBER OF question.mcs and question.questEvent.institution = :institution");
+		 TypedQuery<Question> q = em.createQuery(queryBuilder.toString(),
+					Question.class);
+			
+			q.setParameter("isActive", Status.ACTIVE);
 
-		TypedQuery<Question> q = em.createQuery(queryBuilder.toString(),
-				Question.class);
-		q.setParameter("isAcceptedAdmin", isAcceptedAdmin);
-		q.setParameter("isActive", Status.ACTIVE);
-
-		q.setParameter("mcs_item", mc);
-
-		return q.getResultList();
+			q.setParameter("mcs_item", mc);
+			q.setParameter("institution", institution);
+			
+			CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+			CriteriaQuery<Question> criteriaQuery = criteriaBuilder.createQuery(Question.class);
+    		Root<Question> from=criteriaQuery.from(Question.class);
+    		Predicate statusPredicate=criteriaBuilder.equal(from.get("status"), Status.ACTIVE);
+    		Predicate institutionPredicate=criteriaBuilder.equal(from.get("questEvent").get("institution"), institution);
+    		SetJoin<Question, Mc> mcSetJoin=from.joinSet("mcs",JoinType.LEFT);
+    		
+    		Predicate mcPredicate=criteriaBuilder.equal(mcSetJoin.get("id"), mcId);
+    		
+    		Predicate finalPredicate=criteriaBuilder.and(institutionPredicate,statusPredicate,mcPredicate);
+    		criteriaQuery.where(finalPredicate);
+    		criteriaQuery.select(from);
+    		
+    		TypedQuery<Question> q = entityManager().createQuery(criteriaQuery);
+    		Log.info(q.toString());
+    		return q.getResultList();
+        }*/
+       /* else //for examiner
+        {*/
+        	
+        	
+        	List<Question> questions=Question.findQuestionEntriesByPerson(userLoggedIn.getShidId(), institution.getId(), "", new ArrayList<String>(), 0	, Integer.MAX_VALUE,true);
+        	return questions;
+        	
+        	/*List<Question> questions=UserAccessRights.findQuestionByPerson(userLoggedIn);
+        	
+        	CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+    		CriteriaQuery<Question> criteriaQuery = criteriaBuilder.createQuery(Question.class);
+    		Root<Question> from=criteriaQuery.from(Question.class);
+    		//SetJoin<Question, UserAccessRights> questionAccessSetJoin=from.joinSet("questionAccess",JoinType.LEFT);
+    		SetJoin<Question, Mc> mcSetJoin=from.joinSet("mcs",JoinType.LEFT);
+    		//questionAccessSetJoin.get("person");
+    		
+    		//filter by institution selected
+    		
+    		
+    		Predicate institutionPredicate=criteriaBuilder.equal(from.get("questEvent").get("institution"), institution);
+    		Predicate questEventPredicate=from.get("questEvent").in(questionEvents);
+    		//Predicate questionAccessPredicate=criteriaBuilder.equal(questionAccessSetJoin.get("person"), userLoggedIn);
+    		//Predicate questionAccessPredicate=criteriaBuilder.gt(criteriaBuilder.count(from.get("questionAccess").), 0);
+    		
+    		Predicate accessPredicate=criteriaBuilder.or(questEventPredicate);
+    		Predicate statusPredicate=criteriaBuilder.equal(from.get("status"), Status.ACTIVE);
+    		Predicate mcPredicate=criteriaBuilder.equal(mcSetJoin.get("id"), mcId);
+    		
+    		Predicate finalPredicate=criteriaBuilder.and(institutionPredicate,questEventPredicate,statusPredicate,mcPredicate);
+    		criteriaQuery.where(finalPredicate);
+    		criteriaQuery.select(from);
+    		
+    		
+    		//from.get("questEvent").in(userLoggedIn.get)
+    	//	from.get("questEvent.institution");
+    		
+    		
+    	//	criteriaQuery.where(userEqualPredicate);
+    		
+    		TypedQuery<Question> q = entityManager().createQuery(criteriaQuery);
+    		Log.info(criteriaQuery.toString());
+    		questions.addAll(q.getResultList());
+    		return questions;
+    		//from.join(from.getModel().get)
+*/      //  }
+		
 	}
+	
 
 	public static Long countQuestionsNonAcceptedAdmin() {
 		// Gets the Sessionattributes
@@ -603,7 +715,7 @@ public class Question {
 				institution.getId(), loggedUser));*/
 
 		
-		query = entityManager().createQuery(findQuestionBySearchFilter(searchText, searchField, institution.getId(), loggedUser));
+		query = entityManager().createQuery(findQuestionBySearchFilter(searchText, searchField, institution.getId(), loggedUser,false));
 	
 		log.info("~~QUERY : " + query.unwrap(Query.class).getQueryString());
 	
@@ -613,7 +725,7 @@ public class Question {
 
 	public static List<Question> findQuestionEntriesByPerson(String shibdId,
 			Long institutionId, String searchText,
-			List<String> searchField, int start, int length) {
+			List<String> searchField, int start, int length,boolean newQuestion) {
 		Person loggedUser = Person.findPersonByShibId(shibdId);
 		Institution institution = Institution.findInstitution(institutionId);
 		if (loggedUser == null || institution == null)
@@ -693,7 +805,7 @@ public class Question {
 				institution.getId(), loggedUser));*/
 
 		query = entityManager().createQuery(findQuestionBySearchFilter(searchText, searchField,
-				institution.getId(), loggedUser));
+				institution.getId(), loggedUser,newQuestion));
 		query.setFirstResult(start);
 		query.setMaxResults(length);
 
@@ -760,7 +872,7 @@ public class Question {
 	}
 
 	public static CriteriaQuery<Question> findQuestionBySearchFilter(String searchText,
-			List<String> searchField, Long institutionId, Person loggedUser) {
+			List<String> searchField, Long institutionId, Person loggedUser,boolean newQuestion) {
 		
 		try
 		{
@@ -814,7 +926,18 @@ public class Question {
 			if (searchFilterMap.containsKey("showNew")) {
 				statusNewPredicate =  from.get("status").in(Status.NEW,Status.ACTIVE);
 			}
-			andAdminPredicate = criteriaBuilder.and(statusNewPredicate, andAdminPredicate);
+			
+			if(!newQuestion)
+				andAdminPredicate = criteriaBuilder.and(statusNewPredicate, andAdminPredicate);
+			else
+			{
+				SetJoin<Question, AssesmentQuestion> assesmentQuestionSet=from.joinSet("assesmentQuestionSet",JoinType.LEFT);
+				Predicate assesmentQuestionPredicate1=criteriaBuilder.notEqual(assesmentQuestionSet.get("question").get("id"), from.get("id"));		
+				Predicate assesmentQuestionPredicate2=criteriaBuilder.isNull(assesmentQuestionSet);
+				Predicate assesmentQuestionPredicate=criteriaBuilder.or(assesmentQuestionPredicate1,assesmentQuestionPredicate2);
+				andAdminPredicate = criteriaBuilder.and(statusNewPredicate, andAdminPredicate, assesmentQuestionPredicate);
+			}
+			
 			
 			Predicate andPredicate = searchFilter(searchText,searchFilterMap , criteriaBuilder, from);
 

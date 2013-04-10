@@ -354,7 +354,7 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 		requests.questionRequest()
 				.findQuestionEntriesByPerson(this.userLoggedIn.getShidId(),
 						this.institutionActive.getId(), view.getSerachBox().getValue(), view.getSearchValue(), range.getStart(),
-						range.getLength()).with(view.getPaths())
+						range.getLength(),false).with(view.getPaths())
 				.fire(new BMEReceiver<List<QuestionProxy>>() {
 					@Override
 					public void onSuccess(List<QuestionProxy> values) {
