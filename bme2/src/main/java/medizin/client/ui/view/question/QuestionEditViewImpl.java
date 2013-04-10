@@ -76,12 +76,9 @@ import com.google.web.bindery.requestfactory.gwt.ui.client.EntityProxyKeyProvide
 
 public class QuestionEditViewImpl extends Composite implements QuestionEditView /* , Editor<QuestionProxy>*/{
 
-	private static QuestionEditViewImplUiBinder uiBinder = GWT
-			.create(QuestionEditViewImplUiBinder.class);
+	private static QuestionEditViewImplUiBinder uiBinder = GWT.create(QuestionEditViewImplUiBinder.class);
 
-	interface QuestionEditViewImplUiBinder extends
-			UiBinder<Widget, QuestionEditViewImpl> {
-	}
+	interface QuestionEditViewImplUiBinder extends UiBinder<Widget, QuestionEditViewImpl> {}
 
 	/*
 	 * interface EditorDriver extends RequestFactoryEditorDriver<QuestionProxy,
@@ -247,7 +244,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	@UiHandler("resendToReview")
 	void onResendToReview(ClickEvent event) {
 		if(validationOfFields()) {
-			saveQuestion(true, true);
+			saveQuestion(true, true,true);
 		}
 	}
 
@@ -256,16 +253,16 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		if(validationOfFields()) {
 		
 			if (!edit) {
-				saveQuestion(false,false);
+				saveQuestion(false,false,false);
 				//delegate.saveClicked(false);
 			} else {
 				if(delegate.isAcceptQuestionView()) {
 					if(delegate.isAdminOrReviewer()) {
 						// with minor version
-						saveQuestion(edit, false);
+						saveQuestion(edit, false,false);
 					}else if(delegate.isAuthor()){
 						// with major version
-						saveQuestion(edit, true);
+						saveQuestion(edit, true,false);
 					}else {
 						Log.info("Do nothing");
 					}
@@ -274,7 +271,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 						
 						@Override
 						public Void apply(Boolean input) {
-							saveQuestion(true, input);
+							saveQuestion(true, input,false);
 							//confirm.removeFromParent();
 							return null;
 						}
@@ -340,7 +337,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 			}
 		});
 		questionTypePanel.getTabBar().setTabText(0, constants.manageQuestion());
-		lblQuestionShortName.setText(constants.questionShortName());
+		/*lblQuestionShortName.setText(constants.questionShortName());
 		lblQuestionType.setText(constants.questionType());
 		lblQuestionText.setText(constants.questionText());
 		lblAuther.setText(constants.auther());
@@ -348,7 +345,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		lblQuestionComment.setText(constants.comment());
 		lblQuestionEvent.setText(constants.questionEvent());
 		lblMCS.setText(constants.mcs());
-		lblQuestionSubmitToReviewComitee.setText(constants.submitToReviewComitee());
+		lblQuestionSubmitToReviewComitee.setText(constants.submitToReviewComitee());*/
 		// RichTextToolbar toolbar=new RichTextToolbar(questionTextArea);
 		// toolbarPanel.add(toolbar);
 		
@@ -860,7 +857,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		return imageViewer;
 	}*/
 	
-	private void saveQuestion(boolean isEdit,boolean withNewMajorVersion) {
+	private void saveQuestion(boolean isEdit,boolean withNewMajorVersion, boolean isResend) {
 		
 		int questionVersion = 0;
 		int questionSubVersion = 0;
@@ -907,6 +904,11 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 			break;
 		}
 		} 
+		
+		if(isResend == true) {
+			delegate.resendToReview(questionType.getValue(),questionShortName.getText(),questionTextArea.getHTML(),author.getSelected(),rewiewer.getSelected(),submitToReviewComitee.getValue(),questEvent.getValue(),mcs.getValue(),questionComment.getText(),questionVersion, questionSubVersion, picturePath,questionResourceClients,status);
+			return;
+		}
 		
 		if(isEdit == true && withNewMajorVersion == false) {	
 			// update question with  minor new version

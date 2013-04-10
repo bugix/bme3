@@ -34,7 +34,7 @@
 						<table>
 							<tr id="questionShortName">
 								<td>
-									<g:Label styleName="{style.label}" ui:field="lblQuestionShortName"></g:Label>
+									<g:Label styleName="{style.label}" ui:field="lblQuestionShortName" text="{constants.questionShortName}"></g:Label>
 								</td>
 								<td>
 									<g:TextBox ui:field="questionShortName" width="174px"></g:TextBox>
@@ -45,7 +45,7 @@
 
 							<tr id="questionType">
 								<td>
-									<g:Label styleName="{style.label}" ui:field="lblQuestionType"></g:Label>
+									<g:Label styleName="{style.label}" ui:field="lblQuestionType" text="{constants.questionType}"></g:Label>
 								</td>
 								<td>
 									<g:ValueListBox ui:field="questionType"  width="180px"/>
@@ -54,7 +54,7 @@
 							</tr>
 							<tr id="questionText">
 								<td>
-									<g:Label styleName="{style.label}" ui:field="lblQuestionText"></g:Label>
+									<g:Label styleName="{style.label}" ui:field="lblQuestionText" text="{constants.questionText}"></g:Label>
 								</td>
 								<td>
 
@@ -89,7 +89,7 @@
 
 							<tr id="auther">
 								<td>
-									<g:Label styleName="{style.label}" ui:field="lblAuther"></g:Label>
+									<g:Label styleName="{style.label}" ui:field="lblAuther" text="{constants.auther}"></g:Label>
 								</td>
 								<td>
 									<!-- <g:ValueListBox ui:field="autor" /> -->
@@ -101,7 +101,7 @@
 
 							<tr id="reviewer">
 								<td>
-									<g:Label styleName="{style.label}" ui:field="lblReviewer"></g:Label>
+									<g:Label styleName="{style.label}" ui:field="lblReviewer" text="{constants.reviewer}"></g:Label>
 								</td>
 								<td>
 									<!-- <g:ValueListBox ui:field="rewiewer" /> -->
@@ -111,7 +111,7 @@
 							</tr>
 							<tr id="questionEvent">
 								<td>
-									<g:Label styleName="{style.label}" ui:field="lblQuestionEvent"></g:Label>
+									<g:Label styleName="{style.label}" ui:field="lblQuestionEvent" text="{constants.questionEvent}"></g:Label>
 								</td>
 								<td>
 									<g:ValueListBox ui:field="questEvent"  width="180px"/>
@@ -121,7 +121,7 @@
 
 							<tr id="questionSubmitToReviewComitee">
 								<td>
-									<g:Label styleName="{style.label}" ui:field="lblQuestionSubmitToReviewComitee"></g:Label>
+									<g:Label styleName="{style.label}" ui:field="lblQuestionSubmitToReviewComitee" text="{constants.submitToReviewComitee}"></g:Label>
 								</td>
 								<td>
 									<g:CheckBox ui:field="submitToReviewComitee" />
@@ -136,7 +136,7 @@
 							</tr>
 							<tr id="questionComment">
 								<td>
-									<g:Label styleName="{style.label}" ui:field="lblQuestionComment"></g:Label>
+									<g:Label styleName="{style.label}" ui:field="lblQuestionComment" text="{constants.comment}"></g:Label>
 								</td>
 								<td>
 									<g:TextArea ui:field='questionComment' width="100%"></g:TextArea>
@@ -150,7 +150,7 @@
 							</tr>
 							<tr id="mcs">
 								<td>
-									<g:Label styleName="{style.label}" ui:field="lblMCS"></g:Label>
+									<g:Label styleName="{style.label}" ui:field="lblMCS" text="{constants.mcs}"></g:Label>
 								</td>
 								<td>
 									<r:McSetEditor ui:field="mcs"></r:McSetEditor>

@@ -229,7 +229,14 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 					if (((QuestionProxy) response).getIsReadOnly() == true)
 						view.setVisibleEditAndDeleteBtn(false);
 						
-					initForActivity((QuestionProxy) response);
+					initForActivity((QuestionProxy) response,new Function<Boolean, Void>() {
+
+						@Override
+						public Void apply(Boolean input) {
+							init((QuestionProxy) response);
+							return null;
+						}
+					});
 					/*if (questionPlace.getFromPlace().equals("ACCEPT_QUESTION"))
 					{
 						init((QuestionProxy) response);
@@ -323,7 +330,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	}
 	
 	//method is overridden by sub class accept question
-	protected void initForActivity(final QuestionProxy response) {
+	protected void initForActivity(final QuestionProxy response,final Function<Boolean,Void> callFunction) {
 		
 		if (response.getStatus().equals(Status.ACTIVE) || response.getStatus().equals(Status.NEW))
 		{
@@ -332,7 +339,8 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 				if (((QuestionProxy) response).getAutor().getId().equals(userLoggedIn.getId()))
 				{
 					view.setVisibleEditAndDeleteBtn(true);
-					init((QuestionProxy) response);
+					if(callFunction != null) callFunction.apply(true);
+					/*init((QuestionProxy) response);*/
 				}
 				else
 				{
@@ -363,20 +371,23 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 								view.getAnswerListViewImpl().getNewAnswer().setVisible(false);
 							}
 					
-							init((QuestionProxy) response);
+							if(callFunction != null) callFunction.apply(true);
+							/*init((QuestionProxy) response);*/
 						}
 					});
 				}
 			}
 			else
 			{
-				init((QuestionProxy) response);
+				if(callFunction != null) callFunction.apply(true);
+				/*init((QuestionProxy) response);*/
 			}
 		}
 		else if (response.getStatus().equals(Status.NEW))
 		{
 			view.getEdit().setVisible(false);
-			init((QuestionProxy) response);
+			if(callFunction != null) callFunction.apply(true);
+			/*init((QuestionProxy) response);*/
 		}
 	}
 	/**
@@ -1557,10 +1568,19 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	public void enableBtnOnLatestClicked() {
 		if(isQuestionDetailsPlace() && question != null && question.getIsReadOnly() == false && this.editDeleteBtnFlag == true) {
 			view.setVisibleEditAndDeleteBtn(true);	
-		}
-		else if(isQuestionDetailsPlace() && question != null && question.getIsReadOnly() == true) {
-			view.setVisibleEditAndDeleteBtn(false);
 		}else if(this.editDeleteBtnFlag == false) {
+			view.setVisibleEditAndDeleteBtn(false);
+		}
+		
+		initForActivity(question, new Function<Boolean, Void>() {
+			@Override
+			public Void apply(Boolean input) {
+				//do nothing 
+				return null;
+			}
+		});
+		
+		if(isQuestionDetailsPlace() && question != null && question.getIsReadOnly() == true) {
 			view.setVisibleEditAndDeleteBtn(false);
 		}
 	}

@@ -41,7 +41,7 @@ public interface QuestionRequest extends QuestionRequest_Roo_Gwt {
 
 	Request<Long>  countQuestionsByPerson(String string, Long institutionId, String searchText, List<String> searchField);
 
-	Request<List<QuestionProxy>>  findQuestionEntriesByPerson(String string, Long institutionId, String searchText, List<String> searchField, int start, int length,Boolean newQuestion);
+	Request<List<QuestionProxy>>  findQuestionEntriesByPerson(String string, Long institutionId, String searchText, List<String> searchField, int start, int length,boolean newQuestion);
 	
 	InstanceRequest<QuestionProxy, Void> persistAndSetPreviousInactive();
 
@@ -58,7 +58,7 @@ public interface QuestionRequest extends QuestionRequest_Roo_Gwt {
 
 	InstanceRequest<QuestionProxy, Void> deactivatedQuestion();
 
-	InstanceRequest<QuestionProxy, Void> questionResendToReviewWithMajorVersion(boolean b);
+	InstanceRequest<QuestionProxy, QuestionProxy> questionResendToReviewWithMajorVersion(boolean b);
 
 	Request<Long> countNotActivatedQuestionsByPerson(String searchText, List<String> searchField);
 

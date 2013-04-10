@@ -46,9 +46,9 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 
 	private PlaceQuestionDetails questionPlace;
 
-	private AcceptsOneWidget widget;
+	//private AcceptsOneWidget widget;
 	private QuestionEditView view;
-	private McAppRequestFactory requests;
+	protected McAppRequestFactory requests;
 	private PlaceController placeController;
 
 	private Operation operation;
@@ -112,7 +112,7 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 		QuestionEditView questionEditView = new QuestionEditViewImpl(reciverMap, eventBus, userLoggedIn);
 		/* questionEditView.setName("hallo"); */
 		questionEditView.setPresenter(this);
-		this.widget = widget;
+		//this.widget = widget;
 		this.view = questionEditView;
 		// editorDriver = view.createEditorDriver();
 		view.setDelegate(this);
@@ -1065,4 +1065,8 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 		}
 		return false;
 	}
+
+	// updated in ActivityAcceptQuestionEdit 
+	@Override
+	public void resendToReview(QuestionTypeProxy value, String text, String html, PersonProxy selected, PersonProxy selected2, Boolean value2, QuestionEventProxy value3, Set<McProxy> value4, String text2, int questionVersion, int questionSubVersion, String picturePath, Set<QuestionResourceClient> questionResourceClients, Status status) {}
 }

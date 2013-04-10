@@ -1471,12 +1471,12 @@ public class Question {
 		this.persist();
 	}
 	
-	public void questionResendToReviewWithMajorVersion(boolean isAdmin) {
+	public Question questionResendToReviewWithMajorVersion(boolean isAdmin) {
 		log.info("save with major version here");
 		
 		Person userLoggedIn = Person.myGetLoggedPerson();
 		if(userLoggedIn == null) {
-			return;
+			return null;
 		}
 		
 		if(isAdmin == true) {
@@ -1511,8 +1511,20 @@ public class Question {
 			
 		}).iterator();
 		
-		Question question = persistNewQuestion(this.questionType.getId(), this.questionShortName, this.questionText, this.autor.getId(), this.rewiewer.getId(), this.submitToReviewComitee, 
-				this.questEvent.getId(), Lists.newArrayList(mcIds), this.comment.getComment(), this.questionVersion+1, 0, this.picturePath, this.status, 
+		Long questionTypeId = this.questionType.getId();
+		String shortName = this.questionShortName;
+		String questionTxt = this.questionText;
+		Long authorId = this.autor.getId();
+		Long reviewerId = this.rewiewer.getId();
+		boolean submitReviewComitee = this.submitToReviewComitee;
+		Long questionEventId =  this.questEvent.getId();
+		String questionComment = this.comment.getComment();
+		int questionNextVersion = this.questionVersion;
+		String picPath = this.picturePath;
+		Status newStatus = this.status;
+		entityManager.refresh(this);
+		Question question = persistNewQuestion(questionTypeId, shortName, questionTxt, authorId, reviewerId, submitReviewComitee, 
+				questionEventId, Lists.newArrayList(mcIds), questionComment, questionNextVersion, 0, picPath, newStatus, 
 				Sets.newHashSet(newQuestionResources), this.getId());
 		
 		if(question != null && isAdmin == true) {
@@ -1528,6 +1540,7 @@ public class Question {
 			}
 			question.persist();
 		}
+		return question;
 	}
 	
 	public static Long countNotActivatedQuestionsByPerson(String searchText, List<String> searchField) {

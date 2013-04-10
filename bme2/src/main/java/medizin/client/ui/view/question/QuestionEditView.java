@@ -51,6 +51,8 @@ public interface QuestionEditView extends IsWidget {
 
 		boolean isAuthor();
 
+		void resendToReview(QuestionTypeProxy value, String text, String html, PersonProxy selected, PersonProxy selected2, Boolean value2, QuestionEventProxy value3, Set<McProxy> value4, String text2, int questionVersion, int questionSubVersion, String picturePath, Set<QuestionResourceClient> questionResourceClients, Status status);
+
 	}
 
 	//RequestFactoryEditorDriver<QuestionProxy, QuestionEditViewImpl> createEditorDriver();

@@ -18,6 +18,7 @@ import medizin.shared.QuestionTypes;
 import medizin.shared.Status;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.common.base.Function;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.cellview.client.AbstractHasData;
 import com.google.gwt.view.client.Range;
@@ -55,7 +56,7 @@ public class ActivityAcceptQuestionDetails extends ActivityQuestionDetails imple
 	}
 	
 	@Override
-	protected void initForActivity(QuestionProxy response) {
+	protected void initForActivity(QuestionProxy response,Function<Boolean, Void> function) {
 		//init((QuestionProxy) response);
 		this.question = response;
 		Log.debug("Details für: "+question.getQuestionText());
@@ -249,10 +250,10 @@ public class ActivityAcceptQuestionDetails extends ActivityQuestionDetails imple
 	
 	@Override
 	public void onResendToReviewClicked(QuestionProxy proxy) {
-		requests.questionRequest().questionResendToReviewWithMajorVersion((userLoggedIn.getIsAdmin() || personRightProxy.getIsInstitutionalAdmin())).using(question).fire(new BMEReceiver<Void>() {
+		requests.questionRequest().questionResendToReviewWithMajorVersion((userLoggedIn.getIsAdmin() || personRightProxy.getIsInstitutionalAdmin())).using(question).fire(new BMEReceiver<QuestionProxy>() {
 
 			@Override
-			public void onSuccess(Void response) {
+			public void onSuccess(QuestionProxy response) {
 				goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));
 			}
 		});
