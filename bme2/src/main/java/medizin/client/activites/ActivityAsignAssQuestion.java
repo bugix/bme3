@@ -17,6 +17,7 @@ import medizin.client.request.AssesmentQuestionRequest;
 import medizin.client.ui.ErrorPanel;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.assignquestion.AddQuestionsTabPanel;
+import medizin.client.ui.view.assignquestion.AddQuestionsTabPanelImpl;
 import medizin.client.ui.view.assignquestion.AnswerView;
 import medizin.client.ui.view.assignquestion.AnswerViewImpl;
 import medizin.client.ui.view.assignquestion.AsignAssQuestionView;
@@ -109,6 +110,11 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 		this.view = asignAssQuestionView;
         widget.setWidget(asignAssQuestionView.asWidget());
         addQuestionsTabPanel = view.getAddQuestionsTabPanel();
+        
+        //if admin than disable proposed tab
+        if(personRightProxy.getIsAdmin() || personRightProxy.getIsInstitutionalAdmin())
+        ((AddQuestionsTabPanelImpl)addQuestionsTabPanel).removeTab(0);
+        
         questionPanel = view.getQuestionPanel();
         assementQuestionPanel = view.getAssesmentQuestionPanel();
         assesmentTabPanel = view.getAssesmentTabPanel();
@@ -171,6 +177,15 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 		}
 		
 		Log.debug("Assesmet selected " + assesment.getName());
+		
+		if(personRightProxy.getIsAdmin() || personRightProxy.getIsInstitutionalAdmin())
+		{
+			if(action==0)
+				action=1;
+			
+			if(action==1)
+				action=2;
+		}
 		
 		//proposed Question
 		if (action==0){
