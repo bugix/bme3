@@ -77,6 +77,14 @@ privileged aspect AssesmentQuestion_Roo_JavaBean {
         this.isAssQuestionAcceptedAutor = isAssQuestionAcceptedAutor;
     }
     
+    public Boolean AssesmentQuestion.getIsForcedByAdmin() {
+        return this.isForcedByAdmin;
+    }
+    
+    public void AssesmentQuestion.setIsForcedByAdmin(Boolean isForcedByAdmin) {
+        this.isForcedByAdmin = isForcedByAdmin;
+    }
+    
     public Question AssesmentQuestion.getQuestion() {
         return this.question;
     }

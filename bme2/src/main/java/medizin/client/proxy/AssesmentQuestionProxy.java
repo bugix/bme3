@@ -46,6 +46,10 @@ public interface AssesmentQuestionProxy extends EntityProxy {
 
     abstract void setIsAssQuestionAcceptedAutor(Boolean isAssQuestionAcceptedAutor);
 
+    abstract Boolean getIsForcedByAdmin();
+
+    abstract void setIsForcedByAdmin(Boolean isForcedByAdmin);
+
     abstract QuestionProxy getQuestion();
 
     abstract void setQuestion(QuestionProxy question);

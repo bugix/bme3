@@ -64,7 +64,12 @@ public class AssesmentQuestion {
 
     @Column(columnDefinition="BIT", length = 1)
     private Boolean isAssQuestionAcceptedAutor;
-
+    
+    @NotNull
+    @Value("false")
+    @Column(columnDefinition="BIT", length = 1)
+    private Boolean isForcedByAdmin;
+    
     @NotNull
     @ManyToOne
     private Question question;
@@ -92,6 +97,8 @@ public class AssesmentQuestion {
     @NotNull
     @ManyToOne
     private Person autor;
+    
+   
     
     public static List<AssesmentQuestion> findAssesmentQuestionsByMc(Long id){
         Boolean isAcceptedAdmin = true;

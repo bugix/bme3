@@ -492,7 +492,8 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 						   }
 					   }
 				   }
-			   }
+			   }//propose question if admin
+			   //accept question if examiner
 			   if(event.getSource() instanceof QuestionView)
 			   {
 				   final QuestionView questionViewAktiv = ((QuestionView)event.getSource());
@@ -520,6 +521,24 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 				   assQuestion.setIsAssQuestionAcceptedAutor(true); //If is Propolsal set false
 				   assQuestion.setIsAssQuestionAcceptedRewiever(false);
 				   assQuestion.setIsAssQuestionAdminProposal(false); //If is Propolsal set true
+				   
+				   if(personRightProxy.getIsAdmin() || personRightProxy.getIsInstitutionalAdmin()) //Proposed By Admin
+				   {
+					   assQuestion.setIsAssQuestionAcceptedAdmin(false);
+					   assQuestion.setIsAssQuestionAcceptedAutor(false); //If is Propolsal set false
+					   assQuestion.setIsAssQuestionAcceptedRewiever(false);
+					   assQuestion.setIsAssQuestionAdminProposal(true); //If is Propolsal set true
+					   assQuestion.setIsForcedByAdmin(false);
+				   }
+				   else //For Examiner
+				   {
+					   assQuestion.setIsAssQuestionAcceptedAdmin(false);
+					   assQuestion.setIsAssQuestionAcceptedAutor(true); //If is Propolsal set false
+					   assQuestion.setIsAssQuestionAcceptedRewiever(false);
+					   assQuestion.setIsAssQuestionAdminProposal(false); //If is Propolsal set true
+					   assQuestion.setIsForcedByAdmin(false);
+				   }
+				   
 				   assQuestion.setQuestion(questionViewAktiv.getProxy());
 				   assQuestion.setRewiewer(questionViewAktiv.getProxy().getRewiewer());
 				   assQuestion.setAutor(questionViewAktiv.getProxy().getAutor()); //TODO Ändern auf aktuell eingeloggte Person
