@@ -1,30 +1,17 @@
 package medizin.client.activites;
 
-import java.util.Date;
-import java.util.Set;
-
-import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.AbstractDetailsPlace.Operation;
 import medizin.client.place.PlaceAcceptQuestion;
 import medizin.client.place.PlaceAcceptQuestionDetails;
 import medizin.client.place.PlaceQuestionDetails;
-import medizin.client.proxy.CommentProxy;
-import medizin.client.proxy.McProxy;
-import medizin.client.proxy.PersonProxy;
-import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
-import medizin.client.proxy.QuestionResourceProxy;
-import medizin.client.proxy.QuestionTypeProxy;
-import medizin.client.request.QuestionRequest;
-import medizin.client.request.QuestionResourceRequest;
-import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
-import medizin.client.ui.widget.resource.dndview.vo.State;
 import medizin.shared.Status;
 
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.common.collect.Sets;
+import com.google.common.base.Function;
 import com.google.gwt.place.shared.PlaceController;
+import com.google.web.bindery.requestfactory.shared.EntityProxyId;
 
 public class ActivityAcceptQuestionEdit extends ActivityQuestionEdit {
 
@@ -47,54 +34,7 @@ public class ActivityAcceptQuestionEdit extends ActivityQuestionEdit {
 		
 		return details;
 	}
-	/*@Override
-	protected void gotoDetailsPlace(QuestionProxy questionProxy) {
-		goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));
-	}*/
-	
-	@Override
-	public Status getUpdatedStatus(boolean isEdit, boolean withNewMajorVersion) {
 		
-		Status status;
-		if(isEdit == true ) {
-			if(withNewMajorVersion == true) {
-				if(userLoggedIn.getIsAdmin() == true || personRightProxy.getIsInstitutionalAdmin() == true) {
-					status = Status.CORRECTION_FROM_ADMIN;
-				}else if(userLoggedIn.getId().equals(question.getRewiewer().getId())) {
-					status = Status.CORRECTION_FROM_REVIEWER;
-				}else if(userLoggedIn.getId().equals(question.getAutor().getId())) {
-					status = Status.NEW;
-					/*if(question.getStatus().equals(Status.CORRECTION_FROM_ADMIN)){
-						status = Status.ACCEPTED_ADMIN;	
-					}else if(question.getStatus().equals(Status.CORRECTION_FROM_REVIEWER)) {
-						status = Status.ACCEPTED_REVIEWER;
-					}else {
-						Log.info("Error this scenario is not considered yet");
-						status = question.getStatus();
-					}*/
-				}else {
-					Log.info("Error this scenario is not considered yet");
-					status = question.getStatus();
-				}
-			}else {
-				Log.info("temparory save (with minor version)");
-				if(userLoggedIn.getIsAdmin() == true || personRightProxy.getIsInstitutionalAdmin() == true) {
-					status = Status.EDITED_BY_ADMIN;
-				}else if(userLoggedIn.getId().equals(question.getRewiewer().getId())) {
-					status = Status.EDITED_BY_REVIEWER;
-				}else if(userLoggedIn.getId().equals(question.getAutor().getId())) {
-					status = Status.NEW;
-				}else {
-					Log.info("Error this scenario is not considered yet");
-					status = question.getStatus();
-				}
-			}
-		}else {
-			status = Status.NEW;
-		}
-		return status;
-	}
-	
 	@Override
 	public boolean isAcceptQuestionView() {
 		return true;
@@ -106,83 +46,84 @@ public class ActivityAcceptQuestionEdit extends ActivityQuestionEdit {
 	}
 	
 	@Override
-	protected void gotoUpdateDetailsPlace() {
-		goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));
-		goTo(new PlaceAcceptQuestionDetails(question.stableId(),Operation.DETAILS));
-	}
-	
-	@Override
 	protected void cancelClickedGoto(QuestionProxy questionProxy) {
 		goTo(new PlaceAcceptQuestionDetails(question.stableId(),Operation.DETAILS));
 	}
 	
-	@Override
-	protected void createQuestionGoto(QuestionProxy questionProxy) {
-		goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));
+	public void saveQuestionWithDetails() {
+		// save with minor version in edit
+		Status status = question.getStatus();
+		boolean isAcceptedByAdmin = question.getIsAcceptedAdmin();
+		boolean isAcceptedByReviewer = question.getIsAcceptedRewiever();
+		boolean isAcceptedByAuthor = question.getIsAcceptedAuthor();
+		
+		final Function<EntityProxyId<?>, Void> gotoFunction = new Function<EntityProxyId<?>, Void>() {
+			
+			@Override
+			public Void apply(EntityProxyId<?> stableId) {
+				goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));
+				return null;
+			}
+		};
+		
+		final Function<EntityProxyId<?>, Void> gotoDetailsFunction = new Function<EntityProxyId<?>, Void>() {
+			
+			@Override
+			public Void apply(EntityProxyId<?> stableId) {
+				goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));
+				goTo(new PlaceAcceptQuestionDetails(stableId,Operation.DETAILS));
+				return null;
+			}
+		};
+		
+		if(isAdminOrInstitutionalAdmin() == true) {
+			status = Status.EDITED_BY_ADMIN;
+			updateQuestion(status,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor,gotoDetailsFunction);
+			Log.info("temparory save (with minor version)");
+		}else if(isReviewer() == true) {
+			status = Status.EDITED_BY_REVIEWER;
+			updateQuestion(status,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor,gotoDetailsFunction);
+			Log.info("temparory save (with minor version)");
+		}else if(isAuthor() == true) {
+			status = Status.NEW;
+			isAcceptedByAdmin = false;
+			isAcceptedByReviewer = false;
+			isAcceptedByAuthor = true;
+			createNewQuestion(question,status,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor,gotoFunction);
+			Log.info("save (with major version)");
+		}
+		
 	}
 	
 	@Override
-	public void resendToReview(QuestionTypeProxy questionType, String questionShortName, String questionText, PersonProxy auther, PersonProxy rewiewer, Boolean submitToReviewComitee, QuestionEventProxy questEvent, Set<McProxy> mcs, String questionComment, int questionVersion, int questionSubVersion, String picturePath, final Set<QuestionResourceClient> questionResourceClients, Status status) {
-		QuestionRequest req = requests.questionRequest();
-		QuestionProxy questionEdit = req.edit(question);
-		questionEdit.setQuestionType(questionType);
-		questionEdit.setQuestionText(questionText);
-		questionEdit.setAutor(auther);
-		questionEdit.setQuestionShortName(questionShortName);
-		questionEdit.setRewiewer(rewiewer);
-		questionEdit.setSubmitToReviewComitee(submitToReviewComitee);
-		questionEdit.setQuestEvent(questEvent);
-		questionEdit.setDateChanged(new Date());
-		questionEdit.setMcs(mcs);
-		questionEdit.setQuestionVersion(questionVersion);
-		questionEdit.setQuestionSubVersion(questionSubVersion);
-		CommentProxy comment = req.edit(questionEdit.getComment());
-		comment.setComment(questionComment);
-		questionEdit.setComment(comment);
-		questionEdit.setPicturePath(picturePath);
-
-		//final QuestionProxy qpoxy = questionEdit;
-		req.questionResendToReviewWithMajorVersion(isAdminOrInstitutionalAdmin()).using(questionEdit).fire(new BMEReceiver<QuestionProxy>(reciverMap) {
-
+	public void resendToReview() {
+		Function<EntityProxyId<?>, Void> gotoFunction = new Function<EntityProxyId<?>, Void>() {
+			
 			@Override
-			public void onSuccess(QuestionProxy response) {
-				
-				if(response == null) {
-					goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));
-					return;
-				}
-				
-				if (questionResourceClients.isEmpty() == false) {
-
-					QuestionResourceRequest questionResourceRequest = requests.questionResourceRequest();
-					final Set<QuestionResourceProxy> proxies = Sets.newHashSet();
-					Log.info("proxies.size() " + proxies.size());
-
-					for (QuestionResourceClient questionResource : questionResourceClients) {
-
-						QuestionResourceProxy proxy = questionResourceRequest.create(QuestionResourceProxy.class);
-						proxy.setPath(questionResource.getPath());
-						proxy.setSequenceNumber(questionResource.getSequenceNumber());
-						proxy.setType(questionResource.getType());
-						proxy.setQuestion(response);
-						proxies.add(proxy);
-
-					}
-
-					questionResourceRequest.persistSet(proxies).fire(new BMEReceiver<Void>(reciverMap) {
-
-						@Override
-						public void onSuccess(Void response1) {
-							Log.info("Added successfuly");
-							goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));
-						
-						}
-					});
-				} else {
-					goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));
-				}
-				
+			public Void apply(EntityProxyId<?> stableId) {
+				goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));
+				return null;
 			}
-		});
+		};
+
+		Status status = this.question.getStatus();
+		boolean isAcceptedByAdmin = false;
+		boolean isAcceptedByReviewer = false;
+		boolean isAcceptedByAuthor = false;
+		
+		
+		if(isReviewer() == true){
+			status = Status.CORRECTION_FROM_REVIEWER;
+			isAcceptedByReviewer = true;
+		}
+		
+		if(isAdminOrInstitutionalAdmin() == true) {
+			status = Status.CORRECTION_FROM_ADMIN;
+			isAcceptedByAdmin = true;
+		}
+		
+		if(Status.CORRECTION_FROM_ADMIN.equals(status) || Status.CORRECTION_FROM_REVIEWER.equals(status)) {
+			createNewQuestion(this.question,status,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor, gotoFunction);	
+		}
 	}
 }

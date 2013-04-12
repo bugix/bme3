@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import medizin.client.proxy.CommentProxy;
 import medizin.client.proxy.McProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionEventProxy;
@@ -38,7 +39,6 @@ import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget
 import medizin.client.util.ClientUtility;
 import medizin.shared.MultimediaType;
 import medizin.shared.QuestionTypes;
-import medizin.shared.Status;
 import medizin.shared.i18n.BmeConstants;
 import medizin.shared.utils.SharedConstant;
 
@@ -46,7 +46,6 @@ import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.SpanElement;
@@ -80,22 +79,9 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 
 	interface QuestionEditViewImplUiBinder extends UiBinder<Widget, QuestionEditViewImpl> {}
 
-	/*
-	 * interface EditorDriver extends RequestFactoryEditorDriver<QuestionProxy,
-	 * QuestionEditViewImpl> {} // private final EditorDriver editorDriver =
-	 * GWT.create(EditorDriver.class);
-	 * 
-	 * @Override public
-	 * RequestFactoryEditorDriver<QuestionProxy,QuestionEditViewImpl>
-	 * createEditorDriver() { RequestFactoryEditorDriver<QuestionProxy,
-	 * QuestionEditViewImpl> driver = GWT.create(EditorDriver.class);
-	 * driver.initialize(this); return driver; }
-	 */
-
-	private Presenter presenter;
+	//private Presenter presenter;
 	private Delegate delegate;
-	/*private QuestionProxy proxy;
-	private McAppRequestFactory requests;*/
+	
 	public BmeConstants constants = GWT.create(BmeConstants.class);
 
 	@UiField
@@ -150,18 +136,6 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	@Ignore
 	public DefaultSuggestBox<PersonProxy, EventHandlingValueHolderItem<PersonProxy>> author;
 
-	
-	/*
-	@UiField(provided = true)
-	public ValueListBox<PersonProxy> autor = new ValueListBox<PersonProxy>(
-			medizin.client.ui.view.roo.PersonProxyRenderer.instance(),
-			new EntityProxyKeyProvider<medizin.client.proxy.PersonProxy>());
-
-	@UiField(provided = true)
-	public ValueListBox<PersonProxy> rewiewer = new ValueListBox<PersonProxy>(
-			medizin.client.ui.view.roo.PersonProxyRenderer.instance(),
-			new EntityProxyKeyProvider<medizin.client.proxy.PersonProxy>());
-	 */
 	@UiField
 	public Label lblReviewer;
 
@@ -177,16 +151,6 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 
 	@UiField
 	public Label lblQuestionComment;
-
-	/*@UiField(provided = true)
-	public RichTextToolbar commentToolbar;
-
-	@UiField
-	public DivElement commentValue;
-	@UiField(provided = true)
-	public RichTextArea questionComment;
-
-	*/
 	
 	@UiField
 	public TextArea questionComment;
@@ -209,33 +173,12 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	@UiField
 	HTMLPanel viewerContainer;
 	
-	//private ImageViewer viewer;
 	private ResourceView viewer;
-	
-	private boolean edit;
-	private EventBus eventBus;
 	private ImageViewer imageViewer;
-
 	private QuestionProxy question = null;
 	private final PersonProxy userLoggedIn;
-	// @UiField
-	// DateBox dateAdded;
-	//
-	// @UiField
-	// DateBox dateChanged;
-
-	//
-	// @UiField
-	// RichTextArea questionText;
-
-	/*
-	 * @UiField RichTextArea questionTextArea;
-	 */
-
-	/*
-	 * @UiField McSetEditor mcs;
-	 */
-
+	private final EventBus eventBus;
+	
 	@UiHandler("cancel")
 	void onCancel(ClickEvent event) {
 		delegate.cancelClicked();
@@ -244,53 +187,18 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	@UiHandler("resendToReview")
 	void onResendToReview(ClickEvent event) {
 		if(validationOfFields()) {
-			saveQuestion(true, true,true);
+			delegate.resendToReview();
 		}
 	}
 
 	@UiHandler("save")
 	void onSave(ClickEvent event) {
 		if(validationOfFields()) {
-		
-			if (!edit) {
-				saveQuestion(false,false,false);
-				//delegate.saveClicked(false);
-			} else {
-				if(delegate.isAcceptQuestionView()) {
-					if(delegate.isAdminOrReviewer()) {
-						// with minor version
-						saveQuestion(edit, false,false);
-					}else if(delegate.isAuthor()){
-						// with major version
-						saveQuestion(edit, true,false);
-					}else {
-						Log.info("Do nothing");
-					}
-				}else {
-					final ConfirmQuestionChangesPopup confirm = new ConfirmQuestionChangesPopup(new Function<Boolean, Void>() {
-						
-						@Override
-						public Void apply(Boolean input) {
-							saveQuestion(true, input,false);
-							//confirm.removeFromParent();
-							return null;
-						}
-					});
-					/*delegate);*/
-				}
-			}
+			delegate.saveQuestionWithDetails();
 		}else {
 			Log.info("Validation fail");
 		}
-		// delegate.saveClicked(false);
 	}
-
-	// @UiField
-	// SpanElement displayRenderer;
-
-	/*
-	 * @UiField SimplePanel toolbarPanel;
-	 */
 
 	public QuestionEditViewImpl(Map<String, Widget> reciverMap, EventBus eventBus, PersonProxy userLoggedIn) {
 
@@ -300,12 +208,6 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		questionTextArea.setSize("100%", "14em");
 		toolbar = new RichTextToolbar(questionTextArea);
 		toolbar.setWidth("100%");
-
-		/*questionComment = new RichTextArea();
-		questionComment.setSize("100%", "14em");
-		commentToolbar = new RichTextToolbar(questionComment);
-		commentToolbar.setWidth("100%");
-*/
 		
 		initWidget(uiBinder.createAndBindUi(this));
 		
@@ -337,17 +239,6 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 			}
 		});
 		questionTypePanel.getTabBar().setTabText(0, constants.manageQuestion());
-		/*lblQuestionShortName.setText(constants.questionShortName());
-		lblQuestionType.setText(constants.questionType());
-		lblQuestionText.setText(constants.questionText());
-		lblAuther.setText(constants.auther());
-		lblReviewer.setText(constants.reviewer());
-		lblQuestionComment.setText(constants.comment());
-		lblQuestionEvent.setText(constants.questionEvent());
-		lblMCS.setText(constants.mcs());
-		lblQuestionSubmitToReviewComitee.setText(constants.submitToReviewComitee());*/
-		// RichTextToolbar toolbar=new RichTextToolbar(questionTextArea);
-		// toolbarPanel.add(toolbar);
 		
 		questionType.addValueChangeHandler(new ValueChangeHandler<QuestionTypeProxy>() {
 			
@@ -368,22 +259,16 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 
 	@Override
 	public void setValue(QuestionProxy question) {
-		// questionTextArea.setHTML(html);
 		
 		DOM.setElementPropertyBoolean(questionType.getElement(), "disabled", true);
 		
-		questionShortName.setValue(question.getQuestionShortName()==null ?" ": question.getQuestionShortName());
+		questionShortName.setValue(question.getQuestionShortName()==null ? "": question.getQuestionShortName());
 		questionType.setValue(question.getQuestionType());
-		questionTextArea.setHTML(question.getQuestionText() == null ? ""
-				: question.getQuestionText());
-		//autor.setValue(question.getAutor());
+		questionTextArea.setHTML(question.getQuestionText() == null ? "" : question.getQuestionText());
 		author.setSelected(question.getAutor());
 		rewiewer.setSelected(question.getRewiewer());
-		//rewiewer.setValue(question.getRewiewer());
 		questEvent.setValue(question.getQuestEvent());
 		questionComment.setValue(question.getComment() == null ? "" : question.getComment().getComment());
-		/*questionComment.setHTML(question.getComment() == null ? "" : question
-				.getComment().getComment());*/
 		submitToReviewComitee.setValue(question.getSubmitToReviewComitee());
 		mcs.setValue(question.getMcs());
 		if(question.getSubmitToReviewComitee()==true)
@@ -401,30 +286,14 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		resendToReview.setVisible(delegate.isAdminOrReviewer() && delegate.isAcceptQuestionView());
 	}
 
-	/*@Override
-	public String getRichtTextHTML() {
-		// Log.info(questionTextArea.getHTML());
-		// Log.info(questionTextArea.getText());
-		return questionTextArea.getHTML();
-		// return new String("<b>hallo</b>");
-	}*/
-
-	/*@Override
-	public void setName(String helloName) {
-		// todo Auto-generated method stub
-
-	}*/
-
 	@Override
 	public void setPresenter(Presenter presenter) {
-		this.presenter = presenter;
-
+		//this.presenter = presenter;
 	}
 
 	@Override
 	public void setDelegate(Delegate delegate) {
 		this.delegate = delegate;
-
 	}
 
 	@Override
@@ -483,7 +352,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		//change {
 		author.setWidth(150);
 
-		if(userLoggedIn.getIsAdmin() == false) {
+		if(delegate.isAdminOrInstitutionalAdmin() == false) {
 			author.setSelected(userLoggedIn);
 			author.setEnabled(false);
 		}
@@ -500,89 +369,19 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		 mcs.setAcceptableValues(values);
 	}
 
-	/*
-	 * @UiField Element editTitle;
-	 * 
-	 * @UiField Element createTitle;
-	 */
-
-
 	@Override
 	public void setEditTitle(boolean edit) {
-		this.edit = edit;
 		if (edit) {
 			title.setInnerText(constants.edit());
-			// questionTypePanel.getTabBar().setTabText(0, "Edit Question");
-			// editTitle.getStyle().clearDisplay();
-			// createTitle.getStyle().setDisplay(Display.NONE);
 		} else {
 			title.setInnerText(constants.create());
-			// questionTypePanel.getTabBar().setTabText(0, "New Question");
-			// editTitle.getStyle().setDisplay(Display.NONE);
-			// createTitle.getStyle().clearDisplay();
 		}
-
 	}
-
-	/*@Override
-	public ValueListBox<QuestionTypeProxy> getQuestionType() {
-		return questionType;
-	}
-
-	@Override
-	public RichTextArea getQuestionTextArea() {
-		return questionTextArea;
-	}
-
-	
-	@Override
-	public CheckBox getSubmitToReviewComitee() {
-		return submitToReviewComitee;
-		
-	}*/
-	
-//	@Override
-//	public ValueListBox<PersonProxy> getAuther() {
-//		//return autor;
-//		return null;
-//	}
-	
-	/*@Override
-	public DefaultSuggestBox<PersonProxy, EventHandlingValueHolderItem<PersonProxy>> getAutherListBox() {
-		return auther;
-	}
-
-	
-	@Override
-	public DefaultSuggestBox<PersonProxy, EventHandlingValueHolderItem<PersonProxy>> getReviewerListBox() {
-		return rewiewer;
-	}
-
-	@Override
-	public TextBox getShortName() {
-		return questionShortName;
-	}*/
-
-//	@Override
-//	public ValueListBox<PersonProxy> getReviewer() {
-//		//return rewiewer;
-//		return null;
-//	}
 
 	@Override
 	public ValueListBox<QuestionEventProxy> getQuestionEvent() {
 		return questEvent;
 	}
-	/*
-	@Override
-	public TextArea getQuestionComment() {
-		return questionComment;
-	}
-	
-	@Override
-	public McSetEditor getMCS() {
-		return mcs;
-	}*/
 	
 	// here for new question may be null
 	private void setMediaView(final QuestionTypeProxy questionTypeProxy,final QuestionProxy question) {
@@ -628,8 +427,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	}
 	
 	// for image key question
-	private void setImageViewer(final QuestionTypeProxy questionTypeProxy,
-			QuestionProxy questionProxy,final QuestionTypes type) {
+	private void setImageViewer(final QuestionTypeProxy questionTypeProxy, QuestionProxy questionProxy,final QuestionTypes type) {
 		
 		//remove extra part
 		clearMediaContainer();
@@ -823,27 +621,6 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		viewerContainer.add(viewer);
 	}
 
-		
-//	@Override
-//	public ImageViewer getImageViewer() {
-//		return viewer;
-//	}
-
-	/*@Override
-	public ResourceView getResourceView() {
-		return viewer;
-	}
-
-	@Override
-	public Label getAutherLbl() {
-		return lblAuther;
-	}*/
-
-	/*@Override
-	public void setEventBus(EventBus eventBus) {
-		this.eventBus = eventBus;
-	}*/
-
 	@Override
 	public Set<QuestionResourceClient> getQuestionResources() {
 		if(viewer == null) {
@@ -851,112 +628,6 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		}
 		return viewer.getQuestionResources();
 	}
-
-	/*@Override
-	public ImageViewer getImageViewer() {
-		return imageViewer;
-	}*/
-	
-	private void saveQuestion(boolean isEdit,boolean withNewMajorVersion, boolean isResend) {
-		
-		int questionVersion = 0;
-		int questionSubVersion = 0;
-		
-		if(isEdit == true ) {
-			if(withNewMajorVersion == true) {
-				questionVersion = question.getQuestionVersion() + 1;
-				questionSubVersion = 0; 
-			}else {
-				questionVersion = question.getQuestionVersion();
-				questionSubVersion = question.getQuestionSubVersion() + 1;
-			}
-		}else {
-			questionVersion = 0;
-			questionSubVersion = 0;
-		}
-		
-		Status status = delegate.getUpdatedStatus(isEdit,withNewMajorVersion);
-		
-		String picturePath = null;
-		Set<QuestionResourceClient> questionResourceClients = Sets.newHashSet() ;
-		
-		switch (questionType.getValue().getQuestionType()) {
-		
-		case Imgkey:
-		case ShowInImage:
-		{
-			picturePath = imageViewer.getImageRelativeUrl();
-			break;
-		}
-		
-		case Sort:
-		case Textual:
-		{
-			questionResourceClients = viewer.getQuestionResources();
-			break;
-				
-		}
-		default:
-		{
-			Log.info("in default case");
-			picturePath = null;
-			questionResourceClients = Sets.newHashSet();
-			break;
-		}
-		} 
-		
-		if(isResend == true) {
-			delegate.resendToReview(questionType.getValue(),questionShortName.getText(),questionTextArea.getHTML(),author.getSelected(),rewiewer.getSelected(),submitToReviewComitee.getValue(),questEvent.getValue(),mcs.getValue(),questionComment.getText(),questionVersion, questionSubVersion, picturePath,questionResourceClients,status);
-			return;
-		}
-		
-		if(isEdit == true && withNewMajorVersion == false) {	
-			// update question with  minor new version
-			delegate.updateQuestion(questionType.getValue(),questionShortName.getText(),questionTextArea.getHTML(),author.getSelected(),rewiewer.getSelected(),submitToReviewComitee.getValue(),questEvent.getValue(),mcs.getValue(),questionComment.getText(),questionVersion, questionSubVersion, picturePath,questionResourceClients,status);
-		}else {
-			// create new question or create new major version question 
-			delegate.createNewQuestion(questionType.getValue(),questionShortName.getText(),questionTextArea.getHTML(),author.getSelected(),rewiewer.getSelected(),submitToReviewComitee.getValue(),questEvent.getValue(),mcs.getValue(),questionComment.getText(),questionVersion, questionSubVersion,picturePath,questionResourceClients,status);
-		}
-	}
-
-/*	private Double calculateSubversion(Double questionVersion) {
-		
-		Double subversion = questionVersion%1;
-		Double mainVersion = questionVersion-subversion;
-		Log.info("Subversion basis: "+ subversion + " " + Math.round(subversion*10000)/10000.0);
-		subversion=incrementSubversion(Math.round(subversion*10000)/10000.0, true);
-		
-		return subversion+mainVersion;
-	}
-
-	private Double incrementSubversion(Double subversion, boolean first) {
-		Log.info(subversion.toString());
-		if(subversion*10 == 0.0)
-		{
-			subversion=1.0;
-			return subversion/10;
-		}
-		else if(subversion*10 == 9.0 && first)
-		{
-			subversion=(subversion*10)+1;
-			return subversion/1000;
-		}
-		else if(subversion*10 == 9.0)
-		{
-			subversion=(subversion*10)+2;
-			return subversion/10;
-		}
-		else if(subversion*10%1 == 0){
-			subversion=(subversion*10)+1;
-			return subversion/10;
-		}
-		else{
-			Log.info("übergabe an Funktion" + (subversion*10-subversion*10%1)/10);
-			Log.info("Returnwert" + ((Math.round(subversion*10000)/10000.0)*10)%1/10);
-			return (subversion*10-subversion*10%1)/10 + incrementSubversion(Math.round(subversion*10%1*10000)/10000.0, false)/10;
-		}
-		
-	}*/
 	
 	private boolean validationOfFields() {
 		
@@ -986,13 +657,10 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 			messages.add(constants.selectReviewerOrComitee());
 			rewiewer.getTextField().advancedTextBox.addStyleName("higlight_onViolation");
 			submitToReviewComitee.addStyleName("higlight_onViolation");
-			//ConfirmationDialogBox.showOkDialogBox(constants.warning(), );
-			//return false;
 		}
 		
 		if(author.getSelected() == null) {
 			flag = false;
-			//errorString.append(constants.authorMayNotBeNull()).append("<br />");
 			messages.add(constants.authorMayNotBeNull());
 			author.getTextField().advancedTextBox.addStyleName("higlight_onViolation");
 		}
@@ -1006,14 +674,12 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		
 		if(questionComment.getText() == null || questionComment.getText().isEmpty()) {
 			flag = false;
-			//errorString.append(constants.commentMayNotBeNull()).append("<br />");
 			messages.add(constants.commentMayNotBeNull());
 			questionComment.addStyleName("higlight_onViolation");
 		}
 		
 		if(questionType.getValue() == null) {
 			flag = false;
-			//errorString.append(constants.questionTypeMayNotBeNull()).append("<br />");
 			messages.add(constants.questionTypeMayNotBeNull());
 			questionType.addStyleName("higlight_onViolation");
 		}
@@ -1021,7 +687,6 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		//TODO need to change this condition
 		if(questionTextArea.getText() == null || questionTextArea.getText().isEmpty()) {
 			flag = false;
-			//errorString.append(constants.questionTextMayNotBeNull()).append("<br />");
 			messages.add(constants.questionTextMayNotBeNull());
 			questionTextArea.addStyleName("higlight_onViolation");
 		}else {
@@ -1042,7 +707,6 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 			{
 				if(imageViewer.getImageRelativeUrl() == null || imageViewer.getImageRelativeUrl().isEmpty()) {
 					flag = false;
-					//errorString.append(constants.imageMayNotBeNull()).append("<br />");
 					messages.add(constants.imageMayNotBeNull());
 					imageViewer.addStyleName("higlight_onViolation");
 				}
@@ -1056,6 +720,46 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		}
 		
 		return flag;
+	}
+
+	@Override
+	public void setValuesForQuestion(QuestionProxy question, CommentProxy commentProxy) {
+		
+		String picturePath = null;
+		
+		switch (questionType.getValue().getQuestionType()) {
+		
+		case Imgkey:
+		case ShowInImage:
+		{
+			picturePath = imageViewer.getImageRelativeUrl();
+			break;
+		}
+		
+		default:
+		{
+			Log.info("in default case");
+			picturePath = null;
+			break;
+		}
+		} 
+		
+		question.setQuestionType(questionType.getValue());
+		question.setQuestionShortName(questionShortName.getText());
+		question.setQuestionText(questionTextArea.getHTML());
+		question.setAutor(author.getSelected());
+		question.setRewiewer(rewiewer.getSelected());
+		question.setSubmitToReviewComitee(submitToReviewComitee.getValue());
+		question.setQuestEvent(questEvent.getValue());
+		question.setMcs(mcs.getValue());
+		commentProxy.setComment(questionComment.getText());
+		question.setComment(commentProxy);
+		question.setPicturePath(picturePath);
+	}
+
+	@Override
+	public void comfirmQuestionChanges(Function<Boolean, Void> isMajorOrMinor) {
+		new ConfirmQuestionChangesPopup(isMajorOrMinor);
 	}
 
 }

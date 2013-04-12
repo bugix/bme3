@@ -3,7 +3,6 @@ package medizin.client.activites;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -21,46 +20,38 @@ import medizin.client.proxy.QuestionProxy;
 import medizin.client.proxy.QuestionResourceProxy;
 import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.request.CommentRequest;
+import medizin.client.request.McRequest;
+import medizin.client.request.PersonRequest;
+import medizin.client.request.QuestionEventRequest;
 import medizin.client.request.QuestionRequest;
 import medizin.client.request.QuestionResourceRequest;
+import medizin.client.request.QuestionTypeRequest;
 import medizin.client.ui.view.question.QuestionEditView;
 import medizin.client.ui.view.question.QuestionEditViewImpl;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.ui.widget.resource.dndview.vo.State;
-import medizin.shared.MultimediaType;
 import medizin.shared.Status;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
+import com.google.web.bindery.requestfactory.shared.EntityProxyId;
 
 public class ActivityQuestionEdit extends AbstractActivityWrapper implements QuestionEditView.Presenter, QuestionEditView.Delegate {
 
 	private PlaceQuestionDetails questionPlace;
-
-	//private AcceptsOneWidget widget;
-	private QuestionEditView view;
+	protected QuestionEditView view;
 	protected McAppRequestFactory requests;
 	private PlaceController placeController;
-
 	private Operation operation;
-
 	protected QuestionProxy question;
-
 	private EventBus eventBus;
-
-	// private RequestFactoryEditorDriver<QuestionProxy, QuestionEditViewImpl>
-	// editorDriver;
-
-	/* protected PersonProxy loggedUser; */
 
 	@Inject
 	public ActivityQuestionEdit(PlaceQuestionDetails place, McAppRequestFactory requests, PlaceController placeController) {
@@ -81,61 +72,30 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 
 	@Override
 	public String mayStop() {
-		/*if (!save)
-			return McAppConstant.DO_NOT_SAVE_CHANGES;
-		else*/
-			return null;
+		return null;
 	}
 
 	@Override
 	public void onCancel() {
 		onStop();
-
 	}
 
 	@Override
 	public void onStop() {
 		// ((SlidingPanel)widget).remove(view.asWidget());
-
 	}
-
-	/*
-	 * @Override public void start(AcceptsOneWidget widget, EventBus eventBus) {
-	 * super.start(widget, eventBus);
-	 * 
-	 * }
-	 */
 
 	@Override
 	public void start2(AcceptsOneWidget widget, EventBus eventBus) {
 		this.eventBus = eventBus;
 		QuestionEditView questionEditView = new QuestionEditViewImpl(reciverMap, eventBus, userLoggedIn);
-		/* questionEditView.setName("hallo"); */
 		questionEditView.setPresenter(this);
-		//this.widget = widget;
 		this.view = questionEditView;
-		// editorDriver = view.createEditorDriver();
 		view.setDelegate(this);
-		/* view.setEventBus(eventBus); */
-
-		// ClientUtility.setUserAccess(view.getAutherListBox(),userLoggedIn,UserType.ADMIN,true);
-		// ClientUtility.setUserAccess(view.getAutherLbl(),userLoggedIn,UserType.ADMIN,true);
-
-		// view.setRepeForPickerValues(Collections.<QuestionProxy>emptyList());
-		// requests.questionRequest().findQuestionEntries(0,
-		// 50).with(medizin.client.ui.view.roo.QuestionProxyRenderer.instance().getPaths()).fire(new
-		// Receiver<List<QuestionProxy>>() {
-		//
-		// public void onSuccess(List<QuestionProxy> response) {
-		// List<QuestionProxy> values = new ArrayList<QuestionProxy>();
-		// values.add(null);
-		// values.addAll(response);
-		// view.setRepeForPickerValues(values);
-		// }
-		// });
-
+		
 		view.setRewiewerPickerValues(Collections.<PersonProxy> emptyList());
-		requests.personRequest().findPersonEntries(0, 200).with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).fire(new BMEReceiver<List<PersonProxy>>() {
+		PersonRequest personRequestForReviewer = requests.personRequest();
+		personRequestForReviewer.findPersonEntries(0, 200).with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).to(new BMEReceiver<List<PersonProxy>>() {
 
 			public void onSuccess(List<PersonProxy> response) {
 				List<PersonProxy> values = new ArrayList<PersonProxy>();
@@ -144,8 +104,10 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 				view.setRewiewerPickerValues(values);
 			}
 		});
+		
 		view.setAutorPickerValues(Collections.<PersonProxy> emptyList());
-		requests.personRequest().findPersonEntries(0, 200).with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).fire(new BMEReceiver<List<PersonProxy>>() {
+		PersonRequest personRequestForAuthor = personRequestForReviewer.append(requests.personRequest());
+		personRequestForAuthor.findPersonEntries(0, 200).with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).to(new BMEReceiver<List<PersonProxy>>() {
 
 			public void onSuccess(List<PersonProxy> response) {
 				List<PersonProxy> values = new ArrayList<PersonProxy>();
@@ -157,33 +119,10 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 
 		view.setQuestEventPickerValues(Collections.<QuestionEventProxy> emptyList());
 
-		/*
-		 * requests.questionEventRequest().findQuestionEventEntries(0,
-		 * 200).with(
-		 * medizin.client.ui.view.roo.QuestionEventProxyRenderer.instance
-		 * ().getPaths()).fire(new BMEReceiver<List<QuestionEventProxy>>() {
-		 * 
-		 * public void onSuccess(List<QuestionEventProxy> response) {
-		 * List<QuestionEventProxy> values = new
-		 * ArrayList<QuestionEventProxy>(); values.add(null);
-		 * values.addAll(response); view.setQuestEventPickerValues(values); }
-		 * });
-		 */
-
-		Boolean flag = false;
-		if (personRightProxy.getIsAdmin())
-			flag = true;
-		else if (personRightProxy.getIsInstitutionalAdmin())
-			flag = true;
-
-		requests.questionEventRequest().findQuestionEventByInstitutionAndAccRights(flag, userLoggedIn.getId(), institutionActive.getId()).with(medizin.client.ui.view.roo.QuestionEventProxyRenderer.instance().getPaths()).fire(new BMEReceiver<List<QuestionEventProxy>>() {
+		QuestionEventRequest questionEventRequest = personRequestForAuthor.append(requests.questionEventRequest());
+		questionEventRequest.findQuestionEventByInstitutionAndAccRights(isAdminOrInstitutionalAdmin(), userLoggedIn.getId(), institutionActive.getId()).with(medizin.client.ui.view.roo.QuestionEventProxyRenderer.instance().getPaths()).to(new BMEReceiver<List<QuestionEventProxy>>() {
 
 			public void onSuccess(List<QuestionEventProxy> response) {
-				/*
-				 * List<QuestionEventProxy> values = new
-				 * ArrayList<QuestionEventProxy>(); values.add(null);
-				 * values.addAll(response);
-				 */
 				if (response.size() > 0) {
 					view.getQuestionEvent().setValue(response.get(0));
 				}
@@ -192,7 +131,8 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 		});
 
 		view.setQuestionTypePickerValues(Collections.<QuestionTypeProxy> emptyList());
-		requests.questionTypeRequest().findAllQuestionTypesForInstituteInSession().fire(new BMEReceiver<List<QuestionTypeProxy>>() {
+		QuestionTypeRequest questionTypeRequest = questionEventRequest.append(requests.questionTypeRequest());
+		questionTypeRequest.findAllQuestionTypesForInstituteInSession().to(new BMEReceiver<List<QuestionTypeProxy>>() {
 
 			public void onSuccess(List<QuestionTypeProxy> response) {
 				List<QuestionTypeProxy> values = new ArrayList<QuestionTypeProxy>();
@@ -202,7 +142,9 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 			}
 		});
 		view.setMcsPickerValues(Collections.<McProxy> emptyList());
-		requests.mcRequest().findMcEntries(0, 50).with(medizin.client.ui.view.roo.McProxyRenderer.instance().getPaths()).fire(new BMEReceiver<List<McProxy>>() {
+		
+		McRequest mcRequest = questionTypeRequest.append(requests.mcRequest());
+		mcRequest.findMcEntries(0, 50).with(medizin.client.ui.view.roo.McProxyRenderer.instance().getPaths()).to(new BMEReceiver<List<McProxy>>() {
 
 			public void onSuccess(List<McProxy> response) {
 				List<McProxy> values = new ArrayList<McProxy>();
@@ -212,61 +154,10 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 			}
 		});
 
-		// view.initialiseDriver(requests);
+		mcRequest.fire();
 		widget.setWidget(questionEditView.asWidget());
-		// setTable(view.getTable());
-
-		/*
-		 * eventBus.addHandler(PlaceChangeEvent.TYPE, new
-		 * PlaceChangeEvent.Handler() { public void
-		 * onPlaceChange(PlaceChangeEvent event) {
-		 * 
-		 * //updateSelection(event.getNewPlace()); // TODO implement } });
-		 */
-		// init();
-
-		view.setDelegate(this);
-
-		/*
-		 * if(userLoggedIn.getIsAdmin() == false) {
-		 * view.getAutherListBox().setSelected(userLoggedIn);
-		 * view.getAutherListBox().setEnabled(false); }
-		 */
-
+		
 		start2();
-
-		/*
-		 * requests.personRequest().myGetLoggedPerson() .fire(new
-		 * BMEReceiver<PersonProxy>() {
-		 * 
-		 * @Override public void onSuccess(PersonProxy response) { loggedUser =
-		 * response; start2();
-		 * 
-		 * }
-		 * 
-		 * public void onFailure(ServerFailure error) { ErrorPanel erorPanel =
-		 * new ErrorPanel(); erorPanel.setErrorMessage(error.getMessage());
-		 * Log.error(error.getMessage()); onStop(); }
-		 * 
-		 * 
-		 * @Override public void
-		 * onConstraintViolation(Set<ConstraintViolation<?>> violations) {
-		 * Iterator<ConstraintViolation<?>> iter = violations.iterator(); String
-		 * message = ""; while (iter.hasNext()) { message +=
-		 * iter.next().getPropertyPath() + "<br>"; }
-		 * Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION +
-		 * " in Antwort löschen -" + message);
-		 * 
-		 * ErrorPanel erorPanel = new ErrorPanel();
-		 * erorPanel.setErrorMessage(message); onStop();
-		 * 
-		 * }
-		 * 
-		 * @Override public void onReceiverFailure() { onStop(); }
-		 * 
-		 * });
-		 */
-
 	}
 
 	private void start2() {
@@ -274,86 +165,35 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 			Log.info("edit");
 			requests.find(questionPlace.getProxyId()).with("previousVersion", "keywords", "questEvent", "comment", "questionType", "mcs", "rewiewer", "autor", "answers", "answers.autor", "answers.rewiewer", "questionResources").fire(new BMEReceiver<Object>() {
 
-				/*
-				 * public void onFailure(ServerFailure error){
-				 * Log.error(error.getMessage()); }
-				 */
 				@Override
 				public void onSuccess(Object response) {
 					if (response instanceof QuestionProxy) {
 						Log.info(((QuestionProxy) response).getQuestionText());
-						// init((PersonProxy) response);
 						question = (QuestionProxy) response;
 						init();
 					}
-
 				}
 			});
 		} else {
-
 			Log.info("neues Assement");
-			// questionPlace.setProxyId(person.stableId());
 			init();
 		}
 	}
 
-	QuestionRequest request;
-	CommentRequest commentRequest;
-	QuestionProxy question2;
-
-	private boolean save;
-
 	private void init() {
 
-		request = requests.questionRequest();
-		commentRequest = requests.commentRequest();
-
 		if (question == null) {
-			QuestionProxy question = request.create(QuestionProxy.class);
-			this.question = question;
 			view.setEditTitle(false);
 		} else {
 			Log.info(question.getQuestionText());
-			// view.setRichPanelHTML(question.getQuestionText());
 			view.setValue(question);
 			view.setEditTitle(true);
 		}
-
-		question2 = request.edit(question);
-
-		Log.info("edit");
-
-		Log.info("persist");
-		request.persist().using(question2);
-		// editorDriver.edit(question2, request);
-
-		Log.info("flush");
-		// editorDriver.flush();
-		// this.question = question;
-		Log.debug("Create für: " + question2.getQuestionText());
-		// view.setValue(person);
-
 	}
-
-	// private void init(QuestionProxy question) {
-	//
-	// this.question = question;
-	// QuestionRequest request = requests.questionRequest();
-	// request.persist().using(question);
-	// Log.info("edit");
-	// editorDriver.edit(question, request);
-	//
-	// Log.info("flush");
-	// editorDriver.flush();
-	// Log.debug("Edit für: "+question.getQuestionText());
-	// // view.setValue(person);
-	//
-	// }
 
 	@Override
 	public void goTo(Place place) {
 		placeController.goTo(place);
-
 	}
 
 	@Override
@@ -375,11 +215,9 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 
 		if (question.getId() != null) {
 			cancelClickedGoto(question);
-			//gotoDetailsPlace(question);
 		} else {
 			goTo(new PlaceQuestion(PlaceQuestion.PLACE_QUESTION));
 		}
-
 	}
 
 	private void deleteUploadedFiles(Set<String> paths) {
@@ -391,19 +229,7 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 				Log.info("Files area deleted");
 
 			}
-
-			/*
-			 * @Override public void onConstraintViolation(
-			 * Set<ConstraintViolation<?>> violations) {
-			 * Log.info("ConstraintViolation in files delete process");
-			 * super.onConstraintViolation(violations); }
-			 * 
-			 * @Override public void onFailure(ServerFailure error) {
-			 * Log.info("error in files delete process");
-			 * super.onFailure(error); }
-			 */
 		});
-
 	}
 
 	/*
@@ -786,17 +612,6 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 	 */
 
 	@Override
-	public QuestionResourceProxy createQuestionResource(String url, int sequenceNumber, MultimediaType type) {
-		QuestionResourceProxy proxy = requests.questionResourceRequest().create(QuestionResourceProxy.class);
-
-		proxy.setPath(url);
-		proxy.setQuestion(question);
-		proxy.setSequenceNumber(sequenceNumber);
-		proxy.setType(type);
-		return proxy;
-	}
-
-	@Override
 	public void deleteSelectedQuestionResource(Long qestionResourceId) {
 		requests.questionResourceRequest().removeSelectedQuestionResource(qestionResourceId).fire(new BMEReceiver<Void>(reciverMap) {
 
@@ -805,7 +620,6 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 				Log.info("selected question resource deleted successfully");
 			}
 		});
-
 	}
 
 	@Override
@@ -827,183 +641,9 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 
 	}
 
-	@Override
-	public void createNewQuestion(QuestionTypeProxy questionType, String questionShortName, String questionText, PersonProxy auther, PersonProxy rewiewer, Boolean submitToReviewComitee, QuestionEventProxy questionEvent, Set<McProxy> mcs, String questionComment, int questionVersion, int questionSubVersion, String picturePath, final Set<QuestionResourceClient> questionResourceClients, Status status) {
-		this.save = true;
-		Long reviewerId = rewiewer != null ? rewiewer.getId() : null;
-		List<Long> mcIds = Lists.newArrayList();
-		if (mcs != null) {
-
-			Iterator<Long> iterator = FluentIterable.from(mcs).transform(new Function<McProxy, Long>() {
-
-				@Override
-				public Long apply(McProxy input) {
-
-					if (input != null) {
-						return input.getId();
-					} else {
-						return null;
-					}
-
-				}
-			}).iterator();
-
-			mcIds = Lists.newArrayList(iterator);
-
-		}
-		final Set<QuestionResourceProxy> proxies = Sets.newHashSet();
-		Long oldQuestionId = question != null ? question.getId() : null;
-		requests.questionRequest().persistNewQuestion(questionType.getId(), questionShortName, questionText, auther.getId(), reviewerId, submitToReviewComitee, questionEvent.getId(), mcIds, questionComment, questionVersion, questionSubVersion, picturePath, status,proxies, oldQuestionId).fire(new BMEReceiver<QuestionProxy>(reciverMap) {
-
-			@Override
-			public void onSuccess(final QuestionProxy response) {
-
-				save = true; // save done for question
-
-				
-
-				if (questionResourceClients.isEmpty() == false) {
-
-					QuestionResourceRequest questionResourceRequest = requests.questionResourceRequest();
-
-					Log.info("proxies.size() " + proxies.size());
-
-					for (QuestionResourceClient questionResource : questionResourceClients) {
-
-						QuestionResourceProxy proxy = questionResourceRequest.create(QuestionResourceProxy.class);
-						proxy.setPath(questionResource.getPath());
-						proxy.setSequenceNumber(questionResource.getSequenceNumber());
-						proxy.setType(questionResource.getType());
-						proxy.setQuestion(response);
-						proxies.add(proxy);
-
-					}
-
-					questionResourceRequest.persistSet(proxies).fire(new BMEReceiver<Void>(reciverMap) {
-
-						@Override
-						public void onSuccess(Void response1) {
-							Log.info("Added successfuly");
-							save = true;
-							showNewDisplay();
-							createQuestionGoto(response);
-							//gotoDetailsPlace(response);
-						}
-					});
-				} else {
-					save = true;
-					showNewDisplay();
-					createQuestionGoto(response);
-					//gotoDetailsPlace(response);
-				}
-			}
-
-		});
-
-	}
-
-	@Override
-	public void updateQuestion(QuestionTypeProxy questionType, String questionShortName, String questionText, PersonProxy auther, PersonProxy rewiewer, Boolean submitToReviewComitee, QuestionEventProxy questEvent, Set<McProxy> mcs, String questionComment, int questionVersion, int questionSubVersion, String picturePath, Set<QuestionResourceClient> questionResourceClients, Status status) {
-
-		QuestionRequest req = requests.questionRequest();
-		QuestionProxy questionEdit = req.edit(question);
-		questionEdit.setQuestionType(questionType);
-		questionEdit.setQuestionText(questionText);
-		questionEdit.setAutor(auther);
-		questionEdit.setQuestionShortName(questionShortName);
-		questionEdit.setRewiewer(rewiewer);
-		questionEdit.setSubmitToReviewComitee(submitToReviewComitee);
-		questionEdit.setQuestEvent(questEvent);
-		questionEdit.setDateChanged(new Date());
-		questionEdit.setMcs(mcs);
-		questionEdit.setQuestionVersion(questionVersion);
-		questionEdit.setQuestionSubVersion(questionSubVersion);
-		CommentProxy comment = req.edit(questionEdit.getComment());
-		comment.setComment(questionComment);
-		questionEdit.setComment(comment);
-		questionEdit.setPicturePath(picturePath);
-
-		// question state change to new
-		if (Status.NEW.equals(status)) {
-			questionEdit.setIsAcceptedAdmin(false);
-			questionEdit.setIsAcceptedRewiever(false);
-			questionEdit.setIsAcceptedAuthor(true);
-			// questionEdit.setIsActive(false);
-			questionEdit.setStatus(Status.NEW);
-		} else if (Status.ACCEPTED_REVIEWER.equals(status)) {
-			questionEdit.setIsAcceptedAdmin(false);
-			questionEdit.setIsAcceptedRewiever(true);
-		
-			// questionEdit.setIsActive(false);
-			questionEdit.setStatus(Status.ACCEPTED_REVIEWER);
-		} else if(Status.EDITED_BY_ADMIN.equals(status)){
-			questionEdit.setIsAcceptedAdmin(false);
-			questionEdit.setStatus(Status.EDITED_BY_ADMIN);
-		}else if(Status.EDITED_BY_REVIEWER.equals(status)) {
-			questionEdit.setIsAcceptedRewiever(false);
-			questionEdit.setStatus(Status.EDITED_BY_REVIEWER);
-		}else {
-			Log.info("Do nothing");
-		}
-
-		/*
-		 * questionEdit.setIsAcceptedAdmin(false);
-		 * questionEdit.setIsAcceptedRewiever(false);
-		 * questionEdit.setIsActive(false); questionEdit.setStatus(Status.NEW);
-		 */
-
-		if (questionResourceClients.isEmpty() == false) {
-
-			QuestionResourceRequest questionResourceRequest = requests.questionResourceRequest();
-			Set<QuestionResourceProxy> proxies = Sets.newHashSet();
-			Log.info("proxies.size() " + proxies.size());
-
-			for (QuestionResourceClient questionResource : questionResourceClients) {
-
-				if (questionResource.getState().equals(State.NEW) || questionResource.getState().equals(State.EDITED)) {
-					QuestionResourceProxy proxy = questionResourceRequest.create(QuestionResourceProxy.class);
-					proxy.setPath(questionResource.getPath());
-					proxy.setSequenceNumber(questionResource.getSequenceNumber());
-					proxy.setType(questionResource.getType());
-					proxy.setQuestion(questionEdit);
-					proxies.add(proxy);
-				}
-			}
-
-			questionResourceRequest.persistSet(proxies).fire(new BMEReceiver<Void>(reciverMap) {
-
-				@Override
-				public void onSuccess(Void response) {
-					Log.info("Added successfuly");
-				}
-			});
-
-		}
-
-		//final QuestionProxy qpoxy = questionEdit;
-		req.persist().using(questionEdit).fire(new BMEReceiver<Void>(reciverMap) {
-
-			@Override
-			public void onSuccess(Void response) {
-				Log.info("question update successful");
-				save = true; // save done for question
-				// gotoDetailsPlace(qpoxy);
-				gotoUpdateDetailsPlace();
-			}
-		});
-	}
-
 	protected void showNewDisplay() {
 		Log.info("Question Save Event Fired");
 		this.eventBus.fireEvent(new QuestionSaveEvent());
-	}
-
-	/*protected void gotoDetailsPlace(QuestionProxy questionProxy) {
-		placeController.goTo(new PlaceQuestionDetails(questionProxy.stableId(), PlaceQuestionDetails.Operation.DETAILS));
-	}*/
-
-	protected void gotoUpdateDetailsPlace() {
-		placeController.goTo(new PlaceQuestion("PlaceQuestion"));
 	}
 
 	// also overriden in subclass 
@@ -1011,27 +651,6 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 		goTo(new PlaceQuestionDetails(questionProxy.stableId(), Operation.DETAILS));
 	}
 		
-	// also overriden in subclass
-	protected void createQuestionGoto(QuestionProxy questionProxy) {
-		placeController.goTo(new PlaceQuestionDetails(questionProxy.stableId(), PlaceQuestionDetails.Operation.DETAILS));
-	}
-	@Override
-	public Status getUpdatedStatus(boolean isEdit, boolean withNewMajorVersion) {
-
-		Status status;
-		if (isEdit == true) {
-			if (withNewMajorVersion == true) {
-				status = Status.NEW;
-			} else {
-				status = Status.ACCEPTED_REVIEWER;
-			}
-		} else {
-			status = Status.NEW;
-		}
-
-		return status;
-	}
-
 	@Override
 	public boolean isAcceptQuestionView() {
 		return false;
@@ -1044,29 +663,180 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 	}
 
 	@Override
-	public boolean isAdminOrReviewer() {
+	public final boolean isAdminOrReviewer() {
 		
 		// for admin 
-		if((userLoggedIn.getIsAdmin() || personRightProxy.getIsInstitutionalAdmin())) {
+		if(isAdminOrInstitutionalAdmin()) {
 			return true;
 		}
-		
 		// Reviewer
-		if(question != null && question.getRewiewer() != null && question.getRewiewer().getId().equals(userLoggedIn.getId())) {
+		if(isReviewer()) {
 			return true;
 		}
 		return  false;
 	}
 
+	public final boolean isReviewer() {
+		return question != null && question.getRewiewer() != null && question.getRewiewer().getId().equals(userLoggedIn.getId());
+	}
+	
 	@Override
-	public boolean isAuthor() {
+	public final boolean isAuthor() {
 		if(question != null && userLoggedIn != null && question.getAutor() != null && question.getAutor().getId().equals(userLoggedIn.getId())) {
 			return true;
 		}
 		return false;
 	}
 
+	@Override
+	public void saveQuestionWithDetails() {
+		
+		final Function<EntityProxyId<?>, Void> gotoShowNewFunction = new Function<EntityProxyId<?>, Void>() {
+			@Override
+			public Void apply(EntityProxyId<?> stableId) {
+				showNewDisplay();
+				placeController.goTo(new PlaceQuestionDetails(stableId, PlaceQuestionDetails.Operation.DETAILS));
+				return null;
+			}
+		};
+		
+		if(question == null) {
+			// save new question for first time
+			createNewQuestion(null,Status.NEW,false,false,true,gotoShowNewFunction);
+		}else {
+			// edit accepted question with major or minor version
+			final Function<Boolean, Void> isMajorOrMinor = new Function<Boolean, Void>() {
+
+				@Override
+				public Void apply(Boolean withNewMajorVersion) {
+					
+					if(withNewMajorVersion == true) {
+						createNewQuestion(question,Status.NEW,false,false,true,gotoShowNewFunction);
+					}else {
+						Status status; 
+						boolean isAcceptedByReviewer = false;
+						boolean isAcceptedByAdmin = false;
+						boolean isAcceptedByAuthor = true; // as update from author
+												
+						final Function<EntityProxyId<?>, Void> gotoDetailsFunction = new Function<EntityProxyId<?>, Void>() {
+							@Override
+							public Void apply(EntityProxyId<?> stableId) {
+								placeController.goTo(new PlaceQuestionDetails(stableId, PlaceQuestionDetails.Operation.DETAILS));
+								return null;
+							}
+						};
+						
+						final Function<EntityProxyId<?>, Void> gotoFunction = new Function<EntityProxyId<?>, Void>() {
+							@Override
+							public Void apply(EntityProxyId<?> stableId) {
+								placeController.goTo(new PlaceQuestion(PlaceQuestion.PLACE_QUESTION));
+								return null;
+							}
+						};
+						
+						if(Status.NEW.equals(question.getStatus())) {
+							// if current state of the question is new so status will remain as it is.
+							status = Status.NEW;
+							updateQuestion(status,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor,gotoDetailsFunction);
+						}else if(Status.ACTIVE.equals(question.getStatus())) {
+							// the current state of the question is active so new status with minor changes will be accepted reviewer
+							status = Status.ACCEPTED_REVIEWER;
+							isAcceptedByReviewer = true; 
+							updateQuestion(status,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor,gotoFunction);
+						}
+					}
+					return null;
+				}
+			};
+			view.comfirmQuestionChanges(isMajorOrMinor);
+		}
+	}
+	
+	protected final void createNewQuestion(QuestionProxy previousQuestionProxy, final Status status, final boolean isAcceptedByAdmin, final boolean isAcceptedByReviewer, final boolean isAcceptedByAuthor, final Function<EntityProxyId<?>, Void> gotoFunction) {
+		
+		final CommentRequest commentRequest = requests.commentRequest();
+		final QuestionResourceRequest questionResourceRequest = requests.questionResourceRequest();
+		final QuestionRequest oldQuestionRequest = requests.questionRequest();
+		final QuestionRequest questionRequest = commentRequest.append(questionResourceRequest).append(oldQuestionRequest).append(requests.questionRequest());
+		
+		QuestionProxy question = questionRequest.create(QuestionProxy.class);
+		CommentProxy commentProxy = commentRequest.create(CommentProxy.class);
+		Set<QuestionResourceProxy> questionResourceProxies = Sets.newHashSet();
+		
+		view.setValuesForQuestion(question,commentProxy);
+		
+		question.setStatus(status);
+		question.setIsAcceptedAdmin(isAcceptedByAdmin);
+		question.setIsAcceptedAuthor(isAcceptedByAuthor);
+		question.setIsAcceptedRewiever(isAcceptedByReviewer);
+		question.setQuestionVersion(previousQuestionProxy != null ? previousQuestionProxy.getQuestionVersion()+1 : 0);
+		question.setQuestionSubVersion(0);
+		question.setDateAdded(new Date());
+		question.setQuestionResources(questionResourceProxies);
+		
+		if(previousQuestionProxy != null) question.setPreviousVersion(previousQuestionProxy);
+		
+		for (QuestionResourceClient questionResource : view.getQuestionResources()) {
+			QuestionResourceProxy proxy = questionResourceRequest.create(QuestionResourceProxy.class);
+			proxy.setPath(questionResource.getPath());
+			proxy.setSequenceNumber(questionResource.getSequenceNumber());
+			proxy.setType(questionResource.getType());
+			proxy.setQuestion(question);
+			questionResourceProxies.add(proxy);
+		}
+		
+		final QuestionProxy questionProxy2 = question;
+		questionRequest.persistQuestion().using(question).fire(new BMEReceiver<Void>(reciverMap) {
+
+			@Override
+			public void onSuccess(Void response) {
+				gotoFunction.apply(questionProxy2.stableId());	
+			}
+		});
+	}
+	
+	protected final void updateQuestion(final Status status, final boolean isAcceptedByAdmin, final boolean isAcceptedByReviewer, final boolean isAcceptedByAuthor, final Function<EntityProxyId<?>, Void> gotoFunction) {
+		
+		final CommentRequest commentRequest = requests.commentRequest();
+		final QuestionResourceRequest questionResourceRequest = requests.questionResourceRequest();
+		final QuestionRequest questionRequest = commentRequest.append(questionResourceRequest).append(requests.questionRequest());
+		
+		QuestionProxy questionProxy = questionRequest.edit(this.question);
+		CommentProxy commentProxy = commentRequest.edit(this.question.getComment());
+		Set<QuestionResourceProxy> questionResourceProxies = Sets.newHashSet();
+		
+		view.setValuesForQuestion(questionProxy,commentProxy);
+		
+		questionProxy.setStatus(status);
+		questionProxy.setIsAcceptedAdmin(isAcceptedByAdmin);
+		questionProxy.setIsAcceptedAuthor(isAcceptedByAuthor);
+		questionProxy.setIsAcceptedRewiever(isAcceptedByReviewer);
+		questionProxy.setQuestionVersion(question.getQuestionVersion());
+		questionProxy.setQuestionSubVersion(question.getQuestionSubVersion() + 1);
+		questionProxy.setDateChanged(new Date());
+		questionProxy.setQuestionResources(questionResourceProxies);
+			
+		for (QuestionResourceClient questionResource : view.getQuestionResources()) {
+			if (questionResource.getState().equals(State.NEW) || questionResource.getState().equals(State.EDITED)) {
+				QuestionResourceProxy proxy = questionResourceRequest.create(QuestionResourceProxy.class);
+				proxy.setPath(questionResource.getPath());
+				proxy.setSequenceNumber(questionResource.getSequenceNumber());
+				proxy.setType(questionResource.getType());
+				proxy.setQuestion(questionProxy);
+				questionResourceProxies.add(proxy);
+			}
+		}
+		
+		final QuestionProxy questionProxy2 = questionProxy;
+		questionRequest.persist().using(questionProxy).fire(new BMEReceiver<Void>(reciverMap) {
+			@Override
+			public void onSuccess(Void response) {
+				gotoFunction.apply(questionProxy2.stableId());
+			}
+		});
+	}
+
 	// updated in ActivityAcceptQuestionEdit 
 	@Override
-	public void resendToReview(QuestionTypeProxy value, String text, String html, PersonProxy selected, PersonProxy selected2, Boolean value2, QuestionEventProxy value3, Set<McProxy> value4, String text2, int questionVersion, int questionSubVersion, String picturePath, Set<QuestionResourceClient> questionResourceClients, Status status) {}
+	public void resendToReview() {}
 }

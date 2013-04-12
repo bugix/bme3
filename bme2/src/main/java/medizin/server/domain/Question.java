@@ -1519,10 +1519,12 @@ public class Question {
 		boolean submitReviewComitee = this.submitToReviewComitee;
 		Long questionEventId =  this.questEvent.getId();
 		String questionComment = this.comment.getComment();
-		int questionNextVersion = this.questionVersion;
 		String picPath = this.picturePath;
 		Status newStatus = this.status;
 		entityManager.refresh(this);
+		int questionNextVersion = this.questionVersion + 1;
+		
+		
 		Question question = persistNewQuestion(questionTypeId, shortName, questionTxt, authorId, reviewerId, submitReviewComitee, 
 				questionEventId, Lists.newArrayList(mcIds), questionComment, questionNextVersion, 0, picPath, newStatus, 
 				Sets.newHashSet(newQuestionResources), this.getId());
@@ -1611,5 +1613,85 @@ public class Question {
 			inActivePreviousQuestion(question.getPreviousVersion());
 
 		question.persist();	
+	}
+	
+	public void persistQuestion() {
+		
+		if(previousVersion != null){
+			boolean flag = Question.findQuestionHasNewQuestion(this.previousVersion.getId());
+			
+			if(flag == true) {
+				throw new IllegalStateException("This Question alreay has new status. Try refreshing the page");
+			}	
+		}
+		
+		
+		this.persist();
+		
+		Question oldQuestion = this.previousVersion;
+		Map<Answer,Answer> answerMap = Maps.newHashMap();
+		if(oldQuestion != null) {
+			
+			for(Answer answer : oldQuestion.getAnswers()) {
+				Answer newAnswer = new Answer();
+				// copy answer comment
+				Comment newCommentAnswer = answer.getComment();
+				if(answer.getComment() != null) {
+					newCommentAnswer = new Comment();
+					newCommentAnswer.setComment(answer.getComment().getComment());
+					newCommentAnswer.persist();
+				}	
+				
+				BMEUtils.copyValues(answer, newAnswer, Answer.class);
+				newAnswer.setQuestion(this);
+				newAnswer.setComment(newCommentAnswer);
+				newAnswer.persist();
+				
+				if(QuestionTypes.Matrix.equals(oldQuestion.getQuestionType().getQuestionType()) == true) {
+					answerMap.put(answer, newAnswer);	
+				}
+			}
+			
+			// for user matrix validity
+			if(QuestionTypes.Matrix.equals(oldQuestion.getQuestionType().getQuestionType()) == true && answerMap.isEmpty() == false) {
+				
+				List<MatrixValidity> matrixValiditys = MatrixValidity.findAllMatrixValidityForQuestionWithAnyStatus(oldQuestion.getId());
+
+				for (MatrixValidity oldMatrixValidity : matrixValiditys) {
+					
+					if(answerMap.containsKey(oldMatrixValidity.getAnswerX()) && answerMap.containsKey(oldMatrixValidity.getAnswerY())) {
+						MatrixValidity newMatrixValidity = new MatrixValidity();
+						newMatrixValidity.setValidity(oldMatrixValidity.getValidity());
+						newMatrixValidity.setAnswerX(answerMap.get(oldMatrixValidity.getAnswerX()));
+						newMatrixValidity.setAnswerY(answerMap.get(oldMatrixValidity.getAnswerY()));
+						newMatrixValidity.persist();
+					}
+				}
+			}
+			
+			List<UserAccessRights> userAccessRights = UserAccessRights.findUserAccessRightsByQuestion(oldQuestion.getId());
+			for (UserAccessRights userAccessRight : userAccessRights) {
+				UserAccessRights newUserAccessRights = new UserAccessRights();
+				BMEUtils.copyValues(userAccessRight, newUserAccessRights, UserAccessRights.class);
+				newUserAccessRights.setQuestion(this);
+				newUserAccessRights.persist();
+			}
+			
+			List<AssesmentQuestion> assesmentQuestions = AssesmentQuestion.findAssesmentQuestionsByQuestion(oldQuestion.getId());
+			for (AssesmentQuestion assesmentQuestion : assesmentQuestions) {
+				AssesmentQuestion newAssesmentQuestion = new AssesmentQuestion();
+				BMEUtils.copyValues(assesmentQuestion, newAssesmentQuestion, AssesmentQuestion.class);
+				newAssesmentQuestion.setQuestion(this);
+				newAssesmentQuestion.persist();
+			}
+			
+			if(Status.ACTIVE.equals(oldQuestion.status) == false) {
+				oldQuestion.setStatus(Status.DEACTIVATED);
+			}else {
+				oldQuestion.setIsReadOnly(true);
+			}
+				
+			oldQuestion.persist();
+		}
 	}
 }
