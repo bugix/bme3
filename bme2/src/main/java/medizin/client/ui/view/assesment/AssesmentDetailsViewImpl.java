@@ -17,6 +17,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -88,7 +89,8 @@ public class AssesmentDetailsViewImpl extends Composite implements AssesmentDeta
 	QuestionTypeCountViewImpl questionTypeCountViewImpl;
 
 
-    
+    @UiField
+    StudentViewImpl studentViewImpl;
 //    @UiField
 //    EventAccessViewImpl eventAccessView;
 //    
@@ -102,6 +104,8 @@ public class AssesmentDetailsViewImpl extends Composite implements AssesmentDeta
 //    }
 
 
+    @UiField
+    DisclosurePanel studentPanel;
     
     @UiHandler("delete")
     public void onDeleteClicked(ClickEvent e) {
@@ -176,6 +180,8 @@ public class AssesmentDetailsViewImpl extends Composite implements AssesmentDeta
 		logoForTitlePageLbl.setInnerText(constants.logoForTitlePage());
 		repeForLbl.setInnerText(constants.repeFor());
 		percentSameQuestionLbl.setInnerText(constants.percentSameQuestion());
+		
+		studentPanel.getHeaderTextAccessor().setText(constants.studentMgt());
 	}
 
 
@@ -212,9 +218,12 @@ public class AssesmentDetailsViewImpl extends Composite implements AssesmentDeta
 	public QuestionSumPerPersonViewImpl getQuestionSumPerPersonViewImpl(){
 		return questionSumPerPersonViewImpl;
 	}
-	
 
+	public StudentViewImpl getStudentViewImpl() {
+		return studentViewImpl;
+	}
 
-
-
+	public void setStudentViewImpl(StudentViewImpl studentViewImpl) {
+		this.studentViewImpl = studentViewImpl;
+	}
 }

@@ -6,6 +6,7 @@
     xmlns:m="urn:import:medizin.client.ui.view.assesment"
     xmlns:a="urn:import:medizin.client.ui.widget"
 	>
+	<ui:with type="medizin.shared.i18n.BmeConstants" field="constants"></ui:with>
 	<ui:style src="../../styles.css" >
 	.marginTop10
 	{
@@ -150,6 +151,12 @@
 				<g:header></g:header>
       				<m:QuestionSumPerPersonViewImpl ui:field="questionSumPerPersonViewImpl"></m:QuestionSumPerPersonViewImpl>
 			</g:DisclosurePanel>
+			
+			<g:DisclosurePanel open="true" width="100%" addStyleNames="{style.marginTop10}" ui:field="studentPanel">
+				<g:header></g:header>
+				<m:StudentViewImpl ui:field="studentViewImpl"></m:StudentViewImpl>      				
+			</g:DisclosurePanel>
+			
 			</g:VerticalPanel>
 
 

@@ -121,4 +121,15 @@
         <filter-name>fileDownload</filter-name>
         <url-pattern>/download/*</url-pattern>
     </filter-mapping>
+    
+    <!-- CSV File upload servlet -->    
+	  <servlet>
+	    <servlet-name>CsvFileUploadServlet</servlet-name>
+	    <servlet-class>medizin.server.upload.CsvFileUploadServlet</servlet-class>
+	  </servlet>
+	  <servlet-mapping>
+	    <servlet-name>CsvFileUploadServlet</servlet-name>
+	    <url-pattern>/CsvFileUploadServlet</url-pattern>
+	  </servlet-mapping>
+    
 </web-app>

@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.util.ReflectionUtils;
 
@@ -47,10 +48,8 @@ public final class BMEUtils {
 	 */
 	public static String getRealPath(HttpServletRequest request, String path) {
 
-		String fileSeparator = System.getProperty("file.separator");
-		return request.getSession().getServletContext()
-				.getRealPath(fileSeparator)
-				+ path;
+		//String fileSeparator = System.getProperty("file.separator");
+		return request.getSession().getServletContext().getRealPath(path);
 	}
 
 	/*

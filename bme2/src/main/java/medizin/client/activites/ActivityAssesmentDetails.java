@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.PlaceAssesment;
 import medizin.client.place.PlaceAssesmentDetails;
@@ -13,8 +14,10 @@ import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionSumPerPersonProxy;
 import medizin.client.proxy.QuestionTypeCountPerExamProxy;
 import medizin.client.proxy.QuestionTypeProxy;
+import medizin.client.proxy.StudentToAssesmentProxy;
 import medizin.client.request.QuestionSumPerPersonRequest;
 import medizin.client.request.QuestionTypeCountPerExamRequest;
+import medizin.client.request.StudentToAssesmentRequest;
 import medizin.client.ui.ErrorPanel;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.assesment.AssesmentDetailsView;
@@ -25,6 +28,8 @@ import medizin.client.ui.view.assesment.QuestionSumPerPersonView;
 import medizin.client.ui.view.assesment.QuestionTypeCountAddDialogbox;
 import medizin.client.ui.view.assesment.QuestionTypeCountAddDialogboxImpl;
 import medizin.client.ui.view.assesment.QuestionTypeCountView;
+import medizin.client.ui.view.assesment.StudentView;
+import medizin.client.ui.widget.process.ApplicationLoadingPopupView;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.shared.EventBus;
@@ -51,7 +56,8 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 	QuestionTypeCountView.Presenter, QuestionTypeCountView.Delegate,
 	QuestionTypeCountAddDialogbox.Presenter, QuestionTypeCountAddDialogbox.Delegate,
 	QuestionSumPerPersonView.Presenter, QuestionSumPerPersonView.Delegate,
-	QuestionSumPerPersonDialogbox.Presenter, QuestionSumPerPersonDialogbox.Delegate{
+	QuestionSumPerPersonDialogbox.Presenter, QuestionSumPerPersonDialogbox.Delegate,
+	StudentView.Presenter, StudentView.Delegate{
 
 	private PlaceAssesmentDetails assesmentPlace;
 
@@ -169,7 +175,7 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 
 		initQuestionTypeCount();
 		initQuestionSumPerPerson();
-		
+		initStudentView();
 	}
 
 	private QuestionTypeCountView questionTypeCountView;
@@ -181,6 +187,52 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 	private QuestionSumPerPersonView questionSumPerPersonView;
 
 	private CellTable<QuestionSumPerPersonProxy> questionSumPerPersonTable;
+	
+	private StudentView studentView;
+	
+	private void initStudentView()
+	{
+		studentView = assesmentDetailsView.getStudentViewImpl();
+		studentView.setDelegate(this);
+		studentView.setPresenter(this);
+		studentView.getHidden().setValue(assesment.getId().toString());
+		
+		fireStudentCountRequest();
+		
+		studentView.getTable().addRangeChangeHandler(new RangeChangeEvent.Handler() {
+			
+			@Override
+			public void onRangeChange(RangeChangeEvent event) {
+				ActivityAssesmentDetails.this.onStudentRangeChanged();
+			}
+		});
+	}
+	
+	private void fireStudentCountRequest()
+	{
+		requests.studentToAssesmentRequest().countStudentToAssesmentByAssesment(assesment.getId()).fire(new BMEReceiver<Long>() {
+
+			@Override
+			public void onSuccess(Long response) {
+				studentView.getTable().setRowCount(response.intValue(), true);
+				
+				onStudentRangeChanged();
+			}
+		});
+	}
+	
+	private void onStudentRangeChanged()
+	{
+		final Range range = studentView.getTable().getVisibleRange();
+		
+		requests.studentToAssesmentRequest().findStudentToAssesmentByAssesment(assesment.getId(), range.getStart(), range.getLength()).with("student").fire(new BMEReceiver<List<StudentToAssesmentProxy>>() {
+
+			@Override
+			public void onSuccess(List<StudentToAssesmentProxy> response) {
+				studentView.getTable().setRowData(range.getStart(), response);
+			}
+		});
+	}
 
 	private void initQuestionTypeCount() {
 		questionTypeCountView = assesmentDetailsView.getQuestionTypeCountViewImpl();
@@ -895,20 +947,31 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 
 	@Override
 	public void placeChanged(Place place) {
-		//updateSelection(event.getNewPlace());
-		// TODO implement
+		// TODO Auto-generated method stub
+		
 	}
 
+	@Override
+	public void importClicked() {
+		fireStudentCountRequest();
+	}
 
+	@Override
+	public void deactivateClicked(StudentToAssesmentProxy studentToAssesmentProxy) {
+		
+		Boolean flag = studentToAssesmentProxy.getIsEnrolled();
+		
+		StudentToAssesmentRequest studentToAssesmentRequest = requests.studentToAssesmentRequest();
+		studentToAssesmentProxy = studentToAssesmentRequest.edit(studentToAssesmentProxy);
+		
+		studentToAssesmentProxy.setIsEnrolled(!flag);
+		
+		studentToAssesmentRequest.persist().using(studentToAssesmentProxy).fire(new BMEReceiver<Void>() {
 
-	
-
-	
-	
-
-
-
-
-
-
+			@Override
+			public void onSuccess(Void response) {
+				fireStudentCountRequest();
+			}
+		});
+	}	
 }

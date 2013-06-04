@@ -18,6 +18,7 @@ import medizin.client.request.QuestionTypeCountPerExamRequest;
 import medizin.client.request.QuestionTypeRequest;
 import medizin.client.request.StaticContentRequest;
 import medizin.client.request.StaticToAssesmentRequest;
+import medizin.client.request.StudentToAssesmentRequest;
 import medizin.client.request.UserAccessRightsRequest;
 import medizin.server.domain.UserAccessRights;
 
@@ -80,4 +81,6 @@ public interface McAppRequestFactory extends RequestFactory {
     UserAccessRightsRequest userAccessRightsRequest();
     
     MatrixValidityRequest MatrixValidityRequest();
+    
+    StudentToAssesmentRequest studentToAssesmentRequest();
 }

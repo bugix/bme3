@@ -33,5 +33,6 @@ public interface AssesmentDetailsView extends IsWidget {
 
 	QuestionSumPerPersonViewImpl getQuestionSumPerPersonViewImpl();
 
+	StudentViewImpl getStudentViewImpl();
 	//QuestionAccessViewImpl getQuestionAccessView();
 }

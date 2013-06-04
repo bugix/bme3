@@ -542,14 +542,16 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		
 		save.setText(constants.save());
 		cancel.setText(constants.cancel());
-		multimediaTypeListBox.setAcceptableValues(Arrays.asList(MultimediaType.values()));
+		
 		multimediaTypeListBox.setValue(MultimediaType.Image);
+		multimediaTypeListBox.setAcceptableValues(Arrays.asList(MultimediaType.values()));		
 		
-		selectionTypeListBox.setAcceptableValues(Arrays.asList(SelectionType.values()));
 		selectionTypeListBox.setValue(SelectionType.Choose);
+		selectionTypeListBox.setAcceptableValues(Arrays.asList(SelectionType.values()));		
 		
-		questionTypeListBox.setAcceptableValues(Arrays.asList(QuestionTypes.values()));
 		questionTypeListBox.setValue(QuestionTypes.Textual);
+		questionTypeListBox.setAcceptableValues(Arrays.asList(QuestionTypes.values()));
+		
 		questionTypeListBox.addValueChangeHandler(new ValueChangeHandler<QuestionTypes>() {
 
 			@Override
