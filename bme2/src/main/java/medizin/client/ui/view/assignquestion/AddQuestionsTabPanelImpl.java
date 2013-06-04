@@ -61,6 +61,7 @@ public class AddQuestionsTabPanelImpl extends TabBar implements  AddQuestionsTab
 	public void setDelegate(Delegate delegate) {
 		this.delegate= delegate;
 		
+		
 	}
 
 	@Override

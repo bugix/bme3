@@ -111,9 +111,8 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
         widget.setWidget(asignAssQuestionView.asWidget());
         addQuestionsTabPanel = view.getAddQuestionsTabPanel();
         
-        //if admin than disable proposed tab
-        if(personRightProxy.getIsAdmin() || personRightProxy.getIsInstitutionalAdmin())
-        ((AddQuestionsTabPanelImpl)addQuestionsTabPanel).removeTab(0);
+        
+        
         
         questionPanel = view.getQuestionPanel();
         assementQuestionPanel = view.getAssesmentQuestionPanel();
@@ -130,11 +129,18 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 		
 		dragController.registerDropController(assesmentQuestionPanelDropController);
 		
-		
+		 initAddQuestionsTabPanel();
 		
         initAssementTabPanel();
-        initAddQuestionsTabPanel();
-
+       
+       
+        
+        //if admin than disable proposed tab (first tab)
+        if(personRightProxy.getIsAdmin() || personRightProxy.getIsInstitutionalAdmin())
+        {
+	        ((AddQuestionsTabPanelImpl)addQuestionsTabPanel).removeTab(0);
+	        ((AddQuestionsTabPanelImpl)addQuestionsTabPanel).selectTab(0,false);
+        }
         
 
 	}
@@ -168,7 +174,11 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 	private VerticalPanelDropController questionPanelDropController;
 	
 	private void initQuestionPanel(int action, AssesmentProxy assesment) {
-
+		
+		if(personRightProxy.getIsAdmin() || personRightProxy.getIsInstitutionalAdmin())
+		{
+			action++;
+		}
 		
 		if(assesment==null)
 		{
@@ -178,14 +188,14 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 		
 		Log.debug("Assesmet selected " + assesment.getName());
 		
-		if(personRightProxy.getIsAdmin() || personRightProxy.getIsInstitutionalAdmin())
+		/*if(personRightProxy.getIsAdmin() || personRightProxy.getIsInstitutionalAdmin())
 		{
 			if(action==0)
 				action=1;
 			
 			if(action==1)
 				action=2;
-		}
+		}*/
 		
 		//proposed Question
 		if (action==0){
@@ -232,7 +242,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 			});
 		}//past Question
 		else if (action == 1){
-			requests.assesmentQuestionRequest().findAssesmentQuestionsByMc(assesment.getMc().getId()).with("question.rewiewer","question.autor","question.keywords","question.questEvent","question.comment","question.questionType").fire(new Receiver<List<AssesmentQuestionProxy>>() {
+			requests.assesmentQuestionRequest().findAssesmentQuestionsByMc(assesment.getId(),assesment.getMc().getId()).with("question.rewiewer","question.autor","question.keywords","question.questEvent","question.comment","question.questionType").fire(new Receiver<List<AssesmentQuestionProxy>>() {
 
 				@Override
 				public void onSuccess(List<AssesmentQuestionProxy> response) {

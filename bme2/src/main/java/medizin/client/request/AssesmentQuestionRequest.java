@@ -27,7 +27,7 @@ public interface AssesmentQuestionRequest extends AssesmentQuestionRequest_Roo_G
 //	    
 	abstract Request<java.util.List<medizin.client.proxy.AssesmentQuestionProxy>> findAssesmentQuestionsByQuestionEvent(Long id, Long assesmentId);
 
-	abstract Request<List<AssesmentQuestionProxy>> findAssesmentQuestionsByMc(Long id);
+	abstract Request<List<AssesmentQuestionProxy>> findAssesmentQuestionsByMc(Long assesmentId,Long id);
 	abstract Request<List<AssesmentQuestionProxy>> findAssesmentQuestionsByMcProposal(Long id);
 	abstract Request<List<AssesmentQuestionProxy>> findAssesmentQuestionsByAssesment(Long id);
 	abstract Request<AssesmentQuestionProxy> copyAssesmentQuestion(Long assementQuestionId, Long assementId);

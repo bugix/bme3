@@ -2,6 +2,7 @@ package medizin.server.domain;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.EntityManager;
 import javax.persistence.ManyToOne;
 import javax.persistence.TypedQuery;
@@ -23,7 +24,7 @@ public class AnswerToAssQuestion {
     private Answer answers;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(cascade=CascadeType.ALL)
     private AssesmentQuestion assesmentQuestion;
     
     public static List<AnswerToAssQuestion> findAnswerToAssQuestionByAnswer(java.lang.Long answerId) {

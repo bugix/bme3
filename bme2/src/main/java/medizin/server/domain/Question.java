@@ -42,6 +42,7 @@ import medizin.shared.utils.SharedConstant;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
+import org.mortbay.log.Log;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.roo.addon.javabean.RooJavaBean;
@@ -131,7 +132,7 @@ public class Question {
 
 	@NotNull
 	@ManyToMany(cascade = CascadeType.ALL)
-	private Set<Mc> mcs = new HashSet<Mc>();
+	protected Set<Mc> mcs = new HashSet<Mc>();
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "question")
 	private Set<Answer> answers = new HashSet<Answer>();
@@ -322,14 +323,13 @@ public class Question {
 	}
 
 	
-	/*
-	 * Find New Question for assesment Question
+	/**
+	 * New Question TAb
 	 * 
-	 * Business: 
-	 * For Examiner :an examiner may see only questions of specialization where he has access.
-		+ Question Status : active
+	 * @param mcId
+	 * @return QuestionList
 	 * 
-	 * For Admin + Institutional Admin : can see all new question with status active
+	 * Retrive Query same as Question link, + exclude assessment question
 	 */
 	public static List<Question> findQuestionsByMc(Long mcId) {
 		
@@ -409,6 +409,16 @@ public class Question {
         	
         	
         	List<Question> questions=Question.findQuestionEntriesByPerson(userLoggedIn.getShidId(), institution.getId(), "", new ArrayList<String>(), 0	, Integer.MAX_VALUE,true);
+        	
+        	// exclude assessment question
+        	/*for(Question question : questions)
+        	{
+	        	if(AssesmentQuestion.countAssessmentQuestionByQuestionID(question) > 0)
+	        	{
+	        		questions.remove(question);
+	        	}
+        	}*/
+        	
         	return questions;
         	
         	/*List<Question> questions=UserAccessRights.findQuestionByPerson(userLoggedIn);
@@ -452,6 +462,8 @@ public class Question {
 		
 	}
 	
+	
+
 
 	public static Long countQuestionsNonAcceptedAdmin() {
 		// Gets the Sessionattributes

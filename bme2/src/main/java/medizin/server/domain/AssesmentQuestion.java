@@ -17,18 +17,26 @@ import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.SetJoin;
+import javax.persistence.criteria.Subquery;
+import javax.persistence.metamodel.PluralAttribute;
+import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
 
 import medizin.shared.Status;
 
 import org.apache.log4j.Logger;
+import org.mortbay.log.Log;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
+
+import com.google.web.bindery.requestfactory.server.RequestFactoryServlet;
 
 @RooJavaBean
 @RooToString
@@ -55,20 +63,20 @@ public class AssesmentQuestion {
     @NotNull
     @Value("false")
     @Column(columnDefinition="BIT", length = 1)
-    private Boolean isAssQuestionAcceptedAdmin;
+    private Boolean isAssQuestionAcceptedAdmin;//accepted status
 
     @NotNull
     @Value("false")
     @Column(columnDefinition="BIT", length = 1)
-    private Boolean isAssQuestionAdminProposal;
+    private Boolean isAssQuestionAdminProposal;//proposed question
 
     @Column(columnDefinition="BIT", length = 1)
-    private Boolean isAssQuestionAcceptedAutor;
+    private Boolean isAssQuestionAcceptedAutor;//new status
     
     @NotNull
     @Value("false")
     @Column(columnDefinition="BIT", length = 1)
-    private Boolean isForcedByAdmin;
+    private Boolean isForcedByAdmin;//force status
     
     @NotNull
     @ManyToOne
@@ -98,25 +106,152 @@ public class AssesmentQuestion {
     @ManyToOne
     private Person autor;
     
-   
+   /*
+    * Past Question Tab
+    * 
+    * Logic
+    * 1. Assessment Question with (status force or accepted) and current date > date of 	assessment.  
+    * 2. An examiner may see only questions of specialization 	where he has access.	
+    * 3. group by question- no duplicate question
+    * 4. Not Assigned in current Assesment
+    * */
     
-    public static List<AssesmentQuestion> findAssesmentQuestionsByMc(Long id){
+    public static List<AssesmentQuestion> findAssesmentQuestionsByMc(Long assesmentId,Long id){
+    	
+    	Log.info("Past Question Tab ");
+    	
         Boolean isAcceptedAdmin = true;
         
         Mc mc = Mc.findMc(id);
         if (mc == null) throw new IllegalArgumentException("The mcs argument is required");
         EntityManager em = Question.entityManager();
-        StringBuilder queryBuilder = new StringBuilder("SELECT assesmentauestion FROM AssesmentQuestion AS assesmentauestion " +
-        		"INNER JOIN assesmentauestion.question AS quest WHERE assesmentauestion.isAssQuestionAcceptedAdmin = :isAcceptedAdmin AND"+
-        		" quest.status = :status AND :mcs_item MEMBER OF quest.mcs");
+        
+        //get user who is logged in
+        Person userLoggedIn=Person.myGetLoggedPerson();
+        
+        //get institution
+        HttpSession session1 = RequestFactoryServlet.getThreadLocalRequest().getSession();
+        Long instId = (Long) session1.getAttribute("institutionId");
+		Institution institution = Institution.findInstitution(instId);
+        
+		//create query
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<AssesmentQuestion> criteriaQuery = criteriaBuilder
+				.createQuery(AssesmentQuestion.class);
+		
+		//from
+		Root<AssesmentQuestion> from = criteriaQuery.from(AssesmentQuestion.class);
+		
+		//Join
+		Join<AssesmentQuestion,Question> questionJoin=from.join("question");
+		SetJoin<Question,Mc> mcsJoin=questionJoin.joinSet("mcs");
+		CriteriaQuery<AssesmentQuestion> select = criteriaQuery.select(from);
+		
+		//accepted
+		Predicate pre1=criteriaBuilder.equal(from.get("isAssQuestionAcceptedAdmin"), new Boolean(true));
+		
+		//force accepted
+		Predicate pre2=criteriaBuilder.equal(from.get("isForcedByAdmin"), new Boolean(true));
+		
+		//accepted / force accepted
+		Predicate pre3=criteriaBuilder.or(pre1,pre2);		
+		
+		//active question
+		Predicate pre4=criteriaBuilder.equal(questionJoin.get("status"), Status.ACTIVE);
+		
+		//past assessment
+		Predicate pre5=criteriaBuilder.lessThan(from.get("assesment").<Date>get("dateOfAssesment"), criteriaBuilder.currentDate());
+		
+		
+		
+		//Not Assigned in current Assesment		
+		Set<AssesmentQuestion> assignedassesmentQuestion=Assesment.findAssesment(assesmentId).getAssesmentQuestions();
+		
+		List<Question> assignedQuestions=new ArrayList<Question>();
+		for(AssesmentQuestion aq:assignedassesmentQuestion)
+		{
+			assignedQuestions.add(aq.getQuestion());
+		}
+		
+		Predicate pre7=criteriaBuilder.not(from.get("question").in(assignedQuestions));
+		
+		
+		
+		//group by question- no duplicate question
+		criteriaQuery.groupBy(from.get("question"));
+		
+        if(userLoggedIn.getIsAdmin()) //Main Admin
+        {
+        	Log.info("Main Admin");
+    		
+    		//institution filter
+			Predicate pre6 = criteriaBuilder.equal(from.get("question").get("questEvent")
+					.get("institution"), institution);
+    		
+    		Predicate pre=criteriaBuilder.and(pre3,pre4,pre5,pre6,pre7);
+    		select.where(pre);
+    				
+    		TypedQuery<AssesmentQuestion> q=entityManager().createQuery(criteriaQuery);
+    		return q.getResultList();
+        }
+        else
+        {
+        	Log.info("Not Main Admin");
+        	
+        	//Author
+			Predicate p1 = criteriaBuilder.equal(from.get("autor"), userLoggedIn);
+			
+			//institution filter
+			Predicate mainpre1 = criteriaBuilder.equal(from.get("question").get("questEvent").get("institution"), institution);
+
+			
+			//Author and institution filter
+			mainpre1 = criteriaBuilder.and( p1, mainpre1);
+			
+			//Question Access
+			Subquery<UserAccessRights> subQry = criteriaQuery.subquery(UserAccessRights.class);
+			Root queAccRoot = subQry.from(UserAccessRights.class);
+			subQry.select(queAccRoot.get("question").get("id")).where(criteriaBuilder.equal(queAccRoot.get("person"), userLoggedIn));
+			Predicate mainpre2 = criteriaBuilder.in(from.get("question").get("id")).value(subQry);
+			
+			
+			//Event Access
+			Subquery<UserAccessRights> subQuery = criteriaQuery.subquery(UserAccessRights.class);
+			Root questionAccessRoot = subQuery.from(UserAccessRights.class);
+			subQuery.select(questionAccessRoot.get("questionEvent").get("id")).where(criteriaBuilder.equal(questionAccessRoot.get("person"),userLoggedIn));
+			Predicate mainpre3 = criteriaBuilder.in(from.get("question").get("questEvent").get("id")).value(subQuery);
+			
+			//institutional Access
+			Subquery<UserAccessRights> instSubQuery = criteriaQuery.subquery(UserAccessRights.class);
+			Root instAccessRoot = instSubQuery.from(UserAccessRights.class);
+			Predicate instP1 = criteriaBuilder.equal(instAccessRoot.get("person"), userLoggedIn);
+			Predicate instP2 = criteriaBuilder.equal(instAccessRoot.get("institution"), institution);
+			instSubQuery.select(instAccessRoot.get("institution").get("id")).where(criteriaBuilder.and(instP1, instP2));
+			Predicate mainpre4 = criteriaBuilder.in(from.get("question").get("questEvent").get("institution").get("id")).value(instSubQuery);
+			
+			//Author and institution filter or (Question Access / Event Access / institutional Access)
+			Predicate andAdminPredicate = criteriaBuilder.or(mainpre1, criteriaBuilder.or(mainpre2, mainpre3, mainpre4));
+			
+			select.where(criteriaBuilder.and(pre3,pre4,pre5,pre7,andAdminPredicate));
+        	
+			TypedQuery<AssesmentQuestion> q=entityManager().createQuery(criteriaQuery);
+    		return q.getResultList();
+        }
+        
+       
+		/*StringBuilder queryBuilder = new StringBuilder("SELECT assesmentauestion FROM AssesmentQuestion AS assesmentauestion " +
+        		"INNER JOIN assesmentauestion.question AS quest WHERE (assesmentauestion.isAssQuestionAcceptedAdmin = :isAcceptedAdmin or assesmentauestion.isForcedByAdmin=true) AND"+
+        		" quest.status = :status AND :mcs_item MEMBER OF quest.mcs and assesmentauestion.assesment.dateOfAssesment < :dateOfAssesment");
         
         TypedQuery<AssesmentQuestion> q = em.createQuery(queryBuilder.toString(), AssesmentQuestion.class);
         q.setParameter("isAcceptedAdmin", isAcceptedAdmin);
         q.setParameter("status", Status.ACTIVE);
 
         q.setParameter("mcs_item", mc);
+        q.setParameter("dateOfAssesment", new Date());*/
+       
         
-        return q.getResultList();
+      //  return q.getResultList();
     }
     
     public static List<AssesmentQuestion> findAssesmentQuestionsByAssesment(Long id){
@@ -315,4 +450,22 @@ public class AssesmentQuestion {
 	 
 		return query.getResultList();
 	}
+	
+	/* 
+	 * Used in New Question Tab 
+	 * Used to exclude assessment Question for show New Question
+	 * 
+	public static Long countAssessmentQuestionByQuestionID(Question question)
+	{
+		Log.info("countAssessmentQuestionByQuestionID");
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+		Root<AssesmentQuestion> from = criteriaQuery.from(AssesmentQuestion.class);
+		criteriaQuery.select(criteriaBuilder.count(from));	
+		
+		Predicate pre=criteriaBuilder.equal(from.get("question"), question.getId());
+		criteriaQuery.where(pre);
+		TypedQuery<Long> q = entityManager().createQuery(criteriaQuery);
+		return q.getSingleResult();
+	}*/
 }

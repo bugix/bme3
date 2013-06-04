@@ -295,4 +295,44 @@ public class UserAccessRights {
 	 
 		return query.getResultList();
 	}
+	
+	//check if user has access to particular institution if yes return UserAccessRight else null
+	public static UserAccessRights findUserAccessRightsByPersonAndInstitution(Person user,Institution institution)
+	{
+		CriteriaBuilder cb = entityManager().getCriteriaBuilder();
+		CriteriaQuery<UserAccessRights> cq = cb.createQuery(UserAccessRights.class);
+		Root<UserAccessRights> from = cq.from(UserAccessRights.class);
+		Predicate pre1 = cb.equal(from.get("person"), user);
+		Predicate pre2 = cb.equal(from.get("institution"), institution);
+		
+		cq.where(cb.or(pre1,pre2));
+		TypedQuery<UserAccessRights> query = entityManager().createQuery(cq);
+		
+		List<UserAccessRights> userAccessRights=query.getResultList();
+		
+		if(userAccessRights.size()==0)
+			return null;
+		else
+		{
+			return userAccessRights.get(0);
+		}
+	}
+	
+	//find question access(any access)
+	
+	public static List<Question> findQuestionByPerson(Person person)
+	{
+		CriteriaBuilder cb = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Question> cq = cb.createQuery(Question.class);
+		Root<UserAccessRights> from = cq.from(UserAccessRights.class);
+		Predicate p1=cb.equal(from.get("person"), person);
+		Predicate p2=cb.isNotNull(from.get("question"));
+		cq.where(cb.and(p1,p2));
+		cq.distinct(true);
+		cq.select(from.<Question>get("question"));
+		TypedQuery<Question> query = entityManager().createQuery(cq);
+		List<Question> questions=query.getResultList();
+		return questions;
+		
+	}
 }

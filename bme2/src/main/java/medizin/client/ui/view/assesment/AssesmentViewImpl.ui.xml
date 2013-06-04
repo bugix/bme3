@@ -14,8 +14,7 @@
 
 <g:ScrollPanel>
 				
-				
-				<g:HTMLPanel styleName="{style.listView}">
+		<g:HTMLPanel styleName="{style.listView}">
 					
 					<b:CellTable ui:field="table" addStyleNames="{style.standardTable}"
 						width="500" />

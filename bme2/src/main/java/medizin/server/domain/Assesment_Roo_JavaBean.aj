@@ -6,6 +6,7 @@ package medizin.server.domain;
 import java.util.Date;
 import java.util.Set;
 import medizin.server.domain.Assesment;
+import medizin.server.domain.AssesmentQuestion;
 import medizin.server.domain.Mc;
 import medizin.server.domain.QuestionSumPerPerson;
 
@@ -105,6 +106,14 @@ privileged aspect Assesment_Roo_JavaBean {
     
     public void Assesment.setQuestionSumPerPerson(Set<QuestionSumPerPerson> questionSumPerPerson) {
         this.questionSumPerPerson = questionSumPerPerson;
+    }
+    
+    public Set<AssesmentQuestion> Assesment.getAssesmentQuestions() {
+        return this.assesmentQuestions;
+    }
+    
+    public void Assesment.setAssesmentQuestions(Set<AssesmentQuestion> assesmentQuestions) {
+        this.assesmentQuestions = assesmentQuestions;
     }
     
 }

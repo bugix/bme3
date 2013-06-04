@@ -221,4 +221,15 @@ public class QuestionEvent {
 	    	
 	    	return query.getResultList();
 	    }
+	    
+	    public static List<QuestionEvent> findQuestionEventByInstitution(Institution institution)
+	    {
+	    	CriteriaBuilder cb = entityManager().getCriteriaBuilder();
+	    	CriteriaQuery<QuestionEvent> cq = cb.createQuery(QuestionEvent.class);
+	    	Root<QuestionEvent> from = cq.from(QuestionEvent.class);
+	    	Predicate pre1 = cb.equal(from.get("institution"), institution);
+	    	cq.where(pre1);
+	    	TypedQuery<QuestionEvent> query = entityManager().createQuery(cq);	
+	    	return query.getResultList();
+	    }
 }

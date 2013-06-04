@@ -79,6 +79,9 @@ public class Assesment {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "assesment")
     private Set<QuestionSumPerPerson> questionSumPerPerson = new HashSet<QuestionSumPerPerson>();
     
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "assesment")
+    private Set<AssesmentQuestion> assesmentQuestions = new HashSet<AssesmentQuestion>();
+    
     /* Business Login
      * 
      * Find Assessment
@@ -102,9 +105,9 @@ public class Assesment {
         PersonAccessRight accessRights=userLoggedIn.getLoggedPersonAccessRights();
         Boolean isInstitutionAdmin=accessRights.getIsInstitutionalAdmin();
         TypedQuery<Assesment> q=null;
-        if(isAdmin || isInstitutionAdmin)
+        if(isAdmin || isInstitutionAdmin)//For Admin and Institutional Admin user
         	q = em.createQuery("SELECT Assesment FROM Assesment AS assesment WHERE assesment.dateOfAssesment >= :dateClosed  AND assesment.dateOpen <= :dateOpen  AND assesment.isClosed IS :isClosed", Assesment.class);
-        else
+        else //for examiner
         {
         	q = em.createQuery("SELECT Assesment FROM Assesment AS assesment WHERE assesment.dateClosed >= :dateClosed  AND assesment.dateOpen <= :dateOpen  AND assesment.isClosed IS :isClosed", Assesment.class);
         	 
