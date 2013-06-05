@@ -27,6 +27,7 @@ import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
 
 import medizin.shared.Status;
+import medizin.shared.utils.PersonAccessRight;
 
 import org.apache.log4j.Logger;
 import org.mortbay.log.Log;
@@ -106,6 +107,29 @@ public class AssesmentQuestion {
     @ManyToOne
     private Person autor;
     
+    
+    /*
+	 * Author pull down for admin / institutional Admin
+	 * 
+	 * Show Author / examiner assigned in particular assessment
+	 * */
+     
+     public static List<Person> findAuthorListByAssesment(Assesment assesment){
+     	
+     	Log.info("findAuthorListByAssesment ");
+     	
+     	Set<QuestionSumPerPerson> questionSumPerPersons=assesment.getQuestionSumPerPerson();
+     	
+     	List<Person> authorList=new ArrayList<Person>();
+     	for(QuestionSumPerPerson questionSumPerPerson:questionSumPerPersons)
+     	{
+     		authorList.add(questionSumPerPerson.getResponsiblePerson());
+     	}
+     	return authorList;
+
+     }
+    
+    
    /*
     * Past Question Tab
     * 
@@ -173,24 +197,38 @@ public class AssesmentQuestion {
 			assignedQuestions.add(aq.getQuestion());
 		}
 		
-		Predicate pre7=criteriaBuilder.not(from.get("question").in(assignedQuestions));
+		Predicate pre7=null;
+		if(assignedQuestions.size()>0)
+			pre7=criteriaBuilder.not(from.get("question").in(assignedQuestions));
 		
 		
 		
 		//group by question- no duplicate question
 		criteriaQuery.groupBy(from.get("question"));
 		
+		//institution filter
+		Predicate pre6 = criteriaBuilder.equal(from.get("question").get("questEvent")
+				.get("institution"), institution);
+		
         if(userLoggedIn.getIsAdmin()) //Main Admin
         {
         	Log.info("Main Admin");
     		
-    		//institution filter
-			Predicate pre6 = criteriaBuilder.equal(from.get("question").get("questEvent")
-					.get("institution"), institution);
     		
-    		Predicate pre=criteriaBuilder.and(pre3,pre4,pre5,pre6,pre7);
+			
+			
+			
+			Predicate pre;
+    		if(pre7==null)
+    			pre=criteriaBuilder.and(pre3,pre4,pre5,pre6);
+    		else
+    			 pre=criteriaBuilder.and(pre3,pre4,pre5,pre6,pre7);
+    		
+    		
     		select.where(pre);
-    				
+    		
+    		
+    		
     		TypedQuery<AssesmentQuestion> q=entityManager().createQuery(criteriaQuery);
     		return q.getResultList();
         }
@@ -232,7 +270,11 @@ public class AssesmentQuestion {
 			//Author and institution filter or (Question Access / Event Access / institutional Access)
 			Predicate andAdminPredicate = criteriaBuilder.or(mainpre1, criteriaBuilder.or(mainpre2, mainpre3, mainpre4));
 			
-			select.where(criteriaBuilder.and(pre3,pre4,pre5,pre7,andAdminPredicate));
+			
+    		if(pre7==null)
+    			select.where(criteriaBuilder.and(pre3,pre4,pre5,pre6,andAdminPredicate));
+    		else
+    			select.where(criteriaBuilder.and(pre3,pre4,pre5,pre7,pre6,andAdminPredicate));
         	
 			TypedQuery<AssesmentQuestion> q=entityManager().createQuery(criteriaQuery);
     		return q.getResultList();
@@ -254,47 +296,106 @@ public class AssesmentQuestion {
       //  return q.getResultList();
     }
     
+    /**
+     * Left side view of Assesment Question
+     * @param id
+     * @return
+     */
     public static List<AssesmentQuestion> findAssesmentQuestionsByAssesment(Long id){
 //        Boolean isAcceptedAdmin = true;
 //        Boolean isActive = true;
         Assesment assesment = Assesment.findAssesment(id);
+        
+        //get user who is logged in
+        Person userLoggedIn=Person.myGetLoggedPerson();
+        
+        PersonAccessRight accessRights=Person.getLoggedPersonAccessRights();
+        
+        //get institution
+        HttpSession session1 = RequestFactoryServlet.getThreadLocalRequest().getSession();
+        Long instId = (Long) session1.getAttribute("institutionId");
+		Institution institution = Institution.findInstitution(instId);
+        
         if (assesment == null) throw new IllegalArgumentException("The assesment argument is required");
         EntityManager em = Question.entityManager();
         
-        TypedQuery<AssesmentQuestion> q = em.createQuery("SELECT assesmentauestion FROM AssesmentQuestion AS assesmentauestion " +
-        		"WHERE assesmentauestion.assesment = :assesment", AssesmentQuestion.class);
+        String query="SELECT assesmentauestion FROM AssesmentQuestion AS assesmentauestion " +
+        		"WHERE assesmentauestion.assesment = :assesment    and assesmentauestion.question.questEvent.institution=:institution ";
+        if(!(accessRights.getIsAdmin() || accessRights.getIsInstitutionalAdmin()))
+        {
+        	query=query+" and assesmentauestion.isAssQuestionAdminProposal=false  and assesmentauestion.autor=:author";
+        }
+        
+        
+        TypedQuery<AssesmentQuestion> q = em.createQuery(query, AssesmentQuestion.class);
+        
 //        q.setParameter("isAcceptedAdmin", isAcceptedAdmin);
 //        q.setParameter("isActive", isActive);
 
         q.setParameter("assesment", assesment);
+        q.setParameter("institution", institution);
+      
+        if(!(accessRights.getIsAdmin() || accessRights.getIsInstitutionalAdmin()))
+        {
+        	
+            q.setParameter("author", userLoggedIn);
+        }
         
         return q.getResultList();
     }
     
-    public static List<AssesmentQuestion> findAssesmentQuestionsByMcProposal(Long id){
+    /*
+     * Proposed Question Tab only for examiner
+     * 
+     * Logic
+     * 1. Assessment Question with (status proposed) 
+     * 2. An examiner may see only questions of specialization 	where he has access.	
+     * */
+    public static List<AssesmentQuestion> findAssesmentQuestionsByMcProposal(Long assesmentId){
         Boolean isAssQuestionAdminProposal = true;
        
-        Mc mc = Mc.findMc(id);
-        if (mc == null) throw new IllegalArgumentException("The mcs argument is required");
+        Assesment assesment = Assesment.findAssesment(assesmentId);
+        Person userLoggedIn=Person.myGetLoggedPerson();
+        
+        //get institution
+        HttpSession session1 = RequestFactoryServlet.getThreadLocalRequest().getSession();
+        Long instId = (Long) session1.getAttribute("institutionId");
+		Institution institution = Institution.findInstitution(instId);
+        
+        if (assesment == null) throw new IllegalArgumentException("The mcs argument is required");
         EntityManager em = Question.entityManager();
         StringBuilder queryBuilder = new StringBuilder("SELECT assesmentauestion FROM AssesmentQuestion AS assesmentauestion " +
-        		"INNER JOIN assesmentauestion.question AS quest WHERE assesmentauestion.isAssQuestionAdminProposal = :isAssQuestionAdminProposal AND"+
-        		" quest.status = :status AND :mcs_item MEMBER OF quest.mcs");
+        		"INNER JOIN assesmentauestion.question AS quest WHERE assesmentauestion.isAssQuestionAdminProposal = :isAssQuestionAdminProposal  AND  assesmentauestion.assesment=:assesment and assesmentauestion.autor=:autor and quest.questEvent.institution=:institution");
         
         TypedQuery<AssesmentQuestion> q = em.createQuery(queryBuilder.toString(), AssesmentQuestion.class);
         q.setParameter("isAssQuestionAdminProposal", isAssQuestionAdminProposal);
-        q.setParameter("status", Status.ACTIVE);
-
-         q.setParameter("mcs_item", mc);
+       // q.setParameter("status", Status.ACTIVE);
+        q.setParameter("autor", userLoggedIn);
+        q.setParameter("assesment", assesment);
+        q.setParameter("institution", institution);
         
         return q.getResultList();
     }
     
-    public static AssesmentQuestion copyAssesmentQuestion(Long assementQuestionId, Long assementId){
+    /**
+     * This medthod is common to past and proposed tab
+     * 
+     * @param assementQuestionId
+     * @param assementId
+     * @param selectedAuthor
+     * @return
+     */
+    public static AssesmentQuestion copyAssesmentQuestion(Long assementQuestionId, Long assementId,Person selectedAuthor){
     	//EntityManager em = entityManager();
     	//em.getTransaction().begin();
     	
+    	
     	AssesmentQuestion assesmentQuestionToCopyFrom = AssesmentQuestion.findAssesmentQuestion(assementQuestionId);
+    	
+    	if(!assesmentQuestionToCopyFrom.getIsAssQuestionAdminProposal()) //past Question tab : copy assesment question and change status to proposed if admin
+    	{
+    		
+    	
     	Assesment assesment = Assesment.findAssesment(assementId);
     	AssesmentQuestion assesmentQuestionNew = new AssesmentQuestion();
     	
@@ -313,13 +414,55 @@ public class AssesmentQuestion {
     	}
     	assesmentQuestionNew.setAnswersToAssQuestion(answersToAssementCopied);
     	assesmentQuestionNew.setAssesment(assesment);
-    	assesmentQuestionNew.setAutor(assesmentQuestionToCopyFrom.getAutor());
+    	
+    	if(selectedAuthor!=null)
+    	{
+    		assesmentQuestionNew.setAutor(selectedAuthor);
+    	}
+    	else
+    		assesmentQuestionNew.setAutor(assesmentQuestionToCopyFrom.getAutor());
     	assesmentQuestionNew.setDateAdded(new Date());
-    	assesmentQuestionNew.setIsAssQuestionAcceptedAdmin(false);
-    	assesmentQuestionNew.setIsAssQuestionAcceptedAutor(true);
-    	assesmentQuestionNew.setIsAssQuestionAcceptedRewiever(false);
-    	assesmentQuestionNew.setQuestion(assesmentQuestionToCopyFrom.getQuestion());
-    	assesmentQuestionNew.setRewiewer(assesmentQuestionToCopyFrom.getRewiewer());
+    	
+    	Person userLoggedIn=Person.myGetLoggedPerson();
+    	PersonAccessRight accessRights=Person.getLoggedPersonAccessRights();
+    	
+    	/*
+    	 * if person is both admin and author
+    	 * */
+/*    	if(assesmentQuestionToCopyFrom.getAutor().equals(userLoggedIn) && (accessRights.getIsInstitutionalAdmin() || accessRights.getIsAdmin() ))
+    	{
+    		assesmentQuestionNew.setIsAssQuestionAcceptedAdmin(true);
+        	assesmentQuestionNew.setIsAssQuestionAcceptedAutor(false);
+        	assesmentQuestionNew.setIsAssQuestionAcceptedRewiever(false);
+        	assesmentQuestionNew.setIsForcedByAdmin(false);
+        	assesmentQuestionNew.setIsAssQuestionAdminProposal(false);
+    	}
+    	else*/ if((accessRights.getIsInstitutionalAdmin() || accessRights.getIsAdmin() )) //admin
+    	{
+    		assesmentQuestionNew.setIsAssQuestionAcceptedAdmin(false);
+        	assesmentQuestionNew.setIsAssQuestionAcceptedAutor(false);
+        	assesmentQuestionNew.setIsAssQuestionAcceptedRewiever(false);
+        	assesmentQuestionNew.setIsForcedByAdmin(false);
+        	assesmentQuestionNew.setIsAssQuestionAdminProposal(true);
+    	}
+    	/*else if(assesmentQuestionToCopyFrom.getIsAssQuestionAdminProposal()) //proposed question
+    	{
+    		assesmentQuestionNew.setIsAssQuestionAcceptedAdmin(true);
+        	assesmentQuestionNew.setIsAssQuestionAcceptedAutor(false);
+        	assesmentQuestionNew.setIsAssQuestionAcceptedRewiever(false);
+        	assesmentQuestionNew.setIsForcedByAdmin(false);
+        	assesmentQuestionNew.setIsAssQuestionAdminProposal(false);
+    	}*/
+    	else	//author / examiner
+    	{
+    		assesmentQuestionNew.setIsAssQuestionAcceptedAdmin(false);
+        	assesmentQuestionNew.setIsAssQuestionAcceptedAutor(true);
+        	assesmentQuestionNew.setIsAssQuestionAcceptedRewiever(false);
+        	assesmentQuestionNew.setIsForcedByAdmin(false);
+        	assesmentQuestionNew.setIsAssQuestionAdminProposal(false);
+    	}
+	    	assesmentQuestionNew.setQuestion(assesmentQuestionToCopyFrom.getQuestion());
+	    	assesmentQuestionNew.setRewiewer(assesmentQuestionToCopyFrom.getRewiewer());
     	
     	assesmentQuestionNew.persist();
     	assesmentQuestionNew.flush();
@@ -330,6 +473,20 @@ public class AssesmentQuestion {
     	entityManager().refresh(assesmentQuestionNew);
     	
     	return assesmentQuestionNew;
+    	}
+    	else //proposed tab : change status from proposed to accept
+    	{
+    		assesmentQuestionToCopyFrom.setIsAssQuestionAcceptedAdmin(true);
+    		assesmentQuestionToCopyFrom.setIsAssQuestionAcceptedAutor(false);
+    		assesmentQuestionToCopyFrom.setIsAssQuestionAcceptedRewiever(false);
+    		assesmentQuestionToCopyFrom.setIsForcedByAdmin(false);
+    		assesmentQuestionToCopyFrom.setIsAssQuestionAdminProposal(false);
+    		assesmentQuestionToCopyFrom.persist();
+    		assesmentQuestionToCopyFrom.flush();
+    		entityManager().refresh(assesmentQuestionToCopyFrom);
+    		
+    		return assesmentQuestionToCopyFrom;
+    	}
     }
     
     

@@ -4,7 +4,9 @@
 	<ui:style>
 		
 	</ui:style>
+	
 	<g:HTMLPanel>
+	    
 	<g:Label>AssesmentTabpanel</g:Label>
 	</g:HTMLPanel>
 </ui:UiBinder> 

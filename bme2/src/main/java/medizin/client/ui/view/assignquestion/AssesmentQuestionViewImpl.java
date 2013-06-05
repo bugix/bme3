@@ -91,6 +91,7 @@ public class AssesmentQuestionViewImpl extends Composite implements AssesmentQue
 	}
 	
 	
+	
 	private void close() {
 		twistieOpen.setVisible(true);
 		answers.setVisible(false);
