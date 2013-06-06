@@ -104,8 +104,15 @@
 					                <td>
 					                    <span class="{style.label}" ui:field="logoForTitlePageLbl">Logo für Titelblatt:</span>
 					                </td>
-					                <td colspan="3">
+					                <td colspan="1">
 					                    <span ui:field="logo"/>
+					                </td>
+					                
+					                <td>
+					                    <span class="{style.label}" ui:field="lblbeforeClosing">Remember Examiner Before Closing (In Days):</span>
+					                </td>
+					                <td colspan="3">
+					                    <span ui:field="rememberBeforeClosing"/>
 					                </td>
 					            </tr>
 					     
@@ -126,6 +133,9 @@
 					                    <span ui:field="percentSameQuestion"/>
 					                </td>
 					            </tr>
+					            
+					       
+					      
 					    </table>
 
 

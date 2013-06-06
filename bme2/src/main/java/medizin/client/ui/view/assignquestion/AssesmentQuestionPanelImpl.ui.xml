@@ -6,7 +6,7 @@
 		
 		/*background-color: #E6D8F2 ;*/
 		
-		padding: 5px;
+		/*padding: 5px;*/
 		position: absolute; 
 		width: 100%; 
 		min-height: 50px;
@@ -21,10 +21,39 @@ border-bottom: 1px solid #AAAAAA;
 
 		}
 	
-	 
+	 .float-right
+	{
+		float:right;
+		 margin-right: 10px;
+   		 margin-top: 5px;
+	}
 		
 	</ui:style>
-	<g:HTMLPanel styleName="{style.maxWidth}">
-	<g:VerticalPanel ui:field="assesmentQuestionDisplayPanel"  styleName="{style.displayPanel}"></g:VerticalPanel>
+	
+	<g:HTMLPanel styleName="{style.maxWidth} {style.displayPanel}">
+	
+	    <table width="100%" >
+	        <tr align="right" width="100%">
+	            <td>
+	                <g:ValueListBox ui:field="authorListBox"  styleName="{style.float-right}">
+					</g:ValueListBox>
+	                
+	            </td>
+	        </tr>
+	        <tr width="100%">
+	            <td>
+	                <g:VerticalPanel ui:field="assesmentQuestionDisplayPanel"  width="100%"></g:VerticalPanel>
+	                
+	            </td>
+	        </tr>
+	    </table>
+			
+			
+			
+		
 	</g:HTMLPanel>
+	
+	
+	
+	
 </ui:UiBinder> 

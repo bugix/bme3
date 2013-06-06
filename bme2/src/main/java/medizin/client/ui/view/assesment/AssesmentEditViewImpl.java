@@ -89,7 +89,11 @@ public class AssesmentEditViewImpl extends Composite implements AssesmentEditVie
     @UiField
     TextBox place;
 
-
+    @UiField
+    DivElement lblbeforeClosing;
+    
+    @UiField
+    IntegerBox rememberBeforeClosing;
 
     @UiField(provided = true)
     CheckBox isClosed = new CheckBox() {
@@ -190,7 +194,7 @@ public class AssesmentEditViewImpl extends Composite implements AssesmentEditVie
 		lblrepeFor.setInnerText(constants.repeFor());
 		lblpercentSameQuestion.setInnerText(constants.percentSameQuestion());
 		lbllogo.setInnerText(constants.logo());
-		
+		lblbeforeClosing.setInnerText(constants.rememberExaminerBeforeClosing());
 		
 		reciverMap.put("name", name);
 		reciverMap.put("dateOfAssesment", dateOfAssesment);
@@ -198,6 +202,7 @@ public class AssesmentEditViewImpl extends Composite implements AssesmentEditVie
 		reciverMap.put("dateClosed", dateClosed);
 		reciverMap.put("place", place);
 		reciverMap.put("logo", logo);
+		reciverMap.put("rememberBeforeClosing", rememberBeforeClosing);
 		
 	}
 

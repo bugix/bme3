@@ -49,6 +49,7 @@ privileged aspect AssesmentQuestionDataOnDemand_Roo_DataOnDemand {
         setIsAssQuestionAcceptedAutor(obj, index);
         setIsAssQuestionAcceptedRewiever(obj, index);
         setIsAssQuestionAdminProposal(obj, index);
+        setIsForcedByAdmin(obj, index);
         setOrderAversion(obj, index);
         setOrderBversion(obj, index);
         setQuestion(obj, index);
@@ -91,6 +92,11 @@ privileged aspect AssesmentQuestionDataOnDemand_Roo_DataOnDemand {
     public void AssesmentQuestionDataOnDemand.setIsAssQuestionAdminProposal(AssesmentQuestion obj, int index) {
         Boolean isAssQuestionAdminProposal = Boolean.TRUE;
         obj.setIsAssQuestionAdminProposal(isAssQuestionAdminProposal);
+    }
+    
+    public void AssesmentQuestionDataOnDemand.setIsForcedByAdmin(AssesmentQuestion obj, int index) {
+        Boolean isForcedByAdmin = Boolean.TRUE;
+        obj.setIsForcedByAdmin(isForcedByAdmin);
     }
     
     public void AssesmentQuestionDataOnDemand.setOrderAversion(AssesmentQuestion obj, int index) {

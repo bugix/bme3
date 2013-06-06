@@ -1,5 +1,6 @@
 package medizin.client.activites;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -27,6 +28,7 @@ import medizin.client.ui.view.assignquestion.AssesmentQuestionPanel;
 import medizin.client.ui.view.assignquestion.AssesmentQuestionView;
 import medizin.client.ui.view.assignquestion.AssesmentQuestionViewImpl;
 import medizin.client.ui.view.assignquestion.AssesmentTabPanel;
+import medizin.client.ui.view.assignquestion.AssesmentTabPanelImpl;
 import medizin.client.ui.view.assignquestion.QuestionPanel;
 import medizin.client.ui.view.assignquestion.QuestionView;
 import medizin.client.ui.view.assignquestion.QuestionViewImpl;
@@ -52,7 +54,7 @@ import com.google.web.bindery.requestfactory.shared.ServerFailure;
 import com.google.web.bindery.requestfactory.shared.Violation;
 
 public class ActivityAsignAssQuestion extends AbstractActivityWrapper implements DragHandler, AsignAssQuestionView.Presenter,
-AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, AssesmentQuestionView.Delegate, AssesmentTabPanel.Delegate {
+AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, AssesmentQuestionView.Delegate, AssesmentTabPanel.Delegate,AssesmentQuestionPanel.Delegate {
 
 	private PlaceAsignAssQuestion asignAssQuestionPlace;
 	private AcceptsOneWidget widget;
@@ -119,6 +121,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
         questionPanel = view.getQuestionPanel();
         questionPanel.setDelegate(this);
         assementQuestionPanel = view.getAssesmentQuestionPanel();
+        assementQuestionPanel.setDelegate(this);
         assesmentTabPanel = view.getAssesmentTabPanel();
         assesmentTabPanel.setDelegate(this);
         
@@ -143,6 +146,8 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
         {
 	        ((AddQuestionsTabPanelImpl)addQuestionsTabPanel).removeTab(0);
 	        ((AddQuestionsTabPanelImpl)addQuestionsTabPanel).selectTab(0,false);
+	        
+	        
         }
         
 
@@ -163,12 +168,31 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 				Log.debug("Geholte Assements: " + response.size());
 				Iterator<AssesmentProxy> iter = response.iterator();
 				while(iter.hasNext()){
-					assesmentTabPanel.addAssementTab(iter.next());
+					
+					AssesmentProxy assesment=iter.next();
+					assesmentTabPanel.addAssementTab(assesment);
+					
 					
 				}
+				if(((AssesmentTabPanelImpl)assesmentTabPanel).getTabCount() > 0)
+				((AssesmentTabPanelImpl)assesmentTabPanel).setSelectedTab(0);
+				
 				//assesmentTabPanel.setSelectedTab(0);
 		        //initAssementQuestionPanel();
 		       
+				//show author drop down
+				/*if(personRightProxy.getIsAdmin() || personRightProxy.getIsInstitutionalAdmin())
+				{
+					populateAuthorListBox(assementQuestionPanel.getAuthorListBox(), assesment);
+					
+				}
+				else
+				{
+					assementQuestionPanel.getAuthorListBox().removeFromParent();
+				}*/
+				
+				
+				
 			}
 			
 		});
@@ -176,6 +200,12 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 	}
 	private VerticalPanelDropController questionPanelDropController;
 	
+	
+	/**
+	 * 
+	 * Init Rigt side view
+	 * 
+	 * */
 	private void initQuestionPanel(int action, AssesmentProxy assesment) {
 		
 		//admin / institutional admin
@@ -367,10 +397,16 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 			@Override
 			public void onSuccess(List<PersonProxy> response) {
 				
+				
+				authorListBox.setValue(null);
+				authorListBox.setAcceptableValues(new ArrayList<PersonProxy>());
+				
+				
 				if(response.size() >0)
 				{
 					authorListBox.setValue(response.get(0));
 					authorListBox.setAcceptableValues(response);
+					authorListBox.setValue(response.get(0),true);
 					authorListBox.setVisible(true);
 				}
 			}
@@ -379,14 +415,14 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 	}
 
 	/**
-	 * Right side view
+	 * left side view
 	 * 
 	 * Assesment Tabs
 	 */
-	private void initAssementQuestionPanel() {
+	private void initAssementQuestionPanel(PersonProxy author) {
 		
 		
-		requests.assesmentQuestionRequest().findAssesmentQuestionsByAssesment(assesmentTabPanel.getActiveTab().getId()).with("question.rewiewer","question.autor","question.keywords","question.questEvent","question.comment","question.questionType").fire(new Receiver<List<AssesmentQuestionProxy>>() {
+		requests.assesmentQuestionRequest().findAssesmentQuestionsByAssesment(assesmentTabPanel.getActiveTab().getId(),author).with("question.rewiewer","question.autor","question.keywords","question.questEvent","question.comment","question.questionType").fire(new Receiver<List<AssesmentQuestionProxy>>() {
 
 			@Override
 			public void onSuccess(List<AssesmentQuestionProxy> response) {
@@ -476,8 +512,20 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 	@Override
 	public void tabClicked(AssesmentProxy assesment) {
 		 
+		if(personRightProxy.getIsInstitutionalAdmin() || personRightProxy.getIsAdmin())
+		 {
+			 populateAuthorListBox(assementQuestionPanel.getAuthorListBox(),assesment);
+		 }
+		 else
+		 {
+			 assementQuestionPanel.getAuthorListBox().removeFromParent();
+		 }
+		 
+		// initAssementQuestionPanel(assementQuestionPanel.getAuthorListBox().getValue());
+		
 		 initQuestionPanel(addQuestionsTabPanel.getActiveTab(), assesment);
-		 initAssementQuestionPanel();
+		 
+		 
 		
 	}
 
@@ -849,12 +897,12 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 		
 	}
 	
-	/*when user changed author drop down*/
+	/*called when admin changes author from drop down*/
 	
 	@Override
 	public void authorValueChanged(PersonProxy value) {
 		
-	//	findPastAssesmentQuestion(assesmentTabPanel.getActiveTab(),value);
+		initAssementQuestionPanel(value);
 	}
 
 }

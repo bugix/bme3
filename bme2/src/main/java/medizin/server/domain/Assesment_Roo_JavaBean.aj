@@ -20,6 +20,14 @@ privileged aspect Assesment_Roo_JavaBean {
         this.name = name;
     }
     
+    public Integer Assesment.getRememberBeforeClosing() {
+        return this.rememberBeforeClosing;
+    }
+    
+    public void Assesment.setRememberBeforeClosing(Integer rememberBeforeClosing) {
+        this.rememberBeforeClosing = rememberBeforeClosing;
+    }
+    
     public Date Assesment.getDateOfAssesment() {
         return this.dateOfAssesment;
     }

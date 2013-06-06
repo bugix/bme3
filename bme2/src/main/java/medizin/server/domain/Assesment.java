@@ -34,7 +34,11 @@ public class Assesment {
     @NotNull
     @Size(min = 5, max = 255)
     private String name;
-
+    
+    // remeber examiner before closing in days
+    @NotNull
+    private Integer rememberBeforeClosing;
+    
     @NotNull
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(style = "M-")

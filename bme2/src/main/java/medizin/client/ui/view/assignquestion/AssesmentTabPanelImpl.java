@@ -47,7 +47,7 @@ public class AssesmentTabPanelImpl extends TabBar implements AssesmentTabPanel {
 	public void addAssementTab(AssesmentProxy assesment) {
 		proxyMap.put(getTabCount(), assesment);
 		addTab(assesment.getName());
-		if (getTabCount()==1) selectTab(0);
+		//if (getTabCount()==1) selectTab(0);
 		
 	}
 
@@ -59,7 +59,7 @@ public class AssesmentTabPanelImpl extends TabBar implements AssesmentTabPanel {
 
 	@Override
 	public void setSelectedTab(int i) {
-		selectTab(i);
+		selectTab(i,true);
 		
 	}
 

@@ -43,6 +43,7 @@ privileged aspect AssesmentDataOnDemand_Roo_DataOnDemand {
         setName(obj, index);
         setPercentSameQuestion(obj, index);
         setPlace(obj, index);
+        setRememberBeforeClosing(obj, index);
         setRepeFor(obj, index);
         return obj;
     }
@@ -104,6 +105,11 @@ privileged aspect AssesmentDataOnDemand_Roo_DataOnDemand {
             place = place.substring(0, 100);
         }
         obj.setPlace(place);
+    }
+    
+    public void AssesmentDataOnDemand.setRememberBeforeClosing(Assesment obj, int index) {
+        Integer rememberBeforeClosing = new Integer(index);
+        obj.setRememberBeforeClosing(rememberBeforeClosing);
     }
     
     public void AssesmentDataOnDemand.setRepeFor(Assesment obj, int index) {

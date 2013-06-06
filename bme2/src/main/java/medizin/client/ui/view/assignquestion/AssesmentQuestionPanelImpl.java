@@ -1,12 +1,17 @@
 package medizin.client.ui.view.assignquestion;
 
+import medizin.client.proxy.PersonProxy;
 import medizin.client.ui.view.assignquestion.AssesmentQuestionPanel.Delegate;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.ValueListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -23,14 +28,40 @@ public class AssesmentQuestionPanelImpl extends Composite implements AssesmentQu
 	
 	@UiField
 	VerticalPanel assesmentQuestionDisplayPanel;
+	
+	@UiField(provided = true)
+	ValueListBox<PersonProxy> authorListBox=new ValueListBox<PersonProxy>(new AbstractRenderer<PersonProxy>() {
 
+		@Override
+		public String render(PersonProxy object) {
+			// TODO Auto-generated method stub
+			if(object!=null)
+				return object.getPrename() +" "+ object.getName();
+			else
+			{
+				return "";
+			}
+		}
+	});
+	
+	public ValueListBox<PersonProxy> getAuthorListBox() {
+		return authorListBox;
+	}
+	
 	public AssesmentQuestionPanelImpl() {
 		initWidget(uiBinder.createAndBindUi(this));
 //		assesmentQuestionDisplayPanel.setBorderWidth(1);
 //		assesmentQuestionDisplayPanel.setHeight("100px");
 //		assesmentQuestionDisplayPanel.setWidth("100px");
 		assesmentQuestionDisplayPanel.setSpacing(5);
-		
+		authorListBox.addValueChangeHandler(new ValueChangeHandler<PersonProxy>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<PersonProxy> event) {
+				delegate.authorValueChanged(event.getValue());
+				
+			}
+		});
 		 
 		
 	}

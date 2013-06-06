@@ -300,8 +300,10 @@ public class AssesmentQuestion {
      * Left side view of Assesment Question
      * @param id
      * @return
+     * 
+     * for admin / institutional admin author is not null. Author is selected by admin from author pull down
      */
-    public static List<AssesmentQuestion> findAssesmentQuestionsByAssesment(Long id){
+    public static List<AssesmentQuestion> findAssesmentQuestionsByAssesment(Long id,Person author){
 //        Boolean isAcceptedAdmin = true;
 //        Boolean isActive = true;
         Assesment assesment = Assesment.findAssesment(id);
@@ -323,9 +325,12 @@ public class AssesmentQuestion {
         		"WHERE assesmentauestion.assesment = :assesment    and assesmentauestion.question.questEvent.institution=:institution ";
         if(!(accessRights.getIsAdmin() || accessRights.getIsInstitutionalAdmin()))
         {
-        	query=query+" and assesmentauestion.isAssQuestionAdminProposal=false  and assesmentauestion.autor=:author";
+        	query=query+" and assesmentauestion.isAssQuestionAdminProposal=false  and assesmentauestion.autor=:author ";
         }
-        
+        else if(author!=null)
+        {
+        	query=query+"and autor=:author";
+        }
         
         TypedQuery<AssesmentQuestion> q = em.createQuery(query, AssesmentQuestion.class);
         
@@ -340,7 +345,10 @@ public class AssesmentQuestion {
         	
             q.setParameter("author", userLoggedIn);
         }
-        
+        else if(author!=null)
+        {
+        	q.setParameter("author", author);
+        }
         return q.getResultList();
     }
     

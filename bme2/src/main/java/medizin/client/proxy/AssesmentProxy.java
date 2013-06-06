@@ -18,6 +18,10 @@ public interface AssesmentProxy extends EntityProxy {
 
     abstract void setName(String name);
 
+    abstract Integer getRememberBeforeClosing();
+
+    abstract void setRememberBeforeClosing(Integer rememberBeforeClosing);
+
     abstract Date getDateOfAssesment();
 
     abstract void setDateOfAssesment(Date dateOfAssesment);
