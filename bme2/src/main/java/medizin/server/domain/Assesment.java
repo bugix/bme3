@@ -141,9 +141,10 @@ public class Assesment {
 	        		
 	        	}
 	
-	    		if(!flag)
+	    		if(!flag || questionSumPerPersons.size()==0)
 	    		{
 	    			assesments.remove(i);
+	    			i--;
 	    		}
 	        }
         }

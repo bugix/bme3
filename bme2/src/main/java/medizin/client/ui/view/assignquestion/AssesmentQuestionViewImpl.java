@@ -4,6 +4,7 @@ package medizin.client.ui.view.assignquestion;
 import medizin.client.proxy.AssesmentQuestionProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.ui.view.roo.CollectionRenderer;
+import medizin.shared.i18n.BmeConstants;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.SpanElement;
@@ -13,6 +14,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -25,7 +27,8 @@ public class AssesmentQuestionViewImpl extends Composite implements AssesmentQue
 	private Delegate delegate;
 	private AssesmentQuestionProxy assesmentQuestion;
 	
-
+	public BmeConstants constants = GWT.create(BmeConstants.class);
+	
 	private static QuestionViewImplUiBinder uiBinder = GWT
 	.create(QuestionViewImplUiBinder.class);
 
@@ -48,6 +51,14 @@ public class AssesmentQuestionViewImpl extends Composite implements AssesmentQue
 	@UiField
 	Label addToAssesment;
 	
+	//visible only to admin / institutional admin for proposed question only
+	@UiField
+	Button forceAcceptButton;
+	
+	public Button getForceAcceptButton() {
+		return forceAcceptButton;
+	}
+
 	@UiField
 	TableElement questionTable;
 	
@@ -120,7 +131,15 @@ public class AssesmentQuestionViewImpl extends Composite implements AssesmentQue
 		twistieClose.setVisible(false);
 		answers.setVisible(false);
 		questionTable.setClassName("questionTable-close");
+		forceAcceptButton.setText(constants.forceAccept());
 		
+		
+	}
+	
+	@UiHandler("forceAcceptButton")
+	public void forceAcceptButtonClicked(ClickEvent event)
+	{
+		delegate.forceAccept(this);
 	}
 	
 	@UiHandler("header")

@@ -98,7 +98,11 @@ border-bottom: 1px solid #AAAAAA;
 				<td width="100%"  class="{style.header}" valign="top">
 					<g:Label ui:field="header"></g:Label>
 				</td>
+				<td   valign="top">
+				    <g:Button ui:field="forceAcceptButton" visible="false">Force Accept</g:Button>
+				</td>
 				<td  class="{style.headerIcon}" valign="top">
+				    
 					<g:Label styleName="ui-icon ui-icon-closethick {style.fill}" ui:field="deleteFromAssesment"></g:Label>
 					<g:Label styleName="ui-icon ui-icon-plusthick {style.fill}" ui:field="addToAssesment"></g:Label>
 				</td>

@@ -1,7 +1,7 @@
 package medizin.client.ui.view.assignquestion;
 
 import medizin.client.proxy.PersonProxy;
-import medizin.client.ui.view.assignquestion.AssesmentQuestionPanel.Delegate;
+import medizin.shared.i18n.BmeConstants;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -9,7 +9,7 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.ValueListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -23,12 +23,21 @@ public class AssesmentQuestionPanelImpl extends Composite implements AssesmentQu
 	interface AssesmentQuestionPanelImplUiBinder extends
 			UiBinder<Widget, AssesmentQuestionPanelImpl> {
 	}
-
+	
+	private BmeConstants constants=GWT.create(BmeConstants.class);
+	
 	private Delegate delegate;
 	
 	@UiField
 	VerticalPanel assesmentQuestionDisplayPanel;
 	
+	@UiField
+	Button sendMail;
+	
+	public Button getSendMail() {
+		return sendMail;
+	}
+
 	@UiField(provided = true)
 	ValueListBox<PersonProxy> authorListBox=new ValueListBox<PersonProxy>(new AbstractRenderer<PersonProxy>() {
 
@@ -54,6 +63,7 @@ public class AssesmentQuestionPanelImpl extends Composite implements AssesmentQu
 //		assesmentQuestionDisplayPanel.setHeight("100px");
 //		assesmentQuestionDisplayPanel.setWidth("100px");
 		assesmentQuestionDisplayPanel.setSpacing(5);
+		sendMail.setText(constants.sendMail());
 		authorListBox.addValueChangeHandler(new ValueChangeHandler<PersonProxy>() {
 			
 			@Override

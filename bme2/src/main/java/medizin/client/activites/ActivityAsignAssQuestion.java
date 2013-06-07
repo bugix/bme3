@@ -1,7 +1,9 @@
 package medizin.client.activites;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -67,6 +69,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 	private AssesmentQuestionPanel assementQuestionPanel;
 	private AssesmentTabPanel assesmentTabPanel;
 	private QuestionPanel questionPanel;
+	final private HashMap<AssesmentProxy, List<PersonProxy>> examAutorListMap=new HashMap<AssesmentProxy, List<PersonProxy>>();
 
 
 	@Inject
@@ -214,7 +217,18 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 			action++;
 			
 			//populate author list box
-			populateAuthorListBox(questionPanel.getAuthorListBox(),assesment);
+			
+			if(examAutorListMap.get(assesment) ==null)				
+				populateAuthorListBox(questionPanel.getAuthorListBox(),assesment);
+			else
+			{
+				if(examAutorListMap.get(assesment).size()>0)
+				questionPanel.getAuthorListBox().setValue(examAutorListMap.get(assesment).get(0));
+				else
+					questionPanel.getAuthorListBox().setValue(null);
+				
+				questionPanel.getAuthorListBox().setAcceptableValues(examAutorListMap.get(assesment));
+			}
 		}
 		else
 		{
@@ -384,31 +398,44 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 
 	/*
 	 * 
-	 * Past Tab
+	 * Common to Past Tab and Assesment Tab (left side)
 	 * 
 	 * Author pull down for admin / institutional Admin
 	 * 
 	 * Show Author / examiner assigned in particular assessment
 	 * */
-	private void populateAuthorListBox(final ValueListBox<PersonProxy> authorListBox, AssesmentProxy assesment) {
+	private void populateAuthorListBox(final ValueListBox<PersonProxy> authorListBox,final AssesmentProxy assesment) {
 		
 		requests.assesmentQuestionRequest().findAuthorListByAssesment(assesment).fire(new Receiver<List<PersonProxy>>() {
 
 			@Override
-			public void onSuccess(List<PersonProxy> response) {
+			public void onSuccess( List<PersonProxy> response) {
 				
 				
-				authorListBox.setValue(null);
-				authorListBox.setAcceptableValues(new ArrayList<PersonProxy>());
+				//authorListBox.setValue(null);
+				//authorListBox.setAcceptableValues(new ArrayList<PersonProxy>());
 				
 				
+				//if(response.size() >0)
+			//	{
 				if(response.size() >0)
 				{
 					authorListBox.setValue(response.get(0));
-					authorListBox.setAcceptableValues(response);
-					authorListBox.setValue(response.get(0),true);
-					authorListBox.setVisible(true);
+					initAssementQuestionPanel(response.get(0));
 				}
+				else
+				{
+					authorListBox.setValue(null);
+					initAssementQuestionPanel(null);
+				}
+				
+					authorListBox.setAcceptableValues(response);
+					//authorListBox.setValue(response.get(0),true);
+					authorListBox.setVisible(true);
+				//}
+				
+				
+				examAutorListMap.put(assesment, response);
 			}
 		});
 		
@@ -430,7 +457,17 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 				Iterator<AssesmentQuestionProxy> iter = response.iterator();
 				while(iter.hasNext()){
 					AssesmentQuestionView question = new AssesmentQuestionViewImpl();
+					
+					
 					question.setProxy(iter.next(), false);
+					if((personRightProxy.getIsInstitutionalAdmin() || personRightProxy.getIsAdmin()) && question.getProxy().getIsAssQuestionAdminProposal())
+					{
+						question.getForceAcceptButton().setVisible(true);
+					}
+					else
+					{
+						question.getForceAcceptButton().removeFromParent();
+					}
 					question.setDelegate(ActivityAsignAssQuestion.this);
 					//dragController.makeDraggable(question.asWidget(), question.getDragControler());
 					assementQuestionPanel.addAssesmentQuestion(question);
@@ -514,15 +551,41 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 		 
 		if(personRightProxy.getIsInstitutionalAdmin() || personRightProxy.getIsAdmin())
 		 {
-			 populateAuthorListBox(assementQuestionPanel.getAuthorListBox(),assesment);
+			if(examAutorListMap.get(assesment) ==null)	
+				populateAuthorListBox(assementQuestionPanel.getAuthorListBox(),assesment);
+			else
+			{
+				if(examAutorListMap.get(assesment).size()>0)
+					assementQuestionPanel.getAuthorListBox().setValue(examAutorListMap.get(assesment).get(0),true);
+				else
+					assementQuestionPanel.getAuthorListBox().setValue(null,true);
+				
+				assementQuestionPanel.getAuthorListBox().setAcceptableValues(examAutorListMap.get(assesment));
+			}
+			
 		 }
-		 else
+		 else // not author pull down for examiner
 		 {
 			 assementQuestionPanel.getAuthorListBox().removeFromParent();
+			 initAssementQuestionPanel(null);
 		 }
 		 
 		// initAssementQuestionPanel(assementQuestionPanel.getAuthorListBox().getValue());
 		
+		//send mail button is visible to admin / institutional admin few days(Assesment.rememberBeforeClosing) before closing date of assesment
+		
+		Date closingDate=assesment.getDateClosed();
+		int dayToRemind=closingDate.getDate()-assesment.getRememberBeforeClosing();
+		Date currentDay=new Date();
+		
+		if(currentDay.getDate()==dayToRemind && (personRightProxy.getIsInstitutionalAdmin() || personRightProxy.getIsAdmin()))
+		{
+			assementQuestionPanel.getSendMail().setVisible(true);
+		}
+		else
+		{
+			assementQuestionPanel.getSendMail().removeFromParent();
+		}
 		 initQuestionPanel(addQuestionsTabPanel.getActiveTab(), assesment);
 		 
 		 
@@ -903,6 +966,27 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 	public void authorValueChanged(PersonProxy value) {
 		
 		initAssementQuestionPanel(value);
+	}
+
+	@Override
+	public void forceAccept(final AssesmentQuestionViewImpl assesmentQuestionViewImpl) {
+		AssesmentQuestionProxy assesmentQuestion=assesmentQuestionViewImpl.getProxy();
+		AssesmentQuestionRequest request=requests.assesmentQuestionRequest();
+		assesmentQuestion=request.edit(assesmentQuestion);
+		assesmentQuestion.setIsForcedByAdmin(true);
+		assesmentQuestion.setIsAssQuestionAdminProposal(false);
+		
+		request.persist().using(assesmentQuestion).fire(new Receiver<Void>() {
+
+			@Override
+			public void onSuccess(Void response) {
+				
+				assesmentQuestionViewImpl.getForceAcceptButton().removeFromParent();				
+			}
+		});
+		
+		
+		
 	}
 
 }

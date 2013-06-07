@@ -301,7 +301,10 @@ public class AssesmentQuestion {
      * @param id
      * @return
      * 
-     * for admin / institutional admin author is not null. Author is selected by admin from author pull down
+     * for admin / institutional admin : Author is selected by admin from author pull down.
+     * 
+     * for examiner : author argument is null. Show assessment question where autor=user logged in.
+     * retrieve all assesment question except proposed. Because proposed assesment question will be shown in proposed tab.
      */
     public static List<AssesmentQuestion> findAssesmentQuestionsByAssesment(Long id,Person author){
 //        Boolean isAcceptedAdmin = true;
@@ -323,14 +326,16 @@ public class AssesmentQuestion {
         
         String query="SELECT assesmentauestion FROM AssesmentQuestion AS assesmentauestion " +
         		"WHERE assesmentauestion.assesment = :assesment    and assesmentauestion.question.questEvent.institution=:institution ";
-        if(!(accessRights.getIsAdmin() || accessRights.getIsInstitutionalAdmin()))
+        if(!(accessRights.getIsAdmin() || accessRights.getIsInstitutionalAdmin())) //examiner
         {
-        	query=query+" and assesmentauestion.isAssQuestionAdminProposal=false  and assesmentauestion.autor=:author ";
+        	query=query+" and (assesmentauestion.isAssQuestionAdminProposal=false Or assesmentauestion.isForcedByAdmin=true Or assesmentauestion.isAssQuestionAcceptedAutor=true Or assesmentauestion.isAssQuestionAcceptedAdmin=true)  and assesmentauestion.autor=:author ";
         }
-        else if(author!=null)
+        else if(author!=null) // for admin / institutional admin
         {
         	query=query+"and autor=:author";
         }
+        
+       
         
         TypedQuery<AssesmentQuestion> q = em.createQuery(query, AssesmentQuestion.class);
         
@@ -340,14 +345,14 @@ public class AssesmentQuestion {
         q.setParameter("assesment", assesment);
         q.setParameter("institution", institution);
       
-        if(!(accessRights.getIsAdmin() || accessRights.getIsInstitutionalAdmin()))
+        if(!(accessRights.getIsAdmin() || accessRights.getIsInstitutionalAdmin())) //examiner
         {
         	
             q.setParameter("author", userLoggedIn);
         }
         else if(author!=null)
         {
-        	q.setParameter("author", author);
+        	q.setParameter("author", author); // selected author by admin / institutional admin
         }
         return q.getResultList();
     }

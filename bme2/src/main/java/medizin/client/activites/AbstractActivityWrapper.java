@@ -75,7 +75,10 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 				public void onSuccess(PersonProxy response) {
 					userLoggedIn = response;
 					newStart(panel, eventBus);
-				}				
+					
+				}
+				
+				
 
 			});
 			
@@ -88,6 +91,8 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 				}
 
 			});
+			
+			
 	}
 	
 	/**

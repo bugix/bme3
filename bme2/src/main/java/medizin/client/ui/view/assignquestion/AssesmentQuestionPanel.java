@@ -3,6 +3,7 @@ package medizin.client.ui.view.assignquestion;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.ui.view.assignquestion.QuestionPanel.Delegate;
 
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.ValueListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -24,4 +25,6 @@ public interface AssesmentQuestionPanel extends IsWidget {
 	VerticalPanel getAssesmentQuestionDisplayPanel();
 	
 	public ValueListBox<PersonProxy> getAuthorListBox();
+	
+	public Button getSendMail();
 }

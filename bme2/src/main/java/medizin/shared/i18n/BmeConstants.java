@@ -544,4 +544,8 @@ public interface BmeConstants extends Constants , ConstantsWithLookup {
 	public String importStudBtn();
 
 	public String rememberExaminerBeforeClosing();
+	
+	public String forceAccept();
+	
+	public String sendMail();
 }
