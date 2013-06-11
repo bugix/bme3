@@ -45,5 +45,7 @@ public final class SharedConstant {
 	public static String[] SOUND_EXTENSIONS = {"mp3"};
 	
 	public static String[] VIDEO_EXTENSIONS= {"WebM","ogv","mp4"};
+	
+	public static  String MAIL_TEMPLATE="/application/gwt/unibas/mailTemplate/defaultTemplate.txt";
 
 }

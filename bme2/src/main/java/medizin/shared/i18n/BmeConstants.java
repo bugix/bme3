@@ -548,4 +548,32 @@ public interface BmeConstants extends Constants , ConstantsWithLookup {
 	public String forceAccept();
 	
 	public String sendMail();
+
+	public String mailTemplate();
+
+	public String restoreTemplate();
+
+	public String sendMailPlease();
+
+	public String mailVarAssesment();
+
+	public String mailVarTo();
+
+	public String mailVarFrom();
+
+	public String mailAssesment();
+
+	public String mailToName();
+
+	public String mailFromName();
+
+	public String mailAssesmentFormatHead();
+	
+	public String mailSubject();
+
+	public String sendMailSuccess();
+	
+	public String sendMailFailure();
+	
+	public String failure();
 }

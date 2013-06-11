@@ -1,0 +1,15 @@
+<div>
+
+Dear [toName],
+<p>
+You have following assesments:
+
+<br/><br/>
+	[assesment]
+</p>
+
+<br/>
+Regards,<br/>
+[fromName]
+
+</div>

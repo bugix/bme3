@@ -1,14 +1,20 @@
 package medizin.client.ui.view.assignquestion;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import medizin.client.proxy.PersonProxy;
 import medizin.shared.i18n.BmeConstants;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.ValueListBox;
@@ -28,6 +34,15 @@ public class AssesmentQuestionPanelImpl extends Composite implements AssesmentQu
 	
 	private Delegate delegate;
 	
+	private SendMailPopupViewImpl sendMailPopupViewImpl=null;
+	
+	
+	
+	public SendMailPopupViewImpl getSendMailPopupViewImpl() {
+		return sendMailPopupViewImpl;
+	}
+
+
 	@UiField
 	VerticalPanel assesmentQuestionDisplayPanel;
 	
@@ -98,6 +113,31 @@ public class AssesmentQuestionPanelImpl extends Composite implements AssesmentQu
 	public VerticalPanel getAssesmentQuestionDisplayPanel() {
 		
 		return assesmentQuestionDisplayPanel;
+	}
+	
+	@UiHandler("sendMail")
+	public void showSendMailPopup(ClickEvent event)
+	{
+		if(sendMailPopupViewImpl==null)
+		{
+			sendMailPopupViewImpl=new SendMailPopupViewImpl();
+			
+			sendMailPopupViewImpl.setAnimationEnabled(true);
+			sendMailPopupViewImpl.center();
+			delegate.loadTemplate();
+			
+			sendMailPopupViewImpl.getSendMailButton().addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					
+					delegate.sendMail(sendMailPopupViewImpl.getMessageContent());
+					
+				}
+			});
+		}
+		sendMailPopupViewImpl.show();
+		
 	}
 
 }

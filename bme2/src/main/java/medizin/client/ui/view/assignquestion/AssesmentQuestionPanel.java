@@ -15,6 +15,10 @@ public interface AssesmentQuestionPanel extends IsWidget {
 	interface Delegate {
 
 		void authorValueChanged(PersonProxy value);
+
+		void loadTemplate();
+
+		void sendMail(String messageContent);
 		
 	}
 
@@ -27,4 +31,6 @@ public interface AssesmentQuestionPanel extends IsWidget {
 	public ValueListBox<PersonProxy> getAuthorListBox();
 	
 	public Button getSendMail();
+	
+	public SendMailPopupViewImpl getSendMailPopupViewImpl();
 }

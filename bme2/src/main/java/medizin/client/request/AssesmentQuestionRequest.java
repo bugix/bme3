@@ -42,10 +42,14 @@ public interface AssesmentQuestionRequest extends AssesmentQuestionRequest_Roo_G
 	
 	abstract Request <List<AssesmentQuestionProxy>> findAssesmentQuestionsByQuestionEventAssIdQuestType(java.lang.Long questEventId, java.lang.Long assesmentId, List<Long> questionTypesId);
 	
+	abstract Request<String> loadTemplate();
 //	QuestionTypeCountPerExamRequestNonRoo questionTypeCountPerExamRequest();
 //	QuestionSumPerPersonRequestNonRoo questionSumPerPersonRequest();
 // AssesmentRequestNonRoo assesmentRequest();
 //	AssesmentQuestionRequestNonRoo assesmentQuestionRequest();
+
+	abstract Request<Boolean> sendMail(List<PersonProxy> list, String messageContent,
+			String mailSubject, AssesmentProxy activeTab);
 
 
 }

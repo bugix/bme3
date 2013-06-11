@@ -1,5 +1,7 @@
 package medizin.server.domain;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -22,20 +24,25 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.SetJoin;
 import javax.persistence.criteria.Subquery;
-import javax.persistence.metamodel.PluralAttribute;
 import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
 
+import medizin.server.mail.EmailServiceImpl;
 import medizin.shared.Status;
 import medizin.shared.utils.PersonAccessRight;
+import medizin.shared.utils.SharedConstant;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.mortbay.log.Log;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.google.web.bindery.requestfactory.server.RequestFactoryServlet;
 
@@ -619,6 +626,53 @@ public class AssesmentQuestion {
 		TypedQuery<AssesmentQuestion> query = entityManager().createQuery(cq);
 	 
 		return query.getResultList();
+	}
+	
+	/*load mail template*/
+	public static String loadTemplate()
+	{
+		String filePath=RequestFactoryServlet.getThreadLocalServletContext().getRealPath(SharedConstant.MAIL_TEMPLATE);
+		File file=new File(filePath);
+		try{
+		return FileUtils.readFileToString(file);
+		}catch(IOException e)
+		{
+			return "";
+		}
+	}
+	
+	/*Send Mail*/
+	public static Boolean sendMail(List<Person> toExaminerList, String messageContent,	String mailSubject, Assesment assesment)
+	{
+		try
+		{
+		Person userLoggedIn=Person.myGetLoggedPerson();
+		String fromAddress=userLoggedIn.getEmail();
+		String toAddresses[]=new String[toExaminerList.size()];
+		
+
+		messageContent=messageContent.replace("[fromName]", userLoggedIn.getPrename() +" "+userLoggedIn.getName());
+		messageContent=messageContent.replace("[assesment]", assesment.getName());
+		EmailServiceImpl emailService=new EmailServiceImpl();
+		WebApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(RequestFactoryServlet.getThreadLocalServletContext());
+		((EmailServiceImpl)emailService).setSender(applicationContext.getBean(JavaMailSenderImpl.class));
+		
+		for(int i=0;i<toExaminerList.size();i++)
+		{
+			
+			Person examiner=toExaminerList.get(i);
+			toAddresses[i]=examiner.getEmail();
+			String newMessage=messageContent.replace("[toName]", examiner.getPrename()+" "+examiner.getName());
+			emailService.sendMail(new String[]{examiner.getEmail()}, fromAddress, mailSubject, newMessage);
+		}
+		
+		return true;
+		}
+		catch(Exception e)
+		{
+			Log.info("sendMail exception : " + e.getMessage());
+			return false;
+		}
 	}
 	
 	/* 

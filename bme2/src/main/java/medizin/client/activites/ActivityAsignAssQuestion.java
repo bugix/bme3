@@ -1,7 +1,5 @@
 package medizin.client.activites;
 
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -575,10 +573,13 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 		//send mail button is visible to admin / institutional admin few days(Assesment.rememberBeforeClosing) before closing date of assesment
 		
 		Date closingDate=assesment.getDateClosed();
-		int dayToRemind=closingDate.getDate()-assesment.getRememberBeforeClosing();
+		Date closingDate1=new Date();
+		closingDate1.setDate(closingDate.getDate());
+		closingDate1.setYear(closingDate1.getYear());
+		addDays(closingDate1, assesment.getRememberBeforeClosing());
 		Date currentDay=new Date();
 		
-		if(currentDay.getDate()==dayToRemind && (personRightProxy.getIsInstitutionalAdmin() || personRightProxy.getIsAdmin()))
+		if((currentDay.equals(closingDate1) || currentDay.before(closingDate1)) && (personRightProxy.getIsInstitutionalAdmin() || personRightProxy.getIsAdmin()))
 		{
 			assementQuestionPanel.getSendMail().setVisible(true);
 		}
@@ -590,6 +591,11 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 		 
 		 
 		
+	}
+	
+	public static void addDays(Date d, int days)
+	{
+		d.setTime( d.getTime() + days*1000*60*60*24 );
 	}
 
 	@Override
@@ -986,6 +992,44 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 		});
 		
 		
+		
+	}
+
+	@Override
+	public void loadTemplate() {
+		
+		requests.assesmentQuestionRequest().loadTemplate().fire(new Receiver<String>() {
+
+			@Override
+			public void onSuccess(String response) {
+				assementQuestionPanel.getSendMailPopupViewImpl().setMessageContent(response);
+				
+			}
+		});
+		
+		
+	}
+	
+	/*Send mail to all examiner assigned to assesment*/
+	@Override
+	public void sendMail(String messageContent) {
+		requests.assesmentQuestionRequest().sendMail(examAutorListMap.get(assesmentTabPanel.getActiveTab()),messageContent,constants.mailSubject(),assesmentTabPanel.getActiveTab()).fire(new Receiver<Boolean>() {
+
+			@Override
+			public void onSuccess(Boolean response) {
+				
+				if(response)
+				{
+					ConfirmationDialogBox.showOkDialogBox(constants.success(), constants.sendMailSuccess());
+				}
+				else
+				{
+					ConfirmationDialogBox.showOkDialogBox(constants.failure(), constants.sendMailFailure());
+				}
+				assementQuestionPanel.getSendMailPopupViewImpl().hide();
+				
+			}
+		});
 		
 	}
 
