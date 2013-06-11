@@ -1,5 +1,6 @@
 package medizin.client.ui.view.assignquestion;
 
+import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
@@ -21,6 +22,8 @@ public interface AssesmentQuestionView extends IsWidget {
 			void twistieOpenAssQuestionClicked(AssesmentQuestionView questionView, boolean isInAssement);
 			void addAssQuestionClicked();
 			void forceAccept(AssesmentQuestionViewImpl assesmentQuestionViewImpl);
+			void addToAssesmentButtonClicked(
+					AssesmentQuestionViewImpl assesmentQuestionViewImpl);
 		}
 
 	    void setDelegate(Delegate delegate);
@@ -36,5 +39,7 @@ public interface AssesmentQuestionView extends IsWidget {
 		void setOpen();
 		
 		public Button getForceAcceptButton();
+		
+		public TableElement getQuestionTable();
 
 }

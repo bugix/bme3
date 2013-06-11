@@ -90,6 +90,8 @@ public class Assesment {
      * 
      * Find Assessment
      * 
+     * Left side
+     * 
      * For Admin and Institutional Admin : Open Assessment between  start date and dateOfAssesment
      * 
      * For Examiner :  Open Assessment between  start date and dateClosed , and Assessment for which examiner is assigned

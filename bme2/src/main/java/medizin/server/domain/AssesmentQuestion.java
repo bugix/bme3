@@ -412,6 +412,8 @@ public class AssesmentQuestion {
     	
     	AssesmentQuestion assesmentQuestionToCopyFrom = AssesmentQuestion.findAssesmentQuestion(assementQuestionId);
     	
+    	
+    	
     	if(!assesmentQuestionToCopyFrom.getIsAssQuestionAdminProposal()) //past Question tab : copy assesment question and change status to proposed if admin
     	{
     		
@@ -434,16 +436,16 @@ public class AssesmentQuestion {
     	}
     	assesmentQuestionNew.setAnswersToAssQuestion(answersToAssementCopied);
     	assesmentQuestionNew.setAssesment(assesment);
-    	
+    	Person userLoggedIn=Person.myGetLoggedPerson();
     	if(selectedAuthor!=null)
     	{
     		assesmentQuestionNew.setAutor(selectedAuthor);
     	}
     	else
-    		assesmentQuestionNew.setAutor(assesmentQuestionToCopyFrom.getAutor());
+    		assesmentQuestionNew.setAutor(userLoggedIn);
     	assesmentQuestionNew.setDateAdded(new Date());
     	
-    	Person userLoggedIn=Person.myGetLoggedPerson();
+    	
     	PersonAccessRight accessRights=Person.getLoggedPersonAccessRights();
     	
     	/*

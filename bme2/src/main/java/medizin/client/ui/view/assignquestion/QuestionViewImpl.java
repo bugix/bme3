@@ -171,5 +171,11 @@ public class QuestionViewImpl extends Composite implements QuestionView {
 		return answers;
 		
 	}
+	
+	@UiHandler("addToAssesment")
+	public void addToAssesmentClicked(ClickEvent event)
+	{
+		delegate.addNewQuestionToAssesment(this);
+	}
 
 }

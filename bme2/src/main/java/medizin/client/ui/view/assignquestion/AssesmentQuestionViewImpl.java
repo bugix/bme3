@@ -62,7 +62,11 @@ public class AssesmentQuestionViewImpl extends Composite implements AssesmentQue
 	@UiField
 	TableElement questionTable;
 	
-	  @UiField
+	  public TableElement getQuestionTable() {
+		return questionTable;
+	}
+
+	@UiField
 	    SpanElement rewiewer;
 
 	    @UiField
@@ -109,8 +113,8 @@ public class AssesmentQuestionViewImpl extends Composite implements AssesmentQue
 		twistieClose.setVisible(false);	
 		answersVisible=false;	
 		detailsTablePanel.setVisible(false);
-		questionTable.setClassName("questionTable-close");
-
+		questionTable.addClassName("questionTable-close");
+		questionTable.removeClassName("questionTable-open");
 	}
 
 	private void open() {
@@ -123,7 +127,8 @@ public class AssesmentQuestionViewImpl extends Composite implements AssesmentQue
 		twistieClose.setVisible(true);
 		answersVisible=true;
 		detailsTablePanel.setVisible(true);
-		questionTable.setClassName("questionTable-open");
+		questionTable.addClassName("questionTable-open");
+		questionTable.removeClassName("questionTable-close");
 	}
 
 	public AssesmentQuestionViewImpl() {
@@ -213,6 +218,12 @@ public class AssesmentQuestionViewImpl extends Composite implements AssesmentQue
 	public void setOpen() {
 		open();
 		
+	}
+	
+	@UiHandler("addToAssesment")
+	public void addToAssesmentButtonClicked(ClickEvent event)
+	{
+		delegate.addToAssesmentButtonClicked(this);
 	}
 
 }

@@ -19,6 +19,7 @@ public interface QuestionView extends IsWidget {
 		interface Delegate {
 			void twistieOpenQuestionClicked(QuestionView questionView);
 			void addQuestionClicked();
+			void addNewQuestionToAssesment(QuestionViewImpl questionViewImpl);
 		}
 
 	    void setDelegate(Delegate delegate);

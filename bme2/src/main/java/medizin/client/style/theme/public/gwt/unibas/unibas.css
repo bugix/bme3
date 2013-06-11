@@ -4404,4 +4404,20 @@ background: url("images/colorpicker.png");
 	max-width : 500px !important;
 	overflow: hidden !important;
 	text-overflow: ellipsis !important;
-}	
+}
+
+/*Color code for assesment question*/
+.force-accept{
+	background-color: #00FF00 !important;
+	background-image:none;
+}
+
+.accept{
+	background-color: #81F781 !important;
+	background-image:none;
+}
+
+.not-accept{
+	background-color: #FA5858 !important;
+	background-image:none;
+}

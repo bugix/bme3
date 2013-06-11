@@ -25,6 +25,7 @@ import medizin.client.ui.view.assignquestion.AnswerViewImpl;
 import medizin.client.ui.view.assignquestion.AsignAssQuestionView;
 import medizin.client.ui.view.assignquestion.AsignAssQuestionViewImpl;
 import medizin.client.ui.view.assignquestion.AssesmentQuestionPanel;
+import medizin.client.ui.view.assignquestion.AssesmentQuestionPanelImpl;
 import medizin.client.ui.view.assignquestion.AssesmentQuestionView;
 import medizin.client.ui.view.assignquestion.AssesmentQuestionViewImpl;
 import medizin.client.ui.view.assignquestion.AssesmentTabPanel;
@@ -262,6 +263,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 						AssesmentQuestionView assesmentQuestion = new AssesmentQuestionViewImpl();
 						assesmentQuestion.setProxy(iter.next(), true);
 						assesmentQuestion.setDelegate(ActivityAsignAssQuestion.this);
+						
 						dragController.makeDraggable(assesmentQuestion.asWidget(), assesmentQuestion.getDragControler());
 						questionPanel.addAssesmentQuestion(assesmentQuestion);
 					}
@@ -456,16 +458,11 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 				while(iter.hasNext()){
 					AssesmentQuestionView question = new AssesmentQuestionViewImpl();
 					
-					
 					question.setProxy(iter.next(), false);
-					if((personRightProxy.getIsInstitutionalAdmin() || personRightProxy.getIsAdmin()) && question.getProxy().getIsAssQuestionAdminProposal())
-					{
-						question.getForceAcceptButton().setVisible(true);
-					}
-					else
-					{
-						question.getForceAcceptButton().removeFromParent();
-					}
+					changeAssesmentQuestionColor(question);
+					
+					acceptOrForceAcceptButtonVisisble(question);
+					
 					question.setDelegate(ActivityAsignAssQuestion.this);
 					//dragController.makeDraggable(question.asWidget(), question.getDragControler());
 					assementQuestionPanel.addAssesmentQuestion(question);
@@ -604,53 +601,12 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 		   Log.debug("onDragEnd: " + event);
 		   if (event.getContext().finalDropController != null) {
 			   Log.info(event.getSource().getClass().toString());
-			   if(event.getSource() instanceof AssesmentQuestionView)
+			   if(event.getSource() instanceof AssesmentQuestionView) // from proposed tab to left side by examiner / past to left side by examiner & admin. both logic in same method
 			   {
 				   final AssesmentQuestionView assesmentQuestionViewAktiv = ((AssesmentQuestionView)event.getSource());
 				   Log.debug("Is AssesmentQuestionView");
 				   
-				   PersonProxy selectedAuthor=null;
-				   
-				   if(personRightProxy.getIsInstitutionalAdmin() || personRightProxy.getIsAdmin())
-				   {
-					   selectedAuthor=questionPanel.getAuthorListBox().getValue();
-				   }
-				   
-				   requests.assesmentQuestionRequest().copyAssesmentQuestion(assesmentQuestionViewAktiv.getProxy().getId(), assesmentTabPanel.getActiveTab().getId(),selectedAuthor).with("question.rewiewer","question.autor","question.keywords","question.questEvent","question.comment","question.questionType").fire(new Receiver<AssesmentQuestionProxy>() {
-
-						@Override
-						public void onSuccess(AssesmentQuestionProxy response) {
-							 Log.debug("sucesfull copied");
-							assesmentQuestionViewAktiv.setProxy(response, false);
-							
-							
-						}
-						
-				           @Override
-							public void onFailure(ServerFailure error) {
-									Log.warn(McAppConstant.ERROR_WHILE_DELETE + " in Institution:Event -" + error.getMessage());
-									if(error.getMessage().contains("ConstraintViolationException")){
-										Log.debug("Fehlen beim erstellen: Doppelter name");
-										// TODO mcAppFactory.getErrorPanel().setErrorMessage(McAppConstant.EVENT_IS_REFERENCED);
-									}
-									
-								
-							}
-							@Override
-							public void onViolation(Set<Violation> errors) {
-								Iterator<Violation> iter = errors.iterator();
-								String message = "";
-								while(iter.hasNext()){
-									message += iter.next().getMessage() + "<br>";
-								}
-								Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Event -" + message);
-								
-								ErrorPanel erorPanel = new ErrorPanel();
-			        	  erorPanel.setWarnMessage(message);
-
-								
-							}
-					});
+				   assignQuestionToAssesment(assesmentQuestionViewAktiv,false);
 				  
 				   
 				   
@@ -700,151 +656,8 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 			   if(event.getSource() instanceof QuestionView)
 			   {
 				   final QuestionView questionViewAktiv = ((QuestionView)event.getSource());
-				   Iterator<Widget> iter = assementQuestionPanel.getAssesmentQuestionDisplayPanel().iterator();
-				   while (iter.hasNext()){
-					   Widget wid = iter.next();
-					   if (wid instanceof AssesmentQuestionView){
-						   if (((AssesmentQuestionView) wid).getProxy().getQuestion().getId() == questionViewAktiv.getProxy().getId()){
-							   //Log.error("Keine zwei gleichen Fragen!");
-							   ErrorPanel erPan = new ErrorPanel();
-							   erPan.setErrorMessage("Keine zwei gleichen Fragen pro Prüfung!");
-							   throw new VetoDragException();
-						   }
-					   }
-				   }
-				   
-				   AssesmentQuestionRequest assesmentQuestionRequest = requests.assesmentQuestionRequest();
-				   //AnswerToAssQuestionRequest answerToAssQuestionRequest = requests.answerToAssQuestionRequest();
-				   Iterator<Widget> answerPanelIterator = questionViewAktiv.getAnswerPanel().iterator();
-				   
-				   AssesmentQuestionProxy assQuestion = assesmentQuestionRequest.create(AssesmentQuestionProxy.class);
-				   assQuestion.setAssesment(assesmentTabPanel.getActiveTab());
-				   assQuestion.setDateAdded(new Date());
 				  
-				  /* assQuestion.setIsAssQuestionAcceptedAdmin(false);
-				   assQuestion.setIsAssQuestionAcceptedAutor(true); //If is Propolsal set false
-				   assQuestion.setIsAssQuestionAcceptedRewiever(false);
-				   assQuestion.setIsAssQuestionAdminProposal(false); //If is Propolsal set true
-*/				   
-				   
-			    	/*
-			    	 * if person is both admin and author
-			    	 * */
-/*			    	if(questionViewAktiv.getProxy().getAutor().equals(userLoggedIn) && (personRightProxy.getIsInstitutionalAdmin() || personRightProxy.getIsAdmin() ))
-			    	{
-			    		assQuestion.setIsAssQuestionAcceptedAdmin(true);
-			    		assQuestion.setIsAssQuestionAcceptedAutor(false);
-			    		assQuestion.setIsAssQuestionAcceptedRewiever(false);
-			    		assQuestion.setIsForcedByAdmin(false);
-			        	assQuestion.setIsAssQuestionAdminProposal(false);
-			    	}
-			    	else */if((personRightProxy.getIsInstitutionalAdmin() || personRightProxy.getIsAdmin() )) //admin
-			    	{
-			    		assQuestion.setIsAssQuestionAcceptedAdmin(false);
-			    		assQuestion.setIsAssQuestionAcceptedAutor(false);
-			        	assQuestion.setIsAssQuestionAcceptedRewiever(false);
-			        	assQuestion.setIsForcedByAdmin(false);
-			        	assQuestion.setIsAssQuestionAdminProposal(true);
-			    	}
-			    	else //author / examiner
-			    	{
-			    		assQuestion.setIsAssQuestionAcceptedAdmin(false);
-			    		assQuestion.setIsAssQuestionAcceptedAutor(true);
-			    		assQuestion.setIsAssQuestionAcceptedRewiever(false);
-			    		assQuestion.setIsForcedByAdmin(false);
-			    		assQuestion.setIsAssQuestionAdminProposal(false);
-			    	}
-				   
-				   
-				 /*  if(personRightProxy.getIsAdmin() || personRightProxy.getIsInstitutionalAdmin()) //Proposed By Admin
-				   {
-					   assQuestion.setIsAssQuestionAcceptedAdmin(false);
-					   assQuestion.setIsAssQuestionAcceptedAutor(false); //If is Propolsal set false
-					   assQuestion.setIsAssQuestionAcceptedRewiever(false);
-					   assQuestion.setIsAssQuestionAdminProposal(true); //If is Propolsal set true
-					   assQuestion.setIsForcedByAdmin(false);
-				   }
-				   else //For Examiner
-				   {
-					   assQuestion.setIsAssQuestionAcceptedAdmin(false);
-					   assQuestion.setIsAssQuestionAcceptedAutor(true); //If is Propolsal set false
-					   assQuestion.setIsAssQuestionAcceptedRewiever(false);
-					   assQuestion.setIsAssQuestionAdminProposal(false); //If is Propolsal set true
-					   assQuestion.setIsForcedByAdmin(false);
-				   }
-				   */
-				   assQuestion.setQuestion(questionViewAktiv.getProxy());
-				   assQuestion.setRewiewer(questionViewAktiv.getProxy().getRewiewer());
-				   
-				   PersonProxy author=questionPanel.getAuthorListBox().getValue();
-				   if(author !=null )
-				   {
-					   assQuestion.setAutor(author); //TODO Ändern auf aktuell eingeloggte Person
-				   }
-				   else
-				   {
-					   assQuestion.setAutor(questionViewAktiv.getProxy().getAutor()); //TODO Ändern auf aktuell eingeloggte Person
-				   }
-				   
-				   Set<AnswerToAssQuestionProxy> answerToAssQuestionProxySet =  new HashSet<AnswerToAssQuestionProxy>();
-				   
-				   while (answerPanelIterator.hasNext()) {
-					Widget widget = (Widget) answerPanelIterator.next();
-					if (widget instanceof AnswerView){
-						AnswerView answerView = (AnswerView) widget;
-						if(answerView.getChecked()){
-							AnswerToAssQuestionProxy answerToAssQuestionProxy = assesmentQuestionRequest.create(AnswerToAssQuestionProxy.class);
-							answerToAssQuestionProxy.setAnswers(answerView.getProxy());
-							answerToAssQuestionProxy.setAssesmentQuestion(assQuestion);
-							answerToAssQuestionProxy.setSortOrder(1);
-							Log.debug(answerToAssQuestionProxy.toString());
-							//answerToAssQuestionRequest.persist().using(answerToAssQuestionProxy);
-							answerToAssQuestionProxySet.add(answerToAssQuestionProxy);
-						}
-					  }
-				   }
-				   
-				   
-				   
-				   assQuestion.setAnswersToAssQuestion(answerToAssQuestionProxySet);
-			     assesmentQuestionRequest.persist().using(assQuestion).with("answersToAssQuestion").fire(new Receiver<Void>() {
-
-						@Override
-						public void onSuccess(Void ignore) {
-							 Log.debug("sucesfull saved");
-							
-							 replaceQuestionThroughAssesmentQuestion(assesmentTabPanel.getActiveTab());
-							 
-							
-						}
-						
-				           @Override
-							public void onFailure(ServerFailure error) {
-									Log.warn(McAppConstant.ERROR_WHILE_DELETE + " in Institution:Event -" + error.getMessage());
-									if(error.getMessage().contains("ConstraintViolationException")){
-										Log.debug("Fehlen beim erstellen: Doppelter name");
-										// TODO mcAppFactory.getErrorPanel().setErrorMessage(McAppConstant.EVENT_IS_REFERENCED);
-									}
-									
-									
-									
-								
-							}
-							@Override
-							public void onViolation(Set<Violation> errors) {
-								Iterator<Violation> iter = errors.iterator();
-								String message = "";
-								while(iter.hasNext()){
-									message += iter.next().getMessage() + "<br>";
-								}
-								Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Event -" + message);
-								
-								ErrorPanel erorPanel = new ErrorPanel();
-			        	  erorPanel.setWarnMessage(message);
-
-								
-							}
-					});
+				   assignNewQuestionToAssesment(questionViewAktiv, false);
 			}
 		}
 	}
@@ -871,7 +684,13 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 									 AssesmentQuestionView assesmentQuestionView = new AssesmentQuestionViewImpl();
 									 assesmentQuestionView.setProxy(responce, false);
 									 assesmentQuestionView.setDelegate(ActivityAsignAssQuestion.this);
-									
+									 
+									 //change color
+									 changeAssesmentQuestionColor(assesmentQuestionView);
+									 
+									 //accept / force accept access criteria
+									 acceptOrForceAcceptButtonVisisble(assesmentQuestionView);
+									 
 									 assementQuestionPanel.addAssesmentQuestion(assesmentQuestionView);
 									 assesmentQuestionView.setOpen();
 								}
@@ -977,17 +796,37 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 	@Override
 	public void forceAccept(final AssesmentQuestionViewImpl assesmentQuestionViewImpl) {
 		AssesmentQuestionProxy assesmentQuestion=assesmentQuestionViewImpl.getProxy();
-		AssesmentQuestionRequest request=requests.assesmentQuestionRequest();
+		final AssesmentQuestionRequest request=requests.assesmentQuestionRequest();
 		assesmentQuestion=request.edit(assesmentQuestion);
+		
+		if(assesmentQuestionViewImpl.getForceAcceptButton().getText().equals(constants.forceAccept()))
+		{
 		assesmentQuestion.setIsForcedByAdmin(true);
 		assesmentQuestion.setIsAssQuestionAdminProposal(false);
-		
+		}
+		else
+		{
+			assesmentQuestion.setIsForcedByAdmin(false);
+			assesmentQuestion.setIsAssQuestionAdminProposal(false);
+			assesmentQuestion.setIsAssQuestionAcceptedAdmin(true);
+			assesmentQuestion.setIsAssQuestionAcceptedAutor(false);
+		}
 		request.persist().using(assesmentQuestion).fire(new Receiver<Void>() {
 
 			@Override
 			public void onSuccess(Void response) {
 				
-				assesmentQuestionViewImpl.getForceAcceptButton().removeFromParent();				
+				assesmentQuestionViewImpl.getForceAcceptButton().removeFromParent();	
+				requests.assesmentQuestionRequest().findAssesmentQuestion(assesmentQuestionViewImpl.getProxy().getId()).with("question.rewiewer","question.autor","question.keywords","question.questEvent","question.comment","question.questionType").fire(new Receiver<AssesmentQuestionProxy>() {
+
+					@Override
+					public void onSuccess(AssesmentQuestionProxy response) {
+						assesmentQuestionViewImpl.setProxy(response, false);
+						changeAssesmentQuestionColor(assesmentQuestionViewImpl);
+						
+					}
+				});
+				
 			}
 		});
 		
@@ -1030,6 +869,310 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 				
 			}
 		});
+		
+	}
+	/*color code for assesment question panel left side*/
+	public void changeAssesmentQuestionColor(AssesmentQuestionView question)
+	{
+		if(question.getProxy().getIsAssQuestionAcceptedAdmin())//Accepted
+		{
+			question.getQuestionTable().addClassName("accept");
+			question.getQuestionTable().removeClassName("not-accept");
+			question.getQuestionTable().removeClassName("force-accept");
+		}else if(question.getProxy().getIsForcedByAdmin())//force Accepted
+		{
+			question.getQuestionTable().addClassName("force-accept");
+			question.getQuestionTable().removeClassName("not-accept");
+			question.getQuestionTable().removeClassName("accept");
+		}
+		else //red color
+		{
+			question.getQuestionTable().addClassName("not-accept");
+			question.getQuestionTable().removeClassName("force-accept");
+			question.getQuestionTable().removeClassName("accept");
+		}
+	}
+	
+	/*force accept/ accept button access criteria left side */
+	public void acceptOrForceAcceptButtonVisisble(AssesmentQuestionView question)
+	{
+		if((personRightProxy.getIsInstitutionalAdmin() || personRightProxy.getIsAdmin()) && question.getProxy().getIsAssQuestionAdminProposal())
+		{
+			question.getForceAcceptButton().setVisible(true);
+		}
+		else if((personRightProxy.getIsInstitutionalAdmin() || personRightProxy.getIsAdmin()) && question.getProxy().getIsAssQuestionAcceptedAutor())
+		{
+			question.getForceAcceptButton().setVisible(true);
+			question.getForceAcceptButton().setText(constants.accept());
+		}
+		else
+		{
+			question.getForceAcceptButton().removeFromParent();
+		}
+	}
+	
+	
+	/*New Question to Assesment Question*/
+	public void assignNewQuestionToAssesment(final QuestionView questionViewAktiv,final boolean viaAddButton)  throws VetoDragException 
+	{
+		   Iterator<Widget> iter = assementQuestionPanel.getAssesmentQuestionDisplayPanel().iterator();
+		   while (iter.hasNext()){
+			   Widget wid = iter.next();
+			   if (wid instanceof AssesmentQuestionView){
+				   if (((AssesmentQuestionView) wid).getProxy().getQuestion().getId() == questionViewAktiv.getProxy().getId()){
+					   //Log.error("Keine zwei gleichen Fragen!");
+					   ErrorPanel erPan = new ErrorPanel();
+					   erPan.setErrorMessage("Keine zwei gleichen Fragen pro Prüfung!");
+					   throw new VetoDragException();
+				   }
+			   }
+		   }
+		   
+		   AssesmentQuestionRequest assesmentQuestionRequest = requests.assesmentQuestionRequest();
+		   //AnswerToAssQuestionRequest answerToAssQuestionRequest = requests.answerToAssQuestionRequest();
+		   Iterator<Widget> answerPanelIterator = questionViewAktiv.getAnswerPanel().iterator();
+		   
+		   AssesmentQuestionProxy assQuestion = assesmentQuestionRequest.create(AssesmentQuestionProxy.class);
+		   assQuestion.setAssesment(assesmentTabPanel.getActiveTab());
+		   assQuestion.setDateAdded(new Date());
+		  
+		  /* assQuestion.setIsAssQuestionAcceptedAdmin(false);
+		   assQuestion.setIsAssQuestionAcceptedAutor(true); //If is Propolsal set false
+		   assQuestion.setIsAssQuestionAcceptedRewiever(false);
+		   assQuestion.setIsAssQuestionAdminProposal(false); //If is Propolsal set true
+*/				   
+		   
+	    	/*
+	    	 * if person is both admin and author
+	    	 * */
+/*			    	if(questionViewAktiv.getProxy().getAutor().equals(userLoggedIn) && (personRightProxy.getIsInstitutionalAdmin() || personRightProxy.getIsAdmin() ))
+	    	{
+	    		assQuestion.setIsAssQuestionAcceptedAdmin(true);
+	    		assQuestion.setIsAssQuestionAcceptedAutor(false);
+	    		assQuestion.setIsAssQuestionAcceptedRewiever(false);
+	    		assQuestion.setIsForcedByAdmin(false);
+	        	assQuestion.setIsAssQuestionAdminProposal(false);
+	    	}
+	    	else */if((personRightProxy.getIsInstitutionalAdmin() || personRightProxy.getIsAdmin() )) //admin
+	    	{
+	    		assQuestion.setIsAssQuestionAcceptedAdmin(false);
+	    		assQuestion.setIsAssQuestionAcceptedAutor(false);
+	        	assQuestion.setIsAssQuestionAcceptedRewiever(false);
+	        	assQuestion.setIsForcedByAdmin(false);
+	        	assQuestion.setIsAssQuestionAdminProposal(true);
+	    	}
+	    	else //author / examiner
+	    	{
+	    		assQuestion.setIsAssQuestionAcceptedAdmin(false);
+	    		assQuestion.setIsAssQuestionAcceptedAutor(true);
+	    		assQuestion.setIsAssQuestionAcceptedRewiever(false);
+	    		assQuestion.setIsForcedByAdmin(false);
+	    		assQuestion.setIsAssQuestionAdminProposal(false);
+	    	}
+		   
+		   
+		 /*  if(personRightProxy.getIsAdmin() || personRightProxy.getIsInstitutionalAdmin()) //Proposed By Admin
+		   {
+			   assQuestion.setIsAssQuestionAcceptedAdmin(false);
+			   assQuestion.setIsAssQuestionAcceptedAutor(false); //If is Propolsal set false
+			   assQuestion.setIsAssQuestionAcceptedRewiever(false);
+			   assQuestion.setIsAssQuestionAdminProposal(true); //If is Propolsal set true
+			   assQuestion.setIsForcedByAdmin(false);
+		   }
+		   else //For Examiner
+		   {
+			   assQuestion.setIsAssQuestionAcceptedAdmin(false);
+			   assQuestion.setIsAssQuestionAcceptedAutor(true); //If is Propolsal set false
+			   assQuestion.setIsAssQuestionAcceptedRewiever(false);
+			   assQuestion.setIsAssQuestionAdminProposal(false); //If is Propolsal set true
+			   assQuestion.setIsForcedByAdmin(false);
+		   }
+		   */
+		   assQuestion.setQuestion(questionViewAktiv.getProxy());
+		   assQuestion.setRewiewer(questionViewAktiv.getProxy().getRewiewer());
+		   
+		   PersonProxy author=null;
+		   
+		   if(viaAddButton)
+		   {
+			   author=questionPanel.getAuthorListBox().getValue();
+		   }
+		   else
+		   {
+			   author=assementQuestionPanel.getAuthorListBox().getValue();
+		   }
+		   
+		   if(author !=null )
+		   {
+			   assQuestion.setAutor(author); //TODO Ändern auf aktuell eingeloggte Person
+		   }
+		   else
+		   {
+			   assQuestion.setAutor(userLoggedIn); //TODO Ändern auf aktuell eingeloggte Person
+		   }
+		   
+		   Set<AnswerToAssQuestionProxy> answerToAssQuestionProxySet =  new HashSet<AnswerToAssQuestionProxy>();
+		   
+		   while (answerPanelIterator.hasNext()) {
+			Widget widget = (Widget) answerPanelIterator.next();
+			if (widget instanceof AnswerView){
+				AnswerView answerView = (AnswerView) widget;
+				if(answerView.getChecked()){
+					AnswerToAssQuestionProxy answerToAssQuestionProxy = assesmentQuestionRequest.create(AnswerToAssQuestionProxy.class);
+					answerToAssQuestionProxy.setAnswers(answerView.getProxy());
+					answerToAssQuestionProxy.setAssesmentQuestion(assQuestion);
+					answerToAssQuestionProxy.setSortOrder(1);
+					Log.debug(answerToAssQuestionProxy.toString());
+					//answerToAssQuestionRequest.persist().using(answerToAssQuestionProxy);
+					answerToAssQuestionProxySet.add(answerToAssQuestionProxy);
+				}
+			  }
+		   }
+		   
+		   
+		   
+		   assQuestion.setAnswersToAssQuestion(answerToAssQuestionProxySet);
+	     assesmentQuestionRequest.persist().using(assQuestion).with("answersToAssQuestion").fire(new Receiver<Void>() {
+
+				@Override
+				public void onSuccess(Void ignore) {
+					 Log.debug("sucesfull saved");
+					 if(viaAddButton)
+					 {
+						 ((QuestionViewImpl)questionViewAktiv).removeFromParent();
+					
+						 if(((personRightProxy.getIsInstitutionalAdmin() || personRightProxy.getIsAdmin()) && assementQuestionPanel.getAuthorListBox().getValue().equals(questionPanel.getAuthorListBox().getValue())))
+								assementQuestionPanel.getAssesmentQuestionDisplayPanel().add(questionViewAktiv);
+								
+								if(!((personRightProxy.getIsInstitutionalAdmin() || personRightProxy.getIsAdmin()))) //examiner
+								{
+									assementQuestionPanel.getAssesmentQuestionDisplayPanel().add(questionViewAktiv);
+								}
+					
+					 }
+					 replaceQuestionThroughAssesmentQuestion(assesmentTabPanel.getActiveTab());
+					 
+					
+				}
+				
+		           @Override
+					public void onFailure(ServerFailure error) {
+							Log.warn(McAppConstant.ERROR_WHILE_DELETE + " in Institution:Event -" + error.getMessage());
+							if(error.getMessage().contains("ConstraintViolationException")){
+								Log.debug("Fehlen beim erstellen: Doppelter name");
+								// TODO mcAppFactory.getErrorPanel().setErrorMessage(McAppConstant.EVENT_IS_REFERENCED);
+							}
+							
+							
+							
+						
+					}
+					@Override
+					public void onViolation(Set<Violation> errors) {
+						Iterator<Violation> iter = errors.iterator();
+						String message = "";
+						while(iter.hasNext()){
+							message += iter.next().getMessage() + "<br>";
+						}
+						Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Event -" + message);
+						
+						ErrorPanel erorPanel = new ErrorPanel();
+	        	  erorPanel.setWarnMessage(message);
+
+						
+					}
+			});
+	}
+	
+	/*This method is used to assign question from proposed tab and past tab to left side
+	 * 
+	 * common to both drag and drop and add question to assesment button
+	 * */
+	public void assignQuestionToAssesment(final AssesmentQuestionView assesmentQuestionViewAktiv,final boolean viaAddButton)
+	{
+		PersonProxy selectedAuthor=null;
+		   
+		   if((personRightProxy.getIsInstitutionalAdmin() || personRightProxy.getIsAdmin()) )
+		   {
+			   if(!viaAddButton)
+				   selectedAuthor=assementQuestionPanel.getAuthorListBox().getValue();
+			   else
+			   {
+				   selectedAuthor=questionPanel.getAuthorListBox().getValue();
+			   }
+		   }
+		  
+		  
+		   
+		   requests.assesmentQuestionRequest().copyAssesmentQuestion(assesmentQuestionViewAktiv.getProxy().getId(), assesmentTabPanel.getActiveTab().getId(),selectedAuthor).with("question.rewiewer","question.autor","question.keywords","question.questEvent","question.comment","question.questionType").fire(new Receiver<AssesmentQuestionProxy>() {
+
+				@Override
+				public void onSuccess(AssesmentQuestionProxy response) {
+					 Log.debug("sucesfull copied");
+					assesmentQuestionViewAktiv.setProxy(response, false);
+					changeAssesmentQuestionColor(assesmentQuestionViewAktiv);
+					acceptOrForceAcceptButtonVisisble(assesmentQuestionViewAktiv);
+					if(viaAddButton)
+					{
+					((AssesmentQuestionViewImpl)assesmentQuestionViewAktiv).removeFromParent();
+					
+					if(((personRightProxy.getIsInstitutionalAdmin() || personRightProxy.getIsAdmin()) && assementQuestionPanel.getAuthorListBox().getValue().equals(response.getAutor())))
+					assementQuestionPanel.addAssesmentQuestion(assesmentQuestionViewAktiv);
+					
+					if(!((personRightProxy.getIsInstitutionalAdmin() || personRightProxy.getIsAdmin()))) //examiner
+					{
+						assementQuestionPanel.addAssesmentQuestion(assesmentQuestionViewAktiv);
+					}
+					
+					}
+					
+				}
+				
+		           @Override
+					public void onFailure(ServerFailure error) {
+							Log.warn(McAppConstant.ERROR_WHILE_DELETE + " in Institution:Event -" + error.getMessage());
+							if(error.getMessage().contains("ConstraintViolationException")){
+								Log.debug("Fehlen beim erstellen: Doppelter name");
+								// TODO mcAppFactory.getErrorPanel().setErrorMessage(McAppConstant.EVENT_IS_REFERENCED);
+							}
+							
+						
+					}
+					@Override
+					public void onViolation(Set<Violation> errors) {
+						Iterator<Violation> iter = errors.iterator();
+						String message = "";
+						while(iter.hasNext()){
+							message += iter.next().getMessage() + "<br>";
+						}
+						Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Event -" + message);
+						
+						ErrorPanel erorPanel = new ErrorPanel();
+	        	  erorPanel.setWarnMessage(message);
+
+						
+					}
+			});
+	}
+	
+	/*Add button clicked from past and proposed tab*/
+	@Override
+	public void addToAssesmentButtonClicked(
+			AssesmentQuestionViewImpl assesmentQuestionViewImpl) {
+		assignQuestionToAssesment(assesmentQuestionViewImpl,true);
+		
+	}
+	
+	/*Add button clicked from new question tab*/
+	@Override
+	public void addNewQuestionToAssesment(QuestionViewImpl questionViewImpl)  {
+		try{
+			assignNewQuestionToAssesment(questionViewImpl, true);
+		}
+		catch(Exception e)
+		{
+			
+		}
 		
 	}
 
