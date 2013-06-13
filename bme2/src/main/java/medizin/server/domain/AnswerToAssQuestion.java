@@ -47,6 +47,8 @@ public class AnswerToAssQuestion {
         return q.getResultList();
     }
 	
+
+	
 	
 //	public static List<AnswerToAssQuestion> findAnswerToAssQuestionByAnswer(java.lang.Long answerId) {
 //		Answer answer = Answer.findAnswer(answerId);

@@ -266,7 +266,11 @@ public class AssesmentQuestion {
 		
 		
 		//group by question- no duplicate question
-		criteriaQuery.groupBy(from.get("question"));
+		//criteriaQuery.groupBy(from.get("question"));
+		//criteriaQuery.having(from.<Set>get("answersToAssQuestion").equals(obj))//answersToAssQuestion
+		
+		//criteriaQuery.orderBy(criteriaBuilder.asc(from.get("question").get("id")));
+		
 		
 		//institution filter
 		Predicate pre6 = criteriaBuilder.equal(from.get("question").get("questEvent")
@@ -304,7 +308,10 @@ public class AssesmentQuestion {
     		
     		
     		TypedQuery<AssesmentQuestion> q=entityManager().createQuery(criteriaQuery);
-    		return q.getResultList();
+    		
+    		//remove duplicate question
+    		
+    		return removeDuplicateAssesmentQuestion(q.getResultList());
         }
         else
         {
@@ -363,7 +370,12 @@ public class AssesmentQuestion {
 	    		}
     		}
 			TypedQuery<AssesmentQuestion> q=entityManager().createQuery(criteriaQuery);
-    		return q.getResultList();
+			
+			
+			
+			//remove duplicate question
+		
+    		return removeDuplicateAssesmentQuestion(q.getResultList());
         }
         
        
@@ -844,4 +856,74 @@ public class AssesmentQuestion {
 		TypedQuery<Long> q = entityManager().createQuery(criteriaQuery);
 		return q.getSingleResult();
 	}*/
+	
+	@Override
+    public boolean equals(Object obj) {
+		
+		if (obj == this) {
+            return true;
+        }
+        if (obj == null || obj.getClass() != this.getClass()) {
+            return false;
+        }
+
+        AssesmentQuestion aq=(AssesmentQuestion)obj;
+        
+        if(!aq.getQuestion().equals(this.getQuestion()))
+        {
+        	return false;
+        }
+        else
+        {
+        	Set<AnswerToAssQuestion> ans=aq.getAnswersToAssQuestion();
+        	Set<AnswerToAssQuestion> ans1=this.getAnswersToAssQuestion();
+        	
+        	if(ans.size()==0 && ans1.size()==0)
+        	{
+        		return true;
+        	}
+        	
+        	for(AnswerToAssQuestion a:ans)
+        	{
+        		for(AnswerToAssQuestion a1:ans1)
+        		{
+        			if(a.getAnswers().equals(a1.getAnswers()))
+        			{
+        				return true;
+        			}
+        		}
+        	}
+        }
+
+		
+		return false;
+	}
+	
+	//remove duplicate question
+			/*
+			 *  from a question a lot of different assessment questions may be created. So if a user adds a question to assessment and the assessment_question is created, check 
+			 *  if the question is already in assessment. If no, all is ok, if yes, check if one of the answers is the same. If no, it may be created, if yes, popup a message that the same question 
+			 *  may not be placed twice.
+			 * */
+	public static List<AssesmentQuestion> removeDuplicateAssesmentQuestion(List<AssesmentQuestion> aqs )
+	{
+		for(int i=0;i<aqs.size();i++)
+		{
+			AssesmentQuestion a1=aqs.get(i);
+			for(int j=i+1;j<aqs.size();j++)
+			{
+				AssesmentQuestion a2=aqs.get(j);
+				
+				if(a1.equals(a2))//remove duplicate here
+				{
+					aqs.remove(i);
+					i=-1;
+					break;
+					
+				}
+				
+			}
+		}
+		return aqs;
+	}
 }
