@@ -208,7 +208,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 	 * Init Rigt side view
 	 * 
 	 * */
-	private void initQuestionPanel(int action, AssesmentProxy assesment) {
+	private void initQuestionPanel(int action, AssesmentProxy assesment,String questionName,String questionId,String questionType) {
 		
 		//admin / institutional admin
 		if(personRightProxy.getIsAdmin() || personRightProxy.getIsInstitutionalAdmin())
@@ -253,7 +253,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 		
 		//proposed Question
 		if (action==0){
-			requests.assesmentQuestionRequest().findAssesmentQuestionsByMcProposal(assesment.getId()).with("question.rewiewer","question.autor","question.keywords","question.questEvent","question.comment","question.questionType").fire(new Receiver<List<AssesmentQuestionProxy>>() {
+			requests.assesmentQuestionRequest().findAssesmentQuestionsByMcProposal(assesment.getId(),questionId,questionType,questionName).with("question.rewiewer","question.autor","question.keywords","question.questEvent","question.comment","question.questionType").fire(new Receiver<List<AssesmentQuestionProxy>>() {
 
 				@Override
 				public void onSuccess(List<AssesmentQuestionProxy> response) {
@@ -297,10 +297,10 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 			});
 		}//past Question
 		else if (action == 1){
-				findPastAssesmentQuestion(assesment);
+				findPastAssesmentQuestion(assesment,questionName,questionId,questionType);
 		}//new Question
 		else if (action == 2){
-			requests.questionRequest().findQuestionsByMc(assesment.getMc().getId()).with("rewiewer", "questEvent", "autor", "questionType", "keywords").fire(new Receiver<List<QuestionProxy>>() {
+			requests.questionRequest().findQuestionsByMc(assesment.getMc().getId(),questionId,questionType,questionName).with("rewiewer", "questEvent", "autor", "questionType", "keywords").fire(new Receiver<List<QuestionProxy>>() {
 
 				@Override
 				public void onSuccess(List<QuestionProxy> response) {
@@ -348,11 +348,11 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 	}
 
 	/*finds past assesment question according to selected author*/
-	private void findPastAssesmentQuestion(AssesmentProxy assesment) {
+	private void findPastAssesmentQuestion(AssesmentProxy assesment,String questionName,String questionId,String questionType) {
 		
 		
 		
-		requests.assesmentQuestionRequest().findAssesmentQuestionsByMc(assesment.getId(),assesment.getMc().getId()).with("question.rewiewer","question.autor","question.keywords","question.questEvent","question.comment","question.questionType").fire(new Receiver<List<AssesmentQuestionProxy>>() {
+		requests.assesmentQuestionRequest().findAssesmentQuestionsByMc(assesment.getId(),assesment.getMc().getId(),questionId,questionType,questionName).with("question.rewiewer","question.autor","question.keywords","question.questEvent","question.comment","question.questionType").fire(new Receiver<List<AssesmentQuestionProxy>>() {
 
 			@Override
 			public void onSuccess(List<AssesmentQuestionProxy> response) {
@@ -507,7 +507,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 
 	@Override
 	public void tabQuestionClicked(int index) {
-		initQuestionPanel(index, assesmentTabPanel.getActiveTab());
+		initQuestionPanel(index, assesmentTabPanel.getActiveTab(),"","","");
 		
 	}
 
@@ -584,7 +584,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 		{
 			assementQuestionPanel.getSendMail().removeFromParent();
 		}
-		 initQuestionPanel(addQuestionsTabPanel.getActiveTab(), assesment);
+		 initQuestionPanel(addQuestionsTabPanel.getActiveTab(), assesment,"","","");
 		 
 		 
 		
@@ -605,6 +605,9 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 			   {
 				   final AssesmentQuestionView assesmentQuestionViewAktiv = ((AssesmentQuestionView)event.getSource());
 				   Log.debug("Is AssesmentQuestionView");
+				   
+				   
+				   
 				   
 				   assignQuestionToAssesment(assesmentQuestionViewAktiv,false);
 				  
@@ -638,6 +641,15 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 			   {
 				   AssesmentQuestionView assesmentQuestionViewAktiv = ((AssesmentQuestionView)event.getSource());
 				   Iterator<Widget> iter = assementQuestionPanel.getAssesmentQuestionDisplayPanel().iterator();
+				   
+				   if((personRightProxy.getIsInstitutionalAdmin() || personRightProxy.getIsAdmin() ) && assementQuestionPanel.getAuthorListBox().getValue()==null) //admin
+				   {
+					   ConfirmationDialogBox.showOkDialogBox(constants.information(), constants.examinerCannotBeNull());
+					   throw new VetoDragException();
+					 
+				   }
+				   
+				   
 				   while (iter.hasNext()){
 					   Widget wid = iter.next();
 					   if (wid instanceof AssesmentQuestionView){
@@ -656,7 +668,14 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 			   if(event.getSource() instanceof QuestionView)
 			   {
 				   final QuestionView questionViewAktiv = ((QuestionView)event.getSource());
-				  
+				   
+				   
+				   if((personRightProxy.getIsInstitutionalAdmin() || personRightProxy.getIsAdmin() ) && assementQuestionPanel.getAuthorListBox().getValue()==null) //admin
+				   {
+					   ConfirmationDialogBox.showOkDialogBox(constants.information(), constants.examinerCannotBeNull());
+					   throw new VetoDragException();
+					 
+				   }
 				   assignNewQuestionToAssesment(questionViewAktiv, false);
 			}
 		}
@@ -1006,7 +1025,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 		   {
 			   assQuestion.setAutor(author); //TODO Ändern auf aktuell eingeloggte Person
 		   }
-		   else
+		   else 
 		   {
 			   assQuestion.setAutor(userLoggedIn); //TODO Ändern auf aktuell eingeloggte Person
 		   }
@@ -1174,6 +1193,17 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 			
 		}
 		
+	}
+
+	@Override
+	public void searchQuestion(String questionshortName, Integer questionId,
+			String questionType) {
+		String qId="";
+		if(questionId !=null)
+		{
+			qId=questionId.toString();
+		}
+		initQuestionPanel(addQuestionsTabPanel.getActiveTab(), assesmentTabPanel.getActiveTab(),questionshortName,qId,questionType);
 	}
 
 }

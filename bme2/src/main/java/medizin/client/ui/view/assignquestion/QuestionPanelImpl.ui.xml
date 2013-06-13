@@ -1,6 +1,6 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:m="urn:import:medizin.client.ui.widget">
 	<ui:style>
 	.displayPanel{
 		/*background-color: #E6D8F2 ;*/
@@ -31,10 +31,13 @@ border-bottom: 1px solid #AAAAAA;
 	
 	    <table width="100%" >
 	        <tr align="right" width="100%">
+	           
 	            <td>
+	               <g:HorizontalPanel spacing="5">
+	                 <m:IconButton ui:field="searchButton" icon="wrench" addStyleNames ="{style.float-right}"></m:IconButton>
 	                <g:ValueListBox ui:field="authorListBox" visible="false" styleName="{style.float-right}">
 					</g:ValueListBox>
-	                
+	                </g:HorizontalPanel>
 	            </td>
 	        </tr>
 	        <tr width="100%">

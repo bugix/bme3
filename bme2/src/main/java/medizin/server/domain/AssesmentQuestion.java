@@ -147,7 +147,7 @@ public class AssesmentQuestion {
     * 4. Not Assigned in current Assesment
     * */
     
-    public static List<AssesmentQuestion> findAssesmentQuestionsByMc(Long assesmentId,Long id){
+    public static List<AssesmentQuestion> findAssesmentQuestionsByMc(Long assesmentId,Long id,String questionId,String questionType,String questionName){
     	
     	Log.info("Past Question Tab ");
     	
@@ -190,6 +190,61 @@ public class AssesmentQuestion {
 		//active question
 		Predicate pre4=criteriaBuilder.equal(questionJoin.get("status"), Status.ACTIVE);
 		
+		//search criteria of question
+		
+		Predicate searchPre1=null;
+		Predicate searchPre2=null;
+		Predicate searchPre3=null;
+		if(!questionId.equalsIgnoreCase(""))
+		{
+			searchPre1=criteriaBuilder.equal(questionJoin.get("id"), new Long(questionId));
+		}
+		if(!questionType.equalsIgnoreCase(""))
+		{
+			
+			Predicate shortNamePre=criteriaBuilder.like(questionJoin.get("questionType").<String>get("shortName"),"%"+questionType+"%");
+			Predicate longNamePre=criteriaBuilder.like(questionJoin.get("questionType").<String>get("longName"),"%"+questionType+"%");
+			searchPre2=criteriaBuilder.or(shortNamePre,longNamePre);
+		}
+		if(!questionName.equalsIgnoreCase(""))
+		{
+			Predicate shortNamePre=criteriaBuilder.like(questionJoin.<String>get("questionShortName"),"%"+questionName+"%");
+			Predicate namePre=criteriaBuilder.like(questionJoin.<String>get("questionText"),"%"+questionName+"%");
+		
+			searchPre3=criteriaBuilder.or(shortNamePre,namePre);
+			
+		}
+		
+		Predicate searchPre=null;
+		if(searchPre1!=null && searchPre2!=null && searchPre3!=null)
+		{
+			searchPre=criteriaBuilder.or(searchPre1,searchPre2,searchPre3);
+		}
+		else if(searchPre1!=null && searchPre2!=null)
+		{
+			searchPre=criteriaBuilder.or(searchPre1,searchPre2);
+		}
+		else if(searchPre2!=null && searchPre3!=null)
+		{
+			searchPre=criteriaBuilder.or(searchPre2,searchPre3);
+		}
+		else if(searchPre1!=null && searchPre3!=null)
+		{
+			searchPre=criteriaBuilder.or(searchPre1,searchPre3);
+		}
+		else if(searchPre1!=null)
+		{
+			searchPre=criteriaBuilder.or(searchPre1);
+		}
+		else if(searchPre2 != null)
+		{
+			searchPre=criteriaBuilder.or(searchPre2);
+		}
+		else if(searchPre3 != null)
+		{
+			searchPre=criteriaBuilder.or(searchPre3);
+		}
+		
 		//past assessment
 		Predicate pre5=criteriaBuilder.lessThan(from.get("assesment").<Date>get("dateOfAssesment"), criteriaBuilder.currentDate());
 		
@@ -227,10 +282,22 @@ public class AssesmentQuestion {
 			
 			Predicate pre;
     		if(pre7==null)
+    		{
+    			if(searchPre==null)
     			pre=criteriaBuilder.and(pre3,pre4,pre5,pre6);
-    		else
-    			 pre=criteriaBuilder.and(pre3,pre4,pre5,pre6,pre7);
-    		
+    			else
+    			{
+    				pre=criteriaBuilder.and(pre3,pre4,pre5,pre6,searchPre);
+    			}
+    		}else
+    		{	if(searchPre==null)
+    			pre=criteriaBuilder.and(pre3,pre4,pre5,pre6,pre7);
+        			else
+        			{
+        				pre=criteriaBuilder.and(pre3,pre4,pre5,pre6,pre7,searchPre);
+        			}
+    			 
+    		}
     		
     		select.where(pre);
     		
@@ -279,10 +346,22 @@ public class AssesmentQuestion {
 			
 			
     		if(pre7==null)
+    		{
+    			if(searchPre==null)
     			select.where(criteriaBuilder.and(pre3,pre4,pre5,pre6,andAdminPredicate));
+    			else
+    			{
+    				select.where(criteriaBuilder.and(pre3,pre4,pre5,pre6,andAdminPredicate,searchPre));
+    			}
+    		}
     		else
+    		{	if(searchPre==null)
     			select.where(criteriaBuilder.and(pre3,pre4,pre5,pre7,pre6,andAdminPredicate));
-        	
+	    		else
+	    		{
+	    			select.where(criteriaBuilder.and(pre3,pre4,pre5,pre7,pre6,andAdminPredicate,searchPre));
+	    		}
+    		}
 			TypedQuery<AssesmentQuestion> q=entityManager().createQuery(criteriaQuery);
     		return q.getResultList();
         }
@@ -371,7 +450,7 @@ public class AssesmentQuestion {
      * 1. Assessment Question with (status proposed) 
      * 2. An examiner may see only questions of specialization 	where he has access.	
      * */
-    public static List<AssesmentQuestion> findAssesmentQuestionsByMcProposal(Long assesmentId){
+    public static List<AssesmentQuestion> findAssesmentQuestionsByMcProposal(Long assesmentId,String questionId,String questionType,String questionName){
         Boolean isAssQuestionAdminProposal = true;
        
         Assesment assesment = Assesment.findAssesment(assesmentId);
@@ -385,7 +464,60 @@ public class AssesmentQuestion {
         if (assesment == null) throw new IllegalArgumentException("The mcs argument is required");
         EntityManager em = Question.entityManager();
         StringBuilder queryBuilder = new StringBuilder("SELECT assesmentauestion FROM AssesmentQuestion AS assesmentauestion " +
-        		"INNER JOIN assesmentauestion.question AS quest WHERE assesmentauestion.isAssQuestionAdminProposal = :isAssQuestionAdminProposal  AND  assesmentauestion.assesment=:assesment and assesmentauestion.autor=:autor and quest.questEvent.institution=:institution");
+        		"left JOIN assesmentauestion.question AS quest WHERE assesmentauestion.isAssQuestionAdminProposal = :isAssQuestionAdminProposal  AND  assesmentauestion.assesment=:assesment and assesmentauestion.autor=:autor and quest.questEvent.institution=:institution ");
+        
+        
+        List<String> searchList=new ArrayList<String>();
+        if(!questionId.equalsIgnoreCase(""))
+        {
+        	searchList.add(" assesmentauestion.question.id=:questionId ");
+        }
+        
+        if(!questionName.equalsIgnoreCase(""))
+        {
+        	searchList.add(" ( assesmentauestion.question.questionShortName like '%"+questionName+"%' or assesmentauestion.question.questionText like '%"+questionName+"%' ) ");
+        }
+        if(!questionType.equalsIgnoreCase(""))
+        {
+        	searchList.add(" ( assesmentauestion.question.questionType.shortName like '%"+questionType+"%' or assesmentauestion.question.questionType.longName like '%"+questionType+"%' ) ");
+        }
+        StringBuilder searchstr=new StringBuilder();
+        
+        if(searchList.size()==1)
+        {
+        	queryBuilder.append(" and "+searchList.get(0));
+        }
+        else
+        {
+        	
+        	if(searchList.size()>0)
+        	{
+        		searchstr.append(" and (");
+        	}
+        	
+        	for(int i=0;i<searchList.size();i++)
+        	{
+        		String search=searchList.get(i);
+        		
+        		
+        		if(i==searchList.size()-1)
+        		{
+        			searchstr.append(search);
+        		}
+        		else
+        		{
+        			searchstr.append(search +" or ");
+        		}
+        	}
+        	
+        	if(searchList.size()>0)
+        	{
+        		searchstr.append(" ) ");
+        		queryBuilder.append(searchstr);
+        		
+        	}
+        }
+        
         
         TypedQuery<AssesmentQuestion> q = em.createQuery(queryBuilder.toString(), AssesmentQuestion.class);
         q.setParameter("isAssQuestionAdminProposal", isAssQuestionAdminProposal);
@@ -393,7 +525,25 @@ public class AssesmentQuestion {
         q.setParameter("autor", userLoggedIn);
         q.setParameter("assesment", assesment);
         q.setParameter("institution", institution);
+        if(!questionId.equalsIgnoreCase(""))
+        {
+        	 q.setParameter("questionId", new Long(questionId));
+        	
+        }
         
+/*        if(!questionName.equalsIgnoreCase(""))
+        {
+        	 q.setParameter("questionName", questionName);
+        	 q.setParameter("questionName1", questionName);
+        	
+        }
+        if(!questionType.equalsIgnoreCase(""))
+        {
+        	 q.setParameter("questionType", questionType);
+        	 q.setParameter("questionType1", questionType);
+        	
+        }
+        */
         return q.getResultList();
     }
     

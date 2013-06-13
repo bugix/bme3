@@ -27,7 +27,7 @@ public interface QuestionRequest extends QuestionRequest_Roo_Gwt {
 			Long institutionId, Long eventId, String questiuonStringFilter,
 			Boolean filterQuestionText, Boolean filterKeywords, int start, int length);
 	
-	Request<List<QuestionProxy>> findQuestionsByMc(Long mcId);
+	Request<List<QuestionProxy>> findQuestionsByMc(Long mcId, String questionId, String questionType, String questionName);
 
 	Request<java.lang.Long> countQuestionsNonAcceptedAdmin();
 
@@ -38,7 +38,7 @@ public interface QuestionRequest extends QuestionRequest_Roo_Gwt {
 
 	Request<Long>  countQuestionsByPerson(String string, Long institutionId, String searchText, List<String> searchField);
 
-	Request<List<QuestionProxy>>  findQuestionEntriesByPerson(String string, Long institutionId, String searchText, List<String> searchField, int start, int length,boolean newQuestion);
+	Request<List<QuestionProxy>>  findQuestionEntriesByPerson(String string, Long institutionId, String searchText, List<String> searchField, int start, int length,boolean newQuestion,String questionId,String questionType,String questionName);
 	
 	InstanceRequest<QuestionProxy, Void> persistAndSetPreviousInactive();
 

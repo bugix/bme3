@@ -1,0 +1,45 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:b="urn:import:com.google.gwt.user.cellview.client"
+	xmlns:my="urn:import:medizin.client.ui.widget"
+	xmlns:r="urn:import:medizin.client.ui.richtext">
+
+	<ui:style src="../../styles.css">
+	
+	.label{
+	  font-weight: bold;
+    min-width: 90px;
+
+	}
+		
+	</ui:style>
+	<g:HTMLPanel>
+		<g:VerticalPanel spacing="3">
+		   
+		    <g:HorizontalPanel spacing="5">
+		   		<g:Label ui:field="questionIdLbl"  addStyleNames="{style.label}"></g:Label>
+		   		<g:IntegerBox ui:field="questionIdTxt"></g:IntegerBox>
+		   </g:HorizontalPanel>
+		   
+		   <g:HorizontalPanel spacing="5">
+		   		<g:Label ui:field="questionTypeLbl"  addStyleNames="{style.label}"></g:Label>
+		   		<g:TextBox ui:field="questionTypeTxt"></g:TextBox>
+		   </g:HorizontalPanel>
+		   
+		   <g:HorizontalPanel spacing="5">
+		   		<g:Label ui:field="questionShortNameLbl" addStyleNames="{style.label}"></g:Label>
+		   		<g:TextBox ui:field="questionShortNameTxt"></g:TextBox>
+		   </g:HorizontalPanel>
+		  
+		   
+		    <g:HorizontalPanel spacing="5">
+		   		<g:Button ui:field="searchBtn" ></g:Button>
+		   		<g:Button ui:field="resetBtn"></g:Button>
+		   </g:HorizontalPanel>
+		    
+		</g:VerticalPanel>
+
+	</g:HTMLPanel>
+
+
+</ui:UiBinder> 

@@ -331,7 +331,7 @@ public class Question {
 	 * 
 	 * Retrive Query same as Question link, + exclude assessment question
 	 */
-	public static List<Question> findQuestionsByMc(Long mcId) {
+	public static List<Question> findQuestionsByMc(Long mcId,String questionId,String questionType,String questionName) {
 		
 		
 		Mc mc = Mc.findMc(mcId);
@@ -408,7 +408,7 @@ public class Question {
         {*/
         	
         	
-        	List<Question> questions=Question.findQuestionEntriesByPerson(userLoggedIn.getShidId(), institution.getId(), "", new ArrayList<String>(), 0	, Integer.MAX_VALUE,true);
+        	List<Question> questions=Question.findQuestionEntriesByPerson(userLoggedIn.getShidId(), institution.getId(), "", new ArrayList<String>(), 0	, Integer.MAX_VALUE,true,questionId,questionType,questionName);
         	
         	// exclude assessment question
         	/*for(Question question : questions)
@@ -727,7 +727,7 @@ public class Question {
 				institution.getId(), loggedUser));*/
 
 		
-		query = entityManager().createQuery(findQuestionBySearchFilter(searchText, searchField, institution.getId(), loggedUser,false));
+		query = entityManager().createQuery(findQuestionBySearchFilter(searchText, searchField, institution.getId(), loggedUser,false,"","",""));
 	
 		log.info("~~QUERY : " + query.unwrap(Query.class).getQueryString());
 	
@@ -737,7 +737,7 @@ public class Question {
 
 	public static List<Question> findQuestionEntriesByPerson(String shibdId,
 			Long institutionId, String searchText,
-			List<String> searchField, int start, int length,boolean newQuestion) {
+			List<String> searchField, int start, int length,boolean newQuestion,String questionId,String questionType,String questionName) {
 		Person loggedUser = Person.findPersonByShibId(shibdId);
 		Institution institution = Institution.findInstitution(institutionId);
 		if (loggedUser == null || institution == null)
@@ -817,7 +817,7 @@ public class Question {
 				institution.getId(), loggedUser));*/
 
 		query = entityManager().createQuery(findQuestionBySearchFilter(searchText, searchField,
-				institution.getId(), loggedUser,newQuestion));
+				institution.getId(), loggedUser,newQuestion,questionId,questionType,questionName));
 		query.setFirstResult(start);
 		query.setMaxResults(length);
 
@@ -884,7 +884,7 @@ public class Question {
 	}
 
 	public static CriteriaQuery<Question> findQuestionBySearchFilter(String searchText,
-			List<String> searchField, Long institutionId, Person loggedUser,boolean newQuestion) {
+			List<String> searchField, Long institutionId, Person loggedUser,boolean newQuestion,String questionId,String questionType,String questionName) {
 		
 		try
 		{
@@ -941,18 +941,32 @@ public class Question {
 			
 			if(!newQuestion)
 				andAdminPredicate = criteriaBuilder.and(statusNewPredicate, andAdminPredicate);
-			else
+			else //new question tab inside assessment question
 			{
 				SetJoin<Question, AssesmentQuestion> assesmentQuestionSet=from.joinSet("assesmentQuestionSet",JoinType.LEFT);
 				Predicate assesmentQuestionPredicate1=criteriaBuilder.notEqual(assesmentQuestionSet.get("question").get("id"), from.get("id"));		
 				Predicate assesmentQuestionPredicate2=criteriaBuilder.isNull(assesmentQuestionSet);
 				Predicate assesmentQuestionPredicate=criteriaBuilder.or(assesmentQuestionPredicate1,assesmentQuestionPredicate2);
+				
+				//search filter for assesment quetion new question tab
+				
+				Predicate searchPre=searchForNewQuestionTab(questionId,questionType,questionName,from,criteriaBuilder);
+				
+				
+				if(searchPre == null)
 				andAdminPredicate = criteriaBuilder.and(statusNewPredicate, andAdminPredicate, assesmentQuestionPredicate);
+				else
+				{
+					andAdminPredicate = criteriaBuilder.and(statusNewPredicate, andAdminPredicate, assesmentQuestionPredicate,searchPre);
+				}
 			}
 			
 			
 			Predicate andPredicate = searchFilter(searchText,searchFilterMap , criteriaBuilder, from);
-
+			
+			
+			
+			
 			//andAdminPredicate = criteriaBuilder.and(statusNewPredicate, andAdminPredicate);
 			
 			if (andPredicate == null)
@@ -967,6 +981,65 @@ public class Question {
 			log.error("Error in Question filter",e);
 		}	
 		return null;
+	}
+
+	private static Predicate searchForNewQuestionTab(String questionId,
+			String questionType, String questionName, Root<Question> from, CriteriaBuilder criteriaBuilder) {
+		Predicate searchPre1=null;
+		Predicate searchPre2=null;
+		Predicate searchPre3=null;
+		Predicate searchPre=null;
+		if(!questionId.equalsIgnoreCase(""))
+		{
+			searchPre1=criteriaBuilder.equal(from.get("id"), new Long(questionId));
+		}
+		if(!questionType.equalsIgnoreCase(""))
+		{
+			
+			Predicate shortNamePre=criteriaBuilder.like(from.get("questionType").<String>get("shortName"),"%"+questionType+"%");
+			Predicate longNamePre=criteriaBuilder.like(from.get("questionType").<String>get("longName"),"%"+questionType+"%");
+			searchPre2=criteriaBuilder.or(shortNamePre,longNamePre);
+		}
+		if(!questionName.equalsIgnoreCase(""))
+		{
+			Predicate shortNamePre=criteriaBuilder.like(from.<String>get("questionShortName"),"%"+questionName+"%");
+			Predicate namePre=criteriaBuilder.like(from.<String>get("questionText"),"%"+questionName+"%");
+		
+			searchPre3=criteriaBuilder.or(shortNamePre,namePre);
+			
+		}
+		
+		
+		if(searchPre1!=null && searchPre2!=null && searchPre3!=null)
+		{
+			searchPre=criteriaBuilder.or(searchPre1,searchPre2,searchPre3);
+		}
+		else if(searchPre1!=null && searchPre2!=null)
+		{
+			searchPre=criteriaBuilder.or(searchPre1,searchPre2);
+		}
+		else if(searchPre2!=null && searchPre3!=null)
+		{
+			searchPre=criteriaBuilder.or(searchPre2,searchPre3);
+		}
+		else if(searchPre1!=null && searchPre3!=null)
+		{
+			searchPre=criteriaBuilder.or(searchPre1,searchPre3);
+		}
+		else if(searchPre1!=null)
+		{
+			searchPre=criteriaBuilder.or(searchPre1);
+		}
+		else if(searchPre2 != null)
+		{
+			searchPre=criteriaBuilder.or(searchPre2);
+		}
+		else if(searchPre3 != null)
+		{
+			searchPre=criteriaBuilder.or(searchPre3);
+		}
+		
+		return searchPre;
 	}
 
 	private static Predicate searchFilter(String searchText, Map<String,String> searchField, CriteriaBuilder criteriaBuilder, Root<Question> from) {

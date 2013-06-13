@@ -576,4 +576,12 @@ public interface BmeConstants extends Constants , ConstantsWithLookup {
 	public String sendMailFailure();
 	
 	public String failure();
+	
+	public String examinerCannotBeNull();
+	
+	public String questionIdIsInteger();
+
+	public String questionName();
+
+	public String questionId();
 }
