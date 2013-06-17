@@ -2,19 +2,17 @@ package medizin.client.activites;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.PlaceAssesment;
 import medizin.client.place.PlaceAssesmentDetails;
 import medizin.client.proxy.AssesmentProxy;
+import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.McProxy;
 import medizin.client.request.AssesmentRequest;
-import medizin.client.ui.ErrorPanel;
-import medizin.client.ui.McAppConstant;
+import medizin.client.ui.TopPanel;
 import medizin.client.ui.view.assesment.AssesmentEditView;
 import medizin.client.ui.view.assesment.AssesmentEditViewImpl;
 
@@ -22,12 +20,12 @@ import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 import com.google.web.bindery.requestfactory.gwt.client.RequestFactoryEditorDriver;
 import com.google.web.bindery.requestfactory.shared.Receiver;
 import com.google.web.bindery.requestfactory.shared.ServerFailure;
-import com.google.web.bindery.requestfactory.shared.Violation;
 
 public class ActivityAssesmentCreate  extends AbstractActivityWrapper  implements AssesmentEditView.Presenter, AssesmentEditView.Delegate {
 	
@@ -128,9 +126,15 @@ public class ActivityAssesmentCreate  extends AbstractActivityWrapper  implement
                 values.add(null);
                 values.addAll(response);
                 view.setRepeForPickerValues(values);
+                
+               
             }
         });
-
+       
+        view.setInstitutionPickerValues(TopPanel.getInstitutionalList());
+        view.disableInstituteField();
+        
+        
 //		view.initialiseDriver(requests);
         widget.setWidget(assesmentEditView.asWidget());
 		//setTable(view.getTable());
@@ -147,7 +151,7 @@ public class ActivityAssesmentCreate  extends AbstractActivityWrapper  implement
 		view.setDelegate(this);
 		if(this.operation==PlaceAssesmentDetails.Operation.EDIT){
 			Log.info("edit");
-		requests.find(assesmentPlace.getProxyId()).with("mc","repeFor").fire(new Receiver<Object>() {
+		requests.find(assesmentPlace.getProxyId()).with("mc","repeFor","institution").fire(new Receiver<Object>() {
 
 			public void onFailure(ServerFailure error){
 				Log.error(error.getMessage());
@@ -180,6 +184,8 @@ public class ActivityAssesmentCreate  extends AbstractActivityWrapper  implement
 			AssesmentProxy assesment = request.create(AssesmentProxy.class);
 			this.assesment=assesment;
 			view.setEditTitle(false);
+			//view.setInstitutionValue(institutionActive);
+			assesment.setInstitution(institutionActive);
 		}
 		else {
 			view.setEditTitle(true);

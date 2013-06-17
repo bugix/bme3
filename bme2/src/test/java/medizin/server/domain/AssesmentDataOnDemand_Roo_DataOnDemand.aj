@@ -15,6 +15,8 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import medizin.server.domain.Assesment;
 import medizin.server.domain.AssesmentDataOnDemand;
+import medizin.server.domain.Institution;
+import medizin.server.domain.InstitutionDataOnDemand;
 import medizin.server.domain.Mc;
 import medizin.server.domain.McDataOnDemand;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,9 @@ privileged aspect AssesmentDataOnDemand_Roo_DataOnDemand {
     private List<Assesment> AssesmentDataOnDemand.data;
     
     @Autowired
+    InstitutionDataOnDemand AssesmentDataOnDemand.institutionDataOnDemand;
+    
+    @Autowired
     McDataOnDemand AssesmentDataOnDemand.mcDataOnDemand;
     
     public Assesment AssesmentDataOnDemand.getNewTransientAssesment(int index) {
@@ -37,6 +42,7 @@ privileged aspect AssesmentDataOnDemand_Roo_DataOnDemand {
         setDateClosed(obj, index);
         setDateOfAssesment(obj, index);
         setDateOpen(obj, index);
+        setInstitution(obj, index);
         setIsClosed(obj, index);
         setLogo(obj, index);
         setMc(obj, index);
@@ -66,6 +72,11 @@ privileged aspect AssesmentDataOnDemand_Roo_DataOnDemand {
     public void AssesmentDataOnDemand.setDateOpen(Assesment obj, int index) {
         Date dateOpen = new GregorianCalendar(Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.MONTH), Calendar.getInstance().get(Calendar.DAY_OF_MONTH), Calendar.getInstance().get(Calendar.HOUR_OF_DAY), Calendar.getInstance().get(Calendar.MINUTE), Calendar.getInstance().get(Calendar.SECOND) + new Double(Math.random() * 1000).intValue()).getTime();
         obj.setDateOpen(dateOpen);
+    }
+    
+    public void AssesmentDataOnDemand.setInstitution(Assesment obj, int index) {
+        Institution institution = institutionDataOnDemand.getRandomInstitution();
+        obj.setInstitution(institution);
     }
     
     public void AssesmentDataOnDemand.setIsClosed(Assesment obj, int index) {

@@ -1,12 +1,16 @@
 package medizin.client.ui.view.assesment;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
+
+import org.apache.bcel.generic.NEW;
 
 import medizin.client.place.PlaceUserDetails;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.proxy.AnswerProxy;
 import medizin.client.proxy.AssesmentProxy;
+import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.McProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.request.PersonRequest;
@@ -23,9 +27,11 @@ import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.text.shared.Renderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
@@ -54,7 +60,7 @@ public class AssesmentEditViewImpl extends Composite implements AssesmentEditVie
     @Override
     public RequestFactoryEditorDriver<AssesmentProxy,AssesmentEditViewImpl> createEditorDriver() {
         RequestFactoryEditorDriver<AssesmentProxy, AssesmentEditViewImpl> driver = GWT.create(EditorDriver.class);
-        driver.initialize(this);
+        driver.initialize(this);       
         return driver;
     }
     
@@ -93,6 +99,9 @@ public class AssesmentEditViewImpl extends Composite implements AssesmentEditVie
     DivElement lblbeforeClosing;
     
     @UiField
+    DivElement lblinstitution;
+    
+    @UiField
     IntegerBox rememberBeforeClosing;
 
     @UiField(provided = true)
@@ -110,8 +119,12 @@ public class AssesmentEditViewImpl extends Composite implements AssesmentEditVie
 
     @UiField(provided = true)
     ValueListBox<AssesmentProxy> repeFor = new ValueListBox<AssesmentProxy>(medizin.client.ui.view.roo.AssesmentProxyRenderer.instance(), new EntityProxyKeyProvider<medizin.client.proxy.AssesmentProxy>());
-
-    @UiField
+    
+    @UiField(provided=true)
+    ValueListBox<InstitutionProxy> institution=new ValueListBox<InstitutionProxy>(medizin.client.ui.view.roo.InstitutionProxyRenderer.instance(), new EntityProxyKeyProvider<medizin.client.proxy.InstitutionProxy>());
+    
+  
+	@UiField
     IntegerBox percentSameQuestion;
     
     @Override
@@ -122,6 +135,11 @@ public class AssesmentEditViewImpl extends Composite implements AssesmentEditVie
     @Override
     public void setMcPickerValues(Collection<McProxy> values) {
         mc.setAcceptableValues(values);
+    }
+    
+    @Override
+    public void setInstitutionPickerValues(Collection<InstitutionProxy> values) {
+    	institution.setAcceptableValues(values);
     }
     
 	private AssesmentProxy proxy;
@@ -195,6 +213,7 @@ public class AssesmentEditViewImpl extends Composite implements AssesmentEditVie
 		lblpercentSameQuestion.setInnerText(constants.percentSameQuestion());
 		lbllogo.setInnerText(constants.logo());
 		lblbeforeClosing.setInnerText(constants.rememberExaminerBeforeClosing());
+		lblinstitution.setInnerText(constants.institution());
 		
 		reciverMap.put("name", name);
 		reciverMap.put("dateOfAssesment", dateOfAssesment);
@@ -203,6 +222,7 @@ public class AssesmentEditViewImpl extends Composite implements AssesmentEditVie
 		reciverMap.put("place", place);
 		reciverMap.put("logo", logo);
 		reciverMap.put("rememberBeforeClosing", rememberBeforeClosing);
+		reciverMap.put("institution", institution);
 		
 	}
 
@@ -250,6 +270,17 @@ public class AssesmentEditViewImpl extends Composite implements AssesmentEditVie
 			// createTitle.getStyle().clearDisplay();
 		}
 
+	}
+	@Override
+	public void disableInstituteField()
+	{
+		DOM.setElementProperty( institution.getElement(), "disabled", "true");
+	}
+	
+	@Override
+	public void setInstitutionValue(InstitutionProxy institutionProxy)
+	{
+		institution.setValue(institutionProxy);
 	}
 
 }

@@ -70,5 +70,9 @@ public interface AssesmentProxy extends EntityProxy {
 
     abstract void setAssesmentQuestions(Set<medizin.client.proxy.AssesmentQuestionProxy> assesmentQuestions);
 
+    abstract InstitutionProxy getInstitution();
+
+    abstract void setInstitution(InstitutionProxy institution);
+
     abstract Integer getVersion();
 }

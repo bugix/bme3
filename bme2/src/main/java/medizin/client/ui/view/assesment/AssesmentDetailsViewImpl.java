@@ -72,7 +72,13 @@ public class AssesmentDetailsViewImpl extends Composite implements AssesmentDeta
     SpanElement lblbeforeClosing;
     
     @UiField
+    SpanElement insitutionLbl;
+    
+    @UiField
     SpanElement rememberBeforeClosing;
+    
+    @UiField
+    SpanElement institution;
 
     @UiField
     SpanElement isClosed;
@@ -140,7 +146,9 @@ public class AssesmentDetailsViewImpl extends Composite implements AssesmentDeta
         place.setInnerText(proxy.getPlace() == null ? "" : String.valueOf(proxy.getPlace()));
         logo.setInnerText(proxy.getLogo() == null ? "" : String.valueOf(proxy.getLogo()));
         rememberBeforeClosing.setInnerText(proxy.getRememberBeforeClosing() == null ? "" : String.valueOf(proxy.getRememberBeforeClosing()));
-       
+        institution.setInnerText(proxy.getInstitution() == null ? "" : proxy.getInstitution().getInstitutionName());
+        
+        
         isClosed.setInnerText(proxy.getIsClosed() == null ? "" : (proxy.getIsClosed()? "ja":"nein"));
         assesmentVersion.setInnerText(proxy.getAssesmentVersion() == null ? "" : String.valueOf(proxy.getAssesmentVersion()));
         mc.setInnerText(proxy.getMc() == null ? "" : medizin.client.ui.view.roo.McProxyRenderer.instance().render(proxy.getMc()));
@@ -190,6 +198,7 @@ public class AssesmentDetailsViewImpl extends Composite implements AssesmentDeta
 		percentSameQuestionLbl.setInnerText(constants.percentSameQuestion());
 		lblbeforeClosing.setInnerText(constants.rememberExaminerBeforeClosing());
 		studentPanel.getHeaderTextAccessor().setText(constants.studentMgt());
+		insitutionLbl.setInnerText(constants.institutionLbl());
 	}
 
 

@@ -139,6 +139,15 @@
                    								 <g:IntegerBox ui:field="rememberBeforeClosing"/>
                							 </td>
           						  </tr>
+          						  <tr id="logo">
+                						<td>
+                							 <div class="{style.label}" ui:field="lblinstitution">Remember Examiner Before Closing (In Days):</div>
+                  
+               							 </td>
+              							  <td>
+                   								 <g:ValueListBox ui:field="institution"/>
+               							 </td>
+          						  </tr>
 
 							<!-- <tr id="questionText"> <td colspan="2"> <div class="{style.label}">Text 
 								der Frage:</div> </td> </tr> <tr> <td colspan="2"> <g:SimplePanel ui:field="toolbarPanel" 

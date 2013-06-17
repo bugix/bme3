@@ -57,7 +57,13 @@ public class TopPanel extends Composite {
         return instance;
     }
     
-    private McAppShell shell;
+    private static List<InstitutionProxy> institutionalList=null;
+    
+    public static List<InstitutionProxy> getInstitutionalList() {
+		return institutionalList;
+	}
+
+	private McAppShell shell;
     
     public McAppShell getShell() {
 		return shell;
@@ -215,6 +221,8 @@ public class TopPanel extends Composite {
 							institutionListBox.setAcceptableValues(response);
 							TopPanel.this.requests.institutionRequest().mySetCurrentInstitution().using(institutionListBox.getValue()).fire();
 							McAppNav.checkAdminRights(requests,true);
+							
+							institutionalList=response;
 						}
 						else
 						{
@@ -244,6 +252,7 @@ public class TopPanel extends Composite {
 							institutionListBox.setAcceptableValues(response);
 							TopPanel.this.requests.institutionRequest().mySetCurrentInstitution().using(institutionListBox.getValue()).fire();
 							McAppNav.checkAdminRights(requests,true);
+							institutionalList=response;
 						}
 						else
 						{

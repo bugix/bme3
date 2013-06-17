@@ -133,7 +133,15 @@
 					                    <span ui:field="percentSameQuestion"/>
 					                </td>
 					            </tr>
-					            
+					       <tr id="institution">
+					                <td>
+					                    <span class="{style.label}" ui:field="insitutionLbl">Insitution :</span>
+					                </td>
+					                <td>
+					                    <span ui:field="institution"/>
+					                </td>
+
+					            </tr>     
 					       
 					      
 					    </table>

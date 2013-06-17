@@ -139,7 +139,7 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 		
 		view.setDelegate(this);
 		
-		requests.find(assesmentPlace.getProxyId()).with("repeFor","mc").fire(new Receiver<Object>() {
+		requests.find(assesmentPlace.getProxyId()).with("repeFor","mc","institution").fire(new Receiver<Object>() {
 
 			public void onFailure(ServerFailure error){
 				Log.error(error.getMessage());

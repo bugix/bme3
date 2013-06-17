@@ -584,9 +584,9 @@ public class AssesmentQuestion {
     	AssesmentQuestion assesmentQuestionNew = new AssesmentQuestion();
     	
     	Set<AnswerToAssQuestion> answersToAssementToCopy = assesmentQuestionToCopyFrom.getAnswersToAssQuestion();
-    	Set<AnswerToAssQuestion> answersToAssementCopied = new HashSet<AnswerToAssQuestion>();
+    	//Set<AnswerToAssQuestion> answersToAssementCopied = new HashSet<AnswerToAssQuestion>();
     	
-    	Iterator<AnswerToAssQuestion> iter = answersToAssementToCopy.iterator();
+    	/*Iterator<AnswerToAssQuestion> iter = answersToAssementToCopy.iterator();
     	while (iter.hasNext()){
     		AnswerToAssQuestion oldOne = iter.next();
     		AnswerToAssQuestion newOne = new AnswerToAssQuestion();
@@ -594,9 +594,9 @@ public class AssesmentQuestion {
     		newOne.setAssesmentQuestion(assesmentQuestionNew);
     		newOne.setSortOrder(oldOne.getSortOrder());
     		newOne.persist();
-    		answersToAssementCopied.add(newOne);
-    	}
-    	assesmentQuestionNew.setAnswersToAssQuestion(answersToAssementCopied);
+    		//answersToAssementCopied.add(newOne);
+    	}*/
+    	//assesmentQuestionNew.setAnswersToAssQuestion(answersToAssementCopied);
     	assesmentQuestionNew.setAssesment(assesment);
     	Person userLoggedIn=Person.myGetLoggedPerson();
     	if(selectedAuthor!=null)
@@ -650,6 +650,18 @@ public class AssesmentQuestion {
     	
     	assesmentQuestionNew.persist();
     	assesmentQuestionNew.flush();
+    	
+    	
+    	Iterator<AnswerToAssQuestion> iter1 = answersToAssementToCopy.iterator();
+    	while (iter1.hasNext()){
+    		AnswerToAssQuestion oldOne = iter1.next();
+    		AnswerToAssQuestion newOne = new AnswerToAssQuestion();
+    		newOne.setAnswers(oldOne.getAnswers());
+    		newOne.setAssesmentQuestion(assesmentQuestionNew);
+    		newOne.setSortOrder(oldOne.getSortOrder());
+    		newOne.persist();
+    		//answersToAssementCopied.add(newOne);
+    	}
     	
     	//em.getTransaction().commit();
     	

@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.Set;
 import medizin.server.domain.Assesment;
 import medizin.server.domain.AssesmentQuestion;
+import medizin.server.domain.Institution;
 import medizin.server.domain.Mc;
 import medizin.server.domain.QuestionSumPerPerson;
 
@@ -122,6 +123,14 @@ privileged aspect Assesment_Roo_JavaBean {
     
     public void Assesment.setAssesmentQuestions(Set<AssesmentQuestion> assesmentQuestions) {
         this.assesmentQuestions = assesmentQuestions;
+    }
+    
+    public Institution Assesment.getInstitution() {
+        return this.institution;
+    }
+    
+    public void Assesment.setInstitution(Institution institution) {
+        this.institution = institution;
     }
     
 }

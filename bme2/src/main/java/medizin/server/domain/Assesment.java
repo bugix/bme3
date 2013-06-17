@@ -86,6 +86,10 @@ public class Assesment {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "assesment")
     private Set<AssesmentQuestion> assesmentQuestions = new HashSet<AssesmentQuestion>();
     
+    @NotNull
+    @ManyToOne
+    Institution institution;
+    
     /* Business Login
      * 
      * Find Assessment
