@@ -14,6 +14,9 @@ import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -172,5 +175,25 @@ public class Assesment {
         q.setParameter("dateOpen", dateOpen);
       //  q.setParameter("isClosed", isClosed);
         return q.getResultList();
+    }
+    
+    
+    public static List<Assesment> findAssesmentByInsitute(int firstResult, int maxResults)
+    {
+    	EntityManager em = Assesment.entityManager();
+    	
+    	Institution activeInstitute=Institution.myGetInstitutionToWorkWith();
+    	//create query  	
+    	CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+    	CriteriaQuery<Assesment> criteriaQuery = criteriaBuilder
+				.createQuery(Assesment.class);
+    	//from
+    	Root<Assesment> from = criteriaQuery.from(Assesment.class);
+    	
+    	criteriaQuery.where(criteriaBuilder.equal(from.get("institution"), activeInstitute));
+    	TypedQuery<Assesment> q=entityManager().createQuery(criteriaQuery);
+    	q.setFirstResult(firstResult);
+    	q.setMaxResults(maxResults);
+    	return q.getResultList();
     }
 }

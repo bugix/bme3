@@ -148,7 +148,7 @@ public class ActivityAssesment extends AbstractActivityWrapper implements Assesm
 	
 	//Request fetching Assesment-objects
 	 protected Request<java.util.List<medizin.client.proxy.AssesmentProxy>> createRangeRequest(Range range) {
-	        return requests.assesmentRequest().findAssesmentEntries(range.getStart(), range.getLength());
+	        return requests.assesmentRequest().findAssesmentByInsitute(range.getStart(), range.getLength());
 	    }
 
 	    protected void fireCountRequest(Receiver<Long> callback) {
