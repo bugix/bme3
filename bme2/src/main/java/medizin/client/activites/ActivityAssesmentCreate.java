@@ -119,7 +119,7 @@ public class ActivityAssesmentCreate  extends AbstractActivityWrapper  implement
             }
         });
         view.setRepeForPickerValues(Collections.<AssesmentProxy>emptyList());
-        requests.assesmentRequest().findAssesmentEntries(0, 50).with(medizin.client.ui.view.roo.AssesmentProxyRenderer.instance().getPaths()).fire(new Receiver<List<AssesmentProxy>>() {
+        requests.assesmentRequest().findAssesmentByInsitute(0, 50).with(medizin.client.ui.view.roo.AssesmentProxyRenderer.instance().getPaths()).fire(new Receiver<List<AssesmentProxy>>() {
 
             public void onSuccess(List<AssesmentProxy> response) {
                 List<AssesmentProxy> values = new ArrayList<AssesmentProxy>();
