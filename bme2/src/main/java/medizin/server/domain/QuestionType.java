@@ -1,6 +1,8 @@
 package medizin.server.domain;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.EntityManager;
@@ -283,6 +285,54 @@ public class QuestionType {
 		Root<QuestionType> from = criteriaQuery.from(QuestionType.class);
     	return allQuestionTypesForInstitute(institution, criteriaBuilder, criteriaQuery, from).getResultList();
     }
+    
+    /*exclude question types already added in assesment*/
+    public static List<QuestionType> findAllQuestionTypesForInstituteInSession(Assesment a) {
+    	Person userLoggedIn = Person.myGetLoggedPerson();
+		Institution institution = Institution.myGetInstitutionToWorkWith();
+		if (userLoggedIn == null || institution == null)
+			return Lists.newArrayList();
+
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<QuestionType> criteriaQuery = criteriaBuilder.createQuery(QuestionType.class);
+		Root<QuestionType> from = criteriaQuery.from(QuestionType.class);
+		
+		Predicate p1 = criteriaBuilder.equal(from.get("institution"),institution);	
+		criteriaQuery.where(p1);
+		TypedQuery<QuestionType> query = entityManager().createQuery(criteriaQuery);
+
+		log.info("Query is : " + query.unwrap(Query.class).getQueryString());
+		
+		List<QuestionType> questionTypeList=query.getResultList();
+		
+		List<QuestionType> returnTypeList=new ArrayList<QuestionType>();
+		
+		 /*exclude question types already added in assesment*/
+		 TypedQuery<QuestionTypeCountPerExam> q = entityManager().createQuery("SELECT questTypePerExam FROM QuestionTypeCountPerExam AS questTypePerExam WHERE questTypePerExam.assesment = :assesment ", QuestionTypeCountPerExam.class);
+	        q.setParameter("assesment", a);
+		List<QuestionTypeCountPerExam> questionTypeCountPerExamList=q.getResultList();
+		
+		for(QuestionType questionType:questionTypeList)
+		{
+			boolean excludeQuestionType=false;
+			for(QuestionTypeCountPerExam questionTypeCountPerExam:questionTypeCountPerExamList)
+			{
+				Set<QuestionType> questionTypes=questionTypeCountPerExam.getQuestionTypesAssigned();
+				if(questionTypes.contains(questionType))
+				{
+					excludeQuestionType=true;
+					break;
+				}
+			}
+			if(!excludeQuestionType)
+			{
+				returnTypeList.add(questionType);
+			}
+		}
+		
+    	return returnTypeList;
+    }
+    
     
     private final static <T> TypedQuery<T> allQuestionTypesForInstitute(Institution institution,CriteriaBuilder criteriaBuilder,CriteriaQuery<T> criteriaQuery,Root<QuestionType> from) {
     	

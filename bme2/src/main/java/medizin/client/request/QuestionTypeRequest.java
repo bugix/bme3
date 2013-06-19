@@ -2,6 +2,7 @@ package medizin.client.request;
 
 import java.util.List;
 
+import medizin.client.proxy.AssesmentProxy;
 import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.ui.widget.Sorting;
 
@@ -20,6 +21,7 @@ public interface QuestionTypeRequest extends QuestionTypeRequest_Roo_Gwt {
 	Request<List<QuestionTypeProxy>> findAllQuestionTypesByAssesment(Long assesmentId);
 	abstract Request<Long> countQuestionsForQuestionType(Long questionTypeId);
 	abstract Request<List<QuestionTypeProxy>> findAllQuestionTypesForInstituteInSession();
+	abstract Request<List<QuestionTypeProxy>> findAllQuestionTypesForInstituteInSession(AssesmentProxy a);
 	
 	//    Request<java.lang.Long> countQuestionEventsByInstitutionNonRoo(java.lang.Long institutionId);
 //    

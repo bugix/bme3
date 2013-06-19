@@ -694,7 +694,7 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 	        driver.flush();
 
 		
-		requests.questionTypeRequest().findAllQuestionTypesForInstituteInSession().fire(new Receiver<List<QuestionTypeProxy>>(){
+		requests.questionTypeRequest().findAllQuestionTypesForInstituteInSession(assesment).fire(new Receiver<List<QuestionTypeProxy>>(){
 
 			@Override
 			public void onSuccess(List<QuestionTypeProxy> response) {
