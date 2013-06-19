@@ -30,6 +30,7 @@ import medizin.client.ui.view.assesment.QuestionTypeCountAddDialogboxImpl;
 import medizin.client.ui.view.assesment.QuestionTypeCountView;
 import medizin.client.ui.view.assesment.StudentView;
 import medizin.client.ui.widget.process.ApplicationLoadingPopupView;
+import medizin.server.domain.Institution;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.shared.EventBus;
@@ -826,7 +827,7 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 			
 		});
 		
-		requests.questionEventRequest().findAllQuestionEvents().fire(new Receiver<List<QuestionEventProxy>>(){
+		requests.questionEventRequest().findQuestionEventByInstitution(institutionActive).fire(new Receiver<List<QuestionEventProxy>>(){
 			
 
 			@Override

@@ -16,7 +16,7 @@ public interface AssesmentRequest_Roo_Gwt extends RequestContext {
 
     abstract Request<java.util.List<medizin.client.proxy.AssesmentProxy>> findAllAssesments();
 
-    abstract Request<java.util.List<medizin.client.proxy.AssesmentProxy>> findAssesmentByInsitute(int firstResult, int maxResults);
+    abstract Request<java.util.List<medizin.client.proxy.AssesmentProxy>> findAssesmentEntries(int firstResult, int maxResults);
 
     abstract Request<medizin.client.proxy.AssesmentProxy> findAssesment(Long id);
 

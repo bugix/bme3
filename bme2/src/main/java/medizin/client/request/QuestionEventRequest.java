@@ -2,10 +2,9 @@ package medizin.client.request;
 
 import java.util.List;
 
+import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.QuestionEventProxy;
-import medizin.server.domain.QuestionEvent;
 
-import org.apache.regexp.RE;
 import org.springframework.roo.addon.gwt.RooGwtUnmanagedRequest;
 
 import com.google.web.bindery.requestfactory.shared.InstanceRequest;
@@ -42,6 +41,8 @@ Request<java.lang.Long> countQuestionEventsByInstitutionNonRoo(java.lang.Long in
 	
 	Request<List<QuestionEventProxy>>   findQuestionEventsByInstitutionOrEvent(
 			Long institutionId, String eventNameFilter, int firstResult, int maxResults);
+	
+	Request<List<QuestionEventProxy>> findQuestionEventByInstitution(InstitutionProxy institution);
 	
 	Request<List<QuestionEventProxy>> findQuestionEventByInstitutionAndAccRights(Boolean isAdmin, Long personId, Long instId);
 }
