@@ -15,8 +15,10 @@ import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.ValueListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -48,6 +50,9 @@ public class AssesmentQuestionPanelImpl extends Composite implements AssesmentQu
 	
 	@UiField
 	Button sendMail;
+	
+	@UiField
+	ScrollPanel assesmentQuestionScrollPanel;
 	
 	public Button getSendMail() {
 		return sendMail;
@@ -88,6 +93,8 @@ public class AssesmentQuestionPanelImpl extends Composite implements AssesmentQu
 			}
 		});
 		 
+		assesmentQuestionScrollPanel.setHeight(((int)(Window.getClientHeight()*0.73))+"px");
+		
 		
 	}
 
