@@ -460,7 +460,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 					
 					question.setProxy(iter.next(), false);
 					changeAssesmentQuestionColor(question);
-					
+					changedeleteAssesmentButtonVisiblilty(question);
 					acceptOrForceAcceptButtonVisisble(question);
 					
 					question.setDelegate(ActivityAsignAssQuestion.this);
@@ -712,6 +712,9 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 									 
 									 assementQuestionPanel.addAssesmentQuestion(assesmentQuestionView);
 									 assesmentQuestionView.setOpen();
+									 
+									 
+									 changedeleteAssesmentButtonVisiblilty(assesmentQuestionView);
 								}
 								else {
 									replaceQuestionThroughAssesmentQuestion(assesment);
@@ -1133,19 +1136,20 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 					acceptOrForceAcceptButtonVisisble(assesmentQuestionViewAktiv);
 					if(viaAddButton)
 					{
-					((AssesmentQuestionViewImpl)assesmentQuestionViewAktiv).removeFromParent();
-					
-					if(((personRightProxy.getIsInstitutionalAdmin() || personRightProxy.getIsAdmin()) && assementQuestionPanel.getAuthorListBox().getValue().equals(response.getAutor())))
-					assementQuestionPanel.addAssesmentQuestion(assesmentQuestionViewAktiv);
-					
-					if(!((personRightProxy.getIsInstitutionalAdmin() || personRightProxy.getIsAdmin()))) //examiner
-					{
+						((AssesmentQuestionViewImpl)assesmentQuestionViewAktiv).removeFromParent();
+						
+						if(((personRightProxy.getIsInstitutionalAdmin() || personRightProxy.getIsAdmin()) && assementQuestionPanel.getAuthorListBox().getValue().equals(response.getAutor())))
 						assementQuestionPanel.addAssesmentQuestion(assesmentQuestionViewAktiv);
+						
+						if(!((personRightProxy.getIsInstitutionalAdmin() || personRightProxy.getIsAdmin()))) //examiner
+						{
+							assementQuestionPanel.addAssesmentQuestion(assesmentQuestionViewAktiv);
+						}
+						
+						
 					}
-					
+					changedeleteAssesmentButtonVisiblilty(assesmentQuestionViewAktiv);
 					}
-					
-				}
 				
 		           @Override
 					public void onFailure(ServerFailure error) {
@@ -1204,6 +1208,37 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 			qId=questionId.toString();
 		}
 		initQuestionPanel(addQuestionsTabPanel.getActiveTab(), assesmentTabPanel.getActiveTab(),questionshortName,qId,questionType);
+	}
+
+	@Override
+	public void deleteAssesmentQuestion(
+			final AssesmentQuestionViewImpl assesmentQuestionViewImpl) {
+		AssesmentQuestionRequest request=requests.assesmentQuestionRequest();
+		AssesmentQuestionProxy a=assesmentQuestionViewImpl.getProxy();
+		a=request.edit(a);
+		request.remove().using(a).fire(new Receiver<Void>() {
+
+			@Override
+			public void onSuccess(Void response) {
+				assesmentQuestionViewImpl.removeFromParent();
+				 initQuestionPanel(addQuestionsTabPanel.getActiveTab(), assesmentTabPanel.getActiveTab(),"","","");
+
+			}
+		});
+		
+		
+	}
+	/*Accept and force accept Assesment Question cannot be deleted*/
+	public void changedeleteAssesmentButtonVisiblilty(AssesmentQuestionView assesmentQuestionViewAktiv)
+	{
+		if(assesmentQuestionViewAktiv.getProxy().getIsAssQuestionAcceptedAdmin() || assesmentQuestionViewAktiv.getProxy().getIsForcedByAdmin())
+		{
+			assesmentQuestionViewAktiv.getDeleteFromAssesment().setVisible(false);
+		}
+		else
+		{
+			assesmentQuestionViewAktiv.getDeleteFromAssesment().setVisible(true);
+		}
 	}
 
 }
