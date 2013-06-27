@@ -7,6 +7,7 @@ import java.util.Set;
 import medizin.server.domain.Assesment;
 import medizin.server.domain.QuestionType;
 import medizin.server.domain.QuestionTypeCountPerExam;
+import medizin.shared.BlockingTypes;
 
 privileged aspect QuestionTypeCountPerExam_Roo_JavaBean {
     
@@ -40,6 +41,14 @@ privileged aspect QuestionTypeCountPerExam_Roo_JavaBean {
     
     public void QuestionTypeCountPerExam.setSort_order(Integer sort_order) {
         this.sort_order = sort_order;
+    }
+    
+    public BlockingTypes QuestionTypeCountPerExam.getBlockingType() {
+        return this.blockingType;
+    }
+    
+    public void QuestionTypeCountPerExam.setBlockingType(BlockingTypes blockingType) {
+        this.blockingType = blockingType;
     }
     
 }

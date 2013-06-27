@@ -5,6 +5,7 @@ package medizin.client.proxy;
 import com.google.web.bindery.requestfactory.shared.EntityProxy;
 import com.google.web.bindery.requestfactory.shared.ProxyForName;
 import java.util.Set;
+import medizin.shared.BlockingTypes;
 import org.springframework.roo.addon.gwt.RooGwtProxy;
 
 @ProxyForName(value = "medizin.server.domain.QuestionTypeCountPerExam", locator = "medizin.server.locator.QuestionTypeCountPerExamLocator")
@@ -28,6 +29,10 @@ public interface QuestionTypeCountPerExamProxy extends EntityProxy {
     abstract Integer getSort_order();
 
     abstract void setSort_order(Integer sort_order);
+
+    abstract BlockingTypes getBlockingType();
+
+    abstract void setBlockingType(BlockingTypes blockingType);
 
     abstract Integer getVersion();
 }
