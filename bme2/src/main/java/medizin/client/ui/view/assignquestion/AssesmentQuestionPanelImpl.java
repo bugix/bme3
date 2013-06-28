@@ -1,8 +1,5 @@
 package medizin.client.ui.view.assignquestion;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import medizin.client.proxy.PersonProxy;
 import medizin.shared.i18n.BmeConstants;
 
