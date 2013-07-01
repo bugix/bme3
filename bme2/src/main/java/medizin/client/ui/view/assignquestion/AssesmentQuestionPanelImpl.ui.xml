@@ -1,6 +1,6 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:a="urn:import:medizin.client.ui.view.assignquestion">
 	<ui:style src="../../styles.css">
 	.displayPanel{
 		
@@ -33,6 +33,18 @@ border-bottom: 1px solid #AAAAAA;
 		 margin-right: 10px;
    		 margin-top: 5px;
 	}
+	
+	.questionType-VP{
+	border:1px solid;
+	border-radius:5px;
+
+	}
+	
+	.questionType-Label{
+	max-width: 140px;
+	width:100%;
+
+	}
 		
 	</ui:style>
 	
@@ -42,9 +54,10 @@ border-bottom: 1px solid #AAAAAA;
 	        <tr align="right" width="100%">
 	           
 	            <td>
-	            <g:HorizontalPanel spacing="5">
-	               <g:Label ui:field="blockingCounter" addStyleNames="{style.countLbl}">+22</g:Label>
-	            	
+	            <g:HorizontalPanel spacing="5" width="100%">
+	            	<g:VerticalPanel addStyleNames="{style.questionType-VP}" ui:field="questionTypeVP">
+	            		<a:QuestionTypeCountViewImpl></a:QuestionTypeCountViewImpl>
+	            	</g:VerticalPanel>
 	                <g:ValueListBox ui:field="authorListBox"  styleName="{style.float-right}">
 					</g:ValueListBox>
 	                </g:HorizontalPanel>

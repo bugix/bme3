@@ -1,6 +1,9 @@
 package medizin.client.ui.view.assignquestion;
 
+import java.util.List;
+
 import medizin.client.proxy.PersonProxy;
+import medizin.client.proxy.QuestionTypeCountPerExamProxy;
 import medizin.client.ui.view.assignquestion.QuestionPanel.Delegate;
 
 import com.google.gwt.user.client.ui.Button;
@@ -33,4 +36,11 @@ public interface AssesmentQuestionPanel extends IsWidget {
 	public Button getSendMail();
 	
 	public SendMailPopupViewImpl getSendMailPopupViewImpl();
+	
+	public List<QuestionTypeCountPerExamProxy> getQuestionTypeCountPerExams();
+
+	public void setQuestionTypeCountPerExams(
+			List<QuestionTypeCountPerExamProxy> questionTypeCountPerExams) ;
+	
+	public VerticalPanel getQuestionTypeVP() ;
 }

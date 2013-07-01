@@ -1,5 +1,6 @@
 package medizin.server.domain;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -92,6 +93,9 @@ public class Assesment {
     @NotNull
     @ManyToOne
     Institution institution;
+    
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "assesment")
+    private List<QuestionTypeCountPerExam> questionTypeCountPerExams=new ArrayList<QuestionTypeCountPerExam>();
     
     /* Business Login
      * 

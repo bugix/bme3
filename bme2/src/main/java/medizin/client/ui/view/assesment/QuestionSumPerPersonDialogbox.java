@@ -27,8 +27,10 @@ public interface QuestionSumPerPersonDialogbox extends IsWidget {
 	 * Implemented by the owner of the view.
 	 */
 	interface Delegate {
-		void addQuestionSumPerPersonClicked();
+		//void addQuestionSumPerPersonClicked();
 		void cancelQuestionSumPerPersonClicked();
+		void addQuestionSumPerPersonClicked(
+				QuestionSumPerPersonDialogboxImpl questionSumPerPersonDialogboxImpl);
 	}
 
  

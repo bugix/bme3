@@ -1,6 +1,9 @@
 package medizin.client.ui.view.assignquestion;
 
+import java.util.List;
+
 import medizin.client.proxy.PersonProxy;
+import medizin.client.proxy.QuestionTypeCountPerExamProxy;
 import medizin.shared.i18n.BmeConstants;
 
 import com.google.gwt.core.client.GWT;
@@ -35,12 +38,27 @@ public class AssesmentQuestionPanelImpl extends Composite implements AssesmentQu
 	
 	private SendMailPopupViewImpl sendMailPopupViewImpl=null;
 	
+	private List<QuestionTypeCountPerExamProxy> questionTypeCountPerExams;
 	
-	
+	public List<QuestionTypeCountPerExamProxy> getQuestionTypeCountPerExams() {
+		return questionTypeCountPerExams;
+	}
+
+	public void setQuestionTypeCountPerExams(
+			List<QuestionTypeCountPerExamProxy> questionTypeCountPerExams) {
+		this.questionTypeCountPerExams = questionTypeCountPerExams;
+	}
+
 	public SendMailPopupViewImpl getSendMailPopupViewImpl() {
 		return sendMailPopupViewImpl;
 	}
 
+	@UiField
+	VerticalPanel questionTypeVP;
+	
+	public VerticalPanel getQuestionTypeVP() {
+		return questionTypeVP;
+	}
 
 	@UiField
 	VerticalPanel assesmentQuestionDisplayPanel;
@@ -142,6 +160,17 @@ public class AssesmentQuestionPanelImpl extends Composite implements AssesmentQu
 		}
 		sendMailPopupViewImpl.show();
 		
+	}
+	
+	public void createQuestionTypeCountPanel(List<QuestionTypeCountPerExamProxy> questionTypeCountPerExamProxys)
+	{
+		questionTypeVP.clear();
+		for(QuestionTypeCountPerExamProxy questionTypeCountPerExamProxy:questionTypeCountPerExamProxys)
+		{
+			QuestionTypeCountViewImpl questionTypeCountViewImpl=new QuestionTypeCountViewImpl();
+			questionTypeCountViewImpl.setQuestionTypeCountPerExamProxy(questionTypeCountPerExamProxy);
+			questionTypeCountViewImpl.getQuestionTypeLbl().setText("");
+		}
 	}
 
 }
