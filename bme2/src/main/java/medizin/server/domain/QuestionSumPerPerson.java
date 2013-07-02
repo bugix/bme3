@@ -101,4 +101,20 @@ public class QuestionSumPerPerson {
 
        return q.getSingleResult();
 	}
+	
+	/* Implemented for top element to on left side of assesment question.
+	 * 
+	 * find % of Question Assigned to examiner for assesment*/
+	public static List<QuestionSumPerPerson> findPercentageOfQuestionAssignedToExaminer(Assesment a,Person p)
+	{
+		EntityManager em=QuestionSumPerPerson.entityManager();
+		
+		TypedQuery<QuestionSumPerPerson> q = em.createQuery("SELECT qsum FROM QuestionSumPerPerson qsum " + 
+	       		" WHERE responsiblePerson=:p and assesment=:a",  QuestionSumPerPerson.class);
+	       q.setParameter("a", a);
+	       q.setParameter("p", p);
+		   
+		
+		return q.getResultList();
+	}
 }

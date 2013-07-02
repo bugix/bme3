@@ -584,4 +584,8 @@ public interface BmeConstants extends Constants , ConstantsWithLookup {
 	public String questionName();
 
 	public String questionId();
+	
+	public String blockingType();
+	
+	public String percentNotMoreThan100();
 }

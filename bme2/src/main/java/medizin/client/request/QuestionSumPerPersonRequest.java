@@ -2,6 +2,8 @@ package medizin.client.request;
 
 import java.util.List;
 
+import medizin.client.proxy.AssesmentProxy;
+import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionSumPerPersonProxy;
 
 import org.springframework.roo.addon.gwt.RooGwtUnmanagedRequest;
@@ -19,4 +21,7 @@ public interface QuestionSumPerPersonRequest extends QuestionSumPerPersonRequest
 	InstanceRequest<QuestionSumPerPersonProxy, Void> moveUp();
 	InstanceRequest<QuestionSumPerPersonProxy, Void> moveDown();
 	Request<QuestionSumPerPersonProxy>  findQuestionSumPerPersonByEventNonRoo(Long questionEventId);
+	
+	Request<List<QuestionSumPerPersonProxy>>  findPercentageOfQuestionAssignedToExaminer(AssesmentProxy a, PersonProxy p);
+
 }

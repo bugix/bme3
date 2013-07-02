@@ -1,5 +1,6 @@
 package medizin.client.ui.view.assesment;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -10,6 +11,7 @@ import medizin.client.proxy.QuestionTypeCountPerExamProxy;
 import medizin.client.style.resources.MyCellTableResources;
 import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
+import medizin.shared.BlockingTypes;
 import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
@@ -127,6 +129,43 @@ public class QuestionTypeCountViewImpl extends Composite implements QuestionType
                 return renderer.render(object.getQuestionTypesAssigned());
             }
         }, "Question Types Assigned");
+        
+        paths.add("blockingType");
+        tableQuestionTypeCount.addColumn(new TextColumn<QuestionTypeCountPerExamProxy>() {
+
+            Renderer<BlockingTypes> renderer =new Renderer<BlockingTypes>() {
+
+            	@Override
+        		public String render(BlockingTypes object) {
+        			// TODO Auto-generated method stub
+        			if(object==null)
+        			{
+        				return "";
+        			}
+        			else
+        			{
+        				return object.name();
+        			}
+        		}
+
+        		@Override
+        		public void render(BlockingTypes object, Appendable appendable)
+        				throws IOException {
+        			String s = render(object);
+        		    appendable.append(s);
+
+        			
+        		}
+			
+				
+			};
+
+			@Override
+			public String getValue(QuestionTypeCountPerExamProxy object) {
+				// TODO Auto-generated method stub
+				return renderer.render(object.getBlockingType());
+			}       }, "Blocking Type");
+        
 //        paths.add("assesment");
 //        tableQuestionTypeCount.addColumn(new TextColumn<QuestionTypeCountPerExamProxy>() {
 //

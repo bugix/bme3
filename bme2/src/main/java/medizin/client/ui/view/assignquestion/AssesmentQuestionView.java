@@ -3,6 +3,7 @@ package medizin.client.ui.view.assignquestion;
 import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 import medizin.client.proxy.AssesmentQuestionProxy;
@@ -24,6 +25,8 @@ public interface AssesmentQuestionView extends IsWidget {
 			void forceAccept(AssesmentQuestionViewImpl assesmentQuestionViewImpl);
 			void addToAssesmentButtonClicked(
 					AssesmentQuestionViewImpl assesmentQuestionViewImpl);
+			void deleteAssesmentQuestion(
+					AssesmentQuestionViewImpl assesmentQuestionViewImpl);
 		}
 
 	    void setDelegate(Delegate delegate);
@@ -41,5 +44,7 @@ public interface AssesmentQuestionView extends IsWidget {
 		public Button getForceAcceptButton();
 		
 		public TableElement getQuestionTable();
+		
+		public Label getDeleteFromAssesment();
 
 }

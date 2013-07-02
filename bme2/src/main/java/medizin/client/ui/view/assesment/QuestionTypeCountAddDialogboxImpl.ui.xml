@@ -55,7 +55,16 @@
                     <g:IntegerBox ui:field="questionTypeCount"/>
                 </td>
             </tr>
-      
+      		
+            <tr id="blockingType">
+                <td>
+                    <div class="{style.label}" ui:field="blockingTypeLbl">Blocking Type</div>
+                </td>
+                <td>
+                    <g:ValueListBox ui:field="blockingType" ></g:ValueListBox>
+                </td>
+            </tr>
+            
         </table>
 
     <div class="{style.bar}">

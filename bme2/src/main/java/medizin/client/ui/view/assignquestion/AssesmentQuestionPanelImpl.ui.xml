@@ -1,7 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui">
-	<ui:style>
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:a="urn:import:medizin.client.ui.view.assignquestion">
+	<ui:style src="../../styles.css">
 	.displayPanel{
 		
 		/*background-color: #E6D8F2 ;*/
@@ -33,6 +33,18 @@ border-bottom: 1px solid #AAAAAA;
 		 margin-right: 10px;
    		 margin-top: 5px;
 	}
+	
+	.questionType-VP{
+	border:1px solid;
+	border-radius:5px;
+
+	}
+	
+	.questionType-Label{
+	max-width: 140px;
+	width:100%;
+
+	}
 		
 	</ui:style>
 	
@@ -40,10 +52,15 @@ border-bottom: 1px solid #AAAAAA;
 	
 	    <table width="100%" >
 	        <tr align="right" width="100%">
+	           
 	            <td>
+	            <g:HorizontalPanel spacing="5" width="100%">
+	            	<g:VerticalPanel addStyleNames="{style.questionType-VP}" ui:field="questionTypeVP">
+	            		<a:QuestionTypeCountViewImpl></a:QuestionTypeCountViewImpl>
+	            	</g:VerticalPanel>
 	                <g:ValueListBox ui:field="authorListBox"  styleName="{style.float-right}">
 					</g:ValueListBox>
-	                
+	                </g:HorizontalPanel>
 	            </td>
 	        </tr>
 	        
@@ -55,8 +72,9 @@ border-bottom: 1px solid #AAAAAA;
 	        </tr>
 	        <tr width="100%" styleName="{style.min-height}">
 	            <td>
+	            <g:ScrollPanel height="550px" ui:field="assesmentQuestionScrollPanel" width="100%">
 	                <g:VerticalPanel ui:field="assesmentQuestionDisplayPanel"  width="100%" height="70px"></g:VerticalPanel>
-	                
+	            </g:ScrollPanel>    
 	            </td>
 	        </tr>
 	    </table>

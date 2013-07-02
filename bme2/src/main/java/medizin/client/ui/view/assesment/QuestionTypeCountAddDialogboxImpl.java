@@ -1,52 +1,34 @@
 package medizin.client.ui.view.assesment;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import medizin.client.ui.view.assesment.AssesmentEditViewImpl.EditorDriver;
-import medizin.client.ui.view.user.EventAccessDialogbox;
-import medizin.client.ui.view.user.EventAccessDialogbox.Delegate;
-import medizin.client.ui.view.user.EventAccessDialogbox.Presenter;
-
-
-import medizin.client.proxy.AssesmentProxy;
-import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionTypeCountPerExamProxy;
 import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.ui.view.roo.QuestionTypeSetEditor;
+import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
+import medizin.shared.BlockingTypes;
+import medizin.shared.i18n.BmeConstants;
 
-import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.cell.client.AbstractEditableCell;
-import com.google.gwt.cell.client.ActionCell;
-import com.google.gwt.cell.client.Cell;
-import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.editor.client.Editor;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyUpHandler;
-import com.google.web.bindery.requestfactory.gwt.client.RequestFactoryEditorDriver;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.text.shared.Renderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.IntegerBox;
-import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.ValueListBox;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.web.bindery.requestfactory.gwt.client.RequestFactoryEditorDriver;
 
 public class QuestionTypeCountAddDialogboxImpl extends DialogBox implements QuestionTypeCountAddDialogbox, Editor<QuestionTypeCountPerExamProxy> {
 
@@ -56,11 +38,46 @@ public class QuestionTypeCountAddDialogboxImpl extends DialogBox implements Ques
 	interface EventAccessDialogboxImplUiBinder extends
 			UiBinder<Widget, QuestionTypeCountAddDialogboxImpl> {
 	}
-
+	
+	private BmeConstants constants=GWT.create(BmeConstants.class);
+	
 	private Presenter presenter;
 	
 	@UiField
 	Button closeButton;
+	
+	@UiField
+	DivElement blockingTypeLbl;
+	
+	@UiField(provided=true)
+	ValueListBox<BlockingTypes> blockingType=new ValueListBox<BlockingTypes>(new Renderer<BlockingTypes>() {
+
+		@Override
+		public String render(BlockingTypes object) {
+			// TODO Auto-generated method stub
+			if(object==null)
+			{
+				return "";
+			}
+			else
+			{
+				return object.name();
+			}
+		}
+
+		@Override
+		public void render(BlockingTypes object, Appendable appendable)
+				throws IOException {
+			String s = render(object);
+		    appendable.append(s);
+
+			
+		}
+	});
+	
+
+	
+	
 	
 	@UiHandler ("closeButton")
 	public void onCloseButtonClick(ClickEvent event) {
@@ -90,6 +107,12 @@ public class QuestionTypeCountAddDialogboxImpl extends DialogBox implements Ques
 		this.getElement().getStyle().setZIndex(3);
 	    
 	    init();
+	    blockingTypeLbl.setInnerText(constants.blockingType());	   
+	    List<BlockingTypes> b=BlockingTypes.getValues();
+	    blockingType.setValue(b.get(0));
+	    blockingType.setAcceptableValues(b);
+	    blockingType.setValue(b.get(0));
+	    //blockingType.setValue(BlockingTypes.NON_BLOCLING);
 	    
 	}
 
@@ -141,6 +164,14 @@ public class QuestionTypeCountAddDialogboxImpl extends DialogBox implements Ques
     
     @UiHandler("save")
     void onSave(ClickEvent event) {
+    	
+    	if(blockingType.getValue()==null)
+    	{
+    		ConfirmationDialogBox.showOkDialogBox("Warning", "Blocking Type cannot be empty");
+    		
+    		return;
+    	}
+    	
         delegate.addClicked();
         hide();
     }

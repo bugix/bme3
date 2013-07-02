@@ -14,6 +14,7 @@ import medizin.server.domain.Assesment;
 import medizin.server.domain.AssesmentDataOnDemand;
 import medizin.server.domain.QuestionTypeCountPerExam;
 import medizin.server.domain.QuestionTypeCountPerExamDataOnDemand;
+import medizin.shared.BlockingTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -31,6 +32,7 @@ privileged aspect QuestionTypeCountPerExamDataOnDemand_Roo_DataOnDemand {
     public QuestionTypeCountPerExam QuestionTypeCountPerExamDataOnDemand.getNewTransientQuestionTypeCountPerExam(int index) {
         QuestionTypeCountPerExam obj = new QuestionTypeCountPerExam();
         setAssesment(obj, index);
+        setBlockingType(obj, index);
         setQuestionTypeCount(obj, index);
         setSort_order(obj, index);
         return obj;
@@ -39,6 +41,11 @@ privileged aspect QuestionTypeCountPerExamDataOnDemand_Roo_DataOnDemand {
     public void QuestionTypeCountPerExamDataOnDemand.setAssesment(QuestionTypeCountPerExam obj, int index) {
         Assesment assesment = assesmentDataOnDemand.getRandomAssesment();
         obj.setAssesment(assesment);
+    }
+    
+    public void QuestionTypeCountPerExamDataOnDemand.setBlockingType(QuestionTypeCountPerExam obj, int index) {
+        BlockingTypes blockingType = null;
+        obj.setBlockingType(blockingType);
     }
     
     public void QuestionTypeCountPerExamDataOnDemand.setQuestionTypeCount(QuestionTypeCountPerExam obj, int index) {

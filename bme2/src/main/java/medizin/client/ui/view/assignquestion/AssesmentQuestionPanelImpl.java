@@ -1,9 +1,9 @@
 package medizin.client.ui.view.assignquestion;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import medizin.client.proxy.PersonProxy;
+import medizin.client.proxy.QuestionTypeCountPerExamProxy;
 import medizin.shared.i18n.BmeConstants;
 
 import com.google.gwt.core.client.GWT;
@@ -15,8 +15,10 @@ import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.ValueListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -36,18 +38,36 @@ public class AssesmentQuestionPanelImpl extends Composite implements AssesmentQu
 	
 	private SendMailPopupViewImpl sendMailPopupViewImpl=null;
 	
+	private List<QuestionTypeCountPerExamProxy> questionTypeCountPerExams;
 	
-	
+	public List<QuestionTypeCountPerExamProxy> getQuestionTypeCountPerExams() {
+		return questionTypeCountPerExams;
+	}
+
+	public void setQuestionTypeCountPerExams(
+			List<QuestionTypeCountPerExamProxy> questionTypeCountPerExams) {
+		this.questionTypeCountPerExams = questionTypeCountPerExams;
+	}
+
 	public SendMailPopupViewImpl getSendMailPopupViewImpl() {
 		return sendMailPopupViewImpl;
 	}
 
+	@UiField
+	VerticalPanel questionTypeVP;
+	
+	public VerticalPanel getQuestionTypeVP() {
+		return questionTypeVP;
+	}
 
 	@UiField
 	VerticalPanel assesmentQuestionDisplayPanel;
 	
 	@UiField
 	Button sendMail;
+	
+	@UiField
+	ScrollPanel assesmentQuestionScrollPanel;
 	
 	public Button getSendMail() {
 		return sendMail;
@@ -88,6 +108,8 @@ public class AssesmentQuestionPanelImpl extends Composite implements AssesmentQu
 			}
 		});
 		 
+		assesmentQuestionScrollPanel.setHeight(((int)(Window.getClientHeight()*0.73))+"px");
+		
 		
 	}
 
@@ -138,6 +160,17 @@ public class AssesmentQuestionPanelImpl extends Composite implements AssesmentQu
 		}
 		sendMailPopupViewImpl.show();
 		
+	}
+	
+	public void createQuestionTypeCountPanel(List<QuestionTypeCountPerExamProxy> questionTypeCountPerExamProxys)
+	{
+		questionTypeVP.clear();
+		for(QuestionTypeCountPerExamProxy questionTypeCountPerExamProxy:questionTypeCountPerExamProxys)
+		{
+			QuestionTypeCountViewImpl questionTypeCountViewImpl=new QuestionTypeCountViewImpl();
+			questionTypeCountViewImpl.setQuestionTypeCountPerExamProxy(questionTypeCountPerExamProxy);
+			questionTypeCountViewImpl.getQuestionTypeLbl().setText("");
+		}
 	}
 
 }

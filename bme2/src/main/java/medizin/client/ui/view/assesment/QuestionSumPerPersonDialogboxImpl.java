@@ -132,8 +132,8 @@ public class QuestionSumPerPersonDialogboxImpl extends DialogBox implements Ques
     
     @UiHandler("save")
     void onSave(ClickEvent event) {
-        delegate.addQuestionSumPerPersonClicked();
-        hide();
+        delegate.addQuestionSumPerPersonClicked(this);
+        //hide();
     }
 
 

@@ -130,6 +130,7 @@ public class AssesmentQuestion {
      	List<Person> authorList=new ArrayList<Person>();
      	for(QuestionSumPerPerson questionSumPerPerson:questionSumPerPersons)
      	{
+     		if(!authorList.contains(questionSumPerPerson.getResponsiblePerson()))
      		authorList.add(questionSumPerPerson.getResponsiblePerson());
      	}
      	return authorList;

@@ -4,12 +4,14 @@
 package medizin.server.domain;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import medizin.server.domain.Assesment;
 import medizin.server.domain.AssesmentQuestion;
 import medizin.server.domain.Institution;
 import medizin.server.domain.Mc;
 import medizin.server.domain.QuestionSumPerPerson;
+import medizin.server.domain.QuestionTypeCountPerExam;
 
 privileged aspect Assesment_Roo_JavaBean {
     
@@ -131,6 +133,14 @@ privileged aspect Assesment_Roo_JavaBean {
     
     public void Assesment.setInstitution(Institution institution) {
         this.institution = institution;
+    }
+    
+    public List<QuestionTypeCountPerExam> Assesment.getQuestionTypeCountPerExams() {
+        return this.questionTypeCountPerExams;
+    }
+    
+    public void Assesment.setQuestionTypeCountPerExams(List<QuestionTypeCountPerExam> questionTypeCountPerExams) {
+        this.questionTypeCountPerExams = questionTypeCountPerExams;
     }
     
 }

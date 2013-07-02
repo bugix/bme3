@@ -29,6 +29,7 @@ import medizin.client.ui.view.assesment.QuestionTypeCountAddDialogbox;
 import medizin.client.ui.view.assesment.QuestionTypeCountAddDialogboxImpl;
 import medizin.client.ui.view.assesment.QuestionTypeCountView;
 import medizin.client.ui.view.assesment.StudentView;
+import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.process.ApplicationLoadingPopupView;
 import medizin.server.domain.Institution;
 
@@ -140,7 +141,7 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 		
 		view.setDelegate(this);
 		
-		requests.find(assesmentPlace.getProxyId()).with("repeFor","mc","institution").fire(new Receiver<Object>() {
+		requests.find(assesmentPlace.getProxyId()).with("repeFor","mc","institution","questionSumPerPerson").fire(new Receiver<Object>() {
 
 			public void onFailure(ServerFailure error){
 				Log.error(error.getMessage());
@@ -323,8 +324,15 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 					// This activity is dead
 					return;
 				}
-
-				sort_order = values.size()+1;
+				
+				if(values.size()>0)
+				{
+					sort_order=values.get(values.size()-1).getSort_order()+1;
+				}
+				else
+				{
+					sort_order=1;
+				}
 				questionTypeCountTable.setRowData(range.getStart(), values);
 
 			}
@@ -370,7 +378,17 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 					return;
 				}
 
-				sort_orderQuestSum = values.size()+1;
+				//sort_orderQuestSum = values.size()+1;
+				
+				if(values.size()>0)
+				{
+					sort_orderQuestSum=values.get(values.size()-1).getSort_order()+1;
+				}
+				else
+				{
+					sort_orderQuestSum=1;
+				}
+				
 				questionSumPerPersonTable.setRowData(range.getStart(), values);
 
 			}
@@ -841,13 +859,28 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 	}
 	
 	@Override
-	public void addQuestionSumPerPersonClicked() {
+	public void addQuestionSumPerPersonClicked(final QuestionSumPerPersonDialogboxImpl questionSumPerPersonDialogboxImpl) {
+		
+		Set<QuestionSumPerPersonProxy> questionSumPerPersonProxys=assesment.getQuestionSumPerPerson();
+		int totalPercent=0;
+		for(QuestionSumPerPersonProxy questionSumPerPersonProxy:questionSumPerPersonProxys)
+		{
+			totalPercent=totalPercent+questionSumPerPersonProxy.getQuestionSum();
+		}
+		
+		if(totalPercent>100)
+		{
+			ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.percentNotMoreThan100());
+			
+			return;
+		}
+		
 		driverQuestSum.flush().fire(new Receiver<Void>() {
 			
 	          @Override
 	          public void onSuccess(Void response) {
 	        	  Log.info("fullSaved");
-	        	  
+	        	  questionSumPerPersonDialogboxImpl.hide();
 	        		initQuestionSumPerPerson();
 	          //	goTo(new PlaceAssesment(person.stableId()));
 	          }

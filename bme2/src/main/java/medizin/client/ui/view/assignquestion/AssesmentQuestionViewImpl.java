@@ -48,6 +48,16 @@ public class AssesmentQuestionViewImpl extends Composite implements AssesmentQue
 
 	@UiField
 	Label deleteFromAssesment;
+	public Label getDeleteFromAssesment() {
+		return deleteFromAssesment;
+	}
+
+
+
+	public void setDeleteFromAssesment(Label deleteFromAssesment) {
+		this.deleteFromAssesment = deleteFromAssesment;
+	}
+
 	@UiField
 	Label addToAssesment;
 	
@@ -224,6 +234,12 @@ public class AssesmentQuestionViewImpl extends Composite implements AssesmentQue
 	public void addToAssesmentButtonClicked(ClickEvent event)
 	{
 		delegate.addToAssesmentButtonClicked(this);
+	}
+	
+	@UiHandler("deleteFromAssesment")
+	public void deleteAssesmentQuestion(ClickEvent event)
+	{
+		delegate.deleteAssesmentQuestion(this);
 	}
 
 }

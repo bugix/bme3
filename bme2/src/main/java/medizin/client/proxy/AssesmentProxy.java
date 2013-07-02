@@ -5,6 +5,7 @@ package medizin.client.proxy;
 import com.google.web.bindery.requestfactory.shared.EntityProxy;
 import com.google.web.bindery.requestfactory.shared.ProxyForName;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import org.springframework.roo.addon.gwt.RooGwtProxy;
 
@@ -73,6 +74,10 @@ public interface AssesmentProxy extends EntityProxy {
     abstract InstitutionProxy getInstitution();
 
     abstract void setInstitution(InstitutionProxy institution);
+
+    abstract List<medizin.client.proxy.QuestionTypeCountPerExamProxy> getQuestionTypeCountPerExams();
+
+    abstract void setQuestionTypeCountPerExams(List<medizin.client.proxy.QuestionTypeCountPerExamProxy> questionTypeCountPerExams);
 
     abstract Integer getVersion();
 }

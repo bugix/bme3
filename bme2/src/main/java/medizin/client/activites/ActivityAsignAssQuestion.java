@@ -15,6 +15,9 @@ import medizin.client.proxy.AssesmentProxy;
 import medizin.client.proxy.AssesmentQuestionProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionProxy;
+import medizin.client.proxy.QuestionSumPerPersonProxy;
+import medizin.client.proxy.QuestionTypeCountPerExamProxy;
+import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.request.AssesmentQuestionRequest;
 import medizin.client.ui.ErrorPanel;
 import medizin.client.ui.McAppConstant;
@@ -25,12 +28,12 @@ import medizin.client.ui.view.assignquestion.AnswerViewImpl;
 import medizin.client.ui.view.assignquestion.AsignAssQuestionView;
 import medizin.client.ui.view.assignquestion.AsignAssQuestionViewImpl;
 import medizin.client.ui.view.assignquestion.AssesmentQuestionPanel;
-import medizin.client.ui.view.assignquestion.AssesmentQuestionPanelImpl;
 import medizin.client.ui.view.assignquestion.AssesmentQuestionView;
 import medizin.client.ui.view.assignquestion.AssesmentQuestionViewImpl;
 import medizin.client.ui.view.assignquestion.AssesmentTabPanel;
 import medizin.client.ui.view.assignquestion.AssesmentTabPanelImpl;
 import medizin.client.ui.view.assignquestion.QuestionPanel;
+import medizin.client.ui.view.assignquestion.QuestionTypeCountViewImpl;
 import medizin.client.ui.view.assignquestion.QuestionView;
 import medizin.client.ui.view.assignquestion.QuestionViewImpl;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
@@ -163,7 +166,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 	}
 	
 	private void initAssementTabPanel() {
-		requests.assesmentRequest().findAssesmentsOpenBetween().with("mc").fire(new Receiver<List<AssesmentProxy>>(){
+		requests.assesmentRequest().findAssesmentsOpenBetween().with("mc","questionTypeCountPerExams","questionTypeCountPerExams.questionTypesAssigned").fire(new Receiver<List<AssesmentProxy>>(){
 
 			@Override
 			public void onSuccess(List<AssesmentProxy> response) {
@@ -448,7 +451,47 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 	 */
 	private void initAssementQuestionPanel(PersonProxy author) {
 		
-		
+		/*initialize top element from author dropdown shown on left side for admin / institutional admin*/
+		if(author!=null)// admin/ institutional admin
+		{
+			final AssesmentProxy assesmentProxy=assesmentTabPanel.getActiveTab();
+			requests.questionSumPerPersonRequest().findPercentageOfQuestionAssignedToExaminer(assesmentProxy, author).with("questionEvent").fire(new Receiver<List<QuestionSumPerPersonProxy>>() {
+
+				@Override
+				public void onSuccess(List<QuestionSumPerPersonProxy> response) {
+					assementQuestionPanel.getQuestionTypeVP().clear();
+					List<QuestionTypeCountPerExamProxy> questionTypeCountPerExamProxys=assesmentProxy.getQuestionTypeCountPerExams();
+					
+					for(QuestionTypeCountPerExamProxy questionTypeCountPerExamProxy:questionTypeCountPerExamProxys)
+					{
+						for(QuestionSumPerPersonProxy questionSumPerPersonProxy:response)
+						{
+							QuestionTypeCountViewImpl questionTypeCountViewImpl=new QuestionTypeCountViewImpl();
+							questionTypeCountViewImpl.setQuestionTypeCountPerExamProxy(questionTypeCountPerExamProxy);
+							
+							String questionTypeStr="";
+							
+							Set<QuestionTypeProxy> questionTypes=questionTypeCountPerExamProxy.getQuestionTypesAssigned();
+							
+							for(QuestionTypeProxy questionType:questionTypes)
+							{
+								questionTypeStr=questionTypeStr+questionType.getQuestionType().name();
+							}
+							questionTypeStr=questionTypeStr+"("+questionSumPerPersonProxy.getQuestionEvent().getEventName()+")";
+							questionTypeCountViewImpl.getQuestionTypeLbl().setText(questionTypeStr);
+							questionTypeCountViewImpl.setQuestionSumPerPersonProxy(questionSumPerPersonProxy);
+							int questionTypeCount=questionTypeCountPerExamProxy.getQuestionTypeCount();
+							int percentAllocated=questionSumPerPersonProxy.getQuestionSum();
+							Integer totalQuestionAllocated=(int)(questionTypeCount*percentAllocated)/100;
+							questionTypeCountViewImpl.getBlockingCounter().setText(totalQuestionAllocated.toString());
+							assementQuestionPanel.getQuestionTypeVP().add(questionTypeCountViewImpl);
+						}
+					}
+				}
+			});
+			
+			
+		}
 		requests.assesmentQuestionRequest().findAssesmentQuestionsByAssesment(assesmentTabPanel.getActiveTab().getId(),author).with("question.rewiewer","question.autor","question.keywords","question.questEvent","question.comment","question.questionType").fire(new Receiver<List<AssesmentQuestionProxy>>() {
 
 			@Override
@@ -460,7 +503,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 					
 					question.setProxy(iter.next(), false);
 					changeAssesmentQuestionColor(question);
-					
+					changedeleteAssesmentButtonVisiblilty(question);
 					acceptOrForceAcceptButtonVisisble(question);
 					
 					question.setDelegate(ActivityAsignAssQuestion.this);
@@ -712,6 +755,9 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 									 
 									 assementQuestionPanel.addAssesmentQuestion(assesmentQuestionView);
 									 assesmentQuestionView.setOpen();
+									 
+									 
+									 changedeleteAssesmentButtonVisiblilty(assesmentQuestionView);
 								}
 								else {
 									replaceQuestionThroughAssesmentQuestion(assesment);
@@ -1133,19 +1179,20 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 					acceptOrForceAcceptButtonVisisble(assesmentQuestionViewAktiv);
 					if(viaAddButton)
 					{
-					((AssesmentQuestionViewImpl)assesmentQuestionViewAktiv).removeFromParent();
-					
-					if(((personRightProxy.getIsInstitutionalAdmin() || personRightProxy.getIsAdmin()) && assementQuestionPanel.getAuthorListBox().getValue().equals(response.getAutor())))
-					assementQuestionPanel.addAssesmentQuestion(assesmentQuestionViewAktiv);
-					
-					if(!((personRightProxy.getIsInstitutionalAdmin() || personRightProxy.getIsAdmin()))) //examiner
-					{
+						((AssesmentQuestionViewImpl)assesmentQuestionViewAktiv).removeFromParent();
+						
+						if(((personRightProxy.getIsInstitutionalAdmin() || personRightProxy.getIsAdmin()) && assementQuestionPanel.getAuthorListBox().getValue().equals(response.getAutor())))
 						assementQuestionPanel.addAssesmentQuestion(assesmentQuestionViewAktiv);
+						
+						if(!((personRightProxy.getIsInstitutionalAdmin() || personRightProxy.getIsAdmin()))) //examiner
+						{
+							assementQuestionPanel.addAssesmentQuestion(assesmentQuestionViewAktiv);
+						}
+						
+						
 					}
-					
+					changedeleteAssesmentButtonVisiblilty(assesmentQuestionViewAktiv);
 					}
-					
-				}
 				
 		           @Override
 					public void onFailure(ServerFailure error) {
@@ -1204,6 +1251,37 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 			qId=questionId.toString();
 		}
 		initQuestionPanel(addQuestionsTabPanel.getActiveTab(), assesmentTabPanel.getActiveTab(),questionshortName,qId,questionType);
+	}
+
+	@Override
+	public void deleteAssesmentQuestion(
+			final AssesmentQuestionViewImpl assesmentQuestionViewImpl) {
+		AssesmentQuestionRequest request=requests.assesmentQuestionRequest();
+		AssesmentQuestionProxy a=assesmentQuestionViewImpl.getProxy();
+		a=request.edit(a);
+		request.remove().using(a).fire(new Receiver<Void>() {
+
+			@Override
+			public void onSuccess(Void response) {
+				assesmentQuestionViewImpl.removeFromParent();
+				 initQuestionPanel(addQuestionsTabPanel.getActiveTab(), assesmentTabPanel.getActiveTab(),"","","");
+
+			}
+		});
+		
+		
+	}
+	/*Accept and force accept Assesment Question cannot be deleted*/
+	public void changedeleteAssesmentButtonVisiblilty(AssesmentQuestionView assesmentQuestionViewAktiv)
+	{
+		if(assesmentQuestionViewAktiv.getProxy().getIsAssQuestionAcceptedAdmin() || assesmentQuestionViewAktiv.getProxy().getIsForcedByAdmin())
+		{
+			assesmentQuestionViewAktiv.getDeleteFromAssesment().setVisible(false);
+		}
+		else
+		{
+			assesmentQuestionViewAktiv.getDeleteFromAssesment().setVisible(true);
+		}
 	}
 
 }
