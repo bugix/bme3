@@ -7,6 +7,7 @@ import medizin.client.proxy.InstitutionProxy;
 import medizin.client.style.resources.MyCellTableResources;
 import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
+import medizin.client.ui.widget.IconButton;
 import medizin.shared.i18n.BmeConstants;
 
 import com.google.gwt.cell.client.AbstractEditableCell;
@@ -26,7 +27,6 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -184,7 +184,7 @@ public class InstituteAccessDialogBoxImpl extends DialogBox implements Institute
 		}
 		
 		@UiField
-		Button closeButton;
+		IconButton closeButton;
 		
 		@UiField
 		TextBox searchInstitute;

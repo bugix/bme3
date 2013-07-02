@@ -54,7 +54,6 @@ public class Person {
     @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}$",message="emailNotValid")
     private String email;
 
-    @NotNull(message="alternativeEmailNotNull")
     @Column(unique = true)
     @Size(min = 7, max = 50,message="alternativeEmailMinMaxSize")
     @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}$",message="alternativeEmailNotValid")
