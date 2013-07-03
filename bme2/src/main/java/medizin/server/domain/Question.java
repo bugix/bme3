@@ -410,16 +410,17 @@ public class Question {
         	
         	List<Question> questions=Question.findQuestionEntriesByPerson(userLoggedIn.getShidId(), institution.getId(), "", new ArrayList<String>(), 0	, Integer.MAX_VALUE,true,questionId,questionType,questionName);
         	
-        	// exclude assessment question
-        	/*for(Question question : questions)
+        	// question should belong to particular mc of assesment
+        	ArrayList<Question> questionList=new ArrayList<Question>();
+        	for(Question question : questions)
         	{
-	        	if(AssesmentQuestion.countAssessmentQuestionByQuestionID(question) > 0)
+	        	if(question.getMcs().contains(mc))
 	        	{
-	        		questions.remove(question);
+	        		questionList.add(question);
 	        	}
-        	}*/
+        	}
         	
-        	return questions;
+        	return questionList;
         	
         	/*List<Question> questions=UserAccessRights.findQuestionByPerson(userLoggedIn);
         	
@@ -951,6 +952,7 @@ public class Question {
 				//search filter for assesment quetion new question tab
 				
 				Predicate searchPre=searchForNewQuestionTab(questionId,questionType,questionName,from,criteriaBuilder);
+				
 				
 				
 				if(searchPre == null)

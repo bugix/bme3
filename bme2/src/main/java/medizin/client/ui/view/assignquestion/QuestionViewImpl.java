@@ -11,6 +11,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -30,7 +31,7 @@ public class QuestionViewImpl extends Composite implements QuestionView {
 	}
 
 	@UiField
-	Label header;
+	HTML header;
 	
 	@UiField
 	VerticalPanel answers;
@@ -125,7 +126,7 @@ public class QuestionViewImpl extends Composite implements QuestionView {
 	@Override
 	public void setProxy(QuestionProxy question) {
 		this.question = question;
-		header.setText(question.getQuestionText());
+		header.setHTML(question.getQuestionText());
 		
         rewiewer.setInnerText(question.getRewiewer() == null ? "" : medizin.client.ui.view.roo.PersonProxyRenderer.instance().render(question.getRewiewer()));
         autor.setInnerText(question.getAutor() == null ? "" : medizin.client.ui.view.roo.PersonProxyRenderer.instance().render(question.getAutor()));

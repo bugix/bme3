@@ -56,7 +56,7 @@ border-bottom: 1px solid #AAAAAA;
 	            <td>
 	            <g:HorizontalPanel spacing="5" width="100%">
 	            	<g:VerticalPanel addStyleNames="{style.questionType-VP}" ui:field="questionTypeVP">
-	            		<a:QuestionTypeCountViewImpl></a:QuestionTypeCountViewImpl>
+	            		<!-- <a:QuestionTypeCountViewImpl></a:QuestionTypeCountViewImpl> -->
 	            	</g:VerticalPanel>
 	                <g:ValueListBox ui:field="authorListBox"  styleName="{style.float-right}">
 					</g:ValueListBox>

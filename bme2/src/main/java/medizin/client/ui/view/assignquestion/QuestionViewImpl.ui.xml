@@ -89,7 +89,7 @@ border-bottom: 1px solid #AAAAAA;
 						ui:field="twistieClose"></g:Label>
 				</td>
 				<td width="100%" class="{style.header}" valign="top">
-					<g:Label ui:field="header"></g:Label>
+					<g:HTML ui:field="header"></g:HTML>
 				</td>
 				<td class="{style.headerIcon}" valign="top">
 					<g:Label styleName="ui-icon ui-icon-plusthick {style.fill}"
