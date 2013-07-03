@@ -475,7 +475,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 							
 							for(QuestionTypeProxy questionType:questionTypes)
 							{
-								questionTypeStr=questionTypeStr+questionType.getQuestionType().name();
+								questionTypeStr=questionTypeStr+questionType.getShortName();
 							}
 							questionTypeStr=questionTypeStr+"("+questionSumPerPersonProxy.getQuestionEvent().getEventName()+")";
 							questionTypeCountViewImpl.getQuestionTypeLbl().setText(questionTypeStr);

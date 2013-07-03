@@ -2,6 +2,7 @@ package medizin.client.request;
 
 import java.util.List;
 
+import medizin.client.proxy.McProxy;
 import medizin.client.proxy.QuestionProxy;
 
 import org.springframework.roo.addon.gwt.RooGwtUnmanagedRequest;

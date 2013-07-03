@@ -24,9 +24,9 @@
 	
 	            	
 	            	<g:HorizontalPanel spacing="5" verticalAlignment="middle">
-		               <g:Label ui:field="questionTypeLbl" addStyleNames="{style.label} {style.questionType-Label}">Question Type :</g:Label>
-		               <g:Label ui:field="blockingCounter" addStyleNames="{style.countLbl}">+22</g:Label>
-		             </g:HorizontalPanel>
+		                <g:Label ui:field="questionTypeLbl" addStyleNames="{style.label} {style.questionType-Label}"></g:Label>
+		               <g:Label ui:field="blockingCounter" addStyleNames="{style.countLbl}"></g:Label>
+		              </g:HorizontalPanel>
 	            	
 	                
 	        

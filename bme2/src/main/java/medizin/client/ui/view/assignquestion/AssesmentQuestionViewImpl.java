@@ -10,6 +10,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.uibinder.client.UiField;
@@ -36,8 +38,11 @@ public class AssesmentQuestionViewImpl extends Composite implements AssesmentQue
 		UiBinder<Widget, AssesmentQuestionViewImpl> {
 	}
 
-	@UiField
+	/*@UiField
 	Label header;
+*/	
+	@UiField
+	HTML htmlHeader;
 	
 	@UiField
 	VerticalPanel answers;
@@ -157,7 +162,7 @@ public class AssesmentQuestionViewImpl extends Composite implements AssesmentQue
 		delegate.forceAccept(this);
 	}
 	
-	@UiHandler("header")
+	@UiHandler("htmlHeader")
 	public void headerClicked(ClickEvent event)
 	{
 		if(answersVisible==false){
@@ -173,7 +178,8 @@ public class AssesmentQuestionViewImpl extends Composite implements AssesmentQue
 	public void setProxy(AssesmentQuestionProxy assesmentQuestion, boolean delOrAdd) {
 		this.issInAssement=delOrAdd;
 		this.assesmentQuestion = assesmentQuestion;
-		header.setText(assesmentQuestion.getQuestion().getQuestionText());
+		htmlHeader.setHTML(assesmentQuestion.getQuestion().getQuestionText());
+		
 		if (delOrAdd){
 			deleteFromAssesment.setVisible(false);
 			addToAssesment.setVisible(true); 
@@ -221,7 +227,7 @@ public class AssesmentQuestionViewImpl extends Composite implements AssesmentQue
 
 	@Override
 	public Widget getDragControler() {
-		return header;
+		return htmlHeader;
 	}
 
 	@Override

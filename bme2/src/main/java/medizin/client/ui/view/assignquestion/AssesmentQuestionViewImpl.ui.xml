@@ -97,7 +97,9 @@ float:right;
 						<g:Label styleName="ui-icon ui-icon-triangle-1-s {style.fill}" ui:field="twistieClose"></g:Label>
 				</td>
 				<td width="100%"  class="{style.header}" valign="top">
-					<g:Label ui:field="header"></g:Label>
+					
+						<g:HTML ui:field="htmlHeader"></g:HTML>
+					
 				</td>
 				<td   valign="top">
 				    <g:Button ui:field="forceAcceptButton" visible="false">Force Accept</g:Button>

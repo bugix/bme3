@@ -311,8 +311,20 @@ public class AssesmentQuestion {
     		TypedQuery<AssesmentQuestion> q=entityManager().createQuery(criteriaQuery);
     		
     		//remove duplicate question
+    		List<AssesmentQuestion> pastAqs=removeDuplicateAssesmentQuestion(q.getResultList());
     		
-    		return removeDuplicateAssesmentQuestion(q.getResultList());
+    		
+    		//question should belong to assesment mcq
+    		List<AssesmentQuestion> aqList=new ArrayList<AssesmentQuestion>();
+    		for(AssesmentQuestion aq:pastAqs)
+    		{
+    			if(aq.getQuestion().getMcs().contains(mc))
+    			{
+    				aqList.add(aq);
+    			}
+    		}
+    		
+    		return aqList;
         }
         else
         {
@@ -376,7 +388,21 @@ public class AssesmentQuestion {
 			
 			//remove duplicate question
 		
-    		return removeDuplicateAssesmentQuestion(q.getResultList());
+			//remove duplicate question
+    		List<AssesmentQuestion> pastAqs=removeDuplicateAssesmentQuestion(q.getResultList());
+    		
+    		
+    		//question should belong to assesment mcq
+    		List<AssesmentQuestion> aqList=new ArrayList<AssesmentQuestion>();
+    		for(AssesmentQuestion aq:pastAqs)
+    		{
+    			if(aq.getQuestion().getMcs().contains(mc))
+    			{
+    				aqList.add(aq);
+    			}
+    		}
+    		
+    		return aqList;
         }
         
        
