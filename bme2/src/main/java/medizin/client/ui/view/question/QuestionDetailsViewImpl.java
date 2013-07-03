@@ -319,7 +319,7 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 		lblMcsValue.setText(proxy.getMcs() == null ? "": medizin.client.ui.view.roo.CollectionRenderer.of(medizin.client.ui.view.roo.McProxyRenderer.instance()).render(proxy.getMcs()));
 		if(proxy.getSubmitToReviewComitee()==true)
 		{
-			lblReviewerValue.setText(constants.submitToReviewerCommitte());
+			lblReviewerValue.setText(constants.submitToReviewComitee());
 		}
 		addSecondTabForQuestionResource(proxy);
 		
