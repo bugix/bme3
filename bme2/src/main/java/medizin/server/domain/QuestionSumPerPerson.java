@@ -108,6 +108,8 @@ public class QuestionSumPerPerson {
 	public static List<QuestionSumPerPerson> findPercentageOfQuestionAssignedToExaminer(Assesment a,Person p)
 	{
 		EntityManager em=QuestionSumPerPerson.entityManager();
+		if(p==null)
+		p=Person.myGetLoggedPerson();
 		
 		TypedQuery<QuestionSumPerPerson> q = em.createQuery("SELECT qsum FROM QuestionSumPerPerson qsum " + 
 	       		" WHERE responsiblePerson=:p and assesment=:a",  QuestionSumPerPerson.class);

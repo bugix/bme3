@@ -22,6 +22,26 @@ public class QuestionTypeCountViewImpl extends Composite implements  QuestionTyp
 			UiBinder<Widget, QuestionTypeCountViewImpl> {
 	}
 	
+	private Integer totalQuestionAllowed;
+	
+	private Integer totalQuestionAllocated;
+	
+	public Integer getTotalQuestionAllocated() {
+		return totalQuestionAllocated;
+	}
+
+	public void setTotalQuestionAllocated(Integer totalQuestionAllocated) {
+		this.totalQuestionAllocated = totalQuestionAllocated;
+	}
+
+	public Integer getTotalQuestionAllowed() {
+		return totalQuestionAllowed;
+	}
+
+	public void setTotalQuestionAllowed(Integer totalQuestionAllowed) {
+		this.totalQuestionAllowed = totalQuestionAllowed;
+	}
+
 	private BmeConstants constants=GWT.create(BmeConstants.class);
 	
 	private QuestionSumPerPersonProxy questionSumPerPersonProxy;

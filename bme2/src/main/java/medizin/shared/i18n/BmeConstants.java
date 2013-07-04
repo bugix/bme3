@@ -586,4 +586,9 @@ public interface BmeConstants extends Constants , ConstantsWithLookup {
 	public String blockingType();
 	
 	public String percentNotMoreThan100();
+	
+	public String personalBlockingWarning();
+	
+	public String globalBlockingWarning();
+
 }

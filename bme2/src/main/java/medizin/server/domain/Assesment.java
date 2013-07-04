@@ -120,19 +120,20 @@ public class Assesment {
         Person userLoggedIn=Person.myGetLoggedPerson();
         Boolean isAdmin=userLoggedIn.getIsAdmin();
         PersonAccessRight accessRights=userLoggedIn.getLoggedPersonAccessRights();
+        Institution institution=Institution.myGetInstitutionToWorkWith();
         Boolean isInstitutionAdmin=accessRights.getIsInstitutionalAdmin();
         TypedQuery<Assesment> q=null;
         if(isAdmin || isInstitutionAdmin)//For Admin and Institutional Admin user
-        	q = em.createQuery("SELECT Assesment FROM Assesment AS assesment WHERE assesment.dateOfAssesment >= :dateClosed  AND assesment.dateOpen <= :dateOpen  AND assesment.isClosed IS :isClosed", Assesment.class);
+        	q = em.createQuery("SELECT Assesment FROM Assesment AS assesment WHERE assesment.dateOfAssesment >= :dateClosed  AND assesment.dateOpen <= :dateOpen  AND assesment.isClosed IS :isClosed and assesment.institution=:institution", Assesment.class);
         else //for examiner
         {
-        	q = em.createQuery("SELECT Assesment FROM Assesment AS assesment WHERE assesment.dateClosed >= :dateClosed  AND assesment.dateOpen <= :dateOpen  AND assesment.isClosed IS :isClosed", Assesment.class);
+        	q = em.createQuery("SELECT Assesment FROM Assesment AS assesment WHERE assesment.dateClosed >= :dateClosed  AND assesment.dateOpen <= :dateOpen  AND assesment.isClosed IS :isClosed  and assesment.institution=:institution", Assesment.class);
         	 
         }
         q.setParameter("dateClosed", dateClosed);
         q.setParameter("dateOpen", dateOpen);
         q.setParameter("isClosed", isClosed);
-        
+        q.setParameter("institution", institution);
         List<Assesment> assesments=q.getResultList();
         
         if(!(isAdmin || isInstitutionAdmin))
