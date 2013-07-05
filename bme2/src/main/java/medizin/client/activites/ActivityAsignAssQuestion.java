@@ -227,7 +227,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 			if(examAutorListMap.get(assesment) ==null)		
 			{
 				populateAuthorListBox(questionPanel.getAuthorListBox(),assesment,true);
-				questionPanel.getAuthorListBox().setValue(assementQuestionPanel.getAuthorListBox().getValue());
+				//questionPanel.getAuthorListBox().setValue(assementQuestionPanel.getAuthorListBox().getValue());
 			}
 			else
 			{
@@ -751,6 +751,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 						incrementBlockingCounter(assesmentQuestionViewAktiv.getProxy().getQuestion());
 						   assignQuestionToAssesment(assesmentQuestionViewAktiv,false);
 					}
+				  
 				   
 				   
 			   }
@@ -789,6 +790,15 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 					 
 				   }
 				   
+				   if((personRightProxy.getIsInstitutionalAdmin() || personRightProxy.getIsAdmin() ) && assementQuestionPanel.getAuthorListBox().getValue()!=null) //admin
+				   {
+					   if(!checkQuestionTypeCountBlocking(assesmentQuestionViewAktiv.getProxy().getQuestion()))
+					   {
+						   throw new VetoDragException();
+					   }
+						      
+				   }
+				   
 				   
 				   while (iter.hasNext()){
 					   Widget wid = iter.next();
@@ -822,6 +832,10 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 						incrementBlockingCounter(questionViewAktiv.getProxy());
 						assignNewQuestionToAssesment(questionViewAktiv, false);
 					}
+				   else
+				   {
+					   throw new VetoDragException();
+				   }
 			}
 		}
 	}
