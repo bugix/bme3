@@ -175,16 +175,16 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 	List<String> searchField = new ArrayList<String>();
 	private final EventBus eventBus;
 
-	@Override
+	/*@Override
 	public void setInstitutionFilter(List<InstitutionProxy> values)
 	{
 		filterPanel.institutionListBox.setAcceptableValues(values);
-	}
+	}*/
 
 	@Override
 	public void setSpecialisationFilter(List<QuestionEventProxy> values)
 	{
-		filterPanel.specialiationListBox.setAcceptableValues(values);
+		filterPanel.specialiationListBox.setAcceptableValues(values);	
 	}
 
 	
@@ -357,7 +357,7 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 
 		filterPanel.setPopupPosition(x, y);
 		filterPanel.show();
-		filterPanel.setSize("415px", "255px");
+		filterPanel.setSize("415px", "235px");
 		// Log.info(filterPanel.getSpecialisationBox().getValue());
 
 	}
@@ -860,12 +860,12 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 			searchField.add(filterPanel.showNew.getValue() ? "true" : "false");
 		}
 		
-		if (filterPanel.institutionListBox.getValue() != null)
+		/*if (filterPanel.institutionListBox.getValue() != null)
 		{
 			searchField.add("institution");
 			searchField.add(filterPanel.institutionListBox.getValue().getId().toString());
 			//searchFileds.add(new SearchValue("institution", filterPanel.institutionListBox.getValue().getId().toString()));
-		}
+		}*/
 		
 		if (filterPanel.specialiationListBox.getValue() != null)
 		{

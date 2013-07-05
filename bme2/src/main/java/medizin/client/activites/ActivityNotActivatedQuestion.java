@@ -112,15 +112,15 @@ public class ActivityNotActivatedQuestion extends AbstractActivityWrapper implem
 				ActivityNotActivatedQuestion.this.onRangeChanged();
 			}
 		});
-		requests.institutionRequest().findAllInstitutions().fire(new BMEReceiver<List<InstitutionProxy>>() {
+		/*requests.institutionRequest().findAllInstitutions().fire(new BMEReceiver<List<InstitutionProxy>>() {
 
 			@Override
 			public void onSuccess(List<InstitutionProxy> response) {
 				view.setInstitutionFilter(response);
 			}
-		});
+		});*/
 
-		requests.questionEventRequest().findAllQuestionEvents().fire(new BMEReceiver<List<QuestionEventProxy>>() {
+		requests.questionEventRequest().findQuestionEventByInstitution(this.institutionActive).fire(new BMEReceiver<List<QuestionEventProxy>>() {
 
 			@Override
 			public void onSuccess(List<QuestionEventProxy> response) {

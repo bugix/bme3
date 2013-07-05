@@ -38,7 +38,7 @@ public class ActivityInstitutionEvent extends AbstractActivityWrapper implements
 	private AcceptsOneWidget widget;
 	private EventView view;
 	
-	private SingleSelectionModel<QuestionEventProxy> selectionModel;
+	//private SingleSelectionModel<QuestionEventProxy> selectionModel;
 
 
 	private HandlerRegistration rangeChangeHandler;
@@ -124,7 +124,7 @@ public class ActivityInstitutionEvent extends AbstractActivityWrapper implements
 		//Log.warn(mcAppFactory.getRequestFactory().getProxyId(eventPlace.getProxyId().toString()));
 		
 		// Inherit the view's key provider
-		ProvidesKey<QuestionEventProxy> keyProvider = ((AbstractHasData<QuestionEventProxy>) table).getKeyProvider();
+		/*ProvidesKey<QuestionEventProxy> keyProvider = ((AbstractHasData<QuestionEventProxy>) table).getKeyProvider();
 		selectionModel = new SingleSelectionModel<QuestionEventProxy>(keyProvider);
 		table.setSelectionModel(selectionModel);
 
@@ -136,7 +136,7 @@ public class ActivityInstitutionEvent extends AbstractActivityWrapper implements
 					showDetails(selectedObject);
 				}
 			}
-		});
+		});*/
 		
 		view.setDelegate(this);
 		//updateSelection(mcAppFactory.getPlaceController().getWhere());
@@ -272,7 +272,7 @@ public class ActivityInstitutionEvent extends AbstractActivityWrapper implements
 			pendingSelection = null;
 			if (selectMe != null) {
 				// TODO  make selection Model
-				selectionModel.setSelected(selectMe, true);
+				//selectionModel.setSelected(selectMe, true);
 			}
 		}
 	}

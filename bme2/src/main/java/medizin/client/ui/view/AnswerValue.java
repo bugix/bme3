@@ -1,6 +1,7 @@
 package medizin.client.ui.view;
 
 import medizin.client.proxy.QuestionTypeProxy;
+import medizin.shared.MultimediaType;
 import medizin.shared.QuestionTypes;
 import medizin.shared.i18n.BmeConstants;
 
@@ -26,7 +27,7 @@ public class AnswerValue {
 				return constants.count()+"("+object.getKeywordCount()+ ")"+"/"+constants.keyOnly()+"("+object.getIsDictionaryKeyword()+ ")"+"/"+constants.maxLen()+"("+object.getAnswerLength()+ ")";
 			
 			if(object.getQuestionType()==QuestionTypes.Matrix)
-				return constants.single()+"("+object.getAllowOneToOneAss()+ ")"+"/"+constants.maxLen()+"("+object.getMaxLength()+ ")";
+				return constants.single()+"("+object.getAllowOneToOneAss()+ ")"+"/"+constants.maxLen()+"("+object.getAnswerLength()+ ")";
 			
 			if(object.getQuestionType()==QuestionTypes.ShowInImage)
 				return "";
@@ -35,7 +36,7 @@ public class AnswerValue {
 				return "";
 			
 			if(object.getQuestionType()==QuestionTypes.MCQ)
-				return "";
+				return constants.media() + "(" + object.getMultimediaType() + ")" + "/" + constants.selectionType() + "(" + object.getSelectionType() + ")";		
 			
 			
 		}

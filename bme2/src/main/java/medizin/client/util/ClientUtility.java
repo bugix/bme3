@@ -204,4 +204,23 @@ public final class ClientUtility {
 		return label;
 	}
 
+	public static void getImageWidthHeight(final String url,final ImageWidthHeight imageWidthHeight) {
+		final Image image = new Image(new SafeUri() {
+			
+			@Override
+			public String asString() {
+				return url;
+			}
+		});
+	
+		new Timer() {
+			
+			@Override
+			public void run() {
+				imageWidthHeight.apply(image.getWidth(), image.getHeight());
+				this.cancel();
+			}
+		}.schedule(250);		
+	}
+
 }

@@ -2,6 +2,8 @@ package medizin.client.ui.widget.resource.image.polygon;
 
 import java.util.List;
 
+import medizin.client.util.ClientUtility;
+import medizin.client.util.ImageWidthHeight;
 import medizin.client.util.Point;
 import medizin.client.util.PolygonPath;
 
@@ -9,6 +11,7 @@ import org.vaadin.gwtgraphics.client.DrawingArea;
 import org.vaadin.gwtgraphics.client.shape.Path;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.common.base.Function;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.MouseDownEvent;
@@ -22,13 +25,12 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ImagePolygonViewer extends Composite {
+public class ImagePolygonViewer extends Composite implements ImageWidthHeight {
 
 	private static ImagePolygonViewerUiBinder uiBinder = GWT
 			.create(ImagePolygonViewerUiBinder.class);
 
-	interface ImagePolygonViewerUiBinder extends
-			UiBinder<Widget, ImagePolygonViewer> {
+	interface ImagePolygonViewerUiBinder extends UiBinder<Widget, ImagePolygonViewer> {
 	}
 
 	@UiField(provided = true)
@@ -43,54 +45,32 @@ public class ImagePolygonViewer extends Composite {
 	private PolygonPath currentPolygonPath = null;
 	private Path currentPath = null;
 	private org.vaadin.gwtgraphics.client.Image vImage;
+
+	private final String imageUrl;
+
+	private final List<PolygonPath> otherAnswer;
+
+	private final boolean diplayBtnFlag;
 	
-	public ImagePolygonViewer(final String imageUrl,final int width,final int height,final List<PolygonPath> otherAnswer, boolean diplayBtnFlag) {
+	public ImagePolygonViewer(final String imageUrl,final Integer width1,final Integer height1,final List<PolygonPath> otherAnswer, boolean diplayBtnFlag) {
 		
-		Log.info("url :" + imageUrl + " width : " + width + " height :" + height);
+		this.imageUrl = imageUrl;
+		this.otherAnswer = otherAnswer;
+		this.diplayBtnFlag = diplayBtnFlag;
 		
-		if(width <= 0 || height <= 0) {
-			Log.error("Width and height cannot be negative or zero");
-			return;
-		}
-		
-		if(imageUrl == null || imageUrl.length() <= 0) {
-			Log.error("URL cannot be null");
-			return;
-		}
-		
-		drawingArea = new DrawingArea(width, height);
-		vImage = new org.vaadin.gwtgraphics.client.Image(0, 0, width, height, imageUrl);
-		drawingArea.add(vImage);
-		
-		addOtherPolygons(otherAnswer);
+		drawingArea = new DrawingArea(0, 0);
 		
 		initWidget(uiBinder.createAndBindUi(this));
 		
-		drawingArea.addMouseDownHandler(new MouseDownHandler() {
-
-			@Override
-			public void onMouseDown(MouseDownEvent event) {
-
-				if (btnPolyLine.isEnabled() == false) {
-					int x = event.getRelativeX(event.getRelativeElement());
-					int y = event.getRelativeY(event.getRelativeElement());
-					
-					Log.info("Relative [x,y] : [" + x +","+ y+ "]");
-					addNewPath(new Point(x, y));
-				}
-			}
-		});
-
-		drawingArea.addMouseMoveHandler(new MouseMoveHandler() {
-
-			@Override
-			public void onMouseMove(MouseMoveEvent event) {
-
-			}
-		});
+		Log.info("url :" + imageUrl + " width : " + width1 + " height :" + height1);
 		
-		btnClear.setVisible(diplayBtnFlag);
-		btnPolyLine.setVisible(diplayBtnFlag);
+		if(width1 == null || height1 == null) {
+			ClientUtility.getImageWidthHeight(imageUrl, this);			
+		}else {
+			apply(width1, height1);
+		}
+		
+		
 	}
 
 	private Path addNewPointToPath(Point point,Path path,Point startPoint) {
@@ -185,5 +165,53 @@ public class ImagePolygonViewer extends Composite {
 
 	public boolean isValidPolygon() {
 		return currentPolygonPath != null && currentPolygonPath.isClosed();
+	}
+
+	@Override
+	public void apply(Integer width, Integer height) {
+		if(width <= 0 || height <= 0) {
+			Log.error("Width and height cannot be negative or zero");
+			return;
+		}
+		
+		if(imageUrl == null || imageUrl.length() <= 0) {
+			Log.error("URL cannot be null");
+			return;
+		}
+		
+		drawingArea.setWidth(width);
+		drawingArea.setHeight(height);
+		vImage = new org.vaadin.gwtgraphics.client.Image(0, 0, width, height, imageUrl);
+		drawingArea.add(vImage);
+		
+		addOtherPolygons(otherAnswer);
+		
+		//initWidget(uiBinder.createAndBindUi(this));
+		
+		drawingArea.addMouseDownHandler(new MouseDownHandler() {
+
+			@Override
+			public void onMouseDown(MouseDownEvent event) {
+
+				if (btnPolyLine.isEnabled() == false) {
+					int x = event.getRelativeX(event.getRelativeElement());
+					int y = event.getRelativeY(event.getRelativeElement());
+					
+					Log.info("Relative [x,y] : [" + x +","+ y+ "]");
+					addNewPath(new Point(x, y));
+				}
+			}
+		});
+
+		drawingArea.addMouseMoveHandler(new MouseMoveHandler() {
+
+			@Override
+			public void onMouseMove(MouseMoveEvent event) {
+
+			}
+		});
+		
+		btnClear.setVisible(diplayBtnFlag);
+		btnPolyLine.setVisible(diplayBtnFlag);		
 	}
 }

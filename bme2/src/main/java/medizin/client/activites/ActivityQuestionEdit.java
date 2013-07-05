@@ -213,7 +213,7 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 
 		deleteUploadedFiles(paths);
 
-		if (question.getId() != null) {
+		if (question != null && question.getId() != null) {
 			cancelClickedGoto(question);
 		} else {
 			goTo(new PlaceQuestion(PlaceQuestion.PLACE_QUESTION));

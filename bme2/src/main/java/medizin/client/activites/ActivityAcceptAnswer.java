@@ -157,9 +157,9 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 					else
 					{
 						AcceptAnswerSubView acceptAnswerSubView = new AcceptAnswerSubViewImpl(true);				
-					    acceptAnswerSubView.getTable().setRowCount(questionProxy.getAnswers().size(), true);
 					    acceptAnswerSubView.setDelegate(ActivityAcceptAnswer.this);
 					    acceptAnswerSubView.setProxy(questionProxy);
+					    acceptAnswerSubView.setAcceptAnswerSubView(acceptAnswerSubView);
 					    questionPanel.add(acceptAnswerSubView);
 					}
 				}
@@ -203,7 +203,7 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 		});
 	}
 	@Override
-	public void acceptClicked(AnswerProxy answerProxy2) {
+	public void acceptClicked(final AnswerProxy answerProxy2, final AcceptAnswerSubView acceptAnswerSubView) {
 		
 
 			AnswerRequest req = requests.answerRequest();
@@ -247,8 +247,15 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 
 				@Override
 				public void onSuccess(Void arg0) {
-					init();
 					
+					if (acceptAnswerSubView != null && acceptAnswerSubView.getTable().getRowCount() > 1)
+					{
+						acceptAnswerSubView.setProxy(answerProxy2.getQuestion());
+					}
+					else
+					{
+						init();
+					}
 				}
 			});
 		

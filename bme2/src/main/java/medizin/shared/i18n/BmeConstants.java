@@ -591,4 +591,5 @@ public interface BmeConstants extends Constants , ConstantsWithLookup {
 	
 	public String globalBlockingWarning();
 
+	public String media();
 }

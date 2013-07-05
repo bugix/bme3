@@ -240,7 +240,7 @@ public class ActivityAcceptQuestionDetails extends ActivityQuestionDetails imple
 
 	// unused method
 	@Override
-	public void acceptClicked(AnswerProxy answerProxy) {
+	public void acceptClicked(AnswerProxy answerProxy, AcceptAnswerSubView acceptAnswerSubView) {
 	}
 
 	// unused method

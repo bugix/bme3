@@ -12,6 +12,7 @@ import com.google.gwt.place.shared.Place;
 import com.google.web.bindery.requestfactory.gwt.client.RequestFactoryEditorDriver;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.ValueListBox;
 
@@ -47,7 +48,7 @@ public interface QuestiontypesEditView extends IsWidget {
 
 	public TextBox getLongNameTxtbox();
 	
-	public TextBox getDescriptionTxtbox();
+	public TextArea getDescriptionTxtbox();
 
 	public ValueListBox<InstitutionProxy> getInstituteListBox();
 
@@ -91,9 +92,9 @@ public interface QuestiontypesEditView extends IsWidget {
 
 	public TextBox getImageProportionTxtbox();
 	
-	public CheckBox getLinearPointChkBox();
+	/*public CheckBox getLinearPointChkBox();
 	
-	public TextBox getLinearPercentageTxtbox();
+	public TextBox getLinearPercentageTxtbox();*/
 	
 	public CheckBox getKeywordHighlightChkBox();
 	
@@ -115,13 +116,13 @@ public interface QuestiontypesEditView extends IsWidget {
 
 	public TextBox getColumnTxtbox();
 
-	public TextBox getThumbWidthTxtbox();
+	/*public TextBox getThumbWidthTxtbox();
 
 	public TextBox getThumbHeightTxtbox();
 	
 	public CheckBox getAllowZoomOutChkBox(); 
 	
-	public CheckBox getAllowZoomInChkBox();
+	public CheckBox getAllowZoomInChkBox();*/
 	
 	public TextBox getMaxBytesTxtbox();
 }

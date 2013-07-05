@@ -42,8 +42,7 @@ public interface QuestionView extends IsWidget {
 
 	
 
-	void setInstitutionFilter(
-			List<InstitutionProxy> values);
+	//void setInstitutionFilter(List<InstitutionProxy> values);
 
 	void setSpecialisationFilter(List<QuestionEventProxy> values);
 

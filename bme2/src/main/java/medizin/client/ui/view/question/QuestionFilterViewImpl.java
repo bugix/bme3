@@ -100,7 +100,7 @@ public class QuestionFilterViewImpl extends PopupPanel implements QuestionView {
 		}
 	});*/
 	
-	@UiField(provided = true)
+	/*@UiField(provided = true)
 	public ValueListBox<InstitutionProxy> institutionListBox=new ValueListBox<InstitutionProxy>(new AbstractRenderer<InstitutionProxy>() {
 
 		@Override
@@ -108,7 +108,7 @@ public class QuestionFilterViewImpl extends PopupPanel implements QuestionView {
 			// TODO Auto-generated method stub
 			return object==null ?" ": String.valueOf(object.getInstitutionName());			
 		}
-	});
+	});*/
 	
 	@UiField(provided = true)
 	public ValueListBox<QuestionEventProxy> specialiationListBox=new ValueListBox<QuestionEventProxy>(new AbstractRenderer<QuestionEventProxy>() {
@@ -168,7 +168,7 @@ public class QuestionFilterViewImpl extends PopupPanel implements QuestionView {
 		keywordText.setValue(false);
 		showNew.setValue(false);
 		
-		institutionListBox.setValue(null);
+		//institutionListBox.setValue(null);
 		specialiationListBox.setValue(null);
 		
 		createStartDate.getTextBox().setText("");
@@ -346,11 +346,11 @@ public class QuestionFilterViewImpl extends PopupPanel implements QuestionView {
 		return null;
 	}
 
-	@Override
+	/*@Override
 	public void setInstitutionFilter(List<InstitutionProxy> values) {
 		// TODO Auto-generated method stub
 		
-	}
+	}*/
 
 	@Override
 	public void setSpecialisationFilter(List<QuestionEventProxy> values) {

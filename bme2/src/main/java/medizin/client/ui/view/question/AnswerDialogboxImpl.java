@@ -202,7 +202,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 		reciverMap.put("rewiewer", rewiewer.getTextField().advancedTextBox);
 		reciverMap.put("validity", validity);
 		reciverMap.put("submitToReviewComitee", submitToReviewComitee);
-		reciverMap.put("comment", comment);
+		//reciverMap.put("comment", comment);
 		reciverMap.put("additionalKeywords", txtAdditionalKeyword);
 		reciverMap.put("sequenceNumber", txtSequenceNumber);
 		
@@ -239,12 +239,15 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 		});
 
 		save.setText(constants.save());
-		closeButton.setText(constants.cancel());
+		closeButton.setText(constants.cancel());	
 	}
 	
 	private void addForShowInImage() {
 
 		Log.info("Question id :" + question.getId());
+		
+		//validity.setValue(Validity.Wahr);
+		
 		delegate.findAllAnswersPoints(question.getId(),new Function<List<String>, Void>(){
 
 			@Override
@@ -252,7 +255,12 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 				
 				List<PolygonPath> polygonPaths = PolygonPath.getPolygonPaths(polygons);
 				
-				if(question != null && question.getQuestionType() != null && QuestionTypes.ShowInImage.equals(question.getQuestionType().getQuestionType()) && question.getPicturePath() != null && question.getPicturePath().length() > 0 && question.getQuestionType().getImageWidth() != null && question.getQuestionType().getImageHeight() != null) {
+				/*if(question != null && question.getQuestionType() != null && QuestionTypes.ShowInImage.equals(question.getQuestionType().getQuestionType()) && question.getPicturePath() != null && question.getPicturePath().length() > 0 && question.getQuestionType().getImageWidth() != null && question.getQuestionType().getImageHeight() != null) {
+					imagePolygonViewer = new ImagePolygonViewer(question.getPicturePath(), question.getQuestionType().getImageWidth(), question.getQuestionType().getImageHeight(),polygonPaths, true);
+					viewContainer.add(imagePolygonViewer);
+				}*/
+				
+				if(question != null && question.getQuestionType() != null && QuestionTypes.ShowInImage.equals(question.getQuestionType().getQuestionType()) && question.getPicturePath() != null && question.getPicturePath().length() > 0 /*&& question.getQuestionType().getImageWidth() != null && question.getQuestionType().getImageHeight() != null*/) {
 					imagePolygonViewer = new ImagePolygonViewer(question.getPicturePath(), question.getQuestionType().getImageWidth(), question.getQuestionType().getImageHeight(),polygonPaths, true);
 					viewContainer.add(imagePolygonViewer);
 				}
@@ -323,7 +331,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 					if(event.isResourceUploaded()) {
 						final String url = new String(GWT.getHostPageBaseURL() + event.getFilePath());
 						final QuestionTypeProxy questionTypeProxy = question.getQuestionType();
-						if(questionTypeProxy != null && questionTypeProxy.getImageWidth() != null && questionTypeProxy.getImageHeight() != null) {
+						if(questionTypeProxy != null /*&& questionTypeProxy.getImageWidth() != null && questionTypeProxy.getImageHeight() != null*/) {
 						
 							Function<Boolean, Void> function = new Function<Boolean, Void>() {
 								
@@ -350,13 +358,15 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 							};
 			
 							if(event.getWidth() != null && event.getHeight() != null) {
-								if(event.getWidth().equals(questionTypeProxy.getImageWidth()) && event.getHeight().equals(questionTypeProxy.getImageHeight())) {
+								/*if(event.getWidth().equals(questionTypeProxy.getImageWidth()) && event.getHeight().equals(questionTypeProxy.getImageHeight())) {
 									function.apply(true);
 								}else {
 									function.apply(false);
-								}
+								}*/
+								function.apply(true);
 							}else {
-								ClientUtility.checkImageSize(url,questionTypeProxy.getImageWidth(),questionTypeProxy.getImageHeight(),function);
+								//ClientUtility.checkImageSize(url,questionTypeProxy.getImageWidth(),questionTypeProxy.getImageHeight(),function);
+								Log.error("Error in event width or height");
 							}
 						}
 					}					
@@ -531,6 +541,11 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 			/*answerTextArea.setVisible(false);
 			toolbar.setVisible(false);*/
 		}
+		
+		if (QuestionTypes.ShowInImage.equals(types)){
+			validity.setValue(Validity.Wahr);
+			Document.get().getElementById("validity").getStyle().setDisplay(Display.NONE);
+		}
 
 	}
 
@@ -673,7 +688,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 				break;
 			}
 			
-			delegate.saveAnswerProxy(answer, answerTextArea.getHTML(), author.getSelected(), rewiewer.getSelected(), submitToReviewComitee.getValue(), comment.getText(),validity.getValue(),points,mediaPath,additionalKeywords,sequenceNumber, new Function<AnswerProxy,Void>() {
+			delegate.saveAnswerProxy(answer, answerTextArea.getHTML(), author.getSelected(), rewiewer.getSelected(), submitToReviewComitee.getValue(), (comment.getText().isEmpty() ? " " : comment.getText()),validity.getValue(),points,mediaPath,additionalKeywords,sequenceNumber, new Function<AnswerProxy,Void>() {
 
 				@Override
 				public Void apply(AnswerProxy input) {
@@ -700,7 +715,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 		rewiewer.getTextField().advancedTextBox.removeStyleName("higlight_onViolation");
 		author.getTextField().advancedTextBox.removeStyleName("higlight_onViolation");
 		submitToReviewComitee.removeStyleName("higlight_onViolation");
-		comment.removeStyleName("higlight_onViolation");
+	//	comment.removeStyleName("higlight_onViolation");
 		validity.removeStyleName("higlight_onViolation");
 		if(imagePolygonViewer != null) imagePolygonViewer.removeStyleName("higlight_onViolation");
 		if(imageRectangleViewer != null) imageRectangleViewer.removeStyleName("higlight_onViolation");
@@ -812,11 +827,11 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 			author.getTextField().advancedTextBox.addStyleName("higlight_onViolation");
 		}
 		
-		if(comment.getText() == null || comment.getText().isEmpty()) {
+		/*if(comment.getText() == null || comment.getText().isEmpty()) {
 			flag = false;
 			messages.add(constants.commentMayNotBeNull());
 			comment.addStyleName("higlight_onViolation");
-		}
+		}*/
 		
 		if(validity.getValue() == null) {
 			flag = false;

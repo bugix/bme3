@@ -149,7 +149,7 @@
 						 	  		<g:Label styleName="{style.label}" ui:field="shortNameLbl"></g:Label>
 						 	  	</td>
 						 	  	<td>
-						 	  		<g:TextBox ui:field="shortNameTxtbox"></g:TextBox>
+						 	  		<g:TextBox ui:field="shortNameTxtbox" width="300px"></g:TextBox>
 						 	  	</td>
 						 	  </tr>
 						 	  <tr id="longName">
@@ -157,7 +157,7 @@
 						 	  		<g:Label styleName="{style.label}" ui:field="longNameLbl"></g:Label>
 						 	  	</td>
 						 	  	<td>
-						 	  		<g:TextBox ui:field="longNameTxtbox"></g:TextBox>
+						 	  		<g:TextBox ui:field="longNameTxtbox" width="300px"></g:TextBox>
 						 	  	</td>
 						 	  </tr>
 						 	  <tr id="description">
@@ -165,7 +165,8 @@
 						 	  		<g:Label styleName="{style.label}" ui:field="descriptionLbl"></g:Label>
 						 	  	</td>
 						 	  	<td>
-						 	  		<g:TextBox ui:field="descriptionTxtbox"></g:TextBox>
+						 	  		<!-- <g:TextBox ui:field="descriptionTxtbox"></g:TextBox> -->
+						 	  		<g:TextArea ui:field="descriptionTxtbox" width="300px"></g:TextArea>
 						 	  	</td>
 						 	  </tr>
 						 	  
@@ -174,7 +175,7 @@
 						 	  		<g:Label styleName="{style.label}" ui:field="instituteLbl"></g:Label>
 						 	  	</td>
 						 	  	<td>
-						 	  		<g:ValueListBox ui:field="instituteListBox"></g:ValueListBox>
+						 	  		<g:ValueListBox ui:field="instituteListBox" width="150px"></g:ValueListBox>
 						 	  	</td>
 						 	  </tr>
 						 	  
@@ -183,7 +184,7 @@
 						 	  		<g:Label styleName="{style.label}" ui:field="questionTypeLbl"></g:Label>
 						 	  	</td>
 						 	  	<td>
-						 	  		<g:ValueListBox ui:field="questionTypeListBox"></g:ValueListBox>
+						 	  		<g:ValueListBox ui:field="questionTypeListBox" width="150px"></g:ValueListBox>
 						 	  	</td>
 						 	  </tr>
 						 	  
@@ -192,7 +193,7 @@
 						 	  		<g:Label styleName="{style.label}" ui:field="sumAnswerLbl"></g:Label>
 						 	  	</td>
 						 	  	<td>
-						 	  		<g:TextBox ui:field="sumAnswerTxtbox"></g:TextBox>
+						 	  		<g:TextBox ui:field="sumAnswerTxtbox" width="150px"></g:TextBox>
 						 	  	</td>
 						 	  </tr>
 						 	  
@@ -201,7 +202,7 @@
 						 	  		<g:Label styleName="{style.label}" ui:field="sumTrueAnswerLbl"></g:Label>
 						 	  	</td>
 						 	  	<td>
-						 	  		<g:TextBox ui:field="sumTrueAnswerTxtbox"></g:TextBox>
+						 	  		<g:TextBox ui:field="sumTrueAnswerTxtbox" width="150px"></g:TextBox>
 						 	  	</td>
 						 	  </tr>
 						 	  
@@ -210,7 +211,7 @@
 						 	  		<g:Label styleName="{style.label}" ui:field="sumFalseAnswerLbl"></g:Label>
 						 	  	</td>
 						 	  	<td>
-						 	  		<g:TextBox ui:field="sumFalseAnswerTxtbox"></g:TextBox>
+						 	  		<g:TextBox ui:field="sumFalseAnswerTxtbox" width="150px"></g:TextBox>
 						 	  	</td>
 						 	  </tr>
 						 	  
@@ -219,7 +220,7 @@
 						 	  		<g:Label styleName="{style.label}" ui:field="questionLengthLbl"></g:Label>
 						 	  	</td>
 						 	  	<td>
-						 	  		<g:TextBox ui:field="questionLengthTxtbox"></g:TextBox>
+						 	  		<g:TextBox ui:field="questionLengthTxtbox" width="150px"></g:TextBox>
 						 	  	</td>
 						 	  </tr>
 						 	  
@@ -228,7 +229,7 @@
 						 	  		<g:Label styleName="{style.label}" ui:field="answerLengthLbl"></g:Label>
 						 	  	</td>
 						 	  	<td>
-						 	  		<g:TextBox ui:field="answerLengthTxtbox"></g:TextBox>
+						 	  		<g:TextBox ui:field="answerLengthTxtbox" width="150px"></g:TextBox>
 						 	  	</td>
 						 	  </tr>
 						 	  
@@ -237,7 +238,7 @@
 						 	  		<g:Label styleName="{style.label}" ui:field="answerDiffLbl"></g:Label>
 						 	  	</td>
 						 	  	<td>
-						 	  		<g:TextBox ui:field="answerDiffTxtbox"></g:TextBox>
+						 	  		<g:TextBox ui:field="answerDiffTxtbox" width="150px"></g:TextBox>
 						 	  	</td>
 						 	  </tr>
 						 	  
@@ -246,7 +247,7 @@
 						 	  		<g:Label styleName="{style.label}" ui:field="queHaveImgLbl"></g:Label>
 						 	  	</td>
 						 	  	<td>
-						 	  		<g:CheckBox ui:field="queHaveImgChkBox"></g:CheckBox>						 	  		
+						 	  		<g:CheckBox ui:field="queHaveImgChkBox" ></g:CheckBox>						 	  		
 						 	  	</td>
 						 	  </tr>
 						 	  
@@ -275,7 +276,7 @@
 						 	  		<g:Label styleName="{style.label}" ui:field="keywordCountLbl"></g:Label>
 						 	  	</td>
 						 	  	<td>
-						 	  		<g:TextBox ui:field="keywordCountTxtbox"></g:TextBox>				 	  		
+						 	  		<g:TextBox ui:field="keywordCountTxtbox" width="150px"></g:TextBox>				 	  		
 						 	  	</td>
 						 	  </tr>
 						 	  
@@ -311,7 +312,7 @@
 						 	  		<g:Label styleName="{style.label}" ui:field="minLetterForAutoCompLbl"></g:Label>
 						 	  	</td>
 						 	  	<td>
-						 	  		<g:TextBox ui:field="minLetterForAutoCompTxtbox"></g:TextBox>				 	  		
+						 	  		<g:TextBox ui:field="minLetterForAutoCompTxtbox" width="150px"></g:TextBox>				 	  		
 						 	  	</td>
 						 	  </tr>
 						 	  
@@ -329,7 +330,7 @@
 						 	  		<g:Label styleName="{style.label}" ui:field="shortAnswerLengthLbl"></g:Label>
 						 	  	</td>
 						 	  	<td>
-						 	  		<g:TextBox ui:field="shortAnswerLengthTxtbox"></g:TextBox>					 	  		
+						 	  		<g:TextBox ui:field="shortAnswerLengthTxtbox" width="150px"></g:TextBox>					 	  		
 						 	  	</td>
 						 	  </tr>
 						 	  
@@ -338,7 +339,7 @@
 						 	  		<g:Label styleName="{style.label}" ui:field="imageWidthLbl"></g:Label>
 						 	  	</td>
 						 	  	<td>
-						 	  		<g:TextBox ui:field="imageWidthTxtbox"></g:TextBox>					 	  		
+						 	  		<g:TextBox ui:field="imageWidthTxtbox" width="150px"></g:TextBox>					 	  		
 						 	  	</td>
 						 	  </tr>
 						 	  
@@ -347,7 +348,7 @@
 						 	  		<g:Label styleName="{style.label}" ui:field="imageLengthLbl"></g:Label>
 						 	  	</td>
 						 	  	<td>
-						 	  		<g:TextBox ui:field="imageLengthTxtbox"></g:TextBox>					 	  		
+						 	  		<g:TextBox ui:field="imageLengthTxtbox" width="150px"></g:TextBox>					 	  		
 						 	  	</td>
 						 	  </tr>
 						 	  
@@ -356,13 +357,13 @@
 						 	  		<g:Label styleName="{style.label}" ui:field="imageProportionLbl"></g:Label>
 						 	  	</td>
 						 	  	<td>
-						 	  		<g:TextBox ui:field="imageProportionTxtbox"></g:TextBox>					 	  		
+						 	  		<g:TextBox ui:field="imageProportionTxtbox" width="150px"></g:TextBox>					 	  		
 						 	  	</td>
 						 	  </tr>
 						 	  
 						 	  <!-- Area Question Type Field -->
 						 	  
-						 	  <tr id="linearPoint">
+						 	 <!--  <tr id="linearPoint">
 						 	  	<td>
 						 	  		<g:Label styleName="{style.label}" ui:field="linearPointLbl"></g:Label>
 						 	  	</td>
@@ -377,9 +378,9 @@
 						 	  		<g:Label styleName="{style.label}" ui:field="linearPercentageLbl"></g:Label>
 						 	  	</td>
 						 	  	<td>
-						 	  		<g:TextBox ui:field="linearPercentageTxtbox"></g:TextBox>						 	  		
+						 	  		<g:TextBox ui:field="linearPercentageTxtbox" width="150px"></g:TextBox>						 	  		
 						 	  	</td>
-						 	  </tr>
+						 	  </tr> -->
 						 	  
 						 	  <!-- Long Text Type Field -->
 						 	  
@@ -406,7 +407,7 @@
 						 	  		<g:Label styleName="{style.label}" ui:field="minLengthLbl"></g:Label>
 						 	  	</td>
 						 	  	<td>
-						 	  		<g:TextBox ui:field="minLengthTxtbox"></g:TextBox>					 	  		
+						 	  		<g:TextBox ui:field="minLengthTxtbox" width="150px"></g:TextBox>					 	  		
 						 	  	</td>
 						 	  </tr>
 						 	  
@@ -415,7 +416,7 @@
 						 	  		<g:Label styleName="{style.label}" ui:field="maxLengthLbl"></g:Label>
 						 	  	</td>
 						 	  	<td>
-						 	  		<g:TextBox ui:field="maxLengthTxtbox"></g:TextBox>					 	  		
+						 	  		<g:TextBox ui:field="maxLengthTxtbox" width="150px"></g:TextBox>					 	  		
 						 	  	</td>
 						 	  </tr>
 						 	  
@@ -424,7 +425,7 @@
 						 	  		<g:Label styleName="{style.label}" ui:field="minWordCountLbl"></g:Label>
 						 	  	</td>
 						 	  	<td>
-						 	  		<g:TextBox ui:field="minWordCountTxtbox"></g:TextBox>					 	  		
+						 	  		<g:TextBox ui:field="minWordCountTxtbox" value="0" width="150px"></g:TextBox>					 	  		
 						 	  	</td>
 						 	  </tr>
 						 	  
@@ -433,7 +434,7 @@
 						 	  		<g:Label styleName="{style.label}" ui:field="maxWordCountLbl"></g:Label>
 						 	  	</td>
 						 	  	<td>
-						 	  		<g:TextBox ui:field="maxWordCountTxtbox"></g:TextBox>					 	  		
+						 	  		<g:TextBox ui:field="maxWordCountTxtbox" value="0" width="150px"></g:TextBox>					 	  		
 						 	  	</td>
 						 	  </tr>
 						 	  
@@ -455,7 +456,7 @@
 						 	  		<g:Label styleName="{style.label}" ui:field="multimediaTypeLbl"></g:Label>
 						 	  	</td>
 						 	  	<td>
-						 	  		<g:ValueListBox ui:field="multimediaTypeListBox"></g:ValueListBox>
+						 	  		<g:ValueListBox ui:field="multimediaTypeListBox" width="150px"></g:ValueListBox>
 						 	  	</td>
 						 	  </tr>
 						 	  
@@ -464,7 +465,7 @@
 						 	  		<g:Label styleName="{style.label}" ui:field="selectionTypeLbl"></g:Label>
 						 	  	</td>
 						 	  	<td>
-						 	  		<g:ValueListBox ui:field="selectionTypeListBox"></g:ValueListBox>
+						 	  		<g:ValueListBox ui:field="selectionTypeListBox" width="150px"></g:ValueListBox>
 						 	  	</td>
 						 	  </tr>	  
 						 	  
@@ -473,7 +474,7 @@
 						 	  		<g:Label styleName="{style.label}" ui:field="columnLbl"></g:Label>
 						 	  	</td>
 						 	  	<td>
-						 	  		<g:TextBox ui:field="columnTxtbox"></g:TextBox>					 	  		
+						 	  		<g:TextBox ui:field="columnTxtbox" width="150px"></g:TextBox>					 	  		
 						 	  	</td>
 						 	  </tr>
 						 	  
@@ -495,12 +496,12 @@
 						 	  	</td>
 						 	  </tr> -->
 						 	  
-						 	   <tr id="thumbWidth">
+						 	   <!-- <tr id="thumbWidth">
 						 	  	<td>
 						 	  		<g:Label styleName="{style.label}" ui:field="thumbWidthLbl"></g:Label>
 						 	  	</td>
 						 	  	<td>
-						 	  		<g:TextBox ui:field="thumbWidthTxtbox"></g:TextBox>					 	  		
+						 	  		<g:TextBox ui:field="thumbWidthTxtbox" width="150px"></g:TextBox>					 	  		
 						 	  	</td>
 						 	  </tr>
 						 	  
@@ -509,9 +510,9 @@
 						 	  		<g:Label styleName="{style.label}" ui:field="thumbHeightLbl"></g:Label>
 						 	  	</td>
 						 	  	<td>
-						 	  		<g:TextBox ui:field="thumbHeightTxtbox"></g:TextBox>					 	  		
+						 	  		<g:TextBox ui:field="thumbHeightTxtbox" width="150px"></g:TextBox>					 	  		
 						 	  	</td>
-						 	  </tr>
+						 	  </tr> -->
 						 	  
 						 	  <!-- <tr id="propostions">
 						 	  	<td>
@@ -522,7 +523,7 @@
 						 	  	</td>
 						 	  </tr> -->
 						 	  
-						 	  <tr id="allowZoomOut">
+						 	  <!-- <tr id="allowZoomOut">
 						 	  	<td>
 						 	  		<g:Label styleName="{style.label}" ui:field="allowZoomOutLbl"></g:Label>
 						 	  	</td>
@@ -538,14 +539,14 @@
 						 	  	<td>
 						 	  		<g:CheckBox ui:field="allowZoomInChkBox"></g:CheckBox>						 	  		
 						 	  	</td>
-						 	  </tr>
+						 	  </tr> -->
 						 	  
 						 	  <tr id="maxBytes">
 						 	  	<td>
 						 	  		<g:Label styleName="{style.label}" ui:field="maxBytesLbl"></g:Label>
 						 	  	</td>
 						 	  	<td>
-						 	  		<g:TextBox ui:field="maxBytesTxtbox"></g:TextBox>					 	  		
+						 	  		<g:TextBox ui:field="maxBytesTxtbox" width="150px"></g:TextBox>					 	  		
 						 	  	</td>
 						 	  </tr>
 						      <!-- <tr id="questionTypeName">
