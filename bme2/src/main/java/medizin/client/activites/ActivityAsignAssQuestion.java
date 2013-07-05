@@ -612,15 +612,15 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 		BlockingTypes blockingTypes=questionTypeCountViewImpl.getQuestionTypeCountPerExamProxy().getBlockingType();
 		
 		
-		int totalsum=questionTypeCountViewImpl.getQuestionSumPerPersonProxy().getQuestionSum().intValue();
+		int totalsum=questionTypeCountViewImpl.getQuestionTypeCountPerExamProxy().getQuestionTypeCount().intValue();
 		if(blockingTypes==BlockingTypes.PERSONAL_BLOCKING && new Integer(questionTypeCountViewImpl.getBlockingCounter().getText()) >=0)
 		{
-			ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.personalBlockingWarning()+questionTypeCountViewImpl.getTotalQuestionAllowed());
+			ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.personalBlockingWarning()+" : "+questionTypeCountViewImpl.getTotalQuestionAllowed());
 			return false;
 		}
 		else if(blockingTypes==BlockingTypes.GLOBAL_BLOCKING && questionTypeCountViewImpl.getTotalQuestionAllocated() >= totalsum)
 		{
-			ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.globalBlockingWarning()+totalsum);
+			ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.globalBlockingWarning()+" : "+totalsum);
 			return false;
 		}
 		else
