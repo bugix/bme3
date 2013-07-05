@@ -119,4 +119,20 @@ public class QuestionSumPerPerson {
 		
 		return q.getResultList();
 	}
+	
+	public static List<QuestionEvent> findQuestionEventOfExaminer(Assesment a, Person p)
+	{
+		EntityManager em=QuestionSumPerPerson.entityManager();
+		if(p==null)
+		p=Person.myGetLoggedPerson();
+		
+		TypedQuery<QuestionEvent> q = em.createQuery("SELECT qsum.questionEvent FROM QuestionSumPerPerson qsum " + 
+	       		" WHERE qsum.responsiblePerson=:p and qsum.assesment=:a",  QuestionEvent.class);
+	       q.setParameter("a", a);
+	       q.setParameter("p", p);
+		   
+		
+		return q.getResultList();
+
+	}
 }

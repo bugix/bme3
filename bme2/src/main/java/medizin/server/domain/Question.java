@@ -331,7 +331,7 @@ public class Question {
 	 * 
 	 * Retrive Query same as Question link, + exclude assessment question
 	 */
-	public static List<Question> findQuestionsByMc(Long mcId,String questionId,String questionType,String questionName) {
+	public static List<Question> findQuestionsByMc(Long mcId,String questionId,String questionType,String questionName,Assesment a,Person author) {
 		
 		
 		Mc mc = Mc.findMc(mcId);
@@ -412,13 +412,21 @@ public class Question {
         	
         	// question should belong to particular mc of assesment
         	ArrayList<Question> questionList=new ArrayList<Question>();
+        	
+        	//filter it by question type and question event specified in assesment module for examiner/ author
+    		List<QuestionEvent> questionEventList=QuestionSumPerPerson.findQuestionEventOfExaminer(a, author);    		
+    		List<QuestionType> questionTypeList=QuestionTypeCountPerExam.findQuestionTypePerExam(a);
+    		
         	for(Question question : questions)
         	{
-	        	if(question.getMcs().contains(mc))
+	        	if(question.getMcs().contains(mc) && questionEventList.contains(question.getQuestEvent()) && questionTypeList.contains(question.getQuestionType()))
 	        	{
 	        		questionList.add(question);
 	        	}
         	}
+        	
+        	
+    		
         	
         	return questionList;
         	

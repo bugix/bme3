@@ -215,6 +215,8 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 	 * */
 	private void initQuestionPanel(int action, AssesmentProxy assesment,String questionName,String questionId,String questionType) {
 		
+		PersonProxy author=null;
+		
 		//admin / institutional admin
 		if(personRightProxy.getIsAdmin() || personRightProxy.getIsInstitutionalAdmin())
 		{
@@ -224,22 +226,24 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 			
 			if(examAutorListMap.get(assesment) ==null)		
 			{
-				populateAuthorListBox(questionPanel.getAuthorListBox(),assesment);
+				populateAuthorListBox(questionPanel.getAuthorListBox(),assesment,true);
 				questionPanel.getAuthorListBox().setValue(assementQuestionPanel.getAuthorListBox().getValue());
 			}
 			else
 			{
 				if(examAutorListMap.get(assesment).size()>0)
-				questionPanel.getAuthorListBox().setValue(examAutorListMap.get(assesment).get(0));
+				questionPanel.getAuthorListBox().setValue(assementQuestionPanel.getAuthorListBox().getValue());
 				else
 					questionPanel.getAuthorListBox().setValue(null);
 				
 				questionPanel.getAuthorListBox().setAcceptableValues(examAutorListMap.get(assesment));
 			}
+			author=questionPanel.getAuthorListBox().getValue();
 		}
 		else
 		{
 			questionPanel.getAuthorListBox().removeFromParent();
+			author=userLoggedIn;
 		}
 		
 		if(assesment==null)
@@ -308,7 +312,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 				findPastAssesmentQuestion(assesment,questionName,questionId,questionType);
 		}//new Question
 		else if (action == 2){
-			requests.questionRequest().findQuestionsByMc(assesment.getMc().getId(),questionId,questionType,questionName).with("rewiewer", "questEvent", "autor", "questionType", "keywords").fire(new Receiver<List<QuestionProxy>>() {
+			requests.questionRequest().findQuestionsByMc(assesment.getMc().getId(),questionId,questionType,questionName,assesment,author).with("rewiewer", "questEvent", "autor", "questionType", "keywords").fire(new Receiver<List<QuestionProxy>>() {
 
 				@Override
 				public void onSuccess(List<QuestionProxy> response) {
@@ -358,9 +362,17 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 	/*finds past assesment question according to selected author*/
 	private void findPastAssesmentQuestion(AssesmentProxy assesment,String questionName,String questionId,String questionType) {
 		
+		PersonProxy author=null;
 		
-		
-		requests.assesmentQuestionRequest().findAssesmentQuestionsByMc(assesment.getId(),assesment.getMc().getId(),questionId,questionType,questionName).with("question.rewiewer","question.autor","question.keywords","question.questEvent","question.comment","question.questionType").fire(new Receiver<List<AssesmentQuestionProxy>>() {
+		if(personRightProxy.getIsAdmin() || personRightProxy.getIsInstitutionalAdmin())
+		{
+			author=questionPanel.getAuthorListBox().getValue();
+		}
+		else
+		{
+			author=userLoggedIn;
+		}
+		requests.assesmentQuestionRequest().findAssesmentQuestionsByMc(assesment.getId(),assesment.getMc().getId(),questionId,questionType,questionName,questionPanel.getAuthorListBox().getValue()).with("question.rewiewer","question.autor","question.keywords","question.questEvent","question.comment","question.questionType").fire(new Receiver<List<AssesmentQuestionProxy>>() {
 
 			@Override
 			public void onSuccess(List<AssesmentQuestionProxy> response) {
@@ -412,7 +424,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 	 * 
 	 * Show Author / examiner assigned in particular assessment
 	 * */
-	private void populateAuthorListBox(final ValueListBox<PersonProxy> authorListBox,final AssesmentProxy assesment) {
+	private void populateAuthorListBox(final ValueListBox<PersonProxy> authorListBox,final AssesmentProxy assesment,final boolean isRightSide) {
 		
 		requests.assesmentQuestionRequest().findAuthorListByAssesment(assesment).fire(new Receiver<List<PersonProxy>>() {
 
@@ -428,7 +440,12 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 			//	{
 				if(response.size() >0)
 				{
-					authorListBox.setValue(response.get(0));
+					if(!isRightSide)
+						authorListBox.setValue(response.get(0));
+					else
+					{
+						authorListBox.setValue(assementQuestionPanel.getAuthorListBox().getValue());
+					}
 					initAssementQuestionPanel(response.get(0));
 				}
 				else
@@ -535,15 +552,22 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 				String questionTypeStr="";
 				
 				Set<QuestionTypeProxy> questionTypes=questionTypeCountPerExamProxy.getQuestionTypesAssigned();
-				
+				int k=0;
 				for(QuestionTypeProxy questionType:questionTypes)
 				{
+					if(k==0)
 					questionTypeStr=questionTypeStr+questionType.getShortName();
+					else
+					{
+						questionTypeStr=questionTypeStr+","+questionType.getShortName();
+
+					}
 					
 					questionTypeViewMap.put("q"+questionType.getId()+"s"+questionSumPerPersonProxy.getQuestionEvent().getId(), questionTypeCountViewImpl);
 					
-					
+					k++;	
 				}
+				
 				questionTypeStr=questionTypeStr+"("+questionSumPerPersonProxy.getQuestionEvent().getEventName()+")";
 				questionTypeCountViewImpl.getQuestionTypeLbl().setText(questionTypeStr);
 				questionTypeCountViewImpl.setQuestionSumPerPersonProxy(questionSumPerPersonProxy);
@@ -660,7 +684,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 		if(personRightProxy.getIsInstitutionalAdmin() || personRightProxy.getIsAdmin())
 		 {
 			if(examAutorListMap.get(assesment) ==null)	
-				populateAuthorListBox(assementQuestionPanel.getAuthorListBox(),assesment);
+				populateAuthorListBox(assementQuestionPanel.getAuthorListBox(),assesment,false);
 			else
 			{
 				if(examAutorListMap.get(assesment).size()>0)

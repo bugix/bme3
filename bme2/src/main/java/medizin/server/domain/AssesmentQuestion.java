@@ -148,7 +148,7 @@ public class AssesmentQuestion {
     * 4. Not Assigned in current Assesment
     * */
     
-    public static List<AssesmentQuestion> findAssesmentQuestionsByMc(Long assesmentId,Long id,String questionId,String questionType,String questionName){
+    public static List<AssesmentQuestion> findAssesmentQuestionsByMc(Long assesmentId,Long id,String questionId,String questionType,String questionName,Person author){
     	
     	Log.info("Past Question Tab ");
     	
@@ -277,6 +277,8 @@ public class AssesmentQuestion {
 		Predicate pre6 = criteriaBuilder.equal(from.get("question").get("questEvent")
 				.get("institution"), institution);
 		
+		Assesment a=Assesment.findAssesment(assesmentId);
+		
         if(userLoggedIn.getIsAdmin()) //Main Admin
         {
         	Log.info("Main Admin");
@@ -316,9 +318,14 @@ public class AssesmentQuestion {
     		
     		//question should belong to assesment mcq
     		List<AssesmentQuestion> aqList=new ArrayList<AssesmentQuestion>();
+    		
+    		//filter it by question type and question event specified in assesment module for examiner/ author
+    		List<QuestionEvent> questionEventList=QuestionSumPerPerson.findQuestionEventOfExaminer(a, author);    		
+    		List<QuestionType> questionTypeList=QuestionTypeCountPerExam.findQuestionTypePerExam(a);
+    		
     		for(AssesmentQuestion aq:pastAqs)
     		{
-    			if(aq.getQuestion().getMcs().contains(mc))
+    			if(aq.getQuestion().getMcs().contains(mc) && questionEventList.contains(aq.getQuestion().getQuestEvent()) && questionTypeList.contains(aq.getQuestion().getQuestionType()))
     			{
     				aqList.add(aq);
     			}
@@ -387,23 +394,26 @@ public class AssesmentQuestion {
 			
 			
 			//remove duplicate question
-		
-			//remove duplicate question
     		List<AssesmentQuestion> pastAqs=removeDuplicateAssesmentQuestion(q.getResultList());
     		
     		
     		//question should belong to assesment mcq
     		List<AssesmentQuestion> aqList=new ArrayList<AssesmentQuestion>();
+    		
+    		//filter it by question type and question event specified in assesment module for examiner/ author
+    		List<QuestionEvent> questionEventList=QuestionSumPerPerson.findQuestionEventOfExaminer(a, author);    		
+    		List<QuestionType> questionTypeList=QuestionTypeCountPerExam.findQuestionTypePerExam(a);
+    		
     		for(AssesmentQuestion aq:pastAqs)
     		{
-    			if(aq.getQuestion().getMcs().contains(mc))
+    			if(aq.getQuestion().getMcs().contains(mc) && questionEventList.contains(aq.getQuestion().getQuestEvent()) && questionTypeList.contains(aq.getQuestion().getQuestionType()))
     			{
     				aqList.add(aq);
     			}
     		}
     		
     		return aqList;
-        }
+}
         
        
 		/*StringBuilder queryBuilder = new StringBuilder("SELECT assesmentauestion FROM AssesmentQuestion AS assesmentauestion " +
