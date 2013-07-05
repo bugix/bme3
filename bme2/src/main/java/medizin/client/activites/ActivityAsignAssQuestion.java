@@ -713,7 +713,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 		addDays(closingDate1, assesment.getRememberBeforeClosing());
 		Date currentDay=new Date();
 		
-		if((currentDay.equals(closingDate1) || currentDay.before(closingDate1)) && (personRightProxy.getIsInstitutionalAdmin() || personRightProxy.getIsAdmin()))
+		if((currentDay.equals(closingDate1) || currentDay.after(closingDate1)) && (personRightProxy.getIsInstitutionalAdmin() || personRightProxy.getIsAdmin()))
 		{
 			assementQuestionPanel.getSendMail().setVisible(true);
 		}
@@ -729,7 +729,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 	
 	public static void addDays(Date d, int days)
 	{
-		d.setTime( d.getTime() + days*1000*60*60*24 );
+		d.setTime( d.getTime() - days*1000*60*60*24 );
 	}
 
 	@Override
