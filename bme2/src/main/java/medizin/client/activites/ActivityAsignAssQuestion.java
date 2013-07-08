@@ -20,6 +20,7 @@ import medizin.client.proxy.QuestionSumPerPersonProxy;
 import medizin.client.proxy.QuestionTypeCountPerExamProxy;
 import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.request.AssesmentQuestionRequest;
+import medizin.client.shared.Validity;
 import medizin.client.ui.ErrorPanel;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.assignquestion.AddQuestionsTabPanel;
@@ -39,6 +40,7 @@ import medizin.client.ui.view.assignquestion.QuestionView;
 import medizin.client.ui.view.assignquestion.QuestionViewImpl;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.shared.BlockingTypes;
+import medizin.shared.QuestionTypes;
 
 import com.allen_sauer.gwt.dnd.client.DragEndEvent;
 import com.allen_sauer.gwt.dnd.client.DragHandler;
@@ -747,10 +749,10 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 				   
 				   
 				   if(checkQuestionTypeCountBlocking(assesmentQuestionViewAktiv.getProxy().getQuestion()))
-					{
+				   {
 						incrementBlockingCounter(assesmentQuestionViewAktiv.getProxy().getQuestion());
 						   assignQuestionToAssesment(assesmentQuestionViewAktiv,false);
-					}
+				   }
 				  
 				   
 				   
@@ -778,7 +780,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 		// TODO Auto-generated method stub
 		if(event.getContext().finalDropController!=null){
 			  Log.debug("onPreviewDragEnd: " + event);  
-			   if(event.getSource() instanceof AssesmentQuestionView)
+			   if(event.getSource() instanceof AssesmentQuestionView)//from past / proposed tab
 			   {
 				   AssesmentQuestionView assesmentQuestionViewAktiv = ((AssesmentQuestionView)event.getSource());
 				   Iterator<Widget> iter = assementQuestionPanel.getAssesmentQuestionDisplayPanel().iterator();
@@ -827,7 +829,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 					 
 				   }
 				   
-				   if(checkQuestionTypeCountBlocking(questionViewAktiv.getProxy()))
+				   if(checkQuestionTypeCountBlocking(questionViewAktiv.getProxy()) && validateAssesmentQuestion(questionViewAktiv.getProxy(), (QuestionViewImpl)questionViewAktiv))
 					{
 						incrementBlockingCounter(questionViewAktiv.getProxy());
 						assignNewQuestionToAssesment(questionViewAktiv, false);
@@ -1355,7 +1357,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 	@Override
 	public void addNewQuestionToAssesment(QuestionViewImpl questionViewImpl)  {
 		try{
-			if(checkQuestionTypeCountBlocking(questionViewImpl.getProxy()))
+			if(checkQuestionTypeCountBlocking(questionViewImpl.getProxy()) && validateAssesmentQuestion(questionViewImpl.getProxy(), questionViewImpl))
 			{
 				incrementBlockingCounter(questionViewImpl.getProxy());
 				assignNewQuestionToAssesment(questionViewImpl, true);
@@ -1437,6 +1439,136 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 		initAssementQuestionPanel(value);
 		
 		
+	}
+	
+	/*Question Type Validity*/
+	public boolean validateAssesmentQuestion(QuestionProxy questionProxy,QuestionViewImpl questionViewImpl)
+	{
+		//1. Textual Question type Validation during assignment of new question from right side to left side
+		if(questionProxy.getQuestionType().getQuestionType()==QuestionTypes.Textual)
+		{
+			Integer sumOfAnswer=questionProxy.getQuestionType().getSumAnswer();
+			Integer sumOfTrueAnsw=questionProxy.getQuestionType().getSumTrueAnswer();
+			
+			//check true question
+			if(questionProxy.getQuestionType().getSumTrueAnswer() > 0)
+			{
+				int totalAnswers=questionViewImpl.getAnswerPanel().getWidgetCount();
+				int trueAnswer=0;
+				int totalAnswerSelected=0;
+				for(int i=0;i<totalAnswers;i++)
+				{
+					
+					AnswerViewImpl answerViewImpl=(AnswerViewImpl)questionViewImpl.getAnswerPanel().getWidget(i);
+					if(answerViewImpl.getChecked() && answerViewImpl.getProxy().getValidity()== Validity.Wahr)
+					{
+						trueAnswer++;
+					}
+					else if(answerViewImpl.getChecked())
+					{
+						totalAnswerSelected++;
+					}
+				}
+				
+				if(sumOfTrueAnsw==trueAnswer && totalAnswerSelected==sumOfAnswer)
+					return true;
+				else
+				{
+					if(sumOfTrueAnsw!=trueAnswer)
+					ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.sumOfTrueAnswer() +sumOfTrueAnsw);
+					
+					if(totalAnswerSelected != sumOfAnswer)
+					{
+						ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.sumOfAnswer() +sumOfAnswer);
+
+					}
+					
+					return false;
+				}
+				
+			}
+			else//2. all answer should be false
+			{
+				int totalAnswers=questionViewImpl.getAnswerPanel().getWidgetCount();
+				int sumFalseAnswers=questionViewImpl.getProxy().getQuestionType().getSumFalseAnswer();
+				int falseAnswerSelected=0;
+				for(int i=0;i<totalAnswers;i++)
+				{
+					AnswerViewImpl answerViewImpl=(AnswerViewImpl)questionViewImpl.getAnswerPanel().getWidget(i);
+					
+					if(answerViewImpl.getChecked() && answerViewImpl.getProxy().getValidity()== Validity.Falsch)
+					{
+						falseAnswerSelected++;
+					}
+					
+				}
+				
+				if(sumFalseAnswers==falseAnswerSelected)
+				{
+					return true;					
+				}
+				else
+				{
+					ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.sumOfFalseAnswer() +sumFalseAnswers);
+					return false;
+				}
+			}
+		}//3. Need to validate only sum of answer
+		else if(questionProxy.getQuestionType().getQuestionType()==QuestionTypes.Sort)
+		{
+			int totalAnswers=questionViewImpl.getAnswerPanel().getWidgetCount();
+			int totalSelectedAnswers=0;
+			int sumOfAnswer=questionProxy.getQuestionType().getSumAnswer();
+			for(int i=0;i<totalAnswers;i++)
+			{
+				AnswerViewImpl answerViewImpl=(AnswerViewImpl)questionViewImpl.getAnswerPanel().getWidget(i);
+				
+				if(answerViewImpl.getChecked())
+				{
+					totalSelectedAnswers++;
+				}
+				
+			}
+			
+			if(sumOfAnswer==totalSelectedAnswers)
+			{
+				return true;					
+			}
+			else
+			{
+				ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.sumOfAnswer() +sumOfAnswer);
+				return false;
+			}
+
+		}//image key contain only one answer
+		else if(questionProxy.getQuestionType().getQuestionType()==QuestionTypes.Imgkey)
+		{
+			int totalAnswers=questionViewImpl.getAnswerPanel().getWidgetCount();
+			int totalSelectedAnswers=0;
+			int sumOfAnswer=questionProxy.getQuestionType().getSumAnswer();
+			for(int i=0;i<totalAnswers;i++)
+			{
+				AnswerViewImpl answerViewImpl=(AnswerViewImpl)questionViewImpl.getAnswerPanel().getWidget(i);
+				
+				if(answerViewImpl.getChecked() )
+				{
+					totalSelectedAnswers++;
+				}
+				
+			}
+			
+			if(totalSelectedAnswers==1)
+			{
+				return true;					
+			}
+			else
+			{
+				ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.imageKey());
+				return false;
+			}
+		}
+		
+		return true;
 	}
 
 }

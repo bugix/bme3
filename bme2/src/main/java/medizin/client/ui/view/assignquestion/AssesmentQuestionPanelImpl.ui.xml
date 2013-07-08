@@ -58,18 +58,22 @@ border-bottom: 1px solid #AAAAAA;
 	            	<g:VerticalPanel addStyleNames="{style.questionType-VP}" ui:field="questionTypeVP">
 	            		<!-- <a:QuestionTypeCountViewImpl></a:QuestionTypeCountViewImpl> -->
 	            	</g:VerticalPanel>
+	            	<g:VerticalPanel>
 	                <g:ValueListBox ui:field="authorListBox"  styleName="{style.float-right}">
+	                
 					</g:ValueListBox>
+					<g:Button ui:field="sendMail" visible="false" addStyleNames ="{style.float-right}"></g:Button>
+					</g:VerticalPanel>
 	                </g:HorizontalPanel>
 	            </td>
 	        </tr>
 	        
-	         <tr align="right" width="100%">
+	        <!--  <tr align="right" width="100%">
 	            <td>
-	               <g:Button ui:field="sendMail" visible="false" addStyleNames ="{style.float-right}"></g:Button>
+	               
 	                
 	            </td>
-	        </tr>
+	        </tr> -->
 	        <tr width="100%" styleName="{style.min-height}">
 	            <td>
 	            <g:ScrollPanel height="550px" ui:field="assesmentQuestionScrollPanel" width="100%">

@@ -62,7 +62,11 @@ public class QuestionTypeSetEditor extends QuestionTypeSetEditor_Roo_Gwt {
 
     private final List<QuestionTypeProxy> displayedList;
 
-    public QuestionTypeSetEditor() {
+    public List<QuestionTypeProxy> getDisplayedList() {
+		return displayedList;
+	}
+
+	public QuestionTypeSetEditor() {
         initWidget(GWT.<Binder>create(Binder.class).createAndBindUi(this));
         Driver driver = GWT.<Driver>create(Driver.class);
         ListEditor<QuestionTypeProxy, NameLabel> listEditor = ListEditor.of(new NameLabelSource());

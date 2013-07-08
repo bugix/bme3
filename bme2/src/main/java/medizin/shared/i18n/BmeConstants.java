@@ -592,4 +592,16 @@ public interface BmeConstants extends Constants , ConstantsWithLookup {
 	public String globalBlockingWarning();
 
 	public String media();
+	
+	public String sumOfAnswer();
+	
+	public String sumOfFalseAnswer();
+	
+	public String sumOfTrueAnswer();
+
+	public String imageKey();
+	
+	public String blockingTypeNotEmpty();
+	
+	public String questionTypeCountSetNotNull();
 }
