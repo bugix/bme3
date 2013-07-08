@@ -42,7 +42,6 @@ import medizin.shared.utils.SharedConstant;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
-import org.mortbay.log.Log;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.roo.addon.javabean.RooJavaBean;
