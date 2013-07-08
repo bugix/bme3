@@ -34,7 +34,6 @@ import medizin.shared.utils.SharedConstant;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
-import org.mortbay.log.Log;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -123,7 +122,7 @@ public class AssesmentQuestion {
      
      public static List<Person> findAuthorListByAssesment(Assesment assesment){
      	
-     	Log.info("findAuthorListByAssesment ");
+     	log.info("findAuthorListByAssesment ");
      	
      	Set<QuestionSumPerPerson> questionSumPerPersons=assesment.getQuestionSumPerPerson();
      	
@@ -150,7 +149,7 @@ public class AssesmentQuestion {
     
     public static List<AssesmentQuestion> findAssesmentQuestionsByMc(Long assesmentId,Long id,String questionId,String questionType,String questionName,Person author){
     	
-    	Log.info("Past Question Tab ");
+    	log.info("Past Question Tab ");
     	
         Boolean isAcceptedAdmin = true;
         
@@ -281,7 +280,7 @@ public class AssesmentQuestion {
 		
         if(userLoggedIn.getIsAdmin()) //Main Admin
         {
-        	Log.info("Main Admin");
+        	log.info("Main Admin");
     		
     		
 			
@@ -335,7 +334,7 @@ public class AssesmentQuestion {
         }
         else
         {
-        	Log.info("Not Main Admin");
+        	log.info("Not Main Admin");
         	
         	//Author
 			Predicate p1 = criteriaBuilder.equal(from.get("autor"), userLoggedIn);
@@ -883,7 +882,7 @@ public class AssesmentQuestion {
 		}
 		catch(Exception e)
 		{
-			Log.info("sendMail exception : " + e.getMessage());
+			log.info("sendMail exception : " + e.getMessage());
 			return false;
 		}
 	}
