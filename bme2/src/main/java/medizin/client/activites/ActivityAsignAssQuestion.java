@@ -1,5 +1,6 @@
 package medizin.client.activites;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -30,11 +31,13 @@ import medizin.client.ui.view.assignquestion.AnswerViewImpl;
 import medizin.client.ui.view.assignquestion.AsignAssQuestionView;
 import medizin.client.ui.view.assignquestion.AsignAssQuestionViewImpl;
 import medizin.client.ui.view.assignquestion.AssesmentQuestionPanel;
+import medizin.client.ui.view.assignquestion.AssesmentQuestionPanelImpl;
 import medizin.client.ui.view.assignquestion.AssesmentQuestionView;
 import medizin.client.ui.view.assignquestion.AssesmentQuestionViewImpl;
 import medizin.client.ui.view.assignquestion.AssesmentTabPanel;
 import medizin.client.ui.view.assignquestion.AssesmentTabPanelImpl;
 import medizin.client.ui.view.assignquestion.QuestionPanel;
+import medizin.client.ui.view.assignquestion.QuestionTypeCountProxy;
 import medizin.client.ui.view.assignquestion.QuestionTypeCountViewImpl;
 import medizin.client.ui.view.assignquestion.QuestionView;
 import medizin.client.ui.view.assignquestion.QuestionViewImpl;
@@ -67,7 +70,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 	private PlaceAsignAssQuestion asignAssQuestionPlace;
 	private AcceptsOneWidget widget;
 	private AsignAssQuestionView view;
-	private Map<String, QuestionTypeCountViewImpl> questionTypeViewMap=new HashMap<String, QuestionTypeCountViewImpl>();
+	private Map<String, QuestionTypeCountProxy> questionTypeViewMap=new HashMap<String, QuestionTypeCountProxy>();
 
 	private McAppRequestFactory requests;
 	private PlaceController placeController;
@@ -76,7 +79,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 	private AssesmentTabPanel assesmentTabPanel;
 	private QuestionPanel questionPanel;
 	final private HashMap<AssesmentProxy, List<PersonProxy>> examAutorListMap=new HashMap<AssesmentProxy, List<PersonProxy>>();
-
+	private List<QuestionTypeCountProxy> questionTypeCountProxyList=new ArrayList<QuestionTypeCountProxy>();
 
 	@Inject
 	public ActivityAsignAssQuestion(PlaceAsignAssQuestion place,
@@ -474,9 +477,14 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 	 * Assesment Tabs
 	 */
 	private void initAssementQuestionPanel(PersonProxy author) {
+		//questionTypeCountProxyList=new ArrayList<QuestionTypeCountProxy>();
+		questionTypeCountProxyList.clear();
+		assementQuestionPanel.getTable().setRowCount(0);
+		assementQuestionPanel.getTable().setRowData(questionTypeCountProxyList);
+		assementQuestionPanel.getTable().redraw();
 		
 		/*initialize top element from author dropdown shown on left side for admin / institutional admin*/
-		//if(author!=null)// admin/ institutional admin
+		// if(author!=null)// admin/ institutional admin
 		//{
 			final AssesmentProxy assesmentProxy=assesmentTabPanel.getActiveTab();
 			requests.questionSumPerPersonRequest().findPercentageOfQuestionAssignedToExaminer(assesmentProxy, author).with("questionEvent").fire(new Receiver<List<QuestionSumPerPersonProxy>>() {
@@ -541,39 +549,53 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 
 	/*This method will display top element: QuestionType count*/
 	protected void initTopElement(List<QuestionSumPerPersonProxy> response) {
-		assementQuestionPanel.getQuestionTypeVP().clear();
+		//assementQuestionPanel.getQuestionTypeVP().clear();
 		List<QuestionTypeCountPerExamProxy> questionTypeCountPerExamProxys=assesmentTabPanel.getActiveTab().getQuestionTypeCountPerExams();
 		questionTypeViewMap.clear();
+		//questionTypeCountProxyList=new ArrayList<QuestionTypeCountProxy>();
+		questionTypeCountProxyList.clear();
+		
+		//questionTypeCountProxyList.clear();
+		assementQuestionPanel.getTable().setRowCount(0);
+		assementQuestionPanel.getTable().setRowData(questionTypeCountProxyList);
+		assementQuestionPanel.getTable().setVisibleRange(0, 0);
+		assementQuestionPanel.getTable().redraw();
+		
 		for(QuestionTypeCountPerExamProxy questionTypeCountPerExamProxy:questionTypeCountPerExamProxys)
 		{
 			for(QuestionSumPerPersonProxy questionSumPerPersonProxy:response)
 			{
-				QuestionTypeCountViewImpl questionTypeCountViewImpl=new QuestionTypeCountViewImpl();
+				
+				QuestionTypeCountProxy proxy=new QuestionTypeCountProxy();
+
+				
+				/*QuestionTypeCountViewImpl questionTypeCountViewImpl=new QuestionTypeCountViewImpl();
 				questionTypeCountViewImpl.setQuestionTypeCountPerExamProxy(questionTypeCountPerExamProxy);
 				
 				String questionTypeStr="";
-				
+				*/
 				Set<QuestionTypeProxy> questionTypes=questionTypeCountPerExamProxy.getQuestionTypesAssigned();
-				int k=0;
+				//int k=0;
 				for(QuestionTypeProxy questionType:questionTypes)
 				{
-					if(k==0)
+					/*if(k==0)
 					questionTypeStr=questionTypeStr+questionType.getShortName();
 					else
 					{
 						questionTypeStr=questionTypeStr+","+questionType.getShortName();
 
 					}
+*/					
+					questionTypeViewMap.put("q"+questionType.getId()+"s"+questionSumPerPersonProxy.getQuestionEvent().getId(), proxy);
 					
-					questionTypeViewMap.put("q"+questionType.getId()+"s"+questionSumPerPersonProxy.getQuestionEvent().getId(), questionTypeCountViewImpl);
-					
-					k++;	
+				//	k++;	
 				}
 				
-				questionTypeStr=questionTypeStr+"("+questionSumPerPersonProxy.getQuestionEvent().getEventName()+")";
+				
+			/*	questionTypeStr=questionTypeStr+"("+questionSumPerPersonProxy.getQuestionEvent().getEventName()+")";
 				questionTypeCountViewImpl.getQuestionTypeLbl().setText(questionTypeStr);
 				questionTypeCountViewImpl.setQuestionSumPerPersonProxy(questionSumPerPersonProxy);
-				int questionTypeCount=questionTypeCountPerExamProxy.getQuestionTypeCount();
+			*/	int questionTypeCount=questionTypeCountPerExamProxy.getQuestionTypeCount();
 				int percentAllocated=questionSumPerPersonProxy.getQuestionSum();
 				Integer totalQuestionAllocated=(int)(questionTypeCount*percentAllocated)/100;
 				Integer questionAssigned=-totalQuestionAllocated;
@@ -588,20 +610,41 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 						count++;
 					}
 				}
-				questionTypeCountViewImpl.setTotalQuestionAllowed(totalQuestionAllocated);
+			/*	questionTypeCountViewImpl.setTotalQuestionAllowed(totalQuestionAllocated);
 				questionTypeCountViewImpl.setTotalQuestionAllocated(count);
 				questionTypeCountViewImpl.getBlockingCounter().setText(questionAssigned.toString());
+			*/	
 				
+				//assementQuestionPanel.getQuestionTypeVP().add(questionTypeCountViewImpl);
 				
-				assementQuestionPanel.getQuestionTypeVP().add(questionTypeCountViewImpl);
-				
-				
-				
+				proxy.setQuestionSumPerPersonProxy(questionSumPerPersonProxy);
+				proxy.setQuestionTypeCountPerExamProxy(questionTypeCountPerExamProxy);
+				proxy.setCount(questionAssigned);
+				proxy.setTotalQuestionAllocated(totalQuestionAllocated);
+				proxy.setTotalQuestionAllowed(count);
+				questionTypeCountProxyList.add(proxy);
 				
 				
 			}
 		}
+		
+		assementQuestionPanel.getTable().setRowCount(questionTypeCountProxyList.size(),true);
+		int pageSize=((AssesmentQuestionPanelImpl) assementQuestionPanel).getPageSize();
+		assementQuestionPanel.getTable().setVisibleRange(0, pageSize);
+		
+		if(questionTypeCountProxyList.size()>pageSize)
+		{
+			List<QuestionTypeCountProxy> sublist=questionTypeCountProxyList.subList(0, pageSize);
 
+			assementQuestionPanel.getTable().setRowData(0,sublist);
+		}
+		else
+		{
+		
+		assementQuestionPanel.getTable().setRowData(0,questionTypeCountProxyList);
+			
+		}
+		
 		
 	}
 	
@@ -609,18 +652,18 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 	
 	public boolean checkQuestionTypeCountBlocking(QuestionProxy questionProxy)
 	{
-		QuestionTypeCountViewImpl questionTypeCountViewImpl=getQuestionTypeCountViewImpl(questionProxy);
+		QuestionTypeCountProxy questionTypeCountProxy=getQuestionTypeCountProxy(questionProxy);
 		
-		BlockingTypes blockingTypes=questionTypeCountViewImpl.getQuestionTypeCountPerExamProxy().getBlockingType();
+		BlockingTypes blockingTypes=questionTypeCountProxy.getQuestionTypeCountPerExamProxy().getBlockingType();
 		
 		
-		int totalsum=questionTypeCountViewImpl.getQuestionTypeCountPerExamProxy().getQuestionTypeCount().intValue();
-		if(blockingTypes==BlockingTypes.PERSONAL_BLOCKING && new Integer(questionTypeCountViewImpl.getBlockingCounter().getText()) >=0)
+		int totalsum=questionTypeCountProxy.getQuestionTypeCountPerExamProxy().getQuestionTypeCount().intValue();
+		if(blockingTypes==BlockingTypes.PERSONAL_BLOCKING && questionTypeCountProxy.getCount() >=0)
 		{
-			ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.personalBlockingWarning()+" : "+questionTypeCountViewImpl.getTotalQuestionAllowed());
+			ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.personalBlockingWarning()+" : "+questionTypeCountProxy.getTotalQuestionAllowed());
 			return false;
 		}
-		else if(blockingTypes==BlockingTypes.GLOBAL_BLOCKING && questionTypeCountViewImpl.getTotalQuestionAllocated() >= totalsum)
+		else if(blockingTypes==BlockingTypes.GLOBAL_BLOCKING && questionTypeCountProxy.getTotalQuestionAllocated() >= totalsum)
 		{
 			ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.globalBlockingWarning()+" : "+totalsum);
 			return false;
@@ -632,11 +675,17 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 	}
 	
 	
-	public QuestionTypeCountViewImpl getQuestionTypeCountViewImpl(QuestionProxy questionProxy)
+	/*public QuestionTypeCountViewImpl getQuestionTypeCountViewImpl(QuestionProxy questionProxy)
 	{
 		String key="q"+questionProxy.getQuestionType().getId()+"s"+questionProxy.getQuestEvent().getId();
 		return questionTypeViewMap.get(key);
 		
+	}*/
+	
+	public QuestionTypeCountProxy getQuestionTypeCountProxy(QuestionProxy questionProxy)
+	{
+		String key="q"+questionProxy.getQuestionType().getId()+"s"+questionProxy.getQuestEvent().getId();
+		return questionTypeViewMap.get(key);		
 	}
 	
 	@Override
@@ -1387,14 +1436,14 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 			final AssesmentQuestionViewImpl assesmentQuestionViewImpl) {
 		AssesmentQuestionRequest request=requests.assesmentQuestionRequest();
 		AssesmentQuestionProxy a=assesmentQuestionViewImpl.getProxy();
-		final QuestionTypeCountViewImpl questionTypeCountViewImpl=getQuestionTypeCountViewImpl(a.getQuestion());
+		final QuestionTypeCountProxy questionTypeCountProxy =getQuestionTypeCountProxy(a.getQuestion());
 		a=request.edit(a);
 		request.remove().using(a).fire(new Receiver<Void>() {
 
 			@Override
 			public void onSuccess(Void response) {
 				assesmentQuestionViewImpl.removeFromParent();
-				decrementBlockingCounter(questionTypeCountViewImpl);
+				decrementBlockingCounter(questionTypeCountProxy);
 				initQuestionPanel(addQuestionsTabPanel.getActiveTab(), assesmentTabPanel.getActiveTab(),"","","");
 
 			}
@@ -1407,9 +1456,11 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 	
 	public void incrementBlockingCounter(QuestionProxy questionProxy)
 	{
-		QuestionTypeCountViewImpl questionTypeCountViewImpl=getQuestionTypeCountViewImpl(questionProxy);
-		Integer counter=new Integer(questionTypeCountViewImpl.getBlockingCounter().getText())+1;
-		questionTypeCountViewImpl.getBlockingCounter().setText(counter.toString());
+		QuestionTypeCountProxy questionTypeCountProxy=getQuestionTypeCountProxy(questionProxy);
+		Integer counter=questionTypeCountProxy.getCount()+1;
+		questionTypeCountProxy.setCount(counter);
+		//questionTypeCountViewImpl.getBlockingCounter().setText(counter.toString());
+		assementQuestionPanel.getTable().redraw();
 	}
 	
 	public void decrementBlockingCounter(QuestionTypeCountViewImpl questionTypeCountViewImpl)
@@ -1417,6 +1468,15 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 		//QuestionTypeCountViewImpl questionTypeCountViewImpl=getQuestionTypeCountViewImpl(questionProxy);
 		Integer counter=new Integer(questionTypeCountViewImpl.getBlockingCounter().getText())-1;
 		questionTypeCountViewImpl.getBlockingCounter().setText(counter.toString());
+	}
+	
+	public void decrementBlockingCounter(QuestionTypeCountProxy proxy)
+	{
+		//QuestionTypeCountViewImpl questionTypeCountViewImpl=getQuestionTypeCountViewImpl(questionProxy);
+		Integer counter=proxy.getCount()-1;
+		proxy.setCount(counter);
+		assementQuestionPanel.getTable().redraw();
+
 	}
 	
 	/*Accept and force accept Assesment Question cannot be deleted*/
@@ -1569,6 +1629,26 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 		}
 		
 		return true;
+	}
+
+	@Override
+	public void initTopElemnt(int start, int end) {
+		
+		assementQuestionPanel.getTable().setRowCount(questionTypeCountProxyList.size(),true);
+		
+		if(start==questionTypeCountProxyList.size()-1)//last
+		{
+			ArrayList<QuestionTypeCountProxy> temp=new ArrayList<QuestionTypeCountProxy>();
+			temp.add(questionTypeCountProxyList.get(start));
+		//	assementQuestionPanel.getTable().setRowCount(1,true);
+
+			assementQuestionPanel.getTable().setRowData(start,temp);
+			return;
+
+		}
+		
+		if(end <= questionTypeCountProxyList.size())
+		assementQuestionPanel.getTable().setRowData(start,questionTypeCountProxyList.subList(start, end));
 	}
 
 }

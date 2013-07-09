@@ -1,6 +1,6 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:a="urn:import:medizin.client.ui.view.assignquestion">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:a="urn:import:medizin.client.ui.view.assignquestion" xmlns:c="urn:import:com.google.gwt.user.cellview.client">
 	<ui:style src="../../styles.css">
 	.displayPanel{
 		
@@ -54,17 +54,25 @@ border-bottom: 1px solid #AAAAAA;
 	        <tr align="right" width="100%">
 	           
 	            <td>
-	            <g:HorizontalPanel spacing="5" width="100%">
-	            	<g:VerticalPanel addStyleNames="{style.questionType-VP}" ui:field="questionTypeVP">
-	            		<!-- <a:QuestionTypeCountViewImpl></a:QuestionTypeCountViewImpl> -->
-	            	</g:VerticalPanel>
-	            	<g:VerticalPanel>
-	                <g:ValueListBox ui:field="authorListBox"  styleName="{style.float-right}">
+	            <g:VerticalPanel  width="100%">
+	            <g:HorizontalPanel spacing="5">
+	            	 <g:Button ui:field="sendMail" visible="false" addStyleNames ="{style.float-right}"></g:Button>
+	            	<g:ValueListBox ui:field="authorListBox"  styleName="{style.float-right}">
 	                
 					</g:ValueListBox>
-					<g:Button ui:field="sendMail" visible="false" addStyleNames ="{style.float-right}"></g:Button>
-					</g:VerticalPanel>
+					<c:SimplePager ui:field="pager"  display="{table}" ></c:SimplePager>
+	            	
+	            	 
+					
 	                </g:HorizontalPanel>
+	                
+<!-- 	                <g:VerticalPanel addStyleNames="{style.questionType-VP}" ui:field="questionTypeVP">
+ -->	            		<!-- <a:QuestionTypeCountViewImpl></a:QuestionTypeCountViewImpl> -->
+	            		<c:CellTable ui:field="table"  addStyleNames="{style.standardTable}" width="100%"></c:CellTable>
+	            		
+	        <!--     	</g:VerticalPanel>
+	         -->      
+	               </g:VerticalPanel>
 	            </td>
 	        </tr>
 	        

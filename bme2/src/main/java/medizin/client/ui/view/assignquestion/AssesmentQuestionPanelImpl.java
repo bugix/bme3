@@ -1,9 +1,16 @@
 package medizin.client.ui.view.assignquestion;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionTypeCountPerExamProxy;
+import medizin.client.proxy.QuestionTypeProxy;
+import medizin.client.style.resources.MyCellTableResources;
+import medizin.client.style.resources.MySimplePagerResources;
 import medizin.shared.i18n.BmeConstants;
 
 import com.google.gwt.core.client.GWT;
@@ -15,6 +22,9 @@ import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.SimplePager;
+import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
@@ -22,6 +32,8 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.ValueListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.RangeChangeEvent;
+import com.google.gwt.view.client.RangeChangeEvent.Handler;
 
 public class AssesmentQuestionPanelImpl extends Composite implements AssesmentQuestionPanel {
 
@@ -36,6 +48,12 @@ public class AssesmentQuestionPanelImpl extends Composite implements AssesmentQu
 	
 	private Delegate delegate;
 	
+	private static int pageSize=5;
+	
+	public static int getPageSize() {
+		return pageSize;
+	}
+
 	private SendMailPopupViewImpl sendMailPopupViewImpl=null;
 	
 	private List<QuestionTypeCountPerExamProxy> questionTypeCountPerExams;
@@ -53,13 +71,13 @@ public class AssesmentQuestionPanelImpl extends Composite implements AssesmentQu
 		return sendMailPopupViewImpl;
 	}
 
-	@UiField
+/*	@UiField
 	VerticalPanel questionTypeVP;
 	
 	public VerticalPanel getQuestionTypeVP() {
 		return questionTypeVP;
 	}
-
+*/
 	@UiField
 	VerticalPanel assesmentQuestionDisplayPanel;
 	
@@ -68,6 +86,17 @@ public class AssesmentQuestionPanelImpl extends Composite implements AssesmentQu
 	
 	@UiField
 	ScrollPanel assesmentQuestionScrollPanel;
+	
+    @UiField(provided = true)
+    CellTable<QuestionTypeCountProxy> table;
+	
+    
+    public CellTable<QuestionTypeCountProxy> getTable() {
+		return table;
+	}
+
+	@UiField(provided = true)
+	public SimplePager pager;
 	
 	public Button getSendMail() {
 		return sendMail;
@@ -92,7 +121,28 @@ public class AssesmentQuestionPanelImpl extends Composite implements AssesmentQu
 		return authorListBox;
 	}
 	
+	protected Set<String> paths = new HashSet<String>();
+	
+	private Map<String, QuestionTypeCountProxy> questionTypeModelMap=new HashMap<String, QuestionTypeCountProxy>();
+
+	
+	public Map<String, QuestionTypeCountProxy> getQuestionTypeModelMap() {
+		return questionTypeModelMap;
+	}
+
 	public AssesmentQuestionPanelImpl() {
+		
+		CellTable.Resources tableResources = GWT
+				.create(MyCellTableResources.class);
+		table = new CellTable<QuestionTypeCountProxy>(pageSize,
+				tableResources);
+
+		SimplePager.Resources pagerResources = GWT
+				.create(MySimplePagerResources.class);
+		pager = new SimplePager(SimplePager.TextLocation.RIGHT, pagerResources,
+				true, pageSize*2, true);
+
+		
 		initWidget(uiBinder.createAndBindUi(this));
 //		assesmentQuestionDisplayPanel.setBorderWidth(1);
 //		assesmentQuestionDisplayPanel.setHeight("100px");
@@ -110,6 +160,65 @@ public class AssesmentQuestionPanelImpl extends Composite implements AssesmentQu
 		 
 		assesmentQuestionScrollPanel.setHeight(((int)(Window.getClientHeight()*0.73))+"px");
 		
+		
+		table.addColumn(new TextColumn<QuestionTypeCountProxy>() {
+
+			@Override
+			public String getValue(QuestionTypeCountProxy object) {
+				return object.getCount().toString();
+			}
+		},"Count");
+	   
+	   
+      paths.add("count");
+      
+		table.addColumn(new TextColumn<QuestionTypeCountProxy>() {
+
+			@Override
+			public String getValue(QuestionTypeCountProxy object) {
+				
+				String questionTypeStr="";
+				
+				Set<QuestionTypeProxy> questionTypes=object.getQuestionTypeCountPerExamProxy().getQuestionTypesAssigned();
+				int k=0;
+				for(QuestionTypeProxy questionType:questionTypes)
+				{
+					if(k==0)
+					questionTypeStr=questionTypeStr+questionType.getShortName();
+					else
+					{
+						questionTypeStr=questionTypeStr+","+questionType.getShortName();
+
+					}
+					String key="";
+					if(questionTypeModelMap.get("q"+questionType.getId()+"s"+object.getQuestionSumPerPersonProxy().getQuestionEvent().getId())==null)
+					questionTypeModelMap.put(key, object);
+					
+					k++;	
+				}
+				
+				
+				questionTypeStr=questionTypeStr+"("+object.getQuestionSumPerPersonProxy().getQuestionEvent().getEventName()+")";
+
+				
+				return questionTypeStr;
+			}
+		},"Question Type");
+	   
+	   
+      paths.add("questionType");
+      
+      table.addRangeChangeHandler(new Handler() {
+		
+		@Override
+		public void onRangeChange(RangeChangeEvent event) {
+			int start=event.getNewRange().getStart();
+			int end=start+event.getNewRange().getLength();
+			delegate.initTopElemnt(start,end);
+		}
+	});
+      
+//
 		
 	}
 
@@ -162,15 +271,6 @@ public class AssesmentQuestionPanelImpl extends Composite implements AssesmentQu
 		
 	}
 	
-	public void createQuestionTypeCountPanel(List<QuestionTypeCountPerExamProxy> questionTypeCountPerExamProxys)
-	{
-		questionTypeVP.clear();
-		for(QuestionTypeCountPerExamProxy questionTypeCountPerExamProxy:questionTypeCountPerExamProxys)
-		{
-			QuestionTypeCountViewImpl questionTypeCountViewImpl=new QuestionTypeCountViewImpl();
-			questionTypeCountViewImpl.setQuestionTypeCountPerExamProxy(questionTypeCountPerExamProxy);
-			questionTypeCountViewImpl.getQuestionTypeLbl().setText("");
-		}
-	}
+	
 
 }
