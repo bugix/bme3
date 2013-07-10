@@ -2,6 +2,7 @@ package medizin.server.domain;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -858,33 +859,139 @@ public class AssesmentQuestion {
 	{
 		try
 		{
-		Person userLoggedIn=Person.myGetLoggedPerson();
-		String fromAddress=userLoggedIn.getEmail();
-		String toAddresses[]=new String[toExaminerList.size()];
-		
-
-		messageContent=messageContent.replace("[fromName]", userLoggedIn.getPrename() +" "+userLoggedIn.getName());
-		messageContent=messageContent.replace("[assesment]", assesment.getName());
-		EmailServiceImpl emailService=new EmailServiceImpl();
-		WebApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(RequestFactoryServlet.getThreadLocalServletContext());
-		((EmailServiceImpl)emailService).setSender(applicationContext.getBean(JavaMailSenderImpl.class));
-		
-		for(int i=0;i<toExaminerList.size();i++)
-		{
+			Person userLoggedIn=Person.myGetLoggedPerson();
+			String fromAddress=userLoggedIn.getEmail();
+			String toAddresses[]=new String[toExaminerList.size()];
 			
-			Person examiner=toExaminerList.get(i);
-			toAddresses[i]=examiner.getEmail();
-			String newMessage=messageContent.replace("[toName]", examiner.getPrename()+" "+examiner.getName());
-			emailService.sendMail(new String[]{examiner.getEmail()}, fromAddress, mailSubject, newMessage);
-		}
-		
-		return true;
-		}
-		catch(Exception e)
-		{
-			log.info("sendMail exception : " + e.getMessage());
-			return false;
-		}
+			SimpleDateFormat dateFormat=new SimpleDateFormat("dd-MMM-yy");
+			
+			
+			messageContent=messageContent.replace("[fromName]", userLoggedIn.getPrename() +" "+userLoggedIn.getName());
+			messageContent=messageContent.replace("[assesmentName]", assesment.getName());
+			messageContent=messageContent.replace("[assesmentStartDate]", dateFormat.format(assesment.getDateOpen()));
+			messageContent=messageContent.replace("[assesmentClosedDate]", dateFormat.format(assesment.getDateClosed()));
+			messageContent=messageContent.replace("[assesmentMC]", assesment.getMc().getMcName());
+			
+			EmailServiceImpl emailService=new EmailServiceImpl();
+			WebApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(RequestFactoryServlet.getThreadLocalServletContext());
+			((EmailServiceImpl)emailService).setSender(applicationContext.getBean(JavaMailSenderImpl.class));
+			
+			for(int i=0;i<toExaminerList.size();i++)
+			{
+				
+				
+				
+				Person examiner=toExaminerList.get(i);
+				toAddresses[i]=examiner.getEmail();
+				String newMessage=messageContent.replace("[toName]", examiner.getPrename()+" "+examiner.getName());
+				Integer assesmentQuestionProposedCount=findAssesmentQuestionsByMcProposal(assesment.getId(), "", "", "").size();
+				
+				newMessage=newMessage.replace("[assesmentQuestionProposedCount]", assesmentQuestionProposedCount.toString());
+				List<QuestionSumPerPerson> questionSumPerPersonList=QuestionSumPerPerson.findPercentageOfQuestionAssignedToExaminer(assesment, examiner);
+				List<QuestionTypeCountPerExam> questionTypeCountPerExamList=assesment.getQuestionTypeCountPerExams();
+				StringBuilder totalCountString=new StringBuilder();
+				StringBuilder totalRemainingString=new StringBuilder();
+				
+				totalCountString.append("<table>");
+				totalRemainingString.append("<table>");
+				for(QuestionTypeCountPerExam questionTypeCountPerExam:questionTypeCountPerExamList)
+				{
+					for(QuestionSumPerPerson questionSumPerPerson:questionSumPerPersonList)
+					{
+						
+						
+
+						
+						
+						String questionTypeStr="";
+						
+						Set<QuestionType> questionTypes=questionTypeCountPerExam.getQuestionTypesAssigned();
+						int k=0;
+						for(QuestionType questionType:questionTypes)
+						{
+							if(k==0)
+							questionTypeStr=questionTypeStr+questionType.getShortName();
+							else
+							{
+								questionTypeStr=questionTypeStr+","+questionType.getShortName();
+
+							}
+							
+						
+							k++;	
+						}
+						
+						
+						questionTypeStr=questionTypeStr+"("+questionSumPerPerson.getQuestionEvent().getEventName()+")";
+						
+						int questionTypeCount=questionTypeCountPerExam.getQuestionTypeCount();
+						int percentAllocated=questionSumPerPerson.getQuestionSum();
+						Integer totalQuestionAllocated=(int)(questionTypeCount*percentAllocated)/100;
+						Integer questionAssigned=-totalQuestionAllocated;
+						
+						List<AssesmentQuestion> assesmentQuestionList=AssesmentQuestion.findAssesmentQuestionsByAssesment(assesment.getId(), examiner);
+						
+						int count=0;
+						for(int l=0;l<assesmentQuestionList.size();l++)
+						{
+							AssesmentQuestion question =assesmentQuestionList.get(l);
+							if(questionTypes.contains(question.getQuestion().getQuestionType()) && question.getQuestion().getQuestEvent().equals(questionSumPerPerson.getQuestionEvent()))
+							{						
+								questionAssigned++;
+								count++;
+							}
+						}
+						totalCountString.append("<tr>");
+						totalCountString.append("<td stype='vertical-align:middle'>");
+						totalCountString.append(questionTypeStr);
+						totalCountString.append(" : ");
+						totalCountString.append("</td>");
+						totalCountString.append("<td stype='vertical-align:middle'>");
+						totalCountString.append(totalQuestionAllocated);
+						totalCountString.append("</td>");
+						totalCountString.append("</tr>");
+						
+						totalRemainingString.append("<tr>");
+						totalRemainingString.append("<td stype='vertical-align:middle'>");
+						totalRemainingString.append(questionTypeStr);
+						totalRemainingString.append(" : ");
+						totalRemainingString.append("</td>");
+						totalRemainingString.append("<td stype='vertical-align:middle'>");
+						totalRemainingString.append(-questionAssigned);
+						totalRemainingString.append("</td>");
+						totalRemainingString.append("</tr>");
+						
+						
+					/*	proxy.setQuestionSumPerPersonProxy(questionSumPerPersonProxy);
+						proxy.setQuestionTypeCountPerExamProxy(questionTypeCountPerExamProxy);
+						proxy.setCount(questionAssigned);
+						proxy.setTotalQuestionAllocated(totalQuestionAllocated);
+						proxy.setTotalQuestionAllowed(count);*/
+						
+						
+						
+					}
+					newMessage=newMessage.replace("[LOOP]", "");
+					newMessage=newMessage.replace("[totalCount]", "");
+					newMessage=newMessage.replace("[END LOOP]", "");
+					newMessage=newMessage.replace("[totalRemaining]", "");
+					
+				}
+				totalCountString.append("</table>");
+				totalRemainingString.append("</table>");
+				newMessage=newMessage.replace("[[assesmentQuestionType]([assesmentSpecialization]) : [assesmentQuestionAllocatedCount]]", totalCountString.toString());
+				newMessage=newMessage.replace("[[assesmentQuestionType]([assesmentSpecialization]) : [assesmentQuestionRemainingCount]]", totalRemainingString.toString());
+				
+				emailService.sendMail(new String[]{examiner.getEmail()}, fromAddress, mailSubject, newMessage);
+			}
+			
+			return true;
+			}
+			catch(Exception e)
+			{
+				log.info("sendMail exception : " + e.getMessage());
+				return false;
+			}
 	}
 	
 	/* 

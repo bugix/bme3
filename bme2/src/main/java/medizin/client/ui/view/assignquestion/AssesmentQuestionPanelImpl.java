@@ -48,7 +48,7 @@ public class AssesmentQuestionPanelImpl extends Composite implements AssesmentQu
 	
 	private Delegate delegate;
 	
-	private static int pageSize=5;
+	private static int pageSize=3;
 	
 	public static int getPageSize() {
 		return pageSize;
@@ -158,7 +158,7 @@ public class AssesmentQuestionPanelImpl extends Composite implements AssesmentQu
 			}
 		});
 		 
-		assesmentQuestionScrollPanel.setHeight(((int)(Window.getClientHeight()*0.73))+"px");
+		assesmentQuestionScrollPanel.setHeight(((int)(Window.getClientHeight()*0.65))+"px");
 		
 		
 		table.addColumn(new TextColumn<QuestionTypeCountProxy>() {

@@ -62,7 +62,7 @@
 		
 		.popupStyle {
 			width: 900px;
-			height: 580px;
+			height: 610px;
 			border-width: 2px;
 			border-color: #676767;
 			border-style: solid;
@@ -145,14 +145,54 @@
 					<tr>
 						<td><span ui:field="varTo"></span></td>
 						<td><span ui:field="summoningsToName"></span></td>
+						
+						<td><span ui:field="mailVarStartDate"></span></td>
+						<td><span ui:field="mailStartDate"></span></td>
+						
+						<td><span ui:field="mailVarClosedDate"></span></td>
+						<td><span ui:field="mailClosedDate"></span></td>
+						
+						
 					</tr>
 					<tr>
 						<td><span ui:field="varFrom"></span></td>
 						<td><span ui:field="summoningsFromName"></span></td>
+						
+						<td><span ui:field="mailVarMC"></span></td>
+						<td><span ui:field="mailMC"></span></td>
+						
+						<td><span ui:field="mailVarProposedCount"></span></td>
+						<td><span ui:field="mailProposedCount"></span></td>
 					</tr>
 					<tr>
 						<td><span ui:field="varAssignment"></span></td>
 						<td><span ui:field="summoningsAssignment"></span></td>
+						
+						<td><span ui:field="mailVarTotalCount"></span></td>
+						<td><span ui:field="mailTotalCount"></span></td>
+						
+						<td><span ui:field="mailVarLoopStart"></span></td>
+						<td><span ui:field="mailLoopStart"></span></td>
+					</tr>
+					<tr>
+						<td><span ui:field="mailVarLoopEnd"></span></td>
+						<td><span ui:field="mailLoopEnd"></span></td>
+						
+						<td><span ui:field="mailVarAllocatedCount"></span></td>
+						<td><span ui:field="mailAllocatedCount"></span></td>
+						
+						<td><span ui:field="mailVarQuestionType"></span></td>
+						<td><span ui:field="mailQuestionType"></span></td>
+					</tr>
+					<tr>
+						<td><span ui:field="mailVarSpecialization"></span></td>
+						<td><span ui:field="mailSpecialization"></span></td>
+						
+						<td><span ui:field="mailVarTotalRemaining"></span></td>
+						<td><span ui:field="mailTotalRemaining"></span></td>
+						
+						<td><span ui:field="mailVarTotalRemainingCount"></span></td>
+						<td><span ui:field="mailTotalRemainingCount"></span></td>
 					</tr>
 				</table>
 				

@@ -604,4 +604,48 @@ public interface BmeConstants extends Constants , ConstantsWithLookup {
 	public String blockingTypeNotEmpty();
 	
 	public String questionTypeCountSetNotNull();
+	
+	public String  mailVarStartDate();
+	
+	public String mailStartDate();
+	
+	public String mailVarClosedDate();
+	
+	public String mailClosedDate();
+	
+	public String mailVarMC();
+	
+	public String mailMC();
+	public String mailVarProposedCount();
+	
+	public String mailProposedCount();
+	
+	public String mailVarTotalCount();
+	
+	public String mailTotalCount();
+	public String  mailVarLoopStart();
+	public String mailLoopStart();
+	public String  mailVarLoopEnd();
+	
+	public String  mailLoopEnd();
+	public String  mailVarAllocatedCount();
+	
+	public String mailAllocatedCount();
+	
+	public String mailQuestionType();
+	
+	public String mailVarQuestionType();
+	
+	public String  mailVarSpecialization();
+	
+	public String  mailSpecialization();
+	
+	
+	public String  mailVarTotalRemaining();
+	
+	public String  mailTotalRemaining();
+	
+	public String  mailVarTotalRemainingCount();
+	
+	public String mailTotalRemainingCount();
 }

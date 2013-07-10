@@ -7,7 +7,7 @@
 		/*background-color: #E6D8F2 ;*/
 		
 		/*padding: 5px;*/
-		position: absolute; 
+		position: relative; 
 		width: 100%; 
 		min-height: 100px;
 border-left: 1px solid #AAAAAA;
@@ -33,7 +33,11 @@ border-bottom: 1px solid #AAAAAA;
 		 margin-right: 10px;
    		 margin-top: 5px;
 	}
-	
+	.margin-topElement{
+	 margin-right: 10px;
+   		 margin-top: 5px;
+
+	}
 	.questionType-VP{
 	border:1px solid;
 	border-radius:5px;
@@ -55,12 +59,12 @@ border-bottom: 1px solid #AAAAAA;
 	           
 	            <td>
 	            <g:VerticalPanel  width="100%">
-	            <g:HorizontalPanel spacing="5">
+	            <g:HorizontalPanel spacing="0" width="100%">
 	            	 <g:Button ui:field="sendMail" visible="false" addStyleNames ="{style.float-right}"></g:Button>
-	            	<g:ValueListBox ui:field="authorListBox"  styleName="{style.float-right}">
+	            	<g:ValueListBox ui:field="authorListBox"  styleName="{style.margin-topElement}">
 	                
 					</g:ValueListBox>
-					<c:SimplePager ui:field="pager"  display="{table}" ></c:SimplePager>
+					<c:SimplePager ui:field="pager"  display="{table}" addStyleNames="{style.float-right}"></c:SimplePager>
 	            	
 	            	 
 					

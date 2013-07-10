@@ -88,7 +88,76 @@ public class SendMailPopupViewImpl extends PopupPanel implements SendMailPopupVi
 	SpanElement assignmentFormatHead;
 	
 	@UiField
-	SpanElement assignmentFormat;
+	SpanElement mailVarStartDate;
+	
+	@UiField
+	SpanElement mailStartDate;
+	
+	@UiField
+	SpanElement mailVarClosedDate;
+	
+	@UiField
+	SpanElement mailClosedDate;
+	
+	@UiField
+	SpanElement mailVarMC;
+	
+	@UiField
+	SpanElement mailMC;
+	
+	@UiField
+	SpanElement mailVarProposedCount;
+	
+	@UiField
+	SpanElement mailProposedCount;
+	
+	@UiField
+	SpanElement mailVarTotalCount;
+	
+	@UiField
+	SpanElement mailTotalCount;
+	@UiField
+	SpanElement mailVarLoopStart;
+	@UiField
+	SpanElement mailLoopStart;
+	@UiField
+	SpanElement mailVarLoopEnd;
+	
+	@UiField
+	SpanElement mailLoopEnd;
+	@UiField
+	SpanElement mailVarAllocatedCount;
+	
+	@UiField
+	SpanElement mailAllocatedCount;
+	
+	@UiField
+	SpanElement mailQuestionType;
+	
+	@UiField
+	SpanElement mailVarQuestionType;
+	
+	@UiField
+	SpanElement mailVarSpecialization;
+	
+	@UiField
+	SpanElement mailSpecialization;
+	
+	
+	@UiField
+	SpanElement mailVarTotalRemaining;
+	
+	@UiField
+	SpanElement mailTotalRemaining;
+	
+	
+	@UiField
+	SpanElement mailVarTotalRemainingCount;
+	
+	@UiField
+	SpanElement mailTotalRemainingCount;
+	
+	
 	
 	@UiField(provided = true)
 	RichTextArea message;
@@ -167,6 +236,52 @@ public class SendMailPopupViewImpl extends PopupPanel implements SendMailPopupVi
 		//onlyIfExaminer.setInnerText(constants.summoningsOnlyIfExaminer());
 		assignmentFormatHead.setInnerText(constants.mailAssesmentFormatHead());
 		//assignmentFormat.setInnerText(constants.summoningsAssignmentFormat());
+		
+		
+		mailVarStartDate.setInnerText(constants.mailVarStartDate());
+		
+		mailStartDate.setInnerText(constants.mailStartDate());
+		
+		mailVarClosedDate.setInnerText(constants.mailClosedDate());
+		
+		 mailClosedDate.setInnerText(constants.mailClosedDate());
+		
+		mailVarMC.setInnerText(constants.mailVarMC());
+		
+		 mailMC.setInnerText(constants.mailMC());
+		 mailVarProposedCount.setInnerText(constants.mailVarProposedCount());
+		
+		 mailProposedCount.setInnerText(constants.mailProposedCount());
+		
+		mailVarTotalCount.setInnerText(constants.mailVarTotalCount());
+		
+		 mailTotalCount.setInnerText(constants.mailTotalCount());
+		 mailVarLoopStart.setInnerText(constants.mailVarLoopStart());
+		 mailLoopStart.setInnerText(constants.mailLoopStart());
+		 mailVarLoopEnd.setInnerText(constants.mailVarLoopEnd());
+		
+		 mailLoopEnd.setInnerText(constants.mailLoopEnd());
+		 mailVarAllocatedCount.setInnerText(constants.mailVarAllocatedCount());
+		
+		mailAllocatedCount.setInnerText(constants.mailAllocatedCount());
+		
+	mailQuestionType.setInnerText(constants.mailQuestionType());
+		
+		mailVarQuestionType.setInnerText(constants.mailVarQuestionType());
+		
+		 mailVarSpecialization.setInnerText(constants.mailVarSpecialization());
+		
+		 mailSpecialization.setInnerText(constants.mailSpecialization());
+		
+		
+		 mailVarTotalRemaining.setInnerText(constants.mailVarTotalRemaining());
+		
+	 mailTotalRemaining.setInnerText(constants.mailTotalRemaining());
+		
+		 mailVarTotalRemainingCount.setInnerText(constants.mailTotalRemainingCount());
+		
+	mailTotalRemainingCount.setInnerText(constants.mailTotalRemainingCount());
+		
 	}
 
 	public String[] getPaths() {
