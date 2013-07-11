@@ -81,7 +81,9 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 	private QuestionPanel questionPanel;
 	final private HashMap<AssesmentProxy, List<PersonProxy>> examAutorListMap=new HashMap<AssesmentProxy, List<PersonProxy>>();
 	private List<QuestionTypeCountProxy> questionTypeCountProxyList=new ArrayList<QuestionTypeCountProxy>();
-
+	
+	private List<AssesmentQuestionView> proposedQuestionViewList=new ArrayList<AssesmentQuestionView>();
+	
 	@Inject
 	public ActivityAsignAssQuestion(PlaceAsignAssQuestion place,
 			McAppRequestFactory requests, PlaceController placeController) {
@@ -282,6 +284,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 				public void onSuccess(List<AssesmentQuestionProxy> response) {
 					questionPanel.removeAll();
 					Iterator<AssesmentQuestionProxy> iter = response.iterator();
+					proposedQuestionViewList.clear();
 					while(iter.hasNext()){
 						AssesmentQuestionView assesmentQuestion = new AssesmentQuestionViewImpl();
 						assesmentQuestion.setProxy(iter.next(), true);
@@ -289,6 +292,8 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 						
 						dragController.makeDraggable(assesmentQuestion.asWidget(), assesmentQuestion.getDragControler());
 						questionPanel.addAssesmentQuestion(assesmentQuestion);
+						proposedQuestionViewList.add(assesmentQuestion);
+						
 					}
 					
 				}
@@ -618,6 +623,21 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 						count++;
 					}
 				}
+				//if examiner than include assesment question from prposed tab in count of Top Element
+				if(!(personRightProxy.getIsAdmin() || personRightProxy.getIsInstitutionalAdmin()))
+				{
+					for(int i=0;i<proposedQuestionViewList.size();i++)
+					{
+						AssesmentQuestionView question =proposedQuestionViewList.get(i);
+						if(questionTypes.contains(question.getProxy().getQuestion().getQuestionType()) && question.getProxy().getQuestion().getQuestEvent().equals(questionSumPerPersonProxy.getQuestionEvent()))
+						{						
+							questionAssigned++;
+							count++;
+						}
+						
+					}
+				}
+				
 			/*	questionTypeCountViewImpl.setTotalQuestionAllowed(totalQuestionAllocated);
 				questionTypeCountViewImpl.setTotalQuestionAllocated(count);
 				questionTypeCountViewImpl.getBlockingCounter().setText(questionAssigned.toString());
