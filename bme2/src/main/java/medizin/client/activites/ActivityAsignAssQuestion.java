@@ -44,6 +44,7 @@ import medizin.client.ui.view.assignquestion.QuestionViewImpl;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.shared.BlockingTypes;
 import medizin.shared.QuestionTypes;
+import medizin.shared.Status;
 
 import com.allen_sauer.gwt.dnd.client.DragEndEvent;
 import com.allen_sauer.gwt.dnd.client.DragHandler;
@@ -716,6 +717,9 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 
 				while (iter.hasNext()) {
 					AnswerProxy answerProxy = (AnswerProxy) iter.next();
+					
+					
+					
 					AnswerView answer = new AnswerViewImpl();
 					answer.setProxy(answerProxy, true);
 					questionView.addAnswer(answer);

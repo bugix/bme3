@@ -135,8 +135,9 @@ public class Answer {
         if (question == null) throw new IllegalArgumentException("The question argument is required");
         EntityManager em = QuestionEvent.entityManager();
         TypedQuery<Answer> q = em.createQuery("SELECT ans FROM Answer ans " + 
-        		" WHERE ans.question = :question", Answer.class);
+        		" WHERE ans.question = :question and ans.status = :status", Answer.class);
         q.setParameter("question", question);
+        q.setParameter("status", Status.ACTIVE);
         return q.getResultList();		
 	}
 	public static long contAnswersByQuestion(Long id){
