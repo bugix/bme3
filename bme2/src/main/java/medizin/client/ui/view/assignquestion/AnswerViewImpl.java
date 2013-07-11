@@ -61,6 +61,12 @@ public class AnswerViewImpl extends Composite implements AnswerView {
 	
 	@UiHandler(value = { "lblCheck", "lblDel", "lblIcon" , "lblAnswerText"})
 	void lblCheckClicked(ClickEvent event) {
+		toggleAnswerSelection();
+
+	}
+	
+	public void toggleAnswerSelection()
+	{
 		if(isInAssesment){
 			if(checked==false){
 				checked = true;
@@ -75,8 +81,8 @@ public class AnswerViewImpl extends Composite implements AnswerView {
 				DOM.setElementAttribute(answerPanel.getElement(), "style", "background-color: #E89EA2; border: 1px solid #CF7074; cursor: pointer;");
 			}
 		}
-
 	}
+	
 
 	@Override
 	public void setProxy(AnswerProxy answer, boolean addCheck) {

@@ -189,6 +189,11 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 				if(((AssesmentTabPanelImpl)assesmentTabPanel).getTabCount() > 0)
 				((AssesmentTabPanelImpl)assesmentTabPanel).setSelectedTab(0);
 				
+				if(response.size()==0)
+				{
+					assementQuestionPanel.getTable().setRowCount(0);
+				}
+				
 				//assesmentTabPanel.setSelectedTab(0);
 		        //initAssementQuestionPanel();
 		       
@@ -1524,7 +1529,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 					{
 						trueAnswer++;
 					}
-					else if(answerViewImpl.getChecked())
+					if(answerViewImpl.getChecked())
 					{
 						totalAnswerSelected++;
 					}
@@ -1605,7 +1610,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 		{
 			int totalAnswers=questionViewImpl.getAnswerPanel().getWidgetCount();
 			int totalSelectedAnswers=0;
-			int sumOfAnswer=questionProxy.getQuestionType().getSumAnswer();
+		//	int sumOfAnswer=questionProxy.getQuestionType().getSumAnswer();
 			for(int i=0;i<totalAnswers;i++)
 			{
 				AnswerViewImpl answerViewImpl=(AnswerViewImpl)questionViewImpl.getAnswerPanel().getWidget(i);
