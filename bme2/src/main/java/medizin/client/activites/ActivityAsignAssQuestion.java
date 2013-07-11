@@ -457,12 +457,12 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 					{
 						authorListBox.setValue(assementQuestionPanel.getAuthorListBox().getValue());
 					}
-					initAssementQuestionPanel(response.get(0));
+					initAssementQuestionPanel(assementQuestionPanel.getAuthorListBox().getValue());
 				}
 				else
 				{
 					authorListBox.setValue(null);
-					initAssementQuestionPanel(null);
+					initAssementQuestionPanel(userLoggedIn);
 				}
 				
 					authorListBox.setAcceptableValues(response);
@@ -482,7 +482,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 	 * 
 	 * Assesment Tabs
 	 */
-	private void initAssementQuestionPanel(PersonProxy author) {
+	private void initAssementQuestionPanel(final PersonProxy author) {
 		//questionTypeCountProxyList=new ArrayList<QuestionTypeCountProxy>();
 		questionTypeCountProxyList.clear();
 		assementQuestionPanel.getTable().setRowCount(0);
@@ -493,13 +493,6 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 		// if(author!=null)// admin/ institutional admin
 		//{
 			final AssesmentProxy assesmentProxy=assesmentTabPanel.getActiveTab();
-			requests.questionSumPerPersonRequest().findPercentageOfQuestionAssignedToExaminer(assesmentProxy, author).with("questionEvent").fire(new Receiver<List<QuestionSumPerPersonProxy>>() {
-
-				@Override
-				public void onSuccess(List<QuestionSumPerPersonProxy> response) {
-					initTopElement(response);
-				}
-			});
 			
 			
 		//}
@@ -521,6 +514,15 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 					//dragController.makeDraggable(question.asWidget(), question.getDragControler());
 					assementQuestionPanel.addAssesmentQuestion(question);
 				}
+				
+				requests.questionSumPerPersonRequest().findPercentageOfQuestionAssignedToExaminer(assesmentProxy, author).with("questionEvent").fire(new Receiver<List<QuestionSumPerPersonProxy>>() {
+
+					@Override
+					public void onSuccess(List<QuestionSumPerPersonProxy> response) {
+						initTopElement(response);
+					}
+				});
+
 				
 			}
 			
@@ -759,7 +761,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 		 else // not author pull down for examiner
 		 {
 			 assementQuestionPanel.getAuthorListBox().removeFromParent();
-			 initAssementQuestionPanel(null);
+			 initAssementQuestionPanel(userLoggedIn);
 		 }
 		 
 		// initAssementQuestionPanel(assementQuestionPanel.getAuthorListBox().getValue());
