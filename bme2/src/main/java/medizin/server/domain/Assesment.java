@@ -201,4 +201,22 @@ public class Assesment {
     	q.setMaxResults(maxResults);
     	return q.getResultList();
     }
+    
+    public static Long countAssesmentByInsitute()
+    {
+    	EntityManager em = Assesment.entityManager();
+    	
+    	Institution activeInstitute=Institution.myGetInstitutionToWorkWith();
+    	//create query  	
+    	CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+    	CriteriaQuery<Assesment> criteriaQuery = criteriaBuilder
+				.createQuery(Assesment.class);
+    	//from
+    	Root<Assesment> from = criteriaQuery.from(Assesment.class);
+    	
+    	criteriaQuery.where(criteriaBuilder.equal(from.get("institution"), activeInstitute));
+    	TypedQuery<Assesment> q=entityManager().createQuery(criteriaQuery);
+    
+    	return new Long(q.getResultList().size());
+    }
 }

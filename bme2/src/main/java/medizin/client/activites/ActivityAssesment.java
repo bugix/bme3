@@ -152,7 +152,7 @@ public class ActivityAssesment extends AbstractActivityWrapper implements Assesm
 	    }
 
 	    protected void fireCountRequest(Receiver<Long> callback) {
-	    	requests.assesmentRequest().countAssesments().fire(callback);
+	    	requests.assesmentRequest().countAssesmentByInsitute().fire(callback);
 	    }
 	
 	    

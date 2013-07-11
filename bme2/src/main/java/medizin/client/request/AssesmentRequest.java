@@ -16,4 +16,6 @@ public interface AssesmentRequest extends AssesmentRequest_Roo_Gwt {
 	abstract Request<List<AssesmentProxy>> findAssesmentsOpenBetween();
 	abstract Request<List<AssesmentProxy>> findActiveAssesments();
 	abstract Request<List<AssesmentProxy>> findAssesmentByInsitute(int firstResult, int maxResults);
+	abstract Request<Long> countAssesmentByInsitute();
+
 }
