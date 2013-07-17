@@ -2,7 +2,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:n="urn:import:medizin.client.ui"
-	xmlns:b="urn:import:com.google.gwt.user.cellview.client">
+	xmlns:b="urn:import:com.google.gwt.user.cellview.client" xmlns:m="urn:import:medizin.client.ui.widget">
 	<ui:style src="../styles.css" >
 	.bar {
 		padding: 5px;
@@ -32,7 +32,16 @@
 			<b:CellTable pageSize="8" ui:field="table" width="100%" />				
 		</g:HTMLPanel> -->
 		<g:DisclosurePanel ui:field="questionDisclosurePanel" width="100%">
-			<g:header></g:header>
+			<g:customHeader>
+				<g:HorizontalPanel width="100%" ui:field="headerHorizontalPanel">
+					<g:cell verticalAlignment="ALIGN_MIDDLE">
+						<g:Label ui:field="headerText"></g:Label>
+					</g:cell>
+					<g:cell width="16px" horizontalAlignment="ALIGN_CENTER">
+						<m:IconButton ui:field="viewHtmlText" icon="comment" visible="false"></m:IconButton>
+					</g:cell>
+				</g:HorizontalPanel>
+			</g:customHeader>
 			<g:VerticalPanel>
 				<g:HTMLPanel styleName="{style.listView}">
 					

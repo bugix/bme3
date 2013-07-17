@@ -334,7 +334,7 @@
 						 	  	</td>
 						 	  </tr>
 						 	  
-						 	   <tr id="imageWidth">
+						 	  <!--  <tr id="imageWidth">
 						 	  	<td>
 						 	  		<g:Label styleName="{style.label}" ui:field="imageWidthLbl"></g:Label>
 						 	  	</td>
@@ -360,7 +360,7 @@
 						 	  		<g:TextBox ui:field="imageProportionTxtbox" width="150px"></g:TextBox>					 	  		
 						 	  	</td>
 						 	  </tr>
-						 	  
+						 	   -->
 						 	  <!-- Area Question Type Field -->
 						 	  
 						 	 <!--  <tr id="linearPoint">

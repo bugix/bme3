@@ -9,6 +9,8 @@ import medizin.client.proxy.StudentToAssesmentProxy;
 import medizin.client.style.resources.MyCellTableResources;
 import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
+import medizin.client.ui.view.QuestionTextViewDialogBoxImpl;
+import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.process.ApplicationLoadingPopupView;
 import medizin.shared.i18n.BmeConstants;
@@ -35,6 +37,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 import com.google.gwt.user.client.ui.FormPanel.SubmitEvent;
 import com.google.gwt.user.client.ui.Hidden;
@@ -73,6 +76,8 @@ public class StudentViewImpl extends Composite implements StudentView {
 	@UiField Button importfile;	
 	
 	@UiField Label fileLabel;
+	
+	@UiField IconButton fileInfo;
 
 	private List<AbstractEditableCell<?, ?>> editableCells;
 	
@@ -271,5 +276,15 @@ public class StudentViewImpl extends Composite implements StudentView {
 		      
 			
 		}
+	}
+	
+	@UiHandler("fileInfo")
+	public void fileInfoClicked(ClickEvent event)
+	{
+		QuestionTextViewDialogBoxImpl dialogBox = new QuestionTextViewDialogBoxImpl();
+		dialogBox.questionTextHorizontalPanel.add(new Label(constants.studentImportCsvInfo()));
+		dialogBox.setWidth("500px");
+		dialogBox.setPopupPosition(event.getRelativeElement().getAbsoluteLeft()-250, event.getRelativeElement().getAbsoluteTop()+25);
+		dialogBox.show();		
 	}
 }

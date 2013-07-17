@@ -251,9 +251,9 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 					questionTypeProxy.setAcceptNonKeyword(view.getAcceptNonKeywordChkBox().getValue());
 					questionTypeProxy.setAnswerLength(Integer.parseInt(view.getAnswerLengthTxtbox().getValue()));
 					questionTypeProxy.setLengthShortAnswer(Integer.parseInt(view.getShortAnswerLengthTxtbox().getValue()));
-					questionTypeProxy.setImageWidth(Integer.parseInt(view.getImageWidthTxtbox().getValue()));
+					/*questionTypeProxy.setImageWidth(Integer.parseInt(view.getImageWidthTxtbox().getValue()));
 					questionTypeProxy.setImageHeight(Integer.parseInt(view.getImageLengthTxtbox().getValue()));
-					questionTypeProxy.setImageProportion(view.getImageProportionTxtbox().getValue());
+					questionTypeProxy.setImageProportion(view.getImageProportionTxtbox().getValue());*/
 					questionTypeProxy.setQuestionLength(Integer.parseInt(view.getQuestionLengthTxtbox().getValue()));
 				}
 				else if (selectedQuestionType.equals(QuestionTypes.ShowInImage))

@@ -86,11 +86,11 @@ public interface QuestiontypesEditView extends IsWidget {
 
 	public TextBox getShortAnswerLengthTxtbox();
 	
-	public TextBox getImageWidthTxtbox();
+	/*public TextBox getImageWidthTxtbox();
 	
 	public TextBox getImageLengthTxtbox();
 
-	public TextBox getImageProportionTxtbox();
+	public TextBox getImageProportionTxtbox();*/
 	
 	/*public CheckBox getLinearPointChkBox();
 	

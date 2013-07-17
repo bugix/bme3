@@ -220,7 +220,7 @@ public class AssesmentEditViewImpl extends Composite implements AssesmentEditVie
 		reciverMap.put("dateOpen", dateOpen);
 		reciverMap.put("dateClosed", dateClosed);
 		reciverMap.put("place", place);
-		reciverMap.put("logo", logo);
+		//reciverMap.put("logo", logo);
 		reciverMap.put("rememberBeforeClosing", rememberBeforeClosing);
 		reciverMap.put("institution", institution);
 		

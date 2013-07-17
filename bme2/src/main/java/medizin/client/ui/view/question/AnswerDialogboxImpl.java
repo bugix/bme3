@@ -27,6 +27,7 @@ import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.simple.DefaultSuggestOracle;
 import medizin.client.util.ClientUtility;
+import medizin.client.util.ImageWidthHeight;
 import medizin.client.util.Point;
 import medizin.client.util.PolygonPath;
 import medizin.shared.MultimediaType;
@@ -279,11 +280,20 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 			@Override
 			public Void apply(List<String> points) {
 				
-				List<Point> rectanglePoints = Point.getPoints(points);
+				final List<Point> rectanglePoints = Point.getPoints(points);
 				
-				if(question != null && question.getQuestionType() != null && QuestionTypes.Imgkey.equals(question.getQuestionType().getQuestionType()) && question.getPicturePath() != null && question.getPicturePath().length() > 0 && question.getQuestionType().getImageWidth() != null && question.getQuestionType().getImageHeight() != null) {
-					imageRectangleViewer = new ImageRectangleViewer(question.getPicturePath(), question.getQuestionType().getImageWidth(), question.getQuestionType().getImageHeight(),rectanglePoints, true);
-					viewContainer.add(imageRectangleViewer);
+				if(question != null && question.getQuestionType() != null && QuestionTypes.Imgkey.equals(question.getQuestionType().getQuestionType()) && question.getPicturePath() != null && question.getPicturePath().length() > 0 /*&& question.getQuestionType().getImageWidth() != null && question.getQuestionType().getImageHeight() != null*/) {
+					
+					ClientUtility.getImageWidthHeight(question.getPicturePath(), new ImageWidthHeight() {
+						
+						@Override
+						public void apply(Integer width, Integer height) {
+							imageRectangleViewer = new ImageRectangleViewer(question.getPicturePath(), width, height, rectanglePoints, true);
+							viewContainer.add(imageRectangleViewer);
+						}
+					});
+					/*imageRectangleViewer = new ImageRectangleViewer(question.getPicturePath(), question.getQuestionType().getImageWidth(), question.getQuestionType().getImageHeight(),rectanglePoints, true);
+					viewContainer.add(imageRectangleViewer);*/
 				}
 				
 				validity.addValueChangeHandler(new ValueChangeHandler<Validity>() {

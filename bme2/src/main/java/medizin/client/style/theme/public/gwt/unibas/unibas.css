@@ -24,7 +24,7 @@ pre {
 
 body {
     font-size: 70%;
-	line-height: 1.2em;
+	line-height: normal;
 	color: #222;
 	margin: 0px;
 	border: 0px;
@@ -3160,23 +3160,23 @@ color: #f1b532;
 
 .arrow-popup{ 
 	position:absolute; 
-	bottom:-8px; 
+	top:-8px; 
 	left:51px;
     width: 0; 
     height: 0; 
     border-left:8px solid transparent; 
     border-right: 8px solid transparent; 
-    border-top: 8px solid #fff;
-    }
+    border-bottom: 13px solid #FFFFFF;
+}
 .arrow-popup-border{ 
 	position:absolute; 
-	bottom:-8px; 
+	top:-8px; 
 	left:51px;
     width: 0; 
     height: 0; 
     border-left:8px solid transparent; 
     border-right: 8px solid transparent; 
-    border-top: 8px solid #AAAAAA;
+    border-bottom: 13px solid #AAAAAA;
 }
 .gwt-PopupPanel {
     /* background: url("images/ui-bg_highlight-soft_0_e0e0e0_1x400.png") repeat-x scroll 50% 50% #FFFFFF; */
@@ -4433,4 +4433,8 @@ background: url("images/colorpicker.png");
     height: 22px;
     margin-bottom: 4px;
     width: 22px;
+}
+
+.questionViewDialogBox .dialogTopCenterInner {
+    height: 10px;
 }

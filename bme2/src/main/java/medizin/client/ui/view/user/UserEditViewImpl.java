@@ -114,7 +114,7 @@ public class UserEditViewImpl extends Composite implements UserEditView  {
 		reciverMap.put("name", name);
 		reciverMap.put("prename", prename);
 		reciverMap.put("email", email);
-		reciverMap.put("alternativEmail", alternativEmail);
+		//reciverMap.put("alternativEmail", alternativEmail);
 		reciverMap.put("phoneNumber", phoneNumber);
 		reciverMap.put("isAdmin", isAdmin);
 		reciverMap.put("isAccepted", isAccepted);

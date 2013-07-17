@@ -224,7 +224,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 	@UiField
 	TextBox shortAnswerLengthTxtbox;
 	
-	@UiField
+	/*@UiField
 	Label imageWidthLbl;
 	 
 	@UiField
@@ -240,7 +240,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 	Label imageProportionLbl;
 	 
 	@UiField
-	TextBox imageProportionTxtbox;
+	TextBox imageProportionTxtbox;*/
 	
 	/*@UiField
 	Label linearPointLbl;
@@ -406,7 +406,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 
     private static final ArrayList<String> textualSortList = Lists.newArrayList("sumAnswer","sumTrueAnswer","sumFalseAnswer","questionLength","answerLength","answerDiff","queHaveImg","queHaveVideo","queHaveSound");
 	
-	private static final ArrayList<String> imgKeyList = Lists.newArrayList("questionLength","keywordCount","showAutoComplete","isDictionaryKeyword","allowTyping","minLetterForAutoComp","answerLength","acceptNonKeyword","shortAnswerLength","imageWidth","imageLength","imageProportion");
+	private static final ArrayList<String> imgKeyList = Lists.newArrayList("questionLength","keywordCount","showAutoComplete","isDictionaryKeyword","allowTyping","minLetterForAutoComp","answerLength","acceptNonKeyword","shortAnswerLength"/*,"imageWidth","imageLength","imageProportion"*/);
 
 	private static final ArrayList<String> showInImgList = Lists.newArrayList("questionLength"/*,"answerLength","imageWidth","imageLength","imageProportion","linearPoint","linearPercentage"*/);
 	
@@ -454,9 +454,9 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
     	   answerLengthTxtbox.setValue(toStringUtility(proxy.getAnswerLength()));
     	   acceptNonKeywordChkBox.setValue(proxy.getAcceptNonKeyword());
     	   shortAnswerLengthTxtbox.setValue(toStringUtility(proxy.getLengthShortAnswer()));
-    	   imageWidthTxtbox.setValue(toStringUtility(proxy.getImageWidth()));
+    	   /*imageWidthTxtbox.setValue(toStringUtility(proxy.getImageWidth()));
     	   imageLengthTxtbox.setValue(toStringUtility(proxy.getImageHeight()));
-    	   imageProportionTxtbox.setValue(toStringUtility(proxy.getImageProportion()));
+    	   imageProportionTxtbox.setValue(toStringUtility(proxy.getImageProportion()));*/
        }
        else if (proxy.getQuestionType().equals(QuestionTypes.ShowInImage))
        {
@@ -525,9 +525,9 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		reciverMap.put("keywordCount", keywordCountTxtbox);
 		reciverMap.put("minAutoCompleteLetter", minLetterForAutoCompTxtbox);
 		reciverMap.put("lengthShortAnswer",shortAnswerLengthTxtbox );
-		reciverMap.put("imageWidth", imageWidthTxtbox);
+		/*reciverMap.put("imageWidth", imageWidthTxtbox);
 		reciverMap.put("imageHeight", imageLengthTxtbox);
-		reciverMap.put("imageProportion", imageProportionTxtbox);
+		reciverMap.put("imageProportion", imageProportionTxtbox);*/
 		//reciverMap.put("linearPercentage", linearPercentageTxtbox);
 		reciverMap.put("multimediaType", multimediaTypeListBox);
 		reciverMap.put("selectionType", selectionTypeListBox);
@@ -591,9 +591,9 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		minLetterForAutoCompLbl.setText(constants.minLetterAutoComplete());
 		acceptNonKeywordLbl.setText(constants.acceptNonkeyword());
 		shortAnswerLengthLbl.setText(constants.lengthShortAns());
-		imageWidthLbl.setText(constants.imgWidth());
+		/*imageWidthLbl.setText(constants.imgWidth());
 		imageLengthLbl.setText(constants.imgLength());
-		imageProportionLbl.setText(constants.imgProportion());
+		imageProportionLbl.setText(constants.imgProportion());*/
 		
 		/*linearPointLbl.setText(constants.linearPoint());
 		linearPercentageLbl.setText(constants.linearPercentage());*/
@@ -618,6 +618,17 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		/*allowZoomOutLbl.setText(constants.allowZoomOut());
 		allowZoomInLbl.setText(constants.allowZoomIn());*/
 		maxBytesLbl.setText(constants.maxBytes());
+		
+		showAutoCompleteChkBox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+
+			@Override
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
+				if (event.getValue() == true)
+					Document.get().getElementById("isDictionaryKeyword").getStyle().clearDisplay();
+				else
+					Document.get().getElementById("isDictionaryKeyword").getStyle().setDisplay(Display.NONE);
+			}
+		});
 		
 		/*linearPercentageTxtbox.setEnabled(false);
 		
@@ -703,7 +714,8 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 			disableQuestionField(matrixList);
 			disableQuestionField(longTextList);
 			disableQuestionField(showInImgList);
-			showField(imgKeyList);		
+			showField(imgKeyList);
+			Document.get().getElementById("isDictionaryKeyword").getStyle().setDisplay(Display.NONE);
 		}
 		else if (questionTypes.equals(QuestionTypes.ShowInImage))
 		{
@@ -782,9 +794,9 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 	    	   answerLengthTxtbox.setValue("");
 	    	   acceptNonKeywordChkBox.setValue(false);
 	    	   shortAnswerLengthTxtbox.setValue("");
-	    	   imageWidthTxtbox.setValue("");
+	    	   /*imageWidthTxtbox.setValue("");
 	    	   imageLengthTxtbox.setValue("");
-	    	   imageProportionTxtbox.setValue("");
+	    	   imageProportionTxtbox.setValue("");*/
 	    	   
 	       }
 	       else if (questionTypes.equals(QuestionTypes.ShowInImage))
@@ -1015,7 +1027,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		this.shortAnswerLengthTxtbox = shortAnswerLengthTxtbox;
 	}
 
-	public TextBox getImageWidthTxtbox() {
+	/*public TextBox getImageWidthTxtbox() {
 		return imageWidthTxtbox;
 	}
 
@@ -1037,7 +1049,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 
 	public void setImageProportionTxtbox(TextBox imageProportionTxtbox) {
 		this.imageProportionTxtbox = imageProportionTxtbox;
-	}
+	}*/
 
 	/*public CheckBox getLinearPointChkBox() {
 		return linearPointChkBox;
@@ -1342,7 +1354,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 					shortAnswerLengthTxtbox.addStyleName("higlight_onViolation");
 				}
 				
-				msg = "";
+				/*msg = "";
 				if ((msg = checkTextWidgetForNumber(imageWidthTxtbox)) != "")
 				{
 					flag = false;
@@ -1367,7 +1379,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 					//errorString.append(constants.imgProportion() + " " + constants.questionTypeErroMsg()).append("<br />");
 					errorMessage.add(constants.imgProportion() + " " + constants.questionTypeErroMsg());
 					imageProportionTxtbox.addStyleName("higlight_onViolation");
-				}
+				}*/
 				
 				break;
 			}
@@ -1659,9 +1671,9 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		minLetterForAutoCompTxtbox.removeStyleName("higlight_onViolation");
 		answerLengthTxtbox.removeStyleName("higlight_onViolation");
 		shortAnswerLengthTxtbox.removeStyleName("higlight_onViolation");
-		imageWidthTxtbox.removeStyleName("higlight_onViolation");
+		/*imageWidthTxtbox.removeStyleName("higlight_onViolation");
 		imageLengthTxtbox.removeStyleName("higlight_onViolation");
-		imageProportionTxtbox.removeStyleName("higlight_onViolation");
+		imageProportionTxtbox.removeStyleName("higlight_onViolation");*/
 		
 		//linearPercentageTxtbox.removeStyleName("higlight_onViolation");
 		

@@ -307,7 +307,7 @@
 											</td>
 										</tr>
 
-										<tr id="imageWidth">
+										<!-- <tr id="imageWidth">
 											<td>
 												<g:Label styleName="{style.label}" ui:field="imageWidthLbl"></g:Label>
 											</td>
@@ -332,7 +332,7 @@
 											<td>
 												<g:Label addStyleNames="{style.valueHeight}" ui:field="imageProportionValLbl"></g:Label>
 											</td>
-										</tr>
+										</tr> -->
 
 										<!-- Area Question Type Field -->
 

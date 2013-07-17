@@ -625,7 +625,7 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 	@Override
 	public void deleteMediaFileFromDisk(String path) {
 
-		if (question != null) {
+		/*if (question != null) {*/
 			final QuestionRequest questionRequest = requests.questionRequest();
 			questionRequest.deleteMediaFileFromDisk(path).fire(new BMEReceiver<Boolean>(reciverMap) {
 
@@ -635,9 +635,9 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 				}
 
 			});
-		} else {
+		/*} else {
 			Log.error("Question is null");
-		}
+		}*/
 
 	}
 
@@ -737,7 +737,7 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 						if(Status.NEW.equals(question.getStatus())) {
 							// if current state of the question is new so status will remain as it is.
 							status = Status.NEW;
-							updateQuestion(status,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor,gotoDetailsFunction);
+							updateQuestion(status,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor,gotoShowNewFunction);
 						}else if(Status.ACTIVE.equals(question.getStatus())) {
 							// the current state of the question is active so new status with minor changes will be accepted reviewer
 							status = Status.ACCEPTED_REVIEWER;

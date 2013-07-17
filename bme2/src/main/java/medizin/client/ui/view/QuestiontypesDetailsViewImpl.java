@@ -190,7 +190,7 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 		@UiField
 		Label shortAnswerLengthValLbl;
 		
-		@UiField
+		/*@UiField
 		Label imageWidthLbl;
 		 
 		@UiField
@@ -206,7 +206,7 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 		Label imageProportionLbl;
 		 
 		@UiField
-		Label imageProportionValLbl;
+		Label imageProportionValLbl;*/
 		
 		/*@UiField
 		Label linearPointLbl;
@@ -312,7 +312,7 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 	    
 		private static final ArrayList<String> textualSortList = Lists.newArrayList("sumAnswer","sumTrueAnswer","sumFalseAnswer","questionLength","answerLength","answerDiff","queHaveImg","queHaveVideo","queHaveSound");
 		
-		private static final ArrayList<String> imgKeyList = Lists.newArrayList("questionLength","keywordCount","showAutoComplete","isDictionaryKeyword","allowTyping","minLetterForAutoComp","answerLength","acceptNonKeyword","shortAnswerLength","imageWidth","imageLength","imageProportion");
+		private static final ArrayList<String> imgKeyList = Lists.newArrayList("questionLength","keywordCount","showAutoComplete","isDictionaryKeyword","allowTyping","minLetterForAutoComp","answerLength","acceptNonKeyword","shortAnswerLength"/*,"imageWidth","imageLength","imageProportion"*/);
 
 		private static final ArrayList<String> showInImgList = Lists.newArrayList("questionLength"/*,"answerLength","imageWidth","imageLength","imageProportion","linearPoint","linearPercentage"*/);
 		
@@ -377,17 +377,17 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 	    	   answerLengthValLbl.setText(toStringUtility(proxy.getAnswerLength()));
 	    	   acceptNonKeywordValLbl.setText(toStringUtility(proxy.getAcceptNonKeyword()));
 	    	   shortAnswerLengthValLbl.setText(toStringUtility(proxy.getLengthShortAnswer()));
-	    	   imageWidthValLbl.setText(toStringUtility(proxy.getImageWidth()));
+	    	   /*imageWidthValLbl.setText(toStringUtility(proxy.getImageWidth()));
 	    	   imageLengthValLbl.setText(toStringUtility(proxy.getImageHeight()));
-	    	   imageProportionValLbl.setText(toStringUtility(proxy.getImageProportion()));
+	    	   imageProportionValLbl.setText(toStringUtility(proxy.getImageProportion()));*/
 	       }
 	       else if (proxy.getQuestionType().equals(QuestionTypes.ShowInImage))
 	       {
 	    	   questionLengthValLbl.setText(toStringUtility(proxy.getQuestionLength()));
 	    	   answerLengthValLbl.setText(toStringUtility(proxy.getAnswerLength()));
-	    	   imageWidthValLbl.setText(toStringUtility(proxy.getImageWidth()));
+	    	  /* imageWidthValLbl.setText(toStringUtility(proxy.getImageWidth()));
 	    	   imageLengthValLbl.setText(toStringUtility(proxy.getImageHeight()));
-	    	   imageProportionValLbl.setText(toStringUtility(proxy.getImageProportion()));
+	    	   imageProportionValLbl.setText(toStringUtility(proxy.getImageProportion()));*/
 	    	   /*linearPointValLbl.setText(toStringUtility(proxy.getLinearPoint()));
 	    	   linearPercentageValLbl.setText(toStringUtility(proxy.getLinearPercentage()));*/	    	   
 	       }
@@ -458,9 +458,9 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 			minLetterForAutoCompLbl.setText(constants.minLetterAutoComplete());
 			acceptNonKeywordLbl.setText(constants.acceptNonkeyword());
 			shortAnswerLengthLbl.setText(constants.lengthShortAns());
-			imageWidthLbl.setText(constants.imgWidth());
+			/*imageWidthLbl.setText(constants.imgWidth());
 			imageLengthLbl.setText(constants.imgLength());
-			imageProportionLbl.setText(constants.imgProportion());
+			imageProportionLbl.setText(constants.imgProportion());*/
 			
 			/*linearPointLbl.setText(constants.linearPoint());
 			linearPercentageLbl.setText(constants.linearPercentage());*/

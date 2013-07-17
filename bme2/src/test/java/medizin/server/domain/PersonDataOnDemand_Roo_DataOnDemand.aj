@@ -44,7 +44,7 @@ privileged aspect PersonDataOnDemand_Roo_DataOnDemand {
     public void PersonDataOnDemand.setAlternativEmail(Person obj, int index) {
         String alternativEmail = "foo" + index + "@bar.com";
         if (alternativEmail.length() > 50) {
-            alternativEmail = new Random().nextInt(10) + alternativEmail.substring(1, 50);
+            alternativEmail = alternativEmail.substring(0, 50);
         }
         obj.setAlternativEmail(alternativEmail);
     }

@@ -29,7 +29,7 @@ privileged aspect CommentDataOnDemand_Roo_DataOnDemand {
     }
     
     public void CommentDataOnDemand.setComment(Comment obj, int index) {
-        String comment = "comment_" + index;
+        String comment = " _" + index;
         if (comment.length() > 9000) {
             comment = comment.substring(0, 9000);
         }

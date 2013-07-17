@@ -8,6 +8,7 @@ import medizin.client.style.resources.MyCellTableResources;
 import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.DeclineEmailPopupDelagate;
 import medizin.client.ui.McAppConstant;
+import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEvent;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEventHandler;
@@ -31,21 +32,31 @@ import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.SpanElement;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.dom.client.Style.VerticalAlign;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.AbstractHasData;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.cellview.client.SimplePager;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment.VerticalAlignmentConstant;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -94,6 +105,12 @@ public class AcceptAnswerSubViewImpl extends Composite implements AcceptAnswerSu
 	
 	private AcceptAnswerSubView acceptAnswerSubView = null;
 	
+	@UiField
+	Label headerText;
+	
+	@UiField
+	IconButton viewHtmlText;
+	
 	public AcceptAnswerSubViewImpl(Boolean flag) {
 		
 		this.flag = flag;
@@ -130,15 +147,20 @@ public class AcceptAnswerSubViewImpl extends Composite implements AcceptAnswerSu
 							{					
 							 	dialogBox = new DialogBox();
 							 	
-							 	VerticalPanel vp = new VerticalPanel();
+							 	final VerticalPanel vp = new VerticalPanel();
 								 
 								if (questionProxy.getQuestionType().getQuestionType().equals(QuestionTypes.Imgkey))
 								{	
-									List<Point> points = Point.getPoints(Lists.newArrayList(selectedObject.getPoints()));
+									final List<Point> points = Point.getPoints(Lists.newArrayList(selectedObject.getPoints()));
 									
-									ImageRectangleViewer viewer = new ImageRectangleViewer(questionProxy.getPicturePath(), questionProxy.getQuestionType().getImageWidth(), questionProxy.getQuestionType().getImageHeight(), points, false);
-									
-									vp.add(viewer);
+									ClientUtility.getImageWidthHeight(questionProxy.getPicturePath(), new ImageWidthHeight() {
+										
+										@Override
+										public void apply(Integer width, Integer height) {
+											ImageRectangleViewer viewer = new ImageRectangleViewer(questionProxy.getPicturePath(), width, height, points, false);
+											vp.add(viewer);
+										}
+									});
 								}
 								else if (questionProxy.getQuestionType().getQuestionType().equals(QuestionTypes.ShowInImage))
 								{
@@ -407,6 +429,21 @@ DivElement questionText;*/
 	@UiField
 	DisclosurePanel questionDisclosurePanel;
 
+	@UiHandler("viewHtmlText")
+	public void viewHtmlTextClicked(ClickEvent event)
+	{
+		questionDisclosurePanel.setOpen(!questionDisclosurePanel.isOpen());
+		
+		QuestionTextViewDialogBoxImpl dialogBox = new QuestionTextViewDialogBoxImpl();
+		
+		if (questionProxy != null)
+		{
+			dialogBox.questionTextHorizontalPanel.add(new HTML(new SafeHtmlBuilder().appendHtmlConstant(questionProxy.getQuestionText()).toSafeHtml()));
+			dialogBox.setPopupPosition(event.getRelativeElement().getAbsoluteLeft()-250, event.getRelativeElement().getAbsoluteTop()+25);
+			dialogBox.show();
+		}
+	}
+
 
 	@Override
 	public void setProxy(final QuestionProxy questionProxy) {
@@ -431,8 +468,19 @@ DivElement questionText;*/
 		//new SafeHtmlBuilder().appendHtmlConstant(questionProxy.getQuestionText());
 		
 		if (flag)
-			//questionDisclosurePanel.setHeader(new HTML(questionProxy.getQuestionText()).getText());
-			questionDisclosurePanel.getHeaderTextAccessor().setText(new HTML(questionProxy.getQuestionText()).getText());		
+		{
+			headerText.setText(new HTML(questionProxy.getQuestionText()).getText());			
+			headerText.getElement().getStyle().setMarginLeft(5, Unit.PX);
+			viewHtmlText.getElement().getStyle().setMargin(1, Unit.PX);
+			viewHtmlText.setVisible(true);
+		}
+		else
+		{
+			headerText.setText("");
+			headerText.setHeight("23px");
+			viewHtmlText.setVisible(false);
+		}
+					
 	}
 
 

@@ -1,0 +1,16 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style src="../styles.css" >
+		
+	</ui:style>
+		
+	<g:VerticalPanel spacing="5">
+		<g:HTML>
+			<div class="arrow-popup-border" style="left:253px;"></div>
+			<div class="arrow-popup" style="left:253px;"></div>
+		</g:HTML>
+		<g:HorizontalPanel ui:field="questionTextHorizontalPanel">
+		</g:HorizontalPanel>
+	</g:VerticalPanel>
+</ui:UiBinder> 

@@ -62,8 +62,8 @@ public class Assesment {
     @Size(min = 5, max = 100)
     private String place;
 
-    @NotNull
-    @Size(min = 5, max = 255)
+    /*@NotNull
+    @Size(min = 5, max = 255)*/
     private String logo;
 
     @NotNull
