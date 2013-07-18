@@ -2,6 +2,7 @@ package medizin.client.activites;
 
 import java.util.List;
 
+import medizin.client.events.RecordChangeEvent;
 import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.PlaceNotActivatedQuestion;
@@ -10,6 +11,7 @@ import medizin.client.place.PlaceQuestionDetails;
 import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
+import medizin.client.ui.view.InstitutionViewImpl;
 import medizin.client.ui.view.question.QuestionView;
 import medizin.client.ui.view.question.QuestionViewImpl;
 import medizin.client.ui.view.question.QuestionView.Delegate;
@@ -75,6 +77,7 @@ public class ActivityNotActivatedQuestion extends AbstractActivityWrapper implem
 		Log.debug("start2()");
 		activityManger.setDisplay(view.getDetailsPanel());
 
+		RecordChangeEvent.register(requests.getEventBus(), (QuestionViewImpl)view);
 		init();
 
 		// Inherit the view's key provider

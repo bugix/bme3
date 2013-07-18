@@ -2,11 +2,13 @@ package medizin.client.activites;
 
 import java.util.List;
 
+import medizin.client.events.RecordChangeEvent;
 import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.PlaceUser;
 import medizin.client.place.PlaceUserDetails;
 import medizin.client.proxy.PersonProxy;
+import medizin.client.ui.view.QuestiontypesViewImpl;
 import medizin.client.ui.view.user.UserView;
 import medizin.client.ui.view.user.UserViewImpl;
 
@@ -159,6 +161,8 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 						
 					}
 				});*/
+		
+		RecordChangeEvent.register(requests.getEventBus(), (UserViewImpl)view);
 		init();
 
 		activityManger.setDisplay(view.getDetailsPanel());

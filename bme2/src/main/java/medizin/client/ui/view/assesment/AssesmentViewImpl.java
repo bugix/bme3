@@ -11,6 +11,8 @@ import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.assesment.AssesmentView.Delegate;
 import medizin.client.ui.widget.IconButton;
 
+import medizin.client.events.RecordChangeEvent;
+import medizin.client.events.RecordChangeHandler;
 import medizin.client.proxy.AssesmentProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.shared.i18n.BmeConstants;
@@ -38,7 +40,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class AssesmentViewImpl extends Composite implements AssesmentView  {
+public class AssesmentViewImpl extends Composite implements AssesmentView, RecordChangeHandler  {
 
 	private static AssesmentViewImplUiBinder uiBinder = GWT
 			.create(AssesmentViewImplUiBinder.class);
@@ -172,7 +174,7 @@ public class AssesmentViewImpl extends Composite implements AssesmentView  {
 
 		            @Override
 		            public String getValue(AssesmentProxy object) {
-		                return renderer.render(object.getDateOfAssesment());
+		                return renderer.render(object == null ? null : object.getDateOfAssesment());
 		            }
 		        }, "Prüfung am");
 //		        paths.add("dateOpen");
@@ -262,7 +264,7 @@ public class AssesmentViewImpl extends Composite implements AssesmentView  {
 
 		            @Override
 		            public String getValue(AssesmentProxy object) {
-		                return renderer.render(object.getMc());
+		                return renderer.render(object == null ? null : object.getMc());
 		            }
 		        }, "Mc");
 		        paths.add("repeFor");
@@ -272,7 +274,7 @@ public class AssesmentViewImpl extends Composite implements AssesmentView  {
 
 		            @Override
 		            public String getValue(AssesmentProxy object) {
-		                return object.getRepeFor() == null? "" : "ja";
+		                return object == null ? null : object.getRepeFor() == null? "" : "ja";
 		            }
 		        }, "Repe");
 //		        paths.add("percentSameQuestion");
@@ -354,5 +356,19 @@ public class AssesmentViewImpl extends Composite implements AssesmentView  {
 					
 				}
 			  }
+
+		@Override
+		public void onRecordChange(RecordChangeEvent event) {
+			int pagesize = 0;
+
+			if (event.getRecordValue() == "ALL") {
+				pagesize = table.getRowCount();
+				McAppConstant.TABLE_PAGE_SIZE = pagesize;
+			} else if (event.getRecordValue().matches("\\d+")) {
+				pagesize = Integer.parseInt(event.getRecordValue());
+			}
+
+			table.setPageSize(pagesize);
+		}
 
 }

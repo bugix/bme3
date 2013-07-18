@@ -3,6 +3,8 @@ package medizin.client.ui.view;
 import java.util.HashSet;
 import java.util.Set;
 
+import medizin.client.events.RecordChangeEvent;
+import medizin.client.events.RecordChangeHandler;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.style.resources.MyCellTableResources;
 import medizin.client.style.resources.MySimplePagerResources;
@@ -28,7 +30,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class AcceptQuestionViewImpl extends Composite implements AcceptQuestionView  {
+public class AcceptQuestionViewImpl extends Composite implements AcceptQuestionView, RecordChangeHandler  {
 
 	private static AcceptQuestionViewImplUiBinder uiBinder = GWT
 			.create(AcceptQuestionViewImplUiBinder.class);
@@ -80,7 +82,7 @@ public class AcceptQuestionViewImpl extends Composite implements AcceptQuestionV
 
 	            @Override
 	            public String getValue(QuestionProxy object) {
-	                return renderer.render(object == null ? 0L : object.getId());
+	                return renderer.render(object == null ? null : object.getId());
 	            }
 	        }, constants.id());
 	       
@@ -300,6 +302,21 @@ public class AcceptQuestionViewImpl extends Composite implements AcceptQuestionV
 				return "<tr style=\"vertical-align: top;\"><td><strong>"+ title +"&nbsp;</strong></td></tr><tr><td>" + value + "</td></tr>";
 			}
 		  }
+
+
+	@Override
+	public void onRecordChange(RecordChangeEvent event) {
+		int pagesize = 0;
+
+		if (event.getRecordValue() == "ALL") {
+			pagesize = table.getRowCount();
+			McAppConstant.TABLE_PAGE_SIZE = pagesize;
+		} else if (event.getRecordValue().matches("\\d+")) {
+			pagesize = Integer.parseInt(event.getRecordValue());
+		}
+
+		table.setPageSize(pagesize);		
+	}
 	  
 	
 

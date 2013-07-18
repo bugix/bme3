@@ -2,6 +2,7 @@ package medizin.client.activites;
 
 import java.util.List;
 
+import medizin.client.events.RecordChangeEvent;
 import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.AbstractDetailsPlace.Operation;
@@ -10,6 +11,7 @@ import medizin.client.place.PlaceQuestiontypesDetails;
 import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.ui.view.QuestiontypesView;
 import medizin.client.ui.view.QuestiontypesViewImpl;
+import medizin.client.ui.view.question.QuestionViewImpl;
 import medizin.client.ui.widget.Sorting;
 
 import com.allen_sauer.gwt.log.client.Log;
@@ -168,6 +170,8 @@ public class ActivityQuestiontypes extends AbstractActivityWrapper implements Qu
 				}
 			}
 		});
+		
+		RecordChangeEvent.register(requests.getEventBus(), (QuestiontypesViewImpl)view);
 		
 		init();
 		view.setDelegate(this);

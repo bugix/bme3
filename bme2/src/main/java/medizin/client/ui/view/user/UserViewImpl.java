@@ -3,6 +3,8 @@ package medizin.client.ui.view.user;
 import java.util.HashSet;
 import java.util.Set;
 
+import medizin.client.events.RecordChangeEvent;
+import medizin.client.events.RecordChangeHandler;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.style.resources.MyCellTableResources;
@@ -30,7 +32,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class UserViewImpl extends Composite implements UserView  {
+public class UserViewImpl extends Composite implements UserView, RecordChangeHandler  {
 
 	private static UserViewImplUiBinder uiBinder = GWT
 			.create(UserViewImplUiBinder.class);
@@ -130,7 +132,7 @@ public class UserViewImpl extends Composite implements UserView  {
 
 	            @Override
 	            public String getValue(PersonProxy object) {
-	                return renderer.render(object.getName());
+	                return renderer.render(object == null ? null : object.getName());
 	            }
 	        }, constants.name());
 	        
@@ -146,7 +148,7 @@ public class UserViewImpl extends Composite implements UserView  {
 
 	            @Override
 	            public String getValue(PersonProxy object) {
-	                return renderer.render(object.getPrename());
+	                return renderer.render(object == null ? null : object.getPrename());
 	            }
 	        }, constants.prename());
 	        
@@ -162,7 +164,7 @@ public class UserViewImpl extends Composite implements UserView  {
 
 	            @Override
 	            public String getValue(PersonProxy object) {
-	                return renderer.render(object.getEmail());
+	                return renderer.render(object == null ? null : object.getEmail());
 	            }
 	        }, constants.email());
 //	        paths.add("alternativEmail");
@@ -269,6 +271,21 @@ public class UserViewImpl extends Composite implements UserView  {
 		public SplitLayoutPanel getSplitLayoutPanel() {
 			
 			return splitLayoutPanel;
+		}
+
+		@Override
+		public void onRecordChange(RecordChangeEvent event) {
+			int pagesize = 0;
+
+			if (event.getRecordValue() == "ALL") {
+				pagesize = table.getRowCount();
+				McAppConstant.TABLE_PAGE_SIZE = pagesize;
+			} else if (event.getRecordValue().matches("\\d+")) {
+				pagesize = Integer.parseInt(event.getRecordValue());
+			}
+
+			table.setPageSize(pagesize);	
+
 		}
 
 

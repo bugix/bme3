@@ -2,11 +2,13 @@ package medizin.client.activites;
 
 import java.util.List;
 
+import medizin.client.events.RecordChangeEvent;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.PlaceAssesment;
 import medizin.client.place.PlaceAssesmentDetails;
 import medizin.client.proxy.AssesmentProxy;
 import medizin.client.proxy.PersonProxy;
+import medizin.client.ui.view.InstitutionViewImpl;
 import medizin.client.ui.view.assesment.AssesmentView;
 import medizin.client.ui.view.assesment.AssesmentViewImpl;
 
@@ -114,7 +116,9 @@ public class ActivityAssesment extends AbstractActivityWrapper implements Assesm
 				}
 			}
 		});*/
-		init();
+		
+        RecordChangeEvent.register(requests.getEventBus(), (AssesmentViewImpl)view);
+        init();
 		
 		activityManger.setDisplay(view.getDetailsPanel());
 

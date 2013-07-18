@@ -115,6 +115,14 @@ public interface QuestionProxy extends EntityProxy {
 
     abstract void setIsReadOnly(Boolean isReadOnly);
 
+    abstract Integer getImageHeight();
+
+    abstract void setImageHeight(Integer imageHeight);
+
+    abstract Integer getImageWidth();
+
+    abstract void setImageWidth(Integer imageWidth);
+
     abstract Set<medizin.client.proxy.AssesmentQuestionProxy> getAssesmentQuestionSet();
 
     abstract void setAssesmentQuestionSet(Set<medizin.client.proxy.AssesmentQuestionProxy> assesmentQuestionSet);

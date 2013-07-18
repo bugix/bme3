@@ -2,11 +2,11 @@ package medizin.client.activites;
 
 import java.util.List;
 
+import medizin.client.events.RecordChangeEvent;
 import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.PlaceQuestion;
 import medizin.client.place.PlaceQuestionDetails;
-import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.proxy.UserAccessRightsProxy;
@@ -169,6 +169,8 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 				});*/
 
 		activityManger.setDisplay(view.getDetailsPanel());
+		
+		RecordChangeEvent.register(requests.getEventBus(), (QuestionViewImpl)questionView);
 
 		init();
 		

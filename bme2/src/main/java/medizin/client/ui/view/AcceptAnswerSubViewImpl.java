@@ -153,20 +153,28 @@ public class AcceptAnswerSubViewImpl extends Composite implements AcceptAnswerSu
 								{	
 									final List<Point> points = Point.getPoints(Lists.newArrayList(selectedObject.getPoints()));
 									
-									ClientUtility.getImageWidthHeight(questionProxy.getPicturePath(), new ImageWidthHeight() {
-										
-										@Override
-										public void apply(Integer width, Integer height) {
-											ImageRectangleViewer viewer = new ImageRectangleViewer(questionProxy.getPicturePath(), width, height, points, false);
-											vp.add(viewer);
-										}
-									});
+									if (questionProxy.getImageWidth() != null && questionProxy.getImageHeight() != null)
+									{
+										ImageRectangleViewer viewer = new ImageRectangleViewer(questionProxy.getPicturePath(), questionProxy.getImageWidth(), questionProxy.getImageHeight(), points, false);
+										vp.add(viewer);
+									}
+									else
+									{
+										ClientUtility.getImageWidthHeight(questionProxy.getPicturePath(), new ImageWidthHeight() {
+											
+											@Override
+											public void apply(Integer width, Integer height) {
+												ImageRectangleViewer viewer = new ImageRectangleViewer(questionProxy.getPicturePath(), width, height, points, false);
+												vp.add(viewer);
+											}
+										});
+									}
 								}
 								else if (questionProxy.getQuestionType().getQuestionType().equals(QuestionTypes.ShowInImage))
 								{
 									List<PolygonPath> polygonPathList = PolygonPath.getPolygonPaths(Lists.newArrayList(selectedObject.getPoints()));
 									
-									ImagePolygonViewer imgPolygonViewer = new ImagePolygonViewer(questionProxy.getPicturePath(), questionProxy.getQuestionType().getImageWidth(), questionProxy.getQuestionType().getImageHeight(), polygonPathList, false);
+									ImagePolygonViewer imgPolygonViewer = new ImagePolygonViewer(questionProxy.getPicturePath(), questionProxy.getImageWidth(), questionProxy.getImageHeight(), polygonPathList, false);
 									
 									vp.add(imgPolygonViewer);
 								}
@@ -176,12 +184,22 @@ public class AcceptAnswerSubViewImpl extends Composite implements AcceptAnswerSu
 									{
 										final ImageViewer imgViewer = new ImageViewer();
 										
-										ClientUtility.getImageWidthHeight(selectedObject.getMediaPath(), new ImageWidthHeight() {
+										if (questionProxy.getImageWidth() != null && questionProxy.getImageHeight() != null)
+										{
+											imgViewer.setUrl(selectedObject.getMediaPath(), questionProxy.getImageWidth(), questionProxy.getImageHeight(), questionProxy.getQuestionType().getQuestionType());
+										}
+										else
+										{
+											imgViewer.setUrl(selectedObject.getMediaPath(), null, null, questionProxy.getQuestionType().getQuestionType());
+											/*ClientUtility.getImageWidthHeight(selectedObject.getMediaPath(), new ImageWidthHeight() {
+												
+												@Override
+												public void apply(Integer width, Integer height) {
+													imgViewer.setUrl(selectedObject.getMediaPath(), width, height, questionProxy.getQuestionType().getQuestionType());											
+												}
+											});*/
+										}
 											
-											@Override
-											public void apply(Integer width, Integer height) {
-												imgViewer.setUrl(selectedObject.getMediaPath(), width, height, questionProxy.getQuestionType().getQuestionType());											}
-										});	
 										
 										vp.add(imgViewer);
 									}

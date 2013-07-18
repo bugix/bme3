@@ -530,13 +530,23 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		
 		this.imageViewer.clear();
 		if(questionProxy != null && questionProxy.getPicturePath() != null && questionProxy.getPicturePath().length() > 0) {
-			ClientUtility.getImageWidthHeight(questionProxy.getPicturePath(), new ImageWidthHeight() {
-				
-				@Override
-				public void apply(Integer width, Integer height) {
-					imageViewer.setUrl(questionProxy.getPicturePath(), width, height, type);
-				}
-			});			
+			
+			if (questionProxy.getImageWidth() != null && questionProxy.getImageHeight() != null)
+			{
+				imageViewer.setUrl(questionProxy.getPicturePath(), questionProxy.getImageWidth(), questionProxy.getImageHeight(), type);
+			}
+			else
+			{
+				imageViewer.setUrl(questionProxy.getPicturePath(), null, null, type);
+				/*ClientUtility.getImageWidthHeight(questionProxy.getPicturePath(), new ImageWidthHeight() {
+					
+					@Override
+					public void apply(Integer width, Integer height) {
+						imageViewer.setUrl(questionProxy.getPicturePath(), width, height, type);
+					}
+				});*/
+			}
+						
 		}					
 			
 		ArrayList<String> allowedExt = new ArrayList<String>();
@@ -822,6 +832,8 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	public void setValuesForQuestion(QuestionProxy question, CommentProxy commentProxy) {
 		
 		String picturePath = null;
+		Integer height = null;
+		Integer width = null;
 		
 		switch (questionType.getValue().getQuestionType()) {
 		
@@ -829,6 +841,8 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		case ShowInImage:
 		{
 			picturePath = imageViewer.getImageRelativeUrl();
+			height = imageViewer.getHeight();
+			width = imageViewer.getWidth();
 			break;
 		}
 		
@@ -836,6 +850,9 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		{
 			Log.info("in default case");
 			picturePath = null;
+			height = null;
+			width = null;
+			
 			break;
 		}
 		} 
@@ -851,6 +868,8 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		commentProxy.setComment(questionComment.getText().isEmpty() == true ? " " : questionComment.getText());
 		question.setComment(commentProxy);
 		question.setPicturePath(picturePath);
+		question.setImageHeight(height);
+		question.setImageWidth(width);
 	}
 
 	@Override

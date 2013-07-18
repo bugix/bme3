@@ -165,6 +165,10 @@ public class Question {
 	@Column(columnDefinition="BIT", length = 1)
 	private Boolean isReadOnly;
 	
+	private Integer imageHeight;
+	
+	private Integer imageWidth;
+	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "question")
 	private Set<AssesmentQuestion> assesmentQuestionSet = new HashSet<AssesmentQuestion>();
 	

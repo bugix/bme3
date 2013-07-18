@@ -650,4 +650,6 @@ public interface BmeConstants extends Constants , ConstantsWithLookup {
 	public String mailTotalRemainingCount();
 	
 	public String studentImportCsvInfo();
+	
+	public String tableSize();
 }

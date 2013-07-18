@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import medizin.client.events.RecordChangeEvent;
 import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.PlaceInstitution;
@@ -12,6 +13,7 @@ import medizin.client.proxy.InstitutionProxy;
 import medizin.client.request.InstitutionRequest;
 import medizin.client.ui.view.InstitutionView;
 import medizin.client.ui.view.InstitutionViewImpl;
+import medizin.client.ui.view.QuestiontypesViewImpl;
 import medizin.client.ui.widget.Sorting;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 
@@ -126,6 +128,8 @@ public class ActivityInstitution extends AbstractActivityWrapper implements
 						// TODO implement
 					}
 				});*/
+		
+		RecordChangeEvent.register(requests.getEventBus(), (InstitutionViewImpl)view);
 		init();
 
 		activityManger.setDisplay(view.getDetailsPanel());

@@ -18,6 +18,8 @@ import medizin.shared.utils.SharedConstant;
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.base.Function;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.LoadEvent;
+import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.safehtml.shared.SafeUri;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Image;
@@ -205,6 +207,7 @@ public final class ClientUtility {
 	}
 
 	public static void getImageWidthHeight(final String url,final ImageWidthHeight imageWidthHeight) {
+		Image.prefetch(url);
 		final Image image = new Image(new SafeUri() {
 			
 			@Override
@@ -220,7 +223,7 @@ public final class ClientUtility {
 				imageWidthHeight.apply(image.getWidth(), image.getHeight());
 				this.cancel();
 			}
-		}.schedule(250);		
+		}.schedule(250);
 	}
 
 }

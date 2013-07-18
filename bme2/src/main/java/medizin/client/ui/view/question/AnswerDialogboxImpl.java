@@ -262,7 +262,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 				}*/
 				
 				if(question != null && question.getQuestionType() != null && QuestionTypes.ShowInImage.equals(question.getQuestionType().getQuestionType()) && question.getPicturePath() != null && question.getPicturePath().length() > 0 /*&& question.getQuestionType().getImageWidth() != null && question.getQuestionType().getImageHeight() != null*/) {
-					imagePolygonViewer = new ImagePolygonViewer(question.getPicturePath(), question.getQuestionType().getImageWidth(), question.getQuestionType().getImageHeight(),polygonPaths, true);
+					imagePolygonViewer = new ImagePolygonViewer(question.getPicturePath(), question.getImageWidth(), question.getImageHeight(),polygonPaths, true);
 					viewContainer.add(imagePolygonViewer);
 				}
 				
@@ -284,14 +284,23 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 				
 				if(question != null && question.getQuestionType() != null && QuestionTypes.Imgkey.equals(question.getQuestionType().getQuestionType()) && question.getPicturePath() != null && question.getPicturePath().length() > 0 /*&& question.getQuestionType().getImageWidth() != null && question.getQuestionType().getImageHeight() != null*/) {
 					
-					ClientUtility.getImageWidthHeight(question.getPicturePath(), new ImageWidthHeight() {
-						
-						@Override
-						public void apply(Integer width, Integer height) {
-							imageRectangleViewer = new ImageRectangleViewer(question.getPicturePath(), width, height, rectanglePoints, true);
-							viewContainer.add(imageRectangleViewer);
-						}
-					});
+					if (question.getImageWidth() != null && question.getImageHeight() != null)
+					{
+						imageRectangleViewer = new ImageRectangleViewer(question.getPicturePath(), question.getImageWidth(), question.getImageHeight(), rectanglePoints, true);
+						viewContainer.add(imageRectangleViewer);
+					}
+					else
+					{
+						ClientUtility.getImageWidthHeight(question.getPicturePath(), new ImageWidthHeight() {
+							
+							@Override
+							public void apply(Integer width, Integer height) {
+								imageRectangleViewer = new ImageRectangleViewer(question.getPicturePath(), width, height, rectanglePoints, true);
+								viewContainer.add(imageRectangleViewer);
+							}
+						});
+					}
+					
 					/*imageRectangleViewer = new ImageRectangleViewer(question.getPicturePath(), question.getQuestionType().getImageWidth(), question.getQuestionType().getImageHeight(),rectanglePoints, true);
 					viewContainer.add(imageRectangleViewer);*/
 				}

@@ -9,6 +9,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ImageViewer extends Composite{
@@ -26,16 +27,16 @@ public class ImageViewer extends Composite{
 	interface ImageViewerUiBinder extends UiBinder<Widget, ImageViewer> {
 	}
 
-	private int originalWidth;
-	private int originalHeight;
+	private Integer originalWidth;
+	private Integer originalHeight;
 	/*private int currentWidth;
 	private int currentHeight;
 	private int predefinedWidth;
 	private int predefinedHeight;*/
 	
 	
-	@UiField(provided = true)
-	DrawingArea drawingArea;
+	/*@UiField(provided = true)
+	DrawingArea drawingArea;*/
 	
 	/*@UiField
 	CheckBox chkChangeSize;
@@ -55,12 +56,13 @@ public class ImageViewer extends Composite{
 	@UiField
 	TextBox txtWidth;*/
 
-		
-	private org.vaadin.gwtgraphics.client.Image image;
+	@UiField
+	Image image;
+	//private org.vaadin.gwtgraphics.client.Image image;
 	
 	public ImageViewer() {
 		
-		drawingArea = new DrawingArea(100, 100);
+		/*drawingArea = new DrawingArea(100, 100);*/
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		/*lblHeight.setText(constants.height());
@@ -146,7 +148,7 @@ public class ImageViewer extends Composite{
 		drawingArea.setWidth(width);
 	}*/
 		
-	private void init(int width,int height) {
+	private void init(Integer width,Integer height) {
 		
 		Log.info("Init method called ");
 		Log.info("Image path : " + url);
@@ -160,13 +162,23 @@ public class ImageViewer extends Composite{
 		originalWidth = width;
 		originalHeight = height;
 		
-		drawingArea.setHeight(originalHeight);
+		/*drawingArea.setHeight(originalHeight);
 		drawingArea.setWidth(originalWidth);
 		
 		image = new org.vaadin.gwtgraphics.client.Image(
 				0, 0, originalWidth ,originalHeight, url);
 		
-		drawingArea.add(image);
+		drawingArea.add(image);*/
+		
+		image.setUrl(url);
+		if(height != null) {
+			image.setHeight(height + "px");	
+		}
+		
+		if(width != null) {
+			image.setWidth(width + "px");	
+		}
+		
 		
 	}
 
@@ -178,7 +190,7 @@ public class ImageViewer extends Composite{
 		return url;
 	}
 
-	private void renderImage(int width, int height) {
+	private void renderImage(Integer width, Integer height) {
 		Log.info("Rendering image");
 		init(width,height);
 	}
@@ -194,7 +206,7 @@ public class ImageViewer extends Composite{
 
 
 //	@Override
-	public void setUrl(String url,int width, int height, QuestionTypes questionType) {
+	public void setUrl(String url,Integer width, Integer height, QuestionTypes questionType) {
 		Log.info("Set url : " + url);
 		this.url = url;
 		/*if(questionType != null && QuestionTypes.Textual.equals(questionType)) {
@@ -242,7 +254,21 @@ public class ImageViewer extends Composite{
 	}
 
 	public void clear() {
-		drawingArea.clear();
+		image.setUrl("");
+		//drawingArea.clear();
 	}
 
+	public Integer getHeight() {
+		if(image == null) {
+			return null;
+		}
+		return image.getHeight();
+	}
+
+	public Integer getWidth() {
+		if(image == null) {
+			return null;
+		}
+		return image.getWidth();
+	}
 }
