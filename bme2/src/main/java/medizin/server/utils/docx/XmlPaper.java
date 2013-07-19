@@ -22,7 +22,7 @@ import com.google.common.collect.Lists;
 
 public class XmlPaper {
 		
-	private static final Logger log = Logger.getLogger(DocxPaper.class);
+	private static final Logger log = Logger.getLogger(XmlPaper.class);
 	private final ByteArrayOutputStream os;
 	private final Integer assessment;
 	private String fileName = "Paper.xml";
