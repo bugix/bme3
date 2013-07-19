@@ -2,10 +2,12 @@ package medizin.client.ui.widget.process;
 
 import medizin.client.factory.request.RequestEvent;
 import medizin.client.factory.request.RequestEvent.Handler;
+import medizin.client.util.MathJaxs;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.inject.Inject;
 
 public class AppLoader {
@@ -58,6 +60,7 @@ public class AppLoader {
 
 			@Override
 			public void onRequestEvent(RequestEvent event) {
+				MathJaxs.delayRenderLatexResult(RootPanel.getBodyElement());
 
 				RequestEvent.State state = event.getState();
 				if (showLoader) {

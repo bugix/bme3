@@ -59,6 +59,7 @@ public class XmlPaper {
             // output DOM XML to console 
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes"); 
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "3");
             DOMSource source = new DOMSource(doc);
             StreamResult console = new StreamResult(os);
             transformer.transform(source, console);

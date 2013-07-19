@@ -18,8 +18,6 @@ import medizin.shared.utils.SharedConstant;
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.base.Function;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.LoadEvent;
-import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.safehtml.shared.SafeUri;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Image;
@@ -226,4 +224,7 @@ public final class ClientUtility {
 		}.schedule(250);
 	}
 
+	public static String removeMathJax(String text) {
+		return text.replaceAll("\\[", "").replaceAll("\\]", "");		
+	}
 }

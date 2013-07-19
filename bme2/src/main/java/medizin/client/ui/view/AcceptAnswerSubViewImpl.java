@@ -19,6 +19,7 @@ import medizin.client.ui.widget.resource.image.rectangle.ImageRectangleViewer;
 import medizin.client.ui.widget.resource.video.VideoViewer;
 import medizin.client.util.ClientUtility;
 import medizin.client.util.ImageWidthHeight;
+import medizin.client.util.MathJaxs;
 import medizin.client.util.Point;
 import medizin.client.util.PolygonPath;
 import medizin.shared.MultimediaType;
@@ -32,14 +33,10 @@ import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.dom.client.Style.VerticalAlign;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -49,17 +46,13 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.cellview.client.SimplePager;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
-import com.google.gwt.user.client.ui.HasVerticalAlignment.VerticalAlignmentConstant;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.CellPreviewEvent;
@@ -459,6 +452,8 @@ DivElement questionText;*/
 			dialogBox.questionTextHorizontalPanel.add(new HTML(new SafeHtmlBuilder().appendHtmlConstant(questionProxy.getQuestionText()).toSafeHtml()));
 			dialogBox.setPopupPosition(event.getRelativeElement().getAbsoluteLeft()-250, event.getRelativeElement().getAbsoluteTop()+25);
 			dialogBox.show();
+			dialogBox.setWidth((dialogBox.questionTextHorizontalPanel.getParent().getOffsetWidth() + 10) + "px");
+			MathJaxs.delayRenderLatexResult(RootPanel.getBodyElement());
 		}
 	}
 
@@ -487,7 +482,9 @@ DivElement questionText;*/
 		
 		if (flag)
 		{
-			headerText.setText(new HTML(questionProxy.getQuestionText()).getText());			
+			//headerText.setText(new HTML(ClientUtility.removeMathJax(questionProxy.getQuestionText())).getText());
+			headerText.setText(new HTML(ClientUtility.removeMathJax(questionProxy.getQuestionText())).getText());
+
 			headerText.getElement().getStyle().setMarginLeft(5, Unit.PX);
 			viewHtmlText.getElement().getStyle().setMargin(1, Unit.PX);
 			viewHtmlText.setVisible(true);
