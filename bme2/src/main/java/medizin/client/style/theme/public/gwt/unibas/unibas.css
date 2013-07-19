@@ -4438,3 +4438,483 @@ background: url("images/colorpicker.png");
 .questionViewDialogBox .dialogTopCenterInner {
     height: 10px;
 }
+
+
+.MyMathJax
+{
+    padding-top:0px;
+    padding-bottom :0px;
+    display: block;
+}
+
+/*---------------------------------MyMath20-----------------------------------*/
+.MyMath20
+{
+    background: url(images/mathjax/Math20.png) no-repeat;  
+}
+
+.MyMath20
+{
+    padding-top:0px;
+    padding-bottom :0px;
+    display: block;
+}
+
+.MyMath20-amalg{ background-position: 0 0 ; width: 20px; height: 20px; } 
+.MyMath20-ast{ background-position: -20px 0 ; width: 20px; height: 20px; } 
+.MyMath20-bigcirc{ background-position: -40px 0; width: 20px; height: 20px; } 
+.MyMath20-cap{ background-position: -60px 0; width: 20px; height: 20px; } 
+.MyMath20-cdot{ background-position: -80px 0; width: 20px; height: 20px; } 
+.MyMath20-circ{ background-position: -100px 0; width: 20px; height: 20px; } 
+.MyMath20-cup{ background-position: -120px 0; width: 20px; height: 20px; } 
+.MyMath20-dagger{ background-position: -140px 0; width: 20px; height: 20px; } 
+.MyMath20-ddagger{ background-position: -160px 0; width: 20px; height: 20px; } 
+.MyMath20-diamond{ background-position: -180px 0; width: 20px; height: 20px; } 
+.MyMath20-div{ background-position: -200px 0; width: 20px; height: 20px; } 
+.MyMath20-mp{ background-position: -220px 0; width: 20px; height: 20px; } 
+.MyMath20-odot{ background-position: -240px 0; width: 20px; height: 20px; } 
+.MyMath20-ominus{ background-position: -260px 0; width: 20px; height: 20px; } 
+.MyMath20-oplus{ background-position: -280px 0; width: 20px; height: 20px; } 
+.MyMath20-oslash{ background-position: -300px 0; width: 20px; height: 20px; } 
+.MyMath20-otimes{ background-position: -320px 0; width: 20px; height: 20px; } 
+.MyMath20-pm{ background-position: -340px 0; width: 20px; height: 20px; } 
+.MyMath20-setminus{ background-position: -360px 0; width: 20px; height: 20px; } 
+.MyMath20-sqcap{ background-position: -380px 0; width: 20px; height: 20px; } 
+.MyMath20-sqcup{ background-position: -400px 0; width: 20px; height: 20px; } 
+.MyMath20-star{ background-position: -420px 0; width: 20px; height: 20px; } 
+.MyMath20-times{ background-position: -440px 0 ; width: 20px; height: 20px; } 
+.MyMath20-triangleleft{ background-position: -460px 0; width: 20px; height: 20px; } 
+.MyMath20-triangleright{ background-position: -480px 0; width: 20px; height: 20px; } 
+.MyMath20-uplus{ background-position: -500px 0; width: 20px; height: 20px; } 
+.MyMath20-vee{ background-position: -520px 0; width: 20px; height: 20px; } 
+.MyMath20-wedge{ background-position: -540px 0; width: 20px; height: 20px; } 
+.MyMath20-wr{ background-position: -560px 0; width: 20px; height: 20px; } 
+
+/*---------------------------------MyMath20-----------------------------------*/
+
+
+
+/*---------------------------------MySymbol20-----------------------------------*/
+.MySymbol20
+{
+    background: url(images/mathjax/Symbol20.png) no-repeat;
+}
+
+.MySymbol20-Bbbk{ background-position: 0 0; width: 20px; height: 20px; } 
+.MySymbol20-Box{ background-position: -20px 0; width: 20px; height: 20px; } 
+.MySymbol20-Cap{ background-position: -40px 0; width: 20px; height: 20px; } 
+.MySymbol20-Cup{ background-position: -60px 0; width: 20px; height: 20px; } 
+.MySymbol20-Finv{ background-position: -80px 0; width: 20px; height: 20px; } 
+.MySymbol20-Game{ background-position: -100px 0; width: 20px; height: 20px; } 
+.MySymbol20-Im{ background-position: -120px 0; width: 20px; height: 20px; } 
+.MySymbol20-Re{ background-position: -140px 0; width: 20px; height: 20px; } 
+.MySymbol20-S{ background-position: -160px 0; width: 20px; height: 20px; } 
+.MySymbol20-aleph{ background-position: -180px 0; width: 20px; height: 20px; } 
+.MySymbol20-angle{ background-position: -200px 0; width: 20px; height: 20px; } 
+.MySymbol20-backprime{ background-position: -220px 0; width: 20px; height: 20px; } 
+.MySymbol20-barwedge{ background-position: -240px 0; width: 20px; height: 20px; } 
+.MySymbol20-because{ background-position: -260px 0; width: 20px; height: 20px; } 
+.MySymbol20-bigstar{ background-position: -280px 0; width: 20px; height: 20px; } 
+.MySymbol20-blacklozenge{ background-position: -300px 0; width: 20px; height: 20px; } 
+.MySymbol20-blacksquare{ background-position: -320px 0; width: 20px; height: 20px; } 
+.MySymbol20-blacktriangle{ background-position: -340px 0; width: 20px; height: 20px; } 
+.MySymbol20-blacktriangledown{ background-position: -360px 0; width: 20px; height: 20px; } 
+.MySymbol20-blacktriangleleft{ background-position: -380px 0; width: 20px; height: 20px; } 
+.MySymbol20-blacktriangleright{ background-position: -400px 0; width: 20px; height: 20px; } 
+.MySymbol20-bot{ background-position: -420px 0; width: 20px; height: 20px; } 
+.MySymbol20-boxdot{ background-position: -440px 0; width: 20px; height: 20px; } 
+.MySymbol20-boxminus{ background-position: -460px 0; width: 20px; height: 20px; } 
+.MySymbol20-boxplus{ background-position: -480px 0; width: 20px; height: 20px; } 
+.MySymbol20-boxtimes{ background-position: -500px 0; width: 20px; height: 20px; } 
+.MySymbol20-cdot{ background-position: -520px 0; width: 20px; height: 20px; } 
+.MySymbol20-cdots{ background-position: -540px 0; width: 20px; height: 20px; } 
+.MySymbol20-checkmark{ background-position: -560px 0; width: 20px; height: 20px; } 
+.MySymbol20-circ{ background-position: -580px 0; width: 20px; height: 20px; } 
+.MySymbol20-circledR{ background-position: -600px 0; width: 20px; height: 20px; } 
+.MySymbol20-circledS{ background-position: -620px 0; width: 20px; height: 20px; } 
+.MySymbol20-circledast{ background-position: -640px 0; width: 20px; height: 20px; } 
+.MySymbol20-circledcirc{ background-position: -660px 0; width: 20px; height: 20px; } 
+.MySymbol20-circleddash{ background-position: -680px 0; width: 20px; height: 20px; } 
+.MySymbol20-clubsuit{ background-position: -700px 0; width: 20px; height: 20px; } 
+.MySymbol20-complement{ background-position: -720px 0; width: 20px; height: 20px; } 
+.MySymbol20-curlyvee{ background-position: -740px 0; width: 20px; height: 20px; } 
+.MySymbol20-curlywedge{ background-position: -760px 0; width: 20px; height: 20px; } 
+.MySymbol20-ddots{ background-position: -780px 0; width: 20px; height: 20px; } 
+.MySymbol20-diagdown{ background-position: -800px 0; width: 20px; height: 20px; } 
+.MySymbol20-diagup{ background-position: -820px 0; width: 20px; height: 20px; } 
+.MySymbol20-diamond{ background-position: -840px 0; width: 20px; height: 20px; } 
+.MySymbol20-diamondsuit{ background-position: -860px 0; width: 20px; height: 20px; } 
+.MySymbol20-divideontimes{ background-position: -880px 0; width: 20px; height: 20px; } 
+.MySymbol20-dotplus{ background-position: -900px 0; width: 20px; height: 20px; } 
+.MySymbol20-doublebarwedge{ background-position: -920px 0; width: 20px; height: 20px; } 
+.MySymbol20-ell{ background-position: -940px 0; width: 20px; height: 20px; } 
+.MySymbol20-emptyset{ background-position: -960px 0; width: 20px; height: 20px; } 
+.MySymbol20-eth{ background-position: -980px 0; width: 20px; height: 20px; } 
+.MySymbol20-exists{ background-position: -1000px 0; width: 20px; height: 20px; } 
+.MySymbol20-flat{ background-position: -1020px 0; width: 20px; height: 20px; } 
+.MySymbol20-forall{ background-position: -1040px 0; width: 20px; height: 20px; } 
+.MySymbol20-hbar{ background-position: -1060px 0; width: 20px; height: 20px; } 
+.MySymbol20-heartsuit{ background-position: -1080px 0; width: 20px; height: 20px; } 
+.MySymbol20-hslash{ background-position: -1100px 0; width: 20px; height: 20px; } 
+.MySymbol20-imath{ background-position: -1120px 0; width: 20px; height: 20px; } 
+.MySymbol20-infty{ background-position: -1140px 0; width: 20px; height: 20px; } 
+.MySymbol20-intercal{ background-position: -1160px 0; width: 20px; height: 20px; } 
+.MySymbol20-jmath{ background-position: -1180px 0; width: 20px; height: 20px; } 
+.MySymbol20-ldots{ background-position: -1200px 0; width: 20px; height: 20px; } 
+.MySymbol20-leftthreetimes{ background-position: -1220px 0; width: 20px; height: 20px; } 
+.MySymbol20-llcorner{ background-position: -1240px 0; width: 20px; height: 20px; } 
+.MySymbol20-lozenge{ background-position: -1260px 0; width: 20px; height: 20px; } 
+.MySymbol20-lrcorner{ background-position: -1280px 0; width: 20px; height: 20px; } 
+.MySymbol20-ltimes{ background-position: -1300px 0; width: 20px; height: 20px; } 
+.MySymbol20-maltese{ background-position: -1320px 0; width: 20px; height: 20px; } 
+.MySymbol20-mho{ background-position: -1340px 0; width: 20px; height: 20px; } 
+.MySymbol20-nabla{ background-position: -1360px 0; width: 20px; height: 20px; } 
+.MySymbol20-natural{ background-position: -1380px 0; width: 20px; height: 20px; } 
+.MySymbol20-neg{ background-position: -1400px 0; width: 20px; height: 20px; } 
+.MySymbol20-nexists{ background-position: -1420px 0; width: 20px; height: 20px; } 
+.MySymbol20-ominus{ background-position: -1440px 0; width: 20px; height: 20px; } 
+.MySymbol20-oplus{ background-position: -1460px 0; width: 20px; height: 20px; } 
+.MySymbol20-oslash{ background-position: -1480px 0; width: 20px; height: 20px; } 
+.MySymbol20-otimes{ background-position: -1500px 0; width: 20px; height: 20px; } 
+.MySymbol20-partial{ background-position: -1520px 0; width: 20px; height: 20px; } 
+.MySymbol20-prime{ background-position: -1540px 0; width: 20px; height: 20px; } 
+.MySymbol20-rightthreetimes{ background-position: -1560px 0; width: 20px; height: 20px; } 
+.MySymbol20-rtimes{ background-position: -1580px 0; width: 20px; height: 20px; } 
+.MySymbol20-sharp{ background-position: -1600px 0; width: 20px; height: 20px; } 
+.MySymbol20-smallsetminus{ background-position: -1620px 0; width: 20px; height: 20px; } 
+.MySymbol20-spadesuit{ background-position: -1640px 0; width: 20px; height: 20px; } 
+.MySymbol20-sphericalangle{ background-position: -1660px 0; width: 20px; height: 20px; } 
+.MySymbol20-square{ background-position: -1680px 0; width: 20px; height: 20px; } 
+.MySymbol20-surd{ background-position: -1700px 0; width: 20px; height: 20px; } 
+.MySymbol20-therefore{ background-position: -1720px 0; width: 20px; height: 20px; } 
+.MySymbol20-top{ background-position: -1740px 0; width: 20px; height: 20px; } 
+.MySymbol20-triangle{ background-position: -1760px 0; width: 20px; height: 20px; } 
+.MySymbol20-triangledown{ background-position: -1780px 0; width: 20px; height: 20px; } 
+.MySymbol20-triangleleft{ background-position: -1800px 0; width: 20px; height: 20px; } 
+.MySymbol20-triangleright{ background-position: -1820px 0; width: 20px; height: 20px; } 
+.MySymbol20-ulcorner{ background-position: -1840px 0; width: 20px; height: 20px; } 
+.MySymbol20-urcorner{ background-position: -1860px 0; width: 20px; height: 20px; } 
+.MySymbol20-varnothing{ background-position: -1880px 0; width: 20px; height: 20px; } 
+.MySymbol20-vartriangle{ background-position: -1900px 0; width: 20px; height: 20px; } 
+.MySymbol20-vdots{ background-position: -1920px 0; width: 20px; height: 20px; } 
+.MySymbol20-veebar{ background-position: -1940px 0; width: 20px; height: 20px; } 
+.MySymbol20-wp{ background-position: -1960px 0; width: 20px; height: 20px; } 
+.MySymbol20-yen{ background-position: -1980px 0; width: 20px; height: 20px; } 
+
+/*---------------------------------MySymbol20-----------------------------------*/
+
+
+/*---------------------------------MyArrow20-----------------------------------*/
+.MyArrow20
+{
+    background: url(images/mathjax/Arrow20.png) no-repeat;
+}
+
+.MyArrow20-DDownarrow{ background-position: 0 0; width: 20px; height: 20px; } 
+.MyArrow20-DLeftarrow{ background-position: -20px 0; width: 20px; height: 20px; } 
+.MyArrow20-DLeftrightarrow{ background-position: -40px 0; width: 20px; height: 20px; } 
+.MyArrow20-DRightarrow{ background-position: -60px 0; width: 20px; height: 20px; } 
+.MyArrow20-DUparrow{ background-position: -80px 0; width: 20px; height: 20px; } 
+.MyArrow20-DUpdownarrow{ background-position: -100px 0; width: 20px; height: 20px; } 
+.MyArrow20-DnLeftarrow{ background-position: -120px 0; width: 20px; height: 20px; } 
+.MyArrow20-DnLeftrightarrow{ background-position: -140px 0; width: 20px; height: 20px; } 
+.MyArrow20-DnRightarrow{ background-position: -160px 0; width: 20px; height: 20px; } 
+.MyArrow20-Lleftarrow{ background-position: -180px 0; width: 20px; height: 20px; } 
+.MyArrow20-Lsh{ background-position: -200px 0; width: 20px; height: 20px; } 
+.MyArrow20-Rrightarrow{ background-position: -220px 0; width: 20px; height: 20px; } 
+.MyArrow20-Rsh{ background-position: -240px 0; width: 20px; height: 20px; } 
+.MyArrow20-amalg{ background-position: -260px 0; width: 20px; height: 20px; } 
+.MyArrow20-backslash{ background-position: -280px 0; width: 20px; height: 20px; } 
+.MyArrow20-bigcirc{ background-position: -300px 0; width: 20px; height: 20px; } 
+.MyArrow20-cap{ background-position: -320px 0; width: 20px; height: 20px; } 
+.MyArrow20-circlearrowleft{ background-position: -340px 0; width: 20px; height: 20px; } 
+.MyArrow20-circlearrowright{ background-position: -360px 0; width: 20px; height: 20px; } 
+.MyArrow20-cup{ background-position: -380px 0; width: 20px; height: 20px; } 
+.MyArrow20-curvearrowleft{ background-position: -400px 0; width: 20px; height: 20px; } 
+.MyArrow20-curvearrowright{ background-position: -420px 0; width: 20px; height: 20px; } 
+.MyArrow20-dagger{ background-position: -440px 0; width: 20px; height: 20px; } 
+.MyArrow20-dashleftarrow{ background-position: -460px 0; width: 20px; height: 20px; } 
+.MyArrow20-dashrightarrow{ background-position: -480px 0; width: 20px; height: 20px; } 
+.MyArrow20-ddagger{ background-position: -500px 0; width: 20px; height: 20px; } 
+.MyArrow20-downarrow{ background-position: -520px 0; width: 20px; height: 20px; } 
+.MyArrow20-downdownarrows{ background-position: -540px 0; width: 20px; height: 20px; } 
+.MyArrow20-downharpoonleft{ background-position: -560px 0; width: 20px; height: 20px; } 
+.MyArrow20-downharpoonright{ background-position: -580px 0; width: 20px; height: 20px; } 
+.MyArrow20-hookleftarrow{ background-position: -600px 0; width: 20px; height: 20px; } 
+.MyArrow20-hookrightarrow{ background-position: -620px 0; width: 20px; height: 20px; } 
+.MyArrow20-langle{ background-position: -640px 0; width: 20px; height: 20px; } 
+.MyArrow20-lceil{ background-position: -660px 0; width: 20px; height: 20px; } 
+.MyArrow20-leftD{ background-position: -680px 0; width: 20px; height: 20px; } 
+.MyArrow20-leftL{ background-position: -700px 0; width: 20px; height: 20px; } 
+.MyArrow20-leftM{ background-position: -720px 0; width: 20px; height: 20px; } 
+.MyArrow20-leftarrow{ background-position: -740px 0; width: 20px; height: 20px; } 
+.MyArrow20-leftarrowtail{ background-position: -760px 0; width: 20px; height: 20px; } 
+.MyArrow20-leftharpoondown{ background-position: -780px 0; width: 20px; height: 20px; } 
+.MyArrow20-leftharpoonup{ background-position: -800px 0; width: 20px; height: 20px; } 
+.MyArrow20-leftleftarrows{ background-position: -820px 0; width: 20px; height: 20px; } 
+.MyArrow20-leftrightarrow{ background-position: -840px 0; width: 20px; height: 20px; } 
+.MyArrow20-leftrightarrows{ background-position: -860px 0; width: 20px; height: 20px; } 
+.MyArrow20-leftrightharpoons{ background-position: -880px 0; width: 20px; height: 20px; } 
+.MyArrow20-leftrightsquigarrow{ background-position: -900px 0; width: 20px; height: 20px; } 
+.MyArrow20-lfloor{ background-position: -920px 0; width: 20px; height: 20px; } 
+.MyArrow20-looparrowleft{ background-position: -940px 0; width: 20px; height: 20px; } 
+.MyArrow20-looparrowright{ background-position: -960px 0; width: 20px; height: 20px; } 
+.MyArrow20-mapsto{ background-position: -980px 0; width: 20px; height: 20px; } 
+.MyArrow20-multimap{ background-position: -1000px 0; width: 20px; height: 20px; } 
+.MyArrow20-nleftarrow{ background-position: -1020px 0; width: 20px; height: 20px; } 
+.MyArrow20-nleftrightarrow{ background-position: -1040px 0; width: 20px; height: 20px; } 
+.MyArrow20-nrightarrow{ background-position: -1060px 0; width: 20px; height: 20px; } 
+.MyArrow20-odot{ background-position: -1080px 0; width: 20px; height: 20px; } 
+.MyArrow20-rangle{ background-position: -1100px 0; width: 20px; height: 20px; } 
+.MyArrow20-rceil{ background-position: -1120px 0; width: 20px; height: 20px; } 
+.MyArrow20-rfloor{ background-position: -1140px 0; width: 20px; height: 20px; } 
+.MyArrow20-rightD{ background-position: -1160px 0; width: 20px; height: 20px; } 
+.MyArrow20-rightL{ background-position: -1180px 0; width: 20px; height: 20px; } 
+.MyArrow20-rightM{ background-position: -1200px 0; width: 20px; height: 20px; } 
+.MyArrow20-rightarrow{ background-position: -1220px 0; width: 20px; height: 20px; } 
+.MyArrow20-rightarrowtail{ background-position: -1240px 0; width: 20px; height: 20px; } 
+.MyArrow20-rightharpoondown{ background-position: -1260px 0; width: 20px; height: 20px; } 
+.MyArrow20-rightharpoonup{ background-position: -1280px 0; width: 20px; height: 20px; } 
+.MyArrow20-rightleftarrows{ background-position: -1300px 0; width: 20px; height: 20px; } 
+.MyArrow20-rightleftharpoons{ background-position: -1320px 0; width: 20px; height: 20px; } 
+.MyArrow20-rightrightarrows{ background-position: -1340px 0; width: 20px; height: 20px; } 
+.MyArrow20-rightsquigarrow{ background-position: -1360px 0; width: 20px; height: 20px; } 
+.MyArrow20-setminus{ background-position: -1380px 0; width: 20px; height: 20px; } 
+.MyArrow20-sqcap{ background-position: -1400px 0; width: 20px; height: 20px; } 
+.MyArrow20-sqcup{ background-position: -1420px 0; width: 20px; height: 20px; } 
+.MyArrow20-twoheadleftarrow{ background-position: -1440px 0; width: 20px; height: 20px; } 
+.MyArrow20-twoheadrightarrow{ background-position: -1460px 0; width: 20px; height: 20px; } 
+.MyArrow20-uparrow{ background-position: -1480px 0; width: 20px; height: 20px; } 
+.MyArrow20-updownarrow{ background-position: -1500px 0; width: 20px; height: 20px; } 
+.MyArrow20-upharpoonleft{ background-position: -1520px 0; width: 20px; height: 20px; } 
+.MyArrow20-upharpoonright{ background-position: -1540px 0; width: 20px; height: 20px; } 
+.MyArrow20-uplus{ background-position: -1560px 0; width: 20px; height: 20px; } 
+.MyArrow20-upuparrows{ background-position: -1580px 0; width: 20px; height: 20px; } 
+.MyArrow20-vee{ background-position: -1600px 0; width: 20px; height: 20px; } 
+.MyArrow20-wedge{ background-position: -1620px 0; width: 20px; height: 20px; } 
+.MyArrow20-wr{ background-position: -1640px 0; width: 20px; height: 20px; } 
+
+/*---------------------------------MyArrow20-----------------------------------*/
+
+
+/*---------------------------------MyLogic20-----------------------------------*/
+.MyLogic20
+{
+    background: url(images/mathjax/Logic20.png) no-repeat;
+}
+
+
+.MyLogic20-Leftrightarrow{ background-position: 0 0; width: 20px; height: 20px; } 
+.MyLogic20-acute{ background-position: -20px 0; width: 20px; height: 20px; } 
+.MyLogic20-approx{ background-position: -40px 0; width: 20px; height: 20px; } 
+.MyLogic20-asymp{ background-position: -60px 0; width: 20px; height: 20px; } 
+.MyLogic20-bar{ background-position: -80px 0; width: 20px; height: 20px; } 
+.MyLogic20-bowtie{ background-position: -100px 0; width: 20px; height: 20px; } 
+.MyLogic20-breve{ background-position: -120px 0; width: 20px; height: 20px; } 
+.MyLogic20-check{ background-position: -140px 0; width: 20px; height: 20px; } 
+.MyLogic20-cong{ background-position: -160px 0; width: 20px; height: 20px; } 
+.MyLogic20-dashv{ background-position: -180px 0; width: 20px; height: 20px; } 
+.MyLogic20-ddot{ background-position: -200px 0; width: 20px; height: 20px; } 
+.MyLogic20-dot{ background-position: -220px 0; width: 20px; height: 20px; } 
+.MyLogic20-doteq{ background-position: -240px 0; width: 20px; height: 20px; } 
+.MyLogic20-equiv{ background-position: -260px 0; width: 20px; height: 20px; } 
+.MyLogic20-frown{ background-position: -280px 0; width: 20px; height: 20px; } 
+.MyLogic20-geq{ background-position: -300px 0; width: 20px; height: 20px; } 
+.MyLogic20-gg{ background-position: -320px 0; width: 20px; height: 20px; } 
+.MyLogic20-grave{ background-position: -340px 0; width: 20px; height: 20px; } 
+.MyLogic20-hat{ background-position: -360px 0; width: 20px; height: 20px; } 
+.MyLogic20-implies{ background-position: -380px 0; width: 20px; height: 20px; } 
+.MyLogic20-in{ background-position: -400px 0; width: 20px; height: 20px; } 
+.MyLogic20-leq{ background-position: -420px 0; width: 20px; height: 20px; } 
+.MyLogic20-lhd{ background-position: -440px 0; width: 20px; height: 20px; } 
+.MyLogic20-ll{ background-position: -460px 0; width: 20px; height: 20px; } 
+.MyLogic20-mid{ background-position: -480px 0; width: 20px; height: 20px; } 
+.MyLogic20-models{ background-position: -500px 0; width: 20px; height: 20px; } 
+.MyLogic20-neq{ background-position: -520px 0; width: 20px; height: 20px; } 
+.MyLogic20-ni{ background-position: -540px 0; width: 20px; height: 20px; } 
+.MyLogic20-parallel{ background-position: -560px 0; width: 20px; height: 20px; } 
+.MyLogic20-perp{ background-position: -580px 0; width: 20px; height: 20px; } 
+.MyLogic20-prec{ background-position: -600px 0; width: 20px; height: 20px; } 
+.MyLogic20-preceq{ background-position: -620px 0; width: 20px; height: 20px; } 
+.MyLogic20-propto{ background-position: -640px 0; width: 20px; height: 20px; } 
+.MyLogic20-rhd{ background-position: -660px 0; width: 20px; height: 20px; } 
+.MyLogic20-rightleftharpoons{ background-position: -680px 0; width: 20px; height: 20px; } 
+.MyLogic20-sim{ background-position: -700px 0; width: 20px; height: 20px; } 
+.MyLogic20-simeq{ background-position: -720px 0; width: 20px; height: 20px; } 
+.MyLogic20-smile{ background-position: -740px 0; width: 20px; height: 20px; } 
+.MyLogic20-sqsubseteq{ background-position: -760px 0; width: 20px; height: 20px; } 
+.MyLogic20-sqsupseteq{ background-position: -780px 0; width: 20px; height: 20px; } 
+.MyLogic20-subset{ background-position: -800px 0; width: 20px; height: 20px; } 
+.MyLogic20-subseteq{ background-position: -820px 0; width: 20px; height: 20px; } 
+.MyLogic20-succ{ background-position: -840px 0; width: 20px; height: 20px; } 
+.MyLogic20-succeq{ background-position: -860px 0; width: 20px; height: 20px; } 
+.MyLogic20-supset{ background-position: -880px 0; width: 20px; height: 20px; } 
+.MyLogic20-tilde{ background-position: -900px 0; width: 20px; height: 20px; } 
+.MyLogic20-unlhd{ background-position: -920px 0; width: 20px; height: 20px; } 
+.MyLogic20-unrhd{ background-position: -940px 0; width: 20px; height: 20px; } 
+.MyLogic20-vdash{ background-position: -960px 0; width: 20px; height: 20px; } 
+.MyLogic20-vec{ background-position: -980px 0; width: 20px; height: 20px; } 
+
+/*---------------------------------MyLogic20-----------------------------------*/
+
+/*---------------------------------MyGreek20-----------------------------------*/
+.MyGreek20
+{
+    background: url(images/mathjax/Greek20.png) no-repeat;
+}
+
+.MyGreek20-alpha{ background-position: 0 0; width: 20px; height: 20px; } 
+.MyGreek20-beta{ background-position: -20px 0; width: 20px; height: 20px; } 
+.MyGreek20-chi{ background-position: -40px 0; width: 20px; height: 20px; } 
+.MyGreek20-delta{ background-position: -60px 0; width: 20px; height: 20px; } 
+.MyGreek20-epsilon{ background-position: -80px 0; width: 20px; height: 20px; } 
+.MyGreek20-eta{ background-position: -100px 0; width: 20px; height: 20px; } 
+.MyGreek20-gamma{ background-position: -120px 0; width: 20px; height: 20px; } 
+.MyGreek20-iota{ background-position: -140px 0; width: 20px; height: 20px; } 
+.MyGreek20-kappa{ background-position: -160px 0; width: 20px; height: 20px; } 
+.MyGreek20-lambda{ background-position: -180px 0; width: 20px; height: 20px; } 
+.MyGreek20-mu{ background-position: -200px 0; width: 20px; height: 20px; } 
+.MyGreek20-nu{ background-position: -220px 0; width: 20px; height: 20px; } 
+.MyGreek20-omega{ background-position: -240px 0; width: 20px; height: 20px; } 
+.MyGreek20-phi{ background-position: -260px 0; width: 20px; height: 20px; } 
+.MyGreek20-pi{ background-position: -280px 0; width: 20px; height: 20px; } 
+.MyGreek20-psi{ background-position: -300px 0; width: 20px; height: 20px; } 
+.MyGreek20-rho{ background-position: -320px 0; width: 20px; height: 20px; } 
+.MyGreek20-sigma{ background-position: -340px 0; width: 20px; height: 20px; } 
+.MyGreek20-tau{ background-position: -360px 0; width: 20px; height: 20px; } 
+.MyGreek20-theta{ background-position: -380px 0; width: 20px; height: 20px; } 
+.MyGreek20-upsilon{ background-position: -400px 0; width: 20px; height: 20px; } 
+.MyGreek20-xi{ background-position: -420px 0; width: 20px; height: 20px; } 
+.MyGreek20-zeta{ background-position: -440px 0; width: 20px; height: 20px; } 
+
+/*---------------------------------MyGreek20-----------------------------------*/
+
+/*---------------------------------Fun4020-------------------------------------*/
+
+.MyFun4020
+{
+    background: url(images/mathjax/Fun4020.png) no-repeat;
+}
+
+.MyFun4020-arccos{ background-position: 0 0; width: 40px; height: 20px; } 
+.MyFun4020-arcsin{ background-position: -40px 0; width: 40px; height: 20px; } 
+.MyFun4020-arctan{ background-position: -80px 0; width: 40px; height: 20px; } 
+.MyFun4020-bmod{ background-position: -120px 0; width: 40px; height: 20px; } 
+.MyFun4020-cos{ background-position: -160px 0; width: 40px; height: 20px; } 
+.MyFun4020-cosh{ background-position: -200px 0; width: 40px; height: 20px; } 
+.MyFun4020-cot{ background-position: -240px 0; width: 40px; height: 20px; } 
+.MyFun4020-coth{ background-position: -280px 0; width: 40px; height: 20px; } 
+.MyFun4020-csc{ background-position: -320px 0; width: 40px; height: 20px; } 
+.MyFun4020-det{ background-position: -360px 0; width: 40px; height: 20px; } 
+.MyFun4020-exp{ background-position: -400px 0; width: 40px; height: 20px; } 
+.MyFun4020-gcd{ background-position: -440px 0; width: 40px; height: 20px; } 
+.MyFun4020-hom{ background-position: -480px 0; width: 40px; height: 20px; } 
+.MyFun4020-inf{ background-position: -520px 0; width: 40px; height: 20px; } 
+.MyFun4020-ker{ background-position: -560px 0; width: 40px; height: 20px; } 
+.MyFun4020-lim{ background-position: -600px 0; width: 40px; height: 20px; } 
+.MyFun4020-ln{ background-position: -640px 0; width: 40px; height: 20px; } 
+.MyFun4020-log{ background-position: -680px 0; width: 40px; height: 20px; } 
+.MyFun4020-max{ background-position: -720px 0; width: 40px; height: 20px; } 
+.MyFun4020-min{ background-position: -760px 0; width: 40px; height: 20px; } 
+.MyFun4020-sec{ background-position: -800px 0; width: 40px; height: 20px; } 
+.MyFun4020-sin{ background-position: -840px 0; width: 40px; height: 20px; } 
+.MyFun4020-sinh{ background-position: -880px 0; width: 40px; height: 20px; } 
+.MyFun4020-sup{ background-position: -920px 0; width: 40px; height: 20px; } 
+.MyFun4020-tan{ background-position: -960px 0; width: 40px; height: 20px; } 
+.MyFun4020-tanh{ background-position: -1000px 0; width: 40px; height: 20px; } 
+/*---------------------------------Fun4020-------------------------------------*/
+
+/*-------------------------------MyMath3528-----------------------------------*/
+.MyMath3528
+{
+    background: url(images/mathjax/Math3528.png) no-repeat;
+}
+
+.MyMath3528-UpAndDown{ background-position: 0 0; width: 35px; height: 28px; } 
+.MyMath3528-abDown{ background-position: -35px 0; width: 35px; height: 28px; } 
+.MyMath3528-abUP{ background-position: -70px 0; width: 35px; height: 28px; } 
+.MyMath3528-lg{ background-position: -105px 0; width: 35px; height: 28px; } 
+.MyMath3528-log{ background-position: -140px 0; width: 35px; height: 28px; } 
+.MyMath3528-overbrace{ background-position: -175px 0; width: 35px; height: 28px; } 
+.MyMath3528-overleftarrow{ background-position: -210px 0; width: 35px; height: 28px; } 
+.MyMath3528-overline{ background-position: -245px 0; width: 35px; height: 28px; } 
+.MyMath3528-overrightarrow{ background-position: -280px 0; width: 35px; height: 28px; } 
+.MyMath3528-sqrt{ background-position: -315px 0; width: 35px; height: 28px; } 
+.MyMath3528-sqrtn{ background-position: -350px 0; width: 35px; height: 28px; } 
+.MyMath3528-underbrace{ background-position: -385px 0; width: 35px; height: 28px; } 
+.MyMath3528-underline{ background-position: -420px 0; width: 35px; height: 28px; } 
+.MyMath3528-widehat{ background-position: -455px 0; width: 35px; height: 28px; } 
+.MyMath3528-widetilde{ background-position: -490px 0; width: 35px; height: 28px; } 
+/*-------------------------------MyMath3528-----------------------------------*/
+
+/*-------------------------------MyMath3545-----------------------------------*/
+.MyMath3545
+{
+    background: url(images/mathjax/Math3545.png) no-repeat;
+}
+
+.MyMath3545-arrayA{ background-position: 0 0; width: 35px; height: 45px; } 
+.MyMath3545-bigcap{ background-position: -35px 0; width: 35px; height: 45px; } 
+.MyMath3545-bigcup{ background-position: -70px 0; width: 35px; height: 45px; } 
+.MyMath3545-bigsqcup{ background-position: -105px 0; width: 35px; height: 45px; } 
+.MyMath3545-bigvee{ background-position: -140px 0; width: 35px; height: 45px; } 
+.MyMath3545-bigwedge{ background-position: -175px 0; width: 35px; height: 45px; } 
+.MyMath3545-coprod{ background-position: -210px 0; width: 35px; height: 45px; } 
+.MyMath3545-fracA{ background-position: -245px 0; width: 35px; height: 45px; } 
+.MyMath3545-fracB{ background-position: -280px 0; width: 35px; height: 45px; } 
+.MyMath3545-fracC{ background-position: -315px 0; width: 35px; height: 45px; } 
+.MyMath3545-intA{ background-position: -350px 0; width: 35px; height: 45px; } 
+.MyMath3545-lim{ background-position: -385px 0; width: 35px; height: 45px; } 
+.MyMath3545-oint{ background-position: -420px 0; width: 35px; height: 45px; } 
+.MyMath3545-prod{ background-position: -455px 0; width: 35px; height: 45px; } 
+.MyMath3545-sumA{ background-position: -490px 0; width: 35px; height: 45px; } 
+
+/*-------------------------------MyMath3545-----------------------------------*/
+
+
+/*-------------------------------MyMathHeigh45-----------------------------------*/
+.MyMathHeigh45
+{
+    background: url(images/mathjax/MathHeigh45.png) no-repeat;
+}
+
+.MyMathHeigh45-arrayA{ background-position: 0 0; width: 45px; height: 45px; } 
+.MyMathHeigh45-bmatrix{ background-position: -45px 0; width: 60px; height: 45px; } 
+.MyMathHeigh45-casesA{ background-position: -105px 0; width: 80px; height: 45px; } 
+/*-------------------------------MyMathHeigh45-----------------------------------*/
+
+
+/* .MathJax-Button {
+	outline-style: none !important;
+	margin: 0;
+	padding: 3px 6px 3px 3px;
+	text-decoration: none !important;
+	cursor: pointer;
+	cursor: hand;
+	background: url("images/ui-bg_glass_75_dadada_1x400.png") repeat-x scroll 50% 50% #DADADA;
+	border: 1px solid #999;	
+	border-radius: 4px;
+	white-space: nowrap;
+}
+
+.MathJax-Button:active {
+	outline-style: none;
+	background: url("images/ui-bg_glass_75_f1b532_1x400.png") repeat-x scroll 50% 50% #f1b532;
+}
+
+.MathJax-Button:hover {
+	outline-style: none;
+	background: url("images/ui-bg_glass_75_f1b532_1x400.png") repeat-x scroll 50% 50% #f1b532;
+}
+
+.MathJax-Button[disabled] {
+	cursor: default;
+	color: #bbb;
+	background: url("images/ui-bg_glass_75_dadada_1x400.png") repeat-x scroll 50% 50% #DADADA;
+	border-color: #bbb;
+}
+
+.MathJax-Button[disabled]:hover {
+	color: #bbb;
+	background: url("images/ui-bg_glass_75_dadada_1x400.png") repeat-x scroll 50% 50% #DADADA;
+} */

@@ -166,7 +166,7 @@ public class Assesment {
         return assesments;
     }
     
-    public static List<Assesment> findActiveAssesments() {
+    public static List<Assesment> findActiveAssesments(Long selectedInstitutionId) {
     	Date dateOfAssesment =new Date();
     	Date dateOpen = new Date(); 
     	//Boolean isClosed=false;
@@ -175,10 +175,11 @@ public class Assesment {
     	//log.debug("Datum geschlossen: " + dateClosed);
 
         EntityManager em = Assesment.entityManager();
-        TypedQuery<Assesment> q = em.createQuery("SELECT Assesment FROM Assesment AS assesment WHERE assesment.dateOfAssesment >= :dateOfAssesment  AND assesment.dateOpen <= :dateOpen", Assesment.class);
+        TypedQuery<Assesment> q = em.createQuery("SELECT Assesment FROM Assesment AS assesment WHERE assesment.dateOfAssesment >= :dateOfAssesment  AND assesment.dateOpen <= :dateOpen AND assesment.institution.id = :institution", Assesment.class);
         q.setParameter("dateOfAssesment", dateOfAssesment);
         q.setParameter("dateOpen", dateOpen);
       //  q.setParameter("isClosed", isClosed);
+        q.setParameter("institution", selectedInstitutionId);
         return q.getResultList();
     }
     

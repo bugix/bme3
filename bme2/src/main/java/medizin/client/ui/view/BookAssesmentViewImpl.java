@@ -1,27 +1,31 @@
 package medizin.client.ui.view;
 
+import java.awt.Label;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import medizin.client.place.PlaceBookAssesmentDetails;
 import medizin.client.factory.request.McAppRequestFactory;
+import medizin.client.place.PlaceBookAssesmentDetails;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.BeforeSelectionEvent;
+import com.google.gwt.event.logical.shared.BeforeSelectionHandler;
 import com.google.gwt.place.shared.PlaceController;
-import com.google.web.bindery.requestfactory.shared.EntityProxyId;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.TabBar;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
+import com.google.web.bindery.requestfactory.shared.EntityProxyId;
 
 public class BookAssesmentViewImpl extends Composite implements BookAssesmentView  {
 
@@ -40,6 +44,29 @@ public class BookAssesmentViewImpl extends Composite implements BookAssesmentVie
 
 	private McAppRequestFactory requests;
 	private PlaceController placeController;
+	
+//	//Tab for Assesements
+//	@UiField
+//    TabLayoutPanel tabPanel;
+// 
+//	@UiField
+//    CellTable<AssesmentProxy> table;
+	
+	/*@UiField
+	HorizontalPanel tabs;*/
+	
+	@UiField
+	TabBar tabLayout;
+	
+	@UiField
+	SimplePanel content;
+	
+	
+
+	protected Set<String> paths = new HashSet<String>();
+	private Integer tabId=0;
+	private HashMap<Integer, EntityProxyId<?>> idMap = new HashMap<Integer, EntityProxyId<?>>();
+
 
 	@Inject
 	public BookAssesmentViewImpl(McAppRequestFactory requests, PlaceController placeController) {
@@ -62,40 +89,36 @@ public class BookAssesmentViewImpl extends Composite implements BookAssesmentVie
 		this.presenter = presenter;
 		
 	}
-//	//Tab for Assesements
-//	@UiField
-//    TabLayoutPanel tabPanel;
-// 
-//	@UiField
-//    CellTable<AssesmentProxy> table;
 	
-	@UiField
-	HorizontalPanel tabs;
-	@UiField
-	SimplePanel content;
-	
-	
-
-	protected Set<String> paths = new HashSet<String>();
-	private Integer tabId=0;
-	private HashMap<Integer, EntityProxyId<?>> idMap = new HashMap<Integer, EntityProxyId<?>>();
-	
-	public void init() {
+	@Override
+	public void addTabHandler() {
 		
+		tabLayout.addBeforeSelectionHandler(new BeforeSelectionHandler<Integer>() {
+			
+			@Override
+			public void onBeforeSelection(BeforeSelectionEvent<Integer> event) {
+				presenter.goTo(new PlaceBookAssesmentDetails(idMap.get(event.getItem())));
+			}
+		});
+		
+		if(idMap.isEmpty() == false)
+		{
+			Log.info("TabLayout selection : " + tabLayout.selectTab(0));	
+		}
 		
 	
-	    }
+	}
 	@Override
 	public void createTab(String name, EntityProxyId<?> id) {
 
-		Anchor link = new Anchor(name);
+		/*Anchor link = new Anchor(name);
 		link.setName(String.valueOf(tabId));
-		link.addStyleName("ui-button ui-widget ui-state-default ui-button-text-only");
+		link.addStyleName("ui-button ui-widget ui-state-default ui-button-text-only");*/
 		idMap.put(tabId, id);
 		tabId++;
-		tabs.add(link);
+		tabLayout.addTab(name);
 		
-		link.addClickHandler( new ClickHandler(){  
+		/*link.addClickHandler( new ClickHandler(){  
 			   @Override  
 			  public void onClick(ClickEvent event) {  
 				   
@@ -113,10 +136,10 @@ public class BookAssesmentViewImpl extends Composite implements BookAssesmentVie
 				   Integer value = Integer.parseInt(clickedLink.getName());
 				   clickedLink.setStyleName("ui-button ui-widget ui-state-default ui-button-text-only ui-state-active");
 				   Log.info(idMap.get(value).toString());
-			  presenter.goTo(new PlaceBookAssesmentDetails(idMap.get(value))); 
+				   presenter.goTo(new PlaceBookAssesmentDetails(idMap.get(value))); 
 			  
 			 }  
-			 }); 
+			 }); */
 		
 		
 	}
@@ -125,8 +148,5 @@ public class BookAssesmentViewImpl extends Composite implements BookAssesmentVie
 		
 		return content;
 	}
-	
-	
-	
 
 }

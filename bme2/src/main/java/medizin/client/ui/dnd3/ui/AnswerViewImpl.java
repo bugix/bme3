@@ -1,8 +1,12 @@
 package medizin.client.ui.dnd3.ui;
 
+
 import medizin.client.proxy.AnswerProxy;
 import medizin.client.proxy.AnswerToAssQuestionProxy;
 
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.dom.client.Style.VerticalAlign;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
@@ -13,15 +17,14 @@ import com.google.web.bindery.requestfactory.shared.EntityProxyId;
 
 public class AnswerViewImpl extends HorizontalPanel implements AnswerView {
 
-	   Label lblAnswerText = new Label();
-	   Label lblIcon = new Label();
+	   //Label lblAnswerText = new Label();
+		
+	HorizontalPanel lblAnswerText = new HorizontalPanel();
+	Label lblIcon = new Label();
 
-
-	   private AnswerProxy answer;
-	   private AnswerToAssQuestionProxy answerToAssQueston;
+	private AnswerProxy answer;
+	private AnswerToAssQuestionProxy answerToAssQueston;
 	   
-	   
-
 	@Override
 	public AnswerToAssQuestionProxy getAnswerToAssQueston() {
 		return answerToAssQueston;
@@ -79,10 +82,11 @@ public class AnswerViewImpl extends HorizontalPanel implements AnswerView {
 	}
 	
 	public void setAnswerText(String answerText){
-		lblAnswerText.setText(answerText);
+		//lblAnswerText.setText(answerText);
+		lblAnswerText.add(new HTML(answerText));
 	}
 	@Override
-	public Label getLblAnswerText(){
+	public HorizontalPanel getLblAnswerText(){
 		return lblAnswerText;
 	}
 
@@ -90,9 +94,13 @@ public class AnswerViewImpl extends HorizontalPanel implements AnswerView {
 		this.add(lblIcon);
 		this.setStyleName("answerDND");	
 		this.add(lblAnswerText);
-		lblAnswerText.setText(answer.getAnswerText());
-	
-		lblAnswerText.setWidth("610px");
+		//lblAnswerText.setText(answer.getAnswerText());
+		lblAnswerText.add(new HTML(answer.getAnswerText()));
+		lblAnswerText.getElement().getStyle().setMarginLeft(5, Unit.PX);
+		if (lblIcon.getElement().getParentElement() != null) {
+			lblIcon.getElement().getParentElement().getStyle().setVerticalAlign(VerticalAlign.MIDDLE);
+		}
+		lblAnswerText.setWidth("820px");
 		/**
 		 * Set icon for Answer via css.
 		 */

@@ -295,4 +295,20 @@ public class MatrixValidity {
 		log.info("Result list size :" + query.getResultList().size());
 		return query.getResultList();
 	}
+
+	public static List<MatrixValidity> findallMatrixValidityForAnswers(List<Long> answerList) {
+		
+		
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<MatrixValidity> criteriaQuery = criteriaBuilder.createQuery(MatrixValidity.class);
+		
+		Root<MatrixValidity> from = criteriaQuery.from(MatrixValidity.class);
+		
+		Predicate p1 = from.get("answerX").get("id").in(answerList);
+		Predicate p2 = from.get("answerY").get("id").in(answerList);
+		
+		criteriaQuery.where(criteriaBuilder.or(p1, p2));
+		TypedQuery<MatrixValidity> query = entityManager().createQuery(criteriaQuery);
+		return query.getResultList();
+	}
 }

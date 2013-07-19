@@ -37,6 +37,7 @@ import medizin.client.ui.view.question.QuestionDetailsViewImpl;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.ui.widget.resource.dndview.vo.State;
+import medizin.client.util.MathJaxs;
 import medizin.client.util.Matrix;
 import medizin.client.util.MatrixValidityVO;
 import medizin.shared.QuestionTypes;
@@ -51,6 +52,7 @@ import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.RangeChangeEvent;
 
@@ -411,6 +413,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			view.getMatrixAnswerListViewImpl().setVisible(false);
 			initAnswerView();
 		}
+		MathJaxs.delayRenderLatexResult(RootPanel.getBodyElement());
 	}
 
 	private void initAnswerView() {

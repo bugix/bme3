@@ -30,6 +30,7 @@ import medizin.client.ui.view.question.QuestionEditView;
 import medizin.client.ui.view.question.QuestionEditViewImpl;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.ui.widget.resource.dndview.vo.State;
+import medizin.client.util.MathJaxs;
 import medizin.shared.Status;
 
 import com.allen_sauer.gwt.log.client.Log;
@@ -40,6 +41,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.inject.Inject;
 import com.google.web.bindery.requestfactory.shared.EntityProxyId;
 
@@ -171,6 +173,7 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 						Log.info(((QuestionProxy) response).getQuestionText());
 						question = (QuestionProxy) response;
 						init();
+						MathJaxs.delayRenderLatexResult(RootPanel.getBodyElement());
 					}
 				}
 			});

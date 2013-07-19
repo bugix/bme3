@@ -13,6 +13,7 @@ import medizin.client.proxy.UserAccessRightsProxy;
 import medizin.client.shared.AccessRights;
 import medizin.client.ui.view.question.QuestionView;
 import medizin.client.ui.view.question.QuestionViewImpl;
+import medizin.client.util.MathJaxs;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.activity.shared.ActivityManager;
@@ -24,6 +25,7 @@ import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.cellview.client.AbstractHasData;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.RangeChangeEvent;
@@ -371,6 +373,7 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 						if (widget != null) {
 							widget.setWidget(view.asWidget());
 						}
+						MathJaxs.delayRenderLatexResult(RootPanel.getBodyElement());
 					}
 				});
 

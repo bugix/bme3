@@ -7,6 +7,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -19,8 +20,7 @@ import com.google.web.bindery.requestfactory.shared.EntityProxyId;
  *
  */
 public class QuestionViewImpl extends VerticalPanel implements QuestionView {
-	private static QuestionViewImplUiBinder uiBinder = GWT
-			.create(QuestionViewImplUiBinder.class);
+	private static QuestionViewImplUiBinder uiBinder = GWT.create(QuestionViewImplUiBinder.class);
 
 	interface QuestionViewImplUiBinder extends
 			UiBinder<Widget, QuestionViewImpl> {
@@ -36,7 +36,8 @@ public class QuestionViewImpl extends VerticalPanel implements QuestionView {
 	private AssesmentQuestionProxy questionProxy;
 	private VerticalPanel verticalPanel;
 	private Integer orderAversion;
-	private Label questionTextLbl = new Label();
+	//private Label questionTextLbl = new Label();
+	private HorizontalPanel questionTextLbl = new HorizontalPanel();
 
 	
 	
@@ -45,13 +46,13 @@ public class QuestionViewImpl extends VerticalPanel implements QuestionView {
 	//Getters n setters
 	
 	
-	public Label getQuestionTextLbl() {
+	public HorizontalPanel getQuestionTextLbl() {
 		return questionTextLbl;
 	}
 
-	public void setQuestionTextLbl(Label questionTextLbl) {
+	/*public void setQuestionTextLbl(HorizontalPanel questionTextLbl) {
 		this.questionTextLbl = questionTextLbl;
-	}
+	}*/
 	
 	@Override
 	public AssesmentQuestionProxy getQuestionProxy() {
@@ -108,9 +109,9 @@ public class QuestionViewImpl extends VerticalPanel implements QuestionView {
 	    
 	  
 		//set up labels
-		questionTextLbl.setText(questionProxy.getQuestion().getQuestionText());
+		questionTextLbl.add(new HTML(questionProxy.getQuestion().getQuestionText()));
 		questionTextLbl.setHeight("auto");
-		questionTextLbl.setWidth("650px");
+		questionTextLbl.setWidth("860px");
 	    
 	   	final Label twistieOpenQuestion = new Label();
 		twistieOpenQuestion.addStyleName("ui-icon ui-icon-triangle-1-e");

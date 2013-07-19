@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -28,7 +29,9 @@ import javax.persistence.criteria.Subquery;
 import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
 
+import medizin.client.shared.Validity;
 import medizin.server.mail.EmailServiceImpl;
+import medizin.server.utils.BMEUtils;
 import medizin.shared.Status;
 import medizin.shared.utils.PersonAccessRight;
 import medizin.shared.utils.SharedConstant;
@@ -44,6 +47,9 @@ import org.springframework.roo.addon.tostring.RooToString;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import com.google.common.base.Function;
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Lists;
 import com.google.web.bindery.requestfactory.server.RequestFactoryServlet;
 
 @RooJavaBean
@@ -755,8 +761,8 @@ public class AssesmentQuestion {
         return q.getResultList();
     }
 	
-	public static List<AssesmentQuestion> findAssesmentQuestionsByQuestionEventAssIdQuestType(java.lang.Long questEventId, java.lang.Long assesmentId,  List<Long> questionTypesId) {
-		QuestionEvent questionEvent = QuestionEvent.findQuestionEvent(questEventId);
+	public static List<AssesmentQuestion> findAssesmentQuestionsByQuestionEventAssIdQuestType(java.lang.Long questEventId, java.lang.Long assesmentId,  List<Long> questionTypesId, boolean isVersionA) {
+		/*QuestionEvent questionEvent = QuestionEvent.findQuestionEvent(questEventId);
 		Assesment assesment = Assesment.findAssesment(assesmentId);
 		
 		Iterator<Long> iter = questionTypesId.iterator();
@@ -808,9 +814,33 @@ public class AssesmentQuestion {
         q.setParameter("questionEvent", questionEvent);
         q.setParameter("assesment", assesment);
         //q.setParameter("questionType", questionType);
+        */
         
+        CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+        CriteriaQuery<AssesmentQuestion> criteriaQuery = criteriaBuilder.createQuery(AssesmentQuestion.class);
+        Root<AssesmentQuestion> from = criteriaQuery.from(AssesmentQuestion.class);
         
+        Predicate predicateQuestionEvent = criteriaBuilder.equal(from.get("question").get("questEvent").get("id"), questEventId);		
+        Predicate predicateAssessment = criteriaBuilder.equal(from.get("assesment").get("id"), assesmentId);
+        Predicate predicateQuestionTypeIn = from.get("question").get("questionType").get("id").in(questionTypesId);
+        //accepted
+        Predicate predicateAccepted=criteriaBuilder.equal(from.get("isAssQuestionAcceptedAdmin"), new Boolean(true));
         
+  		//force accepted
+  		Predicate predicateForcedAccepted=criteriaBuilder.equal(from.get("isForcedByAdmin"), new Boolean(true));
+      		
+  		//accepted / force accepted
+  		Predicate predicateAcceptedOr = criteriaBuilder.or(predicateAccepted,predicateForcedAccepted);
+        
+        if(isVersionA == true) {
+        	criteriaQuery.orderBy(criteriaBuilder.asc(from.get("orderAversion")));	
+        }else {
+        	criteriaQuery.orderBy(criteriaBuilder.asc(from.get("orderBversion")));
+        }
+        
+        criteriaQuery.where(criteriaBuilder.and(predicateQuestionEvent,predicateAssessment,predicateQuestionTypeIn,predicateAcceptedOr));
+        
+        TypedQuery<AssesmentQuestion> q = entityManager().createQuery(criteriaQuery);      
         
         return q.getResultList();
     }
@@ -1080,5 +1110,86 @@ public class AssesmentQuestion {
 			}
 		}
 		return aqs;
+	}
+	
+	public static void shuffleQuestionsAnswers(Long assessmentID){
+		
+		List<QuestionTypeCountPerExam> countPerExams = QuestionTypeCountPerExam.findQuestionTypesCountSortedByAssesmentNonRoo(assessmentID);
+		
+		for (QuestionTypeCountPerExam questionTypeCountPerExam : countPerExams) {
+			Set<QuestionType> questionTypes = questionTypeCountPerExam.getQuestionTypesAssigned();
+			
+			List<Long> questionTypeIds = Lists.newArrayList(FluentIterable.from(questionTypes).transform(new Function<QuestionType, Long>() {
+
+				@Override
+				public Long apply(QuestionType input) {
+					return input.getId();
+				}	
+			}).iterator());
+			
+			List<QuestionEvent> questionEvents =  QuestionEvent.findAllQuestionEventsByQuestionTypeAndAssesmentID(assessmentID, questionTypeIds);
+			
+			for (QuestionEvent questionEvent : questionEvents) {
+				List<AssesmentQuestion> assesmentQuestions = AssesmentQuestion.findAssesmentQuestionsByQuestionEventAssIdQuestType(questionEvent.getId(), assessmentID, questionTypeIds,true);
+				
+				for (AssesmentQuestion assesmentQuestion : assesmentQuestions) {
+					log.info("Assessment question id " + assesmentQuestion.getId());
+				}
+				log.info("--------------------------------------------------------");
+				Collections.shuffle(assesmentQuestions);
+				int size = assesmentQuestions.size();
+				for (int i = 0; i < size; i++) {
+					assesmentQuestions.get(i).setOrderAversion(i);
+					assesmentQuestions.get(i).setOrderBversion((size-1) - i);
+					assesmentQuestions.get(i).persist();
+				}
+				
+				for (AssesmentQuestion assesmentQuestion : assesmentQuestions) {
+					log.info("Assessment question id " + assesmentQuestion.getId());
+				}
+					
+				List<Integer> preTrueAnswerSequence = Lists.newArrayList();
+				for (AssesmentQuestion assesmentQuestion : assesmentQuestions) {
+					
+					
+					List<Integer> newtrueAnswerSequence = shuffleAnswer(assesmentQuestion);
+					
+					boolean flag = BMEUtils.compareTwoList(preTrueAnswerSequence,newtrueAnswerSequence);
+					
+					if(flag == true) {
+						newtrueAnswerSequence = shuffleAnswer(assesmentQuestion);
+					}
+					
+					preTrueAnswerSequence = newtrueAnswerSequence;
+				}
+			}
+		}
+	}
+	
+	private static List<Integer> shuffleAnswer(AssesmentQuestion assesmentQuestion ) {
+		
+		List<Integer> newtrueAnswerSequence = Lists.newArrayList();
+		
+		List<AnswerToAssQuestion>  answerToAssQuestions = AnswerToAssQuestion.findAnswerToAssQuestionByAssesmentQuestion(assesmentQuestion.getId());
+		
+		for (AnswerToAssQuestion answerToAssQuestion : answerToAssQuestions) {
+			log.info("Answer Order : " + answerToAssQuestion.getId() + "Validity : " + answerToAssQuestion.getAnswers().getValidity());
+		}
+		
+		Collections.shuffle(answerToAssQuestions);
+		
+		for (int i = 0; i < answerToAssQuestions.size(); i++) {
+			if(Validity.Wahr.equals(answerToAssQuestions.get(i).getAnswers().getValidity())) {
+				newtrueAnswerSequence.add(i);
+			}
+			
+			answerToAssQuestions.get(i).setSortOrder(i);
+			answerToAssQuestions.get(i).persist();
+		}
+		
+		for (AnswerToAssQuestion answerToAssQuestion : answerToAssQuestions) {
+			log.info("Answer Order : " + answerToAssQuestion.getId() + "Validity : " + answerToAssQuestion.getAnswers().getValidity());
+		}
+		return newtrueAnswerSequence;
 	}
 }

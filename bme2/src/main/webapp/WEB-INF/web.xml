@@ -132,4 +132,13 @@
 	    <url-pattern>/CsvFileUploadServlet</url-pattern>
 	  </servlet-mapping>
     
+    <!--  generic file download servlet -->
+     <servlet>
+	    <servlet-name>ResourceDownload</servlet-name>
+	    <servlet-class>medizin.server.download.FileDownloader</servlet-class>
+	  </servlet>
+	  <servlet-mapping>
+	    <servlet-name>ResourceDownload</servlet-name>
+	    <url-pattern>/downloadFile</url-pattern>
+	  </servlet-mapping>
 </web-app>

@@ -81,7 +81,7 @@ public class QuestionTypeDNDViewImpl extends VerticalPanel implements
 	public void setTwistieClose(Label twistieClose) {
 		this.twistieClose = twistieClose;
 	}
-	public Label getUpInOrder() {
+	/*public Label getUpInOrder() {
 		return upInOrder;
 	}
 	public void setUpInOrder(Label upInOrder) {
@@ -99,7 +99,7 @@ public class QuestionTypeDNDViewImpl extends VerticalPanel implements
 	public void setTagLabel(Label tagLabel) {
 		this.tagLabel = tagLabel;
 	}
-
+*/
 	@Override
 	public void setDelegate(Delegate delegate) {
 		this.delegate = delegate;
@@ -132,14 +132,14 @@ public class QuestionTypeDNDViewImpl extends VerticalPanel implements
 		tagLabel.addStyleName("ui-icon ui-icon-tag");
 		this.add(typeHeader);
 		this.add(questionTypeContent);
-		typeHeader.setPixelSize(820, 25);
+		typeHeader.setPixelSize(980, 25);
 		typeHeader.setStyleName("questionTypeHeader");
 		typeHeader.add(twistieClose, 1, 3);
 		typeHeader.add(twistieOpen, 1, 3);
 		typeHeader.add(questionTypeNamelbl, 19, 3);
-		typeHeader.add(upInOrder,740,3);
+		/*typeHeader.add(upInOrder,740,3);
 		typeHeader.add(downInOrder,760,3);
-		typeHeader.add(tagLabel,780,3);
+		typeHeader.add(tagLabel,780,3);*/
 		
 		
 		questionTypeContent.setVisible(false);

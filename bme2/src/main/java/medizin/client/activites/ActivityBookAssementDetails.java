@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.PlaceBookAssesmentDetails;
 import medizin.client.proxy.AnswerProxy;
@@ -23,11 +24,9 @@ import medizin.client.request.AssesmentQuestionRequest;
 import medizin.client.request.QuestionSumPerPersonRequest;
 import medizin.client.ui.AssesmenBookDialogbox;
 import medizin.client.ui.AssesmenBookDialogboxImpl;
-import medizin.client.ui.McAppConstant;
 import medizin.client.ui.dnd3.ui.AnswerView;
 import medizin.client.ui.dnd3.ui.AnswerViewImpl;
 import medizin.client.ui.dnd3.ui.EventViewImpl;
-import medizin.client.ui.dnd3.ui.LoadingPopUp;
 import medizin.client.ui.dnd3.ui.QuestionTypeDNDView;
 import medizin.client.ui.dnd3.ui.QuestionTypeDNDViewImpl;
 import medizin.client.ui.dnd3.ui.QuestionViewImpl;
@@ -37,9 +36,7 @@ import medizin.client.ui.view.BookAssesmentDetailsViewImpl;
 import com.allen_sauer.gwt.dnd.client.DragEndEvent;
 import com.allen_sauer.gwt.dnd.client.DragHandler;
 import com.allen_sauer.gwt.dnd.client.DragStartEvent;
-import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.allen_sauer.gwt.dnd.client.VetoDragException;
-import com.allen_sauer.gwt.dnd.client.drop.VerticalPanelDropController;
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.Place;
@@ -53,10 +50,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.google.web.bindery.requestfactory.shared.EntityProxyId;
-import com.google.web.bindery.requestfactory.shared.Receiver;
 import com.google.web.bindery.requestfactory.shared.Request;
-import com.google.web.bindery.requestfactory.shared.ServerFailure;
-import com.google.web.bindery.requestfactory.shared.Violation;
 /**
  * Provides Activity for BookAssemsentDetailsView, makes extensive use of  gwt-dnd ( <a href="http://code.google.com/p/gwt-dnd">Drag-and-drop Library for Google-Web-toolkit</a>). Allows to
  * sort elements of an assesment-book. All the design elemnts of draggable Elements (questiontype counts(Fragetypen), question events(Themengebiete),questions and answers are excluded in view-classes. 
@@ -103,7 +97,7 @@ public class ActivityBookAssementDetails extends AbstractActivityWrapper impleme
 	
 	private AssesmentProxy assesment;
 	private BookAssesmentDetailsView bookAssesmentViewDetails;
-	private LoadingPopUp loadingPopup = new LoadingPopUp();
+	//private LoadingPopUp loadingPopup = new LoadingPopUp();
 	
 	/*@Override
 	public void start(AcceptsOneWidget widget, EventBus eventBus) {
@@ -120,7 +114,7 @@ public class ActivityBookAssementDetails extends AbstractActivityWrapper impleme
 		/**
 		 * Shows pop-up with animated gif during startup.
 		 */
-		loadingPopup.show();
+		//loadingPopup.show();
 		Log.debug("Inside ActivityBookAssementDetails ");
 		bookAssesmentViewDetails = new BookAssesmentDetailsViewImpl(requests, placeController);
 		bookAssesmentViewDetails.setPresenter(this);
@@ -128,7 +122,7 @@ public class ActivityBookAssementDetails extends AbstractActivityWrapper impleme
 		this.widget = widget;
 		this.view = bookAssesmentViewDetails;
         widget.setWidget(bookAssesmentViewDetails.asWidget());
-        DOM.setElementAttribute(bookAssesmentViewDetails.getScrollContainer().getElement(), "style", "position: absolute; overflow: auto; left: 0px; top: 25px; right: 50px; bottom: 0px;width: 820px");
+        DOM.setElementAttribute(bookAssesmentViewDetails.getScrollContainer().getElement(), "style", "position: absolute; overflow: auto; left: 0px; top: 35px; right: 50px; bottom: 0px;width: 1000px");
         
         /*eventBus.addHandler(PlaceChangeEvent.TYPE, new PlaceChangeEvent.Handler() {
 			public void onPlaceChange(PlaceChangeEvent event) {
@@ -138,12 +132,8 @@ public class ActivityBookAssementDetails extends AbstractActivityWrapper impleme
         /**
          * Requests AssesmentProxy for this assesment-book.
          */
-		requests.find(bookAssmentPlace.getProxyId()).fire(new Receiver<Object>() {
+		requests.find(bookAssmentPlace.getProxyId()).fire(new BMEReceiver<Object>() {
 
-			
-			public void onFailure(ServerFailure error){
-				Log.error(error.getMessage());
-			}
 			@Override
 			public void onSuccess(Object response) {
 				if(response instanceof AssesmentProxy){
@@ -151,10 +141,8 @@ public class ActivityBookAssementDetails extends AbstractActivityWrapper impleme
 					assesment = (AssesmentProxy) response;
 					init();
 				}
-
-				
 			}
-		    });
+		});
 
 		
 	}//End public void start
@@ -166,14 +154,16 @@ public class ActivityBookAssementDetails extends AbstractActivityWrapper impleme
 		 placeController.goTo(place);
 	}
 	
-		/**
-		 * Load all elements for assesementProxy.
-		 */
-		protected void init() {
-			 bookAssesmentViewDetails.getWorkingArea().clear();
-
-			 requests.questionTypeCountPerExamRequest().findQuestionTypesCountSortedByAssesmentNonRoo(assesment.getId() )
-			 .with("questionTypesAssigned").fire(new Receiver<List<QuestionTypeCountPerExamProxy>>() {
+	/**
+	 * Load all elements for assesementProxy.
+	 */
+	protected void init() {
+		bookAssesmentViewDetails.getWorkingArea().clear();
+		bookAssesmentViewDetails.addButtons();
+		
+		
+		requests.questionTypeCountPerExamRequest().findQuestionTypesCountSortedByAssesmentNonRoo(assesment.getId()).with("questionTypesAssigned").fire(new BMEReceiver<List<QuestionTypeCountPerExamProxy>>() {
+			
 			@Override
 			public void onSuccess(List<QuestionTypeCountPerExamProxy> values) {
 				if (view == null) {
@@ -191,7 +181,6 @@ public class ActivityBookAssementDetails extends AbstractActivityWrapper impleme
 					 * For each questionTypeCount-object fill design elements.
 					 */
 					fillQuestiontype(questionTypeCount);
-					
 				}
 				
 				
@@ -214,7 +203,7 @@ public class ActivityBookAssementDetails extends AbstractActivityWrapper impleme
  * @param questionTypeCount
  */
 public void moveQuestionTypeCountPerExamRequestDown(QuestionTypeCountPerExamProxy questionTypeCount) {
-	requests.questionTypeCountPerExamRequest().moveUp().using(questionTypeCount).fire(new Receiver<Void>() {
+	requests.questionTypeCountPerExamRequest().moveUp().using(questionTypeCount).fire(new BMEReceiver<Void>() {
 		
           @Override
           public void onSuccess(Void response) {
@@ -222,10 +211,7 @@ public void moveQuestionTypeCountPerExamRequestDown(QuestionTypeCountPerExamProx
  
           }
           
-          public void onFailure(ServerFailure error){
-				Log.error(error.getMessage());
-			}
-          @Override
+          /*@Override
 			public void onViolation(Set<Violation> errors) {
 				Iterator<Violation> iter = errors.iterator();
 				String message = "";
@@ -235,7 +221,7 @@ public void moveQuestionTypeCountPerExamRequestDown(QuestionTypeCountPerExamProx
 				Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Event -" + message);
 
 				
-			}
+			}*/
       });
 	
 }
@@ -245,17 +231,14 @@ public void moveQuestionTypeCountPerExamRequestDown(QuestionTypeCountPerExamProx
  * @param questionTypeCount
  */
 public void moveQuestionTypeCountPerExamRequestUp(QuestionTypeCountPerExamProxy questionTypeCount) {
-	requests.questionTypeCountPerExamRequest().moveDown().using(questionTypeCount).fire(new Receiver<Void>() {
+	requests.questionTypeCountPerExamRequest().moveDown().using(questionTypeCount).fire(new BMEReceiver<Void>() {
 		
           @Override
           public void onSuccess(Void response) {
         	  Log.info("movedUp");
           }
           
-          public void onFailure(ServerFailure error){
-				Log.error(error.getMessage());
-			}
-          @Override
+          /*@Override
 			public void onViolation(Set<Violation> errors) {
 				Iterator<Violation> iter = errors.iterator();
 				String message = "";
@@ -264,7 +247,7 @@ public void moveQuestionTypeCountPerExamRequestUp(QuestionTypeCountPerExamProxy 
 				}
 				Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Event -" + message);
 				
-			}
+			}*/
       });
 	
 }
@@ -299,7 +282,7 @@ public void moveQuestionTypeCountPerExamRequestUp(QuestionTypeCountPerExamProxy 
 		/**
 		 * Set up pickupDragController for QuestionTypeContent-panel.
 		 */
-		final PickupDragController eventDragController = new PickupDragController(questionTypeContainer.getQuestionTypeContent(),false);
+		//final PickupDragController eventDragController = new PickupDragController(questionTypeContainer.getQuestionTypeContent(),false);
 
 
 		/**
@@ -317,7 +300,7 @@ public void moveQuestionTypeCountPerExamRequestUp(QuestionTypeCountPerExamProxy 
 		/**
 		 * Request all question Events for each questionTypeProxy
 		 */
-		requests.questionEventRequest().findAllQuestionEventsByQuestionTypeAndAssesmentID(assesment.getId(), questionTypesId  ).fire(new Receiver <java.util.List<medizin.client.proxy.QuestionEventProxy>>(){
+		requests.questionEventRequest().findAllQuestionEventsByQuestionTypeAndAssesmentID(assesment.getId(), questionTypesId  ).fire(new BMEReceiver <java.util.List<medizin.client.proxy.QuestionEventProxy>>(){
 
 			@Override
 			public void onSuccess(List<QuestionEventProxy> response) {
@@ -328,7 +311,7 @@ public void moveQuestionTypeCountPerExamRequestUp(QuestionTypeCountPerExamProxy 
 					/**
 					 * For each questionEvent in callback setup event-area
 					 */
-					insertQuestionEvents(questionEventProxy,  eventsContainer, eventDragController, questionTypesId);
+					insertQuestionEvents(questionEventProxy,  eventsContainer, /*eventDragController,*/ questionTypesId);
 					
 					
 				}
@@ -350,39 +333,35 @@ public void moveQuestionTypeCountPerExamRequestUp(QuestionTypeCountPerExamProxy 
 	/**
 	 * Add QuestionEvent to the eventsContainer of Questiontype.
 	 */
-	protected void insertQuestionEvents(QuestionEventProxy questionEvent, VerticalPanel eventsContainer, PickupDragController eventDragController, List<Long> questionTypesId){
+	protected void insertQuestionEvents(QuestionEventProxy questionEvent, VerticalPanel eventsContainer, /*PickupDragController eventDragController,*/ List<Long> questionTypesId){
 		//final QuestionTypeProxy questionTypeProxy= questionTypesId;
 		/**
 		 * New DropController that allows dropping eventsContainer inside eventsContainer.
 		 */
-		VerticalPanelDropController eventsDropController = new VerticalPanelDropController(eventsContainer);
+		//VerticalPanelDropController eventsDropController = new VerticalPanelDropController(eventsContainer);
 		
-		eventDragController.registerDropController(eventsDropController);
-		eventDragController.addDragHandler(this);
+		/*eventDragController.registerDropController(eventsDropController);
+		eventDragController.addDragHandler(this);*/
 		/**
 		 * New EventViewImpl for QuestionEvent-object.
 		 */
 		final EventViewImpl eventVertical = new EventViewImpl();
-		final AbsolutePanel questionEventContent = eventVertical.getQuestionEventContent();
+		//final AbsolutePanel questionEventContent = eventVertical.getQuestionEventContent();
 		final VerticalPanel questionsContainer = eventVertical.getQuestionsContainer();
 		eventVertical.setEventProxy(questionEvent);
-		eventDragController.makeDraggable(eventVertical, eventVertical.getHeaderNamelbl());
+		//eventDragController.makeDraggable(eventVertical, eventVertical.getHeaderNamelbl());
 		eventsContainer.add(eventVertical);
 		Log.debug("eventsContain.add(eventVertical) ausgef�llt");
 		
-		final PickupDragController questionDragController = new PickupDragController(eventVertical.getQuestionEventContent(),false);
-		VerticalPanelDropController questionsDropController = new VerticalPanelDropController(questionsContainer);
-		questionDragController.registerDropController(questionsDropController);
-		questionDragController.addDragHandler(this);
+		//final PickupDragController questionDragController = new PickupDragController(eventVertical.getQuestionEventContent(),false);
+		//VerticalPanelDropController questionsDropController = new VerticalPanelDropController(questionsContainer);
+		//questionDragController.registerDropController(questionsDropController);
+		//questionDragController.addDragHandler(this);
 		/**
 		 * request all Assesmentquestions by QuestinEvent, Assesment and QuestionType
 		 */
 		
-		requests.assesmentQuestionRequest().findAssesmentQuestionsByQuestionEventAssIdQuestType(questionEvent.getId(), assesment.getId(), questionTypesId).with("question").fire(new Receiver <java.util.List<medizin.client.proxy.AssesmentQuestionProxy>>(){
-
-			public void onFailure(ServerFailure error){
-			Log.error(error.getMessage());
-			}
+		requests.assesmentQuestionRequest().findAssesmentQuestionsByQuestionEventAssIdQuestType(questionEvent.getId(), assesment.getId(), questionTypesId,true).with("question").fire(new BMEReceiver <java.util.List<medizin.client.proxy.AssesmentQuestionProxy>>(){
 			
 			@Override
 			public void onSuccess(List<AssesmentQuestionProxy> response) {
@@ -403,30 +382,26 @@ public void moveQuestionTypeCountPerExamRequestUp(QuestionTypeCountPerExamProxy 
 					
 					final QuestionViewImpl questionVert = new QuestionViewImpl();
 					questionVert.setQuestionProxy(assQuestionProxy);
-				    questionDragController.makeDraggable(questionVert, questionVert.getQuestionTextLbl());
+				    //questionDragController.makeDraggable(questionVert, questionVert.getQuestionTextLbl());
 				    questionsContainer.add(questionVert);
 				    
 
 		
 
 				    // initialize our widget drag controller
-				    final PickupDragController widgetDragController = new PickupDragController(questionEventContent, false);
+				    /*final PickupDragController widgetDragController = new PickupDragController(questionEventContent, false);
 				    widgetDragController.setBehaviorMultipleSelection(false);
 				    widgetDragController.addDragHandler(ActivityBookAssementDetails.this);
 				      VerticalPanelDropController widgetDropController = new VerticalPanelDropController(
 				    		  questionVert);
 				      widgetDragController.registerDropController(widgetDropController);
-    
+*/    
 		      
-				   
-				      final Receiver<List<AnswerToAssQuestionProxy>> callbackanswerToAssQuest = new Receiver<List<AnswerToAssQuestionProxy>>() {
 				      
-				 
-				      
-
+				    final BMEReceiver<List<AnswerToAssQuestionProxy>> callbackanswerToAssQuest = new BMEReceiver<List<AnswerToAssQuestionProxy>>() {
+				    
 						@Override
-						public void onSuccess(
-								List<AnswerToAssQuestionProxy> values) {
+						public void onSuccess(List<AnswerToAssQuestionProxy> values) {
 							Iterator<AnswerToAssQuestionProxy> iterAssQuest = values.iterator();
 							/**
 							 * For each AssesmentQuestionProxy get answer and implement view. 
@@ -440,7 +415,7 @@ public void moveQuestionTypeCountPerExamRequestUp(QuestionTypeCountPerExamProxy 
 								answerUi.setAnswerToAssQueston(answerToAssQuest);
 							    answerUi.setDelegate(ActivityBookAssementDetails.this);						 
 							    questionVert.add(answerUi.asWidget());
-							    widgetDragController.makeDraggable(answerUi.asWidget(), answerUi.getLblAnswerText());
+							    //widgetDragController.makeDraggable(answerUi.asWidget(), answerUi.getLblAnswerText());
 							}
 							/**
 							 * Hide Answers at first.
@@ -449,7 +424,7 @@ public void moveQuestionTypeCountPerExamRequestUp(QuestionTypeCountPerExamProxy 
 							for (int i = 1; i < widgetCount; i++){
 							questionVert.getWidget(i).setVisible(false);
 							}
-							loadingPopup.hide();
+							//loadingPopup.hide();
 						}
 						
 				    	  
@@ -479,9 +454,9 @@ public void moveQuestionTypeCountPerExamRequestUp(QuestionTypeCountPerExamProxy 
 	
 
 	//Part of Request for answerToAssQuestions	
-	private void fireGetAnswerToAssQuest( final Receiver<List<AnswerToAssQuestionProxy>> callbackanswerToAssQuest, AssesmentQuestionProxy assesmentQuestionproxy) {
+	private void fireGetAnswerToAssQuest( final BMEReceiver<List<AnswerToAssQuestionProxy>> callbackanswerToAssQuest, AssesmentQuestionProxy assesmentQuestionproxy) {
 		createfireGetAnswerToAssQuest(assesmentQuestionproxy).fire(callbackanswerToAssQuest);
-			}
+	}
 	
 	
 	protected Request<java.util.List<medizin.client.proxy.AnswerToAssQuestionProxy>> createfireGetAnswerToAssQuest(AssesmentQuestionProxy assesmentQuestionproxy) {
@@ -494,12 +469,8 @@ public void moveQuestionTypeCountPerExamRequestUp(QuestionTypeCountPerExamProxy 
 
 
 	public void answerDropped(EntityProxyId<?> answerId) {
-		requests.find(answerId).fire(new Receiver<Object>() {
+		requests.find(answerId).fire(new BMEReceiver<Object>() {
 
-			
-			public void onFailure(ServerFailure error){
-				Log.error(error.getMessage());
-			}
 			@Override
 			public void onSuccess(Object response) {
 				if(response instanceof AnswerProxy){
@@ -525,7 +496,7 @@ public void moveQuestionTypeCountPerExamRequestUp(QuestionTypeCountPerExamProxy 
 	  private Map<EntityProxyId<?>, Integer> eventProxyMap = new HashMap<EntityProxyId<?>, Integer>();
 
 	  
-	  private AnswerToAssQuestionProxy answerToAssQuest;
+	  //private AnswerToAssQuestionProxy answerToAssQuest;
 
 
 
@@ -611,12 +582,8 @@ public void moveQuestionTypeCountPerExamRequestUp(QuestionTypeCountPerExamProxy 
 			 Log.info("inside process Map iterator!");
 			 Log.info("entry.getKey().toString(): "+entry.getKey().toString());
 			 Log.info(entry.getValue().toString());
-				requests.find(entry.getKey()).fire(new Receiver<Object>() {
+				requests.find(entry.getKey()).fire(new BMEReceiver<Object>() {
 
-					
-					public void onFailure(ServerFailure error){
-						Log.error(error.getMessage());
-					}
 					@Override
 					public void onSuccess(Object response) {
 						if(response instanceof  AnswerToAssQuestionProxy ){
@@ -625,16 +592,10 @@ public void moveQuestionTypeCountPerExamRequestUp(QuestionTypeCountPerExamProxy 
 
 							Log.info("answerToAssQuestionRequest wird gleich ausgef�hrt");
 
-							requests.answerToAssQuestionRequest().findAnswerToAssQuestion(answerToAssQuest.getId()).fire(new Receiver<Object>(){
-
-								
-								public void onFailure(ServerFailure error){
-									Log.error(error.getMessage());
-								}
+							requests.answerToAssQuestionRequest().findAnswerToAssQuestion(answerToAssQuest.getId()).fire(new BMEReceiver<Object>(){
 
 								@Override
-								public void onSuccess(
-										Object response) {
+								public void onSuccess(Object response) {
 						
 
 									AnswerToAssQuestionProxy answerToAssQuest = (AnswerToAssQuestionProxy)response;
@@ -648,13 +609,13 @@ public void moveQuestionTypeCountPerExamRequestUp(QuestionTypeCountPerExamProxy 
 									answerToAssQuest.setSortOrder(k);
 			
 									
-									request.persist().using(answerToAssQuest).fire(new Receiver<Void>() {
+									request.persist().using(answerToAssQuest).fire(new BMEReceiver<Void>() {
 								
 										public void onSuccess(Void ignore) {
 											Log.debug("SortOrder Sucessfull saved");
 										}
 
-										@Override
+										/*@Override
 										public void onFailure(ServerFailure error) {
 											Log.warn(McAppConstant.ERROR_WHILE_CREATE + " in Questiontype -"
 													+ error.getMessage());
@@ -675,7 +636,7 @@ public void moveQuestionTypeCountPerExamRequestUp(QuestionTypeCountPerExamProxy 
 											Log.warn(McAppConstant.ERROR_WHILE_CREATE_VIOLATION
 													+ " in Institution -" + message);
 
-										}
+										}*/
 
 									});
 								
@@ -709,11 +670,7 @@ public void moveQuestionTypeCountPerExamRequestUp(QuestionTypeCountPerExamProxy 
 			 
 
 			 
-			 requests.find(questionEntry.getKey()).fire(new Receiver<Object>() {
-
-					public void onFailure(ServerFailure error){
-						Log.error(error.getMessage());
-					}
+			 requests.find(questionEntry.getKey()).fire(new BMEReceiver<Object>() {
 
 					@Override
 					public void onSuccess(Object response) {
@@ -723,13 +680,13 @@ public void moveQuestionTypeCountPerExamRequestUp(QuestionTypeCountPerExamProxy 
 						AssesmentQuestionRequest assQuestionRequest = requests.assesmentQuestionRequest();
 						assQuestion = assQuestionRequest.edit(assQuestion);
 						assQuestion.setOrderAversion(l);
-						assQuestionRequest.persist().using(assQuestion).fire(new Receiver<Void>() {
+						assQuestionRequest.persist().using(assQuestion).fire(new BMEReceiver<Void>() {
 							
 							public void onSuccess(Void ignore) {
 								Log.debug("SortOrder of Questions sucessfully saved");
 							}
 
-							@Override
+							/*@Override
 							public void onFailure(ServerFailure error) {
 								Log.warn(McAppConstant.ERROR_WHILE_CREATE + " in Questiontype -"
 										+ error.getMessage());
@@ -750,7 +707,7 @@ public void moveQuestionTypeCountPerExamRequestUp(QuestionTypeCountPerExamProxy 
 								Log.warn(McAppConstant.ERROR_WHILE_CREATE_VIOLATION
 										+ " in  -" + message);
 
-							}
+							}*/
 
 						});
 						
@@ -772,13 +729,8 @@ public void moveQuestionTypeCountPerExamRequestUp(QuestionTypeCountPerExamProxy 
 			 Log.info("inside process eventProxyIds iterator!");
 			 Log.info("eventEntry().toString(): "+eventEntry.getKey().toString());
 			 Log.info(eventEntry.getValue().toString());
-			 requests.find(eventEntry.getKey()).fire(new Receiver<Object>() {
+			 requests.find(eventEntry.getKey()).fire(new BMEReceiver<Object>() {
 			
-					
-					public void onFailure(ServerFailure error){
-						Log.error(error.getMessage());
-					}
-
 					@Override
 					public void onSuccess(Object response) {
 						
@@ -787,11 +739,11 @@ public void moveQuestionTypeCountPerExamRequestUp(QuestionTypeCountPerExamProxy 
 						
 
 
-						requests.questionSumPerPersonRequest().findQuestionSumPerPersonByEventNonRoo(questionEvent.getId()).fire(new Receiver<Object>(){
+						requests.questionSumPerPersonRequest().findQuestionSumPerPersonByEventNonRoo(questionEvent.getId()).fire(new BMEReceiver<Object>(){
 
-							public void onFailure(ServerFailure error){
+							/*public void onFailure(ServerFailure error){
 								Log.error("questionSumPerPersonRequest()"+error.getMessage());
-							}
+							}*/
 							
 							@Override
 							public void onSuccess(Object response) {
@@ -801,10 +753,10 @@ public void moveQuestionTypeCountPerExamRequestUp(QuestionTypeCountPerExamProxy 
 								QuestionSumPerPersonRequest questionSumRequest = requests.questionSumPerPersonRequest();
 								questionSumProxy = questionSumRequest.edit(questionSumProxy);
 								questionSumProxy.setSort_order(m);
-								questionSumRequest.persist().using(questionSumProxy).fire(new Receiver<Void>() {
-									public void onFailure(ServerFailure error){
+								questionSumRequest.persist().using(questionSumProxy).fire(new BMEReceiver<Void>() {
+									/*public void onFailure(ServerFailure error){
 										Log.error("persist Sortorder QuestionSumProxy"+error.getMessage());
-									}
+									}*/
 									
 									
 									@Override
@@ -983,6 +935,29 @@ public void moveQuestionTypeCountPerExamRequestUp(QuestionTypeCountPerExamProxy 
 	public void placeChanged(Place place) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public Long getAssignemtId() {
+		return assesment.getId();
+	}
+
+	@Override
+	public void shuffleAssementQuestionsAnswers() {
+		
+		if(assesment == null) {
+			Log.error("Assesment is null");
+			return;
+		}
+		
+		requests.assesmentQuestionRequest().shuffleQuestionsAnswers(assesment.getId()).fire(new BMEReceiver<Void>() {
+
+			@Override
+			public void onSuccess(Void response) {
+				init();
+				
+			}
+		});
 	}
 
 

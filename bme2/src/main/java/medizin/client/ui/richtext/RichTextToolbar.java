@@ -15,6 +15,9 @@
  */
 package medizin.client.ui.richtext;
 
+import medizin.client.ui.widget.mathjax.MathJaxDialogImpl;
+import medizin.client.util.MathJaxs;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -22,6 +25,8 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.i18n.client.Constants;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ImageResource;
@@ -30,6 +35,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.RichTextArea;
 import com.google.gwt.user.client.ui.ToggleButton;
@@ -86,6 +92,8 @@ public class RichTextToolbar extends Composite {
     ImageResource ul();
 
     ImageResource underline();
+
+	ImageResource mathJax();
   }
 
   /**
@@ -163,6 +171,8 @@ public class RichTextToolbar extends Composite {
     String xxsmall();
 
     String yellow();
+
+	String mathJax();
   }
 
   /**
@@ -175,6 +185,8 @@ public class RichTextToolbar extends Composite {
     public void onChange(ChangeEvent event) {
       Widget sender = (Widget) event.getSource();
 
+      MathJaxs.renderLatexResult(richText.asWidget().getElement());
+      
       if (sender == backColors) {
         basic.setBackColor(backColors.getValue(backColors.getSelectedIndex()));
         backColors.setSelectedIndex(0);
@@ -240,6 +252,17 @@ public class RichTextToolbar extends Composite {
         // This will catch any cases where the user moves the cursur using the
         // keyboard, or uses one of the browser's built-in keyboard shortcuts.
         updateStatus();
+      }else if(sender == mathJaxDialog) {
+    	  final MathJaxDialogImpl dialogImpl = new MathJaxDialogImpl();
+    	  dialogImpl.center();
+    	  dialogImpl.show();
+    	  dialogImpl.addCloseHandler(new CloseHandler<PopupPanel>() {
+			
+			@Override
+			public void onClose(CloseEvent<PopupPanel> event) {
+				richText.setHTML(richText.getHTML() + dialogImpl.getEquation()); 	
+			}
+		});
       }
     }
 
@@ -289,6 +312,7 @@ public class RichTextToolbar extends Composite {
   private PushButton createLink;
   private PushButton removeLink;
   private PushButton removeFormat;
+  private PushButton mathJaxDialog;
 
   private ListBox backColors;
   private ListBox foreColors;
@@ -330,6 +354,8 @@ public class RichTextToolbar extends Composite {
           strings.justifyCenter()));
       topPanel.add(justifyRight = createPushButton(images.justifyRight(),
           strings.justifyRight()));
+      topPanel.add(mathJaxDialog = createPushButton(images.mathJax(),
+              strings.mathJax()));
     }
 
     if (extended != null) {

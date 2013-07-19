@@ -49,12 +49,21 @@
     cursor: pointer;
   }
 
+	.tabLayoutStyle {
+		width : 820px;
+		margin-top: 5px;
+		margin-bottom: 2px;
+		margin-left: 5px;
+		margin-right: 5px;
+	}
+
 	</ui:style>
-	<g:VerticalPanel>
-	<g:HorizontalPanel ui:field="tabs"></g:HorizontalPanel>
-	
-	<g:SimplePanel ui:field="content"></g:SimplePanel>
-	
+	<g:VerticalPanel styleName="{style.panelHTML}">
+	 	<g:TabBar ui:field="tabLayout" width="1003px"></g:TabBar>
+		<!-- <g:HorizontalPanel ui:field="tabs"></g:HorizontalPanel> -->
+
+		<g:SimplePanel ui:field="content"></g:SimplePanel>
+
 	</g:VerticalPanel>
 
 </ui:UiBinder> 

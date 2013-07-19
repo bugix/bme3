@@ -53,12 +53,21 @@
   	bottom: 0px;
   	right: 0px;
   	}
+  	
+  	.displayPanel{
+		position: absolute; 
+		width: 100%; 
+		min-height: 100px;
+		border-left: 1px solid #AAAAAA;
+    	border-right: 1px solid #AAAAAA;
+		border-bottom: 1px solid #AAAAAA;
+	}
 
 	</ui:style>
 	<g:HTMLPanel>
-	<g:ScrollPanel ui:field="scrollContainer">
-		<g:AbsolutePanel ui:field="content"></g:AbsolutePanel>
+	<g:ScrollPanel ui:field="scrollContainer" styleName="{style.displayPanel}">
+		<g:AbsolutePanel ui:field="content" ></g:AbsolutePanel>
 	</g:ScrollPanel>
-	<g:HTMLPanel><g:Button ui:field="printAButton" styleName="{style.bottomButton}">Prüfungsheft Drucken</g:Button></g:HTMLPanel>
+	<!-- <g:HTMLPanel><g:Button ui:field="printAButton" styleName="{style.bottomButton}">Prüfungsheft Drucken</g:Button></g:HTMLPanel> -->
 	</g:HTMLPanel>
 </ui:UiBinder> 

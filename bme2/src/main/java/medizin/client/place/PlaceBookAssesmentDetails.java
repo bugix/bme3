@@ -1,8 +1,10 @@
 package medizin.client.place;
 
 import medizin.client.factory.request.McAppRequestFactory;
+import medizin.client.place.AbstractDetailsPlace.Operation;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.common.base.Objects;
 import com.google.gwt.place.shared.Prefix;
 import com.google.web.bindery.requestfactory.shared.EntityProxyId;
 
@@ -47,6 +49,24 @@ public class PlaceBookAssesmentDetails extends AbstractDetailsPlace {
 			return new PlaceBookAssesmentDetails(token);
 
 		}
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		
+		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		 return Objects.hashCode(this.getPlaceName(),this.getOperation(),this.getProxyId()); 
 	}
 
 }

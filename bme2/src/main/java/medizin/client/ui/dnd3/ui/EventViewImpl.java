@@ -117,11 +117,11 @@ public class EventViewImpl extends VerticalPanel implements EventView {
 		
 		AbsolutePanel eventHeader = new AbsolutePanel();
 
-		eventHeader.setPixelSize(760, 25);
+		eventHeader.setPixelSize(940, 25);
 		eventHeader.setStyleName("eventHeader");
 		
 		headerNamelbl.setText(eventProxy.getEventName());
-		headerNamelbl.setWidth("730px");
+		headerNamelbl.setWidth("910px");
 		
 		eventHeader.add(twistieOpenQuestionEvent, 2,3);
 		twistieCloseQuestionEvent.setVisible(false);
@@ -129,7 +129,7 @@ public class EventViewImpl extends VerticalPanel implements EventView {
 		
 		eventHeader.add(headerNamelbl,19,3);
 		
-		eventHeader.add(tagLabelQuestionEvent,740,3);
+		//eventHeader.add(tagLabelQuestionEvent,740,3);
 		
 		questionEventContent.setVisible(false);
 		
