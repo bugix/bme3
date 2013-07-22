@@ -4347,9 +4347,14 @@ background: url("images/colorpicker.png");
 	height: 100%;
 	width: 50px;
 	margin-left: 10px;
-	padding-top: 25px;	
+	padding-top: 35px;	
 	text-overflow: ellipsis;
 }
+
+.gwt-TextBox.textbox-y {
+    margin-top: 25px;
+}
+
 .videoSize
 {
 	width:500px !important;

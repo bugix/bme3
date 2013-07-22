@@ -92,8 +92,8 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 	@UiField
 	IconButton closeButton;
 
-	private final Button addAnswerX;
-	private final Button addAnswerY;
+	private final IconButton addAnswerX;
+	private final IconButton addAnswerY;
 	private final QuestionProxy questionProxy;
 	private final Matrix<MatrixValidityVO> matrixList = new Matrix<MatrixValidityVO>();
 
@@ -113,7 +113,7 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 
 		// Add a button that will add more rows to the table
 
-		addAnswerX = new Button(constants.addAnswerX(), new ClickHandler() {
+		addAnswerX = new IconButton(constants.addAnswerX(), new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
@@ -121,8 +121,10 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 			}
 
 		});
+		addAnswerX.setIcon("plusthick");
+		addAnswerX.getElement().getStyle().setMarginLeft(10, Unit.PX);
 
-		addAnswerY = new Button(constants.addAnswerY(), new ClickHandler() {
+		addAnswerY = new IconButton(constants.addAnswerY(), new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
@@ -130,6 +132,7 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 			}
 		});
 
+		addAnswerY.setIcon("plusthick");
 		addAnswerY.addStyleName("rowRotate90");
 		addAnswerY.getElement().getStyle().setPaddingTop(0, Unit.PX);
 				
@@ -195,8 +198,8 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 		matrix.setWidget(currentRow + 1, 0, addAnswerX);
 
 		textBox.setFocus(true);
-		addAnswerX.setEnabled(false);
-		addAnswerY.setEnabled(false);
+		addAnswerX.setVisible(false);
+		addAnswerY.setVisible(false);
 
 		final AnswerVO answerVO = new AnswerVO();
 		answerVO.setState(State.NEW);
@@ -265,7 +268,8 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 		final Label label = new Label();
 		label.setVisible(false);
 		label.addStyleName("rowRotate90");
-		textBox.addStyleName("rowRotate90");
+		//textBox.addStyleName("rowRotate90");
+		textBox.addStyleName("textbox-y");
 		editY.setVisible(false);
 		VerticalPanel vp = new VerticalPanel();
 		HorizontalPanel hp = new HorizontalPanel();
@@ -285,8 +289,8 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 		matrix.setWidget(0, currentColumn + 1, addAnswerY);
 
 		textBox.setFocus(true);
-		addAnswerX.setEnabled(false);
-		addAnswerY.setEnabled(false);
+		addAnswerX.setVisible(false);
+		addAnswerY.setVisible(false);
 
 		final AnswerVO answerVO = new AnswerVO();
 		answerVO.setState(State.NEW);
@@ -565,8 +569,8 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 						@Override
 						public Void apply(AnswerProxy input) {
 							
-							addAnswerX.setEnabled(true);
-							addAnswerY.setEnabled(true);
+							addAnswerX.setVisible(true);
+							addAnswerY.setVisible(true);
 							
 							answer.setAnswerProxy(input);
 							textBox.setVisible(false);
@@ -640,6 +644,9 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 		@Override
 		public void onClick(ClickEvent event) {
 			String text = label.getText();
+			addAnswerX.setVisible(false);
+			addAnswerY.setVisible(false);
+			
 			textBox.setText(text);
 			label.setVisible(false);
 			textBox.setVisible(true);
@@ -665,6 +672,8 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 				
 				@Override
 				public void onYesButtonClicked(ConfirmDialogBoxYesNoButtonEvent event) {
+					addAnswerX.setVisible(true);
+					addAnswerY.setVisible(true);
 					
 					FluentIterable<MatrixValidityVO> fluentIterable = FluentIterable.from(matrixList);
 					final FluentIterable<MatrixValidityVO> foundAnswers;
@@ -679,7 +688,7 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 
 							@Override
 							public Void apply(Boolean input) {
-
+								
 								if(input == true) {
 									//delete the full answer
 									matrix.clear();
@@ -910,7 +919,8 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 		final TextBox textBoxY = new TextBox();
 		final Label labelY = new Label();
 		labelY.addStyleName("rowRotate90");
-		textBoxY.addStyleName("rowRotate90");
+		//textBoxY.addStyleName("rowRotate90");
+		textBoxY.addStyleName("textbox-y");
 		VerticalPanel vp = new VerticalPanel();
 		HorizontalPanel hp = new HorizontalPanel();
 		

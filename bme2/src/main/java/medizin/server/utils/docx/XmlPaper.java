@@ -52,7 +52,7 @@ public class XmlPaper {
             
             // append child elements to root element
             for (QuestionVO question : questionVOs) {   
-              	mainRootElement.appendChild(AddQuestion(doc,question));	
+              	mainRootElement.appendChild(addQuestion(doc,question));	
 			}
             
             
@@ -71,7 +71,7 @@ public class XmlPaper {
         }
 	}
 
-	private Node AddQuestion(Document doc, QuestionVO question) {
+	private Node addQuestion(Document doc, QuestionVO question) {
 		Element questionElement = doc.createElement(QUESTION_ELEMENT);
         questionElement.setAttribute(QUESTION_ID, question.getAssesmentQuestion().getQuestion().getId().toString());
         questionElement.appendChild(getCDATAElements(doc, QUESTION_TEXT, question.getAssesmentQuestion().getQuestion().getQuestionText()));

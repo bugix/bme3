@@ -79,8 +79,9 @@ public final class DocxPaperMHTML {
 		questionVOs = PaperUtils.get_data(assessment.longValue(),isVersionA);
 		
 		try {
-			Document document = Jsoup.parse("<!doctype html><html><body></body></html>");
+			Document document = Jsoup.parse("<!doctype html><html><head></head><body></body></html>");
 			org.jsoup.nodes.Element ul = document.body().appendElement("ul");
+			ul.attr("style", "list-style-type:upper-roman");
 			for (QuestionVO questionVO : questionVOs) {
 				addQuestionNext(ul,questionVO);
 			}
@@ -221,6 +222,7 @@ public final class DocxPaperMHTML {
 				createAnswerMatrix(li,questionVO.getAnswerToAssQuestions());
 			}else {
 				Element answerUL = li.appendElement("ul");
+				answerUL.attr("style", "list-style-type:lower-alpha");
 				for (AnswerToAssQuestion answerToAssQuestion : questionVO.getAnswerToAssQuestions()) {
 					Element answerLI = answerUL.appendElement("li");
 					createNumberedParagraphWithHTML(answerLI, removeLastBr(answerToAssQuestion.getAnswers().getAnswerText()));
@@ -232,7 +234,7 @@ public final class DocxPaperMHTML {
 
 	private void createAnswerMatrix(Element li, List<AnswerToAssQuestion> answerToAssQuestions) {
 		Element table = li.appendElement("table");
-		
+		table.attr("border", "1");
 	    List<Long> answerList = getAnswerIdList(answerToAssQuestions);
 	    
 	    List<MatrixValidity> matrixValidities = MatrixValidity.findallMatrixValidityForAnswers(answerList);
