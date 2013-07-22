@@ -877,4 +877,13 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		new ConfirmQuestionChangesPopup(isMajorOrMinor);
 	}
 
+	@Override
+	public Long getAuthorId() {
+		if(author == null || author.getSelected() == null) {
+			return -1l;
+		}
+		
+		return author.getSelected().getId();
+	}
+
 }

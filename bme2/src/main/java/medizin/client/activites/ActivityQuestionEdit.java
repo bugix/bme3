@@ -705,7 +705,11 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 		
 		if(question == null) {
 			// save new question for first time
-			createNewQuestion(null,Status.NEW,false,false,true,gotoShowNewFunction);
+			boolean isAcceptedByAdmin = isAdminOrInstitutionalAdmin();
+			boolean isAcceptedByReviewer = false;
+			boolean isAcceptedByAuthor = userLoggedIn.getId().equals(view.getAuthorId());
+			
+			createNewQuestion(null,Status.NEW,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor,gotoShowNewFunction);
 		}else {
 			// edit accepted question with major or minor version
 			final Function<Boolean, Void> isMajorOrMinor = new Function<Boolean, Void>() {
@@ -714,20 +718,22 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 				public Void apply(Boolean withNewMajorVersion) {
 					
 					if(withNewMajorVersion == true) {
-						createNewQuestion(question,Status.NEW,false,false,true,gotoShowNewFunction);
+						boolean isAcceptedByAdmin = isAdminOrInstitutionalAdmin();
+						boolean isAcceptedByReviewer = false;
+						boolean isAcceptedByAuthor = userLoggedIn.getId().equals(view.getAuthorId());
+						
+						createNewQuestion(question,Status.NEW,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor,gotoShowNewFunction);
 					}else {
 						Status status; 
-						boolean isAcceptedByReviewer = false;
-						boolean isAcceptedByAdmin = false;
-						boolean isAcceptedByAuthor = true; // as update from author
+						
 												
-						final Function<EntityProxyId<?>, Void> gotoDetailsFunction = new Function<EntityProxyId<?>, Void>() {
+						/*final Function<EntityProxyId<?>, Void> gotoDetailsFunction = new Function<EntityProxyId<?>, Void>() {
 							@Override
 							public Void apply(EntityProxyId<?> stableId) {
 								placeController.goTo(new PlaceQuestionDetails(stableId, PlaceQuestionDetails.Operation.DETAILS));
 								return null;
 							}
-						};
+						};*/
 						
 						final Function<EntityProxyId<?>, Void> gotoFunction = new Function<EntityProxyId<?>, Void>() {
 							@Override
@@ -738,13 +744,19 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 						};
 						
 						if(Status.NEW.equals(question.getStatus())) {
+							boolean isAcceptedByAdmin = isAdminOrInstitutionalAdmin();
+							boolean isAcceptedByReviewer = false;
+							boolean isAcceptedByAuthor = userLoggedIn.getId().equals(view.getAuthorId());
 							// if current state of the question is new so status will remain as it is.
 							status = Status.NEW;
 							updateQuestion(status,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor,gotoShowNewFunction);
 						}else if(Status.ACTIVE.equals(question.getStatus())) {
 							// the current state of the question is active so new status with minor changes will be accepted reviewer
+							boolean isAcceptedByAdmin = isAdminOrInstitutionalAdmin();
+							boolean isAcceptedByReviewer = true;
+							boolean isAcceptedByAuthor = userLoggedIn.getId().equals(view.getAuthorId());
+							
 							status = Status.ACCEPTED_REVIEWER;
-							isAcceptedByReviewer = true; 
 							updateQuestion(status,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor,gotoFunction);
 						}
 					}
