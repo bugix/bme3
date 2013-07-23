@@ -11,6 +11,7 @@ import javax.validation.ConstraintViolation;
 
 import medizin.client.ui.widget.dialogbox.receiver.ReceiverDialog;
 import medizin.shared.i18n.BmeConstants;
+import medizin.shared.i18n.BmeEnumConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.collect.Lists;
@@ -24,6 +25,7 @@ import com.google.web.bindery.requestfactory.shared.Violation;
 @SuppressWarnings("deprecation")
 public abstract class BMEReceiver<T> extends Receiver<T> {
 	private final BmeConstants bmeConstants = GWT.create(BmeConstants.class);
+	private final BmeEnumConstants enumConstants = GWT.create(BmeEnumConstants.class);
 
 	private Map<String, Widget> localViewMap = Maps.newHashMap();
 	
@@ -115,7 +117,7 @@ public abstract class BMEReceiver<T> extends Receiver<T> {
 			String path = constraintViolation.getPropertyPath().toString();
 			String message;
 			try {
-				message = bmeConstants.getString(constraintViolation.getMessage());	
+				message = enumConstants.getString(constraintViolation.getMessage());	
 			}catch (Exception e) {
 				message = path + " " + constraintViolation.getMessage();
 			}
