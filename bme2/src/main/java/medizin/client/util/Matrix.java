@@ -18,7 +18,7 @@ public class Matrix<E>  implements Iterable<E>, RandomAccess, Cloneable, java.io
 
 	private static final long serialVersionUID = 1L;
 	
-	private TreeBasedTable <Integer,Integer,E> table = TreeBasedTable .create();
+	private TreeBasedTable <Integer,Integer,E> table = TreeBasedTable.create();
 	
 	private final Predicate<E> NOT_NULL = new Predicate<E>() {
 
