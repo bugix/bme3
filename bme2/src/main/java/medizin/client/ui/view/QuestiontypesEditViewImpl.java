@@ -8,6 +8,7 @@ import java.util.Map;
 
 import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.QuestionTypeProxy;
+import medizin.client.ui.view.renderer.EnumRenderer;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.dialogbox.receiver.ReceiverDialog;
 import medizin.client.util.ClientUtility;
@@ -116,16 +117,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
     Label questionTypeLbl;
 	
     @UiField (provided = true)
-	ValueListBox<QuestionTypes> questionTypeListBox = new ValueListBox<QuestionTypes>(new AbstractRenderer<QuestionTypes>() {
-		// Note: this is not an EnumRenderer bc. translations of language names would be futile.
-		@Override
-		public String render(QuestionTypes questionType) {
-			if (questionType != null)
-				return questionType.toString();
-			
-			return "";
-		}
-	});    
+	ValueListBox<QuestionTypes> questionTypeListBox = new ValueListBox<QuestionTypes>(new EnumRenderer<QuestionTypes>());    
     
     @UiField
     Label sumAnswerLbl;
@@ -299,16 +291,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
     Label multimediaTypeLbl;
 	
     @UiField (provided = true)
-	ValueListBox<MultimediaType> multimediaTypeListBox = new ValueListBox<MultimediaType>(new AbstractRenderer<MultimediaType>() {
-		// Note: this is not an EnumRenderer bc. translations of language names would be futile.
-		@Override
-		public String render(MultimediaType multimediaType) {
-			if (multimediaType != null)
-				return multimediaType.toString();
-			
-			return "";
-		}
-	});
+	ValueListBox<MultimediaType> multimediaTypeListBox = new ValueListBox<MultimediaType>(new EnumRenderer<MultimediaType>());
     
     @UiField
     Label selectionTypeLbl;
@@ -546,7 +529,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		multimediaTypeListBox.setValue(MultimediaType.Image);
 		multimediaTypeListBox.setAcceptableValues(Arrays.asList(MultimediaType.values()));		
 		
-		selectionTypeListBox.setValue(SelectionType.Choose);
+		selectionTypeListBox.setValue(SelectionType.SEL_CHOOSE);
 		selectionTypeListBox.setAcceptableValues(Arrays.asList(SelectionType.values()));		
 		
 		questionTypeListBox.setValue(QuestionTypes.Textual);
@@ -807,7 +790,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 	    	   imageLengthTxtbox.setValue("");
 	    	   imageProportionTxtbox.setValue("");
 	    	   multimediaTypeListBox.setValue(MultimediaType.Image);
-	    	   selectionTypeListBox.setValue(SelectionType.Choose);
+	    	   selectionTypeListBox.setValue(SelectionType.SEL_CHOOSE);
 	    	   columnTxtbox.setValue("");
 	    	   thumbWidthTxtbox.setValue("");
 	    	   thumbHeightTxtbox.setValue("");
@@ -823,12 +806,12 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 			title.setInnerText(constants.addQuestionType());
 			//editTitle.getStyle().setDisplay(Display.NONE);
 			// change{	//	createTitle.getStyle().clearDisplay();
-			questionTypePanel.getTabBar().setTabText(0, "New Question Type");
+			questionTypePanel.getTabBar().setTabText(0, constants.addQuestionType());
 		} else {
 			title.setInnerText(constants.editQuestionType());
 			//editTitle.getStyle().clearDisplay();
 			// change{	createTitle.getStyle().setDisplay(Display.NONE);
-			questionTypePanel.getTabBar().setTabText(0, "Edit Question Type");
+			questionTypePanel.getTabBar().setTabText(0, constants.editQuestionType());
 		}
 	}
 	

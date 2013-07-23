@@ -1,16 +1,15 @@
 package medizin.client.ui.view.assesment;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import medizin.client.proxy.QuestionProxy;
 import medizin.client.proxy.QuestionTypeCountPerExamProxy;
 import medizin.client.style.resources.MyCellTableResources;
 import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
+import medizin.client.ui.view.renderer.EnumRenderer;
 import medizin.shared.BlockingTypes;
 import medizin.shared.i18n.BmeConstants;
 
@@ -133,32 +132,7 @@ public class QuestionTypeCountViewImpl extends Composite implements QuestionType
         paths.add("blockingType");
         tableQuestionTypeCount.addColumn(new TextColumn<QuestionTypeCountPerExamProxy>() {
 
-            Renderer<BlockingTypes> renderer =new Renderer<BlockingTypes>() {
-
-            	@Override
-        		public String render(BlockingTypes object) {
-        			// TODO Auto-generated method stub
-        			if(object==null)
-        			{
-        				return "";
-        			}
-        			else
-        			{
-        				return object.name();
-        			}
-        		}
-
-        		@Override
-        		public void render(BlockingTypes object, Appendable appendable)
-        				throws IOException {
-        			String s = render(object);
-        		    appendable.append(s);
-
-        			
-        		}
-			
-				
-			};
+            Renderer<BlockingTypes> renderer = new EnumRenderer<BlockingTypes>();
 
 			@Override
 			public String getValue(QuestionTypeCountPerExamProxy object) {

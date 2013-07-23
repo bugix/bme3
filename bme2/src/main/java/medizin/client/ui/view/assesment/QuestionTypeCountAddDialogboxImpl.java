@@ -1,6 +1,5 @@
 package medizin.client.ui.view.assesment;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -8,6 +7,7 @@ import java.util.Set;
 
 import medizin.client.proxy.QuestionTypeCountPerExamProxy;
 import medizin.client.proxy.QuestionTypeProxy;
+import medizin.client.ui.view.renderer.EnumRenderer;
 import medizin.client.ui.view.roo.QuestionTypeSetEditor;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.shared.BlockingTypes;
@@ -18,8 +18,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.text.shared.AbstractRenderer;
-import com.google.gwt.text.shared.Renderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -50,34 +48,7 @@ public class QuestionTypeCountAddDialogboxImpl extends DialogBox implements Ques
 	DivElement blockingTypeLbl;
 	
 	@UiField(provided=true)
-	ValueListBox<BlockingTypes> blockingType=new ValueListBox<BlockingTypes>(new Renderer<BlockingTypes>() {
-
-		@Override
-		public String render(BlockingTypes object) {
-			// TODO Auto-generated method stub
-			if(object==null)
-			{
-				return "";
-			}
-			else
-			{
-				return object.name();
-			}
-		}
-
-		@Override
-		public void render(BlockingTypes object, Appendable appendable)
-				throws IOException {
-			String s = render(object);
-		    appendable.append(s);
-
-			
-		}
-	});
-	
-
-	
-	
+	ValueListBox<BlockingTypes> blockingType=new ValueListBox<BlockingTypes>(new EnumRenderer<BlockingTypes>());
 	
 	@UiHandler ("closeButton")
 	public void onCloseButtonClick(ClickEvent event) {

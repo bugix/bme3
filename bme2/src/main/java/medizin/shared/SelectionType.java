@@ -2,6 +2,8 @@ package medizin.shared;
 
 public enum SelectionType {
 
-	Pick, Choose, Sort;
+	SEL_PICK,
+	SEL_CHOOSE,
+	SEL_SORT;
 	
 }

@@ -1,9 +1,8 @@
 package medizin.shared.i18n;
 
 import com.google.gwt.i18n.client.Constants;
-import com.google.gwt.i18n.client.ConstantsWithLookup;
 
-public interface BmeConstants extends Constants , ConstantsWithLookup {
+public interface BmeConstants extends Constants {
 	
 	public String selectLang();
 	
