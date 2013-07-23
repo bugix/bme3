@@ -711,36 +711,58 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 									matrix.setWidget(1, 0, addAnswerX);
 								}else {
 									if(isAnswerX ==  true) {
-										int currentRow = matrixList.getRowForObject(foundAnswers.get(0));
-										if(currentRow > -1) {
-											matrix.removeRow(currentRow);
-											matrixList.removeRow(currentRow);
-										}else {
-											Log.error("cannot find row for matrix vo : " + currentRow);
-										}
+										removeTableRow(foundAnswers);
 									}else {
-										int firstRow = matrixList.getRowForObject(foundAnswers.get(0));
-										int currentColumn = matrixList.getColumnForObject(foundAnswers.get(0));
-										int totalRows = matrix.getRowCount() -2; // removed answerx button row
-										if(firstRow > -1 && currentColumn > -1) {
-											for(int i=totalRows;i>=0;i--) {
-												matrix.removeCell(i, currentColumn);
-												matrixList.removeCell(i,currentColumn);	
-											}	
-										}else {
-											Log.error("error in first row or current column " + firstRow + " : " + currentColumn);
-										}
+										removeTableCols(foundAnswers);
 									}
 								}
 								return null;
 							}
 						});
 					}else {
-						if(isAnswerX ==  true) {
-							matrix.removeRow(matrix.getRowCount() - 2);
+						final FluentIterable<MatrixValidityVO> foundAnswersWithoutIds;
+						if(isAnswerX == true) {
+							foundAnswersWithoutIds = fluentIterable.filter(new AnswerXWithoutIdsPredicate(answer));
 						}else {
-							matrix.removeCell(0, matrix.getCellCount(0) -2);
+							foundAnswersWithoutIds = fluentIterable.filter(new AnswerYWithoutIdsPredicate(answer));
 						}
+						
+						if(foundAnswersWithoutIds.isEmpty() == false) {
+							if(isAnswerX ==  true) {
+								removeTableRow(foundAnswersWithoutIds);
+							}else {
+								removeTableCols(foundAnswersWithoutIds);
+							}
+						}
+					}
+				}
+
+				private void removeTableCols(final FluentIterable<MatrixValidityVO> foundAnswersWithoutIds) {
+					int firstRow = matrixList.getRowForObject(foundAnswersWithoutIds.get(0));
+					int currentColumn = matrixList.getColumnForObject(foundAnswersWithoutIds.get(0));
+					int totalRows = matrix.getRowCount() -2; // removed answerx button row
+					if(firstRow > -1 && currentColumn > -1) {
+						for(int i=totalRows;i>=0;i--) {
+							matrix.setHTML(i, currentColumn, "");
+							//matrix.removeCell(i, currentColumn);
+							matrixList.removeCell(i,currentColumn);	
+						}	
+					}else {
+						Log.error("error in first row or current column " + firstRow + " : " + currentColumn);
+					}
+				}
+				
+				private void removeTableRow(final FluentIterable<MatrixValidityVO> foundAnswers) {
+					int currentRow = matrixList.getRowForObject(foundAnswers.get(0));
+					int totalCols = matrixList.getColumns(currentRow);
+					if(currentRow > -1) {
+						//matrix.removeRow(currentRow);
+						for(int i=0;i<totalCols;i++) {
+							matrix.removeCell(currentRow, 0);	
+						}
+						matrixList.removeRow(currentRow);
+					}else {
+						Log.error("cannot find row for matrix vo : " + currentRow);
 					}
 				}
 				
@@ -753,6 +775,8 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 		
 	}
 
+	
+	
 	@Override
 	public void setValues(List<MatrixValidityProxy> response) {
 		
@@ -1029,7 +1053,51 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 		}
 		
 	}
+
+	private class AnswerXWithoutIdsPredicate implements Predicate<MatrixValidityVO> {
+
+		private final AnswerVO answerX;
+		
+		public AnswerXWithoutIdsPredicate(final AnswerVO answerX) {
+			this.answerX = answerX;
+		}
+
+		@Override
+		public boolean apply(MatrixValidityVO input) {
+			
+			if(answerX == null) {
+				return false;
+			}
+			if(input != null && input.getAnswerX() != null) {
+				return input.getAnswerX().equals(answerX);
+			}
+			return false;
+		}
+		
+	}
 	
+	private class AnswerYWithoutIdsPredicate implements Predicate<MatrixValidityVO> {
+		private final AnswerVO answerY;
+		
+		public AnswerYWithoutIdsPredicate(final AnswerVO answerY) {
+			this.answerY = answerY;
+		}
+		
+		@Override
+		public boolean apply(MatrixValidityVO input) {
+			
+			if(answerY == null) {
+				return false;
+			}
+			
+			if(input != null && input.getAnswerY() != null) {
+				return input.getAnswerY().equals(answerY);
+			}
+			return false;
+		}
+		
+	}
+
 	private class MatrixValidityPredicate implements Predicate<MatrixValidityVO> {
 		private final MatrixValidityProxy matrixValidityProxy;
 		
