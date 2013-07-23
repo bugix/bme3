@@ -37,7 +37,6 @@ import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.simple.DefaultSuggestOracle;
 import medizin.client.util.ClientUtility;
-import medizin.client.util.ImageWidthHeight;
 import medizin.shared.MultimediaType;
 import medizin.shared.QuestionTypes;
 import medizin.shared.i18n.BmeConstants;

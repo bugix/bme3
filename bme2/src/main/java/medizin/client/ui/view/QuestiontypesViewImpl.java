@@ -126,6 +126,7 @@ public class QuestiontypesViewImpl extends Composite implements QuestiontypesVie
 		ResolutionSettings.setSplitLayoutPanelAnimation(splitLayoutPanel);
 		splitLayoutPanel.animate(McAppConstant.ANIMATION_TIME);*/	
 		DOM.setElementAttribute(splitLayoutPanel.getElement(), "style", "position: absolute; left: 0px; top: 0px; right: 5px; bottom: 0px;");
+		newQuestiontype.setText(constants.newQuestionType());
 
 		paths.add("shortName");
         table.addColumn(new TextColumn<QuestionTypeProxy>() {

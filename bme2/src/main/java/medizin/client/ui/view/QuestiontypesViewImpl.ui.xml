@@ -15,7 +15,7 @@
 						</div>
 						<b:CellTable ui:field="table" addStyleNames="{style.standardTable}"  width="500"/>
 						<div class="{style.controls} {style.controlsleft}">
-							<a:IconButton ui:field="newQuestiontype" icon="plusthick">New Question Type</a:IconButton>
+							<a:IconButton ui:field="newQuestiontype" icon="plusthick"></a:IconButton>
 							<!--  <g:Button ui:field="newQuestiontype"
 								addStyleNames="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
 								<span class="ui-icon ui-icon-plusthick" style="float: left; margin-right: 0.3em;"></span>

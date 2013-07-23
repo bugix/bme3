@@ -14,6 +14,8 @@ public interface BmeConstants extends Constants {
 	
 	public String acceptQuestion();
 	
+	public String acceptQuestions();
+	
 	public String acceptAnswer();
 	
 	public String acceptAssQuestion();
@@ -135,6 +137,8 @@ public interface BmeConstants extends Constants {
 	public String addQuestionType();
 	
 	public String editQuestionType();
+	
+	public String newQuestionType();
 	
 	public String manageQuestionType();
 	
