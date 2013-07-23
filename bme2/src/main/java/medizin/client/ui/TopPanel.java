@@ -7,7 +7,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import medizin.client.McAppShell;
+import medizin.client.events.RecordChangeEvent;
 import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.proxy.InstitutionProxy;
@@ -26,6 +29,7 @@ import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.Window.Location;
 import com.google.gwt.user.client.ui.Composite;
@@ -93,6 +97,17 @@ public class TopPanel extends Composite {
     
     @UiField
     Label languageLbl;
+    
+    @UiField
+    Label recordViewLbl;
+    
+    @UiField (provided = true)
+	ValueListBox<String> recordViewListBox= new ValueListBox<String>(new AbstractRenderer<String>() {
+		@Override
+		public String render(String object) {
+			return object;
+		}
+	});
 
     @UiHandler ("loggedUser")
     public void loginUser(ValueChangeEvent<PersonProxy> event){
@@ -170,6 +185,17 @@ public class TopPanel extends Composite {
 			@Override
 			public void onValueChange(ValueChangeEvent<Locale> event) {
 				changeLanguage(languageListBox.getValue());
+			}
+		});
+		
+		recordViewListBox.setAcceptableValues(Arrays.asList("5","10","20","30","50","100","ALL"));
+		checkCookies();
+		recordViewLbl.setText(constants.tableSize());
+		recordViewListBox.addValueChangeHandler(new ValueChangeHandler<String>() {
+
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				requests.getEventBus().fireEvent(new RecordChangeEvent(recordViewListBox.getValue()));	
 			}
 		});
 	}
@@ -274,5 +300,21 @@ public class TopPanel extends Composite {
 		}
 	}	
 
-
+	public void checkCookies()
+	{
+		String temp = Cookies.getCookie("user");
+		
+		if (temp == null)
+		{
+			Log.info("Value is null");
+		}	
+		else			
+		{			
+			if (temp.matches("\\d+"))
+			{
+				McAppConstant.TABLE_PAGE_SIZE = Integer.parseInt(temp);
+				recordViewListBox.setValue(temp);
+			}
+		}
+	}
 }

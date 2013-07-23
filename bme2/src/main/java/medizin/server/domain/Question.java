@@ -42,7 +42,6 @@ import medizin.shared.utils.SharedConstant;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
-import org.mortbay.log.Log;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.roo.addon.javabean.RooJavaBean;
@@ -165,6 +164,10 @@ public class Question {
 	@Value("false")
 	@Column(columnDefinition="BIT", length = 1)
 	private Boolean isReadOnly;
+	
+	private Integer imageHeight;
+	
+	private Integer imageWidth;
 	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "question")
 	private Set<AssesmentQuestion> assesmentQuestionSet = new HashSet<AssesmentQuestion>();
@@ -331,7 +334,7 @@ public class Question {
 	 * 
 	 * Retrive Query same as Question link, + exclude assessment question
 	 */
-	public static List<Question> findQuestionsByMc(Long mcId,String questionId,String questionType,String questionName) {
+	public static List<Question> findQuestionsByMc(Long mcId,String questionId,String questionType,String questionName,Assesment a,Person author) {
 		
 		
 		Mc mc = Mc.findMc(mcId);
@@ -412,13 +415,21 @@ public class Question {
         	
         	// question should belong to particular mc of assesment
         	ArrayList<Question> questionList=new ArrayList<Question>();
+        	
+        	//filter it by question type and question event specified in assesment module for examiner/ author
+    		List<QuestionEvent> questionEventList=QuestionSumPerPerson.findQuestionEventOfExaminer(a, author);    		
+    		List<QuestionType> questionTypeList=QuestionTypeCountPerExam.findQuestionTypePerExam(a);
+    		
         	for(Question question : questions)
         	{
-	        	if(question.getMcs().contains(mc))
+	        	if(question.getMcs().contains(mc) && questionEventList.contains(question.getQuestEvent()) && questionTypeList.contains(question.getQuestionType()))
 	        	{
 	        		questionList.add(question);
 	        	}
         	}
+        	
+        	
+    		
         	
         	return questionList;
         	
@@ -495,7 +506,7 @@ public class Question {
 		Root<Question> from = criteriaQuery.from(Question.class);
 		criteriaQuery.select(criteriaBuilder.count(from));	
 
-		Predicate pre1 = criteriaBuilder.and(criteriaBuilder.equal(from.get("questEvent").get("institution").get("id"), institution.getId()), criteriaBuilder.notEqual(from.get("status"), Status.DEACTIVATED));
+		Predicate pre1 = criteriaBuilder.and(criteriaBuilder.equal(from.get("questEvent").get("institution").get("id"), institution.getId()), criteriaBuilder.notEqual(from.get("status"), Status.DEACTIVATED),criteriaBuilder.notEqual(from.get("isForcedActive"), true));
 
 		if (loggedUser.getIsAdmin())
 		{
@@ -546,7 +557,7 @@ public class Question {
 		CriteriaQuery<Question> criteriaQuery = criteriaBuilder.createQuery(Question.class);
 		Root<Question> from = criteriaQuery.from(Question.class);
 		
-		Predicate pre1 = criteriaBuilder.and(criteriaBuilder.equal(from.get("questEvent").get("institution").get("id"), institution.getId()), criteriaBuilder.notEqual(from.get("status"), Status.DEACTIVATED));
+		Predicate pre1 = criteriaBuilder.and(criteriaBuilder.equal(from.get("questEvent").get("institution").get("id"), institution.getId()), criteriaBuilder.notEqual(from.get("status"), Status.DEACTIVATED),criteriaBuilder.notEqual(from.get("isForcedActive"), true));
 
 		if (loggedUser.getIsAdmin())
 		{
@@ -896,15 +907,17 @@ public class Question {
 			CriteriaQuery<Question> select = criteriaQuery.select(from);
 
 			Predicate andAdminPredicate = null;
+			
+			Predicate institutionPre = criteriaBuilder.equal(from.get("questEvent").get("institution").get("id"), institutionId);
 
 			if (!loggedUser.getIsAdmin()) {
 				
 				Predicate p1 = criteriaBuilder.equal(from.get("autor").get("id"), loggedUser.getId());
 				Predicate p2 = criteriaBuilder.equal(from.get("rewiewer").get("id"), loggedUser.getId());
 								
-				Predicate mainpre1 = criteriaBuilder.equal(from.get("questEvent").get("institution").get("id"), institutionId);
+				//Predicate mainpre1 = criteriaBuilder.equal(from.get("questEvent").get("institution").get("id"), institutionId);
 
-				mainpre1 = criteriaBuilder.and(criteriaBuilder.or(p2, p1), mainpre1);
+				Predicate mainpre1 = criteriaBuilder.and(criteriaBuilder.or(p2, p1));
 				
 				Subquery<UserAccessRights> subQry = criteriaQuery.subquery(UserAccessRights.class);
 				Root queAccRoot = subQry.from(UserAccessRights.class);
@@ -925,10 +938,15 @@ public class Question {
 
 				andAdminPredicate = criteriaBuilder.or(mainpre1, criteriaBuilder.or(mainpre2, mainpre3, mainpre4));
 			} else {
-				Predicate adminpre1 = criteriaBuilder.equal(from.get("questEvent")
+				/*Predicate adminpre1 = criteriaBuilder.equal(from.get("questEvent")
 						.get("institution").get("id"), institutionId);
-				andAdminPredicate = adminpre1;
+				andAdminPredicate = adminpre1;*/
 			}
+			
+			if (andAdminPredicate == null)
+				andAdminPredicate = institutionPre;
+			else
+				andAdminPredicate = criteriaBuilder.and(institutionPre, andAdminPredicate);
 			
 			//Predicate statusActivePredicate = criteriaBuilder.equal(from.get("isActive"), Boolean.TRUE);
 			//Predicate statusNewPredicate = criteriaBuilder.equal(from.get("status"),Status.NEW);
@@ -951,12 +969,10 @@ public class Question {
 				
 				//search filter for assesment quetion new question tab
 				
-				Predicate searchPre=searchForNewQuestionTab(questionId,questionType,questionName,from,criteriaBuilder);
-				
-				
+				Predicate searchPre=searchForNewQuestionTab(questionId,questionType,questionName,from,criteriaBuilder);				
 				
 				if(searchPre == null)
-				andAdminPredicate = criteriaBuilder.and(statusNewPredicate, andAdminPredicate, assesmentQuestionPredicate);
+					andAdminPredicate = criteriaBuilder.and(statusNewPredicate, andAdminPredicate, assesmentQuestionPredicate);
 				else
 				{
 					andAdminPredicate = criteriaBuilder.and(statusNewPredicate, andAdminPredicate, assesmentQuestionPredicate,searchPre);
@@ -1099,11 +1115,11 @@ public class Question {
 				orPredicate = criteriaBuilder.or(orPredicate, showNewPre);
 			}*/
 
-			if (searchField.containsKey("institution")) {
+			/*if (searchField.containsKey("institution")) {
 				Long selectInstitutionId = Long.parseLong(searchField.get("institution"));
 				Predicate pre7 = criteriaBuilder.equal(from.get("questEvent").get("institution").get("id"), selectInstitutionId);
 				orPredicate = criteriaBuilder.or(orPredicate, pre7);
-			}
+			}*/
 
 			if (searchField.containsKey("specialiation")) {
 				Long questionEventId = Long.parseLong(searchField.get("specialiation"));

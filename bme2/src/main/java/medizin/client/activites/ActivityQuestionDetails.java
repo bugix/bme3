@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import medizin.client.factory.receiver.BMEReceiver;
@@ -37,6 +39,7 @@ import medizin.client.ui.view.question.QuestionDetailsViewImpl;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.ui.widget.resource.dndview.vo.State;
+import medizin.client.util.MathJaxs;
 import medizin.client.util.Matrix;
 import medizin.client.util.MatrixValidityVO;
 import medizin.shared.QuestionTypes;
@@ -44,6 +47,7 @@ import medizin.shared.Status;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.base.Function;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -51,6 +55,7 @@ import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.RangeChangeEvent;
 
@@ -411,6 +416,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			view.getMatrixAnswerListViewImpl().setVisible(false);
 			initAnswerView();
 		}
+		MathJaxs.delayRenderLatexResult(RootPanel.getBodyElement());
 	}
 
 	private void initAnswerView() {
@@ -1608,5 +1614,147 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	@Override
 	public void forcedActiveClicked() {
 		// not to implement here this is for ActivityNotActivatedQuestionDetails.class
+	}
+
+	@Override
+	public void saveAllTheValuesToAnswerAndMatrixAnswer(List<MatrixValidityProxy> currentMatrixValidityProxy, Matrix<MatrixValidityVO> matrixList, PersonProxy author, PersonProxy rewiewer, Boolean submitToReviewComitee, String comment) {
+		final CommentRequest commentRequest = requests.commentRequest();
+		final AnswerRequest answerRequest = commentRequest.append(requests.answerRequest());
+		final MatrixValidityRequest validityRequest = answerRequest.append(requests.MatrixValidityRequest());
+		
+		Map<Integer,AnswerProxy> answerXIndex = Maps.newHashMap();
+		Map<Integer,AnswerProxy> answerYIndex = Maps.newHashMap();
+		
+		for (Entry<Integer, Map<Integer, MatrixValidityVO>> rowset : matrixList.getAllRows()) {
+			
+			Integer xIndex = rowset.getKey(); 
+			
+			for (Entry<Integer, MatrixValidityVO> currentColumn : rowset.getValue().entrySet()) {
+				
+				Integer yIndex = currentColumn.getKey();
+				
+				MatrixValidityVO vo = currentColumn.getValue();
+				
+				Log.info(vo.toString());
+				MatrixValidityProxy proxy ;
+				if(vo.getMatrixValidityProxy() != null) {
+					proxy = validityRequest.edit(vo.getMatrixValidityProxy());
+				}else {
+					proxy = validityRequest.create(MatrixValidityProxy.class);
+				}
+				
+				proxy.setValidity(vo.getValidity());
+				if(proxy.getAnswerX() != null) {
+					proxy.getAnswerX().setDateChanged(new Date());
+					proxy.getAnswerX().setAnswerText(vo.getAnswerX().getAnswer());
+					proxy.getAnswerX().setAutor(author);
+					proxy.getAnswerX().setRewiewer(rewiewer);
+					proxy.getAnswerX().setSubmitToReviewComitee(submitToReviewComitee);
+					proxy.getAnswerX().setIsAnswerAcceptedAdmin(false);
+					proxy.getAnswerX().setIsAnswerAcceptedReviewWahrer(false);
+					proxy.getAnswerX().getComment().setComment(comment);
+					proxy.getAnswerX().setQuestion(question);
+					proxy.getAnswerX().setValidity(vo.getValidity());
+					proxy.getAnswerX().setStatus(Status.NEW);
+					answerXIndex.put(xIndex,proxy.getAnswerX());
+				} else {
+					
+					if(answerXIndex.containsKey(xIndex) == false) {
+					
+						AnswerProxy newAnswerProxy = answerRequest.create(AnswerProxy.class);
+						CommentProxy newCommentProxy = commentRequest.create(CommentProxy.class);
+						newCommentProxy.setComment(comment);
+						newAnswerProxy.setComment(newCommentProxy);
+						
+						
+						newAnswerProxy.setDateAdded(new Date());
+						newAnswerProxy.setAnswerText(vo.getAnswerX().getAnswer());
+						newAnswerProxy.setAutor(author);
+						newAnswerProxy.setRewiewer(rewiewer);
+						newAnswerProxy.setSubmitToReviewComitee(submitToReviewComitee);
+						newAnswerProxy.setIsAnswerAcceptedAdmin(false);
+						newAnswerProxy.setIsAnswerAcceptedReviewWahrer(false);
+						
+						newAnswerProxy.setQuestion(question);
+						newAnswerProxy.setValidity(vo.getValidity());
+						newAnswerProxy.setStatus(Status.NEW);
+						
+						proxy.setAnswerX(newAnswerProxy);
+						answerXIndex.put(xIndex,newAnswerProxy);
+						
+						answerRequest.persist().using(newAnswerProxy);
+						commentRequest.persist().using(newCommentProxy);
+					} else {
+						proxy.setAnswerX(answerXIndex.get(xIndex));
+					}
+					
+				}
+				
+				if(proxy.getAnswerY() != null) {
+				
+					proxy.getAnswerY().setDateChanged(new Date());
+					proxy.getAnswerY().setAnswerText(vo.getAnswerY().getAnswer());
+					proxy.getAnswerY().setAutor(author);
+					proxy.getAnswerY().setRewiewer(rewiewer);
+					proxy.getAnswerY().setSubmitToReviewComitee(submitToReviewComitee);
+					proxy.getAnswerY().setIsAnswerAcceptedAdmin(false);
+					proxy.getAnswerY().setIsAnswerAcceptedReviewWahrer(false);
+					//proxy.getAnswerY().setIsAnswerActive(false);
+					proxy.getAnswerY().getComment().setComment(comment);
+					proxy.getAnswerY().setQuestion(question);
+					proxy.getAnswerY().setValidity(vo.getValidity());
+					proxy.getAnswerY().setStatus(Status.NEW);
+
+					answerYIndex.put(yIndex,proxy.getAnswerY());
+				}else {
+
+					if(answerYIndex.containsKey(yIndex) == false) {
+					
+						AnswerProxy newAnswerProxy = answerRequest.create(AnswerProxy.class);
+						CommentProxy newCommentProxy = commentRequest.create(CommentProxy.class);
+						newCommentProxy.setComment(comment);
+						newAnswerProxy.setComment(newCommentProxy);
+						
+						proxy.setAnswerY(newAnswerProxy);
+						
+						newAnswerProxy.setDateAdded(new Date());
+						newAnswerProxy.setAnswerText(vo.getAnswerY().getAnswer());
+						newAnswerProxy.setAutor(author);
+						newAnswerProxy.setRewiewer(rewiewer);
+						newAnswerProxy.setSubmitToReviewComitee(submitToReviewComitee);
+						newAnswerProxy.setIsAnswerAcceptedAdmin(false);
+						newAnswerProxy.setIsAnswerAcceptedReviewWahrer(false);
+						
+						newAnswerProxy.setQuestion(question);
+						newAnswerProxy.setValidity(vo.getValidity());
+						newAnswerProxy.setStatus(Status.NEW);
+
+						answerYIndex.put(yIndex,newAnswerProxy);
+						
+						answerRequest.persist().using(newAnswerProxy);
+						commentRequest.persist().using(newCommentProxy);
+
+					} else {
+						proxy.setAnswerY(answerYIndex.get(yIndex));
+					}
+										
+				}
+								
+				validityRequest.persist().using(proxy);
+
+			}
+		}
+		
+		validityRequest.fire(new BMEReceiver<Void>() {
+
+			@Override
+			public void onSuccess(Void response) {
+				
+				Log.info("save done for matrix validity");
+				initMatrixAnswerView();
+			}
+		});
+		
+		
 	}
 }

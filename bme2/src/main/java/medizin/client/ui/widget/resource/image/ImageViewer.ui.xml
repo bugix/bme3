@@ -12,7 +12,8 @@
 	<g:HTMLPanel styleName="{style.imageBox}">
 		
 		<g:VerticalPanel>
-			<gwtgraphics:DrawingArea ui:field="drawingArea"></gwtgraphics:DrawingArea>
+			<!-- <gwtgraphics:DrawingArea ui:field="drawingArea"></gwtgraphics:DrawingArea> -->
+			<g:Image ui:field="image"></g:Image>
 		</g:VerticalPanel>
 		<!-- <g:VerticalPanel>
 			<g:HTMLPanel>

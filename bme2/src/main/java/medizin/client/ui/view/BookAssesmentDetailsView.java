@@ -19,6 +19,10 @@ public interface BookAssesmentDetailsView extends IsWidget {
 
 		void createAssementBook(boolean createAVesion);
 
+		Long getAssignemtId();
+
+		void shuffleAssementQuestionsAnswers();
+
 	}
 
 
@@ -37,6 +41,8 @@ public interface BookAssesmentDetailsView extends IsWidget {
 	ScrollPanel getScrollContainer();
 
 	void setDelegate(Delegate delegate);
+
+	void addButtons();
 	
 	
     

@@ -3,6 +3,8 @@ package medizin.client.ui.view;
 import java.util.ArrayList;
 import java.util.List;
 
+import medizin.client.events.RecordChangeEvent;
+import medizin.client.events.RecordChangeHandler;
 import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.style.resources.MyCellTableResources;
 import medizin.client.style.resources.MySimplePagerResources;
@@ -27,7 +29,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class QuestiontypesViewImpl extends Composite implements QuestiontypesView  {
+public class QuestiontypesViewImpl extends Composite implements QuestiontypesView, RecordChangeHandler  {
 
 	private static QuestiontypesViewImplUiBinder uiBinder = GWT
 			.create(QuestiontypesViewImplUiBinder.class);
@@ -141,7 +143,7 @@ public class QuestiontypesViewImpl extends Composite implements QuestiontypesVie
             @Override
             public String getValue(QuestionTypeProxy object) {
                 //return renderer.render(object.getQuestionTypeName());
-            	return renderer.render(object.getShortName()!=null?object.getShortName():"");
+            	return renderer.render(object == null ? null : object.getShortName()!=null?object.getShortName():"");
             	//return renderer.render(object.getShortName());
             }
         }, constants.name());
@@ -162,7 +164,7 @@ public class QuestiontypesViewImpl extends Composite implements QuestiontypesVie
             @Override
             public String getValue(QuestionTypeProxy object) {
                 //return renderer.render(object.getQuestionTypeName());
-            	return renderer.render(object.getQuestionType()!=null?object.getQuestionType().toString():"");
+            	return renderer.render(object == null ? null : object.getQuestionType()!=null?object.getQuestionType().toString():"");
             	//return renderer.render(object.getShortName());
             }
         }, constants.type());
@@ -211,7 +213,7 @@ public class QuestiontypesViewImpl extends Composite implements QuestiontypesVie
             	else 
             		return "2";*/
             	
-            	return AnswerValue.getValue(object);
+            	return AnswerValue.getValue(object == null ? null : object);
             }
         }, constants.answer());
      }
@@ -229,6 +231,21 @@ public class QuestiontypesViewImpl extends Composite implements QuestiontypesVie
 	public SimplePanel getDetailsPanel() {
 		
 		return slidingPanel;
+	}
+
+
+	@Override
+	public void onRecordChange(RecordChangeEvent event) {
+		int pagesize = 0;
+
+		if (event.getRecordValue() == "ALL") {
+			pagesize = table.getRowCount();
+			McAppConstant.TABLE_PAGE_SIZE = pagesize;
+		} else if (event.getRecordValue().matches("\\d+")) {
+			pagesize = Integer.parseInt(event.getRecordValue());
+		}
+
+		table.setPageSize(pagesize);	
 	}
 
 

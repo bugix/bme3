@@ -204,4 +204,27 @@ public final class ClientUtility {
 		return label;
 	}
 
+	public static void getImageWidthHeight(final String url,final ImageWidthHeight imageWidthHeight) {
+		Image.prefetch(url);
+		final Image image = new Image(new SafeUri() {
+			
+			@Override
+			public String asString() {
+				return url;
+			}
+		});
+	
+		new Timer() {
+			
+			@Override
+			public void run() {
+				imageWidthHeight.apply(image.getWidth(), image.getHeight());
+				this.cancel();
+			}
+		}.schedule(250);
+	}
+
+	public static String removeMathJax(String text) {
+		return text.replaceAll("\\[", "").replaceAll("\\]", "");		
+	}
 }

@@ -10,7 +10,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.util.ReflectionUtils;
 
@@ -137,5 +136,17 @@ public final class BMEUtils {
 		}
 		
 		return map;
+	}
+
+	public static boolean compareTwoList(List<Integer> firstList, List<Integer> secondList) {
+		
+		int minSize = Math.min(firstList.size(), secondList.size());
+		for(int i=0;i<minSize;i++) {
+			if(firstList.get(i).equals(secondList.get(i)) == false) {
+				return false;
+			}
+		}
+		
+		return true;
 	}
 }

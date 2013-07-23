@@ -62,8 +62,8 @@ public class Assesment {
     @Size(min = 5, max = 100)
     private String place;
 
-    @NotNull
-    @Size(min = 5, max = 255)
+    /*@NotNull
+    @Size(min = 5, max = 255)*/
     private String logo;
 
     @NotNull
@@ -120,19 +120,20 @@ public class Assesment {
         Person userLoggedIn=Person.myGetLoggedPerson();
         Boolean isAdmin=userLoggedIn.getIsAdmin();
         PersonAccessRight accessRights=userLoggedIn.getLoggedPersonAccessRights();
+        Institution institution=Institution.myGetInstitutionToWorkWith();
         Boolean isInstitutionAdmin=accessRights.getIsInstitutionalAdmin();
         TypedQuery<Assesment> q=null;
         if(isAdmin || isInstitutionAdmin)//For Admin and Institutional Admin user
-        	q = em.createQuery("SELECT Assesment FROM Assesment AS assesment WHERE assesment.dateOfAssesment >= :dateClosed  AND assesment.dateOpen <= :dateOpen  AND assesment.isClosed IS :isClosed", Assesment.class);
+        	q = em.createQuery("SELECT Assesment FROM Assesment AS assesment WHERE assesment.dateOfAssesment >= :dateClosed  AND assesment.dateOpen <= :dateOpen  AND assesment.isClosed IS :isClosed and assesment.institution=:institution", Assesment.class);
         else //for examiner
         {
-        	q = em.createQuery("SELECT Assesment FROM Assesment AS assesment WHERE assesment.dateClosed >= :dateClosed  AND assesment.dateOpen <= :dateOpen  AND assesment.isClosed IS :isClosed", Assesment.class);
+        	q = em.createQuery("SELECT Assesment FROM Assesment AS assesment WHERE assesment.dateClosed >= :dateClosed  AND assesment.dateOpen <= :dateOpen  AND assesment.isClosed IS :isClosed  and assesment.institution=:institution", Assesment.class);
         	 
         }
         q.setParameter("dateClosed", dateClosed);
         q.setParameter("dateOpen", dateOpen);
         q.setParameter("isClosed", isClosed);
-        
+        q.setParameter("institution", institution);
         List<Assesment> assesments=q.getResultList();
         
         if(!(isAdmin || isInstitutionAdmin))
@@ -165,7 +166,7 @@ public class Assesment {
         return assesments;
     }
     
-    public static List<Assesment> findActiveAssesments() {
+    public static List<Assesment> findActiveAssesments(Long selectedInstitutionId) {
     	Date dateOfAssesment =new Date();
     	Date dateOpen = new Date(); 
     	//Boolean isClosed=false;
@@ -174,10 +175,11 @@ public class Assesment {
     	//log.debug("Datum geschlossen: " + dateClosed);
 
         EntityManager em = Assesment.entityManager();
-        TypedQuery<Assesment> q = em.createQuery("SELECT Assesment FROM Assesment AS assesment WHERE assesment.dateOfAssesment >= :dateOfAssesment  AND assesment.dateOpen <= :dateOpen", Assesment.class);
+        TypedQuery<Assesment> q = em.createQuery("SELECT Assesment FROM Assesment AS assesment WHERE assesment.dateOfAssesment >= :dateOfAssesment  AND assesment.dateOpen <= :dateOpen AND assesment.institution.id = :institution", Assesment.class);
         q.setParameter("dateOfAssesment", dateOfAssesment);
         q.setParameter("dateOpen", dateOpen);
       //  q.setParameter("isClosed", isClosed);
+        q.setParameter("institution", selectedInstitutionId);
         return q.getResultList();
     }
     
@@ -199,5 +201,23 @@ public class Assesment {
     	q.setFirstResult(firstResult);
     	q.setMaxResults(maxResults);
     	return q.getResultList();
+    }
+    
+    public static Long countAssesmentByInsitute()
+    {
+    	EntityManager em = Assesment.entityManager();
+    	
+    	Institution activeInstitute=Institution.myGetInstitutionToWorkWith();
+    	//create query  	
+    	CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+    	CriteriaQuery<Assesment> criteriaQuery = criteriaBuilder
+				.createQuery(Assesment.class);
+    	//from
+    	Root<Assesment> from = criteriaQuery.from(Assesment.class);
+    	
+    	criteriaQuery.where(criteriaBuilder.equal(from.get("institution"), activeInstitute));
+    	TypedQuery<Assesment> q=entityManager().createQuery(criteriaQuery);
+    
+    	return new Long(q.getResultList().size());
     }
 }

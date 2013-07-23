@@ -7,8 +7,9 @@ import java.util.Map;
 import java.util.Set;
 
 import medizin.client.events.QuestionSaveEvent;
+import medizin.client.events.RecordChangeEvent;
+import medizin.client.events.RecordChangeHandler;
 import medizin.client.factory.request.McAppRequestFactory;
-import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.style.resources.MyCellTableResources;
@@ -46,7 +47,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class QuestionViewImpl extends Composite implements QuestionView {
+public class QuestionViewImpl extends Composite implements QuestionView, RecordChangeHandler {
 
 	private static QuestionViewImplUiBinder uiBinder = GWT
 			.create(QuestionViewImplUiBinder.class);
@@ -175,16 +176,16 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 	List<String> searchField = new ArrayList<String>();
 	private final EventBus eventBus;
 
-	@Override
+	/*@Override
 	public void setInstitutionFilter(List<InstitutionProxy> values)
 	{
 		filterPanel.institutionListBox.setAcceptableValues(values);
-	}
+	}*/
 
 	@Override
 	public void setSpecialisationFilter(List<QuestionEventProxy> values)
 	{
-		filterPanel.specialiationListBox.setAcceptableValues(values);
+		filterPanel.specialiationListBox.setAcceptableValues(values);	
 	}
 
 	
@@ -357,7 +358,7 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 
 		filterPanel.setPopupPosition(x, y);
 		filterPanel.show();
-		filterPanel.setSize("415px", "255px");
+		filterPanel.setSize("415px", "235px");
 		// Log.info(filterPanel.getSpecialisationBox().getValue());
 
 	}
@@ -376,7 +377,7 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 
 			@Override
 			public String getValue(QuestionProxy object) {
-				return renderer.render(object.getId());
+				return renderer.render(object == null ? null : object.getId());
 			}
 		}, constants.id());
 		
@@ -392,7 +393,7 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 
 			@Override
 			public String getValue(QuestionProxy object) {
-				return renderer.render(object.getQuestionShortName()==null?"":object.getQuestionShortName());
+				return renderer.render(object == null ? null : object.getQuestionShortName()==null?"":object.getQuestionShortName());
 			}
 		},constants.questionShortName() );
 		
@@ -651,7 +652,7 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 				new QuestionTextCell()) {
 			@Override
 			public QuestionProxy getValue(QuestionProxy object) {
-				return object;
+				return object == null ? null : object;
 			}
 		}, constants.questionText());
 
@@ -676,7 +677,7 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 
 			@Override
 			public String getValue(QuestionProxy object) {
-				return renderer.render(object.getQuestionType()==null?"":object.getQuestionType().getShortName());
+				return renderer.render(object == null ? null : object.getQuestionType()==null?"":object.getQuestionType().getShortName());
 			}
 		},constants.questionType() );
 		paths.add("status");
@@ -691,7 +692,7 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 
 			@Override
 			public String getValue(QuestionProxy object) {
-				return renderer.render(object.getStatus()==null?"":object.getStatus().toString());
+				return renderer.render(object == null ? null : object.getStatus()==null?"":object.getStatus().toString());
 			}
 		},constants.status() );
 		
@@ -860,12 +861,12 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 			searchField.add(filterPanel.showNew.getValue() ? "true" : "false");
 		}
 		
-		if (filterPanel.institutionListBox.getValue() != null)
+		/*if (filterPanel.institutionListBox.getValue() != null)
 		{
 			searchField.add("institution");
 			searchField.add(filterPanel.institutionListBox.getValue().getId().toString());
 			//searchFileds.add(new SearchValue("institution", filterPanel.institutionListBox.getValue().getId().toString()));
-		}
+		}*/
 		
 		if (filterPanel.specialiationListBox.getValue() != null)
 		{
@@ -910,5 +911,20 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 		}
 		
 		delegate.performSearch(searchBox.getValue());
+	}
+
+
+	@Override
+	public void onRecordChange(RecordChangeEvent event) {
+		int pagesize = 0;
+
+		if (event.getRecordValue() == "ALL") {
+			pagesize = table.getRowCount();
+			McAppConstant.TABLE_PAGE_SIZE = pagesize;
+		} else if (event.getRecordValue().matches("\\d+")) {
+			pagesize = Integer.parseInt(event.getRecordValue());
+		}
+
+		table.setPageSize(pagesize);		
 	}
 }

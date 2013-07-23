@@ -251,20 +251,20 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 					questionTypeProxy.setAcceptNonKeyword(view.getAcceptNonKeywordChkBox().getValue());
 					questionTypeProxy.setAnswerLength(Integer.parseInt(view.getAnswerLengthTxtbox().getValue()));
 					questionTypeProxy.setLengthShortAnswer(Integer.parseInt(view.getShortAnswerLengthTxtbox().getValue()));
-					questionTypeProxy.setImageWidth(Integer.parseInt(view.getImageWidthTxtbox().getValue()));
+					/*questionTypeProxy.setImageWidth(Integer.parseInt(view.getImageWidthTxtbox().getValue()));
 					questionTypeProxy.setImageHeight(Integer.parseInt(view.getImageLengthTxtbox().getValue()));
-					questionTypeProxy.setImageProportion(view.getImageProportionTxtbox().getValue());
+					questionTypeProxy.setImageProportion(view.getImageProportionTxtbox().getValue());*/
 					questionTypeProxy.setQuestionLength(Integer.parseInt(view.getQuestionLengthTxtbox().getValue()));
 				}
 				else if (selectedQuestionType.equals(QuestionTypes.ShowInImage))
 				{
-					questionTypeProxy.setAnswerLength(Integer.parseInt(view.getAnswerLengthTxtbox().getValue()));
 					questionTypeProxy.setQuestionLength(Integer.parseInt(view.getQuestionLengthTxtbox().getValue()));
+					/*questionTypeProxy.setAnswerLength(Integer.parseInt(view.getAnswerLengthTxtbox().getValue()));					
 					questionTypeProxy.setImageWidth(Integer.parseInt(view.getImageWidthTxtbox().getValue()));
 					questionTypeProxy.setImageHeight(Integer.parseInt(view.getImageLengthTxtbox().getValue()));
 					questionTypeProxy.setImageProportion(view.getImageProportionTxtbox().getValue());
 					questionTypeProxy.setLinearPoint(view.getLinearPointChkBox().getValue());
-					questionTypeProxy.setLinearPercentage(Double.parseDouble(view.getLinearPercentageTxtbox().getValue()));
+					questionTypeProxy.setLinearPercentage(Double.parseDouble(view.getLinearPercentageTxtbox().getValue().isEmpty() == true ? "0" : view.getLinearPercentageTxtbox().getValue()));*/
 				}
 				else if (selectedQuestionType.equals(QuestionTypes.LongText))
 				{
@@ -289,13 +289,13 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 					questionTypeProxy.setMultimediaType(view.getMultimediaTypeListBox().getValue());
 					questionTypeProxy.setSelectionType(view.getSelectionTypeListBox().getValue());
 					questionTypeProxy.setColumns(Integer.parseInt(view.getColumnTxtbox().getValue()));
-					questionTypeProxy.setImageWidth(Integer.parseInt(view.getImageWidthTxtbox().getValue()));
+					/*questionTypeProxy.setImageWidth(Integer.parseInt(view.getImageWidthTxtbox().getValue()));
 					questionTypeProxy.setImageHeight(Integer.parseInt(view.getImageLengthTxtbox().getValue()));
 					questionTypeProxy.setImageProportion(view.getImageProportionTxtbox().getValue());
 					questionTypeProxy.setThumbWidth(Integer.parseInt(view.getThumbWidthTxtbox().getValue()));
 					questionTypeProxy.setThumbHeight(Integer.parseInt(view.getThumbHeightTxtbox().getValue()));
 					questionTypeProxy.setAllowZoomIn(view.getAllowZoomInChkBox().getValue());
-					questionTypeProxy.setAllowZoomOut(view.getAllowZoomOutChkBox().getValue());
+					questionTypeProxy.setAllowZoomOut(view.getAllowZoomOutChkBox().getValue());*/
 					questionTypeProxy.setMaxBytes(Integer.parseInt(view.getMaxBytesTxtbox().getValue()));
 					questionTypeProxy.setRichText(view.getRichTextChkBox().getValue());
 				}

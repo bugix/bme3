@@ -30,6 +30,7 @@ import medizin.client.ui.view.question.QuestionEditView;
 import medizin.client.ui.view.question.QuestionEditViewImpl;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.ui.widget.resource.dndview.vo.State;
+import medizin.client.util.MathJaxs;
 import medizin.shared.Status;
 
 import com.allen_sauer.gwt.log.client.Log;
@@ -40,6 +41,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.inject.Inject;
 import com.google.web.bindery.requestfactory.shared.EntityProxyId;
 
@@ -171,6 +173,7 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 						Log.info(((QuestionProxy) response).getQuestionText());
 						question = (QuestionProxy) response;
 						init();
+						MathJaxs.delayRenderLatexResult(RootPanel.getBodyElement());
 					}
 				}
 			});
@@ -213,7 +216,7 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 
 		deleteUploadedFiles(paths);
 
-		if (question.getId() != null) {
+		if (question != null && question.getId() != null) {
 			cancelClickedGoto(question);
 		} else {
 			goTo(new PlaceQuestion(PlaceQuestion.PLACE_QUESTION));
@@ -625,7 +628,7 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 	@Override
 	public void deleteMediaFileFromDisk(String path) {
 
-		if (question != null) {
+		/*if (question != null) {*/
 			final QuestionRequest questionRequest = requests.questionRequest();
 			questionRequest.deleteMediaFileFromDisk(path).fire(new BMEReceiver<Boolean>(reciverMap) {
 
@@ -635,9 +638,9 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 				}
 
 			});
-		} else {
+		/*} else {
 			Log.error("Question is null");
-		}
+		}*/
 
 	}
 
@@ -702,7 +705,11 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 		
 		if(question == null) {
 			// save new question for first time
-			createNewQuestion(null,Status.NEW,false,false,true,gotoShowNewFunction);
+			boolean isAcceptedByAdmin = isAdminOrInstitutionalAdmin();
+			boolean isAcceptedByReviewer = false;
+			boolean isAcceptedByAuthor = userLoggedIn.getId().equals(view.getAuthorId());
+			
+			createNewQuestion(null,Status.NEW,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor,gotoShowNewFunction);
 		}else {
 			// edit accepted question with major or minor version
 			final Function<Boolean, Void> isMajorOrMinor = new Function<Boolean, Void>() {
@@ -711,20 +718,22 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 				public Void apply(Boolean withNewMajorVersion) {
 					
 					if(withNewMajorVersion == true) {
-						createNewQuestion(question,Status.NEW,false,false,true,gotoShowNewFunction);
+						boolean isAcceptedByAdmin = isAdminOrInstitutionalAdmin();
+						boolean isAcceptedByReviewer = false;
+						boolean isAcceptedByAuthor = userLoggedIn.getId().equals(view.getAuthorId());
+						
+						createNewQuestion(question,Status.NEW,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor,gotoShowNewFunction);
 					}else {
 						Status status; 
-						boolean isAcceptedByReviewer = false;
-						boolean isAcceptedByAdmin = false;
-						boolean isAcceptedByAuthor = true; // as update from author
+						
 												
-						final Function<EntityProxyId<?>, Void> gotoDetailsFunction = new Function<EntityProxyId<?>, Void>() {
+						/*final Function<EntityProxyId<?>, Void> gotoDetailsFunction = new Function<EntityProxyId<?>, Void>() {
 							@Override
 							public Void apply(EntityProxyId<?> stableId) {
 								placeController.goTo(new PlaceQuestionDetails(stableId, PlaceQuestionDetails.Operation.DETAILS));
 								return null;
 							}
-						};
+						};*/
 						
 						final Function<EntityProxyId<?>, Void> gotoFunction = new Function<EntityProxyId<?>, Void>() {
 							@Override
@@ -735,13 +744,19 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 						};
 						
 						if(Status.NEW.equals(question.getStatus())) {
+							boolean isAcceptedByAdmin = isAdminOrInstitutionalAdmin();
+							boolean isAcceptedByReviewer = false;
+							boolean isAcceptedByAuthor = userLoggedIn.getId().equals(view.getAuthorId());
 							// if current state of the question is new so status will remain as it is.
 							status = Status.NEW;
-							updateQuestion(status,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor,gotoDetailsFunction);
+							updateQuestion(status,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor,gotoShowNewFunction);
 						}else if(Status.ACTIVE.equals(question.getStatus())) {
 							// the current state of the question is active so new status with minor changes will be accepted reviewer
+							boolean isAcceptedByAdmin = isAdminOrInstitutionalAdmin();
+							boolean isAcceptedByReviewer = true;
+							boolean isAcceptedByAuthor = userLoggedIn.getId().equals(view.getAuthorId());
+							
 							status = Status.ACCEPTED_REVIEWER;
-							isAcceptedByReviewer = true; 
 							updateQuestion(status,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor,gotoFunction);
 						}
 					}

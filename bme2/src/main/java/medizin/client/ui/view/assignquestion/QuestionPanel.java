@@ -21,6 +21,8 @@ public interface QuestionPanel extends IsWidget {
 
 		void searchQuestion(String questionshortName, Integer questionId,
 				String questionType);
+
+		void authorValueChangedFromRightSide(PersonProxy value);
 		
 	}
 

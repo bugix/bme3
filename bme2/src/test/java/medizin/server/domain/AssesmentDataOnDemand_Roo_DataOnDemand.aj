@@ -86,9 +86,6 @@ privileged aspect AssesmentDataOnDemand_Roo_DataOnDemand {
     
     public void AssesmentDataOnDemand.setLogo(Assesment obj, int index) {
         String logo = "logo_" + index;
-        if (logo.length() > 255) {
-            logo = logo.substring(0, 255);
-        }
         obj.setLogo(logo);
     }
     

@@ -51,6 +51,8 @@ privileged aspect QuestionDataOnDemand_Roo_DataOnDemand {
         setAutor(obj, index);
         setDateAdded(obj, index);
         setDateChanged(obj, index);
+        setImageHeight(obj, index);
+        setImageWidth(obj, index);
         setIsAcceptedAdmin(obj, index);
         setIsAcceptedAuthor(obj, index);
         setIsAcceptedRewiever(obj, index);
@@ -82,6 +84,16 @@ privileged aspect QuestionDataOnDemand_Roo_DataOnDemand {
     public void QuestionDataOnDemand.setDateChanged(Question obj, int index) {
         Date dateChanged = new GregorianCalendar(Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.MONTH), Calendar.getInstance().get(Calendar.DAY_OF_MONTH), Calendar.getInstance().get(Calendar.HOUR_OF_DAY), Calendar.getInstance().get(Calendar.MINUTE), Calendar.getInstance().get(Calendar.SECOND) + new Double(Math.random() * 1000).intValue()).getTime();
         obj.setDateChanged(dateChanged);
+    }
+    
+    public void QuestionDataOnDemand.setImageHeight(Question obj, int index) {
+        Integer imageHeight = new Integer(index);
+        obj.setImageHeight(imageHeight);
+    }
+    
+    public void QuestionDataOnDemand.setImageWidth(Question obj, int index) {
+        Integer imageWidth = new Integer(index);
+        obj.setImageWidth(imageWidth);
     }
     
     public void QuestionDataOnDemand.setIsAcceptedAdmin(Question obj, int index) {

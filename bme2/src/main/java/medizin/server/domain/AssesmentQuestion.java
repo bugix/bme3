@@ -2,7 +2,9 @@ package medizin.server.domain;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -27,14 +29,15 @@ import javax.persistence.criteria.Subquery;
 import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
 
+import medizin.client.shared.Validity;
 import medizin.server.mail.EmailServiceImpl;
+import medizin.server.utils.BMEUtils;
 import medizin.shared.Status;
 import medizin.shared.utils.PersonAccessRight;
 import medizin.shared.utils.SharedConstant;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
-import org.mortbay.log.Log;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -44,6 +47,9 @@ import org.springframework.roo.addon.tostring.RooToString;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import com.google.common.base.Function;
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Lists;
 import com.google.web.bindery.requestfactory.server.RequestFactoryServlet;
 
 @RooJavaBean
@@ -123,7 +129,7 @@ public class AssesmentQuestion {
      
      public static List<Person> findAuthorListByAssesment(Assesment assesment){
      	
-     	Log.info("findAuthorListByAssesment ");
+     	log.info("findAuthorListByAssesment ");
      	
      	Set<QuestionSumPerPerson> questionSumPerPersons=assesment.getQuestionSumPerPerson();
      	
@@ -148,9 +154,9 @@ public class AssesmentQuestion {
     * 4. Not Assigned in current Assesment
     * */
     
-    public static List<AssesmentQuestion> findAssesmentQuestionsByMc(Long assesmentId,Long id,String questionId,String questionType,String questionName){
+    public static List<AssesmentQuestion> findAssesmentQuestionsByMc(Long assesmentId,Long id,String questionId,String questionType,String questionName,Person author){
     	
-    	Log.info("Past Question Tab ");
+    	log.info("Past Question Tab ");
     	
         Boolean isAcceptedAdmin = true;
         
@@ -277,9 +283,11 @@ public class AssesmentQuestion {
 		Predicate pre6 = criteriaBuilder.equal(from.get("question").get("questEvent")
 				.get("institution"), institution);
 		
+		Assesment a=Assesment.findAssesment(assesmentId);
+		
         if(userLoggedIn.getIsAdmin()) //Main Admin
         {
-        	Log.info("Main Admin");
+        	log.info("Main Admin");
     		
     		
 			
@@ -316,9 +324,14 @@ public class AssesmentQuestion {
     		
     		//question should belong to assesment mcq
     		List<AssesmentQuestion> aqList=new ArrayList<AssesmentQuestion>();
+    		
+    		//filter it by question type and question event specified in assesment module for examiner/ author
+    		List<QuestionEvent> questionEventList=QuestionSumPerPerson.findQuestionEventOfExaminer(a, author);    		
+    		List<QuestionType> questionTypeList=QuestionTypeCountPerExam.findQuestionTypePerExam(a);
+    		
     		for(AssesmentQuestion aq:pastAqs)
     		{
-    			if(aq.getQuestion().getMcs().contains(mc))
+    			if(aq.getQuestion().getMcs().contains(mc) && questionEventList.contains(aq.getQuestion().getQuestEvent()) && questionTypeList.contains(aq.getQuestion().getQuestionType()))
     			{
     				aqList.add(aq);
     			}
@@ -328,7 +341,7 @@ public class AssesmentQuestion {
         }
         else
         {
-        	Log.info("Not Main Admin");
+        	log.info("Not Main Admin");
         	
         	//Author
 			Predicate p1 = criteriaBuilder.equal(from.get("autor"), userLoggedIn);
@@ -387,23 +400,26 @@ public class AssesmentQuestion {
 			
 			
 			//remove duplicate question
-		
-			//remove duplicate question
     		List<AssesmentQuestion> pastAqs=removeDuplicateAssesmentQuestion(q.getResultList());
     		
     		
     		//question should belong to assesment mcq
     		List<AssesmentQuestion> aqList=new ArrayList<AssesmentQuestion>();
+    		
+    		//filter it by question type and question event specified in assesment module for examiner/ author
+    		List<QuestionEvent> questionEventList=QuestionSumPerPerson.findQuestionEventOfExaminer(a, author);    		
+    		List<QuestionType> questionTypeList=QuestionTypeCountPerExam.findQuestionTypePerExam(a);
+    		
     		for(AssesmentQuestion aq:pastAqs)
     		{
-    			if(aq.getQuestion().getMcs().contains(mc))
+    			if(aq.getQuestion().getMcs().contains(mc) && questionEventList.contains(aq.getQuestion().getQuestEvent()) && questionTypeList.contains(aq.getQuestion().getQuestionType()))
     			{
     				aqList.add(aq);
     			}
     		}
     		
     		return aqList;
-        }
+}
         
        
 		/*StringBuilder queryBuilder = new StringBuilder("SELECT assesmentauestion FROM AssesmentQuestion AS assesmentauestion " +
@@ -745,8 +761,8 @@ public class AssesmentQuestion {
         return q.getResultList();
     }
 	
-	public static List<AssesmentQuestion> findAssesmentQuestionsByQuestionEventAssIdQuestType(java.lang.Long questEventId, java.lang.Long assesmentId,  List<Long> questionTypesId) {
-		QuestionEvent questionEvent = QuestionEvent.findQuestionEvent(questEventId);
+	public static List<AssesmentQuestion> findAssesmentQuestionsByQuestionEventAssIdQuestType(java.lang.Long questEventId, java.lang.Long assesmentId,  List<Long> questionTypesId, boolean isVersionA) {
+		/*QuestionEvent questionEvent = QuestionEvent.findQuestionEvent(questEventId);
 		Assesment assesment = Assesment.findAssesment(assesmentId);
 		
 		Iterator<Long> iter = questionTypesId.iterator();
@@ -798,9 +814,33 @@ public class AssesmentQuestion {
         q.setParameter("questionEvent", questionEvent);
         q.setParameter("assesment", assesment);
         //q.setParameter("questionType", questionType);
+        */
         
+        CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+        CriteriaQuery<AssesmentQuestion> criteriaQuery = criteriaBuilder.createQuery(AssesmentQuestion.class);
+        Root<AssesmentQuestion> from = criteriaQuery.from(AssesmentQuestion.class);
         
+        Predicate predicateQuestionEvent = criteriaBuilder.equal(from.get("question").get("questEvent").get("id"), questEventId);		
+        Predicate predicateAssessment = criteriaBuilder.equal(from.get("assesment").get("id"), assesmentId);
+        Predicate predicateQuestionTypeIn = from.get("question").get("questionType").get("id").in(questionTypesId);
+        //accepted
+        Predicate predicateAccepted=criteriaBuilder.equal(from.get("isAssQuestionAcceptedAdmin"), new Boolean(true));
         
+  		//force accepted
+  		Predicate predicateForcedAccepted=criteriaBuilder.equal(from.get("isForcedByAdmin"), new Boolean(true));
+      		
+  		//accepted / force accepted
+  		Predicate predicateAcceptedOr = criteriaBuilder.or(predicateAccepted,predicateForcedAccepted);
+        
+        if(isVersionA == true) {
+        	criteriaQuery.orderBy(criteriaBuilder.asc(from.get("orderAversion")));	
+        }else {
+        	criteriaQuery.orderBy(criteriaBuilder.asc(from.get("orderBversion")));
+        }
+        
+        criteriaQuery.where(criteriaBuilder.and(predicateQuestionEvent,predicateAssessment,predicateQuestionTypeIn,predicateAcceptedOr));
+        
+        TypedQuery<AssesmentQuestion> q = entityManager().createQuery(criteriaQuery);      
         
         return q.getResultList();
     }
@@ -849,33 +889,139 @@ public class AssesmentQuestion {
 	{
 		try
 		{
-		Person userLoggedIn=Person.myGetLoggedPerson();
-		String fromAddress=userLoggedIn.getEmail();
-		String toAddresses[]=new String[toExaminerList.size()];
-		
-
-		messageContent=messageContent.replace("[fromName]", userLoggedIn.getPrename() +" "+userLoggedIn.getName());
-		messageContent=messageContent.replace("[assesment]", assesment.getName());
-		EmailServiceImpl emailService=new EmailServiceImpl();
-		WebApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(RequestFactoryServlet.getThreadLocalServletContext());
-		((EmailServiceImpl)emailService).setSender(applicationContext.getBean(JavaMailSenderImpl.class));
-		
-		for(int i=0;i<toExaminerList.size();i++)
-		{
+			Person userLoggedIn=Person.myGetLoggedPerson();
+			String fromAddress=userLoggedIn.getEmail();
+			String toAddresses[]=new String[toExaminerList.size()];
 			
-			Person examiner=toExaminerList.get(i);
-			toAddresses[i]=examiner.getEmail();
-			String newMessage=messageContent.replace("[toName]", examiner.getPrename()+" "+examiner.getName());
-			emailService.sendMail(new String[]{examiner.getEmail()}, fromAddress, mailSubject, newMessage);
-		}
-		
-		return true;
-		}
-		catch(Exception e)
-		{
-			Log.info("sendMail exception : " + e.getMessage());
-			return false;
-		}
+			SimpleDateFormat dateFormat=new SimpleDateFormat("dd-MMM-yy");
+			
+			
+			messageContent=messageContent.replace("[fromName]", userLoggedIn.getPrename() +" "+userLoggedIn.getName());
+			messageContent=messageContent.replace("[assesmentName]", assesment.getName());
+			messageContent=messageContent.replace("[assesmentStartDate]", dateFormat.format(assesment.getDateOpen()));
+			messageContent=messageContent.replace("[assesmentClosedDate]", dateFormat.format(assesment.getDateClosed()));
+			messageContent=messageContent.replace("[assesmentMC]", assesment.getMc().getMcName());
+			
+			EmailServiceImpl emailService=new EmailServiceImpl();
+			WebApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(RequestFactoryServlet.getThreadLocalServletContext());
+			((EmailServiceImpl)emailService).setSender(applicationContext.getBean(JavaMailSenderImpl.class));
+			
+			for(int i=0;i<toExaminerList.size();i++)
+			{
+				
+				
+				
+				Person examiner=toExaminerList.get(i);
+				toAddresses[i]=examiner.getEmail();
+				String newMessage=messageContent.replace("[toName]", examiner.getPrename()+" "+examiner.getName());
+				Integer assesmentQuestionProposedCount=findAssesmentQuestionsByMcProposal(assesment.getId(), "", "", "").size();
+				
+				newMessage=newMessage.replace("[assesmentQuestionProposedCount]", assesmentQuestionProposedCount.toString());
+				List<QuestionSumPerPerson> questionSumPerPersonList=QuestionSumPerPerson.findPercentageOfQuestionAssignedToExaminer(assesment, examiner);
+				List<QuestionTypeCountPerExam> questionTypeCountPerExamList=assesment.getQuestionTypeCountPerExams();
+				StringBuilder totalCountString=new StringBuilder();
+				StringBuilder totalRemainingString=new StringBuilder();
+				
+				totalCountString.append("<table>");
+				totalRemainingString.append("<table>");
+				for(QuestionTypeCountPerExam questionTypeCountPerExam:questionTypeCountPerExamList)
+				{
+					for(QuestionSumPerPerson questionSumPerPerson:questionSumPerPersonList)
+					{
+						
+						
+
+						
+						
+						String questionTypeStr="";
+						
+						Set<QuestionType> questionTypes=questionTypeCountPerExam.getQuestionTypesAssigned();
+						int k=0;
+						for(QuestionType questionType:questionTypes)
+						{
+							if(k==0)
+							questionTypeStr=questionTypeStr+questionType.getShortName();
+							else
+							{
+								questionTypeStr=questionTypeStr+","+questionType.getShortName();
+
+							}
+							
+						
+							k++;	
+						}
+						
+						
+						questionTypeStr=questionTypeStr+"("+questionSumPerPerson.getQuestionEvent().getEventName()+")";
+						
+						int questionTypeCount=questionTypeCountPerExam.getQuestionTypeCount();
+						int percentAllocated=questionSumPerPerson.getQuestionSum();
+						Integer totalQuestionAllocated=(int)(questionTypeCount*percentAllocated)/100;
+						Integer questionAssigned=-totalQuestionAllocated;
+						
+						List<AssesmentQuestion> assesmentQuestionList=AssesmentQuestion.findAssesmentQuestionsByAssesment(assesment.getId(), examiner);
+						
+						int count=0;
+						for(int l=0;l<assesmentQuestionList.size();l++)
+						{
+							AssesmentQuestion question =assesmentQuestionList.get(l);
+							if(questionTypes.contains(question.getQuestion().getQuestionType()) && question.getQuestion().getQuestEvent().equals(questionSumPerPerson.getQuestionEvent()))
+							{						
+								questionAssigned++;
+								count++;
+							}
+						}
+						totalCountString.append("<tr>");
+						totalCountString.append("<td stype='vertical-align:middle'>");
+						totalCountString.append(questionTypeStr);
+						totalCountString.append(" : ");
+						totalCountString.append("</td>");
+						totalCountString.append("<td stype='vertical-align:middle'>");
+						totalCountString.append(totalQuestionAllocated);
+						totalCountString.append("</td>");
+						totalCountString.append("</tr>");
+						
+						totalRemainingString.append("<tr>");
+						totalRemainingString.append("<td stype='vertical-align:middle'>");
+						totalRemainingString.append(questionTypeStr);
+						totalRemainingString.append(" : ");
+						totalRemainingString.append("</td>");
+						totalRemainingString.append("<td stype='vertical-align:middle'>");
+						totalRemainingString.append(-questionAssigned);
+						totalRemainingString.append("</td>");
+						totalRemainingString.append("</tr>");
+						
+						
+					/*	proxy.setQuestionSumPerPersonProxy(questionSumPerPersonProxy);
+						proxy.setQuestionTypeCountPerExamProxy(questionTypeCountPerExamProxy);
+						proxy.setCount(questionAssigned);
+						proxy.setTotalQuestionAllocated(totalQuestionAllocated);
+						proxy.setTotalQuestionAllowed(count);*/
+						
+						
+						
+					}
+					newMessage=newMessage.replace("[LOOP]", "");
+					newMessage=newMessage.replace("[totalCount]", "");
+					newMessage=newMessage.replace("[END LOOP]", "");
+					newMessage=newMessage.replace("[totalRemaining]", "");
+					
+				}
+				totalCountString.append("</table>");
+				totalRemainingString.append("</table>");
+				newMessage=newMessage.replace("[[assesmentQuestionType]([assesmentSpecialization]) : [assesmentQuestionAllocatedCount]]", totalCountString.toString());
+				newMessage=newMessage.replace("[[assesmentQuestionType]([assesmentSpecialization]) : [assesmentQuestionRemainingCount]]", totalRemainingString.toString());
+				
+				emailService.sendMail(new String[]{examiner.getEmail()}, fromAddress, mailSubject, newMessage);
+			}
+			
+			return true;
+			}
+			catch(Exception e)
+			{
+				log.info("sendMail exception : " + e.getMessage());
+				return false;
+			}
 	}
 	
 	/* 
@@ -964,5 +1110,86 @@ public class AssesmentQuestion {
 			}
 		}
 		return aqs;
+	}
+	
+	public static void shuffleQuestionsAnswers(Long assessmentID){
+		
+		List<QuestionTypeCountPerExam> countPerExams = QuestionTypeCountPerExam.findQuestionTypesCountSortedByAssesmentNonRoo(assessmentID);
+		
+		for (QuestionTypeCountPerExam questionTypeCountPerExam : countPerExams) {
+			Set<QuestionType> questionTypes = questionTypeCountPerExam.getQuestionTypesAssigned();
+			
+			List<Long> questionTypeIds = Lists.newArrayList(FluentIterable.from(questionTypes).transform(new Function<QuestionType, Long>() {
+
+				@Override
+				public Long apply(QuestionType input) {
+					return input.getId();
+				}	
+			}).iterator());
+			
+			List<QuestionEvent> questionEvents =  QuestionEvent.findAllQuestionEventsByQuestionTypeAndAssesmentID(assessmentID, questionTypeIds);
+			
+			for (QuestionEvent questionEvent : questionEvents) {
+				List<AssesmentQuestion> assesmentQuestions = AssesmentQuestion.findAssesmentQuestionsByQuestionEventAssIdQuestType(questionEvent.getId(), assessmentID, questionTypeIds,true);
+				
+				for (AssesmentQuestion assesmentQuestion : assesmentQuestions) {
+					log.info("Assessment question id " + assesmentQuestion.getId());
+				}
+				log.info("--------------------------------------------------------");
+				Collections.shuffle(assesmentQuestions);
+				int size = assesmentQuestions.size();
+				for (int i = 0; i < size; i++) {
+					assesmentQuestions.get(i).setOrderAversion(i);
+					assesmentQuestions.get(i).setOrderBversion((size-1) - i);
+					assesmentQuestions.get(i).persist();
+				}
+				
+				for (AssesmentQuestion assesmentQuestion : assesmentQuestions) {
+					log.info("Assessment question id " + assesmentQuestion.getId());
+				}
+					
+				List<Integer> preTrueAnswerSequence = Lists.newArrayList();
+				for (AssesmentQuestion assesmentQuestion : assesmentQuestions) {
+					
+					
+					List<Integer> newtrueAnswerSequence = shuffleAnswer(assesmentQuestion);
+					
+					boolean flag = BMEUtils.compareTwoList(preTrueAnswerSequence,newtrueAnswerSequence);
+					
+					if(flag == true) {
+						newtrueAnswerSequence = shuffleAnswer(assesmentQuestion);
+					}
+					
+					preTrueAnswerSequence = newtrueAnswerSequence;
+				}
+			}
+		}
+	}
+	
+	private static List<Integer> shuffleAnswer(AssesmentQuestion assesmentQuestion ) {
+		
+		List<Integer> newtrueAnswerSequence = Lists.newArrayList();
+		
+		List<AnswerToAssQuestion>  answerToAssQuestions = AnswerToAssQuestion.findAnswerToAssQuestionByAssesmentQuestion(assesmentQuestion.getId());
+		
+		for (AnswerToAssQuestion answerToAssQuestion : answerToAssQuestions) {
+			log.info("Answer Order : " + answerToAssQuestion.getId() + "Validity : " + answerToAssQuestion.getAnswers().getValidity());
+		}
+		
+		Collections.shuffle(answerToAssQuestions);
+		
+		for (int i = 0; i < answerToAssQuestions.size(); i++) {
+			if(Validity.Wahr.equals(answerToAssQuestions.get(i).getAnswers().getValidity())) {
+				newtrueAnswerSequence.add(i);
+			}
+			
+			answerToAssQuestions.get(i).setSortOrder(i);
+			answerToAssQuestions.get(i).persist();
+		}
+		
+		for (AnswerToAssQuestion answerToAssQuestion : answerToAssQuestions) {
+			log.info("Answer Order : " + answerToAssQuestion.getId() + "Validity : " + answerToAssQuestion.getAnswers().getValidity());
+		}
+		return newtrueAnswerSequence;
 	}
 }

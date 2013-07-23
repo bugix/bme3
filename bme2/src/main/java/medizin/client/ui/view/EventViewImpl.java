@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import medizin.client.style.resources.MyCellTableNoHilightResources;
 import medizin.client.style.resources.MyCellTableResources;
 import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
@@ -74,7 +75,7 @@ public class EventViewImpl extends Composite implements EventView  {
 
 	public EventViewImpl(Map<String, Widget> reciverMap) {
 		
-		CellTable.Resources tableResources = GWT.create(MyCellTableResources.class);
+		CellTable.Resources tableResources = GWT.create(MyCellTableNoHilightResources.class);
 		tableEvent = new CellTable<QuestionEventProxy>(McAppConstant.TABLE_PAGE_SIZE, tableResources);
 				
 		SimplePager.Resources pagerResources = GWT.create(MySimplePagerResources.class);

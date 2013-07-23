@@ -1,5 +1,6 @@
 package medizin.server.domain;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -99,5 +100,23 @@ public class QuestionTypeCountPerExam {
         q.setParameter("assesment", assesment);
 
         return q.getSingleResult();
-	}  
+	}
+	
+	public static List<QuestionType> findQuestionTypePerExam(Assesment a)
+	{
+		if (a == null) throw new IllegalArgumentException("The assesment argument is required");
+        EntityManager em = QuestionSumPerPerson.entityManager();
+        TypedQuery<QuestionTypeCountPerExam> q = em.createQuery("SELECT questTypePerExam FROM QuestionTypeCountPerExam AS questTypePerExam WHERE questTypePerExam.assesment = :assesment ", QuestionTypeCountPerExam.class);
+        q.setParameter("assesment", a);
+        
+        List<QuestionTypeCountPerExam> questionTypeCountPerExams=q.getResultList();
+        List<QuestionType> questionTypes=new ArrayList<QuestionType>();
+        
+        for(QuestionTypeCountPerExam questionTypeCountPerExam:questionTypeCountPerExams)
+        {
+        	questionTypes.addAll(questionTypeCountPerExam.getQuestionTypesAssigned());
+        }
+        return questionTypes;
+
+	}
 }

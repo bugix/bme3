@@ -34,6 +34,7 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabPanel;
+import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.ValueListBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -96,7 +97,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
     Label descriptionLbl;
 	
 	@UiField
-	TextBox descriptionTxtbox;	
+	TextArea descriptionTxtbox;	
 	
 	@UiField
     Label instituteLbl;
@@ -215,7 +216,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 	@UiField
 	TextBox shortAnswerLengthTxtbox;
 	
-	@UiField
+	/*@UiField
 	Label imageWidthLbl;
 	 
 	@UiField
@@ -231,9 +232,9 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 	Label imageProportionLbl;
 	 
 	@UiField
-	TextBox imageProportionTxtbox;
+	TextBox imageProportionTxtbox;*/
 	
-	@UiField
+	/*@UiField
 	Label linearPointLbl;
 	 
 	@UiField
@@ -243,7 +244,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 	Label linearPercentageLbl;
 	 
 	@UiField
-	TextBox linearPercentageTxtbox;
+	TextBox linearPercentageTxtbox;*/
 	
 	@UiField
 	Label keywordHighlightLbl;
@@ -326,7 +327,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 	@UiField
 	TextBox heightTxtbox;*/
 	
-	@UiField
+	/*@UiField
 	Label thumbWidthLbl;
 	 
 	@UiField
@@ -336,7 +337,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 	Label thumbHeightLbl;
 	 
 	@UiField
-	TextBox thumbHeightTxtbox;
+	TextBox thumbHeightTxtbox;*/
 	
 	/*@UiField
 	Label propostionsLbl;
@@ -344,7 +345,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 	@UiField
 	TextBox propostionsTxtbox;*/
 	
-	@UiField
+	/*@UiField
 	Label allowZoomOutLbl;
 	
 	@UiField
@@ -354,7 +355,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 	Label allowZoomInLbl;
 	
 	@UiField
-    CheckBox allowZoomInChkBox;
+    CheckBox allowZoomInChkBox;*/
 	
 	@UiField
 	Label maxBytesLbl;
@@ -388,15 +389,17 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 
     private static final ArrayList<String> textualSortList = Lists.newArrayList("sumAnswer","sumTrueAnswer","sumFalseAnswer","questionLength","answerLength","answerDiff","queHaveImg","queHaveVideo","queHaveSound");
 	
-	private static final ArrayList<String> imgKeyList = Lists.newArrayList("questionLength","keywordCount","showAutoComplete","isDictionaryKeyword","allowTyping","minLetterForAutoComp","answerLength","acceptNonKeyword","shortAnswerLength","imageWidth","imageLength","imageProportion");
+	private static final ArrayList<String> imgKeyList = Lists.newArrayList("questionLength","keywordCount","showAutoComplete","isDictionaryKeyword","allowTyping","minLetterForAutoComp","answerLength","acceptNonKeyword","shortAnswerLength"/*,"imageWidth","imageLength","imageProportion"*/);
 
-	private static final ArrayList<String> showInImgList = Lists.newArrayList("questionLength","answerLength","imageWidth","imageLength","imageProportion","linearPoint","linearPercentage");
+	private static final ArrayList<String> showInImgList = Lists.newArrayList("questionLength"/*,"answerLength","imageWidth","imageLength","imageProportion","linearPoint","linearPercentage"*/);
 	
 	private static final ArrayList<String> longTextList = Lists.newArrayList("questionLength","keywordHighlight","richText","minLength","maxLength","minWordCount","maxWordCount");
 	
 	private static final ArrayList<String> matrixList = Lists.newArrayList("questionLength","answerLength","oneToOneAss");
 	
-	private static final ArrayList<String> mcqList = Lists.newArrayList("questionLength","imageWidth","imageLength","imageProportion","multimediaType","selectionType","column","thumbWidth","thumbHeight","richText","allowZoomOut","allowZoomIn","maxBytes");
+	//private static final ArrayList<String> mcqList = Lists.newArrayList("questionLength",/*"imageWidth","imageLength","imageProportion",*/"multimediaType","selectionType","column",/*"thumbWidth","thumbHeight",*/"richText",/*"allowZoomOut","allowZoomIn",*/"maxBytes");
+	
+	private static final ArrayList<String> mcqList = Lists.newArrayList("questionLength","multimediaType","selectionType","column","richText","maxBytes");
 	
 //    @UiField
 //    SpanElement displayRenderer;
@@ -434,19 +437,19 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
     	   answerLengthTxtbox.setValue(toStringUtility(proxy.getAnswerLength()));
     	   acceptNonKeywordChkBox.setValue(proxy.getAcceptNonKeyword());
     	   shortAnswerLengthTxtbox.setValue(toStringUtility(proxy.getLengthShortAnswer()));
-    	   imageWidthTxtbox.setValue(toStringUtility(proxy.getImageWidth()));
+    	   /*imageWidthTxtbox.setValue(toStringUtility(proxy.getImageWidth()));
     	   imageLengthTxtbox.setValue(toStringUtility(proxy.getImageHeight()));
-    	   imageProportionTxtbox.setValue(toStringUtility(proxy.getImageProportion()));
+    	   imageProportionTxtbox.setValue(toStringUtility(proxy.getImageProportion()));*/
        }
        else if (proxy.getQuestionType().equals(QuestionTypes.ShowInImage))
        {
-    	   answerLengthTxtbox.setValue(toStringUtility(proxy.getAnswerLength()));
     	   questionLengthTxtbox.setValue(toStringUtility(proxy.getQuestionLength()));
+    	   /*answerLengthTxtbox.setValue(toStringUtility(proxy.getAnswerLength()));    	  
     	   imageWidthTxtbox.setValue(toStringUtility(proxy.getImageWidth()));
     	   imageLengthTxtbox.setValue(toStringUtility(proxy.getImageHeight()));
     	   imageProportionTxtbox.setValue(toStringUtility(proxy.getImageProportion()));
     	   linearPointChkBox.setValue(proxy.getLinearPoint());
-    	   linearPercentageTxtbox.setValue(toStringUtility(proxy.getLinearPercentage()));	    	   
+    	   linearPercentageTxtbox.setValue(toStringUtility(proxy.getLinearPercentage()));*/	    	   
        }
        else if (proxy.getQuestionType().equals(QuestionTypes.LongText))
        {
@@ -468,17 +471,17 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
        else if (proxy.getQuestionType().equals(QuestionTypes.MCQ))
        {
     	   questionLengthTxtbox.setValue(toStringUtility(proxy.getQuestionLength()));
-    	   imageWidthTxtbox.setValue(toStringUtility(proxy.getImageWidth()));
+    	  /* imageWidthTxtbox.setValue(toStringUtility(proxy.getImageWidth()));
     	   imageLengthTxtbox.setValue(toStringUtility(proxy.getImageHeight()));
-    	   imageProportionTxtbox.setValue(toStringUtility(proxy.getImageProportion()));
+    	   imageProportionTxtbox.setValue(toStringUtility(proxy.getImageProportion()));*/
     	   multimediaTypeListBox.setValue(proxy.getMultimediaType());
     	   selectionTypeListBox.setValue(proxy.getSelectionType());
     	   columnTxtbox.setValue(toStringUtility(proxy.getColumns()));
-    	   thumbWidthTxtbox.setValue(toStringUtility(proxy.getThumbWidth()));
-    	   thumbHeightTxtbox.setValue(toStringUtility(proxy.getThumbHeight()));
     	   richTextChkBox.setValue(proxy.getRichText());
+    	   /*thumbWidthTxtbox.setValue(toStringUtility(proxy.getThumbWidth()));
+    	   thumbHeightTxtbox.setValue(toStringUtility(proxy.getThumbHeight()));    	   
     	   allowZoomOutChkBox.setValue(proxy.getAllowZoomOut());
-    	   allowZoomInChkBox.setValue(proxy.getAllowZoomIn());
+    	   allowZoomInChkBox.setValue(proxy.getAllowZoomIn());*/
     	   maxBytesTxtbox.setValue(toStringUtility(proxy.getMaxBytes()));
        }
        
@@ -505,15 +508,15 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		reciverMap.put("keywordCount", keywordCountTxtbox);
 		reciverMap.put("minAutoCompleteLetter", minLetterForAutoCompTxtbox);
 		reciverMap.put("lengthShortAnswer",shortAnswerLengthTxtbox );
-		reciverMap.put("imageWidth", imageWidthTxtbox);
+		/*reciverMap.put("imageWidth", imageWidthTxtbox);
 		reciverMap.put("imageHeight", imageLengthTxtbox);
-		reciverMap.put("imageProportion", imageProportionTxtbox);
-		reciverMap.put("linearPercentage", linearPercentageTxtbox);
+		reciverMap.put("imageProportion", imageProportionTxtbox);*/
+		//reciverMap.put("linearPercentage", linearPercentageTxtbox);
 		reciverMap.put("multimediaType", multimediaTypeListBox);
 		reciverMap.put("selectionType", selectionTypeListBox);
 		reciverMap.put("columns", columnTxtbox);
-		reciverMap.put("thumbWidth",thumbWidthTxtbox );
-		reciverMap.put("thumbHeight", thumbHeightTxtbox);
+		/*reciverMap.put("thumbWidth",thumbWidthTxtbox );
+		reciverMap.put("thumbHeight", thumbHeightTxtbox);*/
 		reciverMap.put("maxBytes", maxBytesTxtbox);
 		reciverMap.put("minLength", minLengthTxtbox);
 		reciverMap.put("maxLength", maxLengthTxtbox);
@@ -546,8 +549,8 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		
 		DOM.setElementPropertyBoolean(instituteListBox.getElement(), "disabled", true);
 		
-		instituteListBox.setWidth("120px");
-		questionTypeListBox.setWidth("120px");
+		/*instituteListBox.setWidth("120px");
+		questionTypeListBox.setWidth("120px");*/
 		
 		shortNameLbl.setText(constants.shortName());
 		longNameLbl.setText(constants.longName());
@@ -571,12 +574,12 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		minLetterForAutoCompLbl.setText(constants.minLetterAutoComplete());
 		acceptNonKeywordLbl.setText(constants.acceptNonkeyword());
 		shortAnswerLengthLbl.setText(constants.lengthShortAns());
-		imageWidthLbl.setText(constants.imgWidth());
+		/*imageWidthLbl.setText(constants.imgWidth());
 		imageLengthLbl.setText(constants.imgLength());
-		imageProportionLbl.setText(constants.imgProportion());
+		imageProportionLbl.setText(constants.imgProportion());*/
 		
-		linearPointLbl.setText(constants.linearPoint());
-		linearPercentageLbl.setText(constants.linearPercentage());
+		/*linearPointLbl.setText(constants.linearPoint());
+		linearPercentageLbl.setText(constants.linearPercentage());*/
 		
 		keywordHighlightLbl.setText(constants.keywordHighlight());
 		richTextLbl.setText(constants.richText());
@@ -592,12 +595,34 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		columnLbl.setText(constants.column());
 		/*widthLbl.setText(constants.width());
 		heightLbl.setText(constants.height());*/
-		thumbWidthLbl.setText(constants.thumbWidth());
-		thumbHeightLbl.setText(constants.thumbHeight());
+		/*thumbWidthLbl.setText(constants.thumbWidth());
+		thumbHeightLbl.setText(constants.thumbHeight());*/
 		//propostionsLbl.setText(constants.propostions());
-		allowZoomOutLbl.setText(constants.allowZoomOut());
-		allowZoomInLbl.setText(constants.allowZoomIn());
+		/*allowZoomOutLbl.setText(constants.allowZoomOut());
+		allowZoomInLbl.setText(constants.allowZoomIn());*/
 		maxBytesLbl.setText(constants.maxBytes());
+		
+		showAutoCompleteChkBox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+
+			@Override
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
+				if (event.getValue() == true)
+					Document.get().getElementById("isDictionaryKeyword").getStyle().clearDisplay();
+				else
+					Document.get().getElementById("isDictionaryKeyword").getStyle().setDisplay(Display.NONE);
+			}
+		});
+		
+		/*linearPercentageTxtbox.setEnabled(false);
+		
+		linearPointChkBox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+
+			@Override
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
+				
+				linearPercentageTxtbox.setEnabled(event.getValue());			
+			}
+		});*/
 	}
 	
 	public void showField(ArrayList<String> list)
@@ -672,7 +697,8 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 			disableQuestionField(matrixList);
 			disableQuestionField(longTextList);
 			disableQuestionField(showInImgList);
-			showField(imgKeyList);		
+			showField(imgKeyList);
+			Document.get().getElementById("isDictionaryKeyword").getStyle().setDisplay(Display.NONE);
 		}
 		else if (questionTypes.equals(QuestionTypes.ShowInImage))
 		{
@@ -751,20 +777,20 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 	    	   answerLengthTxtbox.setValue("");
 	    	   acceptNonKeywordChkBox.setValue(false);
 	    	   shortAnswerLengthTxtbox.setValue("");
-	    	   imageWidthTxtbox.setValue("");
+	    	   /*imageWidthTxtbox.setValue("");
 	    	   imageLengthTxtbox.setValue("");
-	    	   imageProportionTxtbox.setValue("");
+	    	   imageProportionTxtbox.setValue("");*/
 	    	   
 	       }
 	       else if (questionTypes.equals(QuestionTypes.ShowInImage))
 	       {
-	    	   answerLengthTxtbox.setValue("");
 	    	   questionLengthTxtbox.setValue("");
+	    	   /*answerLengthTxtbox.setValue("");	    	   
 	    	   imageWidthTxtbox.setValue("");
 	    	   imageLengthTxtbox.setValue("");
 	    	   imageProportionTxtbox.setValue("");
 	    	   linearPointChkBox.setValue(false);
-	    	   linearPercentageTxtbox.setValue("");	    	   
+	    	   linearPercentageTxtbox.setValue("");*/	    	   
 	       }
 	       else if (questionTypes.equals(QuestionTypes.LongText))
 	       {
@@ -773,8 +799,8 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 	    	   richTextChkBox.setValue(false);
 	    	   minLengthTxtbox.setValue("");
 	    	   maxLengthTxtbox.setValue("");
-	    	   minWordCountTxtbox.setValue("");
-	    	   maxWordCountTxtbox.setValue("");
+	    	   minWordCountTxtbox.setValue("0");
+	    	   maxWordCountTxtbox.setValue("0");
 	       }
 	       else if (questionTypes.equals(QuestionTypes.Matrix))
 	       {
@@ -786,17 +812,17 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 	       else if (questionTypes.equals(QuestionTypes.MCQ))
 	       {
 	    	   questionLengthTxtbox.setValue("");
-	    	   imageWidthTxtbox.setValue("");
+	    	   /*imageWidthTxtbox.setValue("");
 	    	   imageLengthTxtbox.setValue("");
-	    	   imageProportionTxtbox.setValue("");
+	    	   imageProportionTxtbox.setValue("");*/
 	    	   multimediaTypeListBox.setValue(MultimediaType.Image);
 	    	   selectionTypeListBox.setValue(SelectionType.SEL_CHOOSE);
 	    	   columnTxtbox.setValue("");
-	    	   thumbWidthTxtbox.setValue("");
-	    	   thumbHeightTxtbox.setValue("");
 	    	   richTextChkBox.setValue(false);
+	    	   /*thumbWidthTxtbox.setValue("");
+	    	   thumbHeightTxtbox.setValue("");
 	    	   allowZoomOutChkBox.setValue(false);
-	    	   allowZoomInChkBox.setValue(false);
+	    	   allowZoomInChkBox.setValue(false);*/
 	    	   maxBytesTxtbox.setValue("");
 	       }
 	}
@@ -831,11 +857,11 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		this.longNameTxtbox = longNameTxtbox;
 	}
 
-	public TextBox getDescriptionTxtbox() {
+	public TextArea getDescriptionTxtbox() {
 		return descriptionTxtbox;
 	}
 
-	public void setDescriptionTxtbox(TextBox descriptionTxtbox) {
+	public void setDescriptionTxtbox(TextArea descriptionTxtbox) {
 		this.descriptionTxtbox = descriptionTxtbox;
 	}
 
@@ -984,7 +1010,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		this.shortAnswerLengthTxtbox = shortAnswerLengthTxtbox;
 	}
 
-	public TextBox getImageWidthTxtbox() {
+	/*public TextBox getImageWidthTxtbox() {
 		return imageWidthTxtbox;
 	}
 
@@ -1006,9 +1032,9 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 
 	public void setImageProportionTxtbox(TextBox imageProportionTxtbox) {
 		this.imageProportionTxtbox = imageProportionTxtbox;
-	}
+	}*/
 
-	public CheckBox getLinearPointChkBox() {
+	/*public CheckBox getLinearPointChkBox() {
 		return linearPointChkBox;
 	}
 
@@ -1022,7 +1048,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 
 	public void setLinearPercentageTxtbox(TextBox linearPercentageTxtbox) {
 		this.linearPercentageTxtbox = linearPercentageTxtbox;
-	}
+	}*/
 
 	public CheckBox getKeywordHighlightChkBox() {
 		return keywordHighlightChkBox;
@@ -1106,7 +1132,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		this.columnTxtbox = columnTxtbox;
 	}
 
-	public TextBox getThumbWidthTxtbox() {
+	/*public TextBox getThumbWidthTxtbox() {
 		return thumbWidthTxtbox;
 	}
 
@@ -1136,7 +1162,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 
 	public void setAllowZoomInChkBox(CheckBox allowZoomInChkBox) {
 		this.allowZoomInChkBox = allowZoomInChkBox;
-	}
+	}*/
 
 	public TextBox getMaxBytesTxtbox() {
 		return maxBytesTxtbox;
@@ -1311,7 +1337,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 					shortAnswerLengthTxtbox.addStyleName("higlight_onViolation");
 				}
 				
-				msg = "";
+				/*msg = "";
 				if ((msg = checkTextWidgetForNumber(imageWidthTxtbox)) != "")
 				{
 					flag = false;
@@ -1336,7 +1362,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 					//errorString.append(constants.imgProportion() + " " + constants.questionTypeErroMsg()).append("<br />");
 					errorMessage.add(constants.imgProportion() + " " + constants.questionTypeErroMsg());
 					imageProportionTxtbox.addStyleName("higlight_onViolation");
-				}
+				}*/
 				
 				break;
 			}
@@ -1344,7 +1370,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 			case ShowInImage:
 			{
 				String msg = "";
-				if ((msg = checkTextWidgetForNumber(imageWidthTxtbox)) != "")
+				/*if ((msg = checkTextWidgetForNumber(imageWidthTxtbox)) != "")
 				{
 					flag = false;
 					//errorString.append(constants.imgWidth() + " " + msg).append("<br />");
@@ -1359,7 +1385,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 					//errorString.append(constants.answerLength() + " " + msg).append("<br />");
 					errorMessage.add(constants.answerLength() + " " + msg);
 					answerLengthTxtbox.addStyleName("higlight_onViolation");
-				}
+				}*/
 				
 				msg = "";
 				if ((msg = checkTextWidgetForNumber(questionLengthTxtbox)) != "")
@@ -1370,7 +1396,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 					questionLengthTxtbox.addStyleName("higlight_onViolation");
 				}
 				
-				msg = "";
+				/*msg = "";
 				if ((msg = checkTextWidgetForNumber(imageLengthTxtbox)) != "")
 				{
 					flag = false;
@@ -1389,13 +1415,13 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				}
 				
 				msg = "";
-				if ((msg = checkTextWidgetForNumber(linearPercentageTxtbox)) != "")
+				if (linearPointChkBox.getValue() == true && (msg = checkTextWidgetForNumber(linearPercentageTxtbox)) != "")
 				{
 					flag = false;
 					//errorString.append(constants.imgProportion() + " " + msg).append("<br />");
 					errorMessage.add(constants.imgProportion() + " " + msg);
 					linearPercentageTxtbox.addStyleName("higlight_onViolation");
-				}
+				}*/
 				
 				break;
 			}
@@ -1482,13 +1508,13 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 			case MCQ:
 			{
 				String msg = "";
-				if ((msg = checkTextWidgetForNumber(imageWidthTxtbox)) != "")
+				/*if ((msg = checkTextWidgetForNumber(imageWidthTxtbox)) != "")
 				{
 					flag = false;
 					//errorString.append(constants.imgWidth() + " " + msg).append("<br />");
 					errorMessage.add(constants.imgWidth() + " " + msg);
 					imageWidthTxtbox.addStyleName("higlight_onViolation");
-				}
+				}*/
 				
 				msg = "";
 				if ((msg = checkTextWidgetForNumber(questionLengthTxtbox)) != "")
@@ -1499,23 +1525,23 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 					questionLengthTxtbox.addStyleName("higlight_onViolation");
 				}
 				
-				msg = "";
+				/*msg = "";
 				if ((msg = checkTextWidgetForNumber(imageLengthTxtbox)) != "")
 				{
 					flag = false;
 					//errorString.append(constants.imgLength() + " " + msg).append("<br />");
 					errorMessage.add(constants.imgLength() + " " + msg);
 					imageLengthTxtbox.addStyleName("higlight_onViolation");
-				}
+				}*/
 				
-				msg = "";
+				/*msg = "";
 				if (imageProportionTxtbox.getText().isEmpty())
 				{
 					flag = false;
 					//errorString.append(constants.imgProportion() + " " + constants.questionTypeErroMsg()).append("<br />");
 					errorMessage.add(constants.imgProportion() + " " + constants.questionTypeErroMsg());
 					imageProportionTxtbox.addStyleName("higlight_onViolation");
-				}
+				}*/
 				
 				if (multimediaTypeListBox.getValue().equals(null))
 				{
@@ -1542,7 +1568,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 					columnTxtbox.addStyleName("higlight_onViolation");
 				}
 				
-				msg = "";
+				/*msg = "";
 				if ((msg = checkTextWidgetForNumber(thumbWidthTxtbox)) != "")
 				{
 					flag = false;
@@ -1558,7 +1584,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 					//errorString.append(constants.thumbHeight() + " " + msg).append("<br />");
 					errorMessage.add(constants.thumbHeight() + " " + msg);
 					thumbHeightTxtbox.addStyleName("higlight_onViolation");
-				}
+				}*/
 
 				msg = "";
 				if ((msg = checkTextWidgetForNumber(maxBytesTxtbox)) != "")
@@ -1628,11 +1654,11 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		minLetterForAutoCompTxtbox.removeStyleName("higlight_onViolation");
 		answerLengthTxtbox.removeStyleName("higlight_onViolation");
 		shortAnswerLengthTxtbox.removeStyleName("higlight_onViolation");
-		imageWidthTxtbox.removeStyleName("higlight_onViolation");
+		/*imageWidthTxtbox.removeStyleName("higlight_onViolation");
 		imageLengthTxtbox.removeStyleName("higlight_onViolation");
-		imageProportionTxtbox.removeStyleName("higlight_onViolation");
+		imageProportionTxtbox.removeStyleName("higlight_onViolation");*/
 		
-		linearPercentageTxtbox.removeStyleName("higlight_onViolation");
+		//linearPercentageTxtbox.removeStyleName("higlight_onViolation");
 		
 		minLengthTxtbox.removeStyleName("higlight_onViolation");
 		maxLengthTxtbox.removeStyleName("higlight_onViolation");
@@ -1641,8 +1667,8 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		
 		columnTxtbox.removeStyleName("higlight_onViolation");
 		maxBytesTxtbox.removeStyleName("higlight_onViolation");
-		thumbWidthTxtbox.removeStyleName("higlight_onViolation");
-		thumbHeightTxtbox.removeStyleName("higlight_onViolation");
+		/*thumbWidthTxtbox.removeStyleName("higlight_onViolation");
+		thumbHeightTxtbox.removeStyleName("higlight_onViolation");*/
 		selectionTypeListBox.removeStyleName("higlight_onViolation");
 		multimediaTypeListBox.removeStyleName("higlight_onViolation");
 	}

@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import medizin.client.events.RecordChangeEvent;
+import medizin.client.events.RecordChangeHandler;
 import medizin.client.proxy.InstitutionProxy;
 import medizin.client.style.resources.MyCellTableResources;
 import medizin.client.style.resources.MySimplePagerResources;
@@ -41,7 +43,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class InstitutionViewImpl extends Composite implements InstitutionView  {
+public class InstitutionViewImpl extends Composite implements InstitutionView, RecordChangeHandler  {
 
 	private static InstitutionViewImplUiBinder uiBinder = GWT
 			.create(InstitutionViewImplUiBinder.class);
@@ -194,7 +196,7 @@ public class InstitutionViewImpl extends Composite implements InstitutionView  {
 
             @Override
             public String getValue(InstitutionProxy object) {
-                return renderer.render(object.getInstitutionName());
+                return renderer.render(object == null ? null : object.getInstitutionName());
             }
         }, constants.institutionLbl());
         
@@ -321,6 +323,21 @@ public class InstitutionViewImpl extends Composite implements InstitutionView  {
 	public SimplePanel getDetailsPanel() {
 		
 		return slidingPanel;
+	}
+
+
+	@Override
+	public void onRecordChange(RecordChangeEvent event) {
+		int pagesize = 0;
+
+		if (event.getRecordValue() == "ALL") {
+			pagesize = table.getRowCount();
+			McAppConstant.TABLE_PAGE_SIZE = pagesize;
+		} else if (event.getRecordValue().matches("\\d+")) {
+			pagesize = Integer.parseInt(event.getRecordValue());
+		}
+
+		table.setPageSize(pagesize);
 	}
 
 }

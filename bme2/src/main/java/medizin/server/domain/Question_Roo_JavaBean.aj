@@ -220,6 +220,22 @@ privileged aspect Question_Roo_JavaBean {
         this.isReadOnly = isReadOnly;
     }
     
+    public Integer Question.getImageHeight() {
+        return this.imageHeight;
+    }
+    
+    public void Question.setImageHeight(Integer imageHeight) {
+        this.imageHeight = imageHeight;
+    }
+    
+    public Integer Question.getImageWidth() {
+        return this.imageWidth;
+    }
+    
+    public void Question.setImageWidth(Integer imageWidth) {
+        this.imageWidth = imageWidth;
+    }
+    
     public Set<AssesmentQuestion> Question.getAssesmentQuestionSet() {
         return this.assesmentQuestionSet;
     }

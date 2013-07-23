@@ -1,0 +1,39 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:m="urn:import:medizin.client.ui.widget">
+	<ui:style>
+		.marginStyle {
+			margin-left: 10px;
+			margin-top: 10px;
+		}
+		.saveStyle {
+		    text-align: right;
+		} 
+		.contentBorder {
+		    border-bottom: 1px solid #AAAAAA;
+		    border-left: 1px solid #AAAAAA;
+		    border-right: 1px solid #AAAAAA;
+		}
+		
+	</ui:style>
+	<g:HTMLPanel>
+		<g:HorizontalPanel>
+			<g:VerticalPanel>
+				<g:TabBar ui:field="symbolTab"></g:TabBar>
+				<g:SimplePanel ui:field="content" styleName="{style.contentBorder}"></g:SimplePanel>
+			</g:VerticalPanel>
+			<g:VerticalPanel>
+				<g:HTMLPanel styleName="{style.marginStyle}">
+					<g:TextArea ui:field="txtInputBox" width="600px" height="200px"></g:TextArea>
+					<g:Label ui:field="lblOutput"></g:Label>
+					<div class="{style.saveStyle}">
+						<m:IconButton ui:field="save" icon="disk">Save</m:IconButton>
+						<m:IconButton ui:field="close" icon="close">Close</m:IconButton>
+					</div>
+				</g:HTMLPanel>
+			</g:VerticalPanel>
+			
+		</g:HorizontalPanel>
+	
+	</g:HTMLPanel>
+</ui:UiBinder> 

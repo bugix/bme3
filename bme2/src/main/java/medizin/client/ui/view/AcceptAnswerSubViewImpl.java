@@ -8,6 +8,7 @@ import medizin.client.style.resources.MyCellTableResources;
 import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.DeclineEmailPopupDelagate;
 import medizin.client.ui.McAppConstant;
+import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEvent;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEventHandler;
@@ -17,6 +18,8 @@ import medizin.client.ui.widget.resource.image.polygon.ImagePolygonViewer;
 import medizin.client.ui.widget.resource.image.rectangle.ImageRectangleViewer;
 import medizin.client.ui.widget.resource.video.VideoViewer;
 import medizin.client.util.ClientUtility;
+import medizin.client.util.ImageWidthHeight;
+import medizin.client.util.MathJaxs;
 import medizin.client.util.Point;
 import medizin.client.util.PolygonPath;
 import medizin.shared.MultimediaType;
@@ -30,11 +33,14 @@ import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.AbstractHasData;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
@@ -43,7 +49,10 @@ import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.DisclosurePanel;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.CellPreviewEvent;
@@ -87,6 +96,14 @@ public class AcceptAnswerSubViewImpl extends Composite implements AcceptAnswerSu
 	
 	private Boolean flag = false;
 	
+	private AcceptAnswerSubView acceptAnswerSubView = null;
+	
+	@UiField
+	Label headerText;
+	
+	@UiField
+	IconButton viewHtmlText;
+	
 	public AcceptAnswerSubViewImpl(Boolean flag) {
 		
 		this.flag = flag;
@@ -112,7 +129,7 @@ public class AcceptAnswerSubViewImpl extends Composite implements AcceptAnswerSu
 				if(isClicked){
 					if(event.getColumn()==1){
 						
-						AnswerProxy selectedObject = selectionModel.getSelectedObject();
+						final AnswerProxy selectedObject = selectionModel.getSelectedObject();
 						
 						if (selectionModel.isSelected(selectedObject))
 							selectionModel.setSelected(selectedObject, false);
@@ -123,21 +140,34 @@ public class AcceptAnswerSubViewImpl extends Composite implements AcceptAnswerSu
 							{					
 							 	dialogBox = new DialogBox();
 							 	
-							 	VerticalPanel vp = new VerticalPanel();
+							 	final VerticalPanel vp = new VerticalPanel();
 								 
 								if (questionProxy.getQuestionType().getQuestionType().equals(QuestionTypes.Imgkey))
 								{	
-									List<Point> points = Point.getPoints(Lists.newArrayList(selectedObject.getPoints()));
+									final List<Point> points = Point.getPoints(Lists.newArrayList(selectedObject.getPoints()));
 									
-									ImageRectangleViewer viewer = new ImageRectangleViewer(questionProxy.getPicturePath(), questionProxy.getQuestionType().getImageWidth(), questionProxy.getQuestionType().getImageHeight(), points, false);
-									
-									vp.add(viewer);
+									if (questionProxy.getImageWidth() != null && questionProxy.getImageHeight() != null)
+									{
+										ImageRectangleViewer viewer = new ImageRectangleViewer(questionProxy.getPicturePath(), questionProxy.getImageWidth(), questionProxy.getImageHeight(), points, false);
+										vp.add(viewer);
+									}
+									else
+									{
+										ClientUtility.getImageWidthHeight(questionProxy.getPicturePath(), new ImageWidthHeight() {
+											
+											@Override
+											public void apply(Integer width, Integer height) {
+												ImageRectangleViewer viewer = new ImageRectangleViewer(questionProxy.getPicturePath(), width, height, points, false);
+												vp.add(viewer);
+											}
+										});
+									}
 								}
 								else if (questionProxy.getQuestionType().getQuestionType().equals(QuestionTypes.ShowInImage))
 								{
 									List<PolygonPath> polygonPathList = PolygonPath.getPolygonPaths(Lists.newArrayList(selectedObject.getPoints()));
 									
-									ImagePolygonViewer imgPolygonViewer = new ImagePolygonViewer(questionProxy.getPicturePath(), questionProxy.getQuestionType().getImageWidth(), questionProxy.getQuestionType().getImageHeight(), polygonPathList, false);
+									ImagePolygonViewer imgPolygonViewer = new ImagePolygonViewer(questionProxy.getPicturePath(), questionProxy.getImageWidth(), questionProxy.getImageHeight(), polygonPathList, false);
 									
 									vp.add(imgPolygonViewer);
 								}
@@ -145,8 +175,25 @@ public class AcceptAnswerSubViewImpl extends Composite implements AcceptAnswerSu
 								{
 									if (questionProxy.getQuestionType().getMultimediaType().equals(MultimediaType.Image))
 									{
-										ImageViewer imgViewer = new ImageViewer();
-										imgViewer.setUrl(selectedObject.getMediaPath(), questionProxy.getQuestionType().getImageWidth(), questionProxy.getQuestionType().getImageHeight(), questionProxy.getQuestionType().getQuestionType());
+										final ImageViewer imgViewer = new ImageViewer();
+										
+										if (questionProxy.getImageWidth() != null && questionProxy.getImageHeight() != null)
+										{
+											imgViewer.setUrl(selectedObject.getMediaPath(), questionProxy.getImageWidth(), questionProxy.getImageHeight(), questionProxy.getQuestionType().getQuestionType());
+										}
+										else
+										{
+											imgViewer.setUrl(selectedObject.getMediaPath(), null, null, questionProxy.getQuestionType().getQuestionType());
+											/*ClientUtility.getImageWidthHeight(selectedObject.getMediaPath(), new ImageWidthHeight() {
+												
+												@Override
+												public void apply(Integer width, Integer height) {
+													imgViewer.setUrl(selectedObject.getMediaPath(), width, height, questionProxy.getQuestionType().getQuestionType());											
+												}
+											});*/
+										}
+											
+										
 										vp.add(imgViewer);
 									}
 									
@@ -333,7 +380,7 @@ public class AcceptAnswerSubViewImpl extends Composite implements AcceptAnswerSu
 
 			addColumn(new ActionCell<AnswerProxy>( McAppConstant.ACCEPT_ICON, new ActionCell.Delegate<AnswerProxy>() {
 			    public void execute(AnswerProxy answerProxy) {
-			      delegate.acceptClicked(answerProxy);
+			     	delegate.acceptClicked(answerProxy, acceptAnswerSubView);
 			    }
 			  }), constants.accept(), new GetValue<AnswerProxy>() {
 			public AnswerProxy getValue(AnswerProxy answerProxy) {
@@ -393,10 +440,33 @@ DivElement questionText;*/
 	@UiField
 	DisclosurePanel questionDisclosurePanel;
 
+	@UiHandler("viewHtmlText")
+	public void viewHtmlTextClicked(ClickEvent event)
+	{
+		questionDisclosurePanel.setOpen(!questionDisclosurePanel.isOpen());
+		
+		QuestionTextViewDialogBoxImpl dialogBox = new QuestionTextViewDialogBoxImpl();
+		
+		if (questionProxy != null)
+		{
+			dialogBox.questionTextHorizontalPanel.add(new HTML(new SafeHtmlBuilder().appendHtmlConstant(questionProxy.getQuestionText()).toSafeHtml()));
+			dialogBox.setPopupPosition(event.getRelativeElement().getAbsoluteLeft()-250, event.getRelativeElement().getAbsoluteTop()+25);
+			dialogBox.show();
+			dialogBox.setWidth((dialogBox.questionTextHorizontalPanel.getParent().getOffsetWidth() + 10) + "px");
+			MathJaxs.delayRenderLatexResult(RootPanel.getBodyElement());
+		}
+	}
+
 
 	@Override
 	public void setProxy(final QuestionProxy questionProxy) {
 		this.questionProxy = questionProxy;
+		
+		if (questionProxy.getAnswers() != null)
+			table.setRowCount(questionProxy.getAnswers().size(), true);
+		else if (table.getRowCount() > 0)
+			table.setRowCount((table.getRowCount() - 1), true);
+		
 		table.addRangeChangeHandler(new RangeChangeEvent.Handler() {
 			   
 			public void onRangeChange(RangeChangeEvent event) {
@@ -408,9 +478,24 @@ DivElement questionText;*/
 		
 		//questionText.setInnerHTML(questionProxy.getQuestionText());
 		
-		if (flag)
-			questionDisclosurePanel.getHeaderTextAccessor().setText(questionProxy.getQuestionText());
+		//new SafeHtmlBuilder().appendHtmlConstant(questionProxy.getQuestionText());
 		
+		if (flag)
+		{
+			//headerText.setText(new HTML(ClientUtility.removeMathJax(questionProxy.getQuestionText())).getText());
+			headerText.setText(new HTML(ClientUtility.removeMathJax(questionProxy.getQuestionText())).getText());
+
+			headerText.getElement().getStyle().setMarginLeft(5, Unit.PX);
+			viewHtmlText.getElement().getStyle().setMargin(1, Unit.PX);
+			viewHtmlText.setVisible(true);
+		}
+		else
+		{
+			headerText.setText("");
+			headerText.setHeight("23px");
+			viewHtmlText.setVisible(false);
+		}
+					
 	}
 
 
@@ -526,4 +611,12 @@ DivElement questionText;*/
 		this.questionDisclosurePanel = questionDisclosurePanel;
 	}
 
+	public AcceptAnswerSubView getAcceptAnswerSubView() {
+		return acceptAnswerSubView;
+	}
+
+	public void setAcceptAnswerSubView(AcceptAnswerSubView acceptAnswerSubView) {
+		this.acceptAnswerSubView = acceptAnswerSubView;
+	}
+	
 }

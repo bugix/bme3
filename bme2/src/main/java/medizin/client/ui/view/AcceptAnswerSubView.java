@@ -18,7 +18,7 @@ public interface AcceptAnswerSubView extends IsWidget {
 		void onRangeChanged(QuestionProxy questionProxy,
 				AbstractHasData<AnswerProxy> table);
 
-		void acceptClicked(AnswerProxy answerProxy);
+		void acceptClicked(AnswerProxy answerProxy, AcceptAnswerSubView acceptAnswerSubView);
        
 		void rejectClicked(AnswerProxy answerProxy);
     }
@@ -31,4 +31,6 @@ public interface AcceptAnswerSubView extends IsWidget {
 	void setDelegatePopup(DeclineEmailPopupDelagate delegate);
 
 	public DisclosurePanel getQuestionDisclosurePanel();
+	
+	public void setAcceptAnswerSubView(AcceptAnswerSubView acceptAnswerSubView);
 }

@@ -1,6 +1,8 @@
 package medizin.client.util;
 
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.RandomAccess;
 import java.util.Set;
 
@@ -176,5 +178,9 @@ public class Matrix<E>  implements Iterable<E>, RandomAccess, Cloneable, java.io
 		}
 		
 		return filterSeted;
+	}
+	  
+	public Set<Entry<Integer, Map<Integer, E>>> getAllRows() {
+		return table.rowMap().entrySet();
 	}
 }

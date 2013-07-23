@@ -118,7 +118,7 @@
 							</td>
 						</tr>
 						
-						<tr>
+						<!-- <tr>
 							<td>
 							
 								<g:Label addStyleNames="{style.labelSize}" text="{constants.institutionLbl}"></g:Label>
@@ -128,7 +128,7 @@
 							<td>
 								<g:ValueListBox ui:field="institutionListBox" />
 							</td>
-						</tr>
+						</tr> -->
 						
 						<tr>
 							<td>

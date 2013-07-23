@@ -190,7 +190,7 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 		@UiField
 		Label shortAnswerLengthValLbl;
 		
-		@UiField
+		/*@UiField
 		Label imageWidthLbl;
 		 
 		@UiField
@@ -206,9 +206,9 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 		Label imageProportionLbl;
 		 
 		@UiField
-		Label imageProportionValLbl;
+		Label imageProportionValLbl;*/
 		
-		@UiField
+		/*@UiField
 		Label linearPointLbl;
 		 
 		@UiField
@@ -218,7 +218,7 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 		Label linearPercentageLbl;
 		 
 		@UiField
-		Label linearPercentageValLbl;
+		Label linearPercentageValLbl;*/
 		
 		@UiField
 		Label keywordHighlightLbl;
@@ -280,7 +280,7 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 		@UiField
 		Label columnValLbl;
 		
-		@UiField
+		/*@UiField
 		Label thumbWidthLbl;
 		 
 		@UiField
@@ -302,7 +302,7 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 		Label allowZoomInLbl;
 		
 		@UiField
-		Label allowZoomInValLbl;
+		Label allowZoomInValLbl;*/
 		
 		@UiField
 		Label maxBytesLbl;
@@ -312,15 +312,15 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 	    
 		private static final ArrayList<String> textualSortList = Lists.newArrayList("sumAnswer","sumTrueAnswer","sumFalseAnswer","questionLength","answerLength","answerDiff","queHaveImg","queHaveVideo","queHaveSound");
 		
-		private static final ArrayList<String> imgKeyList = Lists.newArrayList("questionLength","keywordCount","showAutoComplete","isDictionaryKeyword","allowTyping","minLetterForAutoComp","answerLength","acceptNonKeyword","shortAnswerLength","imageWidth","imageLength","imageProportion");
+		private static final ArrayList<String> imgKeyList = Lists.newArrayList("questionLength","keywordCount","showAutoComplete","isDictionaryKeyword","allowTyping","minLetterForAutoComp","answerLength","acceptNonKeyword","shortAnswerLength"/*,"imageWidth","imageLength","imageProportion"*/);
 
-		private static final ArrayList<String> showInImgList = Lists.newArrayList("questionLength","answerLength","imageWidth","imageLength","imageProportion","linearPoint","linearPercentage");
+		private static final ArrayList<String> showInImgList = Lists.newArrayList("questionLength"/*,"answerLength","imageWidth","imageLength","imageProportion","linearPoint","linearPercentage"*/);
 		
 		private static final ArrayList<String> longTextList = Lists.newArrayList("questionLength","keywordHighlight","richText","minLength","maxLength","minWordCount","maxWordCount");
 		
 		private static final ArrayList<String> matrixList = Lists.newArrayList("questionLength","answerLength","oneToOneAss");
 		
-		private static final ArrayList<String> mcqList = Lists.newArrayList("questionLength","imageWidth","imageLength","imageProportion","multimediaType","selectionType","column","thumbWidth","thumbHeight","richText","allowZoomOut","allowZoomIn","maxBytes");
+		private static final ArrayList<String> mcqList = Lists.newArrayList("questionLength",/*"imageWidth","imageLength","imageProportion",*/"multimediaType","selectionType","column",/*"thumbWidth","thumbHeight",*/"richText",/*"allowZoomOut","allowZoomIn",*/"maxBytes");
 		
 	    @UiHandler("edit")
 	    public void onEditClicked(ClickEvent e) {
@@ -377,19 +377,19 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 	    	   answerLengthValLbl.setText(toStringUtility(proxy.getAnswerLength()));
 	    	   acceptNonKeywordValLbl.setText(toStringUtility(proxy.getAcceptNonKeyword()));
 	    	   shortAnswerLengthValLbl.setText(toStringUtility(proxy.getLengthShortAnswer()));
-	    	   imageWidthValLbl.setText(toStringUtility(proxy.getImageWidth()));
+	    	   /*imageWidthValLbl.setText(toStringUtility(proxy.getImageWidth()));
 	    	   imageLengthValLbl.setText(toStringUtility(proxy.getImageHeight()));
-	    	   imageProportionValLbl.setText(toStringUtility(proxy.getImageProportion()));
+	    	   imageProportionValLbl.setText(toStringUtility(proxy.getImageProportion()));*/
 	       }
 	       else if (proxy.getQuestionType().equals(QuestionTypes.ShowInImage))
 	       {
 	    	   questionLengthValLbl.setText(toStringUtility(proxy.getQuestionLength()));
 	    	   answerLengthValLbl.setText(toStringUtility(proxy.getAnswerLength()));
-	    	   imageWidthValLbl.setText(toStringUtility(proxy.getImageWidth()));
+	    	  /* imageWidthValLbl.setText(toStringUtility(proxy.getImageWidth()));
 	    	   imageLengthValLbl.setText(toStringUtility(proxy.getImageHeight()));
-	    	   imageProportionValLbl.setText(toStringUtility(proxy.getImageProportion()));
-	    	   linearPointValLbl.setText(toStringUtility(proxy.getLinearPoint()));
-	    	   linearPercentageValLbl.setText(toStringUtility(proxy.getLinearPercentage()));	    	   
+	    	   imageProportionValLbl.setText(toStringUtility(proxy.getImageProportion()));*/
+	    	   /*linearPointValLbl.setText(toStringUtility(proxy.getLinearPoint()));
+	    	   linearPercentageValLbl.setText(toStringUtility(proxy.getLinearPercentage()));*/	    	   
 	       }
 	       else if (proxy.getQuestionType().equals(QuestionTypes.LongText))
 	       {
@@ -411,17 +411,17 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 	       else if (proxy.getQuestionType().equals(QuestionTypes.MCQ))
 	       {
 	    	   questionLengthValLbl.setText(toStringUtility(proxy.getQuestionLength()));
-	    	   imageWidthValLbl.setText(toStringUtility(proxy.getImageWidth()));
+	    	   /*imageWidthValLbl.setText(toStringUtility(proxy.getImageWidth()));
 	    	   imageLengthValLbl.setText(toStringUtility(proxy.getImageHeight()));
-	    	   imageProportionValLbl.setText(toStringUtility(proxy.getImageProportion()));
+	    	   imageProportionValLbl.setText(toStringUtility(proxy.getImageProportion()));*/
 	    	   multimediaTypeValLbl.setText(toStringUtility(proxy.getMultimediaType()));
 	    	   selectionTypeValLbl.setText(toStringUtility(proxy.getSelectionType()));
 	    	   columnValLbl.setText(toStringUtility(proxy.getColumns()));
-	    	   thumbWidthValLbl.setText(toStringUtility(proxy.getThumbWidth()));
-	    	   thumbHeightValLbl.setText(toStringUtility(proxy.getThumbHeight()));
 	    	   richTextValLbl.setText(toStringUtility(proxy.getRichText()));
+	    	   /*thumbWidthValLbl.setText(toStringUtility(proxy.getThumbWidth()));
+	    	   thumbHeightValLbl.setText(toStringUtility(proxy.getThumbHeight()));	    	   
 	    	   allowZoomOutValLbl.setText(toStringUtility(proxy.getAllowZoomOut()));
-	    	   allowZoomInValLbl.setText(toStringUtility(proxy.getAllowZoomIn()));
+	    	   allowZoomInValLbl.setText(toStringUtility(proxy.getAllowZoomIn()));*/
 	    	   maxBytesValLbl.setText(toStringUtility(proxy.getMaxBytes()));
 	       }
 	       
@@ -458,12 +458,12 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 			minLetterForAutoCompLbl.setText(constants.minLetterAutoComplete());
 			acceptNonKeywordLbl.setText(constants.acceptNonkeyword());
 			shortAnswerLengthLbl.setText(constants.lengthShortAns());
-			imageWidthLbl.setText(constants.imgWidth());
+			/*imageWidthLbl.setText(constants.imgWidth());
 			imageLengthLbl.setText(constants.imgLength());
-			imageProportionLbl.setText(constants.imgProportion());
+			imageProportionLbl.setText(constants.imgProportion());*/
 			
-			linearPointLbl.setText(constants.linearPoint());
-			linearPercentageLbl.setText(constants.linearPercentage());
+			/*linearPointLbl.setText(constants.linearPoint());
+			linearPercentageLbl.setText(constants.linearPercentage());*/
 			
 			keywordHighlightLbl.setText(constants.keywordHighlight());
 			richTextLbl.setText(constants.richText());
@@ -477,10 +477,10 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 			multimediaTypeLbl.setText(constants.multimediaType());
 			selectionTypeLbl.setText(constants.selectionType());
 			columnLbl.setText(constants.column());
-			thumbWidthLbl.setText(constants.thumbWidth());
+			/*thumbWidthLbl.setText(constants.thumbWidth());
 			thumbHeightLbl.setText(constants.thumbHeight());
 			allowZoomOutLbl.setText(constants.allowZoomOut());
-			allowZoomInLbl.setText(constants.allowZoomIn());
+			allowZoomInLbl.setText(constants.allowZoomIn());*/
 			maxBytesLbl.setText(constants.maxBytes());
 		}
 	

@@ -37,6 +37,7 @@ import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.simple.DefaultSuggestOracle;
 import medizin.client.util.ClientUtility;
+import medizin.client.util.ImageWidthHeight;
 import medizin.shared.MultimediaType;
 import medizin.shared.QuestionTypes;
 import medizin.shared.i18n.BmeConstants;
@@ -218,7 +219,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		reciverMap.put("rewiewer", rewiewer);
 		reciverMap.put("questEvent", questEvent);
 		reciverMap.put("submitToReviewComitee", submitToReviewComitee);
-		reciverMap.put("comment", questionComment);
+		//reciverMap.put("comment", questionComment);
 		
 		questionTypePanel.selectTab(0);
 		save.setText(constants.save());
@@ -399,13 +400,14 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 			
 		case Imgkey:
 		{
-			setImageViewer(questionTypeProxy, question,QuestionTypes.Imgkey);
+			//setImageViewer(questionTypeProxy, question,QuestionTypes.Imgkey);
+			setImageViewerForShowInImg(questionTypeProxy, question,QuestionTypes.Imgkey);
 			break;
 		}
 			
 		case ShowInImage:
 		{
-			setImageViewer(questionTypeProxy, question,QuestionTypes.ShowInImage);
+			setImageViewerForShowInImg(questionTypeProxy, question,QuestionTypes.ShowInImage);
 			break;
 		}
 		
@@ -499,6 +501,110 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 							}
 						}else {
 							ClientUtility.checkImageSize(url,questionTypeProxy.getImageWidth(),questionTypeProxy.getImageHeight(),function);
+						}
+							
+					}else {
+						Log.error("Error in questionType.");
+					}
+				}else {
+					Log.error("Upload fail.");
+				}
+			}
+		});
+		
+		setMediaContainer(resourceUpload,paths.keySet(), imageViewer);
+	}
+	
+	private void setImageViewerForShowInImg(final QuestionTypeProxy questionTypeProxy, final QuestionProxy questionProxy,final QuestionTypes type) {
+		
+		//remove extra part
+		clearMediaContainer();
+		
+		final ImageViewer imageViewer;
+		if(this.imageViewer == null) {
+			imageViewer = new ImageViewer();
+			this.imageViewer = imageViewer;
+		}else {
+			imageViewer = this.imageViewer;	
+		}
+		
+		this.imageViewer.clear();
+		if(questionProxy != null && questionProxy.getPicturePath() != null && questionProxy.getPicturePath().length() > 0) {
+			
+			if (questionProxy.getImageWidth() != null && questionProxy.getImageHeight() != null)
+			{
+				imageViewer.setUrl(questionProxy.getPicturePath(), questionProxy.getImageWidth(), questionProxy.getImageHeight(), type);
+			}
+			else
+			{
+				imageViewer.setUrl(questionProxy.getPicturePath(), null, null, type);
+				/*ClientUtility.getImageWidthHeight(questionProxy.getPicturePath(), new ImageWidthHeight() {
+					
+					@Override
+					public void apply(Integer width, Integer height) {
+						imageViewer.setUrl(questionProxy.getPicturePath(), width, height, type);
+					}
+				});*/
+			}
+						
+		}					
+			
+		ArrayList<String> allowedExt = new ArrayList<String>();
+		Map<MultimediaType, String> paths = Maps.newHashMap();
+		
+		allowedExt.addAll(Arrays.asList(SharedConstant.IMAGE_EXTENSIONS));
+		paths.put(MultimediaType.Image, SharedConstant.UPLOAD_MEDIA_IMAGES_PATH);
+		
+		ResourceUpload resourceUpload = new ResourceUpload(allowedExt,paths,this.eventBus); 
+		
+		resourceUpload.addResourceUploadedHandler(new ResourceUploadEventHandler() {
+			
+			@Override
+			public void onResourceUploaded(final ResourceUploadEvent event) {
+
+				final String filePath = event.getFilePath();
+				
+				if(event.isResourceUploaded() == true) {
+					Log.info("filePath is " + filePath);
+					
+					// for image
+					final String url = new String(GWT.getHostPageBaseURL() + filePath);
+					if(questionTypeProxy != null/* && questionTypeProxy.getImageWidth() != null && questionTypeProxy.getImageHeight() != null*/) {
+						
+						Function<Boolean, Void> function = new Function<Boolean, Void>() {
+							
+							@Override
+							public Void apply(Boolean flag) {
+						
+								if(flag != null && flag == true) {
+									Log.info("picturePath : " + filePath);
+									if(imageViewer != null && imageViewer.getImageUrl() != null && imageViewer.getImageUrl().length() > 0) {
+										// delete old files
+										Log.info("Delete old uploaded file " + imageViewer.getImageUrl().toString());
+										delegate.deleteMediaFileFromDisk(imageViewer.getImageUrl().replace(GWT.getHostPageBaseURL(), ""));
+									}
+									
+									imageViewer.setUrl(filePath, event.getWidth(), event.getHeight(), type);	
+								} else {
+									ErrorPanel errorPanel = new ErrorPanel();
+									errorPanel.setErrorMessage("Only Upload image of size" + questionTypeProxy.getImageWidth() + "*" + questionTypeProxy.getImageHeight());
+									delegate.deleteMediaFileFromDisk(filePath);
+								}
+
+								return null;
+							}
+						};
+						
+						if(event.getWidth() != null && event.getHeight() != null) {
+							/*if(event.getWidth().equals(questionTypeProxy.getImageWidth()) && event.getHeight().equals(questionTypeProxy.getImageHeight())) {
+								function.apply(true);
+							}else {
+								function.apply(false);
+							}*/
+							function.apply(true);
+						}else {
+							//ClientUtility.checkImageSize(url,questionTypeProxy.getImageWidth(),questionTypeProxy.getImageHeight(),function);
+							Log.error("Error in event width or height");
 						}
 							
 					}else {
@@ -632,7 +738,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	private boolean validationOfFields() {
 		
 		author.getTextField().advancedTextBox.removeStyleName("higlight_onViolation");
-		questionComment.removeStyleName("higlight_onViolation");
+		//questionComment.removeStyleName("higlight_onViolation");
 		questionType.removeStyleName("higlight_onViolation");
 		questionTextArea.removeStyleName("higlight_onViolation");
 		if(imageViewer != null)
@@ -672,11 +778,11 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 			rewiewer.getTextField().advancedTextBox.addStyleName("higlight_onViolation");
 		}
 		
-		if(questionComment.getText() == null || questionComment.getText().isEmpty()) {
+		/*if(questionComment.getText() == null || questionComment.getText().isEmpty()) {
 			flag = false;
 			messages.add(constants.commentMayNotBeNull());
 			questionComment.addStyleName("higlight_onViolation");
-		}
+		}*/
 		
 		if(questionType.getValue() == null) {
 			flag = false;
@@ -726,6 +832,8 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	public void setValuesForQuestion(QuestionProxy question, CommentProxy commentProxy) {
 		
 		String picturePath = null;
+		Integer height = null;
+		Integer width = null;
 		
 		switch (questionType.getValue().getQuestionType()) {
 		
@@ -733,6 +841,8 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		case ShowInImage:
 		{
 			picturePath = imageViewer.getImageRelativeUrl();
+			height = imageViewer.getHeight();
+			width = imageViewer.getWidth();
 			break;
 		}
 		
@@ -740,6 +850,9 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		{
 			Log.info("in default case");
 			picturePath = null;
+			height = null;
+			width = null;
+			
 			break;
 		}
 		} 
@@ -752,14 +865,25 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		question.setSubmitToReviewComitee(submitToReviewComitee.getValue());
 		question.setQuestEvent(questEvent.getValue());
 		question.setMcs(mcs.getValue());
-		commentProxy.setComment(questionComment.getText());
+		commentProxy.setComment(questionComment.getText().isEmpty() == true ? " " : questionComment.getText());
 		question.setComment(commentProxy);
 		question.setPicturePath(picturePath);
+		question.setImageHeight(height);
+		question.setImageWidth(width);
 	}
 
 	@Override
 	public void comfirmQuestionChanges(Function<Boolean, Void> isMajorOrMinor) {
 		new ConfirmQuestionChangesPopup(isMajorOrMinor);
+	}
+
+	@Override
+	public Long getAuthorId() {
+		if(author == null || author.getSelected() == null) {
+			return -1l;
+		}
+		
+		return author.getSelected().getId();
 	}
 
 }

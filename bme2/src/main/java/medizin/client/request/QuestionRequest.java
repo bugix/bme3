@@ -2,7 +2,8 @@ package medizin.client.request;
 
 import java.util.List;
 
-import medizin.client.proxy.McProxy;
+import medizin.client.proxy.AssesmentProxy;
+import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionProxy;
 
 import org.springframework.roo.addon.gwt.RooGwtUnmanagedRequest;
@@ -28,7 +29,7 @@ public interface QuestionRequest extends QuestionRequest_Roo_Gwt {
 			Long institutionId, Long eventId, String questiuonStringFilter,
 			Boolean filterQuestionText, Boolean filterKeywords, int start, int length);
 	
-	Request<List<QuestionProxy>> findQuestionsByMc(Long mcId, String questionId, String questionType, String questionName);
+	Request<List<QuestionProxy>> findQuestionsByMc(Long mcId, String questionId, String questionType, String questionName,AssesmentProxy a,PersonProxy author);
 
 	Request<java.lang.Long> countQuestionsNonAcceptedAdmin();
 

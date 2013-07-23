@@ -15,7 +15,7 @@
 				<g:FileUpload ui:field="fileUpload" name="fileUpload1" />
 				<m:IconButton ui:field="importfile" icon="arrowthickstop-1-s"></m:IconButton>
 				<g:Hidden ui:field="hidden" name="hidden" />
-
+				<m:IconButton ui:field="fileInfo" icon="info"></m:IconButton>
 			</g:HorizontalPanel>
 		</g:FormPanel>
 	

@@ -70,4 +70,6 @@ public interface QuestionEditView extends IsWidget {
 	void setValuesForQuestion(QuestionProxy question, CommentProxy commentProxy);
 	
 	void comfirmQuestionChanges(Function<Boolean, Void> isMajorOrMinor);
+	
+	Long getAuthorId();
 }

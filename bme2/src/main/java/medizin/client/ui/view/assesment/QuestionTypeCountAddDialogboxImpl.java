@@ -138,11 +138,16 @@ public class QuestionTypeCountAddDialogboxImpl extends DialogBox implements Ques
     	
     	if(blockingType.getValue()==null)
     	{
-    		ConfirmationDialogBox.showOkDialogBox("Warning", "Blocking Type cannot be empty");
+    		ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.blockingTypeNotEmpty());
     		
     		return;
     	}
     	
+    	if(questionTypesAssigned.getDisplayedList().size()==0)
+    	{
+    		ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.questionTypeCountSetNotNull());
+    		return;
+    	}
         delegate.addClicked();
         hide();
     }

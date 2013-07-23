@@ -29,7 +29,7 @@ public interface AssesmentQuestionRequest extends AssesmentQuestionRequest_Roo_G
 //	    
 	abstract Request<java.util.List<medizin.client.proxy.AssesmentQuestionProxy>> findAssesmentQuestionsByQuestionEvent(Long id, Long assesmentId);
 
-	abstract Request<List<AssesmentQuestionProxy>> findAssesmentQuestionsByMc(Long assesmentId,Long id, String questionId, String questionType, String questionName);
+	abstract Request<List<AssesmentQuestionProxy>> findAssesmentQuestionsByMc(Long assesmentId,Long id, String questionId, String questionType, String questionName,PersonProxy author);
 	abstract Request<List<PersonProxy>> findAuthorListByAssesment(AssesmentProxy assesment);
 	abstract Request<List<AssesmentQuestionProxy>> findAssesmentQuestionsByMcProposal(Long id, String questionId, String questionType, String questionName);
 	abstract Request<List<AssesmentQuestionProxy>> findAssesmentQuestionsByAssesment(Long id,PersonProxy author);
@@ -40,7 +40,7 @@ public interface AssesmentQuestionRequest extends AssesmentQuestionRequest_Roo_G
 
 	abstract Request<List<AssesmentQuestionProxy>>  findAssementQuestionForAssementBook(Long id);
 	
-	abstract Request <List<AssesmentQuestionProxy>> findAssesmentQuestionsByQuestionEventAssIdQuestType(java.lang.Long questEventId, java.lang.Long assesmentId, List<Long> questionTypesId);
+	abstract Request <List<AssesmentQuestionProxy>> findAssesmentQuestionsByQuestionEventAssIdQuestType(java.lang.Long questEventId, java.lang.Long assesmentId, List<Long> questionTypesId,boolean isVersionA);
 	
 	abstract Request<String> loadTemplate();
 //	QuestionTypeCountPerExamRequestNonRoo questionTypeCountPerExamRequest();
@@ -50,6 +50,8 @@ public interface AssesmentQuestionRequest extends AssesmentQuestionRequest_Roo_G
 
 	abstract Request<Boolean> sendMail(List<PersonProxy> list, String messageContent,
 			String mailSubject, AssesmentProxy activeTab);
+
+	abstract Request<Void> shuffleQuestionsAnswers(Long assessmentID);
 
 
 }

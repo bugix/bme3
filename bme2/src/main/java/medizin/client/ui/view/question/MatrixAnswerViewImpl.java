@@ -45,7 +45,6 @@ import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -92,8 +91,8 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 	@UiField
 	IconButton closeButton;
 
-	private final Button addAnswerX;
-	private final Button addAnswerY;
+	private final IconButton addAnswerX;
+	private final IconButton addAnswerY;
 	private final QuestionProxy questionProxy;
 	private final Matrix<MatrixValidityVO> matrixList = new Matrix<MatrixValidityVO>();
 
@@ -103,6 +102,7 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 		this.questionProxy = questionProxy;
 		setWidget(uiBinder.createAndBindUi(this));
 		matrix.setWidth("100%");
+		matrix.setHeight("200px");
 		matrix.setCellSpacing(5);
 		matrix.setCellPadding(3);
 
@@ -113,7 +113,7 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 
 		// Add a button that will add more rows to the table
 
-		addAnswerX = new Button(constants.addAnswerX(), new ClickHandler() {
+		addAnswerX = new IconButton(constants.addAnswerX(), new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
@@ -121,8 +121,10 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 			}
 
 		});
+		addAnswerX.setIcon("plusthick");
+		addAnswerX.getElement().getStyle().setMarginLeft(10, Unit.PX);
 
-		addAnswerY = new Button(constants.addAnswerY(), new ClickHandler() {
+		addAnswerY = new IconButton(constants.addAnswerY(), new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
@@ -130,6 +132,7 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 			}
 		});
 
+		addAnswerY.setIcon("plusthick");
 		addAnswerY.addStyleName("rowRotate90");
 		addAnswerY.getElement().getStyle().setPaddingTop(0, Unit.PX);
 				
@@ -195,8 +198,8 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 		matrix.setWidget(currentRow + 1, 0, addAnswerX);
 
 		textBox.setFocus(true);
-		addAnswerX.setEnabled(false);
-		addAnswerY.setEnabled(false);
+		addAnswerX.setVisible(false);
+		addAnswerY.setVisible(false);
 
 		final AnswerVO answerVO = new AnswerVO();
 		answerVO.setState(State.NEW);
@@ -234,15 +237,16 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 					}
 
 					button.addClickHandler(new ButtonClickHandler(matrixValidityVO, button));
+					matrixValidityVO.setValidity(Validity.Falsch);
 					
-					delegate.saveMatrixValidityValue(matrixValidityVO,Validity.Falsch, new Function<MatrixValidityProxy, Void>() {
+					/*delegate.saveMatrixValidityValue(matrixValidityVO,Validity.Falsch, new Function<MatrixValidityProxy, Void>() {
 
 						@Override
 						public Void apply(MatrixValidityProxy input) {
 							matrixValidityVO.setMatrixValidityProxy(input);
 							return null;
 						}
-					});
+					});*/
 				}
 				
 				return null;
@@ -265,7 +269,8 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 		final Label label = new Label();
 		label.setVisible(false);
 		label.addStyleName("rowRotate90");
-		textBox.addStyleName("rowRotate90");
+		//textBox.addStyleName("rowRotate90");
+		textBox.addStyleName("textbox-y");
 		editY.setVisible(false);
 		VerticalPanel vp = new VerticalPanel();
 		HorizontalPanel hp = new HorizontalPanel();
@@ -285,8 +290,8 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 		matrix.setWidget(0, currentColumn + 1, addAnswerY);
 
 		textBox.setFocus(true);
-		addAnswerX.setEnabled(false);
-		addAnswerY.setEnabled(false);
+		addAnswerX.setVisible(false);
+		addAnswerY.setVisible(false);
 
 		final AnswerVO answerVO = new AnswerVO();
 		answerVO.setState(State.NEW);
@@ -323,15 +328,17 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 					}
 								
 					button.addClickHandler(new ButtonClickHandler(matrixValidityVO, button));
+
+					matrixValidityVO.setValidity(Validity.Falsch);
 					
-					delegate.saveMatrixValidityValue(matrixValidityVO,Validity.Falsch, new Function<MatrixValidityProxy, Void>() {
+					/*delegate.saveMatrixValidityValue(matrixValidityVO,Validity.Falsch, new Function<MatrixValidityProxy, Void>() {
 
 						@Override
 						public Void apply(MatrixValidityProxy input) {
 							matrixValidityVO.setMatrixValidityProxy(input);
 							return null;
 						}
-					});
+					});*/
 				}
 				
 				return null;
@@ -410,7 +417,8 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 			
 			
 			if(validationOfFields(true,null) == true) {
-				delegate.saveMatrixAnswer(currentMatrixValidityProxy,matrixList, author.getSelected(), rewiewer.getSelected(), submitToReviewComitee.getValue(), comment.getText());
+                //delegate.saveMatrixAnswer(currentMatrixValidityProxy,matrixList, author.getSelected(), rewiewer.getSelected(), submitToReviewComitee.getValue(), comment.getText());
+				delegate.saveAllTheValuesToAnswerAndMatrixAnswer(currentMatrixValidityProxy,matrixList, author.getSelected(), rewiewer.getSelected(), submitToReviewComitee.getValue(), comment.getText());
 				hide();
 			}
 		}
@@ -550,7 +558,7 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 				
 				if(flag == true) {
 
-					String points = null; 
+					/*String points = null; 
 					String mediaPath = null;
 					String additionalKeywords = null; 
 					Integer sequenceNumber =null;
@@ -560,15 +568,15 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 						validity = answer.getAnswerProxy().getValidity();
 					}
 					
-					delegate.saveAnswerProxy(answer.getAnswerProxy(), text, author.getSelected(), rewiewer.getSelected(), submitToReviewComitee.getValue(), comment.getText(), validity, points, mediaPath, additionalKeywords,sequenceNumber, new Function<AnswerProxy,Void>() {
+                    delegate.saveAnswerProxy(answer.getAnswerProxy(), text, author.getSelected(), rewiewer.getSelected(), submitToReviewComitee.getValue(), comment.getText(), validity, points, mediaPath, additionalKeywords,sequenceNumber, new Function<AnswerProxy,Void>() {
 
 						@Override
 						public Void apply(AnswerProxy input) {
+						*/	
+							addAnswerX.setVisible(true);
+							addAnswerY.setVisible(true);
 							
-							addAnswerX.setEnabled(true);
-							addAnswerY.setEnabled(true);
-							
-							answer.setAnswerProxy(input);
+							//answer.setAnswerProxy(input);
 							textBox.setVisible(false);
 							
 							label.setVisible(true);	
@@ -581,9 +589,9 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 							edit.setVisible(true);
 							function.apply(true);
 							
-							return null;
-						}
-					});
+						//	return null;
+						//}
+					//});
 				}
 			}
 		}
@@ -610,14 +618,14 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 				validity = Validity.Falsch;
 				mValidtyVO.setValidity(Validity.Falsch);
 			}
-			delegate.saveMatrixValidityValue(mValidtyVO, validity, new Function<MatrixValidityProxy, Void>() {
+			/*delegate.saveMatrixValidityValue(mValidtyVO, validity, new Function<MatrixValidityProxy, Void>() {
 				
 				@Override
 				public Void apply(MatrixValidityProxy input) {
 					mValidtyVO.setMatrixValidityProxy(input);
 					return null;
 				}
-			});
+			});*/
 		}
 	}
 	
@@ -640,6 +648,9 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 		@Override
 		public void onClick(ClickEvent event) {
 			String text = label.getText();
+			addAnswerX.setVisible(false);
+			addAnswerY.setVisible(false);
+			
 			textBox.setText(text);
 			label.setVisible(false);
 			textBox.setVisible(true);
@@ -665,6 +676,8 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 				
 				@Override
 				public void onYesButtonClicked(ConfirmDialogBoxYesNoButtonEvent event) {
+					addAnswerX.setVisible(true);
+					addAnswerY.setVisible(true);
 					
 					FluentIterable<MatrixValidityVO> fluentIterable = FluentIterable.from(matrixList);
 					final FluentIterable<MatrixValidityVO> foundAnswers;
@@ -675,11 +688,12 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 					}
 					
 					if(foundAnswers.isEmpty() == false) {
+                                         
 						delegate.deletedSelectedAnswer(answer.getAnswerProxy(),isAnswerX,new Function<Boolean, Void>() {
 
 							@Override
 							public Void apply(Boolean input) {
-
+								
 								if(input == true) {
 									//delete the full answer
 									matrix.clear();
@@ -910,7 +924,8 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 		final TextBox textBoxY = new TextBox();
 		final Label labelY = new Label();
 		labelY.addStyleName("rowRotate90");
-		textBoxY.addStyleName("rowRotate90");
+		//textBoxY.addStyleName("rowRotate90");
+		textBoxY.addStyleName("textbox-y");
 		VerticalPanel vp = new VerticalPanel();
 		HorizontalPanel hp = new HorizontalPanel();
 		

@@ -307,7 +307,7 @@
 											</td>
 										</tr>
 
-										<tr id="imageWidth">
+										<!-- <tr id="imageWidth">
 											<td>
 												<g:Label styleName="{style.label}" ui:field="imageWidthLbl"></g:Label>
 											</td>
@@ -332,11 +332,11 @@
 											<td>
 												<g:Label addStyleNames="{style.valueHeight}" ui:field="imageProportionValLbl"></g:Label>
 											</td>
-										</tr>
+										</tr> -->
 
 										<!-- Area Question Type Field -->
 
-										<tr id="linearPoint">
+										<!-- <tr id="linearPoint">
 											<td>
 												<g:Label styleName="{style.label}" ui:field="linearPointLbl"></g:Label>
 											</td>
@@ -353,7 +353,7 @@
 											<td>
 												<g:Label addStyleNames="{style.valueHeight}" ui:field="linearPercentageValLbl"></g:Label>
 											</td>
-										</tr>
+										</tr> -->
 
 										<!-- Long Text Type Field -->
 
@@ -451,7 +451,7 @@
 											</td>
 										</tr>
 
-										<tr id="thumbWidth">
+										<!-- <tr id="thumbWidth">
 											<td>
 												<g:Label styleName="{style.label}" ui:field="thumbWidthLbl"></g:Label>
 											</td>
@@ -485,7 +485,7 @@
 											<td>
 												<g:Label addStyleNames="{style.valueHeight}" ui:field="allowZoomInValLbl"></g:Label>
 											</td>
-										</tr>
+										</tr> -->
 
 										<tr id="maxBytes">
 											<td>

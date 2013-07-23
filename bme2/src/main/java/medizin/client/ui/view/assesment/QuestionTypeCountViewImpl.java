@@ -125,7 +125,12 @@ public class QuestionTypeCountViewImpl extends Composite implements QuestionType
 
             @Override
             public String getValue(QuestionTypeCountPerExamProxy object) {
-                return renderer.render(object.getQuestionTypesAssigned());
+            	if(object==null)
+    			{
+    				return "";
+    			}
+            	else
+            		return renderer.render(object.getQuestionTypesAssigned());
             }
         }, "Question Types Assigned");
         
@@ -137,6 +142,11 @@ public class QuestionTypeCountViewImpl extends Composite implements QuestionType
 			@Override
 			public String getValue(QuestionTypeCountPerExamProxy object) {
 				// TODO Auto-generated method stub
+				if(object==null)
+    			{
+    				return "";
+    			}
+				else
 				return renderer.render(object.getBlockingType());
 			}       }, "Blocking Type");
         
@@ -162,6 +172,11 @@ public class QuestionTypeCountViewImpl extends Composite implements QuestionType
 
             @Override
             public String getValue(QuestionTypeCountPerExamProxy object) {
+            	if(object==null)
+    			{
+    				return "";
+    			}
+            	else 
                 return renderer.render(object.getQuestionTypeCount());
             }
         }, new Header<String>(new IconHeader()){
@@ -183,6 +198,10 @@ public class QuestionTypeCountViewImpl extends Composite implements QuestionType
 
             @Override
             public String getValue(QuestionTypeCountPerExamProxy object) {
+            	if(object==null)
+    			{
+    				return "";
+    			}
                 return renderer.render(object.getSort_order());
             }
         }, new Header<String>(new IconHeader()){

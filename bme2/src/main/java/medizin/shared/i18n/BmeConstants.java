@@ -585,4 +585,70 @@ public interface BmeConstants extends Constants {
 	public String blockingType();
 	
 	public String percentNotMoreThan100();
+	
+	public String personalBlockingWarning();
+	
+	public String globalBlockingWarning();
+
+	public String media();
+	
+	public String sumOfAnswer();
+	
+	public String sumOfFalseAnswer();
+	
+	public String sumOfTrueAnswer();
+
+	public String imageKey();
+	
+	public String blockingTypeNotEmpty();
+	
+	public String questionTypeCountSetNotNull();
+	
+	public String  mailVarStartDate();
+	
+	public String mailStartDate();
+	
+	public String mailVarClosedDate();
+	
+	public String mailClosedDate();
+	
+	public String mailVarMC();
+	
+	public String mailMC();
+	public String mailVarProposedCount();
+	
+	public String mailProposedCount();
+	
+	public String mailVarTotalCount();
+	
+	public String mailTotalCount();
+	public String  mailVarLoopStart();
+	public String mailLoopStart();
+	public String  mailVarLoopEnd();
+	
+	public String  mailLoopEnd();
+	public String  mailVarAllocatedCount();
+	
+	public String mailAllocatedCount();
+	
+	public String mailQuestionType();
+	
+	public String mailVarQuestionType();
+	
+	public String  mailVarSpecialization();
+	
+	public String  mailSpecialization();
+	
+	
+	public String  mailVarTotalRemaining();
+	
+	public String  mailTotalRemaining();
+	
+	public String  mailVarTotalRemainingCount();
+	
+	public String mailTotalRemainingCount();
+	
+	public String studentImportCsvInfo();
+	
+	public String tableSize();
 }
