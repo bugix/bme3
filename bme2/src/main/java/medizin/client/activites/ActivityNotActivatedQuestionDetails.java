@@ -316,4 +316,7 @@ public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper
 
 	@Override
 	public void checkForResendToReview() {}
+
+	@Override
+	public void saveAllTheValuesToAnswerAndMatrixAnswer(List<MatrixValidityProxy> currentMatrixValidityProxy, Matrix<MatrixValidityVO> matrixList, PersonProxy author, PersonProxy rewiewer, Boolean submitToReviewComitee, String comment) {}
 }

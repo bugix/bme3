@@ -37,6 +37,10 @@ public class MatrixValidityVO {
 
 	public void setAnswerX(AnswerVO answerX) {
 		this.answerX = answerX;
+		
+		if(answerX != null && matrixValidityProxy != null && answerX.getAnswerProxy() != null && matrixValidityProxy.getAnswerX() == null) {
+			matrixValidityProxy.setAnswerX(answerX.getAnswerProxy());
+		}
 	}
 
 	public AnswerVO getAnswerY() {
@@ -45,6 +49,10 @@ public class MatrixValidityVO {
 
 	public void setAnswerY(AnswerVO answerY) {
 		this.answerY = answerY;
+		
+		if(answerY != null && matrixValidityProxy != null && answerY.getAnswerProxy() != null && matrixValidityProxy.getAnswerY() == null) {
+			matrixValidityProxy.setAnswerY(answerY.getAnswerProxy());
+		}
 	}
 
 	public void setValidity(Validity validity) {

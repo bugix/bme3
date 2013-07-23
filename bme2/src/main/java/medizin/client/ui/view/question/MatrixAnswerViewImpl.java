@@ -45,7 +45,6 @@ import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -103,6 +102,7 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 		this.questionProxy = questionProxy;
 		setWidget(uiBinder.createAndBindUi(this));
 		matrix.setWidth("100%");
+		matrix.setHeight("200px");
 		matrix.setCellSpacing(5);
 		matrix.setCellPadding(3);
 
@@ -237,15 +237,16 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 					}
 
 					button.addClickHandler(new ButtonClickHandler(matrixValidityVO, button));
+					matrixValidityVO.setValidity(Validity.Falsch);
 					
-					delegate.saveMatrixValidityValue(matrixValidityVO,Validity.Falsch, new Function<MatrixValidityProxy, Void>() {
+					/*delegate.saveMatrixValidityValue(matrixValidityVO,Validity.Falsch, new Function<MatrixValidityProxy, Void>() {
 
 						@Override
 						public Void apply(MatrixValidityProxy input) {
 							matrixValidityVO.setMatrixValidityProxy(input);
 							return null;
 						}
-					});
+					});*/
 				}
 				
 				return null;
@@ -327,15 +328,17 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 					}
 								
 					button.addClickHandler(new ButtonClickHandler(matrixValidityVO, button));
+
+					matrixValidityVO.setValidity(Validity.Falsch);
 					
-					delegate.saveMatrixValidityValue(matrixValidityVO,Validity.Falsch, new Function<MatrixValidityProxy, Void>() {
+					/*delegate.saveMatrixValidityValue(matrixValidityVO,Validity.Falsch, new Function<MatrixValidityProxy, Void>() {
 
 						@Override
 						public Void apply(MatrixValidityProxy input) {
 							matrixValidityVO.setMatrixValidityProxy(input);
 							return null;
 						}
-					});
+					});*/
 				}
 				
 				return null;
@@ -414,7 +417,8 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 			
 			
 			if(validationOfFields(true,null) == true) {
-				delegate.saveMatrixAnswer(currentMatrixValidityProxy,matrixList, author.getSelected(), rewiewer.getSelected(), submitToReviewComitee.getValue(), comment.getText());
+                //delegate.saveMatrixAnswer(currentMatrixValidityProxy,matrixList, author.getSelected(), rewiewer.getSelected(), submitToReviewComitee.getValue(), comment.getText());
+				delegate.saveAllTheValuesToAnswerAndMatrixAnswer(currentMatrixValidityProxy,matrixList, author.getSelected(), rewiewer.getSelected(), submitToReviewComitee.getValue(), comment.getText());
 				hide();
 			}
 		}
@@ -554,7 +558,7 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 				
 				if(flag == true) {
 
-					String points = null; 
+					/*String points = null; 
 					String mediaPath = null;
 					String additionalKeywords = null; 
 					Integer sequenceNumber =null;
@@ -564,15 +568,15 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 						validity = answer.getAnswerProxy().getValidity();
 					}
 					
-					delegate.saveAnswerProxy(answer.getAnswerProxy(), text, author.getSelected(), rewiewer.getSelected(), submitToReviewComitee.getValue(), comment.getText(), validity, points, mediaPath, additionalKeywords,sequenceNumber, new Function<AnswerProxy,Void>() {
+                    delegate.saveAnswerProxy(answer.getAnswerProxy(), text, author.getSelected(), rewiewer.getSelected(), submitToReviewComitee.getValue(), comment.getText(), validity, points, mediaPath, additionalKeywords,sequenceNumber, new Function<AnswerProxy,Void>() {
 
 						@Override
 						public Void apply(AnswerProxy input) {
-							
+						*/	
 							addAnswerX.setVisible(true);
 							addAnswerY.setVisible(true);
 							
-							answer.setAnswerProxy(input);
+							//answer.setAnswerProxy(input);
 							textBox.setVisible(false);
 							
 							label.setVisible(true);	
@@ -585,9 +589,9 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 							edit.setVisible(true);
 							function.apply(true);
 							
-							return null;
-						}
-					});
+						//	return null;
+						//}
+					//});
 				}
 			}
 		}
@@ -614,14 +618,14 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 				validity = Validity.Falsch;
 				mValidtyVO.setValidity(Validity.Falsch);
 			}
-			delegate.saveMatrixValidityValue(mValidtyVO, validity, new Function<MatrixValidityProxy, Void>() {
+			/*delegate.saveMatrixValidityValue(mValidtyVO, validity, new Function<MatrixValidityProxy, Void>() {
 				
 				@Override
 				public Void apply(MatrixValidityProxy input) {
 					mValidtyVO.setMatrixValidityProxy(input);
 					return null;
 				}
-			});
+			});*/
 		}
 	}
 	
@@ -684,6 +688,7 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 					}
 					
 					if(foundAnswers.isEmpty() == false) {
+                                         
 						delegate.deletedSelectedAnswer(answer.getAnswerProxy(),isAnswerX,new Function<Boolean, Void>() {
 
 							@Override
