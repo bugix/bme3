@@ -28,6 +28,7 @@ import medizin.client.util.ClientUtility;
 import medizin.shared.MultimediaType;
 import medizin.shared.QuestionTypes;
 import medizin.shared.i18n.BmeConstants;
+import medizin.shared.i18n.BmeMessages;
 import medizin.shared.utils.SharedConstant;
 import medizin.shared.utils.SharedUtility;
 
@@ -58,6 +59,7 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 	interface QuestionDetailsViewImplUiBinder extends UiBinder<Widget, QuestionDetailsViewImpl> {
 	}
 
+	public BmeMessages bmeMessages = GWT.create(BmeMessages.class);
 	public BmeConstants constants = GWT.create(BmeConstants.class);
 	private Presenter presenter;
 	private Delegate delegate;
@@ -513,7 +515,7 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 		
 		questionTypeDetailPanel.selectTab(0);
 		questionTypeDetailPanel.getTabBar().setTabText(0, constants.manageQuestion());
-		questionTypeDetailPanel.getTabBar().setTabText(1, constants.resources());
+		questionTypeDetailPanel.getTabBar().setTabText(1, constants.media());
 		TabPanelHelper.moveTabBarToBottom(questionTypeDetailPanel);
 		
 	}
@@ -664,7 +666,7 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 		h2.add(resourceView);
 		panel.add(h1);
 		panel.add(h2);
-		questionTypeDetailPanel.add(panel, constants.resources());*/
+		questionTypeDetailPanel.add(panel, constants.media());*/
 		
 		
 		/*resourceUploadPanel.add(lblUploadText);
@@ -723,7 +725,7 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 									imageViewer.setUrl(filePath, questionTypeProxy.getImageWidth(), questionTypeProxy.getImageHeight(), type);	
 									delegate.updatePicturePathInQuestion(filePath);
 								}else {
-									ConfirmationDialogBox.showOkDialogBox(constants.warning(),constants.imageSizeError().replace("(0)", questionTypeProxy.getImageWidth().toString()).replace("(1)", questionTypeProxy.getImageHeight().toString()));
+									ConfirmationDialogBox.showOkDialogBox(constants.warning(),bmeMessages.imageSizeError(questionTypeProxy.getImageWidth(), questionTypeProxy.getImageHeight()));
 									delegate.deleteUploadedPicture(filePath);
 								}
 
@@ -759,7 +761,7 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 		panel.add(h1);
 		panel.add(h2);
 		
-		questionTypeDetailPanel.add(panel, constants.resources());*/
+		questionTypeDetailPanel.add(panel, constants.media());*/
 		
 		/*resourceUploadPanel.add(lblUploadText);
 		resourceUploadPanel.add(resourceUpload);*/

@@ -83,8 +83,8 @@ public class QuestionAccessDialogboxImpl extends DialogBox implements QuestionAc
 		setWidget(uiBinder.createAndBindUi(this));
 	    setGlassEnabled(true);
 	    setAnimationEnabled(true);
-	    setTitle(constants.queAccDialogTitle());
-	    setText(constants.queAccDialogTitle());
+	    setTitle(constants.questionAccess());
+	    setText(constants.questionAccess());
 	    
 	    init();
 	    

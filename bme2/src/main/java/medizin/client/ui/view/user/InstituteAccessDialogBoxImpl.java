@@ -50,8 +50,8 @@ public class InstituteAccessDialogBoxImpl extends DialogBox implements Institute
 		setWidget(uiBinder.createAndBindUi(this));
 	    setGlassEnabled(true);
 	    setAnimationEnabled(true);
-	    setTitle(constants.institutedAccDialogTitle());
-	    setText(constants.institutedAccDialogTitle());
+	    setTitle(constants.institutionAccess());
+	    setText(constants.institutionAccess());
 	    
 	   /* tableEvent.removeColumnStyleName(1, "cellTableCell");
 	    

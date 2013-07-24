@@ -33,6 +33,7 @@ import medizin.client.util.PolygonPath;
 import medizin.shared.MultimediaType;
 import medizin.shared.QuestionTypes;
 import medizin.shared.i18n.BmeConstants;
+import medizin.shared.i18n.BmeMessages;
 import medizin.shared.utils.SharedConstant;
 
 import com.allen_sauer.gwt.log.client.Log;
@@ -126,6 +127,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 	@UiField
 	TextBox txtSequenceNumber;
 	
+	public BmeMessages bmeMessages = GWT.create(BmeMessages.class);
 	public BmeConstants constants = GWT.create(BmeConstants.class);
 
 	private ImagePolygonViewer imagePolygonViewer;
@@ -368,7 +370,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 										viewContainer.clear();
 										viewContainer.add(simpleImageViewer);
 									} else {
-										ConfirmationDialogBox.showOkDialogBox(constants.error(), constants.imageSizeError().replace("(0)", questionTypeProxy.getImageWidth().toString()).replace("(1)", questionTypeProxy.getImageHeight().toString()));
+										ConfirmationDialogBox.showOkDialogBox(constants.error(), bmeMessages.imageSizeError(questionTypeProxy.getImageWidth(), questionTypeProxy.getImageHeight()));
 										delegate.deleteUploadedFiles(Sets.newHashSet(event.getFilePath()));
 									}
 
@@ -418,7 +420,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 								viewContainer.clear();
 								viewContainer.add(audioViewer);
 							}else {
-								ConfirmationDialogBox.showOkDialogBox(constants.error(), constants.mediaErrorMsg().replace("(0)", question.getQuestionType().getMaxBytes().toString()));
+								ConfirmationDialogBox.showOkDialogBox(constants.error(), bmeMessages.mediaErrorMsg(question.getQuestionType().getMaxBytes() / 1024));
 								delegate.deleteUploadedFiles(Sets.newHashSet(event.getFilePath()));
 							}
 						}else {
@@ -456,7 +458,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 								viewContainer.clear();
 								viewContainer.add(videoViewer);
 							}else {
-								ConfirmationDialogBox.showOkDialogBox(constants.error(), constants.mediaErrorMsg().replace("(0)", question.getQuestionType().getMaxBytes().toString()));
+								ConfirmationDialogBox.showOkDialogBox(constants.error(), bmeMessages.mediaErrorMsg(question.getQuestionType().getMaxBytes()/1024));
 								delegate.deleteUploadedFiles(Sets.newHashSet(event.getFilePath()));
 							}
 						}else {
@@ -767,7 +769,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 			if(question.getQuestionType().getAnswerLength() != null  && answerTextMaxDiff != null && answerTextMinDiff != null) {
 				if(answerTextArea.getText().length() < answerTextMinDiff || answerTextArea.getText().length() > answerTextMaxDiff) {
 					flag = false;
-					messages.add(constants.answerTextMinMax().replace("{0}", answerTextMinDiff.toString()).replace("{1}", answerTextMaxDiff.toString()));
+					messages.add(bmeMessages.answerTextMinMax(answerTextMinDiff, answerTextMaxDiff));
 					answerTextArea.addStyleName("higlight_onViolation");
 				}
 			}

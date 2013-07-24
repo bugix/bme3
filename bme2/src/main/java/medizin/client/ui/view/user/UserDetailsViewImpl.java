@@ -3,6 +3,7 @@ package medizin.client.ui.view.user;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.TabPanelHelper;
+import medizin.shared.i18n.BmeConstants;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
@@ -30,7 +31,7 @@ public class UserDetailsViewImpl extends Composite implements UserDetailsView
 	{
 	}
 	
-
+	private BmeConstants constants = GWT.create(BmeConstants.class);
 
 	private Presenter presenter;
 
@@ -204,9 +205,9 @@ public class UserDetailsViewImpl extends Composite implements UserDetailsView
 		
 		userAccessDetailPanel.selectTab(0);
 		
-		userAccessDetailPanel.getTabBar().setTabText(0, "Institute Access");
-		userAccessDetailPanel.getTabBar().setTabText(1, "Event Access");
-		userAccessDetailPanel.getTabBar().setTabText(2, "Question Access");
+		userAccessDetailPanel.getTabBar().setTabText(0, constants.institutionAccess());
+		userAccessDetailPanel.getTabBar().setTabText(1, constants.eventAccess());
+		userAccessDetailPanel.getTabBar().setTabText(2, constants.questionAccess());
 		
 		
 		//userAccessDetailPanel.getTabBar().setTabEnabled(0, false);

@@ -206,8 +206,6 @@ public interface BmeConstants extends Constants {
 	
 	public String success();
 
-	public String resources();
-
 	public String questionTypeSaveMsg();
 
 	public String answerText();
@@ -314,8 +312,6 @@ public interface BmeConstants extends Constants {
 	
 	public String fetch();
 
-	public String mediaErrorMsg();
-
 	public String polygonErrorMessage();
 
 	public String rectangleErrorMessage();
@@ -332,17 +328,9 @@ public interface BmeConstants extends Constants {
 
 	public String deleteTopicConfirmation();
 	
-	public String imageSizeError();
-	
 	public String sequenceNumber();
 
 	public String sequenceNumberError();
-	
-	public String institutedAccDialogTitle();
-	
-	public String queAccDialogTitle();
-	
-	public String eventAccDialogTitle();
 	
 	public String read();
 	
@@ -520,8 +508,6 @@ public interface BmeConstants extends Constants {
 
 	public String uploadSoundsOrVideos();
 
-	public String answerTextMinMax();
-
 	public String notActivatedQuestion();
 	
 	public String forcedActive();
@@ -589,18 +575,8 @@ public interface BmeConstants extends Constants {
 	public String blockingType();
 	
 	public String percentNotMoreThan100();
-	
-	public String personalBlockingWarning();
-	
-	public String globalBlockingWarning();
 
 	public String media();
-	
-	public String sumOfAnswer();
-	
-	public String sumOfFalseAnswer();
-	
-	public String sumOfTrueAnswer();
 
 	public String imageKey();
 	
@@ -642,8 +618,7 @@ public interface BmeConstants extends Constants {
 	public String  mailVarSpecialization();
 	
 	public String  mailSpecialization();
-	
-	
+		
 	public String  mailVarTotalRemaining();
 	
 	public String  mailTotalRemaining();
@@ -655,4 +630,10 @@ public interface BmeConstants extends Constants {
 	public String studentImportCsvInfo();
 	
 	public String tableSize();
+	
+	public String eventAccess();
+	
+	public String institutionAccess();
+	
+	public String questionAccess();
 }

@@ -23,6 +23,7 @@ import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxOkButtonEvent;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxOkButtonEventHandler;
 import medizin.shared.i18n.BmeConstants;
+import medizin.shared.i18n.BmeMessages;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.collect.Maps;
@@ -50,6 +51,7 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 	protected Map<String, Widget> reciverMap = Maps.newHashMap();
 	
 	public BmeConstants constants = GWT.create(BmeConstants.class);
+	public BmeMessages bmeMessages = GWT.create(BmeMessages.class);
 	
 	protected PersonProxy userLoggedIn;
 	protected InstitutionProxy institutionActive;

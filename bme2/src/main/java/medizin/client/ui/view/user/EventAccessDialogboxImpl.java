@@ -78,8 +78,8 @@ public class EventAccessDialogboxImpl extends DialogBox implements EventAccessDi
 		setWidget(uiBinder.createAndBindUi(this));
 	    setGlassEnabled(true);
 	    setAnimationEnabled(true);
-	    setTitle(constants.eventAccDialogTitle());
-	    setText(constants.eventAccDialogTitle());
+	    setTitle(constants.eventAccess());
+	    setText(constants.eventAccess());
 	    
 	    init();
 	    

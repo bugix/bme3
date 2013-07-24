@@ -688,12 +688,12 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 		int totalsum=questionTypeCountProxy.getQuestionTypeCountPerExamProxy().getQuestionTypeCount().intValue();
 		if(blockingTypes==BlockingTypes.PERSONAL_BLOCKING && questionTypeCountProxy.getCount() >=0)
 		{
-			ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.personalBlockingWarning()+" : "+questionTypeCountProxy.getTotalQuestionAllowed());
+			ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.blockingWarning(questionTypeCountProxy.getTotalQuestionAllowed()));
 			return false;
 		}
 		else if(blockingTypes==BlockingTypes.GLOBAL_BLOCKING && questionTypeCountProxy.getTotalQuestionAllocated() >= totalsum)
 		{
-			ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.globalBlockingWarning()+" : "+totalsum);
+			ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.blockingWarning(totalsum));
 			return false;
 		}
 		else
@@ -1566,11 +1566,11 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 				else
 				{
 					if(sumOfTrueAnsw!=trueAnswer)
-					ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.sumOfTrueAnswer() +sumOfTrueAnsw);
+					ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.sumOfTrueAnswer(sumOfTrueAnsw));
 					
 					if(totalAnswerSelected != sumOfAnswer)
 					{
-						ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.sumOfAnswer() +sumOfAnswer);
+						ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.sumOfAnswer(sumOfAnswer));
 
 					}
 					
@@ -1600,7 +1600,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 				}
 				else
 				{
-					ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.sumOfFalseAnswer() +sumFalseAnswers);
+					ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.sumOfFalseAnswer(sumFalseAnswers));
 					return false;
 				}
 			}
@@ -1627,7 +1627,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 			}
 			else
 			{
-				ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.sumOfAnswer() +sumOfAnswer);
+				ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.sumOfAnswer(sumOfAnswer));
 				return false;
 			}
 
