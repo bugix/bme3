@@ -3,6 +3,7 @@ package medizin.client.ui.view;
 import java.util.ArrayList;
 
 import medizin.client.proxy.QuestionTypeProxy;
+import medizin.client.ui.view.renderer.EnumRenderer;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.TabPanelHelper;
 import medizin.shared.QuestionTypes;
@@ -32,6 +33,8 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 		interface UserDetailsViewImplUiBinder extends
 				UiBinder<Widget, QuestiontypesDetailsViewImpl> {
 		}
+		
+		private EnumRenderer<Enum<?>> enumRenderer = new EnumRenderer<Enum<?>>();
 	
 		public BmeConstants constants = GWT.create(BmeConstants.class);
 		 
@@ -351,7 +354,7 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 	    	shortNameValLbl.setText(proxy.getShortName());
 	    	longNameValLbl.setText(proxy.getLongName());
 	    	descriptionValLbl.setText(proxy.getDescription());
-	    	questionTypeValLbl.setText(toStringUtility(proxy.getQuestionType()));
+	    	questionTypeValLbl.setText(enumRenderer.render(proxy.getQuestionType()));
 	    	instituteValLbl.setText(proxy.getInstitution().getInstitutionName());
 	    	
 	       if (proxy.getQuestionType().equals(QuestionTypes.Textual) || proxy.getQuestionType().equals(QuestionTypes.Sort))
@@ -414,8 +417,8 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 	    	   /*imageWidthValLbl.setText(toStringUtility(proxy.getImageWidth()));
 	    	   imageLengthValLbl.setText(toStringUtility(proxy.getImageHeight()));
 	    	   imageProportionValLbl.setText(toStringUtility(proxy.getImageProportion()));*/
-	    	   multimediaTypeValLbl.setText(toStringUtility(proxy.getMultimediaType()));
-	    	   selectionTypeValLbl.setText(toStringUtility(proxy.getSelectionType()));
+	    	   multimediaTypeValLbl.setText(enumRenderer.render(proxy.getMultimediaType()));
+	    	   selectionTypeValLbl.setText(enumRenderer.render(proxy.getSelectionType()));
 	    	   columnValLbl.setText(toStringUtility(proxy.getColumns()));
 	    	   richTextValLbl.setText(toStringUtility(proxy.getRichText()));
 	    	   /*thumbWidthValLbl.setText(toStringUtility(proxy.getThumbWidth()));

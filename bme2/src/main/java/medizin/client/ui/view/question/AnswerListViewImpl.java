@@ -430,10 +430,10 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 			      }
 			      String validityIcon = "";
 			      switch (value.getValidity()) {
-					case Wahr: ; validityIcon += "<span class=\"ui-icon ui-icon-plus\"></span>";
+					case Wahr: ; validityIcon += "<span class=\"ui-icon ui-icon-check\"></span>";
 							     break;
 							
-					case Falsch: validityIcon += "<span class=\"ui-icon ui-icon-minus\"></span>";
+					case Falsch: validityIcon += "<span class=\"ui-icon ui-icon-close\"></span>";
 							     break;
 							     
 					/*case Weil:	 validityIcon += "<span class=\"ui-icon ui-icon-refresh\"></span>";	

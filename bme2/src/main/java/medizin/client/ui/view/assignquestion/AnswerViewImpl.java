@@ -125,10 +125,10 @@ public class AnswerViewImpl extends Composite implements AnswerView {
 		//lblAnswerText.setWidth("100%");
 		
 		switch (answer.getValidity()) {
-		case Wahr: ; lblIcon.addStyleName("ui-icon-plus");	
+		case Wahr: ; lblIcon.addStyleName("ui-icon-check");	
 				     break;
 				
-		case Falsch: lblIcon.addStyleName("ui-icon-minus");
+		case Falsch: lblIcon.addStyleName("ui-icon-close");
 				     break;
 				     
 		/*case Weil:	lblIcon.addStyleName("ui-icon-refresh");
