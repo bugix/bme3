@@ -7,6 +7,7 @@ import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.PlaceBookAssesmentDetails;
 import medizin.client.proxy.AssesmentProxy;
 import medizin.client.ui.widget.IconButton;
+import medizin.shared.i18n.BmeConstants;
 import medizin.shared.utils.FileDownloaderProps;
 
 import com.allen_sauer.gwt.log.client.Log;
@@ -20,6 +21,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -33,6 +35,8 @@ public class BookAssesmentDetailsViewImpl extends Composite implements BookAsses
 	interface BookAssesmentDetailsViewImplUiBinder extends UiBinder<Widget, BookAssesmentDetailsViewImpl> {
 	}
 
+	private BmeConstants constants = GWT.create(BmeConstants.class);
+	
 	private Presenter presenter;
 
 	/*private McAppRequestFactory requests;
@@ -126,7 +130,7 @@ public class BookAssesmentDetailsViewImpl extends Composite implements BookAsses
 			}
 		});
 		
-		IconButton printAVersion = new IconButton("A version");
+		IconButton printAVersion = new IconButton(constants.printAVersion());
 		printAVersion.setIcon("print");
 		printAVersion.addClickHandler(new ClickHandler() {
 			
@@ -144,7 +148,7 @@ public class BookAssesmentDetailsViewImpl extends Composite implements BookAsses
 			}
 		});
 		
-		IconButton printBVersion = new IconButton("B Version");
+		IconButton printBVersion = new IconButton(constants.printBVersion());
 		printBVersion.setIcon("print");
 		printBVersion.addClickHandler(new ClickHandler() {
 			
@@ -161,7 +165,7 @@ public class BookAssesmentDetailsViewImpl extends Composite implements BookAsses
 			}
 		});
 		
-		IconButton exportXML = new IconButton("Export XML");
+		IconButton exportXML = new IconButton(constants.exportXML());
 		exportXML.setIcon("disk");
 		exportXML.addClickHandler(new ClickHandler() {
 			

@@ -646,4 +646,14 @@ public interface BmeConstants extends Constants {
 	public String keywordDelMessage();
 			
 	public String keywordNullMessage();
+	
+	public String addNonAcceptedQuestions();
+
+	public String exportXML();
+
+	public String printBVersion();
+
+	public String printAVersion();
+
+	public String sorryImageNotAvailable();
 }

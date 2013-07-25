@@ -4,16 +4,20 @@
 	<ui:style>
 		.imageBox {
 			overflow: auto;
-			height: 500px;
+			max-height: 500px;
 			width: 500px;
 			
+		}
+		.altText {
+			font-weight: bold;
+			font-size: large;
 		}
 	</ui:style>
 	<g:HTMLPanel styleName="{style.imageBox}">
 		
 		<g:VerticalPanel>
 			<!-- <gwtgraphics:DrawingArea ui:field="drawingArea"></gwtgraphics:DrawingArea> -->
-			<g:Image ui:field="image"></g:Image>
+			<g:Image ui:field="image" styleName="{style.altText}"></g:Image>
 		</g:VerticalPanel>
 		<!-- <g:VerticalPanel>
 			<g:HTMLPanel>
