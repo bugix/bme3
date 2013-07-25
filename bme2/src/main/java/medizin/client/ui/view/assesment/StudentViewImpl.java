@@ -32,12 +32,10 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 import com.google.gwt.user.client.ui.FormPanel.SubmitEvent;
 import com.google.gwt.user.client.ui.Hidden;
@@ -282,7 +280,8 @@ public class StudentViewImpl extends Composite implements StudentView {
 	public void fileInfoClicked(ClickEvent event)
 	{
 		QuestionTextViewDialogBoxImpl dialogBox = new QuestionTextViewDialogBoxImpl();
-		dialogBox.questionTextHorizontalPanel.add(new Label(constants.studentImportCsvInfo()));
+		//dialogBox.questionTextHorizontalPanel.add(new Label(constants.studentImportCsvInfo()));
+		dialogBox.setHtmlText(constants.studentImportCsvInfo());
 		dialogBox.setWidth("500px");
 		dialogBox.setPopupPosition(event.getRelativeElement().getAbsoluteLeft()-250, event.getRelativeElement().getAbsoluteTop()+25);
 		dialogBox.show();		

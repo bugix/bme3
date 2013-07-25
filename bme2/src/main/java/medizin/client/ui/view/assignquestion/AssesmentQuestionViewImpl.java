@@ -189,7 +189,9 @@ public class AssesmentQuestionViewImpl extends Composite implements AssesmentQue
 		if (assesmentQuestion != null && assesmentQuestion.getQuestion() != null)
 		{
 			dialogBox.setWidth("280px");
-			dialogBox.questionTextHorizontalPanel.add(new HTML(new SafeHtmlBuilder().appendHtmlConstant(assesmentQuestion.getQuestion().getQuestionText()).toSafeHtml()));
+			//dialogBox.questionTextHorizontalPanel.add(new HTML(new SafeHtmlBuilder().appendHtmlConstant(assesmentQuestion.getQuestion().getQuestionText()).toSafeHtml()));
+			//dialogBox.questionHtmlText.setHTML(new SafeHtmlBuilder().appendHtmlConstant(assesmentQuestion.getQuestion().getQuestionText()).toSafeHtml());
+			dialogBox.setHtmlText(assesmentQuestion.getQuestion().getQuestionText());
 			dialogBox.setPopupPosition(event.getRelativeElement().getAbsoluteLeft()-250, event.getRelativeElement().getAbsoluteTop()+25);
 			dialogBox.show();
 			//dialogBox.setWidth((dialogBox.questionTextHorizontalPanel.getParent().getOffsetWidth()) + "px");
