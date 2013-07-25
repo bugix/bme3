@@ -733,6 +733,12 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 							}else {
 								removeTableCols(foundAnswersWithoutIds);
 							}
+						}else {
+							if(isAnswerX ==  true) {
+								matrix.removeRow(matrix.getRowCount() - 2);
+							}else {
+								matrix.removeCell(0, matrix.getCellCount(0) -2);
+							}
 						}
 					}
 				}
