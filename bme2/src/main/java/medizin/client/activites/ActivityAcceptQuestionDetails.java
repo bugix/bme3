@@ -1,6 +1,7 @@
 package medizin.client.activites;
 
 import java.util.List;
+import java.util.Set;
 
 import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
@@ -8,20 +9,25 @@ import medizin.client.place.PlaceAcceptQuestion;
 import medizin.client.place.PlaceAcceptQuestionDetails;
 import medizin.client.place.PlaceQuestionDetails;
 import medizin.client.proxy.AnswerProxy;
+import medizin.client.proxy.KeywordProxy;
 import medizin.client.proxy.MatrixValidityProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.ui.view.AcceptAnswerSubView;
 import medizin.client.ui.view.AcceptAnswerSubViewImpl;
 import medizin.client.ui.view.AcceptMatrixAnswerSubView;
 import medizin.client.ui.view.AcceptMatrixAnswerSubViewImpl;
+import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
+import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.simple.DefaultSuggestOracle;
 import medizin.shared.QuestionTypes;
 import medizin.shared.Status;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.base.Function;
 import com.google.gwt.place.shared.PlaceController;
+import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.user.cellview.client.AbstractHasData;
 import com.google.gwt.view.client.Range;
+import com.google.gwt.view.client.RangeChangeEvent;
 
 public class ActivityAcceptQuestionDetails extends ActivityQuestionDetails implements AcceptAnswerSubView.Delegate, AcceptMatrixAnswerSubView.Delegate{
 
@@ -65,8 +71,65 @@ public class ActivityAcceptQuestionDetails extends ActivityQuestionDetails imple
 		if (question.getQuestionType() != null && QuestionTypes.Matrix.equals(question.getQuestionType().getQuestionType()))
 			initMatrixAnswerView();
 		else
-			initAnswerView();
+			initAnswerView();	
 		
+		initKeywordView();
+	}
+	
+	/*private void initKeywordView() {
+		requests.keywordRequest().findAllKeywords().fire(new BMEReceiver<List<KeywordProxy>>() {
+
+			@Override
+			public void onSuccess(List<KeywordProxy> response) {
+				DefaultSuggestOracle<KeywordProxy> suggestOracle1 = (DefaultSuggestOracle<KeywordProxy>) view.getKeywordSuggestBox().getSuggestOracle();
+				suggestOracle1.setPossiblilities(response);
+				view.getKeywordSuggestBox().setSuggestOracle(suggestOracle1);
+				
+				view.getKeywordSuggestBox().setRenderer(new AbstractRenderer<KeywordProxy>() {
+
+					@Override
+					public String render(KeywordProxy object) {
+						return object == null ? "" : object.getName();					
+					}
+				});
+			}
+		});
+		
+		if (question != null && question.getKeywords() != null)
+		{
+			
+			
+			requests.keywordRequest().countKeywordByQuestion(question.getId()).fire(new BMEReceiver<Integer>() {
+
+				@Override
+				public void onSuccess(Integer response) {
+					view.getKeywordTable().setRowCount(response);
+					ActivityAcceptQuestionDetails.this.onKeywordTableRangeChanged();
+				}
+			});
+			
+			view.getKeywordTable().addRangeChangeHandler(new RangeChangeEvent.Handler() {
+				
+				@Override
+				public void onRangeChange(RangeChangeEvent event) {
+					ActivityAcceptQuestionDetails.this.onKeywordTableRangeChanged();
+				}
+			});
+		}
+		
+	}
+*/	
+	public void onKeywordTableRangeChanged()
+	{
+		final Range range = view.getKeywordTable().getVisibleRange();
+		
+		requests.keywordRequest().findKeywordByQuestion(question.getId(), range.getStart(), range.getLength()).fire(new BMEReceiver<List<KeywordProxy>>() {
+
+			@Override
+			public void onSuccess(List<KeywordProxy> response) {
+				view.getKeywordTable().setRowData(range.getStart(), response);
+			}
+		});
 	}
 	
 	@Override
@@ -300,4 +363,65 @@ public class ActivityAcceptQuestionDetails extends ActivityQuestionDetails imple
 			view.setVisibleAcceptButton();
 		}	
 	}
+	
+/*	@Override
+	public void deleteKeywordClicked(KeywordProxy keyword, QuestionProxy proxy) {
+		
+		requests.keywordRequest().deleteKeywordFromQuestion(keyword, proxy).with("previousVersion","keywords","questEvent","comment","questionType","mcs", "rewiewer", "autor","questionResources","answers").fire(new BMEReceiver<QuestionProxy>() {
+
+			@Override
+			public void onSuccess(QuestionProxy response) {
+				view.setValue(response);
+				question = response;
+				view.getKeywordSuggestBox().getTextField().setText("");
+				initForActivity(question, new Function<Boolean, Void>() {
+					@Override
+					public Void apply(Boolean input) {
+						//do nothing 
+						return null;
+					}
+				});
+			}
+		});
+	}
+	
+	@Override
+	public void keywordAddButtonClicked(String text, final QuestionProxy proxy) {
+		Set<KeywordProxy> keywordProxySet = proxy.getKeywords();
+		boolean flag = false;
+		for (KeywordProxy keywordProxy : keywordProxySet)
+		{
+			if (keywordProxy.getName().equals(text))
+			{
+				flag = true;
+				break;
+			}
+		}
+		
+		if (flag == false)
+		{
+			requests.keywordRequest().findKeywordByStringOrAddKeyword(text, proxy).with("previousVersion","keywords","questEvent","comment","questionType","mcs", "rewiewer", "autor","questionResources","answers").fire(new BMEReceiver<QuestionProxy>() {
+
+				@Override
+				public void onSuccess(QuestionProxy response) {
+					view.setValue(response);
+					question = response;
+					view.getKeywordSuggestBox().getTextField().setText("");
+					initForActivity(question, new Function<Boolean, Void>() {
+						@Override
+						public Void apply(Boolean input) {
+							//do nothing 
+							return null;
+						}
+					});
+				}
+			});
+		}
+		else
+		{
+			view.getKeywordSuggestBox().getTextField().setText("");
+			ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.keywordExist());
+		}		
+	}*/
+
 }

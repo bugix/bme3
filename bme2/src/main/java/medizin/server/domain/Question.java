@@ -113,7 +113,7 @@ public class Question {
 	private medizin.server.domain.Question previousVersion;
 
 	@ManyToMany(cascade = CascadeType.ALL)
-	private Set<Keyword> keywords = new HashSet<Keyword>();
+	protected Set<Keyword> keywords = new HashSet<Keyword>();
 
 	@NotNull
 	@ManyToOne
@@ -1787,6 +1787,8 @@ public class Question {
 				newAssesmentQuestion.setQuestion(this);
 				newAssesmentQuestion.persist();
 			}
+			
+			this.setKeywords(oldQuestion.getKeywords());
 			
 			if(Status.ACTIVE.equals(oldQuestion.status) == false) {
 				oldQuestion.setStatus(Status.DEACTIVATED);

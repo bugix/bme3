@@ -9,6 +9,7 @@ import java.util.Set;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionTypeCountPerExamProxy;
 import medizin.client.proxy.QuestionTypeProxy;
+import medizin.client.style.resources.MyCellTableNoHilightResources;
 import medizin.client.style.resources.MyCellTableResources;
 import medizin.client.style.resources.MySimplePagerResources;
 import medizin.shared.i18n.BmeConstants;
@@ -133,7 +134,7 @@ public class AssesmentQuestionPanelImpl extends Composite implements AssesmentQu
 	public AssesmentQuestionPanelImpl() {
 		
 		CellTable.Resources tableResources = GWT
-				.create(MyCellTableResources.class);
+				.create(MyCellTableNoHilightResources.class);
 		table = new CellTable<QuestionTypeCountProxy>(pageSize,
 				tableResources);
 

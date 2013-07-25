@@ -636,4 +636,14 @@ public interface BmeConstants extends Constants {
 	public String institutionAccess();
 	
 	public String questionAccess();
+	
+	public String addKeyword();
+			
+	public String keywords();
+			
+	public String keywordExist();
+			
+	public String keywordDelMessage();
+			
+	public String keywordNullMessage();
 }
