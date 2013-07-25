@@ -1,27 +1,35 @@
 package medizin.server.utils.docx;
 
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
+import javax.imageio.ImageIO;
 import javax.mail.BodyPart;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import javax.mail.util.ByteArrayDataSource;
 
 import medizin.server.domain.Answer;
 import medizin.server.domain.AnswerToAssQuestion;
+import medizin.server.domain.AssesmentQuestion;
 import medizin.server.domain.MatrixValidity;
 import medizin.server.domain.Question;
 import medizin.server.domain.QuestionResource;
@@ -49,9 +57,11 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
 import com.google.common.base.Predicates;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 
 public final class DocxPaperMHTML {
@@ -63,11 +73,13 @@ public final class DocxPaperMHTML {
 	private List<QuestionVO> questionVOs = Lists.newArrayList();
 	private final boolean isVersionA;
 	private final List<String> imagePath = Lists.newArrayList();
-
+	private final Map<String,BufferedImage> equationMap = Maps.newHashMap();
+	
 	public DocxPaperMHTML(ByteArrayOutputStream os, Integer assessment, boolean isVersionA) {
 		this.os = os;
 		this.assessment = assessment;
 		this.isVersionA = isVersionA;
+		log.info("isVersionA : " + isVersionA);
 	}
 
 	public String getFileName() {
@@ -78,62 +90,26 @@ public final class DocxPaperMHTML {
 		
 		questionVOs = PaperUtils.get_data(assessment.longValue(),isVersionA);
 		
+		for (QuestionVO questionVO : questionVOs) {
+		
+			AssesmentQuestion assesmentQuestion = questionVO.getAssesmentQuestion();
+			log.info("assesmentQuestion : " + Objects.toStringHelper(AssesmentQuestion.class).add("questionId", assesmentQuestion.getQuestion().getId())
+					.add("questionText", assesmentQuestion.getQuestion().getQuestionText())
+					.add("AdminAccepted", assesmentQuestion.getIsAssQuestionAcceptedAdmin())
+					.add("ForcedByAdmin", assesmentQuestion.getIsForcedByAdmin())
+					.add("AssQuestionAcceptedRewiever", assesmentQuestion.getIsAssQuestionAcceptedRewiever())
+					.add("AssQuestionAdminProposal", assesmentQuestion.getIsAssQuestionAdminProposal())
+					.toString()
+					);
+		}
+		
+		
 		try {
-			Document document = Jsoup.parse("<!doctype html><html><head></head><body></body></html>");
-			org.jsoup.nodes.Element ul = document.body().appendElement("ul");
-			ul.attr("style", "list-style-type:upper-roman");
-			for (QuestionVO questionVO : questionVOs) {
-				addQuestionNext(ul,questionVO);
-			}
+			final String htmlPage = addQuestionAnswerToDocument();
 			
-			String htmlPage = document.html();
-			
-			// get system properties
-	        Properties props = new Properties();
-	        // System.getProperties();
-	        // create a new session
-	        Session session = Session.getInstance(props, null);
-	        // construct a MIME message message
-	        MimeMessage message = new MimeMessage(session);
-	        MimeMultipart mpart = new MimeMultipart("related");
+			final ByteArrayOutputStream htmlFile = createMHTMLContent(htmlPage);
 	        
-	        mpart.addBodyPart(bodyPart(new StringSource("text/html", "index.html", htmlPage) ));
-	        for (String path : imagePath) {
-				try {
-					mpart.addBodyPart(bodyPart(new FileDataSource(path)));
-			        message.setContent(mpart);		
-				} catch (Exception e) {
-					log.error("Error in add image",e);
-				}	
-			}
-	        
-	        // the subject is displayed as the window title in the browser
-	        message.setSubject("MHTML example");
-	        // one can set the URL of the original page:
-	        message.addHeader("Content-Location", "index.html");
-
-	        // Save to example.mhtml
-	        ByteArrayOutputStream htmlFile = new ByteArrayOutputStream();
-	        message.writeTo(htmlFile);
-	        htmlFile.close();
-	        
-	        WordprocessingMLPackage wordMLPackage = WordprocessingMLPackage.createPackage();
-	        AlternativeFormatInputPart afiPart = new AlternativeFormatInputPart(new PartName("/hw.mht"));
-			afiPart.setBinaryData(htmlFile.toByteArray());
-			afiPart.setContentType(new ContentType("message/rfc822"));
-			Relationship altChunkRel = wordMLPackage.getMainDocumentPart().addTargetPart(afiPart);
-			 
-			// .. the bit in document body
-			CTAltChunk ac = Context.getWmlObjectFactory().createCTAltChunk();
-			ac.setId(altChunkRel.getId() );
-			wordMLPackage.getMainDocumentPart().addObject(ac);
-			
-			// .. content type
-			wordMLPackage.getContentTypeManager().addDefaultContentType("html", "text/html");
-			SaveToZipFile saver = new SaveToZipFile(wordMLPackage);
-			saver.save(os);
-			
-			
+	        createDocxFile(htmlFile);
 			
 		} catch (InvalidFormatException e) {
 			log.error("Error while  creating docx ",e);
@@ -150,10 +126,94 @@ public final class DocxPaperMHTML {
 		}
 	}
 
+	private void createDocxFile(final ByteArrayOutputStream htmlFile) throws InvalidFormatException, Docx4JException {
+		
+		WordprocessingMLPackage wordMLPackage = WordprocessingMLPackage.createPackage();
+		AlternativeFormatInputPart afiPart = new AlternativeFormatInputPart(new PartName("/hw.mht"));
+		afiPart.setBinaryData(htmlFile.toByteArray());
+		afiPart.setContentType(new ContentType("message/rfc822"));
+		Relationship altChunkRel = wordMLPackage.getMainDocumentPart().addTargetPart(afiPart);
+		 
+		// .. the bit in document body
+		CTAltChunk ac = Context.getWmlObjectFactory().createCTAltChunk();
+		ac.setId(altChunkRel.getId() );
+		wordMLPackage.getMainDocumentPart().addObject(ac);
+		
+		// .. content type
+		wordMLPackage.getContentTypeManager().addDefaultContentType("html", "text/html");
+		SaveToZipFile saver = new SaveToZipFile(wordMLPackage);
+		saver.save(os);
+	}
+
+	private ByteArrayOutputStream createMHTMLContent(final String htmlPage) throws MessagingException, IOException {
+		
+		Properties props = new Properties();
+		Session session = Session.getInstance(props, null);
+		MimeMessage message = new MimeMessage(session);
+		MimeMultipart mpart = new MimeMultipart("related");
+		
+		mpart.addBodyPart(bodyPart(new StringSource("text/html", "index.html", htmlPage)));
+		
+		addEquationImageToMessage(message, mpart);
+		
+		addImageToMessage(message, mpart);
+		
+		// the subject is displayed as the window title in the browser
+		message.setSubject("MHTML example");
+		// one can set the URL of the original page:
+		message.addHeader("Content-Location", "index.html");
+
+		// Save to example.mhtml
+		ByteArrayOutputStream htmlFile = new ByteArrayOutputStream();
+		message.writeTo(htmlFile);
+		htmlFile.close();
+		
+		return htmlFile;
+	}
+
+	private void addImageToMessage(MimeMessage message, MimeMultipart mpart) {
+		for (String path : imagePath) {
+			try {
+				mpart.addBodyPart(bodyPart(new FileDataSource(path)));
+		        message.setContent(mpart);		
+			} catch (Exception e) {
+				log.error("Error in add image",e);
+			}	
+		}
+	}
+
+	private void addEquationImageToMessage(MimeMessage message, MimeMultipart mpart) throws IOException, MessagingException {
+		for (Entry<String, BufferedImage> equationImage : equationMap.entrySet()) {
+			ByteArrayDataSource ds = new ByteArrayDataSource(getByteArrayForBufferedImage(equationImage.getValue()), "Application/octet-stream");
+			ds.setName(equationImage.getKey());
+			mpart.addBodyPart(bodyPart(ds));
+		    message.setContent(mpart);
+		}
+	}
+
+	private String addQuestionAnswerToDocument() throws Docx4JException {
+		Document document = Jsoup.parse("<!doctype html><html><head></head><body></body></html>");
+		org.jsoup.nodes.Element ul = document.body().appendElement("ul");
+		ul.attr("style", "list-style-type:upper-roman");
+		for (QuestionVO questionVO : questionVOs) {
+			addQuestionNext(ul,questionVO);
+		}
+		return document.html();
+	}
+
+	private byte[] getByteArrayForBufferedImage(BufferedImage image) throws IOException {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ImageIO.write(image, "png", baos);
+		baos.flush();
+		byte[] imageInByte = baos.toByteArray();
+		baos.close();
+		return imageInByte;
+	}
+
 	private final Pattern patternBegin = Pattern.compile("(?<=\\\\)\\[");
 	private final Pattern patternEnd = Pattern.compile("(?<=\\\\)\\]");
 
-	private String replaceWithImageTag(String string) {
+	private String replaceEquationWithImageTag(String string) {
 
 		List<String> foundList = Lists.newArrayList();
 		Matcher matcher = patternBegin.matcher(string);
@@ -161,7 +221,7 @@ public final class DocxPaperMHTML {
 		// Check all occurance
 		while (matcher.find()) {
 			log.info("Start index: " + matcher.start());
-			log.info(" End index: " + matcher.end() + " ");
+			log.info("End index: " + matcher.end() + " ");
 			log.info("Group : " + matcher.group());
 			log.info("Orginal : " + string);
 			
@@ -186,46 +246,42 @@ public final class DocxPaperMHTML {
 
 		String newString = string;
 		for (String fnd : foundList) {
-			String filePath;
-			try {
-				filePath = PaperUtils.writeToFile(PaperUtils.generateImageFromLaTex(fnd), "png");
-				newString = newString.replace("\\[" + fnd + "\\]", "<img src=\""+FilenameUtils.getName(filePath)+"\"/>");
-				imagePath.add(filePath);
-			} catch (IOException e) {
-				log.error("Error while creating math image.",e);
-			}
-			
+			final String fileName = UUID.randomUUID().toString();  
+			final BufferedImage bufferedImage = PaperUtils.generateImageFromLaTex(fnd);
+			newString = newString.replace("\\[" + fnd + "\\]", "<img src=\""+fileName+"\"/>");
+			equationMap.put(fileName, bufferedImage);
 		}
 		log.info("New String  :" + newString);
 		
 		return newString;
 	}
-
-	/*private void addToDoxNode(WordprocessingMLPackage wordMLPackage,String html) throws JAXBException, Docx4JException {
-        wordMLPackage.getMainDocumentPart().getContent().addAll(XHTMLImporter.convert(html, null, wordMLPackage));
-	}*/
 	
-	private void addQuestionNext(Element element, QuestionVO questionVO) throws Docx4JException{
+	private void addQuestionNext(Element questionUL, QuestionVO questionVO) throws Docx4JException{
 		
-		Element li = element.appendElement("li");
+		Element li = questionUL.appendElement("li");
 		
-		createNumberedParagraphWithHTML(li,removeLastBr(questionVO.getAssesmentQuestion().getQuestion().getQuestionText()));
+		createTextParaWithEquation(li,removeLastBr(questionVO.getAssesmentQuestion().getQuestion().getQuestionText()));
 		
 		QuestionType type = questionVO.getAssesmentQuestion().getQuestion().getQuestionType() ;
 		Question question = questionVO.getAssesmentQuestion().getQuestion();
 		
 		addImageToQuestion(li,type,question);	
 		
-		if(questionVO.getAnswerToAssQuestions().size() > 0) {
+		addAnswer(questionVO.getAnswerToAssQuestions(), li, question);
+	}
+
+	private void addAnswer(List<AnswerToAssQuestion> answerToAssQuestions, Element li, Question question) {
+		
+		if(answerToAssQuestions != null && answerToAssQuestions.size() > 0) {
 		
 			if(QuestionTypes.Matrix.equals(question.getQuestionType().getQuestionType())) {
-				createAnswerMatrix(li,questionVO.getAnswerToAssQuestions());
+				createAnswerMatrix(li,answerToAssQuestions);
 			}else {
 				Element answerUL = li.appendElement("ul");
 				answerUL.attr("style", "list-style-type:lower-alpha");
-				for (AnswerToAssQuestion answerToAssQuestion : questionVO.getAnswerToAssQuestions()) {
+				for (AnswerToAssQuestion answerToAssQuestion : answerToAssQuestions) {
 					Element answerLI = answerUL.appendElement("li");
-					createNumberedParagraphWithHTML(answerLI, removeLastBr(answerToAssQuestion.getAnswers().getAnswerText()));
+					createTextParaWithEquation(answerLI, removeLastBr(answerToAssQuestion.getAnswers().getAnswerText()));
 					addImageToAnswer(answerLI, answerToAssQuestion.getAnswers());
 				}
 			}
@@ -287,7 +343,6 @@ public final class DocxPaperMHTML {
 	private void addImageToQuestion(Element li, QuestionType type, Question question) {
 		
 		if(type != null)  {
-			
 			if(QuestionTypes.Textual.equals(type) || QuestionTypes.Sort.equals(type)) {
 				if((type.getQueHaveImage() != null && type.getQueHaveImage() == true)) {
 					for (QuestionResource resource : question.getQuestionResources()) {
@@ -301,8 +356,14 @@ public final class DocxPaperMHTML {
 	}
 
 	private String addImage(String path) {
-		imagePath.add(path);
-		return "<img src=\""+ FilenameUtils.getName(path) + "\"/>";
+		
+		if(new File(path).exists()) {
+			imagePath.add(path);
+			return "<img src=\""+ FilenameUtils.getName(path) + "\"/>";	
+		} else {
+			return "<p> File "+ FilenameUtils.getName(path) + " does not exists.</p>";
+		}
+		
 	}
 
 	private String removeLastBr(String questionText) {
@@ -310,10 +371,10 @@ public final class DocxPaperMHTML {
 		return StringUtils.removeEnd(text, "<br/>"); 
 	}
 
-	private void createNumberedParagraphWithHTML(Element li,String paragraphText) {
+	private void createTextParaWithEquation(Element li,String paragraphText) {
 		
 		try {
-			paragraphText = replaceWithImageTag(paragraphText);	
+			paragraphText = replaceEquationWithImageTag(paragraphText);	
 		}catch (Exception e) {
 			log.error("Error ",e);
 		}

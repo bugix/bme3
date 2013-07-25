@@ -260,7 +260,9 @@ public class RichTextToolbar extends Composite {
 			
 			@Override
 			public void onClose(CloseEvent<PopupPanel> event) {
-				richText.setHTML(richText.getHTML() + dialogImpl.getEquation()); 	
+				if(dialogImpl.getEquation() != null && dialogImpl.getEquation().isEmpty() == false) {
+					richText.getFormatter().insertHTML(dialogImpl.getEquation());	
+				}
 			}
 		});
       }

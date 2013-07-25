@@ -1,19 +1,26 @@
 package medizin.client.ui.view.assignquestion;
 
 import medizin.client.proxy.QuestionProxy;
+import medizin.client.ui.view.QuestionTextViewDialogBoxImpl;
 import medizin.client.ui.view.roo.CollectionRenderer;
+import medizin.client.ui.widget.IconButton;
+import medizin.client.util.ClientUtility;
+import medizin.client.util.MathJaxs;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -66,7 +73,8 @@ public class QuestionViewImpl extends Composite implements QuestionView {
 	    @UiField
 		TableElement questionTable;
 		
-	    
+	@UiField
+	IconButton viewHtmlText;
 	
 	boolean answersVisible=false;
 	boolean answersLoaded=false;
@@ -92,6 +100,23 @@ public class QuestionViewImpl extends Composite implements QuestionView {
 			close();
 		}
 		
+	}
+	
+	@UiHandler("viewHtmlText")
+	public void viewHtmlTextClicked(ClickEvent event)
+	{
+		QuestionTextViewDialogBoxImpl dialogBox = new QuestionTextViewDialogBoxImpl();
+		
+		if (question != null)
+		{
+			dialogBox.setWidth("280px");
+			//dialogBox.questionTextHorizontalPanel.add(new HTML(new SafeHtmlBuilder().appendHtmlConstant(question.getQuestionText()).toSafeHtml()));
+			dialogBox.setHtmlText(question.getQuestionText());
+			dialogBox.setPopupPosition(event.getRelativeElement().getAbsoluteLeft()-250, event.getRelativeElement().getAbsoluteTop()+25);
+			dialogBox.show();
+			//dialogBox.setWidth((dialogBox.questionTextHorizontalPanel.getParent().getOffsetWidth() + 10) + "px");
+			MathJaxs.delayRenderLatexResult(RootPanel.getBodyElement());
+		}		
 	}
 	
 	private void close() {
@@ -126,7 +151,7 @@ public class QuestionViewImpl extends Composite implements QuestionView {
 	@Override
 	public void setProxy(QuestionProxy question) {
 		this.question = question;
-		header.setHTML(question.getQuestionText());
+		header.setHTML(new HTML(ClientUtility.removeMathJax(question.getQuestionText())).getText());
 		
         rewiewer.setInnerText(question.getRewiewer() == null ? "" : medizin.client.ui.view.roo.PersonProxyRenderer.instance().render(question.getRewiewer()));
         autor.setInnerText(question.getAutor() == null ? "" : medizin.client.ui.view.roo.PersonProxyRenderer.instance().render(question.getAutor()));

@@ -8,6 +8,7 @@ import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.PlaceNotActivatedQuestion;
 import medizin.client.place.PlaceNotActivatedQuestionDetails;
 import medizin.client.proxy.AnswerProxy;
+import medizin.client.proxy.KeywordProxy;
 import medizin.client.proxy.MatrixValidityProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionProxy;
@@ -19,6 +20,7 @@ import medizin.client.ui.view.question.MatrixAnswerView;
 import medizin.client.ui.view.question.QuestionDetailsView;
 import medizin.client.ui.view.question.QuestionDetailsViewImpl;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
+import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.simple.DefaultSuggestOracle;
 import medizin.client.util.Matrix;
 import medizin.client.util.MatrixValidityVO;
 import medizin.shared.QuestionTypes;
@@ -29,6 +31,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
+import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.RangeChangeEvent;
@@ -129,6 +132,66 @@ public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper
 		
 		view.getAcceptBtn().setVisible(false);
 		view.getForcedActiveBtn().setVisible(true);
+		
+		initKeywordView();
+	}
+	
+	private void initKeywordView() {
+		
+		view.getKeywordSuggestBox().setVisible(false);
+		view.getKeywordAddButton().setVisible(false);
+		
+		requests.keywordRequest().findAllKeywords().fire(new BMEReceiver<List<KeywordProxy>>() {
+
+			@Override
+			public void onSuccess(List<KeywordProxy> response) {
+				DefaultSuggestOracle<KeywordProxy> suggestOracle1 = (DefaultSuggestOracle<KeywordProxy>) view.getKeywordSuggestBox().getSuggestOracle();
+				suggestOracle1.setPossiblilities(response);
+				view.getKeywordSuggestBox().setSuggestOracle(suggestOracle1);
+				
+				view.getKeywordSuggestBox().setRenderer(new AbstractRenderer<KeywordProxy>() {
+
+					@Override
+					public String render(KeywordProxy object) {
+						return object == null ? "" : object.getName();					
+					}
+				});
+			}
+		});
+		
+		if (question != null && question.getKeywords() != null)
+		{
+			requests.keywordRequest().countKeywordByQuestion(question.getId()).fire(new BMEReceiver<Integer>() {
+
+				@Override
+				public void onSuccess(Integer response) {
+					view.getKeywordTable().setRowCount(response);
+					onKeywordTableRangeChanged();
+				}
+			});
+			
+			view.getKeywordTable().addRangeChangeHandler(new RangeChangeEvent.Handler() {
+				
+				@Override
+				public void onRangeChange(RangeChangeEvent event) {
+					onKeywordTableRangeChanged();
+				}
+			});
+		}
+		
+	}
+	
+	public void onKeywordTableRangeChanged()
+	{
+		final Range range = view.getKeywordTable().getVisibleRange();
+		
+		requests.keywordRequest().findKeywordByQuestion(question.getId(), range.getStart(), range.getLength()).fire(new BMEReceiver<List<KeywordProxy>>() {
+
+			@Override
+			public void onSuccess(List<KeywordProxy> response) {
+				view.getKeywordTable().setRowData(range.getStart(), response);
+			}
+		});
 	}
 	
 	private void initAnswerView() {
@@ -316,6 +379,18 @@ public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper
 
 	@Override
 	public void checkForResendToReview() {}
+
+	@Override
+	public void keywordAddButtonClicked(String text, QuestionProxy proxy) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void deleteKeywordClicked(KeywordProxy keyword, QuestionProxy proxy) {
+		// TODO Auto-generated method stub
+		
+	}
 
 	@Override
 	public void saveAllTheValuesToAnswerAndMatrixAnswer(List<MatrixValidityProxy> currentMatrixValidityProxy, Matrix<MatrixValidityVO> matrixList, PersonProxy author, PersonProxy rewiewer, Boolean submitToReviewComitee, String comment) {}

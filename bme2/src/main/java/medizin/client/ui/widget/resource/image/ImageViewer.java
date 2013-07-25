@@ -1,8 +1,7 @@
 package medizin.client.ui.widget.resource.image;
 
 import medizin.shared.QuestionTypes;
-
-import org.vaadin.gwtgraphics.client.DrawingArea;
+import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
@@ -17,12 +16,11 @@ public class ImageViewer extends Composite{
 	public static final int TEXTUAL_IMAGE_HEIGHT = 480;
 	public static final int TEXTUAL_IMAGE_WIDTH = 480;
 
-	private static ImageViewerUiBinder uiBinder = GWT
-			.create(ImageViewerUiBinder.class);
+	private static ImageViewerUiBinder uiBinder = GWT.create(ImageViewerUiBinder.class);
 
 	private String url = null;
 
-	/*private final BmeConstants constants = GWT.create(BmeConstants.class);*/
+	private final BmeConstants constants = GWT.create(BmeConstants.class);
 	
 	interface ImageViewerUiBinder extends UiBinder<Widget, ImageViewer> {
 	}
@@ -270,5 +268,13 @@ public class ImageViewer extends Composite{
 			return null;
 		}
 		return image.getWidth();
+	}
+
+
+	public void setUrl(String url, QuestionTypes questionType) {
+		image.setUrl(url);
+		image.setHeight("100%");
+		image.setWidth("100%");
+		image.setAltText(constants.sorryImageNotAvailable());
 	}
 }

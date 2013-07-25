@@ -1,6 +1,6 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:m="urn:import:medizin.client.ui.widget">
 	<ui:style src="../../styles.css">
 	.header{
 		
@@ -96,18 +96,19 @@ float:right;
 					<g:Label styleName="ui-icon ui-icon-triangle-1-e {style.fill}" ui:field="twistieOpen"></g:Label>
 						<g:Label styleName="ui-icon ui-icon-triangle-1-s {style.fill}" ui:field="twistieClose"></g:Label>
 				</td>
-				<td width="100%"  class="{style.header}" valign="top">
-					
-						<g:HTML ui:field="htmlHeader"></g:HTML>
-					
+				<td width="100%"  class="{style.header}" valign="top">					
+						<g:HTML ui:field="htmlHeader"></g:HTML>					
 				</td>
 				<td   valign="top">
 				    <g:Button ui:field="forceAcceptButton" visible="false">Force Accept</g:Button>
-				</td>
+				</td>				
 				<td  class="{style.headerIcon}" valign="top">
 				    
 					<g:Label styleName="ui-icon ui-icon-closethick {style.fill}" ui:field="deleteFromAssesment"></g:Label>
 					<g:Label styleName="ui-icon ui-icon-plusthick {style.fill}" ui:field="addToAssesment"></g:Label>
+				</td>
+				<td>
+					<m:IconButton ui:field="viewHtmlText" icon="comment"></m:IconButton>
 				</td>
 			</tr>
 		</table>

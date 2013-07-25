@@ -3,7 +3,11 @@ package medizin.client.ui.view.assignquestion;
 
 import medizin.client.proxy.AssesmentQuestionProxy;
 import medizin.client.proxy.QuestionProxy;
+import medizin.client.ui.view.QuestionTextViewDialogBoxImpl;
 import medizin.client.ui.view.roo.CollectionRenderer;
+import medizin.client.ui.widget.IconButton;
+import medizin.client.util.ClientUtility;
+import medizin.client.util.MathJaxs;
 import medizin.shared.i18n.BmeConstants;
 
 import com.google.gwt.core.client.GWT;
@@ -21,6 +25,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -102,6 +107,8 @@ public class AssesmentQuestionViewImpl extends Composite implements AssesmentQue
 	    @UiField
 	    HTMLPanel detailsTablePanel;
 	    
+	 @UiField
+	 IconButton viewHtmlText;	    
 	
 	boolean answersVisible=false;
 	boolean answersLoaded=false;
@@ -174,11 +181,29 @@ public class AssesmentQuestionViewImpl extends Composite implements AssesmentQue
 		
 	}
 	
+	@UiHandler("viewHtmlText")
+	public void viewHtmlTextClicked(ClickEvent event)
+	{
+		QuestionTextViewDialogBoxImpl dialogBox = new QuestionTextViewDialogBoxImpl();
+		
+		if (assesmentQuestion != null && assesmentQuestion.getQuestion() != null)
+		{
+			dialogBox.setWidth("280px");
+			//dialogBox.questionTextHorizontalPanel.add(new HTML(new SafeHtmlBuilder().appendHtmlConstant(assesmentQuestion.getQuestion().getQuestionText()).toSafeHtml()));
+			//dialogBox.questionHtmlText.setHTML(new SafeHtmlBuilder().appendHtmlConstant(assesmentQuestion.getQuestion().getQuestionText()).toSafeHtml());
+			dialogBox.setHtmlText(assesmentQuestion.getQuestion().getQuestionText());
+			dialogBox.setPopupPosition(event.getRelativeElement().getAbsoluteLeft()-250, event.getRelativeElement().getAbsoluteTop()+25);
+			dialogBox.show();
+			//dialogBox.setWidth((dialogBox.questionTextHorizontalPanel.getParent().getOffsetWidth()) + "px");
+			MathJaxs.delayRenderLatexResult(RootPanel.getBodyElement());
+		}		
+	}
+	
 	@Override
 	public void setProxy(AssesmentQuestionProxy assesmentQuestion, boolean delOrAdd) {
 		this.issInAssement=delOrAdd;
 		this.assesmentQuestion = assesmentQuestion;
-		htmlHeader.setHTML(assesmentQuestion.getQuestion().getQuestionText());
+		htmlHeader.setHTML(new HTML(ClientUtility.removeMathJax(assesmentQuestion.getQuestion().getQuestionText())).getText());
 		
 		if (delOrAdd){
 			deleteFromAssesment.setVisible(false);
