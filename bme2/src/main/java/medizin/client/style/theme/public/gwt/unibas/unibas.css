@@ -3160,8 +3160,9 @@ color: #f1b532;
 
 .arrow-popup{ 
 	position:absolute; 
-	top:-8px; 
-	left:51px;
+	top:-13px; 
+	/* left:51px; */
+	right: 4px;
     width: 0; 
     height: 0; 
     border-left:8px solid transparent; 
@@ -3170,8 +3171,9 @@ color: #f1b532;
 }
 .arrow-popup-border{ 
 	position:absolute; 
-	top:-8px; 
-	left:51px;
+	top:-13px; 
+	/* left:51px; */
+	right: 4px;
     width: 0; 
     height: 0; 
     border-left:8px solid transparent; 
@@ -4923,3 +4925,8 @@ background: url("images/colorpicker.png");
 	color: #bbb;
 	background: url("images/ui-bg_glass_75_dadada_1x400.png") repeat-x scroll 50% 50% #DADADA;
 } */
+
+.questionViewPopupPanel{
+	border: 5px solid #AAAAAA;
+	border-radius: 10px;
+}

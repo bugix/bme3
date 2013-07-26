@@ -1,14 +1,16 @@
 package medizin.client.ui.view;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Position;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class QuestionTextViewDialogBoxImpl extends DialogBox {
+public class QuestionTextViewDialogBoxImpl extends PopupPanel {
 
 	private static QuestionTextViewDialogBoxImplUiBinder uiBinder = GWT
 			.create(QuestionTextViewDialogBoxImplUiBinder.class);
@@ -16,9 +18,6 @@ public class QuestionTextViewDialogBoxImpl extends DialogBox {
 	interface QuestionTextViewDialogBoxImplUiBinder extends
 			UiBinder<Widget, QuestionTextViewDialogBoxImpl> {
 	}
-	
-	/*@UiField
-	public HorizontalPanel questionTextHorizontalPanel;*/
 	
 	@UiField
 	public HTML questionHtmlText;
@@ -28,16 +27,18 @@ public class QuestionTextViewDialogBoxImpl extends DialogBox {
 		add(uiBinder.createAndBindUi(this));
 		setAutoHideEnabled(true);
 		setGlassEnabled(false);
-		getElement().addClassName("questionViewDialogBox");
+		getElement().addClassName("questionViewPopupPanel");
 	}
 
 	public void setHtmlText(String text)
 	{
 		questionHtmlText.setHTML(new SafeHtmlBuilder().appendHtmlConstant(text).toSafeHtml());
 	}
-
-	public void addToOffsetWidth(int i) {
-		setWidth((questionHtmlText.getParent().getOffsetWidth() + 10) + "px");
+	
+	public void setLeftTopPosition(int leftValue, int topValue)
+	{
+		getElement().getStyle().setLeft(leftValue, Unit.PX);
+		getElement().getStyle().setTop(topValue, Unit.PX);
+		getElement().getStyle().setPosition(Position.ABSOLUTE);
 	}
-
 }

@@ -343,13 +343,11 @@ DivElement questionText;*/
 		
 		if (questionProxy != null)
 		{
-			//dialogBox.questionTextHorizontalPanel.add(new HTML(new SafeHtmlBuilder().appendHtmlConstant(questionProxy.getQuestionText()).toSafeHtml()));
-			dialogBox.setHtmlText(questionProxy.getQuestionText());
-			dialogBox.setPopupPosition(event.getRelativeElement().getAbsoluteLeft()-250, event.getRelativeElement().getAbsoluteTop()+25);
-			dialogBox.show();
-			//dialogBox.setWidth((dialogBox.questionTextHorizontalPanel.getParent().getOffsetWidth() + 10) + "px");
-			dialogBox.addToOffsetWidth(10);
 			MathJaxs.delayRenderLatexResult(RootPanel.getBodyElement());
+			dialogBox.setHtmlText(questionProxy.getQuestionText());
+			dialogBox.show();
+			dialogBox.setWidth(dialogBox.getOffsetWidth() + "px");
+			dialogBox.setLeftTopPosition((viewHtmlText.getElement().getAbsoluteLeft()-dialogBox.getOffsetWidth()+30), (viewHtmlText.getAbsoluteTop()+20));
 		}
 	}
 

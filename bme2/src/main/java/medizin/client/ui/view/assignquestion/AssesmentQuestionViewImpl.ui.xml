@@ -2,89 +2,86 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:m="urn:import:medizin.client.ui.widget">
 	<ui:style src="../../styles.css">
-	.header{
-		
+	.assQueHeader{
+		color: #555555;
+		/* float: left; */
+		font-weight: bold;
+		height: 100%;
+		margin: 2px 0 0;
+		padding: 3px;
+		vertical-align: bottom;
 		padding: 3px;
 		valign: top;
-cursor: pointer;
+		cursor: pointer;
 	}
 	
-		.headerIcon{
-		
-	
-padding: 6px;
-
+	.headerIcon{
+		padding: 6px;
 	}
+	
 	.answers{
 		background-color: white;
 		width: 100%;
 		padding: 10px 5px 5px 5px;
-border-left: 1px solid #AAAAAA;
-    border-right: 1px solid #AAAAAA;
-border-bottom: 1px solid #AAAAAA;
+		border-left: 1px solid #AAAAAA;
+ 	   	border-right: 1px solid #AAAAAA;
+		border-bottom: 1px solid #AAAAAA;
 	}
+
 	.question{
 		width: 100%;
 
 	}
+
 	.questionTable{
 		width: 100%;	
-		
 		-moz-border-radius:5px; /* Firefox */
 		-webkit-border-radius:5px; /* Safari, Chrome */
 		-khtml-border-radius:5px; /* Konqueror */
 		/* CSS3 */
-
 		/*background-color: #BFD6C3;*/
 		border-top-left-radius: 7px;
 		border-top-right-radius:7px;
-
 	}
-
 
 	.questionTable-close
 	{
 		width: 100%;	
-		
 		-moz-border-radius:5px; /* Firefox */
 		-webkit-border-radius:5px; /* Safari, Chrome */
 		-khtml-border-radius:5px; /* Konqueror */
 		/* CSS3 */
-
 		background-color: #BFD6C3;
 		border-radius: 7px;
-	
 	}
 
-			.detailsTablePanel{
+	.detailsTablePanel{
 			padding: 3px;
 		/*	background-color: #E4F2E7;*/
 			border-bottom-left-radius: 7px;
-		border-bottom-right-radius:7px;
+			border-bottom-right-radius:7px;
 			background-color: white;
-border-left: 1px solid #AAAAAA;
-    border-right: 1px solid #AAAAAA;
-border-bottom: 1px solid #AAAAAA;
-   
-			}
-
-		
-		.fill{
-	cursor: pointer;
-float:right;
-
+			border-left: 1px solid #AAAAAA;
+    		border-right: 1px solid #AAAAAA;
+			border-bottom: 1px solid #AAAAAA;
 	}
-		.label {
-      min-height: 25px;
-      font-weight: bold;
+
+	.fill{
+		cursor: pointer;
+		float:right;
+	}
+	
+	.label {
+	   	min-height: 25px;
+	    font-weight: bold;
     }
-    		.questionDetails{
+    
+    .questionDetails{
 		width: 100%;
 		/*background-color: #E4F2E7;*/
-			/*	border-top: 1px solid #BFD6C3; */
+		/*	border-top: 1px solid #BFD6C3; */
 		background-color: white;
-
-		}
+	}
 	
 	</ui:style>
 	
@@ -96,7 +93,7 @@ float:right;
 					<g:Label styleName="ui-icon ui-icon-triangle-1-e {style.fill}" ui:field="twistieOpen"></g:Label>
 						<g:Label styleName="ui-icon ui-icon-triangle-1-s {style.fill}" ui:field="twistieClose"></g:Label>
 				</td>
-				<td width="100%"  class="{style.header}" valign="top">					
+				<td width="100%"  class="{style.assQueHeader}" valign="top">					
 						<g:HTML ui:field="htmlHeader"></g:HTML>					
 				</td>
 				<td   valign="top">

@@ -33,6 +33,7 @@ import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.CloseEvent;
@@ -449,12 +450,11 @@ DivElement questionText;*/
 		
 		if (questionProxy != null)
 		{
-			//dialogBox.questionTextHorizontalPanel.add(new HTML(new SafeHtmlBuilder().appendHtmlConstant(questionProxy.getQuestionText()).toSafeHtml()));
-			dialogBox.setHtmlText(questionProxy.getQuestionText());
-			dialogBox.setPopupPosition(event.getRelativeElement().getAbsoluteLeft()-250, event.getRelativeElement().getAbsoluteTop()+25);
-			dialogBox.show();
-			dialogBox.addToOffsetWidth(10);
 			MathJaxs.delayRenderLatexResult(RootPanel.getBodyElement());
+			dialogBox.setHtmlText(questionProxy.getQuestionText());
+			dialogBox.show();
+			dialogBox.setWidth(dialogBox.getOffsetWidth() + "px");
+			dialogBox.setLeftTopPosition((viewHtmlText.getElement().getAbsoluteLeft()-dialogBox.getOffsetWidth()+30), (viewHtmlText.getAbsoluteTop()+20));
 		}
 	}
 

@@ -11,16 +11,11 @@
 		
 	<g:VerticalPanel spacing="5">
 		<g:HTML>
-			<div class="arrow-popup-border" style="left:253px;"></div>
-			<div class="arrow-popup" style="left:253px;"></div>
+			<div class="arrow-popup-border"></div>
+			<div class="arrow-popup"></div>
 		</g:HTML>
 		
 		<g:HTML ui:field="questionHtmlText">
 		</g:HTML>
-			
-		<!-- <g:HorizontalPanel ui:field="questionTextHorizontalPanel" styleName="{style.questionPanelStyle}">
-			<g:HTML ui:field="questionHtmlText">
-			</g:HTML>
-		</g:HorizontalPanel> -->
 	</g:VerticalPanel>
 </ui:UiBinder> 

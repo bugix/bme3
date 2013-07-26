@@ -109,13 +109,11 @@ public class QuestionViewImpl extends Composite implements QuestionView {
 		
 		if (question != null)
 		{
-			dialogBox.setWidth("280px");
-			//dialogBox.questionTextHorizontalPanel.add(new HTML(new SafeHtmlBuilder().appendHtmlConstant(question.getQuestionText()).toSafeHtml()));
-			dialogBox.setHtmlText(question.getQuestionText());
-			dialogBox.setPopupPosition(event.getRelativeElement().getAbsoluteLeft()-250, event.getRelativeElement().getAbsoluteTop()+25);
-			dialogBox.show();
-			//dialogBox.setWidth((dialogBox.questionTextHorizontalPanel.getParent().getOffsetWidth() + 10) + "px");
 			MathJaxs.delayRenderLatexResult(RootPanel.getBodyElement());
+			dialogBox.setHtmlText(question.getQuestionText());
+			dialogBox.show();
+			dialogBox.setWidth(dialogBox.getOffsetWidth() + "px");
+			dialogBox.setLeftTopPosition((viewHtmlText.getElement().getAbsoluteLeft()-dialogBox.getOffsetWidth()+30), (viewHtmlText.getAbsoluteTop()+20));
 		}		
 	}
 	

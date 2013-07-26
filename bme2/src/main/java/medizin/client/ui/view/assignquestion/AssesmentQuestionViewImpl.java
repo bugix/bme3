@@ -13,6 +13,8 @@ import medizin.shared.i18n.BmeConstants;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.dom.client.TableElement;
+import com.google.gwt.dom.client.Style.Position;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -160,7 +162,7 @@ public class AssesmentQuestionViewImpl extends Composite implements AssesmentQue
 		questionTable.setClassName("questionTable-close");
 		forceAcceptButton.setText(constants.forceAccept());
 		
-		
+		viewHtmlText.getElement().getStyle().setMarginRight(5, Unit.PX);
 	}
 	
 	@UiHandler("forceAcceptButton")
@@ -188,14 +190,11 @@ public class AssesmentQuestionViewImpl extends Composite implements AssesmentQue
 		
 		if (assesmentQuestion != null && assesmentQuestion.getQuestion() != null)
 		{
-			dialogBox.setWidth("280px");
-			//dialogBox.questionTextHorizontalPanel.add(new HTML(new SafeHtmlBuilder().appendHtmlConstant(assesmentQuestion.getQuestion().getQuestionText()).toSafeHtml()));
-			//dialogBox.questionHtmlText.setHTML(new SafeHtmlBuilder().appendHtmlConstant(assesmentQuestion.getQuestion().getQuestionText()).toSafeHtml());
-			dialogBox.setHtmlText(assesmentQuestion.getQuestion().getQuestionText());
-			dialogBox.setPopupPosition(event.getRelativeElement().getAbsoluteLeft()-250, event.getRelativeElement().getAbsoluteTop()+25);
-			dialogBox.show();
-			//dialogBox.setWidth((dialogBox.questionTextHorizontalPanel.getParent().getOffsetWidth()) + "px");
 			MathJaxs.delayRenderLatexResult(RootPanel.getBodyElement());
+			dialogBox.setHtmlText(assesmentQuestion.getQuestion().getQuestionText());
+			dialogBox.show();
+			dialogBox.setWidth(dialogBox.getOffsetWidth() + "px");
+			dialogBox.setLeftTopPosition((viewHtmlText.getElement().getAbsoluteLeft()-dialogBox.getOffsetWidth()+30), (viewHtmlText.getAbsoluteTop()+20));
 		}		
 	}
 	

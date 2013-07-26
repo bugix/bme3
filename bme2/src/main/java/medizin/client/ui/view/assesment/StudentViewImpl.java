@@ -280,10 +280,10 @@ public class StudentViewImpl extends Composite implements StudentView {
 	public void fileInfoClicked(ClickEvent event)
 	{
 		QuestionTextViewDialogBoxImpl dialogBox = new QuestionTextViewDialogBoxImpl();
-		//dialogBox.questionTextHorizontalPanel.add(new Label(constants.studentImportCsvInfo()));
 		dialogBox.setHtmlText(constants.studentImportCsvInfo());
 		dialogBox.setWidth("500px");
-		dialogBox.setPopupPosition(event.getRelativeElement().getAbsoluteLeft()-250, event.getRelativeElement().getAbsoluteTop()+25);
-		dialogBox.show();		
+		dialogBox.show();
+		dialogBox.setLeftTopPosition((fileInfo.getElement().getAbsoluteLeft()-dialogBox.getOffsetWidth()+30), (fileInfo.getAbsoluteTop()+20));
+		
 	}
 }
