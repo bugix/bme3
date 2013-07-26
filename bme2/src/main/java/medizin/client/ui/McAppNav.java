@@ -463,7 +463,7 @@ public class McAppNav extends Composite {
 		questionPanel.getHeaderTextAccessor().setText(constants.questionPanel());
 		question.setText(constants.question());
 		notActivatedQuestion.setText(constants.notActivatedQuestion());
-		questionType.setText(constants.questionType());
+		questionType.setText(constants.questionTypes());
 		institution.setText(constants.institution());
 		
 		assementPanel.getHeaderTextAccessor().setText(constants.assementPanel());

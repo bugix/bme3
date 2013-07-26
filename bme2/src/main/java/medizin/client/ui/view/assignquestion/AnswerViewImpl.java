@@ -3,7 +3,7 @@ package medizin.client.ui.view.assignquestion;
 import medizin.client.ui.view.assignquestion.QuestionViewImpl.QuestionViewImplUiBinder;
 import medizin.client.proxy.AnswerProxy;
 import medizin.client.proxy.AnswerToAssQuestionProxy;
-import medizin.client.shared.Validity;
+import medizin.shared.Validity;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;

@@ -173,7 +173,7 @@ public class EventAccessDialogboxImpl extends DialogBox implements EventAccessDi
 	    	        constants.read(), new ActionCell.Delegate<QuestionEventProxy>() {
 	    	            public void execute(QuestionEventProxy questionEvent) {
 	    	              Log.debug("You clicked " + questionEvent.getEventName());
-	    	              delegate.addClicked(medizin.client.shared.AccessRights.AccRead, questionEvent);
+	    	              delegate.addClicked(medizin.shared.AccessRights.AccRead, questionEvent);
 	    	            }
 	    	          }), constants.read(), new GetValue<QuestionEventProxy>() {
 	    	        public QuestionEventProxy getValue(QuestionEventProxy contact) {
@@ -185,7 +185,7 @@ public class EventAccessDialogboxImpl extends DialogBox implements EventAccessDi
 	    			constants.write(), new ActionCell.Delegate<QuestionEventProxy>() {
 	    	            public void execute(QuestionEventProxy questionEvent) {
 	    	              Log.debug("You clicked " + questionEvent.getEventName());
-	    	              delegate.addClicked(medizin.client.shared.AccessRights.AccWrite, questionEvent);
+	    	              delegate.addClicked(medizin.shared.AccessRights.AccWrite, questionEvent);
 	    	            }
 	    	          }), constants.write(), new GetValue<QuestionEventProxy>() {
 	    	        public QuestionEventProxy getValue(QuestionEventProxy contact) {
@@ -196,7 +196,7 @@ public class EventAccessDialogboxImpl extends DialogBox implements EventAccessDi
 	    			constants.addQuestions(), new ActionCell.Delegate<QuestionEventProxy>() {
 	    	            public void execute(QuestionEventProxy questionEvent) {
 	    	              Log.debug("You clicked " + questionEvent.getEventName());
-	    	              delegate.addClicked(medizin.client.shared.AccessRights.AccAddQuestions, questionEvent);
+	    	              delegate.addClicked(medizin.shared.AccessRights.AccAddQuestions, questionEvent);
 	    	            }
 	    	          }), constants.addQuestions(), new GetValue<QuestionEventProxy>() {
 	    	        public QuestionEventProxy getValue(QuestionEventProxy contact) {

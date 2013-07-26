@@ -14,7 +14,7 @@ import javax.persistence.criteria.Root;
 import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
 
-import medizin.client.shared.AccessRights;
+import medizin.shared.AccessRights;
 
 import org.hibernate.Query;
 import org.springframework.roo.addon.javabean.RooJavaBean;

@@ -26,8 +26,6 @@ import medizin.client.request.CommentRequest;
 import medizin.client.request.MatrixValidityRequest;
 import medizin.client.request.QuestionRequest;
 import medizin.client.request.QuestionResourceRequest;
-import medizin.client.shared.AccessRights;
-import medizin.client.shared.Validity;
 import medizin.client.ui.view.question.AnswerDialogbox;
 import medizin.client.ui.view.question.AnswerDialogboxImpl;
 import medizin.client.ui.view.question.AnswerListView;
@@ -44,8 +42,10 @@ import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget
 import medizin.client.util.MathJaxs;
 import medizin.client.util.Matrix;
 import medizin.client.util.MatrixValidityVO;
+import medizin.shared.AccessRights;
 import medizin.shared.QuestionTypes;
 import medizin.shared.Status;
+import medizin.shared.Validity;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.base.Function;

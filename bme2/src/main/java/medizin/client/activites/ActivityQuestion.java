@@ -10,10 +10,10 @@ import medizin.client.place.PlaceQuestionDetails;
 import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.proxy.UserAccessRightsProxy;
-import medizin.client.shared.AccessRights;
 import medizin.client.ui.view.question.QuestionView;
 import medizin.client.ui.view.question.QuestionViewImpl;
 import medizin.client.util.MathJaxs;
+import medizin.shared.AccessRights;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.activity.shared.ActivityManager;

@@ -6,9 +6,9 @@ import java.util.List;
 import medizin.client.proxy.AnswerProxy;
 import medizin.client.proxy.MatrixValidityProxy;
 import medizin.client.proxy.PersonProxy;
-import medizin.client.shared.Validity;
 import medizin.client.util.Matrix;
 import medizin.client.util.MatrixValidityVO;
+import medizin.shared.Validity;
 
 import com.google.common.base.Function;
 import com.google.gwt.place.shared.Place;

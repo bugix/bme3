@@ -12,7 +12,6 @@ import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.proxy.UserAccessRightsProxy;
 import medizin.client.request.UserAccessRightsRequest;
-import medizin.client.shared.AccessRights;
 import medizin.client.ui.view.user.EventAccessDialogbox;
 import medizin.client.ui.view.user.EventAccessDialogboxImpl;
 import medizin.client.ui.view.user.EventAccessView;
@@ -25,6 +24,7 @@ import medizin.client.ui.view.user.QuestionAccessView;
 import medizin.client.ui.view.user.UserDetailsView;
 import medizin.client.ui.view.user.UserDetailsViewImpl;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.simple.DefaultSuggestOracle;
+import medizin.shared.AccessRights;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.activity.shared.ActivityManager;

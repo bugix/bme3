@@ -14,8 +14,8 @@ import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import medizin.client.shared.AccessRights;
 import medizin.client.ui.widget.Sorting;
+import medizin.shared.AccessRights;
 
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;

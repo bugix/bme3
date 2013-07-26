@@ -32,6 +32,8 @@ public interface BmeConstants extends Constants {
 	
 	public String questionType();
 	
+	public String questionTypes();
+	
 	public String institution();
 	
 	public String assementPanel();

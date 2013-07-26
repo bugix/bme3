@@ -29,10 +29,10 @@ import javax.persistence.criteria.Subquery;
 import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
 
-import medizin.client.shared.Validity;
 import medizin.server.mail.EmailServiceImpl;
 import medizin.server.utils.BMEUtils;
 import medizin.shared.Status;
+import medizin.shared.Validity;
 import medizin.shared.utils.PersonAccessRight;
 import medizin.shared.utils.SharedConstant;
 

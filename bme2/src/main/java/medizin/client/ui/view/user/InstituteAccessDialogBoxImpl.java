@@ -94,7 +94,7 @@ public class InstituteAccessDialogBoxImpl extends DialogBox implements Institute
     	addColumn(new ActionCell<InstitutionProxy>(
     	        constants.access(), new ActionCell.Delegate<InstitutionProxy>() {
     	            public void execute(InstitutionProxy questionEvent) {
-    	              delegate.addClicked(medizin.client.shared.AccessRights.AccRead, questionEvent);
+    	              delegate.addClicked(medizin.shared.AccessRights.AccRead, questionEvent);
     	            }
     	          }), constants.accessRights(), new GetValue<InstitutionProxy>() {
     	        public InstitutionProxy getValue(InstitutionProxy contact) {

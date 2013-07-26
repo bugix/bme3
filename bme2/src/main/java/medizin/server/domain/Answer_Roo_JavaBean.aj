@@ -4,12 +4,13 @@
 package medizin.server.domain;
 
 import java.util.Date;
-import medizin.client.shared.Validity;
+
 import medizin.server.domain.Answer;
 import medizin.server.domain.Comment;
 import medizin.server.domain.Person;
 import medizin.server.domain.Question;
 import medizin.shared.Status;
+import medizin.shared.Validity;
 
 privileged aspect Answer_Roo_JavaBean {
     

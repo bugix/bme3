@@ -298,16 +298,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
     Label selectionTypeLbl;
 	
     @UiField (provided = true)
-	ValueListBox<SelectionType> selectionTypeListBox = new ValueListBox<SelectionType>(new AbstractRenderer<SelectionType>() {
-		// Note: this is not an EnumRenderer bc. translations of language names would be futile.
-		@Override
-		public String render(SelectionType selectionType) {
-			if (selectionType != null)
-				return selectionType.toString();
-			
-			return "";
-		}
-	});
+	ValueListBox<SelectionType> selectionTypeListBox = new ValueListBox<SelectionType>(new EnumRenderer<SelectionType>());
     
     @UiField
 	Label columnLbl;

@@ -4,7 +4,9 @@ package medizin.client.proxy;
 
 import com.google.web.bindery.requestfactory.shared.EntityProxy;
 import com.google.web.bindery.requestfactory.shared.ProxyForName;
-import medizin.client.shared.Validity;
+
+import medizin.shared.Validity;
+
 import org.springframework.roo.addon.gwt.RooGwtProxy;
 
 @ProxyForName(value = "medizin.server.domain.MatrixValidity", locator = "medizin.server.locator.MatrixValidityLocator")

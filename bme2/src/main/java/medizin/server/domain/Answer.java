@@ -22,8 +22,8 @@ import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import medizin.client.shared.Validity;
 import medizin.shared.Status;
+import medizin.shared.Validity;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;

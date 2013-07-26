@@ -9,7 +9,6 @@ import medizin.client.proxy.AnswerProxy;
 import medizin.client.proxy.MatrixValidityProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionProxy;
-import medizin.client.shared.Validity;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.widget.HtmlToggleButton;
 import medizin.client.ui.widget.IconButton;
@@ -24,6 +23,7 @@ import medizin.client.util.AnswerVO;
 import medizin.client.util.Matrix;
 import medizin.client.util.MatrixValidityVO;
 import medizin.client.util.State;
+import medizin.shared.Validity;
 import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;

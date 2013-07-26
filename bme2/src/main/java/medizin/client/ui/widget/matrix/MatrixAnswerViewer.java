@@ -4,9 +4,9 @@ import java.util.List;
 
 import medizin.client.proxy.AnswerProxy;
 import medizin.client.proxy.MatrixValidityProxy;
-import medizin.client.shared.Validity;
 import medizin.client.ui.McAppConstant;
 import medizin.client.util.Matrix;
+import medizin.shared.Validity;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.base.Optional;

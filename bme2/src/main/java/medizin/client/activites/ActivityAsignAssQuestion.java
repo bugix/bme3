@@ -21,7 +21,6 @@ import medizin.client.proxy.QuestionSumPerPersonProxy;
 import medizin.client.proxy.QuestionTypeCountPerExamProxy;
 import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.request.AssesmentQuestionRequest;
-import medizin.client.shared.Validity;
 import medizin.client.ui.ErrorPanel;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.assignquestion.AddQuestionsTabPanel;
@@ -45,6 +44,7 @@ import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.shared.BlockingTypes;
 import medizin.shared.QuestionTypes;
 import medizin.shared.Status;
+import medizin.shared.Validity;
 
 import com.allen_sauer.gwt.dnd.client.DragEndEvent;
 import com.allen_sauer.gwt.dnd.client.DragHandler;

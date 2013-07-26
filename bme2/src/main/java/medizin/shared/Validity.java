@@ -1,4 +1,4 @@
-package medizin.client.shared;
+package medizin.shared;
 
 
 public enum Validity {

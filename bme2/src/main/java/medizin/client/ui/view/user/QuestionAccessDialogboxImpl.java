@@ -178,7 +178,7 @@ public class QuestionAccessDialogboxImpl extends DialogBox implements QuestionAc
 	    	        constants.read(), new ActionCell.Delegate<QuestionProxy>() {
 	    	            public void execute(QuestionProxy question) {
 	    	              Log.debug("You clicked " + question.getQuestionText());
-	    	              delegate.addClicked(medizin.client.shared.AccessRights.AccRead, question);
+	    	              delegate.addClicked(medizin.shared.AccessRights.AccRead, question);
 	    	            }
 	    	          }), constants.read(), new GetValue<QuestionProxy>() {
 	    	        public QuestionProxy getValue(QuestionProxy contact) {
@@ -190,7 +190,7 @@ public class QuestionAccessDialogboxImpl extends DialogBox implements QuestionAc
 	    			constants.write(), new ActionCell.Delegate<QuestionProxy>() {
 	    	            public void execute(QuestionProxy question) {
 	    	              Log.debug("You clicked " + question.getQuestionText());
-	    	              delegate.addClicked(medizin.client.shared.AccessRights.AccWrite, question);
+	    	              delegate.addClicked(medizin.shared.AccessRights.AccWrite, question);
 	    	            }
 	    	          }), constants.write(), new GetValue<QuestionProxy>() {
 	    	        public QuestionProxy getValue(QuestionProxy contact) {
@@ -201,7 +201,7 @@ public class QuestionAccessDialogboxImpl extends DialogBox implements QuestionAc
 	    			constants.addAnswers(), new ActionCell.Delegate<QuestionProxy>() {
 	    	            public void execute(QuestionProxy question) {
 	    	              Log.debug("You clicked " + question.getQuestionText());
-	    	              delegate.addClicked(medizin.client.shared.AccessRights.AccAddAnswers, question);
+	    	              delegate.addClicked(medizin.shared.AccessRights.AccAddAnswers, question);
 	    	            }
 	    	          }), constants.addAnswers(), new GetValue<QuestionProxy>() {
 	    	        public QuestionProxy getValue(QuestionProxy contact) {

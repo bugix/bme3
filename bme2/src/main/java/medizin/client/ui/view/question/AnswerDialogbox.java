@@ -6,8 +6,8 @@ import java.util.Set;
 
 import medizin.client.proxy.AnswerProxy;
 import medizin.client.proxy.PersonProxy;
-import medizin.client.shared.Validity;
 import medizin.shared.QuestionTypes;
+import medizin.shared.Validity;
 
 import com.google.common.base.Function;
 import com.google.gwt.place.shared.Place;

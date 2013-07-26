@@ -12,7 +12,6 @@ import medizin.client.proxy.KeywordProxy;
 import medizin.client.proxy.MatrixValidityProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionProxy;
-import medizin.client.shared.Validity;
 import medizin.client.ui.view.question.AnswerDialogbox;
 import medizin.client.ui.view.question.AnswerListView;
 import medizin.client.ui.view.question.MatrixAnswerListView;
@@ -24,6 +23,7 @@ import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget
 import medizin.client.util.Matrix;
 import medizin.client.util.MatrixValidityVO;
 import medizin.shared.QuestionTypes;
+import medizin.shared.Validity;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.base.Function;

@@ -15,6 +15,7 @@ import medizin.client.proxy.QuestionProxy;
 import medizin.client.style.resources.MyCellTableResources;
 import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
+import medizin.client.ui.view.renderer.EnumRenderer;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.QuickSearchBox;
 import medizin.shared.Status;
@@ -328,6 +329,8 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 		initWidget(uiBinder.createAndBindUi(this));
 		DOM.setElementAttribute(splitLayoutPanel.getElement(), "style",
 				"position: absolute; left: 0px; top: 0px; right: 5px; bottom: 0px;");
+		
+		newQuestion.setText(constants.newQuestion());
 		
 		if (flag)
 			newQuestion.setVisible(true);
@@ -683,16 +686,11 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 		paths.add("status");
 		table.addColumn(new TextColumn<QuestionProxy>() {
 
-			Renderer<java.lang.String> renderer = new AbstractRenderer<java.lang.String>() {
-
-				public String render(java.lang.String obj) {
-					return obj == null ? "" : String.valueOf(obj);
-				}
-			};
+			EnumRenderer<Status> renderer = new EnumRenderer<Status>();
 
 			@Override
 			public String getValue(QuestionProxy object) {
-				return renderer.render(object == null ? null : object.getStatus()==null?"":object.getStatus().toString());
+				return renderer.render(object == null ? null : object.getStatus());
 			}
 		},constants.status() );
 		

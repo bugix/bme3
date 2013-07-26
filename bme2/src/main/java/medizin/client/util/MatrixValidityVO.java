@@ -4,7 +4,7 @@ package medizin.client.util;
 import com.google.common.base.Objects;
 
 import medizin.client.proxy.MatrixValidityProxy;
-import medizin.client.shared.Validity;
+import medizin.shared.Validity;
 
 public class MatrixValidityVO {
 	
