@@ -7,8 +7,8 @@
 	<ui:with type="medizin.shared.i18n.BmeConstants" field="cc"></ui:with>
 	
 	<g:HTMLPanel  width="100%">
-		<g:VerticalPanel width="100%">
-			<g:FlexTable ui:field="matrix"></g:FlexTable>
+		<g:VerticalPanel width="100%" spacing="0">
+			<g:FlexTable ui:field="matrix" cellPadding="0" cellSpacing="0"></g:FlexTable>
 		</g:VerticalPanel>
 		
 		<g:VerticalPanel width="100%">

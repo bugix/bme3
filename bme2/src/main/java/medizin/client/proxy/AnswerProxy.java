@@ -4,12 +4,9 @@ package medizin.client.proxy;
 
 import com.google.web.bindery.requestfactory.shared.EntityProxy;
 import com.google.web.bindery.requestfactory.shared.ProxyForName;
-
 import java.util.Date;
-
 import medizin.shared.Status;
 import medizin.shared.Validity;
-
 import org.springframework.roo.addon.gwt.RooGwtProxy;
 
 @ProxyForName(value = "medizin.server.domain.Answer", locator = "medizin.server.locator.AnswerLocator")

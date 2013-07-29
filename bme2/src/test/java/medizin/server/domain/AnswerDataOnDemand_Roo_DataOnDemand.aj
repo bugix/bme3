@@ -11,10 +11,8 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-
 import medizin.server.domain.Answer;
 import medizin.server.domain.AnswerDataOnDemand;
 import medizin.server.domain.CommentDataOnDemand;
@@ -23,7 +21,6 @@ import medizin.server.domain.PersonDataOnDemand;
 import medizin.server.domain.QuestionDataOnDemand;
 import medizin.shared.Status;
 import medizin.shared.Validity;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

@@ -577,9 +577,9 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 			new EntityProxyKeyProvider<PersonProxy>());
 */
 	@UiField(provided = true)
-	ValueListBox<Validity> validity = new ValueListBox<Validity>(new AbstractRenderer<medizin.client.shared.Validity>() {
+	ValueListBox<Validity> validity = new ValueListBox<Validity>(new AbstractRenderer<medizin.shared.Validity>() {
 
-																public String render(medizin.client.shared.Validity obj) {
+																public String render(medizin.shared.Validity obj) {
 																	return obj == null ? "" : String.valueOf(obj);
 																}
 															});

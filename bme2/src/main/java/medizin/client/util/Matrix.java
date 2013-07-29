@@ -62,7 +62,7 @@ public class Matrix<E>  implements Iterable<E>, RandomAccess, Cloneable, java.io
 	}
 	
 	public void clear() {
-		table.clear();
+		table = TreeBasedTable.create();
 	}
 
 	public E get(int row, int column) {

@@ -4,7 +4,6 @@
 package medizin.server.domain;
 
 import java.util.Date;
-
 import medizin.server.domain.Answer;
 import medizin.server.domain.Comment;
 import medizin.server.domain.Person;
