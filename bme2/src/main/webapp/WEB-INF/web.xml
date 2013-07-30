@@ -113,14 +113,15 @@
         <url-pattern>/fileUploadServlet</url-pattern>
     </servlet-mapping>
     
-    <filter>
-        <filter-name>fileDownload</filter-name>
-        <filter-class>medizin.server.download.FileDownloadFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>fileDownload</filter-name>
-        <url-pattern>/download/*</url-pattern>
-    </filter-mapping>
+    <servlet>
+        <servlet-name>fileDownload</servlet-name>
+        <servlet-class>medizin.server.download.FileDownloadServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>fileDownload</servlet-name>
+        <url-pattern>/fileDownloadServlet</url-pattern>
+    </servlet-mapping>
     
     <!-- CSV File upload servlet -->    
 	  <servlet>

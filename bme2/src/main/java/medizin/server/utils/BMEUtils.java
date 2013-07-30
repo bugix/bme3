@@ -8,6 +8,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -58,6 +59,10 @@ public final class BMEUtils {
 		String contextFileSeparator = "/";
 		return request.getSession().getServletContext().getContextPath()
 				+ contextFileSeparator + path;
+	}
+	
+	public static String getRealPath(ServletContext servletContext, String path) {
+		return servletContext.getRealPath(path);
 	}
 
 	public static int[] findImageWidthAndHeight(File appUploadedFile) {
