@@ -157,4 +157,12 @@ privileged aspect Answer_Roo_JavaBean {
         this.status = status;
     }
     
+    public Boolean Answer.getIsForcedActive() {
+        return this.isForcedActive;
+    }
+    
+    public void Answer.setIsForcedActive(Boolean isForcedActive) {
+        this.isForcedActive = isForcedActive;
+    }
+    
 }

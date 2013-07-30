@@ -20,7 +20,9 @@ public interface AcceptMatrixAnswerSubView extends IsWidget {
 			void onMatrixRangeChanged(QuestionProxy questionProxy, AbstractHasData<MatrixValidityProxy> table, AcceptMatrixAnswerSubView acceptMatrixAnswerSubView);
 
 			void matrixAcceptClicked(QuestionProxy questionProxy);
-	       
+
+			void forceMatrixAcceptClicked(QuestionProxy questionProxy);
+			
 			void matrixRejectClicked(QuestionProxy questionProxy);
 	    }
 

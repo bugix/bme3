@@ -19,6 +19,8 @@ public interface AcceptAnswerSubView extends IsWidget {
 				AbstractHasData<AnswerProxy> table);
 
 		void acceptClicked(AnswerProxy answerProxy, AcceptAnswerSubView acceptAnswerSubView);
+		
+		void forcedAcceptClicked(AnswerProxy answerProxy, AcceptAnswerSubView acceptAnswerSubView);
        
 		void rejectClicked(AnswerProxy answerProxy);
     }

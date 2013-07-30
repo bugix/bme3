@@ -31,4 +31,10 @@ public interface AnswerRequest extends AnswerRequest_Roo_Gwt {
 	Request<List<AnswerProxy>> findAnswerForAcceptQuestion(Long questionId, Integer start, Integer length);
 	
 	Request<List<Long>> maxDifferenceBetweenAnswerForQuestion(Long answerId, Long questionId);
+	
+	Request<Boolean> forceAcceptMatrixAnswer(QuestionProxy questionProxy, Boolean isAdmin, Boolean isInstitutionalAdmin);
+	
+	Request<Long> countAnswersForForceActiveByQuestion(Long questionId);
+	
+	Request<List<AnswerProxy>> findAnswersForForceActiveByQuestion(Long questionId, Integer start, Integer length);
 }

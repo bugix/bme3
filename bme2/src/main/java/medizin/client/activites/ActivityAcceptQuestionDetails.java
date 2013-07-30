@@ -203,7 +203,7 @@ public class ActivityAcceptQuestionDetails extends ActivityQuestionDetails imple
 	
 	private void initAnswerView()
 	{
-		AcceptAnswerSubView acceptAnswerSubView = new AcceptAnswerSubViewImpl(false);				
+		AcceptAnswerSubView acceptAnswerSubView = new AcceptAnswerSubViewImpl(false, false);				
 	    acceptAnswerSubView.setDelegate(ActivityAcceptQuestionDetails.this);
 	    acceptAnswerSubView.setProxy(question);
 	    acceptAnswerSubView.getQuestionDisclosurePanel().setOpen(true);
@@ -213,7 +213,7 @@ public class ActivityAcceptQuestionDetails extends ActivityQuestionDetails imple
 	
 	private void initMatrixAnswerView()
 	{
-		AcceptMatrixAnswerSubView matrixAnswerSubView = new AcceptMatrixAnswerSubViewImpl(false);
+		AcceptMatrixAnswerSubView matrixAnswerSubView = new AcceptMatrixAnswerSubViewImpl(false, false);
 		matrixAnswerSubView.setDelegate(ActivityAcceptQuestionDetails.this);
 		matrixAnswerSubView.setProxy(question);
 		matrixAnswerSubView.getQuestionDisclosurePanel().setOpen(true);
@@ -396,6 +396,16 @@ public class ActivityAcceptQuestionDetails extends ActivityQuestionDetails imple
 		}else {
 			view.setVisibleAcceptButton();
 		}	
+	}
+	
+	//unused method
+	@Override
+	public void forceMatrixAcceptClicked(QuestionProxy questionProxy) {
+	}
+
+	//unused method
+	@Override
+	public void forcedAcceptClicked(AnswerProxy answerProxy,AcceptAnswerSubView acceptAnswerSubView) {
 	}
 	
 /*	@Override

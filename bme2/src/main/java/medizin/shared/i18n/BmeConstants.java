@@ -662,4 +662,6 @@ public interface BmeConstants extends Constants {
 	public String shuffle();
 
 	public String printWithNonAcceptedQuestions();
+	
+	public String notActivatedAnswer();
 }

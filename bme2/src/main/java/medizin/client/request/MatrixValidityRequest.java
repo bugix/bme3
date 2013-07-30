@@ -3,6 +3,7 @@ package medizin.client.request;
 import java.util.List;
 
 import medizin.client.proxy.MatrixValidityProxy;
+import medizin.server.domain.MatrixValidity;
 
 import org.springframework.roo.addon.gwt.RooGwtUnmanagedRequest;
 
@@ -26,4 +27,8 @@ public interface MatrixValidityRequest extends MatrixValidityRequest_Roo_Gwt {
 	Request<Long> countAllMatrixValidityForAcceptQuestion(Long id);
 	
 	Request<List<MatrixValidityProxy>> findAllMatrixValidityForAcceptQuestion(Long id, Integer start, Integer length);
+	
+	Request<Long> countAllMatrixValidityForForceActiveByQuestion(Long id,Boolean isInstitutionalAdmin);
+	
+	Request<List<MatrixValidityProxy>> findAllMatrixValidityForForceActiveByQuestion(Long id, Boolean isInstitutionalAdmin, Integer start, Integer length);
 }

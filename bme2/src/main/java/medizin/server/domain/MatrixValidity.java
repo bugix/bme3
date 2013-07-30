@@ -311,4 +311,50 @@ public class MatrixValidity {
 		TypedQuery<MatrixValidity> query = entityManager().createQuery(criteriaQuery);
 		return query.getResultList();
 	}
+	
+	public static Long countAllMatrixValidityForForceActiveByQuestion(Long id,Boolean isInstitutionalAdmin) {
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+		
+		Root<MatrixValidity> from = criteriaQuery.from(MatrixValidity.class);
+		criteriaQuery.select(criteriaBuilder.count(from));
+		
+		Predicate p1 = criteriaBuilder.equal(from.get("answerX").get("question").get("id"), id);
+		Predicate p2 = criteriaBuilder.equal(from.get("answerY").get("question").get("id"), id);
+		Expression<Status> exp1 = from.get("answerX").get("status");
+		Expression<Status> exp2 = from.get("answerY").get("status");
+		
+		Person userLoggedIn = Person.myGetLoggedPerson();
+		List<Status> statusList = Lists.newArrayList(Status.NEW, Status.ACCEPTED_ADMIN, Status.ACCEPTED_REVIEWER);
+		Predicate p3 = exp1.in(statusList);
+		Predicate p4 = exp2.in(statusList);
+		criteriaQuery.where(criteriaBuilder.and(p1, p2, p3, p4));
+		TypedQuery<Long> query = entityManager().createQuery(criteriaQuery);
+		log.info("Result list size :" + query.getResultList().size());
+		return query.getSingleResult();
+	}
+	
+	public static List<MatrixValidity> findAllMatrixValidityForForceActiveByQuestion(Long id, Boolean isInstitutionalAdmin, Integer start, Integer length) {
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<MatrixValidity> criteriaQuery = criteriaBuilder.createQuery(MatrixValidity.class);
+		
+		Root<MatrixValidity> from = criteriaQuery.from(MatrixValidity.class);
+		
+		Predicate p1 = criteriaBuilder.equal(from.get("answerX").get("question").get("id"), id);
+		Predicate p2 = criteriaBuilder.equal(from.get("answerY").get("question").get("id"), id);
+		Expression<Status> exp1 = from.get("answerX").get("status");
+		Expression<Status> exp2 = from.get("answerY").get("status");
+		
+		Person userLoggedIn = Person.myGetLoggedPerson();
+		List<Status> statusList = Lists.newArrayList(Status.NEW, Status.ACCEPTED_ADMIN, Status.ACCEPTED_REVIEWER);
+		Predicate p3 = exp1.in(statusList);
+		Predicate p4 = exp2.in(statusList);
+		criteriaQuery.where(criteriaBuilder.and(p1, p2, p3, p4));
+		TypedQuery<MatrixValidity> query = entityManager().createQuery(criteriaQuery);
+
+		query.setFirstResult(start);
+		query.setMaxResults(length);
+		log.info("Result list size :" + query.getResultList().size());
+		return query.getResultList();
+	}
 }

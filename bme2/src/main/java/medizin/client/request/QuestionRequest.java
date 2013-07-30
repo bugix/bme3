@@ -5,6 +5,7 @@ import java.util.List;
 import medizin.client.proxy.AssesmentProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionProxy;
+import medizin.server.domain.Question;
 
 import org.springframework.roo.addon.gwt.RooGwtUnmanagedRequest;
 
@@ -63,4 +64,6 @@ public interface QuestionRequest extends QuestionRequest_Roo_Gwt {
 	Request<Void> forcedActiveQuestion(Long questionId);
 
 	InstanceRequest<QuestionProxy, Void> persistQuestion();
+	
+	Request<List<QuestionProxy>> findAllQuestionsAnswersNotActivatedByPerson();
 }

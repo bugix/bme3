@@ -1800,4 +1800,38 @@ public class Question {
 			oldQuestion.persist();
 		}
 	}
+	
+	/*
+	 * This method find all the active question's answer for active answer forcefully.
+	 * */
+	public static List<Question> findAllQuestionsAnswersNotActivatedByPerson() {
+		
+		Person loggedUser = Person.myGetLoggedPerson();
+		Institution institution = Institution.myGetInstitutionToWorkWith();
+		if (loggedUser == null || institution == null)
+			throw new IllegalArgumentException("The person and institution arguments are required");
+
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Question> criteriaQuery = criteriaBuilder.createQuery(Question.class);
+		Root<Question> from = criteriaQuery.from(Question.class);
+
+		Subquery<Answer> subQuery = criteriaQuery.subquery(Answer.class);
+		Root answerRoot = subQuery.from(Answer.class);
+		
+		Predicate subPre1 = answerRoot.get("status").in(Status.NEW, Status.ACCEPTED_ADMIN, Status.ACCEPTED_REVIEWER);
+			
+		subQuery.select(answerRoot.get("question").get("id")).where(subPre1);
+		
+		Predicate mainPre1 = criteriaBuilder.equal(from.get("status"), Status.ACTIVE);
+		Predicate mainPre2 = criteriaBuilder.equal(from.get("questEvent").get("institution").get("id"), institution.getId());
+		Predicate mainpre = criteriaBuilder.and(mainPre1, mainPre2, criteriaBuilder.in(from.get("id")).value(subQuery));
+		
+		criteriaQuery.where(mainpre);
+		
+		TypedQuery<Question> q = entityManager().createQuery(criteriaQuery);
+		
+		System.out.println("~~QUERY : " + q.unwrap(Query.class).getQueryString());
+		
+		return q.getResultList();
+	}
 }

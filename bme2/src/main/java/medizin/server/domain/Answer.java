@@ -120,6 +120,11 @@ public class Answer {
 	@NotNull
 	private Status status;
     
+	@NotNull
+	@Value("false")
+	@Column(columnDefinition="BIT", length = 1)
+	private Boolean isForcedActive;
+    
 	public static List<Answer> findAnswersEntriesByQuestion(Long id, int start, int max){
         Question question = Question.findQuestion(id);
         if (question == null) throw new IllegalArgumentException("The question argument is required");
@@ -510,5 +515,73 @@ public class Answer {
             }
         } 
 		return range;
+	}
+	
+	public static Boolean forceAcceptMatrixAnswer(Question question, Boolean isAdmin, Boolean isInstitutionalAdmin)
+	{
+		Person userLoggedIn = Person.myGetLoggedPerson();
+		
+		if(userLoggedIn == null) {
+			return false;
+		}
+		
+		for (Answer answer : question.getAnswers())
+		{ 
+			if(isAdmin || isInstitutionalAdmin){
+				answer.setStatus(Status.ACTIVE);
+				answer.setIsForcedActive(true);
+			} 
+	  	
+			answer.persist();
+		}
+	  
+		return true;	 
+	}
+
+	public static long countAnswersForForceActiveByQuestion(Long questionId){
+
+		Person loggedUser = Person.myGetLoggedPerson();
+		Institution institution = Institution.myGetInstitutionToWorkWith();
+		if (loggedUser == null || institution == null)
+			throw new IllegalArgumentException("The person and institution arguments are required");
+		
+		CriteriaBuilder cb = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+		Root<Answer> from = cq.from(Answer.class);
+		
+		cq.select(cb.count(from));
+		
+		Predicate pre0 = cb.equal(from.get("question").get("questEvent").get("institution"), institution);
+		Predicate pre1 = cb.equal(from.get("question").get("id"), questionId);
+		
+		pre1 = cb.and(from.get("status").in(Status.NEW, Status.ACCEPTED_REVIEWER, Status.ACCEPTED_ADMIN), pre1);
+		
+		cq.where(cb.and(pre0,pre1));
+		
+        TypedQuery<Long> q = entityManager().createQuery(cq);
+        
+        return q.getSingleResult();
+	}
+	
+	public static List<Answer> findAnswersForForceActiveByQuestion(Long questionId, Integer start, Integer length){
+		
+		Person loggedUser = Person.myGetLoggedPerson();
+		Institution institution = Institution.myGetInstitutionToWorkWith();
+		if (loggedUser == null || institution == null)
+			throw new IllegalArgumentException("The person and institution arguments are required");
+		
+		CriteriaBuilder cb = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Answer> cq = cb.createQuery(Answer.class);
+		Root<Answer> from = cq.from(Answer.class);
+		
+		Predicate pre0 = cb.equal(from.get("question").get("questEvent").get("institution"), institution);
+		Predicate pre1 = cb.equal(from.get("question").get("id"), questionId);
+		
+		pre1 = cb.and(from.get("status").in(Status.NEW, Status.ACCEPTED_REVIEWER, Status.ACCEPTED_ADMIN), pre1);
+		
+		cq.where(cb.and(pre0,pre1));
+		
+        TypedQuery<Answer> q = entityManager().createQuery(cq);
+        return q.getResultList();
 	}
 }

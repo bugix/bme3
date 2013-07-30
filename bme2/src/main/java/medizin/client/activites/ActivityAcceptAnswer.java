@@ -149,14 +149,14 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 					
 					if (questionProxy.getQuestionType().getQuestionType().equals(QuestionTypes.Matrix))
 					{
-						AcceptMatrixAnswerSubView matrixAnswerSubView = new AcceptMatrixAnswerSubViewImpl(true);
+						AcceptMatrixAnswerSubView matrixAnswerSubView = new AcceptMatrixAnswerSubViewImpl(true, false);
 						matrixAnswerSubView.setDelegate(ActivityAcceptAnswer.this);
 						matrixAnswerSubView.setProxy(questionProxy);
 						questionPanel.add(matrixAnswerSubView);
 					}
 					else
 					{
-						AcceptAnswerSubView acceptAnswerSubView = new AcceptAnswerSubViewImpl(true);				
+						AcceptAnswerSubView acceptAnswerSubView = new AcceptAnswerSubViewImpl(true, false);				
 					    acceptAnswerSubView.setDelegate(ActivityAcceptAnswer.this);
 					    acceptAnswerSubView.setProxy(questionProxy);
 					    acceptAnswerSubView.setAcceptAnswerSubView(acceptAnswerSubView);
@@ -400,6 +400,19 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 	@Override
 	public void placeChanged(Place place) {
 		// TODO add place changed code here
+		
+	}
+
+	@Override
+	public void forceMatrixAcceptClicked(QuestionProxy questionProxy) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void forcedAcceptClicked(AnswerProxy answerProxy,
+			AcceptAnswerSubView acceptAnswerSubView) {
+		// TODO Auto-generated method stub
 		
 	}
 }

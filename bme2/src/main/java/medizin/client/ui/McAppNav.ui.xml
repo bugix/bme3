@@ -41,6 +41,7 @@
 			<g:Anchor ui:field="questionType"></g:Anchor>
 			<g:Anchor ui:field="question"></g:Anchor>
 			<g:Anchor ui:field="notActivatedQuestion"></g:Anchor>
+			<g:Anchor ui:field="notActivatedAnswer"></g:Anchor>
 			<g:Anchor ui:field="institution"></g:Anchor>
 		</g:VerticalPanel>
 	</g:DisclosurePanel>

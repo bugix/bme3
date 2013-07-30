@@ -87,10 +87,13 @@ public class AcceptMatrixAnswerSubViewImpl extends Composite implements AcceptMa
 	
 	@UiField
 	IconButton viewHtmlText;
+
+	private Boolean forceActive;
 	
-	public AcceptMatrixAnswerSubViewImpl(Boolean flag) {
+	public AcceptMatrixAnswerSubViewImpl(Boolean flag, Boolean forceActive) {
 		
 		this.flag = flag;
+		this.forceActive = forceActive;
 		
 		CellTable.Resources tableResources = GWT.create(MyCellTableResources.class);
 		table = new CellTable<MatrixValidityProxy>(McAppConstant.TABLE_PAGE_SIZE, tableResources);
@@ -171,14 +174,14 @@ public class AcceptMatrixAnswerSubViewImpl extends Composite implements AcceptMa
 			}
 		});
         
-		init(flag);
+		init(flag, forceActive);
 
 	}
 
 	private DeclineEmailPopupDelagate delegatePopup;
 
 
-	private void init(Boolean flag) {
+	private void init(Boolean flag, Boolean forceActive) {
 
 		table.addColumn(new Column<MatrixValidityProxy, MatrixValidityProxy>(new ValidityTextCell()) {
     	      @Override
@@ -253,6 +256,26 @@ public class AcceptMatrixAnswerSubViewImpl extends Composite implements AcceptMa
 	    	table.addColumnStyleName(3, "deleteColumn");
 	    	table.addColumnStyleName(4, "deleteColumn");
 		}		
+		
+		if (forceActive)
+		{
+			addColumn(new ActionCell<MatrixValidityProxy>(
+					McAppConstant.ACCEPT_ICON,
+					new ActionCell.Delegate<MatrixValidityProxy>() {
+						public void execute(MatrixValidityProxy answerProxy) {
+							delegate.forceMatrixAcceptClicked(questionProxy);
+						}
+					}), constants.forceAccept(),
+					new GetValue<MatrixValidityProxy>() {
+						public MatrixValidityProxy getValue(
+								MatrixValidityProxy answerProxy) {
+							return answerProxy;
+						}
+					}, null);
+	    	
+	    	
+	    	table.addColumnStyleName(3, "deleteColumn");
+		}
 	}
 
 	  /**
@@ -317,7 +340,7 @@ DivElement questionText;*/
 		/*if (flag)
 			questionDisclosurePanel.getHeaderTextAccessor().setText(questionProxy.getQuestionText());*/
 		
-		if (flag)
+		if (flag || forceActive)
 		{
 			//headerText.setText(new HTML(questionProxy.getQuestionText()).getText());
 			headerText.setText(new HTML(ClientUtility.removeMathJax(questionProxy.getQuestionText())).getText());

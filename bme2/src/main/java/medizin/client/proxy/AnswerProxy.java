@@ -87,5 +87,9 @@ public interface AnswerProxy extends EntityProxy {
 
     abstract void setStatus(Status status);
 
+    abstract Boolean getIsForcedActive();
+
+    abstract void setIsForcedActive(Boolean isForcedActive);
+
     abstract Integer getVersion();
 }

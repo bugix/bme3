@@ -36,6 +36,7 @@ import medizin.client.place.PlaceBookAssesment;
 import medizin.client.place.PlaceBookAssesmentDetails;
 import medizin.client.place.PlaceInstitution;
 import medizin.client.place.PlaceInstitutionEvent;
+import medizin.client.place.PlaceNotActivatedAnswer;
 import medizin.client.place.PlaceNotActivatedQuestion;
 import medizin.client.place.PlaceNotActivatedQuestionDetails;
 import medizin.client.place.PlaceOpenDemand;
@@ -159,6 +160,9 @@ public class FilterForMainPlaces implements FilteredActivityMapper.Filter {
 		 if (place instanceof PlaceNotActivatedQuestionDetails){
 			 return new PlaceNotActivatedQuestion(PlaceNotActivatedQuestion.PLACE_NOT_ACTIVATED_QUESTION);
 		 }
+		 
+		 if (place instanceof PlaceNotActivatedAnswer)
+			 return (PlaceNotActivatedAnswer) place;
 		 
 		 return null;
 	}
