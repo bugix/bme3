@@ -761,7 +761,7 @@ public class AssesmentQuestion {
         return q.getResultList();
     }
 	
-	public static List<AssesmentQuestion> findAssesmentQuestionsByQuestionEventAssIdQuestType(java.lang.Long questEventId, java.lang.Long assesmentId,  List<Long> questionTypesId, boolean isVersionA) {
+	public static List<AssesmentQuestion> findAssesmentQuestionsByQuestionEventAssIdQuestType(java.lang.Long questEventId, java.lang.Long assesmentId,  List<Long> questionTypesId, final boolean isVersionA, final boolean printAllQuestions) {
 		/*QuestionEvent questionEvent = QuestionEvent.findQuestionEvent(questEventId);
 		Assesment assesment = Assesment.findAssesment(assesmentId);
 		
@@ -828,9 +828,19 @@ public class AssesmentQuestion {
         
   		//force accepted
   		Predicate predicateForcedAccepted=criteriaBuilder.equal(from.get("isForcedByAdmin"), new Boolean(true));
-      		
-  		//accepted / force accepted
-  		Predicate predicateAcceptedOr = criteriaBuilder.or(predicateAccepted,predicateForcedAccepted);
+  		Predicate predicateAcceptedOr;
+  		if(printAllQuestions == true) {
+  	        //non accepted
+  	        Predicate predicateNonAccepted=criteriaBuilder.equal(from.get("isAssQuestionAcceptedAdmin"), Boolean.FALSE);
+  	        
+  	  		//non force accepted
+  	  		Predicate predicateNonForcedAccepted=criteriaBuilder.equal(from.get("isForcedByAdmin"), Boolean.FALSE);
+
+  	  		predicateAcceptedOr = criteriaBuilder.or(predicateAccepted,predicateForcedAccepted,predicateNonAccepted,predicateNonForcedAccepted);
+  		}else {
+  			//accepted / force accepted
+  	  		predicateAcceptedOr = criteriaBuilder.or(predicateAccepted,predicateForcedAccepted);	
+  		}
         
         if(isVersionA == true) {
         	criteriaQuery.orderBy(criteriaBuilder.asc(from.get("orderAversion")));	
@@ -1130,7 +1140,7 @@ public class AssesmentQuestion {
 			List<QuestionEvent> questionEvents =  QuestionEvent.findAllQuestionEventsByQuestionTypeAndAssesmentID(assessmentID, questionTypeIds);
 			
 			for (QuestionEvent questionEvent : questionEvents) {
-				List<AssesmentQuestion> assesmentQuestions = AssesmentQuestion.findAssesmentQuestionsByQuestionEventAssIdQuestType(questionEvent.getId(), assessmentID, questionTypeIds,true);
+				List<AssesmentQuestion> assesmentQuestions = AssesmentQuestion.findAssesmentQuestionsByQuestionEventAssIdQuestType(questionEvent.getId(), assessmentID, questionTypeIds,true,false);
 				
 				for (AssesmentQuestion assesmentQuestion : assesmentQuestions) {
 					log.info("Assessment question id " + assesmentQuestion.getId());

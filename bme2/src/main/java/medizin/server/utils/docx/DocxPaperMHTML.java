@@ -74,12 +74,15 @@ public final class DocxPaperMHTML {
 	private final boolean isVersionA;
 	private final List<String> imagePath = Lists.newArrayList();
 	private final Map<String,BufferedImage> equationMap = Maps.newHashMap();
+	private final boolean printAllQuestions;
 	
-	public DocxPaperMHTML(ByteArrayOutputStream os, Integer assessment, boolean isVersionA) {
+	public DocxPaperMHTML(ByteArrayOutputStream os, Integer assessment, boolean isVersionA, boolean printAllQuestions) {
 		this.os = os;
 		this.assessment = assessment;
 		this.isVersionA = isVersionA;
+		this.printAllQuestions = printAllQuestions;
 		log.info("isVersionA : " + isVersionA);
+		log.info("printAllQuestions : " + printAllQuestions);
 	}
 
 	public String getFileName() {
@@ -88,7 +91,7 @@ public final class DocxPaperMHTML {
 
 	public void createWordFile() {
 		
-		questionVOs = PaperUtils.get_data(assessment.longValue(),isVersionA);
+		questionVOs = PaperUtils.get_data(assessment.longValue(),isVersionA,printAllQuestions);
 		
 		for (QuestionVO questionVO : questionVOs) {
 		

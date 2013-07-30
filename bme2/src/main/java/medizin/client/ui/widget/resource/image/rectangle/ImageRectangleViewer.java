@@ -162,5 +162,17 @@ public class ImageRectangleViewer extends Composite{
 	public boolean isValidRectangle() {
 		return validRectangle;
 	}
+
+
+	public void setCurrentPoint(Point point) {
+		if(point == null) {
+			return;
+		}
+		currentRectangle = addNewRectangle(point,"#fa7575"); //red color
+		btnAdd.setEnabled(false);
+		validRectangle = true;
+		target.setVisible(false);
+		btnAddClicked = false;
+	}
 	
 }

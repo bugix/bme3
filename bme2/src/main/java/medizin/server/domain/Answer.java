@@ -302,10 +302,14 @@ public class Answer {
         return q.getResultList();
 	}	
 	
-	public static List<String> findAllAnswersPoints(Long questionId) {
+	public static List<String> findAllAnswersPoints(Long questionId,Long currentAnswerId) {
 		
 		EntityManager em = entityManager();
 		String sql = "SELECT ans.points FROM Answer ans WHERE ans.question.id = " + questionId;
+		
+		if(currentAnswerId != null) {
+			sql = sql + " and ans.id != " + currentAnswerId;
+		}
 		
 		TypedQuery<String> q = em.createQuery(sql, String.class);
 	    //q.setParameter("question", question);

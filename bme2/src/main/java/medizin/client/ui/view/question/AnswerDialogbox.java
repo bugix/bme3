@@ -28,7 +28,7 @@ public interface AnswerDialogbox extends IsWidget {
 	interface Delegate {
 		/*void addAnswerClicked();*/
 		void cancelAnswerClicked();
-		void findAllAnswersPoints(Long id,Function<List<String>, Void> function);
+		void findAllAnswersPoints(Long id,Long currentAnswerId, Function<List<String>, Void> function);
 		void deleteUploadedFiles(Set<String> paths);
 		void saveAnswerProxy(AnswerProxy answerProxy, String answerText, PersonProxy author, PersonProxy rewiewer, Boolean submitToReviewComitee, String comment, Validity validity, String points, String mediaPath, String additionalKeywords, Integer sequenceNumber, final Function<AnswerProxy, Void> function);
 	}

@@ -21,7 +21,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -120,7 +119,7 @@ public class BookAssesmentDetailsViewImpl extends Composite implements BookAsses
 
 	@Override
 	public void addButtons() {
-		IconButton shuffle = new IconButton("Shuffle");
+		IconButton shuffle = new IconButton(constants.shuffle());
 		shuffle.setIcon("shuffle");
 		shuffle.addClickHandler(new ClickHandler() {
 			
@@ -181,12 +180,28 @@ public class BookAssesmentDetailsViewImpl extends Composite implements BookAsses
 			}
 		});
 		
+		IconButton printWithNonAcceptedQuestions= new IconButton(constants.printWithNonAcceptedQuestions());
+		printWithNonAcceptedQuestions.setIcon("print");
+		printWithNonAcceptedQuestions.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				String ordinal = URL.encodeQueryString(String.valueOf(FileDownloaderProps.Method.DOCX_PAPER_ALL.ordinal()));          
+				String url = GWT.getHostPageBaseURL() + "downloadFile?".concat(FileDownloaderProps.METHOD_KEY).concat("=").concat(ordinal)
+						.concat("&").concat(FileDownloaderProps.ASSIGNMENT).concat("=").concat(URL.encodeQueryString(delegate.getAssignemtId() + ""));
+				Log.info("--> url is : " +url);
+				
+				Window.open(url, "", "");
+				
+			}
+		});
 		
 		HorizontalPanel horizontalPanel = new HorizontalPanel();
 		horizontalPanel.add(shuffle);
 		horizontalPanel.add(printAVersion);
 		horizontalPanel.add(printBVersion);
 		horizontalPanel.add(exportXML);
+		horizontalPanel.add(printWithNonAcceptedQuestions);
 		horizontalPanel.setSpacing(5);
 		horizontalPanel.getElement().getStyle().setPaddingTop(10, Unit.PX);
 		content.add(horizontalPanel);

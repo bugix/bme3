@@ -63,6 +63,11 @@ public class FileDownloader extends HttpServlet{
 				fileName = createXmlPaperForExam(request,response,os);
 				break;
 			}
+			case DOCX_PAPER_ALL:
+			{
+				fileName = createDocxPaperForExamWithAllQuestions(request,response,os);
+				
+			}
 			default:
 				log.error("Error in method ordinal");
 				break;
@@ -94,6 +99,7 @@ public class FileDownloader extends HttpServlet{
 		
 		Integer assignment = null; 
 		boolean isVersionA = true;
+		final boolean printAllQuestions = false;
 		
 		if(StringUtils.isNotBlank(request.getParameter(FileDownloaderProps.ASSIGNMENT))) {
 			assignment = Ints.tryParse(request.getParameter(FileDownloaderProps.ASSIGNMENT));	
@@ -126,10 +132,30 @@ public class FileDownloader extends HttpServlet{
 			
 		/*DocxPaper paper = new DocxPaper(os,assignment,isVersionA);*/
 		/*DocxPaperHTML paper = new DocxPaperHTML(os,assignment,isVersionA);*/
-		DocxPaperMHTML paper = new DocxPaperMHTML(os,assignment,isVersionA);
+		DocxPaperMHTML paper = new DocxPaperMHTML(os,assignment,isVersionA,printAllQuestions);
 		paper.createWordFile();
 		
 		return paper.getFileName();
+	}
+
+	private String createDocxPaperForExamWithAllQuestions(HttpServletRequest request, HttpServletResponse response, ByteArrayOutputStream os) {
+		
+		final Integer assignment; 
+		final boolean isVersionA = true;
+		final boolean printAllQuestions = true;
+		
+		if(StringUtils.isNotBlank(request.getParameter(FileDownloaderProps.ASSIGNMENT))) {
+			assignment = Ints.tryParse(request.getParameter(FileDownloaderProps.ASSIGNMENT));	
+		}else {
+			log.error("Error in assignment id");
+			return "error.docx";
+		}
+		
+		DocxPaperMHTML paper = new DocxPaperMHTML(os,assignment,isVersionA,printAllQuestions);
+		paper.createWordFile();
+		
+		return paper.getFileName();
+
 	}
 	
 	private String createXmlPaperForExam(HttpServletRequest request, HttpServletResponse response, ByteArrayOutputStream os) {

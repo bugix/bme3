@@ -361,7 +361,7 @@ public void moveQuestionTypeCountPerExamRequestUp(QuestionTypeCountPerExamProxy 
 		 * request all Assesmentquestions by QuestinEvent, Assesment and QuestionType
 		 */
 		
-		requests.assesmentQuestionRequest().findAssesmentQuestionsByQuestionEventAssIdQuestType(questionEvent.getId(), assesment.getId(), questionTypesId,true).with("question").fire(new BMEReceiver <java.util.List<medizin.client.proxy.AssesmentQuestionProxy>>(){
+		requests.assesmentQuestionRequest().findAssesmentQuestionsByQuestionEventAssIdQuestType(questionEvent.getId(), assesment.getId(), questionTypesId,true,false).with("question").fire(new BMEReceiver <java.util.List<medizin.client.proxy.AssesmentQuestionProxy>>(){
 			
 			@Override
 			public void onSuccess(List<AssesmentQuestionProxy> response) {

@@ -9,6 +9,6 @@ public interface FileDownloaderProps {
 	String B_VERSION = "5";
 	
 	public enum Method {
-		DOCX_PAPER, XML_PAPER
+		DOCX_PAPER, XML_PAPER, DOCX_PAPER_ALL
 	}
 }

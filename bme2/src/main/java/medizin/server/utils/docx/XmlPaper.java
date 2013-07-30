@@ -39,7 +39,7 @@ public class XmlPaper {
 	
 	public void createXMLFile() {
 	
-		questionVOs = PaperUtils.get_data(assessment.longValue(),true);
+		questionVOs = PaperUtils.get_data(assessment.longValue(),true,false);
 		
 		DocumentBuilderFactory icFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder icBuilder;

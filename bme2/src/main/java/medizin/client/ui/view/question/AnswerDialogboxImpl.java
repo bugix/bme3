@@ -251,7 +251,8 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 		
 		//validity.setValue(Validity.Wahr);
 		
-		delegate.findAllAnswersPoints(question.getId(),new Function<List<String>, Void>(){
+		Long currentAnswerId = answer != null ? answer.getId() : null;
+		delegate.findAllAnswersPoints(question.getId(),currentAnswerId,new Function<List<String>, Void>(){
 
 			@Override
 			public Void apply(List<String> polygons) {
@@ -265,6 +266,10 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 				
 				if(question != null && question.getQuestionType() != null && QuestionTypes.ShowInImage.equals(question.getQuestionType().getQuestionType()) && question.getPicturePath() != null && question.getPicturePath().length() > 0 /*&& question.getQuestionType().getImageWidth() != null && question.getQuestionType().getImageHeight() != null*/) {
 					imagePolygonViewer = new ImagePolygonViewer(question.getPicturePath(), question.getImageWidth(), question.getImageHeight(),polygonPaths, true);
+					
+					if(answer != null && answer.getPoints() != null) {
+						imagePolygonViewer.setCurrentPolygon(PolygonPath.getPolygonPath(answer.getPoints()));
+					}
 					viewContainer.add(imagePolygonViewer);
 				}
 				
@@ -277,7 +282,8 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 	private void addForImageKey() {
 
 		Log.info("Question id :" + question.getId());
-		delegate.findAllAnswersPoints(question.getId(),new Function<List<String>, Void>(){
+		Long currentAnswerId = answer != null ? answer.getId() : null;
+		delegate.findAllAnswersPoints(question.getId(),currentAnswerId,new Function<List<String>, Void>(){
 
 			@Override
 			public Void apply(List<String> points) {
@@ -289,6 +295,9 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 					if (question.getImageWidth() != null && question.getImageHeight() != null)
 					{
 						imageRectangleViewer = new ImageRectangleViewer(question.getPicturePath(), question.getImageWidth(), question.getImageHeight(), rectanglePoints, true);
+						if(answer != null && answer.getPoints() != null) {
+							imageRectangleViewer.setCurrentPoint(Point.getPoint(answer.getPoints()));
+						}
 						viewContainer.add(imageRectangleViewer);
 					}
 					else
@@ -298,6 +307,9 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 							@Override
 							public void apply(Integer width, Integer height) {
 								imageRectangleViewer = new ImageRectangleViewer(question.getPicturePath(), width, height, rectanglePoints, true);
+								if(answer != null && answer.getPoints() != null) {
+									imageRectangleViewer.setCurrentPoint(Point.getPoint(answer.getPoints()));
+								}
 								viewContainer.add(imageRectangleViewer);
 							}
 						});

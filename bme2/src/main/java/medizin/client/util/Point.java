@@ -64,17 +64,25 @@ public final class Point implements Comparable<Point> {
 		
 		for (String stringPoint : points) {
 			if(stringPoint != null ) {
-				String[] coordinates = stringPoint.split(",");
-				if(coordinates.length == 2) {
-					int x = Integer.parseInt(coordinates[0],10);
-					int y = Integer.parseInt(coordinates[1],10);
-					list.add(new  Point(x,y));
-				}else {
-					Log.error("error in point : " + stringPoint);
-				}
+				Point p =  getPoint(stringPoint);
+				if(p  != null)
+					list.add(p);
 			}
 		}
 		
 		return list;
 	}
+
+	public static Point getPoint(String stringPoint) {
+		String[] coordinates = stringPoint.split(",");
+		if(coordinates.length == 2) {
+			int x = Integer.parseInt(coordinates[0],10);
+			int y = Integer.parseInt(coordinates[1],10);
+			return (new  Point(x,y));
+		}else {
+			Log.error("error in point : " + stringPoint);
+			return null;
+		}
+	}
+
 }

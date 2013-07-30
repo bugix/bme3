@@ -1,7 +1,6 @@
 package medizin.client.activites;
 
 import java.util.List;
-import java.util.Set;
 
 import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
@@ -12,22 +11,19 @@ import medizin.client.proxy.AnswerProxy;
 import medizin.client.proxy.KeywordProxy;
 import medizin.client.proxy.MatrixValidityProxy;
 import medizin.client.proxy.QuestionProxy;
+import medizin.client.request.QuestionRequest;
 import medizin.client.ui.view.AcceptAnswerSubView;
 import medizin.client.ui.view.AcceptAnswerSubViewImpl;
 import medizin.client.ui.view.AcceptMatrixAnswerSubView;
 import medizin.client.ui.view.AcceptMatrixAnswerSubViewImpl;
-import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
-import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.simple.DefaultSuggestOracle;
 import medizin.shared.QuestionTypes;
 import medizin.shared.Status;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.base.Function;
 import com.google.gwt.place.shared.PlaceController;
-import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.user.cellview.client.AbstractHasData;
 import com.google.gwt.view.client.Range;
-import com.google.gwt.view.client.RangeChangeEvent;
 
 public class ActivityAcceptQuestionDetails extends ActivityQuestionDetails implements AcceptAnswerSubView.Delegate, AcceptMatrixAnswerSubView.Delegate{
 
@@ -313,10 +309,48 @@ public class ActivityAcceptQuestionDetails extends ActivityQuestionDetails imple
 	
 	@Override
 	public void onResendToReviewClicked(QuestionProxy proxy) {
-		requests.questionRequest().questionResendToReviewWithMajorVersion((userLoggedIn.getIsAdmin() || personRightProxy.getIsInstitutionalAdmin())).using(question).fire(new BMEReceiver<QuestionProxy>() {
+		/*requests.questionRequest().questionResendToReviewWithMajorVersion((userLoggedIn.getIsAdmin() || personRightProxy.getIsInstitutionalAdmin())).using(question).fire(new BMEReceiver<QuestionProxy>() {
 
 			@Override
 			public void onSuccess(QuestionProxy response) {
+				goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));
+			}
+		});*/
+
+		// now the question with resend with minor version change as major version is updated by editing the question.
+		Status status = question.getStatus();
+		boolean isAcceptedAdmin =  false;
+		boolean isAcceptedReviewer = false;
+		boolean isAcceptedAuthor = false;
+		
+		if(isAdminOrInstitutionalAdmin() == true) {
+			status = Status.CORRECTION_FROM_ADMIN;
+			isAcceptedAdmin = true;
+			updateQuestionStatusAndFlags(status, isAcceptedAdmin, isAcceptedReviewer, isAcceptedAuthor);
+		}else if(userLoggedIn.getId().equals(question.getRewiewer().getId()) == true){
+			status = Status.CORRECTION_FROM_REVIEWER;
+			isAcceptedReviewer = true;
+			updateQuestionStatusAndFlags(status, isAcceptedAdmin, isAcceptedReviewer, isAcceptedAuthor);
+		}else if(userLoggedIn.getId().equals(question.getAutor().getId()) == true) {
+			Log.error("Author cannnot see this button.");
+		}else {
+			Log.error("Error in logic");
+		}
+		
+	}
+
+	private void updateQuestionStatusAndFlags(final Status status, final boolean isAcceptedAdmin, final boolean isAcceptedReviewer, final boolean isAcceptedAuthor) {
+		QuestionRequest questionRequest = requests.questionRequest();
+		QuestionProxy editedQuestion = questionRequest.edit(question);
+		editedQuestion.setStatus(status);
+		editedQuestion.setIsAcceptedAdmin(isAcceptedAdmin);
+		editedQuestion.setIsAcceptedAuthor(isAcceptedAuthor);
+		editedQuestion.setIsAcceptedRewiever(isAcceptedReviewer);
+		
+		questionRequest.persist().using(editedQuestion).fire(new BMEReceiver<Void>() {
+
+			@Override
+			public void onSuccess(Void response) {
 				goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));
 			}
 		});

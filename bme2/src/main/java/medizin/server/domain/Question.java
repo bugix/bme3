@@ -1788,7 +1788,8 @@ public class Question {
 				newAssesmentQuestion.persist();
 			}
 			
-			this.setKeywords(oldQuestion.getKeywords());
+			HashSet<Keyword> keywordSet = new HashSet<Keyword>(oldQuestion.getKeywords());
+			this.setKeywords(keywordSet);
 			
 			if(Status.ACTIVE.equals(oldQuestion.status) == false) {
 				oldQuestion.setStatus(Status.DEACTIVATED);

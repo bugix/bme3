@@ -658,4 +658,8 @@ public interface BmeConstants extends Constants {
 	public String printAVersion();
 
 	public String sorryImageNotAvailable();
+
+	public String shuffle();
+
+	public String printWithNonAcceptedQuestions();
 }

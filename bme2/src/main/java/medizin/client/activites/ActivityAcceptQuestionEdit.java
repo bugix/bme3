@@ -77,13 +77,27 @@ public class ActivityAcceptQuestionEdit extends ActivityQuestionEdit {
 		};
 		
 		if(isAdminOrInstitutionalAdmin() == true) {
-			status = Status.EDITED_BY_ADMIN;
-			updateQuestion(status,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor,gotoDetailsFunction);
-			Log.info("temparory save (with minor version)");
+			if(Status.EDITED_BY_ADMIN.equals(question.getStatus())) {
+				status = Status.EDITED_BY_ADMIN;
+				updateQuestion(status,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor,gotoDetailsFunction);
+				Log.info("Admin : temparory save (with minor version)");
+			} else {
+				status = Status.EDITED_BY_ADMIN;
+				createNewQuestion(question, status, isAcceptedByAdmin, isAcceptedByReviewer, isAcceptedByAuthor, gotoFunction);
+				Log.info("Admin : temparory save (with major version)");
+			}
+
 		}else if(isReviewer() == true) {
-			status = Status.EDITED_BY_REVIEWER;
-			updateQuestion(status,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor,gotoDetailsFunction);
-			Log.info("temparory save (with minor version)");
+			if(Status.EDITED_BY_REVIEWER.equals(question.getStatus())) {
+				status = Status.EDITED_BY_REVIEWER;
+				updateQuestion(status,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor,gotoDetailsFunction);
+				Log.info("Reviewer : temparory save (with minor version)");
+			} else {
+				status = Status.EDITED_BY_REVIEWER;
+				createNewQuestion(question, status, isAcceptedByAdmin, isAcceptedByReviewer, isAcceptedByAuthor, gotoFunction);
+				Log.info("Reviewer : temparory save (with major version)");
+			}
+			
 		}else if(isAuthor() == true) {
 			status = Status.NEW;
 			isAcceptedByAdmin = false;
@@ -113,17 +127,32 @@ public class ActivityAcceptQuestionEdit extends ActivityQuestionEdit {
 		
 		
 		if(isReviewer() == true){
-			status = Status.CORRECTION_FROM_REVIEWER;
 			isAcceptedByReviewer = true;
+			
+			Status correctionFromReviewer = Status.CORRECTION_FROM_REVIEWER;
+			if(Status.EDITED_BY_REVIEWER.equals(status) == true) {
+				// if current state is edited by reviewer then just update the state to correction_from_reviewer
+				updateQuestion(correctionFromReviewer, isAcceptedByAdmin, isAcceptedByReviewer, isAcceptedByAuthor, gotoFunction);
+			}else {
+				createNewQuestion(this.question,correctionFromReviewer,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor, gotoFunction);
+			}
+			
 		}
 		
 		if(isAdminOrInstitutionalAdmin() == true) {
-			status = Status.CORRECTION_FROM_ADMIN;
 			isAcceptedByAdmin = true;
+			Status correctionFromAdmin = Status.CORRECTION_FROM_ADMIN;
+			if(Status.EDITED_BY_ADMIN.equals(status) == true) {
+				// if current state is edited by admin then just update the state to correction_from_admin
+				updateQuestion(correctionFromAdmin, isAcceptedByAdmin, isAcceptedByReviewer, isAcceptedByAuthor, gotoFunction);
+			}else {
+				
+				createNewQuestion(this.question,correctionFromAdmin,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor, gotoFunction);
+			}
 		}
 		
-		if(Status.CORRECTION_FROM_ADMIN.equals(status) || Status.CORRECTION_FROM_REVIEWER.equals(status)) {
+		/*if(Status.CORRECTION_FROM_ADMIN.equals(status) || Status.CORRECTION_FROM_REVIEWER.equals(status)) {
 			createNewQuestion(this.question,status,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor, gotoFunction);	
-		}
+		}*/
 	}
 }

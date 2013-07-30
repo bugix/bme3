@@ -339,7 +339,7 @@ public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper
 	public void cancelAnswerClicked() {}
 
 	@Override
-	public void findAllAnswersPoints(Long id, Function<List<String>, Void> function) {}
+	public void findAllAnswersPoints(Long id,Long currentAnswerId, Function<List<String>, Void> function) {}
 
 	@Override
 	public void saveAnswerProxy(AnswerProxy answerProxy, String answerText, PersonProxy author, PersonProxy rewiewer, Boolean submitToReviewComitee, String comment, Validity validity, String points, String mediaPath, String additionalKeywords, Integer sequenceNumber, Function<AnswerProxy, Void> function) {}

@@ -1129,9 +1129,9 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	}
 
 	@Override
-	public void findAllAnswersPoints(Long questionId,final Function<List<String>, Void> function) {
+	public void findAllAnswersPoints(Long questionId,Long currentAnswerId,final Function<List<String>, Void> function) {
 		
-		requests.answerRequest().findAllAnswersPoints(questionId).fire(new BMEReceiver<List<String>>() {
+		requests.answerRequest().findAllAnswersPoints(questionId,currentAnswerId).fire(new BMEReceiver<List<String>>() {
 
 			@Override
 			public void onSuccess(List<String> polygons) {

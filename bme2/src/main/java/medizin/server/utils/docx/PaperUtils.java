@@ -39,7 +39,7 @@ public final class PaperUtils {
 
 	private static final Logger log = Logger.getLogger(PaperUtils.class);
 	
-	public static List<QuestionVO> get_data(final Long assessmentID, final boolean isVersionA) {
+	public static List<QuestionVO> get_data(final Long assessmentID, final boolean isVersionA,final boolean printAllQuestions) {
 		
 		List<QuestionVO> questionVOs = Lists.newArrayList();
 		
@@ -59,7 +59,7 @@ public final class PaperUtils {
 			List<QuestionEvent> questionEvents =  QuestionEvent.findAllQuestionEventsByQuestionTypeAndAssesmentID(assessmentID, questionTypeIds);
 			
 			for (QuestionEvent questionEvent : questionEvents) {
-				List<AssesmentQuestion> assesmentQuestions = AssesmentQuestion.findAssesmentQuestionsByQuestionEventAssIdQuestType(questionEvent.getId(), assessmentID, questionTypeIds,isVersionA);
+				List<AssesmentQuestion> assesmentQuestions = AssesmentQuestion.findAssesmentQuestionsByQuestionEventAssIdQuestType(questionEvent.getId(), assessmentID, questionTypeIds,isVersionA,printAllQuestions);
 				
 				for (AssesmentQuestion assesmentQuestion : assesmentQuestions) {
 					

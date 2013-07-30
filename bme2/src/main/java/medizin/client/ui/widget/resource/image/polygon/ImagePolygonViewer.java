@@ -214,4 +214,18 @@ public class ImagePolygonViewer extends Composite implements ImageWidthHeight {
 		btnClear.setVisible(diplayBtnFlag);
 		btnPolyLine.setVisible(diplayBtnFlag);		
 	}
+
+	public void setCurrentPolygon(PolygonPath polygonPath) {
+		if(polygonPath == null || polygonPath.getPoints().isEmpty()) {
+			Log.info("No polygon path");
+			return;
+		}
+		
+		currentPolygonPath = new PolygonPath();
+		for (Point point : polygonPath.getPoints()) {
+			addNewPath(point);
+		}
+		
+		btnPolyLine.setEnabled(false);
+	}
 }

@@ -40,7 +40,7 @@ public interface AssesmentQuestionRequest extends AssesmentQuestionRequest_Roo_G
 
 	abstract Request<List<AssesmentQuestionProxy>>  findAssementQuestionForAssementBook(Long id);
 	
-	abstract Request <List<AssesmentQuestionProxy>> findAssesmentQuestionsByQuestionEventAssIdQuestType(java.lang.Long questEventId, java.lang.Long assesmentId, List<Long> questionTypesId,boolean isVersionA);
+	abstract Request <List<AssesmentQuestionProxy>> findAssesmentQuestionsByQuestionEventAssIdQuestType(java.lang.Long questEventId, java.lang.Long assesmentId, List<Long> questionTypesId,boolean isVersionA,boolean printAllQuestions);
 	
 	abstract Request<String> loadTemplate();
 //	QuestionTypeCountPerExamRequestNonRoo questionTypeCountPerExamRequest();
