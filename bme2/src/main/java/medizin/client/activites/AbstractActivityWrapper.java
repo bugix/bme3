@@ -1,5 +1,6 @@
 package medizin.client.activites;
 
+import java.util.List;
 import java.util.Map;
 
 import medizin.client.factory.receiver.BMEReceiver;
@@ -10,6 +11,7 @@ import medizin.client.place.PlaceBookAssesment;
 import medizin.client.place.PlaceBookAssesmentDetails;
 import medizin.client.place.PlaceInstitution;
 import medizin.client.place.PlaceInstitutionEvent;
+import medizin.client.place.PlaceNotActivatedAnswer;
 import medizin.client.place.PlaceNotActivatedQuestion;
 import medizin.client.place.PlaceNotActivatedQuestionDetails;
 import medizin.client.place.PlaceQuestiontypes;
@@ -19,13 +21,20 @@ import medizin.client.place.PlaceSystemOverview;
 import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.PersonAccessRightProxy;
 import medizin.client.proxy.PersonProxy;
+import medizin.client.proxy.QuestionProxy;
+import medizin.client.proxy.UserAccessRightsProxy;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxOkButtonEvent;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxOkButtonEventHandler;
+import medizin.client.util.AnswerAccessRightsVO;
+import medizin.client.util.QuestionAccessRightsVO;
+import medizin.server.domain.UserAccessRights;
+import medizin.shared.AccessRights;
 import medizin.shared.i18n.BmeConstants;
 import medizin.shared.i18n.BmeMessages;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gwt.activity.shared.AbstractActivity;
 import com.google.gwt.core.client.GWT;
@@ -168,7 +177,7 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 						|| place instanceof PlaceInstitution 	|| place instanceof PlaceInstitutionEvent
 						|| place instanceof PlaceAssesment 		|| place instanceof PlaceAssesmentDetails
 						|| place instanceof PlaceBookAssesment	|| place instanceof PlaceBookAssesmentDetails
-						|| place instanceof PlaceStaticContent
+						|| place instanceof PlaceStaticContent  || place instanceof PlaceNotActivatedAnswer
 				) {
 					flag = false;
 				}else {
@@ -186,6 +195,115 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 		}
 		
 		return  userLoggedIn.getIsAdmin() || personRightProxy.getIsInstitutionalAdmin();
+	}
+	
+	public final QuestionAccessRightsVO hasQuestionRights(QuestionProxy proxy)
+	{
+		final QuestionAccessRightsVO questionAccessRightsVO = new QuestionAccessRightsVO();
+		
+		if (proxy == null || proxy.getAutor() == null || userLoggedIn == null || institutionActive == null)
+			return questionAccessRightsVO;
+		
+		if (isAdminOrInstitutionalAdmin() == true)
+		{
+			questionAccessRightsVO.setAddRight(true);
+			questionAccessRightsVO.setReadRight(true);
+			questionAccessRightsVO.setWriteRight(true);
+			
+			return questionAccessRightsVO;
+		}
+						
+		if (proxy.getAutor().getId().equals(userLoggedIn.getId()))
+		{
+			questionAccessRightsVO.setReadRight(true);
+			questionAccessRightsVO.setWriteRight(true);
+			
+			return questionAccessRightsVO;
+		}
+		
+		List<UserAccessRightsProxy> userAccessRightsProxyList = Lists.newArrayList();
+		userAccessRightsProxyList.addAll(personRightProxy.getQuestionEventAccList());
+		userAccessRightsProxyList.addAll(personRightProxy.getQuestionAccList());
+		
+		for (UserAccessRightsProxy userRightsProxy : userAccessRightsProxyList)
+		{
+			AccessRights accRights = userRightsProxy.getAccRights();
+			
+			if (userRightsProxy.getQuestionEvent() != null && proxy.getQuestEvent() != null && userRightsProxy.getQuestionEvent().getId().equals(proxy.getQuestEvent().getId()))
+			{
+				if (accRights.equals(AccessRights.AccRead))
+					questionAccessRightsVO.setReadRight(true);
+				else if (accRights.equals(AccessRights.AccWrite))
+					questionAccessRightsVO.setWriteRight(true);
+				else if (accRights.equals(AccessRights.AccAddQuestions))
+					questionAccessRightsVO.setAddRight(true);
+			}
+			else if (userRightsProxy.getQuestion() != null && userRightsProxy.getQuestion().getId().equals(proxy.getId()))
+			{
+				if (accRights.equals(AccessRights.AccRead))
+					questionAccessRightsVO.setReadRight(true);
+				else if (accRights.equals(AccessRights.AccWrite))
+					questionAccessRightsVO.setWriteRight(true);				
+			}
+		}
+		
+		return questionAccessRightsVO;
+	}
+	
+	public final AnswerAccessRightsVO hasAnswerRights(QuestionProxy proxy)
+	{
+		final AnswerAccessRightsVO answerAccessRightsVO = new AnswerAccessRightsVO();
+		
+		if (proxy == null || proxy.getAutor() == null || userLoggedIn == null || institutionActive == null)
+			return answerAccessRightsVO;
+		
+		if (isAdminOrInstitutionalAdmin() == true)
+		{
+			answerAccessRightsVO.setAddRight(true);
+			answerAccessRightsVO.setReadRight(true);
+			answerAccessRightsVO.setWriteRight(true);
+			
+			return answerAccessRightsVO;
+		}
+						
+		if (proxy.getAutor().getId().equals(userLoggedIn.getId()))
+		{
+			answerAccessRightsVO.setReadRight(true);
+			answerAccessRightsVO.setWriteRight(true);
+			answerAccessRightsVO.setAddRight(true);
+			
+			return answerAccessRightsVO;
+		}
+		
+		List<UserAccessRightsProxy> userAccessRightsProxyList = Lists.newArrayList();
+		userAccessRightsProxyList.addAll(personRightProxy.getQuestionEventAccList());
+		userAccessRightsProxyList.addAll(personRightProxy.getQuestionAccList());
+		
+		for (UserAccessRightsProxy userRightsProxy : userAccessRightsProxyList)
+		{
+			AccessRights accRights = userRightsProxy.getAccRights();
+			
+			if (userRightsProxy.getQuestionEvent() != null && proxy.getQuestEvent() != null && userRightsProxy.getQuestionEvent().getId().equals(proxy.getQuestEvent().getId()))
+			{
+				if (accRights.equals(AccessRights.AccRead))
+					answerAccessRightsVO.setReadRight(true);
+				else if (accRights.equals(AccessRights.AccWrite))
+					answerAccessRightsVO.setWriteRight(true);
+				else if (accRights.equals(AccessRights.AccAddQuestions))
+					answerAccessRightsVO.setAddRight(true);
+			}
+			else if (userRightsProxy.getQuestion() != null && userRightsProxy.getQuestion().getId().equals(proxy.getId()))
+			{
+				if (accRights.equals(AccessRights.AccRead))
+					answerAccessRightsVO.setReadRight(true);
+				else if (accRights.equals(AccessRights.AccWrite))
+					answerAccessRightsVO.setWriteRight(true);	
+				else if (accRights.equals(AccessRights.AccAddAnswers))
+					answerAccessRightsVO.setAddRight(true);
+			}			
+		}
+			
+		return answerAccessRightsVO;
 	}
 	
 	public abstract void start2(AcceptsOneWidget panel, EventBus eventBus);
