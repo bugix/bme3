@@ -28,7 +28,6 @@ import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxOkButtonEvent;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxOkButtonEventHandler;
 import medizin.client.util.AnswerAccessRightsVO;
 import medizin.client.util.QuestionAccessRightsVO;
-import medizin.server.domain.UserAccessRights;
 import medizin.shared.AccessRights;
 import medizin.shared.i18n.BmeConstants;
 import medizin.shared.i18n.BmeMessages;
@@ -68,8 +67,7 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 	
 	protected PersonAccessRightProxy personRightProxy;
 	
-	public AbstractActivityWrapper(Place place,
-			McAppRequestFactory requests, PlaceController placeController) {
+	public AbstractActivityWrapper(Place place, McAppRequestFactory requests, PlaceController placeController) {
 		this.place = place;
         this.requests = requests;
         this.placeController = placeController;
@@ -201,8 +199,12 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 	{
 		final QuestionAccessRightsVO questionAccessRightsVO = new QuestionAccessRightsVO();
 		
-		if (proxy == null || proxy.getAutor() == null || userLoggedIn == null || institutionActive == null)
+		if (userLoggedIn == null || institutionActive == null)
 			return questionAccessRightsVO;
+		
+		if(proxy != null  && proxy.getIsReadOnly() == true) {
+			return questionAccessRightsVO;
+		}
 		
 		if (isAdminOrInstitutionalAdmin() == true)
 		{
@@ -210,6 +212,10 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 			questionAccessRightsVO.setReadRight(true);
 			questionAccessRightsVO.setWriteRight(true);
 			
+			return questionAccessRightsVO;
+		}
+		
+		if(proxy == null || proxy.getAutor() == null) {
 			return questionAccessRightsVO;
 		}
 						
@@ -254,7 +260,7 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 	{
 		final AnswerAccessRightsVO answerAccessRightsVO = new AnswerAccessRightsVO();
 		
-		if (proxy == null || proxy.getAutor() == null || userLoggedIn == null || institutionActive == null)
+		if (userLoggedIn == null || institutionActive == null)
 			return answerAccessRightsVO;
 		
 		if (isAdminOrInstitutionalAdmin() == true)
@@ -265,7 +271,11 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 			
 			return answerAccessRightsVO;
 		}
-						
+			
+		if(proxy == null || proxy.getAutor() == null ) {
+			return answerAccessRightsVO;
+		}
+		
 		if (proxy.getAutor().getId().equals(userLoggedIn.getId()))
 		{
 			answerAccessRightsVO.setReadRight(true);

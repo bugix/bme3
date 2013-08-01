@@ -62,15 +62,12 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.RangeChangeEvent;
 
-
-
 public class ActivityQuestionDetails extends AbstractActivityWrapper implements 
 	QuestionDetailsView.Delegate, QuestionDetailsView.Presenter, AnswerDialogbox.Delegate, 
 	 AnswerListView.Delegate, MatrixAnswerView.Presenter , MatrixAnswerView.Delegate, 
 	 MatrixAnswerListView.Delegate, MatrixAnswerListView.Presenter{
 
 	private AcceptsOneWidget widget;
-	//private QuestionDetailsView view;
 	protected McAppRequestFactory requests;
 	private PlaceController placeController;
 	private PlaceQuestionDetails questionPlace;
@@ -82,8 +79,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	
 	//private BmeConstants constants = GWT.create(BmeConstants.class);
 	
-	public ActivityQuestionDetails(PlaceQuestionDetails place,
-			McAppRequestFactory requests, PlaceController placeController) {
+	public ActivityQuestionDetails(PlaceQuestionDetails place, McAppRequestFactory requests, PlaceController placeController) {
 		super(place, requests, placeController);
 		this.questionPlace = place;
         this.requests = requests;
@@ -103,139 +99,50 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	public void onStop() {
 	}
 	
-	/*private PersonProxy loggedUser;*/
 	private HandlerRegistration answerRangeChangeHandler;
 	private EventBus eventBus;
 	
-	
-	/*@Override
-	public void start(AcceptsOneWidget widget, EventBus eventBus) {
-		super.start(widget, eventBus);
-
-	}*/
 	Boolean editDeleteBtnFlag = false;
 	Boolean answerFlag = false;
+	
 	@Override
 	public void start2(AcceptsOneWidget panel, EventBus eventBus) {
-		startForAccessRights();
-		/*if (!questionPlace.getFromPlace().equals("ACCEPT_QUESTION"))
-		{
-			if (personRightProxy.getIsAdmin())
-			{
-				flag = true;
-				answerFlag = true;
-			}
-			else if (personRightProxy.getIsInstitutionalAdmin())
-			{
-				flag = true;
-				answerFlag = true;
-			}
-			else
-			{
-				for (UserAccessRightsProxy proxy : personRightProxy.getQuestionEventAccList())
-				{
-					if (proxy.getAccRights().equals(AccessRights.AccWrite))
-					{
-						flag = true;
-						answerFlag = false;
-						break;
-					}
-				}
-			}
-		}*/		
-		
-		QuestionDetailsViewImpl questionDetailsView = new QuestionDetailsViewImpl(eventBus, editDeleteBtnFlag,true);
-		
-		/*questionDetailsView.setName("hallo");*/
-		questionDetailsView.setPresenter(this);
 		this.widget = panel;
-		this.view = questionDetailsView;
 		this.eventBus = eventBus;
+		
+		getQuestionDetails();
+	}
+
+	public void initDetailsView(QuestionProxy questionProxy) {
+		startForAccessRights();
+		QuestionDetailsViewImpl questionDetailsView = new QuestionDetailsViewImpl(eventBus, editDeleteBtnFlag,hasAnswerRights(questionProxy).hasWriteRight());
+		questionDetailsView.setPresenter(this);
+		this.view = questionDetailsView;
         widget.setWidget(questionDetailsView.asWidget());
-		//setTable(view.getTable());
-        
-		/*eventBus.addHandler(PlaceChangeEvent.TYPE, new PlaceChangeEvent.Handler() {
-			public void onPlaceChange(PlaceChangeEvent event) {
-				//updateSelection(event.getNewPlace());
-				// TODO implement
-			}
-		});*/
-		//init();
-		
 		view.setDelegate(this);
-		
 		startForAcceptQuestion();
-		
-		/*if(questionPlace.getFromPlace().equals("ACCEPT_QUESTION"))
-		{
-			view.getAnswerListViewImpl().setVisible(false);
-			view.setVisibleAcceptButton();
-		}*/
-	
 		this.answerListView = view.getAnswerListViewImpl();
 		answerListView.setDelegate(this);
 		this.answerTable = answerListView.getTable();
-		
-		
-		start2();
-		
-		/*requests.personRequest().myGetLoggedPerson()
-				.fire(new BMEReceiver<PersonProxy>() {
-
-					@Override
-					public void onSuccess(PersonProxy response) {
-						loggedUser = response;
-						start2();
-
-					}
-
-					public void onFailure(ServerFailure error) {
-						ErrorPanel erorPanel = new ErrorPanel();
-						erorPanel.setErrorMessage(error.getMessage());
-						Log.error(error.getMessage());
-						onStop();
-					}
-
-					@Override
-					public void onViolation(Set<Violation> errors) {
-						Iterator<Violation> iter = errors.iterator();
-						String message = "";
-						while (iter.hasNext()) {
-							message += iter.next().getMessage() + "<br>";
-						}
-						Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION
-								+ " in Antwort löschen -" + message);
-
-						ErrorPanel erorPanel = new ErrorPanel();
-						erorPanel.setErrorMessage(message);
-						onStop();
-
-					}
-					
-					@Override
-					public void onReceiverFailure() {
-						onStop();
-					}
-
-				});*/
-
 	}
-	private void start2(){
-		/*if(loggedUser==null) return;*/
+	
+	private void getQuestionDetails(){
 		if(userLoggedIn==null) return;
 		
 		requests.find(questionPlace.getProxyId()).with("previousVersion","keywords","questEvent","comment","questionType","mcs", "rewiewer", "autor","questionResources","answers").fire(new BMEReceiver<Object>() {
-
-			/*public void onFailure(ServerFailure error){
-				Log.error(error.getMessage());
-			}*/
+			
 			@Override
 			public void onSuccess(final Object response) {
 				if(response instanceof QuestionProxy){
+					
+					initDetailsView((QuestionProxy) response);
+					
 					Log.info(((QuestionProxy) response).getQuestionText());
 					
-					if (((QuestionProxy) response).getIsReadOnly() == true)
+					if (((QuestionProxy) response).getIsReadOnly() == true) {
 						view.setVisibleEditAndDeleteBtn(false);
+					}
+						
 						
 					initForActivity((QuestionProxy) response,new Function<Boolean, Void>() {
 
@@ -244,70 +151,14 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 							init((QuestionProxy) response);
 							return null;
 						}
-					});
-					/*if (questionPlace.getFromPlace().equals("ACCEPT_QUESTION"))
-					{
-						init((QuestionProxy) response);
-					}
-					else
-					{
-						if (!flag && !answerFlag)
-						{
-							if (((QuestionProxy) response).getAutor().getId().equals(userLoggedIn.getId()))
-							{
-								view.setInvisibleIconButton(true);
-								init((QuestionProxy) response);
-							}
-							else
-							{
-								requests.userAccessRightsRequest().checkAddAnswerRightsByQuestionAndPerson(userLoggedIn.getId(), ((QuestionProxy) response).getId()).fire(new BMEReceiver<List<UserAccessRightsProxy>>() {
-
-									@Override
-									public void onSuccess(List<UserAccessRightsProxy> rightsResponse) {
-										
-										if (rightsResponse.size() > 0)
-										{
-											for (UserAccessRightsProxy proxy : rightsResponse)
-											{
-												if (proxy.getAccRights().equals(AccessRights.AccWrite))
-												{
-													view.setInvisibleIconButton(true);
-													questionDetailsView.getAnswerListViewImpl().getNewAnswer().setVisible(false);
-												}
-												
-												if (proxy.getAccRights().equals(AccessRights.AccAddAnswers))
-												{
-													view.setInvisibleIconButton(false);
-												}	
-											}
-										}
-										else
-										{
-											view.setInvisibleIconButton(false);
-											questionDetailsView.getAnswerListViewImpl().getNewAnswer().setVisible(false);
-										}
-								
-										init((QuestionProxy) response);
-									}
-								});
-							}
-						}
-						else
-						{
-							init((QuestionProxy) response);
-						}
-					}*/
-					
-					
+					});					
 				}				
 			}
-			
-		    });
+		});
 	}
 	
 	protected void startForAcceptQuestion() {
 		//do nothing
-
 	}
 	//method is overridden by sub class accept question
 	protected void startForAccessRights() {
