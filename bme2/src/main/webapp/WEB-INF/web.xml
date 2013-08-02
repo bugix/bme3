@@ -142,4 +142,23 @@
 	    <servlet-name>ResourceDownload</servlet-name>
 	    <url-pattern>/downloadFile</url-pattern>
 	  </servlet-mapping>
+	  
+	<!-- For Authorization -->
+	<!-- Uncomment for production mode -->
+	<!--     
+	<filter>
+		<filter-name>AuthenticationFilter</filter-name>		
+		<filter-class>medizin.server.security.AuthenticationFilter</filter-class>
+	</filter>
+ 
+	<filter-mapping>
+		<filter-name>AuthenticationFilter</filter-name>
+		<url-pattern>*.html</url-pattern>
+		<url-pattern>/gwtRequest</url-pattern>
+		<url-pattern>/fileDownloadServlet</url-pattern>
+		<url-pattern>/fileUploadServlet</url-pattern>
+		<url-pattern>/CsvFileUploadServlet</url-pattern>
+		<url-pattern>/downloadFile</url-pattern>
+	</filter-mapping>
+	 -->	
 </web-app>
