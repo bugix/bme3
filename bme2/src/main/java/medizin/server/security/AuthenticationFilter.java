@@ -122,6 +122,7 @@ public class AuthenticationFilter implements Filter {
 			
 		}catch(Exception e)
 		{
+			log.error("Exception in authentication ",e);
 			flag=false;
 		}
 		return flag;
