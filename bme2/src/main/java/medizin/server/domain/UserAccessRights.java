@@ -11,17 +11,13 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
 
 import medizin.shared.AccessRights;
 
-import org.hibernate.Query;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
-
-import com.google.web.bindery.requestfactory.server.RequestFactoryServlet;
 
 @RooJavaBean
 @RooToString
@@ -143,15 +139,16 @@ public class UserAccessRights {
 	   
 	   public static Boolean checkInstitutionalAdmin()
 	    {
-		   	HttpSession session = RequestFactoryServlet.getThreadLocalRequest().getSession();
-	    	HttpSession session1 = RequestFactoryServlet.getThreadLocalRequest().getSession();
-	    	
-	    	Person person = Person.findPersonByShibId(session.getAttribute("shibdId").toString());
-	    	
+		   
+		   	Person person = Person.myGetLoggedPerson();
+			Institution institution = Institution.myGetInstitutionToWorkWith();
+			if (person == null || institution == null)
+				throw new IllegalArgumentException("The person and institution arguments are required");
+			
 	    	if (person.getIsAdmin())
 	    		return true;
 	    	
-	    	Long instId = (Long) session1.getAttribute("institutionId");
+	    	Long instId = institution.getId();
     		
 	    	CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
 	  		CriteriaQuery<UserAccessRights> criteriaQuery = criteriaBuilder.createQuery(UserAccessRights.class);

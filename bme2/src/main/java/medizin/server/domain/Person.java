@@ -19,8 +19,10 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import medizin.server.utils.ServerConstants;
 import medizin.shared.utils.PersonAccessRight;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.roo.addon.javabean.RooJavaBean;
@@ -95,11 +97,34 @@ public class Person {
         	this.persist();
         }
         
-        session.setAttribute("shibdId", this.shidId);
+        session.setAttribute(ServerConstants.SESSION_SHIBD_ID_KEY, this.shidId);
     }
 
+    public void loginPerson(HttpSession session,String shibId) {
+        
+        if (StringUtils.isBlank(shibId))
+        {
+        	throw new IllegalArgumentException("Shibboleth ID cannot be empty");
+        }
+        
+        if(shibId.equals(this.shidId) == false) {
+        	this.shidId = shibId;
+        	this.persist();	
+        	log.info("Updated shibid : " + this.shidId);
+        }
+        session.setAttribute(ServerConstants.SESSION_SHIBD_ID_KEY, this.shidId);
+    }
+    
     public static medizin.server.domain.Person findPersonByShibId(String shibdId) {
-        return entityManager().createQuery("select o from Person o WHERE o.shidId LIKE '" + shibdId + "'", Person.class).getSingleResult();
+    	TypedQuery<Person> query =  entityManager().createQuery("select o from Person o WHERE o.shidId LIKE '" + shibdId + "'", Person.class);
+    	
+    	List<Person> resultList = query.getResultList();
+    	
+    	if(resultList == null || resultList.isEmpty()) {
+    		return null;
+    	}else {
+    		return resultList.get(0);
+    	}
     }
 
     public static medizin.server.domain.Person myGetLoggedPerson() {
@@ -113,29 +138,20 @@ public class Person {
             session.setAttribute("shibdId", "LHDAHSDFHDKJFH747835");
         }*/
         Person person = null;
-        if (session.getAttribute("shibdId") != null)
+        if (session.getAttribute(ServerConstants.SESSION_SHIBD_ID_KEY) != null)
         {
-        	person = findPersonByShibId(session.getAttribute("shibdId").toString());
+        	person = findPersonByShibId(session.getAttribute(ServerConstants.SESSION_SHIBD_ID_KEY).toString());
         }
         return person;
     }
     
     public static Boolean checkAdminRightToLoggedPerson()
     {
-    	HttpSession session = RequestFactoryServlet.getThreadLocalRequest().getSession();
-    	HttpSession session1 = RequestFactoryServlet.getThreadLocalRequest().getSession();
+    	Person person = Person.myGetLoggedPerson();
+    	Institution institution = Institution.myGetInstitutionToWorkWith();
     	
-    	if (session.getAttribute("shibdId") == null)
+    	if (person != null)
     	{
-    		return null;
-    	}
-    	else if (session.getAttribute("shibdId") == null && session1.getAttribute("institutionId") != null)
-    	{
-    		return null;
-    	}
-    	else if (session.getAttribute("shibdId") != null)
-    	{
-        Person person = findPersonByShibId(session.getAttribute("shibdId").toString());
             
             if (person.getIsAdmin())
             {
@@ -143,12 +159,8 @@ public class Person {
             }
             else
             {
-            	//HttpSession session1 = RequestFactoryServlet.getThreadLocalRequest().getSession();
-        		if (session1.getAttribute("institutionId") != null)
+        		if (institution != null)
         		{
-        			Long instId = (Long) session1.getAttribute("institutionId");
-            		Institution institution = Institution.findInstitution(instId);
-            		
             		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
             		CriteriaQuery<UserAccessRights> criteriaQuery = criteriaBuilder.createQuery(UserAccessRights.class);
             		Root<UserAccessRights> from = criteriaQuery.from(UserAccessRights.class);
@@ -261,12 +273,12 @@ public class Person {
 	public static PersonAccessRight getLoggedPersonAccessRights()
 	{
 		PersonAccessRight personAccess = new PersonAccessRight();
-		HttpSession session = RequestFactoryServlet.getThreadLocalRequest().getSession();
-	
-		if (session.getAttribute("shibdId") != null && session.getAttribute("institutionId") != null)
+		Person person = myGetLoggedPerson();
+		Institution institution = Institution.myGetInstitutionToWorkWith();
+		
+		if (person != null && institution != null)
 		{
-			Person person = findPersonByShibId(session.getAttribute("shibdId").toString());
-			Long instId = (Long) session.getAttribute("institutionId");
+			Long instId = institution.getId();
 			
 			if (person.getIsAdmin())
 			{
@@ -316,4 +328,23 @@ public class Person {
 		
 		return personAccess;
     }
+
+	public static Person findPersonByEmail(String email) {
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Person> criteriaQuery = criteriaBuilder.createQuery(Person.class);
+		Root<Person> from = criteriaQuery.from(Person.class);
+		
+		Predicate pre1 = criteriaBuilder.equal(from.get("email"), email);
+		
+		criteriaQuery.where(pre1);
+		
+		TypedQuery<Person> query = entityManager().createQuery(criteriaQuery);
+		List<Person> resultList = query.getResultList();
+    	
+    	if(resultList == null || resultList.isEmpty()) {
+    		return null;
+    	} else {
+    		return resultList.get(0);
+    	}
+	}
 }

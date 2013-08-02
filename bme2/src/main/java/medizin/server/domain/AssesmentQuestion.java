@@ -168,9 +168,7 @@ public class AssesmentQuestion {
         Person userLoggedIn=Person.myGetLoggedPerson();
         
         //get institution
-        HttpSession session1 = RequestFactoryServlet.getThreadLocalRequest().getSession();
-        Long instId = (Long) session1.getAttribute("institutionId");
-		Institution institution = Institution.findInstitution(instId);
+		Institution institution = Institution.myGetInstitutionToWorkWith();
         
 		//create query
 		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
@@ -458,9 +456,7 @@ public class AssesmentQuestion {
         PersonAccessRight accessRights=Person.getLoggedPersonAccessRights();
         
         //get institution
-        HttpSession session1 = RequestFactoryServlet.getThreadLocalRequest().getSession();
-        Long instId = (Long) session1.getAttribute("institutionId");
-		Institution institution = Institution.findInstitution(instId);
+		Institution institution = Institution.myGetInstitutionToWorkWith();
         
         if (assesment == null) throw new IllegalArgumentException("The assesment argument is required");
         EntityManager em = Question.entityManager();
@@ -512,9 +508,7 @@ public class AssesmentQuestion {
         Person userLoggedIn=Person.myGetLoggedPerson();
         
         //get institution
-        HttpSession session1 = RequestFactoryServlet.getThreadLocalRequest().getSession();
-        Long instId = (Long) session1.getAttribute("institutionId");
-		Institution institution = Institution.findInstitution(instId);
+		Institution institution = Institution.myGetInstitutionToWorkWith();
         
         if (assesment == null) throw new IllegalArgumentException("The mcs argument is required");
         EntityManager em = Question.entityManager();

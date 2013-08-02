@@ -349,9 +349,7 @@ public class Question {
 		}
 		
 		 //get institution
-        HttpSession session1 = RequestFactoryServlet.getThreadLocalRequest().getSession();
-        Long instId = (Long) session1.getAttribute("institutionId");
-		Institution institution = Institution.findInstitution(instId);
+		Institution institution = Institution.myGetInstitutionToWorkWith();
 		
         /*Boolean isAdmin=userLoggedIn.getIsAdmin();
         PersonAccessRight accessRights=userLoggedIn.getLoggedPersonAccessRights();
@@ -648,15 +646,8 @@ public class Question {
 	public static Long countQuestionsByPerson(String shibdId,
 			Long institutionId, String searchText, List<String> searchField) {
 
-		HttpSession session = RequestFactoryServlet.getThreadLocalRequest()
-				.getSession();
-		log.info(session.getAttribute("shibdId"));
-		log.info(session.getAttribute("institutionId"));
-		String shibdId2 = (String) session.getAttribute("shibdId");
-		long institutionId2 = (Long) session.getAttribute("institutionId");
-
-		Person loggedUser = Person.findPersonByShibId(shibdId2);
-		Institution institution = Institution.findInstitution(institutionId2);
+		Person loggedUser = Person.myGetLoggedPerson();
+		Institution institution = Institution.myGetInstitutionToWorkWith();
 		if (loggedUser == null || institution == null)
 			throw new IllegalArgumentException(
 					"The person and institution arguments are required");

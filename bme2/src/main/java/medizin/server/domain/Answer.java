@@ -404,14 +404,10 @@ public class Answer {
 	
 	public static Long countAnswerForAcceptQuestion(Long questionId)
 	{
-		HttpSession session = RequestFactoryServlet.getThreadLocalRequest().getSession();
-		
-		String shibdId2 = (String) session.getAttribute("shibdId");
-		long institutionId2 = (Long) session.getAttribute("institutionId");
 		Question question = Question.findQuestion(questionId);
 		
-		Person loggedUser = Person.findPersonByShibId(shibdId2);
-		Institution institution = Institution.findInstitution(institutionId2);
+		Person loggedUser = Person.myGetLoggedPerson();
+		Institution institution = Institution.myGetInstitutionToWorkWith();
 		if (loggedUser == null || institution == null) throw new IllegalArgumentException("The person and institution arguments are required");
 		
 		CriteriaBuilder cb = entityManager().getCriteriaBuilder();
@@ -437,12 +433,10 @@ public class Answer {
 	{
 		HttpSession session = RequestFactoryServlet.getThreadLocalRequest().getSession();
 		
-		String shibdId2 = (String) session.getAttribute("shibdId");
-		long institutionId2 = (Long) session.getAttribute("institutionId");
 		Question question = Question.findQuestion(questionId);
 		
-		Person loggedUser = Person.findPersonByShibId(shibdId2);
-		Institution institution = Institution.findInstitution(institutionId2);
+		Person loggedUser = Person.myGetLoggedPerson();
+		Institution institution = Institution.myGetInstitutionToWorkWith();
 		if (loggedUser == null || institution == null) throw new IllegalArgumentException("The person and institution arguments are required");
 		
 		CriteriaBuilder cb = entityManager().getCriteriaBuilder();

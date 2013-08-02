@@ -15,6 +15,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import medizin.client.ui.widget.Sorting;
+import medizin.server.utils.ServerConstants;
 import medizin.shared.AccessRights;
 
 import org.springframework.roo.addon.javabean.RooJavaBean;
@@ -35,20 +36,20 @@ public class Institution {
     
     public void mySetCurrentInstitution(){
     	HttpSession session = RequestFactoryServlet.getThreadLocalRequest().getSession();
-		session.setAttribute("institutionId", this.getId());
+		session.setAttribute(ServerConstants.SESSION_INSTITUTION_ID_KEY, this.getId());
     }
     
     public static void fillCurrentInstitutionNull()
     {
     	HttpSession session = RequestFactoryServlet.getThreadLocalRequest().getSession();
-		session.setAttribute("institutionId", null);
+		session.setAttribute(ServerConstants.SESSION_INSTITUTION_ID_KEY, null);
     }
 
     public static Institution myGetInstitutionToWorkWith(){
     	HttpSession session = RequestFactoryServlet.getThreadLocalRequest().getSession();
 		Long instId = null;
-		if(session.getAttribute("institutionId") != null)
-			instId  = (Long) session.getAttribute("institutionId");
+		if(session.getAttribute(ServerConstants.SESSION_INSTITUTION_ID_KEY) != null)
+			instId  = (Long) session.getAttribute(ServerConstants.SESSION_INSTITUTION_ID_KEY);
 		else
 			return null;
 					
