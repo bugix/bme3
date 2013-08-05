@@ -60,7 +60,7 @@
 
 									<t:RichTextToolbar ui:field="toolbar" />
 									<div
-										style="-moz-border-radius-bottomleft: 8px; -moz-border-radius-bottomright: 8px; border: 1px solid #AAA; border-top: 0; padding: 4px">
+										style="border-bottom-left-radius: 2px; border-bottom-right-radius: 2px; border: 1px solid #AAA; border-top: 0; padding: 4px">
 										<div ui:field="descriptionValue">
 										</div>
 										<g:RichTextArea ui:field='questionTextArea'
@@ -140,12 +140,6 @@
 								</td>
 								<td>
 									<g:TextArea ui:field='questionComment' width="100%"></g:TextArea>
-
-									<!-- <t:RichTextToolbar ui:field="commentToolbar" /> <div style="-moz-border-radius-bottomleft: 
-										8px; -moz-border-radius-bottomright: 8px; border: 1px solid #AAA; border-top: 
-										0; padding: 4px"> <div ui:field="commentValue"> </div> <g:RichTextArea ui:field='questionComment' 
-										enabled="false" /> </div> -->
-
 								</td>
 							</tr>
 							<tr id="mcs">

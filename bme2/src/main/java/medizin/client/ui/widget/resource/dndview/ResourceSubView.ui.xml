@@ -34,7 +34,7 @@
 		}
 
 	</ui:style>
-	<g:AbsolutePanel ui:field="absPanel" width="98%">
+	<g:AbsolutePanel ui:field="absPanel">
 		<g:VerticalPanel addStyleNames="{style.widthView}">
 			<g:HTMLPanel addStyleNames="{style.vPanelStyle}">
 				<table cellspacing="1" cellpadding="0" style="width: 100%;">

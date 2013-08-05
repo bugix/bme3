@@ -27,10 +27,10 @@
 		width: 95%;
 		padding: 1px;
 		margin-left: 10px;
-		-moz-border-radius:5px; /* Firefox */
-		-webkit-border-radius:5px; /* Safari, Chrome */
-		-khtml-border-radius:5px; /* Konqueror */
-		border-radius:5px; /* CSS3 */
+		-moz-border-radius:2px; /* Firefox */
+		-webkit-border-radius:2px; /* Safari, Chrome */
+		-khtml-border-radius:2px; /* Konqueror */
+		border-radius:2px; /* CSS3 */
 		float: left;
 		
 		}

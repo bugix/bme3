@@ -65,21 +65,25 @@
 }
 
 .cellTableFirstColumnFooter {
-  -moz-border-radius-bottomleft: 8px;
+  	-moz-border-radius-bottomleft: 8px;
+  	border-radius-bottomleft: 8px;
 }
 
 .cellTableFirstColumnHeader {
-  -moz-border-radius-topleft: 8px;
+  	-moz-border-radius-topleft: 8px;
+  	border-radius-topleft: 8px;
 }
 
 .cellTableLastColumnFooter {
-  -moz-border-radius-bottomright: 8px;
-  border-right: 0;
+  	-moz-border-radius-bottomright: 8px;
+  	border-radius-bottomright: 8px;
+  	border-right: 0;
 }
 
 .cellTableLastColumnHeader {
-	border-right: 0;
 	-moz-border-radius-topright: 8px;
+  	border-radius-topright: 8px;
+	border-right: 0;
 }
 
 .cellTableSortableHeader {

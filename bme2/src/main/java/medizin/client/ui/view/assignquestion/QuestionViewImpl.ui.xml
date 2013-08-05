@@ -34,14 +34,14 @@ border-bottom: 1px solid #AAAAAA;
 		.questionTable{
 		width: 100%;	
 		
-		-moz-border-radius:5px; /* Firefox */
-		-webkit-border-radius:5px; /* Safari, Chrome */
-		-khtml-border-radius:5px; /* Konqueror */
-		/* CSS3 */
+		-moz-border-radius:2px; /* Firefox */
+		-webkit-border-radius:2px; /* Safari, Chrome */
+		-khtml-border-radius:2px; /* Konqueror */
+		border-radius:2px; /* CSS3 */
 
 		/*background-color: #BFD6C3;*/
-		border-top-left-radius: 7px;
-		border-top-right-radius:7px;
+		border-top-left-radius: 2px;
+		border-top-right-radius:2px;
 
 
 		}
@@ -50,14 +50,12 @@ border-bottom: 1px solid #AAAAAA;
 	{
 		width: 100%;	
 		
-		-moz-border-radius:5px; /* Firefox */
-		-webkit-border-radius:5px; /* Safari, Chrome */
-		-khtml-border-radius:5px; /* Konqueror */
-		/* CSS3 */
+		-moz-border-radius:2px; /* Firefox */
+		-webkit-border-radius:2px; /* Safari, Chrome */
+		-khtml-border-radius:2px; /* Konqueror */
+		border-radius:2px; /* CSS3 */
 
 		background-color: #BFD6C3;
-		border-radius: 7px;
-	
 	}
 		.fill{
 		cursor: pointer;
