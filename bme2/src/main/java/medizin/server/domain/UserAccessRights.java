@@ -15,6 +15,7 @@ import javax.validation.constraints.NotNull;
 
 import medizin.shared.AccessRights;
 
+import org.apache.log4j.Logger;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
@@ -24,6 +25,8 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooJpaActiveRecord
 public class UserAccessRights {
 
+	private static Logger log = Logger.getLogger(UserAccessRights.class);
+	
     @NotNull
     @Enumerated
     private AccessRights accRights;
@@ -240,7 +243,7 @@ public class UserAccessRights {
 			
 			Predicate ansPre2 = criteriaBuilder.equal(ansFrom.get("rewiewer").get("id"), personId);
 			
-			cq.where(quePre2);
+			ansCq.where(ansPre2);
 			
 			TypedQuery<Answer> ansq = entityManager().createQuery(ansCq);
 			
@@ -257,7 +260,7 @@ public class UserAccessRights {
 			//System.out.println("result size :" + institutionList.size());
 			 return institutionList;
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage(), e);
 			return null;
 		}
 		  //return institutionList;  

@@ -7,32 +7,23 @@ import medizin.client.place.PlaceAcceptAnswer;
 import medizin.client.place.PlaceAcceptAssQuestion;
 import medizin.client.place.PlaceAcceptPerson;
 import medizin.client.place.PlaceAcceptQuestion;
-import medizin.client.place.PlaceAcceptQuestionDetails;
 import medizin.client.place.PlaceAsignAssQuestion;
 import medizin.client.place.PlaceAssesment;
-import medizin.client.place.PlaceAssesmentDetails;
 import medizin.client.place.PlaceBookAssesment;
-import medizin.client.place.PlaceBookAssesmentDetails;
 import medizin.client.place.PlaceInstitution;
-import medizin.client.place.PlaceInstitutionEvent;
 import medizin.client.place.PlaceNotActivatedAnswer;
 import medizin.client.place.PlaceNotActivatedQuestion;
-import medizin.client.place.PlaceNotActivatedQuestionDetails;
 import medizin.client.place.PlaceOpenDemand;
 import medizin.client.place.PlaceQuestion;
-import medizin.client.place.PlaceQuestionDetails;
 import medizin.client.place.PlaceQuestiontypes;
-import medizin.client.place.PlaceQuestiontypesDetails;
 import medizin.client.place.PlaceStaticContent;
 import medizin.client.place.PlaceSystemOverview;
 import medizin.client.place.PlaceUser;
-import medizin.client.place.PlaceUserDetails;
 import medizin.shared.i18n.BmeConstants;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.place.shared.Place;
-import com.google.gwt.place.shared.PlaceChangeEvent;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -296,28 +287,30 @@ public class McAppNav extends Composite {
 		
 
         
-        requests.getEventBus().addHandler(PlaceChangeEvent.TYPE, new PlaceChangeEvent.Handler() {
+        /*requests.getEventBus().addHandler(PlaceChangeEvent.TYPE, new PlaceChangeEvent.Handler() {
 			public void onPlaceChange(PlaceChangeEvent event) {
 
 				Place place = event.getNewPlace();
 				changeMenue(place);
 			}
-		});
+		});*/
         
         Place place = placeController.getWhere();
         if(place == null || place.equals(Place.NOWHERE)) {
         	place =  new PlaceSystemOverview(PlaceSystemOverview.PLACE_SYSTEM_OVERVIEW);
         }
-        changeMenue(place);
+        //changeMenue(place);
+        setConstantText();
+        
         placeController.goTo(new PlaceSystemOverview(PlaceSystemOverview.PLACE_SYSTEM_OVERVIEW));
         placeController.goTo(place);
 	}
 	
-	protected void changeMenue(Place place){
+	/*protected void changeMenue(Place place){
 		
 		setConstantText();
 		
-		/*systemOverview.removeStyleName("gwt-AnchorSelected");
+		systemOverview.removeStyleName("gwt-AnchorSelected");
 
 		
 		acceptPerson.removeStyleName("gwt-AnchorSelected");
@@ -346,7 +339,7 @@ public class McAppNav extends Composite {
 		
 		staticContent.removeStyleName("gwt-AnchorSelected");
 		
-*/        if (place instanceof PlaceSystemOverview){
+        if (place instanceof PlaceSystemOverview){
             systemOweviewPanel.setOpen(true);
             managementPanel.setOpen(false);
             assementPanel.setOpen(false);
@@ -456,7 +449,7 @@ public class McAppNav extends Composite {
             assementPanel.setOpen(false);
             questionPanel.setOpen(true);	
         }
-	}
+	}*/
 		
 	public void setConstantText()
 	{
