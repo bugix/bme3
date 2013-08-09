@@ -124,6 +124,12 @@ public class Answer {
 	@Value("false")
 	@Column(columnDefinition="BIT", length = 1)
 	private Boolean isForcedActive;
+	
+	@ManyToOne
+	private Person createdBy;
+	
+	@ManyToOne
+	private Person modifiedBy;
     
 	public static List<Answer> findAnswersEntriesByQuestion(Long id, int start, int max){
         Question question = Question.findQuestion(id);

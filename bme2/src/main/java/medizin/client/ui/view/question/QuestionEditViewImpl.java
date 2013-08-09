@@ -218,6 +218,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		reciverMap.put("rewiewer", rewiewer);
 		reciverMap.put("questEvent", questEvent);
 		reciverMap.put("submitToReviewComitee", submitToReviewComitee);
+		reciverMap.put("mcs", mcs);
 		//reciverMap.put("comment", questionComment);
 		
 		questionTypePanel.selectTab(0);
@@ -706,8 +707,22 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 					}
 				});
 				
-				// added to container
-				setMediaContainer(resourceUpload,paths.keySet(), viewer);
+				
+				if(questionType != null) {
+					
+					boolean flag = Boolean.TRUE.equals(questionType.getQueHaveImage())
+									|| Boolean.TRUE.equals(questionType.getQueHaveSound())
+									|| Boolean.TRUE.equals(questionType.getQueHaveVideo());
+							
+					if(flag == true) {
+						// added to container
+						setMediaContainer(resourceUpload,paths.keySet(), viewer);	
+					}else {
+						Log.info("Flag is false : " + questionType.getQueHaveImage() +"," + questionType.getQueHaveSound() + "," + questionType.getQueHaveVideo());
+					}
+						
+				}
+				
 		}
 	}
 	
@@ -744,6 +759,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 			imageViewer.removeStyleName("higlight_onViolation");
 		rewiewer.getTextField().advancedTextBox.removeStyleName("higlight_onViolation");
 		submitToReviewComitee.removeStyleName("higlight_onViolation");
+		mcs.removeStyleName("higlight_onViolation");
 		
 		ArrayList<String> messages = Lists.newArrayList();
 		boolean flag = true;
@@ -820,6 +836,11 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 			}
 		} 
 		
+		if(mcs.getValue() == null || mcs.getValue().isEmpty()) {
+			flag = false;
+			messages.add(constants.mcsMayNotBeNull());
+			mcs.addStyleName("higlight_onViolation");
+		}
 		if(flag == false) {
 			ReceiverDialog.showMessageDialog(constants.pleaseEnterWarning(),messages);
 		}

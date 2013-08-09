@@ -172,6 +172,12 @@ public class Question {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "question")
 	private Set<AssesmentQuestion> assesmentQuestionSet = new HashSet<AssesmentQuestion>();
 	
+	@ManyToOne
+	private Person createdBy;
+	
+	@ManyToOne
+	private Person modifiedBy;
+	
 	public static long countQuestionAccessByPersonNonRoo(java.lang.Long personId) {
 		Person person = Person.findPerson(personId);
 		if (person == null)

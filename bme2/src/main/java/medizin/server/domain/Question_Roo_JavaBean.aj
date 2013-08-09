@@ -244,4 +244,20 @@ privileged aspect Question_Roo_JavaBean {
         this.assesmentQuestionSet = assesmentQuestionSet;
     }
     
+    public Person Question.getCreatedBy() {
+        return this.createdBy;
+    }
+    
+    public void Question.setCreatedBy(Person createdBy) {
+        this.createdBy = createdBy;
+    }
+    
+    public Person Question.getModifiedBy() {
+        return this.modifiedBy;
+    }
+    
+    public void Question.setModifiedBy(Person modifiedBy) {
+        this.modifiedBy = modifiedBy;
+    }
+    
 }

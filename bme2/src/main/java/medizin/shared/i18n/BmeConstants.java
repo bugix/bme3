@@ -664,4 +664,6 @@ public interface BmeConstants extends Constants {
 	public String printWithNonAcceptedQuestions();
 	
 	public String notActivatedAnswer();
+
+	public String mcsMayNotBeNull();
 }

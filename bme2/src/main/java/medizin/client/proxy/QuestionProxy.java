@@ -127,5 +127,13 @@ public interface QuestionProxy extends EntityProxy {
 
     abstract void setAssesmentQuestionSet(Set<medizin.client.proxy.AssesmentQuestionProxy> assesmentQuestionSet);
 
+    abstract PersonProxy getCreatedBy();
+
+    abstract void setCreatedBy(PersonProxy createdBy);
+
+    abstract PersonProxy getModifiedBy();
+
+    abstract void setModifiedBy(PersonProxy modifiedBy);
+
     abstract Integer getVersion();
 }
