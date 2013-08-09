@@ -68,4 +68,62 @@ public interface BmeEnumConstants extends ConstantsWithLookup {
 	//UserType
 	public String ADMIN();
 	public String USER();
+	
+	//Keyword Advance Search
+	public String KEYWORD_EQUALS();
+	
+	public String KEYWORD_NOT_EQUALS();
+	
+	//bind type
+	public String AND();
+	
+	public String OR();
+	
+	//Question Event Advanced Search
+	public String QUESTION_EVENT_EQUALS();
+	
+	public String QUESTION_EVENT_NOT_EQUALS();
+	
+	//Text search advanced search
+	public String TEXT_SEARCH_EQUALS();
+	
+	public String TEXT_SEARCH_NOT_EQUALS();
+	
+	public String COMMENT();
+			
+	public String ANSWER_TEXT();
+			
+	public String QUESTION_TEXT();
+			
+	public String QUESTION_SHORT_NAME();
+	
+	//date advanced search
+	public String EQUALS();
+	
+	public String NOT_EQUALS(); 
+	
+	public String LESS(); 
+	
+	public String MORE();
+	
+	public String CREATED_QUESTION_DATE();
+			
+	public String CHANGED_QUESTION_DATE();
+			
+	public String USED_IN_MC_DATE();
+	
+	//MC advancedSearch
+	public String MC_EQUALS();
+	
+	public String MC_NOT_EQUALS();
+	
+	//Use type advanced Search
+	public String AUTHOR();
+			
+	public String REVIEWER();
+	
+	//Media Availability advanced search
+	public String MEDIA_AVAILABILITY_EQUALS();
+	
+	public String MEDIA_AVAILABILITY_NOT_EQUALS();
 }

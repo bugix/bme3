@@ -5,18 +5,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import medizin.client.style.resources.MyCellTableResources;
-import medizin.client.style.resources.MySimplePagerResources;
-import medizin.client.ui.McAppConstant;
-import medizin.client.ui.view.user.EventAccessDialogbox.Delegate;
-import medizin.client.ui.view.user.EventAccessDialogbox.Presenter;
-import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.EventHandlingValueHolderItem;
-import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
-
-
 import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
+import medizin.client.proxy.UserAccessRightsProxy;
+import medizin.client.style.resources.MyCellTableResources;
+import medizin.client.style.resources.MySimplePagerResources;
+import medizin.client.ui.McAppConstant;
+import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.EventHandlingValueHolderItem;
+import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
+import medizin.shared.AccessRights;
 import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
@@ -31,6 +29,9 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.text.shared.Renderer;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -42,9 +43,7 @@ import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DialogBox;
-import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -69,6 +68,8 @@ public class QuestionAccessDialogboxImpl extends DialogBox implements QuestionAc
           }
 
 	private BmeConstants constants = GWT.create(BmeConstants.class);
+	
+	private List<UserAccessRightsProxy> userAccessRightsList = new ArrayList<UserAccessRightsProxy>();
 	
 
 	public QuestionAccessDialogboxImpl() {
@@ -174,36 +175,19 @@ public class QuestionAccessDialogboxImpl extends DialogBox implements QuestionAc
 	            }
 	        }, constants.question());
 	        
-	    	addColumn(new ActionCell<QuestionProxy>(
-	    	        constants.read(), new ActionCell.Delegate<QuestionProxy>() {
-	    	            public void execute(QuestionProxy question) {
-	    	              Log.debug("You clicked " + question.getQuestionText());
-	    	              delegate.addClicked(medizin.shared.AccessRights.AccRead, question);
-	    	            }
-	    	          }), constants.read(), new GetValue<QuestionProxy>() {
+	    	addColumn(getReadButtonCell(), constants.read(), new GetValue<QuestionProxy>() {
 	    	        public QuestionProxy getValue(QuestionProxy contact) {
 	    	          return contact;
 	    	        }
 	    	      }, null);
 	    	
-	    	addColumn(new ActionCell<QuestionProxy>(
-	    			constants.write(), new ActionCell.Delegate<QuestionProxy>() {
-	    	            public void execute(QuestionProxy question) {
-	    	              Log.debug("You clicked " + question.getQuestionText());
-	    	              delegate.addClicked(medizin.shared.AccessRights.AccWrite, question);
-	    	            }
-	    	          }), constants.write(), new GetValue<QuestionProxy>() {
+	    	addColumn(getWriteButtonCell(), constants.write(), new GetValue<QuestionProxy>() {
 	    	        public QuestionProxy getValue(QuestionProxy contact) {
 	    	          return contact;
 	    	        }
 	    	      }, null);
-	    	addColumn(new ActionCell<QuestionProxy>(
-	    			constants.addAnswers(), new ActionCell.Delegate<QuestionProxy>() {
-	    	            public void execute(QuestionProxy question) {
-	    	              Log.debug("You clicked " + question.getQuestionText());
-	    	              delegate.addClicked(medizin.shared.AccessRights.AccAddAnswers, question);
-	    	            }
-	    	          }), constants.addAnswers(), new GetValue<QuestionProxy>() {
+	    	
+	    	addColumn(getAddAnswerButtonCell(), constants.addAnswers(), new GetValue<QuestionProxy>() {
 	    	        public QuestionProxy getValue(QuestionProxy contact) {
 	    	          return contact;
 	    	        }
@@ -401,5 +385,107 @@ public class QuestionAccessDialogboxImpl extends DialogBox implements QuestionAc
 		show();
 		
 	}
-
+	
+	public List<UserAccessRightsProxy> getUserAccessRightsList() {
+		return userAccessRightsList;
+	}
+	
+	public void setUserAccessRightsList(List<UserAccessRightsProxy> userAccessRightsList) {
+		this.userAccessRightsList = userAccessRightsList;
+	}
+	
+	private static SafeHtml READ_DISABLED_BUTTON;
+	private static SafeHtml WRITE_DISABLED_BUTTON;
+	private static SafeHtml ADDANSWER_DISABLED_BUTTON;
+	
+	private ActionCell<QuestionProxy> getReadButtonCell()
+	{
+		READ_DISABLED_BUTTON = SafeHtmlUtils.fromSafeConstant("<button type=\"button\" tabindex=\"-1\" disabled=\"disabled\">" + constants.read() + "</button>");
+		
+		ActionCell<QuestionProxy> readButtonCell = new ActionCell<QuestionProxy>(
+    	        constants.read(), new ActionCell.Delegate<QuestionProxy>() {
+    	            public void execute(QuestionProxy question) {
+    	              Log.debug("You clicked " + question.getQuestionText());
+    	              delegate.addClicked(medizin.shared.AccessRights.AccRead, question);
+    	            }
+    	          })
+    	          {
+					@Override
+					public void render(com.google.gwt.cell.client.Cell.Context context, QuestionProxy value, SafeHtmlBuilder sb) {
+						boolean readButtonFlag = checkAccessRights(value, AccessRights.AccRead);
+						
+						if (readButtonFlag == false)
+							super.render(context, value, sb);
+						else if (readButtonFlag == true)
+							sb.append(READ_DISABLED_BUTTON);
+					}					
+    	          };
+    	          
+    	 return readButtonCell;
+	}
+	
+	private ActionCell<QuestionProxy> getWriteButtonCell()
+	{
+		WRITE_DISABLED_BUTTON = SafeHtmlUtils.fromSafeConstant("<button type=\"button\" tabindex=\"-1\" disabled=\"disabled\">" + constants.write() + "</button>");
+		
+		ActionCell<QuestionProxy> writeButtonCell = new ActionCell<QuestionProxy>(
+    			constants.write(), new ActionCell.Delegate<QuestionProxy>() {
+    	            public void execute(QuestionProxy question) {
+    	              Log.debug("You clicked " + question.getQuestionText());
+    	              delegate.addClicked(medizin.shared.AccessRights.AccWrite, question);
+    	            }
+    	          })
+    	          {
+					@Override
+					public void render(com.google.gwt.cell.client.Cell.Context context, QuestionProxy value, SafeHtmlBuilder sb) {
+						boolean writeButtonFlag = checkAccessRights(value, AccessRights.AccWrite);
+						
+						if (writeButtonFlag == false)
+							super.render(context, value, sb);
+						else if (writeButtonFlag == true)
+							sb.append(WRITE_DISABLED_BUTTON);
+					}
+    	          };
+    	 
+    	return writeButtonCell;
+	}
+	
+	private ActionCell<QuestionProxy> getAddAnswerButtonCell()
+	{
+		ADDANSWER_DISABLED_BUTTON = SafeHtmlUtils.fromSafeConstant("<button type=\"button\" tabindex=\"-1\" disabled=\"disabled\">" + constants.addAnswers() + "</button>");
+		
+		ActionCell<QuestionProxy> addAnswerButtonCell = new ActionCell<QuestionProxy>(
+    			constants.addAnswers(), new ActionCell.Delegate<QuestionProxy>() {
+    	            public void execute(QuestionProxy question) {
+    	              Log.debug("You clicked " + question.getQuestionText());
+    	              delegate.addClicked(medizin.shared.AccessRights.AccAddAnswers, question);
+    	            }
+    	          })
+    	          {
+					@Override
+					public void render(com.google.gwt.cell.client.Cell.Context context, QuestionProxy value, SafeHtmlBuilder sb) {
+						boolean addAnswerFlag = checkAccessRights(value, AccessRights.AccAddAnswers);
+						
+						if (addAnswerFlag == false)
+							super.render(context, value, sb);
+						else if (addAnswerFlag == true)
+							sb.append(ADDANSWER_DISABLED_BUTTON);
+					}
+    	          };
+    	          
+    	 return addAnswerButtonCell;
+	}
+	
+	private boolean checkAccessRights(QuestionProxy value, AccessRights access) {
+		boolean flag = false;
+		for (UserAccessRightsProxy rights : userAccessRightsList)
+		{
+			if (value.getId().equals(rights.getQuestion().getId()) && access.equals(rights.getAccRights()))
+			{
+				flag = true;
+				break;
+			}
+		}
+		return flag;
+	}	
 }

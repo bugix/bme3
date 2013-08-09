@@ -1172,6 +1172,8 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		ArrayList<String> errorMessage = Lists.newArrayList();
 		
 		boolean flag = true;
+		boolean answerFlag = false;
+		
 		//StringBuilder errorString = new StringBuilder();
 		
 		if (shortNameTxtbox.getText().isEmpty())
@@ -1207,6 +1209,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(sumAnswerTxtbox)) != "")
 				{
 					flag = false;
+					answerFlag = true;
 					//errorString.append(constants.sumAnswer() + " " + msg).append("<br />");
 					errorMessage.add(constants.sumAnswer() + " " + msg);
 					sumAnswerTxtbox.addStyleName("higlight_onViolation");
@@ -1214,6 +1217,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				else if (Integer.parseInt(sumAnswerTxtbox.getValue()) < 2)
 				{
 					flag = false;
+					answerFlag = true;
 					//errorString.append(constants.sumOfAnsMsg()).append("<br />");
 					errorMessage.add(constants.sumOfAnsMsg());
 					sumAnswerTxtbox.addStyleName("higlight_onViolation");
@@ -1223,6 +1227,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(sumTrueAnswerTxtbox)) != "")
 				{
 					flag = false;
+					answerFlag = true;
 					//errorString.append(constants.sumTrueAnswer() + " " + msg).append("<br />");
 					errorMessage.add(constants.sumTrueAnswer() + " " + msg);
 					sumTrueAnswerTxtbox.addStyleName("higlight_onViolation");
@@ -1230,6 +1235,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				else if (Integer.parseInt(sumTrueAnswerTxtbox.getValue()) < 0)
 				{
 					flag = false;
+					answerFlag = true;
 					//errorString.append(constants.sumOfTrueAnsMsg()).append("<br />");
 					errorMessage.add(constants.sumOfTrueAnsMsg());
 					sumTrueAnswerTxtbox.addStyleName("higlight_onViolation");
@@ -1239,6 +1245,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(sumFalseAnswerTxtbox)) != "")
 				{
 					flag = false;
+					answerFlag = true;
 					//errorString.append(constants.sumFalseAnswer() + " " + msg).append("<br />");
 					errorMessage.add(constants.sumFalseAnswer() + " " + msg);
 					sumFalseAnswerTxtbox.addStyleName("higlight_onViolation");
@@ -1246,9 +1253,21 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				else if (Integer.parseInt(sumFalseAnswerTxtbox.getValue()) < 0)
 				{
 					flag = false;
+					answerFlag = true;
 					//errorString.append(constants.sumOfFalseAnsMsg()).append("<br />");
 					errorMessage.add(constants.sumOfFalseAnsMsg());
 					sumFalseAnswerTxtbox.addStyleName("higlight_onViolation");
+				}
+				
+				if (answerFlag == false)
+				{
+					if (checkTextualAnswerCondition(Integer.parseInt(sumAnswerTxtbox.getValue()), Integer.parseInt(sumTrueAnswerTxtbox.getValue()), Integer.parseInt(sumFalseAnswerTxtbox.getValue())) == false)
+					{
+						flag = false;
+						errorMessage.add(constants.sumOfAnsValidateMsg());
+						sumTrueAnswerTxtbox.addStyleName("higlight_onViolation");
+						sumFalseAnswerTxtbox.addStyleName("higlight_onViolation");
+					}
 				}
 				
 				msg = "";
@@ -1597,6 +1616,16 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		}
 		
 		return flag;
+	}
+
+	private boolean checkTextualAnswerCondition(int sumOfTotalAns, int sumOfTrueAns, int sumOfFalseAns) {
+		
+		if ( (sumOfTrueAns + sumOfFalseAns) <=1 )
+			return true;
+		else if ( (sumOfTrueAns + sumOfFalseAns) <= sumOfTotalAns )
+			return true;
+		
+		return false;
 	}
 
 	private String checkTextWidgetForNumber(TextBox textBox)

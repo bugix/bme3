@@ -202,7 +202,7 @@
 						 	  		<g:Label styleName="{style.label}" ui:field="sumTrueAnswerLbl"></g:Label>
 						 	  	</td>
 						 	  	<td>
-						 	  		<g:TextBox ui:field="sumTrueAnswerTxtbox" width="150px"></g:TextBox>
+						 	  		<g:TextBox ui:field="sumTrueAnswerTxtbox" value="0" width="150px"></g:TextBox>
 						 	  	</td>
 						 	  </tr>
 						 	  
@@ -211,7 +211,7 @@
 						 	  		<g:Label styleName="{style.label}" ui:field="sumFalseAnswerLbl"></g:Label>
 						 	  	</td>
 						 	  	<td>
-						 	  		<g:TextBox ui:field="sumFalseAnswerTxtbox" width="150px"></g:TextBox>
+						 	  		<g:TextBox ui:field="sumFalseAnswerTxtbox" value="0" width="150px"></g:TextBox>
 						 	  	</td>
 						 	  </tr>
 						 	  

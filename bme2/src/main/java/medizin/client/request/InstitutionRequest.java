@@ -4,7 +4,6 @@ import java.util.List;
 
 import medizin.client.proxy.InstitutionProxy;
 import medizin.client.ui.widget.Sorting;
-import medizin.server.domain.Institution;
 
 import org.springframework.roo.addon.gwt.RooGwtUnmanagedRequest;
 
@@ -22,9 +21,9 @@ public interface InstitutionRequest extends InstitutionRequest_Roo_Gwt {
 	
 	Request<Void> fillCurrentInstitutionNull();
 	
-	Request<List<InstitutionProxy>> findInstitutionByName(String text, int start, int length);
+	Request<List<InstitutionProxy>> findInstitutionByName(String text, Long personId, int start, int length);
 	
-	Request<Long> countInstitutionByName(String text);
+	Request<Long> countInstitutionByName(String text, Long personId);
 	
 	Request<Long> countAllInstitutions(String text);
 			

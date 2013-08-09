@@ -31,7 +31,6 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.SetJoin;
 import javax.persistence.criteria.Subquery;
-import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -40,6 +39,7 @@ import medizin.shared.QuestionTypes;
 import medizin.shared.Status;
 import medizin.shared.utils.SharedConstant;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Value;
@@ -55,7 +55,6 @@ import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.google.web.bindery.requestfactory.server.RequestFactoryServlet;
 
 @RooJavaBean
 @RooToString
@@ -217,9 +216,9 @@ public class Question {
 			Long institutionId, Long eventId, String questiuonStringFilter,
 			Boolean filterQuestionText, Boolean filterKeywords) {
 
-		Institution inst = null;
+		/*Institution inst = null;
 		QuestionEvent event = null;
-		String queryString = "SELECT COUNT(quest) FROM Question quest INNER JOIN quest.questEvent queEvent LEFT JOIN quest.keywords keyw ";
+		String queryString = "SELECT COUNT(DISTINCT quest) FROM Question quest INNER JOIN quest.questEvent queEvent LEFT JOIN quest.keywords keyw ";
 		if (institutionId != null || eventId != null
 				|| !questiuonStringFilter.equals("")) {
 			queryString += "WHERE ";
@@ -267,16 +266,67 @@ public class Question {
 
 		}
 
-		return q.getSingleResult();
+		return q.getSingleResult();*/
+		
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+		Root<Question> from = criteriaQuery.from(Question.class);
+		criteriaQuery.select(criteriaBuilder.count(from)); 			
+		Predicate mainPredicate = null;
+		if (institutionId != null)
+		{
+			Predicate institutePre = criteriaBuilder.equal(from.get("questEvent").get("institution").get("id"), institutionId);
+			mainPredicate = institutePre;
+		}
+		
+		if (eventId != null)
+		{
+			Predicate questionEventPre = criteriaBuilder.equal(from.get("questEvent").get("id"), eventId);
+			if (mainPredicate == null)
+				mainPredicate = questionEventPre;
+			else
+				mainPredicate = criteriaBuilder.and(mainPredicate, questionEventPre);
+		}
+		
+		if (StringUtils.isNotBlank(questiuonStringFilter)) {
+			if (filterQuestionText)
+			{
+				Expression<String> questionTextExp = from.get("questionText");
+				Predicate questionTextPre = criteriaBuilder.like(questionTextExp, "%" + questiuonStringFilter + "%");
+				
+				if (mainPredicate == null)
+					mainPredicate = questionTextPre;
+				else
+					mainPredicate = criteriaBuilder.and(mainPredicate, questionTextPre);
+			}
+			
+			if (filterKeywords)
+			{
+				SetJoin<Question, Keyword> keywordSetJoin = from.joinSet("keywords", JoinType.LEFT);
+				Expression<String> keywordTextExp = keywordSetJoin.get("name");
+				Predicate keywordPre = criteriaBuilder.like(keywordTextExp, "%" + questiuonStringFilter + "%");
+				
+				if (mainPredicate == null)
+					mainPredicate = keywordPre;
+				else
+					mainPredicate = criteriaBuilder.and(mainPredicate, keywordPre);
+			}
+		}
+		
+		if (mainPredicate != null)
+			criteriaQuery.where(mainPredicate);
+		
+		TypedQuery<Long> query = entityManager().createQuery(criteriaQuery);
+		return query.getSingleResult();
 	}
 
 	public static List<Question> findQuestionByInstitutionOrEventOrQuestionNameOrKeyword(
 			Long institutionId, Long eventId, String questiuonStringFilter,
 			Boolean filterQuestionText, Boolean filterKeywords, int start,
 			int length) {
-		Institution inst = null;
+		/*Institution inst = null;
 		QuestionEvent event = null;
-		String queryString = "SELECT quest FROM Question quest INNER JOIN quest.questEvent queEvent LEFT JOIN quest.keywords keyw  ";
+		String queryString = "SELECT DISTINCT quest FROM Question quest INNER JOIN quest.questEvent queEvent LEFT JOIN quest.keywords keyw  ";
 		if (institutionId != null || eventId != null
 				|| !questiuonStringFilter.equals("")) {
 			queryString += "WHERE ";
@@ -327,8 +377,60 @@ public class Question {
 
 		}
 
-		return q.getResultList();
+		return q.getResultList();*/
+		
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Question> criteriaQuery = criteriaBuilder.createQuery(Question.class);
+		Root<Question> from = criteriaQuery.from(Question.class);
+		
+		Predicate mainPredicate = null;
+		if (institutionId != null)
+		{
+			Predicate institutePre = criteriaBuilder.equal(from.get("questEvent").get("institution").get("id"), institutionId);
+			mainPredicate = institutePre;
+		}
+		
+		if (eventId != null)
+		{
+			Predicate questionEventPre = criteriaBuilder.equal(from.get("questEvent").get("id"), eventId);
+			if (mainPredicate == null)
+				mainPredicate = questionEventPre;
+			else
+				mainPredicate = criteriaBuilder.and(mainPredicate, questionEventPre);
+		}
+		
+		if (StringUtils.isNotBlank(questiuonStringFilter)) {
+			if (filterQuestionText)
+			{
+				Expression<String> questionTextExp = from.get("questionText");
+				Predicate questionTextPre = criteriaBuilder.like(questionTextExp, "%" + questiuonStringFilter + "%");
+				
+				if (mainPredicate == null)
+					mainPredicate = questionTextPre;
+				else
+					mainPredicate = criteriaBuilder.and(mainPredicate, questionTextPre);
+			}
+			
+			if (filterKeywords)
+			{
+				SetJoin<Question, Keyword> keywordSetJoin = from.joinSet("keywords", JoinType.LEFT);
+				Expression<String> keywordTextExp = keywordSetJoin.get("name");
+				Predicate keywordPre = criteriaBuilder.like(keywordTextExp, "%" + questiuonStringFilter + "%");
+				
+				if (mainPredicate == null)
+					mainPredicate = keywordPre;
+				else
+					mainPredicate = criteriaBuilder.and(mainPredicate, keywordPre);
+			}
+		}
+		
+		if (mainPredicate != null)
+			criteriaQuery.where(mainPredicate);
 
+		TypedQuery<Question> query = entityManager().createQuery(criteriaQuery);
+		query.setFirstResult(start);
+		query.setMaxResults(length);
+		return query.getResultList();
 	}
 
 	
@@ -1831,4 +1933,6 @@ public class Question {
 		
 		return q.getResultList();
 	}
+	
+	
 }

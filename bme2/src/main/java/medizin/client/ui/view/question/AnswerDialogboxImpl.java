@@ -767,6 +767,13 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 			submitToReviewComitee.addStyleName("higlight_onViolation");
 		}
 		
+		if(author.getSelected() != null && rewiewer.getSelected() != null && author.getSelected().getId().equals(rewiewer.getSelected().getId()) == true) {
+			flag = false;
+			messages.add(constants.authorReviewerMayNotBeSame());
+			author.getTextField().advancedTextBox.addStyleName("higlight_onViolation");
+			rewiewer.getTextField().advancedTextBox.addStyleName("higlight_onViolation");
+		}
+		
 		if(question.getQuestionType() != null && (QuestionTypes.MCQ.equals(question.getQuestionType().getQuestionType()) == false && QuestionTypes.LongText.equals(question.getQuestionType().getQuestionType()) == false)) {
 			if(answerTextArea.getText() == null || answerTextArea.getText().length() <= 0) {
 				flag = false;

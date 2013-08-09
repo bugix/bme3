@@ -4,7 +4,7 @@ import java.util.List;
 
 import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.UserAccessRightsProxy;
-import medizin.server.domain.UserAccessRights;
+import medizin.shared.AccessRights;
 
 import org.springframework.roo.addon.gwt.RooGwtUnmanagedRequest;
 
@@ -29,4 +29,12 @@ public interface UserAccessRightsRequest extends UserAccessRightsRequest_Roo_Gwt
 	Request<List<InstitutionProxy>> findInstituionFromQuestionAccessByPerson(Long personId);
 
 	Request<List<UserAccessRightsProxy>> checkAddAnswerRightsByQuestionAndPerson(Long personid, Long questionid);
+	
+	Request<List<UserAccessRightsProxy>> findQuestionEventAccessByPerson(Long personId);
+	
+	Request<List<UserAccessRightsProxy>> findQuestionAccessByPerson(Long personId);
+	
+	Request<Boolean> persistQuestionEventAccess(AccessRights rights, Long personId, Long questionEventId);
+	
+	Request<Boolean> persistQuestionAccess(AccessRights rights, Long personId, Long questionId);
 }

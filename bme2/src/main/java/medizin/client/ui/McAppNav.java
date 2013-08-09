@@ -189,10 +189,10 @@ public class McAppNav extends Composite {
         initWidget(uiBinder.createAndBindUi(this));
         
 		shell.setNavigation(this);
-        systemOweviewPanel.setOpen(false);
-        managementPanel.setOpen(false);
-        assementPanel.setOpen(false);
-        questionPanel.setOpen(false);
+        /*systemOweviewPanel.setOpen(true);
+        managementPanel.setOpen(true);
+        assementPanel.setOpen(true);
+        questionPanel.setOpen(true);*/
 
     	/*requests.personRequest().myGetLoggedPerson().fire(new Receiver<PersonProxy>(){
 

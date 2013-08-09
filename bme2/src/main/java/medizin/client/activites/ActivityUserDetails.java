@@ -23,6 +23,7 @@ import medizin.client.ui.view.user.QuestionAccessDialogboxImpl;
 import medizin.client.ui.view.user.QuestionAccessView;
 import medizin.client.ui.view.user.UserDetailsView;
 import medizin.client.ui.view.user.UserDetailsViewImpl;
+import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.simple.DefaultSuggestOracle;
 import medizin.shared.AccessRights;
 
@@ -578,6 +579,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 	 */
 	@Override
 	public void addNewEventAccessClicked() {
+
 		institutionFilter=null;
 		eventNameFilter="";
 		dialogBoxEvent = new EventAccessDialogboxImpl();
@@ -663,26 +665,34 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 				ActivityUserDetails.this.onRangeEventAccessByInstitutionOrEventnameChanged();
 			}
 		});
-		
+	
 	}
 	
 	private void initEventAccessDialogbox() {
-		fireQuestionAccessCountByInstitutionOrEventnameRequest(new BMEReceiver<Long>() {
-			@Override
-			public void onSuccess(Long response) {
-				if (view == null) {
-					// This activity is dead
-					return;
-				}
-				Log.debug("Geholte Events aus der Datenbank: " + response);
-				eventAccessTable.setRowCount(response.intValue(), true);
+		if (person != null)
+		{
+			requests.userAccessRightsRequest().findQuestionEventAccessByPerson(person.getId()).with("questionEvent").fire(new BMEReceiver<List<UserAccessRightsProxy>>() {
 
-				onRangeEventAccessByInstitutionOrEventnameChanged();
-			}
-		});
-		
-	
-		
+				@Override
+				public void onSuccess(List<UserAccessRightsProxy> response) {
+					dialogBoxEvent.setUserAccessRightsList(response);
+					
+					fireQuestionAccessCountByInstitutionOrEventnameRequest(new BMEReceiver<Long>() {
+						@Override
+						public void onSuccess(Long response) {
+							if (view == null) {
+								// This activity is dead
+								return;
+							}
+							Log.debug("Geholte Events aus der Datenbank: " + response);
+							eventAccessTable.setRowCount(response.intValue(), true);
+
+							onRangeEventAccessByInstitutionOrEventnameChanged();
+						}
+					});
+				}
+			});
+		}				
 	}
 	private Boolean filterQuestionText = true;
 	private Boolean filterKeywords = false;
@@ -701,22 +711,31 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
     }
 	
 	private void initQuestionAccessDialogbox() {
-		fireQuestionAccessCountByInstitutionOrEventOrQuestionNameOrKeywordRequest(new BMEReceiver<Long>() {
-			@Override
-			public void onSuccess(Long response) {
-				if (view == null) {
-					// This activity is dead
-					return;
-				}
-				Log.debug("Geholte Events aus der Datenbank: " + response);
-				questionAccessTable.setRowCount(response.intValue(), true);
+		if (person != null)
+		{
+			requests.userAccessRightsRequest().findQuestionAccessByPerson(person.getId()).with("question").fire(new BMEReceiver<List<UserAccessRightsProxy>>() {
 
-				onRangeQuestionAccessCountByInstitutionOrEventOrQuestionNameOrKeywordRequest();
-			}
-		});
-		
-	
-		
+				@Override
+				public void onSuccess(List<UserAccessRightsProxy> response) {
+					
+					dialogBoxQuestion.setUserAccessRightsList(response);
+					
+					fireQuestionAccessCountByInstitutionOrEventOrQuestionNameOrKeywordRequest(new BMEReceiver<Long>() {
+						@Override
+						public void onSuccess(Long response) {
+							if (view == null) {
+								// This activity is dead
+								return;
+							}
+							Log.debug("Geholte Events aus der Datenbank: " + response);
+							questionAccessTable.setRowCount(response.intValue(), true);
+
+							onRangeQuestionAccessCountByInstitutionOrEventOrQuestionNameOrKeywordRequest();
+						}
+					});
+				}
+			});
+		}	
 	}
 	
 	protected void onRangeQuestionAccessCountByInstitutionOrEventOrQuestionNameOrKeywordRequest() {
@@ -1062,7 +1081,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 
 	@Override
 	public void addClicked(AccessRights rights, QuestionEventProxy questionEvent) {
-		UserAccessRightsRequest request = requests.userAccessRightsRequest();
+		/*UserAccessRightsRequest request = requests.userAccessRightsRequest();
 		UserAccessRightsProxy eventAccess = request.create(UserAccessRightsProxy.class);
 
 		request.persist().using(eventAccess);
@@ -1079,13 +1098,30 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 	        	  Log.info("PersonSucesfullSaved");
 	        	  
 	        		initEventAccess();
+	        		initEventAccessDialogbox();
 	          //	goTo(new PlaceUser(person.stableId()));
 	          }
 	          
-	         /* public void onFailure(ServerFailure error){
+	          public void onFailure(ServerFailure error){
 					Log.error(error.getMessage());
-				}*/
-	      }); 
+				}
+	      }); */
+		
+		requests.userAccessRightsRequest().persistQuestionEventAccess(rights, person.getId(), questionEvent.getId()).fire(new BMEReceiver<Boolean>() {
+
+			@Override
+			public void onSuccess(Boolean response) {
+				if (response)
+				{
+					initEventAccess();
+					initEventAccessDialogbox();
+				}
+				else
+				{
+					ConfirmationDialogBox.showOkDialogBox(constants.error(), constants.accRightsErrorMsg());
+				}
+			}
+		});
 		
 		
 	}
@@ -1217,7 +1253,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 
 		@Override
 		public void addClicked(AccessRights rights, QuestionProxy question) {
-			Log.debug("im add clicked");
+			/*Log.debug("im add clicked");
 			UserAccessRightsRequest request = requests.userAccessRightsRequest();
 			UserAccessRightsProxy eventAccess = request.create(UserAccessRightsProxy.class);
 
@@ -1235,13 +1271,30 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 		        	  Log.info("eventAccessnSucesfullSaved");
 		        	  
 		        		initQuestionAccess();
+		        		initQuestionAccessDialogbox();
 		          //	goTo(new PlaceUser(person.stableId()));
 		          }
 		          
-		         /* public void onFailure(ServerFailure error){
+		          public void onFailure(ServerFailure error){
 						Log.error(error.getMessage());
-					}*/
-		      }); 
+					}
+		      }); */
+			
+			requests.userAccessRightsRequest().persistQuestionAccess(rights, person.getId(), question.getId()).fire(new BMEReceiver<Boolean>() {
+
+				@Override
+				public void onSuccess(Boolean response) {
+					if (response)
+					{
+						initQuestionAccess();
+						initQuestionAccessDialogbox();
+					}
+					else
+					{
+						ConfirmationDialogBox.showOkDialogBox(constants.error(), constants.accRightsErrorMsg());
+					}
+				}
+			});
 		}
 		
 		public void filterQuestionChanged(String text) {			
@@ -1331,6 +1384,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 						@Override
 						public void onSuccess(Void response) {
 							initInstituteAccess();
+							initInstituteAccessDialogBox();
 						}
 						
 						/*@Override
@@ -1434,22 +1488,25 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 
 		public void initInstituteAccessDialogBox()
 		{
-			requests.institutionRequest().countInstitutionByName(instituteSearchText).fire(new BMEReceiver<Long>() {
+			if (person != null)
+			{
+				requests.institutionRequest().countInstitutionByName(instituteSearchText, person.getId()).fire(new BMEReceiver<Long>() {
 
-				@Override
-				public void onSuccess(Long response) {
-					dialogBoxInstitute.getTable().setRowCount(response.intValue(), true);
-					
-					final Range range = dialogBoxInstitute.getTable().getVisibleRange();
-					requests.institutionRequest().findInstitutionByName(instituteSearchText, range.getStart(), range.getLength()).fire(new BMEReceiver<List<InstitutionProxy>>() {
+					@Override
+					public void onSuccess(Long response) {
+						dialogBoxInstitute.getTable().setRowCount(response.intValue(), true);
+						
+						final Range range = dialogBoxInstitute.getTable().getVisibleRange();
+						requests.institutionRequest().findInstitutionByName(instituteSearchText, person.getId(), range.getStart(), range.getLength()).fire(new BMEReceiver<List<InstitutionProxy>>() {
 
-						@Override
-						public void onSuccess(List<InstitutionProxy> list) {
-							dialogBoxInstitute.getTable().setRowData(range.getStart(), list);
-						}
-					});
-				}
-			});
+							@Override
+							public void onSuccess(List<InstitutionProxy> list) {
+								dialogBoxInstitute.getTable().setRowData(range.getStart(), list);
+							}
+						});
+					}
+				});
+			}
 		}
 		
 		@Override
