@@ -13,6 +13,10 @@ public class PlaceInstitution extends AbstractPlace {
 		super(placeName);
 	}
 
+	public PlaceInstitution(String placeName, boolean reload) {
+		super(placeName, reload);
+	}
+
 	@Prefix(PLACE_INSTITUTION)
 	public static class Tokenizer extends AbstractPlace.AbstractTokenizer<PlaceInstitution> {
 

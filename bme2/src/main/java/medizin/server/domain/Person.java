@@ -7,6 +7,7 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.FlushModeType;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.TypedQuery;
@@ -347,4 +348,27 @@ public class Person {
     		return resultList.get(0);
     	}
 	}
+	
+	 public static Person getLoggedPersonByShibId() {
+		 HttpSession session = RequestFactoryServlet.getThreadLocalRequest().getSession();
+	     String personShibId = "";
+	     
+	     if (session.getAttribute(ServerConstants.SESSION_SHIBD_ID_KEY) != null)
+	     {
+	    	 personShibId = session.getAttribute(ServerConstants.SESSION_SHIBD_ID_KEY).toString();
+	     }
+		 
+		 TypedQuery<Person> query =  entityManager().createQuery("select o from Person o WHERE o.shidId LIKE '" + personShibId + "'", Person.class);
+	    
+		 query.setFlushMode(FlushModeType.COMMIT);
+		 
+		 List<Person> resultList = query.getResultList();
+	    	
+		 if(resultList == null || resultList.isEmpty()) {
+			 return null;
+		 }
+		 else {
+			 return resultList.get(0);
+		 }
+	 }
 }

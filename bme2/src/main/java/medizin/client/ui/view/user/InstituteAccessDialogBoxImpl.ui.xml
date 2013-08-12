@@ -82,10 +82,9 @@
 			<b:SimplePager display="{tableEvent}" location="RIGHT" />
 		</div> -->
 
-		<div style="height:3em;" />
 		<div class="{style.barNew}">
 			<my:IconButton ui:field="closeButton" icon="closethick"
-				addStyleNames="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only {style.right}">Schliessen</my:IconButton>
+				addStyleNames="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only {style.right}"></my:IconButton>
 		</div>
 	</g:HTMLPanel>
 </ui:UiBinder> 

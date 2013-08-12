@@ -84,6 +84,7 @@ public class EventAccessDialogboxImpl extends DialogBox implements EventAccessDi
 	    
 	    init();
 	    
+	    closeButton.setText(constants.close());
 	}
 
 	  private List<AbstractEditableCell<?, ?>> editableCells;
@@ -289,10 +290,6 @@ public class EventAccessDialogboxImpl extends DialogBox implements EventAccessDi
 	@UiField
     TextBox searchEvent;
 	
-	
-	
-	
-
 	private Delegate delegate;
 
 	public DefaultSuggestBox<InstitutionProxy, EventHandlingValueHolderItem<InstitutionProxy>> getSearchInstitution() {
@@ -354,7 +351,12 @@ public class EventAccessDialogboxImpl extends DialogBox implements EventAccessDi
 	        				
 	        				if (readButtonFlag == false)
 	        				{
-	        					super.render(context, value, sb);
+	        					boolean writeButtonFlag = checkAccessRights(value, AccessRights.AccWrite);
+	        					
+	        					if (writeButtonFlag)
+	        						sb.append(READ_DISABLED_BUTTON);
+	        					else
+	        						super.render(context, value, sb);
 	        				}
 	        				else if (readButtonFlag == true)
 	        				{

@@ -372,6 +372,55 @@ public class UserAccessRights {
 	
 	public static Boolean persistQuestionEventAccess(AccessRights rights, Long personId, Long questionEventId)
 	{
+		if (rights.equals(AccessRights.AccWrite))
+		{
+			UserAccessRights userAccessRights = checkAccessRightsForQuestionEvent(AccessRights.AccRead, personId, questionEventId);
+			if (userAccessRights != null)
+				userAccessRights.remove();
+		}
+		
+		UserAccessRights userAccRights = checkAccessRightsForQuestionEvent(rights, personId, questionEventId);
+		
+		if (userAccRights != null)
+			return false;
+		else
+		{
+			UserAccessRights userAccessRights = new UserAccessRights();
+			userAccessRights.setAccRights(rights);
+			userAccessRights.setPerson(Person.findPerson(personId));
+			userAccessRights.setQuestionEvent(QuestionEvent.findQuestionEvent(questionEventId));
+			userAccessRights.persist();
+			return true;
+		}
+	}
+	
+	public static Boolean persistQuestionAccess(AccessRights rights, Long personId, Long questionId)
+	{
+		if (rights.equals(AccessRights.AccWrite))
+		{
+			UserAccessRights readRights = checkAccessRightsForQuestion(AccessRights.AccRead, personId, questionId);
+			
+			if (readRights != null)
+				readRights.remove();			
+		}
+		
+		UserAccessRights userAccssRight = checkAccessRightsForQuestion(rights, personId, questionId);
+		
+		if (userAccssRight != null)
+			return false;
+		else
+		{
+			UserAccessRights userAccessRights = new UserAccessRights();
+			userAccessRights.setAccRights(rights);
+			userAccessRights.setPerson(Person.findPerson(personId));
+			userAccessRights.setQuestion(Question.findQuestion(questionId));
+			userAccessRights.persist();
+			return true;
+		}
+	}
+
+	public static UserAccessRights checkAccessRightsForQuestionEvent(AccessRights rights, Long personId, Long questionEventId)
+	{
 		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
 		CriteriaQuery<UserAccessRights> criteriaQuery = criteriaBuilder.createQuery(UserAccessRights.class);
 		Root<UserAccessRights> from = criteriaQuery.from(UserAccessRights.class);
@@ -386,20 +435,13 @@ public class UserAccessRights {
 		
 		TypedQuery<UserAccessRights> query = entityManager().createQuery(criteriaQuery);
 		
-		if (query.getResultList() != null && query.getResultList().size() > 0)
-			return false;
+		if (query.getResultList() != null && query.getResultList().isEmpty() == false)
+			return query.getResultList().get(0);
 		else
-		{
-			UserAccessRights userAccessRights = new UserAccessRights();
-			userAccessRights.setAccRights(rights);
-			userAccessRights.setPerson(Person.findPerson(personId));
-			userAccessRights.setQuestionEvent(QuestionEvent.findQuestionEvent(questionEventId));
-			userAccessRights.persist();
-			return true;
-		}
+			return null;		
 	}
 	
-	public static Boolean persistQuestionAccess(AccessRights rights, Long personId, Long questionId)
+	public static UserAccessRights checkAccessRightsForQuestion(AccessRights rights, Long personId, Long questionId)
 	{
 		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
 		CriteriaQuery<UserAccessRights> criteriaQuery = criteriaBuilder.createQuery(UserAccessRights.class);
@@ -415,16 +457,9 @@ public class UserAccessRights {
 		
 		TypedQuery<UserAccessRights> query = entityManager().createQuery(criteriaQuery);
 		
-		if (query.getResultList() != null && query.getResultList().size() > 0)
-			return false;
+		if (query.getResultList() != null && query.getResultList().isEmpty() == false)
+			return query.getResultList().get(0);
 		else
-		{
-			UserAccessRights userAccessRights = new UserAccessRights();
-			userAccessRights.setAccRights(rights);
-			userAccessRights.setPerson(Person.findPerson(personId));
-			userAccessRights.setQuestion(Question.findQuestion(questionId));
-			userAccessRights.persist();
-			return true;
-		}
+			return null;
 	}
 }

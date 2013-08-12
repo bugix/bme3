@@ -12,6 +12,10 @@ public class PlaceOpenDemand extends AbstractPlace {
 		super(placeName);
 	}
 
+	public PlaceOpenDemand(String placeName, boolean reload) {
+		super(placeName, reload);
+	}
+
 	@Prefix(PLACE_OPEN_DEMAND)
 	public static class Tokenizer extends AbstractPlace.AbstractTokenizer<PlaceOpenDemand> {
 

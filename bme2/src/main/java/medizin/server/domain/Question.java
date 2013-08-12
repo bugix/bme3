@@ -20,6 +20,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PostRemove;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
@@ -37,6 +39,8 @@ import javax.validation.constraints.Size;
 import medizin.server.utils.BMEUtils;
 import medizin.shared.QuestionTypes;
 import medizin.shared.Status;
+import medizin.shared.criteria.AdvancedSearchCriteria;
+import medizin.shared.criteria.AdvancedSearchCriteriaUtils;
 import medizin.shared.utils.SharedConstant;
 
 import org.apache.commons.lang3.StringUtils;
@@ -1933,6 +1937,29 @@ public class Question {
 		
 		return q.getResultList();
 	}
-	
-	
+		
+	@PrePersist
+	@PreUpdate
+	public void preQuestionPersist()
+	{
+		Person loggedPerson = Person.getLoggedPersonByShibId();
+		
+		if (loggedPerson != null)
+		{
+			if (this.previousVersion != null)
+			{
+				if (this.createdBy == null)
+					this.setCreatedBy(this.previousVersion.getCreatedBy());
+				
+				this.setModifiedBy(loggedPerson);				
+			}
+			else if (this.previousVersion == null)
+			{
+				if (this.createdBy == null)
+					this.setCreatedBy(loggedPerson);
+				else if (this.createdBy != null)
+					this.setModifiedBy(loggedPerson);
+			}
+		}		
+	}
 }

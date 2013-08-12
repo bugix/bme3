@@ -11,6 +11,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.PostRemove;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
@@ -583,5 +585,20 @@ public class Answer {
 		
         TypedQuery<Answer> q = entityManager().createQuery(cq);
         return q.getResultList();
+	}
+	
+	@PrePersist
+	@PreUpdate
+	public void preAnswerPersist()
+	{
+		Person loggedPerson = Person.getLoggedPersonByShibId();
+		
+		if (loggedPerson == null)
+		{
+			if (this.createdBy == null)
+				this.setCreatedBy(loggedPerson);
+			else if (this.createdBy != null)
+				this.setModifiedBy(loggedPerson);
+		}
 	}
 }

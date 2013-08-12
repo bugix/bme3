@@ -91,6 +91,7 @@ public class QuestionAccessDialogboxImpl extends DialogBox implements QuestionAc
 	    
 	    checkKeywords.setText(constants.keyword());
 		checkQuestiontext.setText(constants.question());
+		closeButton.setText(constants.close());
 	}
 
 	  private List<AbstractEditableCell<?, ?>> editableCells;
@@ -415,7 +416,14 @@ public class QuestionAccessDialogboxImpl extends DialogBox implements QuestionAc
 						boolean readButtonFlag = checkAccessRights(value, AccessRights.AccRead);
 						
 						if (readButtonFlag == false)
-							super.render(context, value, sb);
+						{
+							boolean writeButtonFlag = checkAccessRights(value, AccessRights.AccWrite);
+        					
+        					if (writeButtonFlag)
+        						sb.append(READ_DISABLED_BUTTON);
+        					else
+        						super.render(context, value, sb);
+						}
 						else if (readButtonFlag == true)
 							sb.append(READ_DISABLED_BUTTON);
 					}					

@@ -66,9 +66,7 @@ public class InstituteAccessDialogBoxImpl extends DialogBox implements Institute
 	    
 	    //tableEvent.getColumn(1).setCellStyleNames("cellStyle");
 	    
-	  
-	    
-	    
+	    closeButton.setText(constants.close());
 	}
 
 	public BmeConstants constants = GWT.create(BmeConstants.class);
