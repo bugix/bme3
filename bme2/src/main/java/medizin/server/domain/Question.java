@@ -39,8 +39,6 @@ import javax.validation.constraints.Size;
 import medizin.server.utils.BMEUtils;
 import medizin.shared.QuestionTypes;
 import medizin.shared.Status;
-import medizin.shared.criteria.AdvancedSearchCriteria;
-import medizin.shared.criteria.AdvancedSearchCriteriaUtils;
 import medizin.shared.utils.SharedConstant;
 
 import org.apache.commons.lang3.StringUtils;
