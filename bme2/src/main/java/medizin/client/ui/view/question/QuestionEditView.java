@@ -8,6 +8,7 @@ import medizin.client.proxy.McProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
+import medizin.client.proxy.QuestionResourceProxy;
 import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 
@@ -72,4 +73,6 @@ public interface QuestionEditView extends IsWidget {
 	void comfirmQuestionChanges(Function<Boolean, Void> isMajorOrMinor);
 	
 	Long getAuthorId();
+	
+	void addPictureToQuestionResources(QuestionResourceProxy questionResourceProxyForPicture);
 }

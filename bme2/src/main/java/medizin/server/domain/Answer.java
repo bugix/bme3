@@ -591,7 +591,7 @@ public class Answer {
 	@PreUpdate
 	public void preAnswerPersist()
 	{
-		Person loggedPerson = Person.getLoggedPersonByShibId();
+		Person loggedPerson = Person.findLoggedPersonByShibId();
 		
 		if (loggedPerson == null)
 		{

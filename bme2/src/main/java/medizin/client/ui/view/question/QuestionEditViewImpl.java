@@ -436,14 +436,13 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 			
 		case Imgkey:
 		{
-			//setImageViewer(questionTypeProxy, question,QuestionTypes.Imgkey);
-			setImageViewerForShowInImg(questionTypeProxy, question,QuestionTypes.Imgkey);
+			setImageViewer(questionTypeProxy, question,QuestionTypes.Imgkey);
 			break;
 		}
 			
 		case ShowInImage:
 		{
-			setImageViewerForShowInImg(questionTypeProxy, question,QuestionTypes.ShowInImage);
+			setImageViewer(questionTypeProxy, question,QuestionTypes.ShowInImage);
 			break;
 		}
 		
@@ -464,8 +463,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		
 	}
 	
-	// for image key question
-	private void setImageViewer(final QuestionTypeProxy questionTypeProxy, QuestionProxy questionProxy,final QuestionTypes type) {
+	private void setImageViewer(final QuestionTypeProxy questionTypeProxy, final QuestionProxy questionProxy,final QuestionTypes type) {
 		
 		//remove extra part
 		clearMediaContainer();
@@ -479,111 +477,26 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		}
 		
 		this.imageViewer.clear();
-		if(questionProxy != null && questionProxy.getPicturePath() != null && questionProxy.getPicturePath().length() > 0) {
-			imageViewer.setUrl(questionProxy.getPicturePath(), questionTypeProxy.getImageWidth(), questionTypeProxy.getImageHeight(), type);
-		}					
+		if(questionProxy != null ) {
+			List<QuestionResourceProxy> questionResources = Lists.newArrayList(questionProxy.getQuestionResources());
 			
-		ArrayList<String> allowedExt = new ArrayList<String>();
-		Map<MultimediaType, String> paths = Maps.newHashMap();
-		
-		allowedExt.addAll(Arrays.asList(SharedConstant.IMAGE_EXTENSIONS));
-		paths.put(MultimediaType.Image, SharedConstant.UPLOAD_MEDIA_IMAGES_PATH);
-		
-		ResourceUpload resourceUpload = new ResourceUpload(allowedExt,paths,this.eventBus); 
-		
-		resourceUpload.addResourceUploadedHandler(new ResourceUploadEventHandler() {
+			if(questionResources != null && questionResources.isEmpty() == false) {
 			
-			@Override
-			public void onResourceUploaded(final ResourceUploadEvent event) {
-
-				final String filePath = event.getFilePath();
-				
-				if(event.isResourceUploaded() == true) {
-					Log.info("filePath is " + filePath);
-					
-					// for image
-					final String url = new String(GWT.getHostPageBaseURL() + filePath);
-					if(questionTypeProxy != null && questionTypeProxy.getImageWidth() != null && questionTypeProxy.getImageHeight() != null) {
+				final QuestionResourceProxy questionResourceProxy = questionResources.get(0);
+				final Integer width = questionResourceProxy.getImageWidth();
+				final Integer height = questionResourceProxy.getImageHeight();
+				final String imagePath = questionResourceProxy.getPath();
 						
-						Function<Boolean, Void> function = new Function<Boolean, Void>() {
-							
-							@Override
-							public Void apply(Boolean flag) {
-						
-								if(flag != null && flag == true) {
-									Log.info("picturePath : " + filePath);
-									if(imageViewer != null && imageViewer.getImageUrl() != null && imageViewer.getImageUrl().length() > 0) {
-										// delete old files
-										Log.info("Delete old uploaded file " + imageViewer.getImageUrl().toString());
-										delegate.deleteMediaFileFromDisk(imageViewer.getImageUrl().replace(GWT.getHostPageBaseURL(), ""));
-									}
-									
-									imageViewer.setUrl(filePath, questionTypeProxy.getImageWidth(), questionTypeProxy.getImageHeight(), type);	
-								} else {
-									ErrorPanel errorPanel = new ErrorPanel();
-									errorPanel.setErrorMessage("Only Upload image of size" + questionTypeProxy.getImageWidth() + "*" + questionTypeProxy.getImageHeight());
-									delegate.deleteMediaFileFromDisk(filePath);
-								}
-
-								return null;
-							}
-						};
-						
-						if(event.getWidth() != null && event.getHeight() != null) {
-							if(event.getWidth().equals(questionTypeProxy.getImageWidth()) && event.getHeight().equals(questionTypeProxy.getImageHeight())) {
-								function.apply(true);
-							}else {
-								function.apply(false);
-							}
-						}else {
-							ClientUtility.checkImageSize(url,questionTypeProxy.getImageWidth(),questionTypeProxy.getImageHeight(),function);
-						}
-							
-					}else {
-						Log.error("Error in questionType.");
-					}
-				}else {
-					Log.error("Upload fail.");
+				if (width != null && height != null)
+				{
+					imageViewer.setUrl(imagePath, width, height, type);
+				}
+				else
+				{
+					imageViewer.setUrl(imagePath, null, null, type);
 				}
 			}
-		});
-		
-		setMediaContainer(resourceUpload,paths.keySet(), imageViewer);
-	}
-	
-	private void setImageViewerForShowInImg(final QuestionTypeProxy questionTypeProxy, final QuestionProxy questionProxy,final QuestionTypes type) {
-		
-		//remove extra part
-		clearMediaContainer();
-		
-		final ImageViewer imageViewer;
-		if(this.imageViewer == null) {
-			imageViewer = new ImageViewer();
-			this.imageViewer = imageViewer;
-		}else {
-			imageViewer = this.imageViewer;	
 		}
-		
-		this.imageViewer.clear();
-		if(questionProxy != null && questionProxy.getPicturePath() != null && questionProxy.getPicturePath().length() > 0) {
-			
-			if (questionProxy.getImageWidth() != null && questionProxy.getImageHeight() != null)
-			{
-				imageViewer.setUrl(questionProxy.getPicturePath(), questionProxy.getImageWidth(), questionProxy.getImageHeight(), type);
-			}
-			else
-			{
-				imageViewer.setUrl(questionProxy.getPicturePath(), null, null, type);
-				/*ClientUtility.getImageWidthHeight(questionProxy.getPicturePath(), new ImageWidthHeight() {
-					
-					@Override
-					public void apply(Integer width, Integer height) {
-						imageViewer.setUrl(questionProxy.getPicturePath(), width, height, type);
-					}
-				});*/
-			}
-						
-		}					
 			
 		ArrayList<String> allowedExt = new ArrayList<String>();
 		Map<MultimediaType, String> paths = Maps.newHashMap();
@@ -604,7 +517,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 					Log.info("filePath is " + filePath);
 					
 					// for image
-					final String url = new String(GWT.getHostPageBaseURL() + filePath);
+					//final String url = new String(GWT.getHostPageBaseURL() + filePath);
 					if(questionTypeProxy != null/* && questionTypeProxy.getImageWidth() != null && questionTypeProxy.getImageHeight() != null*/) {
 						
 						Function<Boolean, Void> function = new Function<Boolean, Void>() {
@@ -886,7 +799,21 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 
 	@Override
 	public void setValuesForQuestion(QuestionProxy question, CommentProxy commentProxy) {
-		
+		question.setQuestionType(questionType.getValue());
+		question.setQuestionShortName(questionShortName.getText());
+		question.setQuestionText(questionTextArea.getHTML());
+		question.setAutor(author.getSelected());
+		question.setRewiewer(rewiewer.getSelected());
+		question.setSubmitToReviewComitee(submitToReviewComitee.getValue());
+		question.setQuestEvent(questEvent.getValue());
+		question.setMcs(mcs.getValue());
+		commentProxy.setComment(questionComment.getText().isEmpty() == true ? " " : questionComment.getText());
+		question.setComment(commentProxy);
+	}
+
+	
+	@Override
+	public void addPictureToQuestionResources(QuestionResourceProxy questionResourceProxy) {
 		String picturePath = null;
 		Integer height = null;
 		Integer width = null;
@@ -899,6 +826,9 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 			picturePath = imageViewer.getImageRelativeUrl();
 			height = imageViewer.getHeight();
 			width = imageViewer.getWidth();
+			questionResourceProxy.setImageHeight(height);
+			questionResourceProxy.setImageWidth(width);
+			questionResourceProxy.setPath(picturePath);
 			break;
 		}
 		
@@ -913,21 +843,13 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		}
 		} 
 		
-		question.setQuestionType(questionType.getValue());
-		question.setQuestionShortName(questionShortName.getText());
-		question.setQuestionText(questionTextArea.getHTML());
-		question.setAutor(author.getSelected());
-		question.setRewiewer(rewiewer.getSelected());
-		question.setSubmitToReviewComitee(submitToReviewComitee.getValue());
-		question.setQuestEvent(questEvent.getValue());
-		question.setMcs(mcs.getValue());
-		commentProxy.setComment(questionComment.getText().isEmpty() == true ? " " : questionComment.getText());
-		question.setComment(commentProxy);
-		question.setPicturePath(picturePath);
-		question.setImageHeight(height);
-		question.setImageWidth(width);
-	}
+		
 
+		/*question.setPicturePath(picturePath);
+		question.setImageHeight(height);
+		question.setImageWidth(width);*/
+	}
+	
 	@Override
 	public void comfirmQuestionChanges(Function<Boolean, Void> isMajorOrMinor) {
 		new ConfirmQuestionChangesPopup(isMajorOrMinor);
@@ -941,5 +863,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		
 		return author.getSelected().getId();
 	}
+
+	
 
 }

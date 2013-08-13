@@ -1,15 +1,10 @@
 package medizin.client.ui.view.question;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.KeywordProxy;
 import medizin.client.proxy.QuestionProxy;
-import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.style.resources.MyCellTableNoHilightResources;
 import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
@@ -20,31 +15,15 @@ import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEvent
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEventHandler;
 import medizin.client.ui.widget.resource.dndview.ResourceView;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
-import medizin.client.ui.widget.resource.dndview.vo.State;
-import medizin.client.ui.widget.resource.event.ResourceAddedEvent;
-import medizin.client.ui.widget.resource.event.ResourceAddedEventHandler;
-import medizin.client.ui.widget.resource.event.ResourceDeletedEvent;
-import medizin.client.ui.widget.resource.event.ResourceDeletedEventHandler;
-import medizin.client.ui.widget.resource.event.ResourceSequenceChangedEvent;
-import medizin.client.ui.widget.resource.event.ResourceSequenceChangedHandler;
-import medizin.client.ui.widget.resource.image.ImageViewer;
-import medizin.client.ui.widget.resource.upload.ResourceUpload;
-import medizin.client.ui.widget.resource.upload.event.ResourceUploadEvent;
-import medizin.client.ui.widget.resource.upload.event.ResourceUploadEventHandler;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.EventHandlingValueHolderItem;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
 import medizin.client.util.ClientUtility;
-import medizin.shared.MultimediaType;
 import medizin.shared.QuestionTypes;
 import medizin.shared.i18n.BmeConstants;
 import medizin.shared.i18n.BmeMessages;
-import medizin.shared.utils.SharedConstant;
-import medizin.shared.utils.SharedUtility;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.base.Function;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.google.gwt.cell.client.AbstractEditableCell;
 import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.Cell;
@@ -62,7 +41,6 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -459,6 +437,7 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 			switch (questionType) {
 			
 			case Textual:
+			case Sort:
 			{
 				if(proxy != null && proxy.getQuestionType()!= null && proxy.getQuestionType().getQueHaveImage() != null &&  proxy.getQuestionType().getQueHaveSound() != null && proxy.getQuestionType().getQueHaveVideo() != null) {
 					//setResourceUploadAndResourceViewer(proxy.getQuestionType(),proxy);
@@ -473,53 +452,23 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 			}	
 				
 			case Imgkey:
-			{
-				if(proxy != null && proxy.getQuestionType()!= null && proxy.getQuestionType().getQuestionType() != null && proxy.getPicturePath() != null) {
-					//imageViewer(proxy.getQuestionType(),proxy,QuestionTypes.Imgkey);
-					QuestionResourceClient client = new QuestionResourceClient();
-					client.setPath(proxy.getPicturePath());
-					client.setSequenceNumber(0);
-					client.setState(State.CREATED);
-					client.setType(MultimediaType.Image);
-					questionResourceClients.add(client);
-					haveImage = true;
-					isAdded = true;
-				}
-				
-				break;
-			}
-				
 			case ShowInImage:
 			{
-				if(proxy != null && proxy.getQuestionType()!= null && proxy.getQuestionType().getQuestionType() != null && proxy.getPicturePath() != null) {
-					//imageViewer(proxy.getQuestionType(),proxy,QuestionTypes.ShowInImage);
-					QuestionResourceClient client = new QuestionResourceClient();
+				if(proxy != null && proxy.getQuestionType()!= null && proxy.getQuestionType().getQuestionType() != null /*&& proxy.getPicturePath() != null*/) {
+					//imageViewer(proxy.getQuestionType(),proxy,QuestionTypes.Imgkey);
+					questionResourceClients = ClientUtility.getQuestionResourceClient(proxy.getQuestionResources());
+					/*QuestionResourceClient client = new QuestionResourceClient();
 					client.setPath(proxy.getPicturePath());
 					client.setSequenceNumber(0);
 					client.setState(State.CREATED);
 					client.setType(MultimediaType.Image);
-					questionResourceClients.add(client);
+					questionResourceClients.add(client);*/
 					haveImage = true;
 					isAdded = true;
 				}
 				
 				break;
 			}
-			
-			case Sort:
-			{
-				if(proxy != null && proxy.getQuestionType()!= null && proxy.getQuestionType().getQueHaveImage() != null &&  proxy.getQuestionType().getQueHaveSound() != null && proxy.getQuestionType().getQueHaveVideo() != null) {
-					//setResourceUploadAndResourceViewer(proxy.getQuestionType(),proxy);
-					questionResourceClients = ClientUtility.getQuestionResourceClient(proxy.getQuestionResources());
-					haveImage = proxy.getQuestionType().getQueHaveImage();
-					haveSound = proxy.getQuestionType().getQueHaveSound();
-					haveVideo = proxy.getQuestionType().getQueHaveVideo();
-					isAdded = true;
-				}
-				
-				break;
-			}
-				
 			default:
 			{
 				Log.info("in default case");
@@ -644,7 +593,7 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 
 	}
 	
-	private void setResourceUploadAndResourceViewer(QuestionTypeProxy questionTypeProxy, QuestionProxy question) { 
+	/*private void setResourceUploadAndResourceViewer(QuestionTypeProxy questionTypeProxy, QuestionProxy question) { 
 		
 		final ResourceView resourceView = new ResourceView(eventBus,ClientUtility.getQuestionResourceClient(question.getQuestionResources()), proxy.getQuestionType().getQuestionType(), proxy.getQuestionType().getQueHaveImage(),proxy.getQuestionType().getQueHaveSound(),proxy.getQuestionType().getQueHaveVideo(),false);
 		
@@ -762,7 +711,7 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 		});
 		
 		
-		/*VerticalPanel panel = new VerticalPanel();
+		VerticalPanel panel = new VerticalPanel();
 		panel.setWidth("100%");
 		HorizontalPanel h1 =  new HorizontalPanel();
 		HorizontalPanel h2 = new HorizontalPanel();
@@ -772,16 +721,16 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 		h2.add(resourceView);
 		panel.add(h1);
 		panel.add(h2);
-		questionTypeDetailPanel.add(panel, constants.media());*/
+		questionTypeDetailPanel.add(panel, constants.media());
 		
 		
-		/*resourceUploadPanel.add(lblUploadText);
-		resourceUploadPanel.add(resourceUpload);*/
+		resourceUploadPanel.add(lblUploadText);
+		resourceUploadPanel.add(resourceUpload);
 		resourceViewPanel.add(resourceView);
 
-	}
+	}*/
 
-	private void imageViewer(final QuestionTypeProxy questionTypeProxy,QuestionProxy questionProxy,final QuestionTypes type) {
+	/*private void imageViewer(final QuestionTypeProxy questionTypeProxy,QuestionProxy questionProxy,final QuestionTypes type) {
 		final ImageViewer imageViewer = new ImageViewer();
 		if(questionProxy.getPicturePath() != null && questionProxy.getPicturePath().length() > 0) {
 			imageViewer.setUrl(questionProxy.getPicturePath(),questionTypeProxy.getImageWidth(),questionTypeProxy.getImageHeight(), type);
@@ -857,7 +806,7 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 			}
 		});
 		
-		/*VerticalPanel panel = new VerticalPanel();
+		VerticalPanel panel = new VerticalPanel();
 		panel.setWidth("100%");
 		HorizontalPanel h1 =  new HorizontalPanel();
 		HorizontalPanel h2 = new HorizontalPanel();
@@ -868,12 +817,12 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 		panel.add(h1);
 		panel.add(h2);
 		
-		questionTypeDetailPanel.add(panel, constants.media());*/
+		questionTypeDetailPanel.add(panel, constants.media());
 		
-		/*resourceUploadPanel.add(lblUploadText);
-		resourceUploadPanel.add(resourceUpload);*/
+		resourceUploadPanel.add(lblUploadText);
+		resourceUploadPanel.add(resourceUpload);
 		resourceViewPanel.add(imageViewer);
-	}
+	}*/
 	
 	public void setVisibleEditAndDeleteBtn(Boolean flag)
 	{

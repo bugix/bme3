@@ -51,14 +51,11 @@ privileged aspect QuestionDataOnDemand_Roo_DataOnDemand {
         setAutor(obj, index);
         setDateAdded(obj, index);
         setDateChanged(obj, index);
-        setImageHeight(obj, index);
-        setImageWidth(obj, index);
         setIsAcceptedAdmin(obj, index);
         setIsAcceptedAuthor(obj, index);
         setIsAcceptedRewiever(obj, index);
         setIsForcedActive(obj, index);
         setIsReadOnly(obj, index);
-        setPicturePath(obj, index);
         setPreviousVersion(obj, index);
         setQuestEvent(obj, index);
         setQuestionShortName(obj, index);
@@ -86,16 +83,6 @@ privileged aspect QuestionDataOnDemand_Roo_DataOnDemand {
         obj.setDateChanged(dateChanged);
     }
     
-    public void QuestionDataOnDemand.setImageHeight(Question obj, int index) {
-        Integer imageHeight = new Integer(index);
-        obj.setImageHeight(imageHeight);
-    }
-    
-    public void QuestionDataOnDemand.setImageWidth(Question obj, int index) {
-        Integer imageWidth = new Integer(index);
-        obj.setImageWidth(imageWidth);
-    }
-    
     public void QuestionDataOnDemand.setIsAcceptedAdmin(Question obj, int index) {
         Boolean isAcceptedAdmin = Boolean.TRUE;
         obj.setIsAcceptedAdmin(isAcceptedAdmin);
@@ -119,14 +106,6 @@ privileged aspect QuestionDataOnDemand_Roo_DataOnDemand {
     public void QuestionDataOnDemand.setIsReadOnly(Question obj, int index) {
         Boolean isReadOnly = Boolean.TRUE;
         obj.setIsReadOnly(isReadOnly);
-    }
-    
-    public void QuestionDataOnDemand.setPicturePath(Question obj, int index) {
-        String picturePath = "picturePath_" + index;
-        if (picturePath.length() > 255) {
-            picturePath = picturePath.substring(0, 255);
-        }
-        obj.setPicturePath(picturePath);
     }
     
     public void QuestionDataOnDemand.setPreviousVersion(Question obj, int index) {

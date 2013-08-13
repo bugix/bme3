@@ -23,10 +23,6 @@ public interface QuestionProxy extends EntityProxy {
 
     abstract void setQuestionText(String questionText);
 
-    abstract String getPicturePath();
-
-    abstract void setPicturePath(String picturePath);
-
     abstract Integer getQuestionVersion();
 
     abstract void setQuestionVersion(Integer questionVersion);
@@ -114,14 +110,6 @@ public interface QuestionProxy extends EntityProxy {
     abstract Boolean getIsReadOnly();
 
     abstract void setIsReadOnly(Boolean isReadOnly);
-
-    abstract Integer getImageHeight();
-
-    abstract void setImageHeight(Integer imageHeight);
-
-    abstract Integer getImageWidth();
-
-    abstract void setImageWidth(Integer imageWidth);
 
     abstract Set<medizin.client.proxy.AssesmentQuestionProxy> getAssesmentQuestionSet();
 

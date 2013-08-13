@@ -359,11 +359,11 @@ public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper
 	@Override
 	public void addNewQuestionResource(QuestionResourceClient questionResourceClient) {}
 
-	@Override
+	/*@Override
 	public void updatePicturePathInQuestion(String picturePath) {}
 
 	@Override
-	public void deleteUploadedPicture(String picturePath) {}
+	public void deleteUploadedPicture(String picturePath) {}*/
 
 	@Override
 	public void deleteUploadedFiles(Set<String> paths) {}

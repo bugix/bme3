@@ -349,7 +349,7 @@ public class Person {
     	}
 	}
 	
-	 public static Person getLoggedPersonByShibId() {
+	 public static Person findLoggedPersonByShibId() {
 		 HttpSession session = RequestFactoryServlet.getThreadLocalRequest().getSession();
 	     String personShibId = "";
 	     

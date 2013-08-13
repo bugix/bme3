@@ -39,9 +39,9 @@ public interface QuestionDetailsView extends IsWidget {
 
 		void addNewQuestionResource(QuestionResourceClient questionResourceClient);
 
-		void updatePicturePathInQuestion(String picturePath);
+		/*void updatePicturePathInQuestion(String picturePath);
 
-		void deleteUploadedPicture(String picturePath);
+		void deleteUploadedPicture(String picturePath);*/
 
 		void deleteUploadedFiles(Set<String> paths);
 

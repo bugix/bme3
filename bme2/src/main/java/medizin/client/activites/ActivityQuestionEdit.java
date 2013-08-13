@@ -31,11 +31,14 @@ import medizin.client.ui.view.question.QuestionEditViewImpl;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.ui.widget.resource.dndview.vo.State;
 import medizin.client.util.MathJaxs;
+import medizin.shared.MultimediaType;
+import medizin.shared.QuestionTypes;
 import medizin.shared.Status;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.Place;
@@ -791,14 +794,19 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 		
 		if(previousQuestionProxy != null) question.setPreviousVersion(previousQuestionProxy);
 		
-		for (QuestionResourceClient questionResource : view.getQuestionResources()) {
-			QuestionResourceProxy proxy = questionResourceRequest.create(QuestionResourceProxy.class);
-			proxy.setPath(questionResource.getPath());
-			proxy.setSequenceNumber(questionResource.getSequenceNumber());
-			proxy.setType(questionResource.getType());
-			proxy.setQuestion(question);
-			questionResourceProxies.add(proxy);
+		final QuestionTypes questionType = question.getQuestionType().getQuestionType();
+		if(QuestionTypes.Textual.equals(questionType) || QuestionTypes.Sort.equals(questionType)) {
+			for (QuestionResourceClient questionResource : view.getQuestionResources()) {
+				QuestionResourceProxy proxy = questionResourceRequest.create(QuestionResourceProxy.class);
+				proxy.setPath(questionResource.getPath());
+				proxy.setSequenceNumber(questionResource.getSequenceNumber());
+				proxy.setType(questionResource.getType());
+				proxy.setQuestion(question);
+				questionResourceProxies.add(proxy);
+			}
 		}
+		
+		addPicturePathToQuestion(questionResourceRequest, questionResourceProxies, questionType,question);
 		
 		final QuestionProxy questionProxy2 = question;
 		questionRequest.persistQuestion().using(question).fire(new BMEReceiver<Void>(reciverMap) {
@@ -816,9 +824,9 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 		final QuestionResourceRequest questionResourceRequest = requests.questionResourceRequest();
 		final QuestionRequest questionRequest = commentRequest.append(questionResourceRequest).append(requests.questionRequest());
 		
-		QuestionProxy questionProxy = questionRequest.edit(this.question);
-		CommentProxy commentProxy = commentRequest.edit(this.question.getComment());
-		Set<QuestionResourceProxy> questionResourceProxies = Sets.newHashSet();
+		final QuestionProxy questionProxy = questionRequest.edit(this.question);
+		final CommentProxy commentProxy = commentRequest.edit(this.question.getComment());
+		final Set<QuestionResourceProxy> questionResourceProxies = Sets.newHashSet();
 		
 		view.setValuesForQuestion(questionProxy,commentProxy);
 		
@@ -830,17 +838,23 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 		questionProxy.setQuestionSubVersion(question.getQuestionSubVersion() + 1);
 		questionProxy.setDateChanged(new Date());
 		questionProxy.setQuestionResources(questionResourceProxies);
-			
-		for (QuestionResourceClient questionResource : view.getQuestionResources()) {
-			if (questionResource.getState().equals(State.NEW) || questionResource.getState().equals(State.EDITED)) {
-				QuestionResourceProxy proxy = questionResourceRequest.create(QuestionResourceProxy.class);
-				proxy.setPath(questionResource.getPath());
-				proxy.setSequenceNumber(questionResource.getSequenceNumber());
-				proxy.setType(questionResource.getType());
-				proxy.setQuestion(questionProxy);
-				questionResourceProxies.add(proxy);
+		
+		final QuestionTypes questionType = questionProxy.getQuestionType().getQuestionType();
+		
+		if(QuestionTypes.Textual.equals(questionType) || QuestionTypes.Sort.equals(questionType)) {
+			for (QuestionResourceClient questionResource : view.getQuestionResources()) {
+				if (questionResource.getState().equals(State.NEW) || questionResource.getState().equals(State.EDITED)) {
+					QuestionResourceProxy proxy = questionResourceRequest.create(QuestionResourceProxy.class);
+					proxy.setPath(questionResource.getPath());
+					proxy.setSequenceNumber(questionResource.getSequenceNumber());
+					proxy.setType(questionResource.getType());
+					proxy.setQuestion(questionProxy);
+					questionResourceProxies.add(proxy);
+				}
 			}
 		}
+		
+		addPicturePathToQuestion(questionResourceRequest, questionResourceProxies, questionType,questionProxy);
 		
 		final QuestionProxy questionProxy2 = questionProxy;
 		questionRequest.persist().using(questionProxy).fire(new BMEReceiver<Void>(reciverMap) {
@@ -849,6 +863,23 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 				gotoFunction.apply(questionProxy2.stableId());
 			}
 		});
+	}
+
+	private void addPicturePathToQuestion(final QuestionResourceRequest questionResourceRequest, final Set<QuestionResourceProxy> questionResourceProxies, final QuestionTypes questionType, final QuestionProxy questionProxy) {
+		if(QuestionTypes.Imgkey.equals(questionType) || QuestionTypes.ShowInImage.equals(questionType)) {
+		
+			final QuestionResourceProxy questionResourceProxyForPicture; 
+			if(questionResourceProxies.isEmpty() == true) {
+				questionResourceProxyForPicture = questionResourceRequest.create(QuestionResourceProxy.class);
+				questionResourceProxies.add(questionResourceProxyForPicture);
+			}else {
+				questionResourceProxyForPicture = Lists.newArrayList(questionResourceProxies).get(0);
+			}
+			questionResourceProxyForPicture.setQuestion(questionProxy);
+			questionResourceProxyForPicture.setType(MultimediaType.Image);
+			questionResourceProxyForPicture.setSequenceNumber(0);
+			view.addPictureToQuestionResources(questionResourceProxyForPicture);
+		}
 	}
 
 	// updated in ActivityAcceptQuestionEdit 

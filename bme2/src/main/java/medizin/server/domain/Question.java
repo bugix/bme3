@@ -7,7 +7,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -49,14 +48,10 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicates;
 import com.google.common.collect.FluentIterable;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 @RooJavaBean
 @RooToString
@@ -71,8 +66,8 @@ public class Question {
 	@Size(min = 1, max = 9000)
 	private String questionText;
 
-	@Size(min = 2, max = 255)
-	private String picturePath;
+	/*@Size(min = 2, max = 255)
+	private String picturePath;*/
 
 	@NotNull
 	private Integer questionVersion;
@@ -166,9 +161,9 @@ public class Question {
 	@Column(columnDefinition="BIT", length = 1)
 	private Boolean isReadOnly;
 	
-	private Integer imageHeight;
+	/*private Integer imageHeight;
 	
-	private Integer imageWidth;
+	private Integer imageWidth;*/
 	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "question")
 	private Set<AssesmentQuestion> assesmentQuestionSet = new HashSet<AssesmentQuestion>();
@@ -1419,7 +1414,7 @@ public class Question {
 		return orPredicate;
 	}
 	
-	@Transactional
+	/*@Transactional
 	public static Question persistNewQuestion(Long questionTypeId, String questionShortName, String questionText, Long autherId,Long reviewerId,
 			Boolean submitToReviewComitee,Long questionEventId, List<Long> mcIds, String questionComment, int questionVersion, int questionSubVersion, 
 			String picturePath, Status status, Set<QuestionResource> questionResources, Long oldQuestionId) {
@@ -1494,10 +1489,10 @@ public class Question {
 		}else {
 			log.info("Do nothing");
 		}
-		/*question.setIsAcceptedAdmin(false);
+		question.setIsAcceptedAdmin(false);
 		question.setIsAcceptedRewiever(false);
 		question.setIsActive(false);
-		question.setStatus(Status.NEW);*/
+		question.setStatus(Status.NEW);
 		question.setPreviousVersion(Question.findQuestion(oldQuestionId));
 		question.persist();
 		
@@ -1573,7 +1568,7 @@ public class Question {
 		}
 		
 		return question;
-	}
+	}*/
 	
 	private static boolean findQuestionHasNewQuestion(Long id) {
 		
@@ -1660,12 +1655,20 @@ public class Question {
 		} while (tempQuestion != null);
 	}
 
+	private final static Function<QuestionResource, String> RESOURCES_TO_PATH = new Function<QuestionResource, String>() {
+
+		@Override
+		public String apply(QuestionResource input) {
+			return input.getPath();
+		}
+	};
+	
 	@PostRemove
 	void onPostRemove() {
 		log.info("in post remove method of question");
 		if(this instanceof Question) {
-			if(this.getPicturePath() != null) {
-				QuestionResource.deleteFiles(Sets.newHashSet(this.getPicturePath()));
+			if(this.questionResources != null && this.questionResources.isEmpty() == false) {
+				QuestionResource.deleteFiles(FluentIterable.from(this.questionResources).transform(RESOURCES_TO_PATH).toImmutableSet());
 			}
 		}
 	}
@@ -1675,7 +1678,7 @@ public class Question {
 		this.persist();
 	}
 	
-	public Question questionResendToReviewWithMajorVersion(boolean isAdmin) {
+	/*public Question questionResendToReviewWithMajorVersion(boolean isAdmin) {
 		log.info("save with major version here");
 		
 		Person userLoggedIn = Person.myGetLoggedPerson();
@@ -1747,7 +1750,7 @@ public class Question {
 			question.persist();
 		}
 		return question;
-	}
+	}*/
 	
 	public static Long countNotActivatedQuestionsByPerson(String searchText, List<String> searchField) {
 		
@@ -1881,13 +1884,13 @@ public class Question {
 				newUserAccessRights.persist();
 			}
 			
-			List<AssesmentQuestion> assesmentQuestions = AssesmentQuestion.findAssesmentQuestionsByQuestion(oldQuestion.getId());
+			/*List<AssesmentQuestion> assesmentQuestions = AssesmentQuestion.findAssesmentQuestionsByQuestion(oldQuestion.getId());
 			for (AssesmentQuestion assesmentQuestion : assesmentQuestions) {
 				AssesmentQuestion newAssesmentQuestion = new AssesmentQuestion();
 				BMEUtils.copyValues(assesmentQuestion, newAssesmentQuestion, AssesmentQuestion.class);
 				newAssesmentQuestion.setQuestion(this);
 				newAssesmentQuestion.persist();
-			}
+			}*/
 			
 			HashSet<Keyword> keywordSet = new HashSet<Keyword>(oldQuestion.getKeywords());
 			this.setKeywords(keywordSet);
@@ -1940,7 +1943,7 @@ public class Question {
 	@PreUpdate
 	public void preQuestionPersist()
 	{
-		Person loggedPerson = Person.getLoggedPersonByShibId();
+		Person loggedPerson = Person.findLoggedPersonByShibId();
 		
 		if (loggedPerson != null)
 		{

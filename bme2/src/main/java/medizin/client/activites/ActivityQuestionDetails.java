@@ -24,7 +24,6 @@ import medizin.client.proxy.UserAccessRightsProxy;
 import medizin.client.request.AnswerRequest;
 import medizin.client.request.CommentRequest;
 import medizin.client.request.MatrixValidityRequest;
-import medizin.client.request.QuestionRequest;
 import medizin.client.request.QuestionResourceRequest;
 import medizin.client.ui.view.question.AnswerDialogbox;
 import medizin.client.ui.view.question.AnswerDialogboxImpl;
@@ -872,7 +871,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		});
 	}
 
-	@Override
+	/*@Override
 	public void updatePicturePathInQuestion(String picturePath) {
 		
 		if(question != null) {
@@ -909,7 +908,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		}else {
 			Log.error("Question is null");
 		}
-	}
+	}*/
 
 	@Override
 	public void deleteUploadedFiles(Set<String> paths) {
