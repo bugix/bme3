@@ -6,11 +6,16 @@ import medizin.client.place.PlaceAcceptQuestion;
 import medizin.client.place.PlaceAcceptQuestionDetails;
 import medizin.client.place.PlaceQuestionDetails;
 import medizin.client.proxy.QuestionProxy;
+import medizin.client.ui.McAppConstant;
+import medizin.client.ui.widget.dialogbox.ConfirmationCheckboxDialog;
 import medizin.shared.Status;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.base.Function;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.place.shared.PlaceController;
+import com.google.gwt.user.client.Cookies;
 import com.google.web.bindery.requestfactory.shared.EntityProxyId;
 
 public class ActivityAcceptQuestionEdit extends ActivityQuestionEdit {
@@ -57,7 +62,7 @@ public class ActivityAcceptQuestionEdit extends ActivityQuestionEdit {
 		boolean isAcceptedByReviewer = question.getIsAcceptedRewiever();
 		boolean isAcceptedByAuthor = question.getIsAcceptedAuthor();
 		
-		final Function<EntityProxyId<?>, Void> gotoFunction = new Function<EntityProxyId<?>, Void>() {
+		final Function<EntityProxyId<?>, Void> gotoAuthorFunction = new Function<EntityProxyId<?>, Void>() {
 			
 			@Override
 			public Void apply(EntityProxyId<?> stableId) {
@@ -66,12 +71,69 @@ public class ActivityAcceptQuestionEdit extends ActivityQuestionEdit {
 			}
 		};
 		
-		final Function<EntityProxyId<?>, Void> gotoDetailsFunction = new Function<EntityProxyId<?>, Void>() {
+		final Function<EntityProxyId<?>, Void> gotoFunction = new Function<EntityProxyId<?>, Void>() {
 			
 			@Override
 			public Void apply(EntityProxyId<?> stableId) {
-				goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));
-				goTo(new PlaceAcceptQuestionDetails(stableId,Operation.DETAILS));
+				String resendToReviewValue = Cookies.getCookie(McAppConstant.RESEND_TO_REVIEW_KEY);
+				
+				if (resendToReviewValue == null)
+				{
+					final ConfirmationCheckboxDialog checkBoxDialog = new ConfirmationCheckboxDialog(constants.acceptQueSaveMsg(), constants.neverShowMsg());
+					checkBoxDialog.showBaseDialog(constants.warning());
+					
+					checkBoxDialog.addOKClickHandler(new ClickHandler() {
+						
+						@Override
+						public void onClick(ClickEvent event) {
+							checkBoxDialog.hide();
+							
+							if (checkBoxDialog.getCheckBoxValue())
+								Cookies.setCookie(McAppConstant.RESEND_TO_REVIEW_KEY, String.valueOf(true));
+							
+							goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));
+						}
+					});
+				}
+				else
+				{
+					goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));
+				}
+				return null;
+			}
+		};
+		
+		final Function<EntityProxyId<?>, Void> gotoDetailsFunction = new Function<EntityProxyId<?>, Void>() {
+			
+			@Override
+			public Void apply(final EntityProxyId<?> stableId) {
+				String resendToReviewValue = Cookies.getCookie(McAppConstant.RESEND_TO_REVIEW_KEY);
+				
+				if (resendToReviewValue == null)
+				{
+					final ConfirmationCheckboxDialog checkBoxDialog = new ConfirmationCheckboxDialog(constants.acceptQueSaveMsg(), constants.neverShowMsg());
+					checkBoxDialog.showBaseDialog(constants.warning());
+					
+					checkBoxDialog.addOKClickHandler(new ClickHandler() {
+						
+						@Override
+						public void onClick(ClickEvent event) {
+							checkBoxDialog.hide();
+							
+							if (checkBoxDialog.getCheckBoxValue())
+								Cookies.setCookie(McAppConstant.RESEND_TO_REVIEW_KEY, String.valueOf(true));
+							
+							goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));
+							goTo(new PlaceAcceptQuestionDetails(stableId,Operation.DETAILS));
+						}
+					});
+				}
+				else
+				{
+					goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));
+					goTo(new PlaceAcceptQuestionDetails(stableId,Operation.DETAILS));
+				}
+				
 				return null;
 			}
 		};
@@ -103,7 +165,7 @@ public class ActivityAcceptQuestionEdit extends ActivityQuestionEdit {
 			isAcceptedByAdmin = false;
 			isAcceptedByReviewer = false;
 			isAcceptedByAuthor = true;
-			createNewQuestion(question,status,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor,gotoFunction);
+			createNewQuestion(question,status,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor,gotoAuthorFunction);
 			Log.info("save (with major version)");
 		}
 		

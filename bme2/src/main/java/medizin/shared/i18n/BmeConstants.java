@@ -686,4 +686,8 @@ public interface BmeConstants extends Constants {
 	public String sumOfAnsValidateMsg();
 	
 	public String accRightsErrorMsg();
+	
+	public String acceptQueSaveMsg();
+	
+	public String neverShowMsg();
 }
