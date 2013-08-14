@@ -9,6 +9,7 @@ import java.util.Map;
 import medizin.client.proxy.AnswerProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionProxy;
+import medizin.client.proxy.QuestionResourceProxy;
 import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.ui.richtext.RichTextToolbar;
 import medizin.client.ui.widget.IconButton;
@@ -264,8 +265,12 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 					viewContainer.add(imagePolygonViewer);
 				}*/
 				
-				if(question != null && question.getQuestionType() != null && QuestionTypes.ShowInImage.equals(question.getQuestionType().getQuestionType()) && question.getPicturePath() != null && question.getPicturePath().length() > 0 /*&& question.getQuestionType().getImageWidth() != null && question.getQuestionType().getImageHeight() != null*/) {
-					imagePolygonViewer = new ImagePolygonViewer(question.getPicturePath(), question.getImageWidth(), question.getImageHeight(),polygonPaths, true);
+				if(question != null && question.getQuestionType() != null && QuestionTypes.ShowInImage.equals(question.getQuestionType().getQuestionType()) && question.getQuestionResources() != null && question.getQuestionResources().isEmpty() == false /*&& question.getPicturePath() != null && question.getPicturePath().length() > 0 && question.getQuestionType().getImageWidth() != null && question.getQuestionType().getImageHeight() != null*/) {
+					final QuestionResourceProxy questionResourceProxy = Lists.newArrayList(question.getQuestionResources()).get(0);
+					final Integer imageWidth = questionResourceProxy.getImageWidth();
+					final Integer imageHeight = questionResourceProxy.getImageHeight();
+					final String path = questionResourceProxy.getPath();
+					imagePolygonViewer = new ImagePolygonViewer(path, imageWidth, imageHeight,polygonPaths, true);
 					
 					if(answer != null && answer.getPoints() != null) {
 						imagePolygonViewer.setCurrentPolygon(PolygonPath.getPolygonPath(answer.getPoints()));
@@ -290,11 +295,16 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 				
 				final List<Point> rectanglePoints = Point.getPoints(points);
 				
-				if(question != null && question.getQuestionType() != null && QuestionTypes.Imgkey.equals(question.getQuestionType().getQuestionType()) && question.getPicturePath() != null && question.getPicturePath().length() > 0 /*&& question.getQuestionType().getImageWidth() != null && question.getQuestionType().getImageHeight() != null*/) {
+				if(question != null && question.getQuestionType() != null && QuestionTypes.Imgkey.equals(question.getQuestionType().getQuestionType()) && question.getQuestionResources() != null && question.getQuestionResources().isEmpty() == false  /*&& question.getPicturePath() != null && question.getPicturePath().length() > 0 && question.getQuestionType().getImageWidth() != null && question.getQuestionType().getImageHeight() != null*/) {
 					
-					if (question.getImageWidth() != null && question.getImageHeight() != null)
+					final QuestionResourceProxy questionResourceProxy = Lists.newArrayList(question.getQuestionResources()).get(0);
+					final Integer imageWidth = questionResourceProxy.getImageWidth();
+					final Integer imageHeight = questionResourceProxy.getImageHeight();
+					final String path = questionResourceProxy.getPath();
+					
+					if (imageWidth != null &&imageHeight != null)
 					{
-						imageRectangleViewer = new ImageRectangleViewer(question.getPicturePath(), question.getImageWidth(), question.getImageHeight(), rectanglePoints, true);
+						imageRectangleViewer = new ImageRectangleViewer(path, imageWidth, imageHeight, rectanglePoints, true);
 						if(answer != null && answer.getPoints() != null) {
 							imageRectangleViewer.setCurrentPoint(Point.getPoint(answer.getPoints()));
 						}
@@ -302,11 +312,11 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 					}
 					else
 					{
-						ClientUtility.getImageWidthHeight(question.getPicturePath(), new ImageWidthHeight() {
+						ClientUtility.getImageWidthHeight(path, new ImageWidthHeight() {
 							
 							@Override
 							public void apply(Integer width, Integer height) {
-								imageRectangleViewer = new ImageRectangleViewer(question.getPicturePath(), width, height, rectanglePoints, true);
+								imageRectangleViewer = new ImageRectangleViewer(path, width, height, rectanglePoints, true);
 								if(answer != null && answer.getPoints() != null) {
 									imageRectangleViewer.setCurrentPoint(Point.getPoint(answer.getPoints()));
 								}
@@ -765,6 +775,13 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 			messages.add(constants.selectReviewerOrComitee());
 			rewiewer.getTextField().advancedTextBox.addStyleName("higlight_onViolation");
 			submitToReviewComitee.addStyleName("higlight_onViolation");
+		}
+		
+		if(author.getSelected() != null && rewiewer.getSelected() != null && author.getSelected().getId().equals(rewiewer.getSelected().getId()) == true) {
+			flag = false;
+			messages.add(constants.authorReviewerMayNotBeSame());
+			author.getTextField().advancedTextBox.addStyleName("higlight_onViolation");
+			rewiewer.getTextField().advancedTextBox.addStyleName("higlight_onViolation");
 		}
 		
 		if(question.getQuestionType() != null && (QuestionTypes.MCQ.equals(question.getQuestionType().getQuestionType()) == false && QuestionTypes.LongText.equals(question.getQuestionType().getQuestionType()) == false)) {

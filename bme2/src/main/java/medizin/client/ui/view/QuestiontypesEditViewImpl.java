@@ -841,6 +841,8 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		ArrayList<String> errorMessage = Lists.newArrayList();
 		
 		boolean flag = true;
+		boolean answerFlag = false;
+		
 		//StringBuilder errorString = new StringBuilder();
 		
 		if (shortName.getText().isEmpty())
@@ -876,6 +878,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(sumAnswer.getIntegerBox())) != "")
 				{
 					flag = false;
+					answerFlag = true;
 					//errorString.append(constants.sumAnswer() + " " + msg).append("<br />");
 					errorMessage.add(constants.sumAnswer() + " " + msg);
 					sumAnswer.getTextBox().addStyleName("higlight_onViolation");
@@ -883,6 +886,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				else if (Integer.parseInt(sumAnswer.getValue()) < 2)
 				{
 					flag = false;
+					answerFlag = true;
 					//errorString.append(constants.sumOfAnsMsg()).append("<br />");
 					errorMessage.add(constants.sumOfAnsMsg());
 					sumAnswer.getTextBox().addStyleName("higlight_onViolation");
@@ -892,6 +896,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(sumTrueAnswer.getIntegerBox())) != "")
 				{
 					flag = false;
+					answerFlag = true;
 					//errorString.append(constants.sumTrueAnswer() + " " + msg).append("<br />");
 					errorMessage.add(constants.sumTrueAnswer() + " " + msg);
 					sumTrueAnswer.getTextBox().addStyleName("higlight_onViolation");
@@ -899,6 +904,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				else if (Integer.parseInt(sumTrueAnswer.getValue()) < 0)
 				{
 					flag = false;
+					answerFlag = true;
 					//errorString.append(constants.sumOfTrueAnsMsg()).append("<br />");
 					errorMessage.add(constants.sumOfTrueAnsMsg());
 					sumTrueAnswer.getTextBox().addStyleName("higlight_onViolation");
@@ -908,6 +914,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(sumFalseAnswer.getIntegerBox())) != "")
 				{
 					flag = false;
+					answerFlag = true;
 					//errorString.append(constants.sumFalseAnswer() + " " + msg).append("<br />");
 					errorMessage.add(constants.sumFalseAnswer() + " " + msg);
 					sumFalseAnswer.getTextBox().addStyleName("higlight_onViolation");
@@ -915,9 +922,21 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				else if (Integer.parseInt(sumFalseAnswer.getValue()) < 0)
 				{
 					flag = false;
+					answerFlag = true;
 					//errorString.append(constants.sumOfFalseAnsMsg()).append("<br />");
 					errorMessage.add(constants.sumOfFalseAnsMsg());
 					sumFalseAnswer.getTextBox().addStyleName("higlight_onViolation");
+				}
+				
+				if (answerFlag == false)
+				{
+					if (checkTextualAnswerCondition(Integer.parseInt(sumAnswer.getValue()), Integer.parseInt(sumTrueAnswer.getValue()), Integer.parseInt(sumFalseAnswer.getValue())) == false)
+					{
+						flag = false;
+						errorMessage.add(constants.sumOfAnsValidateMsg());
+						sumTrueAnswer.getTextBox().addStyleName("higlight_onViolation");
+						sumFalseAnswer.getTextBox().addStyleName("higlight_onViolation");
+					}
 				}
 				
 				msg = "";
@@ -1148,6 +1167,16 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		return flag;
 	}
 
+	private boolean checkTextualAnswerCondition(int sumOfTotalAns, int sumOfTrueAns, int sumOfFalseAns) {
+		
+		if ( (sumOfTrueAns + sumOfFalseAns) <=1 )
+			return true;
+		else if ( (sumOfTrueAns + sumOfFalseAns) <= sumOfTotalAns )
+			return true;
+		
+		return false;
+	}
+
 	private String checkTextWidgetForNumber(TextBox textBox)
 	{
 		String message = "";
@@ -1181,36 +1210,29 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 	private void removeStyles()
 	{
 		shortName.getTextBox().removeStyleName("higlight_onViolation");
-		longName.removeStyleName("higlight_onViolation");
-		description.removeStyleName("higlight_onViolation");
+		longName.getTextBox().removeStyleName("higlight_onViolation");
+		description.getTextArea().removeStyleName("higlight_onViolation");
 		
-		sumAnswer.removeStyleName("higlight_onViolation");
-		sumTrueAnswer.removeStyleName("higlight_onViolation");
-		sumFalseAnswer.removeStyleName("higlight_onViolation");
-		questionLength.removeStyleName("higlight_onViolation");
-		answerLength.removeStyleName("higlight_onViolation");
-		answerDiff.removeStyleName("higlight_onViolation");
+		sumAnswer.getTextBox().removeStyleName("higlight_onViolation");
+		sumTrueAnswer.getTextBox().removeStyleName("higlight_onViolation");
+		sumFalseAnswer.getTextBox().removeStyleName("higlight_onViolation");
+		questionLength.getTextBox().removeStyleName("higlight_onViolation");
+		answerLength.getTextBox().removeStyleName("higlight_onViolation");
+		answerDiff.getTextBox().removeStyleName("higlight_onViolation");
 		
-		keywordCount.removeStyleName("higlight_onViolation");
-		minLetterForAutoComp.removeStyleName("higlight_onViolation");
-		answerLength.removeStyleName("higlight_onViolation");
-		shortAnswerLength.removeStyleName("higlight_onViolation");
-		/*imageWidthTxtbox.removeStyleName("higlight_onViolation");
-		imageLengthTxtbox.removeStyleName("higlight_onViolation");
-		imageProportionTxtbox.removeStyleName("higlight_onViolation");*/
+		keywordCount.getTextBox().removeStyleName("higlight_onViolation");
+		minLetterForAutoComp.getTextBox().removeStyleName("higlight_onViolation");
+		answerLength.getTextBox().removeStyleName("higlight_onViolation");
+		shortAnswerLength.getTextBox().removeStyleName("higlight_onViolation");
 		
-		//linearPercentageTxtbox.removeStyleName("higlight_onViolation");
+		minLength.getTextBox().removeStyleName("higlight_onViolation");
+		maxLength.getTextBox().removeStyleName("higlight_onViolation");
+		minWordCount.getTextBox().removeStyleName("higlight_onViolation");
+		maxWordCount.getTextBox().removeStyleName("higlight_onViolation");
 		
-		minLength.removeStyleName("higlight_onViolation");
-		maxLength.removeStyleName("higlight_onViolation");
-		minWordCount.removeStyleName("higlight_onViolation");
-		maxWordCount.removeStyleName("higlight_onViolation");
-		
-		column.removeStyleName("higlight_onViolation");
-		maxBytes.removeStyleName("higlight_onViolation");
-		/*thumbWidthTxtbox.removeStyleName("higlight_onViolation");
-		thumbHeightTxtbox.removeStyleName("higlight_onViolation");*/
-		selectionType.removeStyleName("higlight_onViolation");
-		multimediaType.removeStyleName("higlight_onViolation");
+		column.getTextBox().removeStyleName("higlight_onViolation");
+		maxBytes.getTextBox().removeStyleName("higlight_onViolation");
+		selectionType.getValueListBox().removeStyleName("higlight_onViolation");
+		multimediaType.getValueListBox().removeStyleName("higlight_onViolation");
 	}
 }

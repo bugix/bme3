@@ -7,7 +7,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -20,6 +19,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PostRemove;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
@@ -31,7 +32,6 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.SetJoin;
 import javax.persistence.criteria.Subquery;
-import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -40,6 +40,7 @@ import medizin.shared.QuestionTypes;
 import medizin.shared.Status;
 import medizin.shared.utils.SharedConstant;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,15 +48,10 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicates;
 import com.google.common.collect.FluentIterable;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.google.web.bindery.requestfactory.server.RequestFactoryServlet;
 
 @RooJavaBean
 @RooToString
@@ -70,8 +66,8 @@ public class Question {
 	@Size(min = 1, max = 9000)
 	private String questionText;
 
-	@Size(min = 2, max = 255)
-	private String picturePath;
+	/*@Size(min = 2, max = 255)
+	private String picturePath;*/
 
 	@NotNull
 	private Integer questionVersion;
@@ -165,12 +161,18 @@ public class Question {
 	@Column(columnDefinition="BIT", length = 1)
 	private Boolean isReadOnly;
 	
-	private Integer imageHeight;
+	/*private Integer imageHeight;
 	
-	private Integer imageWidth;
+	private Integer imageWidth;*/
 	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "question")
 	private Set<AssesmentQuestion> assesmentQuestionSet = new HashSet<AssesmentQuestion>();
+	
+	@ManyToOne
+	private Person createdBy;
+	
+	@ManyToOne
+	private Person modifiedBy;
 	
 	public static long countQuestionAccessByPersonNonRoo(java.lang.Long personId) {
 		Person person = Person.findPerson(personId);
@@ -211,9 +213,9 @@ public class Question {
 			Long institutionId, Long eventId, String questiuonStringFilter,
 			Boolean filterQuestionText, Boolean filterKeywords) {
 
-		Institution inst = null;
+		/*Institution inst = null;
 		QuestionEvent event = null;
-		String queryString = "SELECT COUNT(quest) FROM Question quest INNER JOIN quest.questEvent queEvent LEFT JOIN quest.keywords keyw ";
+		String queryString = "SELECT COUNT(DISTINCT quest) FROM Question quest INNER JOIN quest.questEvent queEvent LEFT JOIN quest.keywords keyw ";
 		if (institutionId != null || eventId != null
 				|| !questiuonStringFilter.equals("")) {
 			queryString += "WHERE ";
@@ -261,16 +263,67 @@ public class Question {
 
 		}
 
-		return q.getSingleResult();
+		return q.getSingleResult();*/
+		
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+		Root<Question> from = criteriaQuery.from(Question.class);
+		criteriaQuery.select(criteriaBuilder.count(from)); 			
+		Predicate mainPredicate = null;
+		if (institutionId != null)
+		{
+			Predicate institutePre = criteriaBuilder.equal(from.get("questEvent").get("institution").get("id"), institutionId);
+			mainPredicate = institutePre;
+		}
+		
+		if (eventId != null)
+		{
+			Predicate questionEventPre = criteriaBuilder.equal(from.get("questEvent").get("id"), eventId);
+			if (mainPredicate == null)
+				mainPredicate = questionEventPre;
+			else
+				mainPredicate = criteriaBuilder.and(mainPredicate, questionEventPre);
+		}
+		
+		if (StringUtils.isNotBlank(questiuonStringFilter)) {
+			if (filterQuestionText)
+			{
+				Expression<String> questionTextExp = from.get("questionText");
+				Predicate questionTextPre = criteriaBuilder.like(questionTextExp, "%" + questiuonStringFilter + "%");
+				
+				if (mainPredicate == null)
+					mainPredicate = questionTextPre;
+				else
+					mainPredicate = criteriaBuilder.and(mainPredicate, questionTextPre);
+			}
+			
+			if (filterKeywords)
+			{
+				SetJoin<Question, Keyword> keywordSetJoin = from.joinSet("keywords", JoinType.LEFT);
+				Expression<String> keywordTextExp = keywordSetJoin.get("name");
+				Predicate keywordPre = criteriaBuilder.like(keywordTextExp, "%" + questiuonStringFilter + "%");
+				
+				if (mainPredicate == null)
+					mainPredicate = keywordPre;
+				else
+					mainPredicate = criteriaBuilder.and(mainPredicate, keywordPre);
+			}
+		}
+		
+		if (mainPredicate != null)
+			criteriaQuery.where(mainPredicate);
+		
+		TypedQuery<Long> query = entityManager().createQuery(criteriaQuery);
+		return query.getSingleResult();
 	}
 
 	public static List<Question> findQuestionByInstitutionOrEventOrQuestionNameOrKeyword(
 			Long institutionId, Long eventId, String questiuonStringFilter,
 			Boolean filterQuestionText, Boolean filterKeywords, int start,
 			int length) {
-		Institution inst = null;
+		/*Institution inst = null;
 		QuestionEvent event = null;
-		String queryString = "SELECT quest FROM Question quest INNER JOIN quest.questEvent queEvent LEFT JOIN quest.keywords keyw  ";
+		String queryString = "SELECT DISTINCT quest FROM Question quest INNER JOIN quest.questEvent queEvent LEFT JOIN quest.keywords keyw  ";
 		if (institutionId != null || eventId != null
 				|| !questiuonStringFilter.equals("")) {
 			queryString += "WHERE ";
@@ -321,8 +374,60 @@ public class Question {
 
 		}
 
-		return q.getResultList();
+		return q.getResultList();*/
+		
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Question> criteriaQuery = criteriaBuilder.createQuery(Question.class);
+		Root<Question> from = criteriaQuery.from(Question.class);
+		
+		Predicate mainPredicate = null;
+		if (institutionId != null)
+		{
+			Predicate institutePre = criteriaBuilder.equal(from.get("questEvent").get("institution").get("id"), institutionId);
+			mainPredicate = institutePre;
+		}
+		
+		if (eventId != null)
+		{
+			Predicate questionEventPre = criteriaBuilder.equal(from.get("questEvent").get("id"), eventId);
+			if (mainPredicate == null)
+				mainPredicate = questionEventPre;
+			else
+				mainPredicate = criteriaBuilder.and(mainPredicate, questionEventPre);
+		}
+		
+		if (StringUtils.isNotBlank(questiuonStringFilter)) {
+			if (filterQuestionText)
+			{
+				Expression<String> questionTextExp = from.get("questionText");
+				Predicate questionTextPre = criteriaBuilder.like(questionTextExp, "%" + questiuonStringFilter + "%");
+				
+				if (mainPredicate == null)
+					mainPredicate = questionTextPre;
+				else
+					mainPredicate = criteriaBuilder.and(mainPredicate, questionTextPre);
+			}
+			
+			if (filterKeywords)
+			{
+				SetJoin<Question, Keyword> keywordSetJoin = from.joinSet("keywords", JoinType.LEFT);
+				Expression<String> keywordTextExp = keywordSetJoin.get("name");
+				Predicate keywordPre = criteriaBuilder.like(keywordTextExp, "%" + questiuonStringFilter + "%");
+				
+				if (mainPredicate == null)
+					mainPredicate = keywordPre;
+				else
+					mainPredicate = criteriaBuilder.and(mainPredicate, keywordPre);
+			}
+		}
+		
+		if (mainPredicate != null)
+			criteriaQuery.where(mainPredicate);
 
+		TypedQuery<Question> query = entityManager().createQuery(criteriaQuery);
+		query.setFirstResult(start);
+		query.setMaxResults(length);
+		return query.getResultList();
 	}
 
 	
@@ -1309,7 +1414,7 @@ public class Question {
 		return orPredicate;
 	}
 	
-	@Transactional
+	/*@Transactional
 	public static Question persistNewQuestion(Long questionTypeId, String questionShortName, String questionText, Long autherId,Long reviewerId,
 			Boolean submitToReviewComitee,Long questionEventId, List<Long> mcIds, String questionComment, int questionVersion, int questionSubVersion, 
 			String picturePath, Status status, Set<QuestionResource> questionResources, Long oldQuestionId) {
@@ -1384,10 +1489,10 @@ public class Question {
 		}else {
 			log.info("Do nothing");
 		}
-		/*question.setIsAcceptedAdmin(false);
+		question.setIsAcceptedAdmin(false);
 		question.setIsAcceptedRewiever(false);
 		question.setIsActive(false);
-		question.setStatus(Status.NEW);*/
+		question.setStatus(Status.NEW);
 		question.setPreviousVersion(Question.findQuestion(oldQuestionId));
 		question.persist();
 		
@@ -1463,7 +1568,7 @@ public class Question {
 		}
 		
 		return question;
-	}
+	}*/
 	
 	private static boolean findQuestionHasNewQuestion(Long id) {
 		
@@ -1550,12 +1655,20 @@ public class Question {
 		} while (tempQuestion != null);
 	}
 
+	private final static Function<QuestionResource, String> RESOURCES_TO_PATH = new Function<QuestionResource, String>() {
+
+		@Override
+		public String apply(QuestionResource input) {
+			return input.getPath();
+		}
+	};
+	
 	@PostRemove
 	void onPostRemove() {
 		log.info("in post remove method of question");
 		if(this instanceof Question) {
-			if(this.getPicturePath() != null) {
-				QuestionResource.deleteFiles(Sets.newHashSet(this.getPicturePath()));
+			if(this.questionResources != null && this.questionResources.isEmpty() == false) {
+				QuestionResource.deleteFiles(FluentIterable.from(this.questionResources).transform(RESOURCES_TO_PATH).toImmutableSet());
 			}
 		}
 	}
@@ -1565,7 +1678,7 @@ public class Question {
 		this.persist();
 	}
 	
-	public Question questionResendToReviewWithMajorVersion(boolean isAdmin) {
+	/*public Question questionResendToReviewWithMajorVersion(boolean isAdmin) {
 		log.info("save with major version here");
 		
 		Person userLoggedIn = Person.myGetLoggedPerson();
@@ -1637,7 +1750,7 @@ public class Question {
 			question.persist();
 		}
 		return question;
-	}
+	}*/
 	
 	public static Long countNotActivatedQuestionsByPerson(String searchText, List<String> searchField) {
 		
@@ -1771,13 +1884,13 @@ public class Question {
 				newUserAccessRights.persist();
 			}
 			
-			List<AssesmentQuestion> assesmentQuestions = AssesmentQuestion.findAssesmentQuestionsByQuestion(oldQuestion.getId());
+			/*List<AssesmentQuestion> assesmentQuestions = AssesmentQuestion.findAssesmentQuestionsByQuestion(oldQuestion.getId());
 			for (AssesmentQuestion assesmentQuestion : assesmentQuestions) {
 				AssesmentQuestion newAssesmentQuestion = new AssesmentQuestion();
 				BMEUtils.copyValues(assesmentQuestion, newAssesmentQuestion, AssesmentQuestion.class);
 				newAssesmentQuestion.setQuestion(this);
 				newAssesmentQuestion.persist();
-			}
+			}*/
 			
 			HashSet<Keyword> keywordSet = new HashSet<Keyword>(oldQuestion.getKeywords());
 			this.setKeywords(keywordSet);
@@ -1824,5 +1937,30 @@ public class Question {
 		System.out.println("~~QUERY : " + q.unwrap(Query.class).getQueryString());
 		
 		return q.getResultList();
+	}
+		
+	@PrePersist
+	@PreUpdate
+	public void preQuestionPersist()
+	{
+		Person loggedPerson = Person.findLoggedPersonByShibId();
+		
+		if (loggedPerson != null)
+		{
+			if (this.previousVersion != null)
+			{
+				if (this.createdBy == null)
+					this.setCreatedBy(this.previousVersion.getCreatedBy());
+				
+				this.setModifiedBy(loggedPerson);				
+			}
+			else if (this.previousVersion == null)
+			{
+				if (this.createdBy == null)
+					this.setCreatedBy(loggedPerson);
+				else if (this.createdBy != null)
+					this.setModifiedBy(loggedPerson);
+			}
+		}		
 	}
 }

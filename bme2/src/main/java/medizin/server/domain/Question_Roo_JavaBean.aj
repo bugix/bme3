@@ -36,14 +36,6 @@ privileged aspect Question_Roo_JavaBean {
         this.questionText = questionText;
     }
     
-    public String Question.getPicturePath() {
-        return this.picturePath;
-    }
-    
-    public void Question.setPicturePath(String picturePath) {
-        this.picturePath = picturePath;
-    }
-    
     public Integer Question.getQuestionVersion() {
         return this.questionVersion;
     }
@@ -220,28 +212,28 @@ privileged aspect Question_Roo_JavaBean {
         this.isReadOnly = isReadOnly;
     }
     
-    public Integer Question.getImageHeight() {
-        return this.imageHeight;
-    }
-    
-    public void Question.setImageHeight(Integer imageHeight) {
-        this.imageHeight = imageHeight;
-    }
-    
-    public Integer Question.getImageWidth() {
-        return this.imageWidth;
-    }
-    
-    public void Question.setImageWidth(Integer imageWidth) {
-        this.imageWidth = imageWidth;
-    }
-    
     public Set<AssesmentQuestion> Question.getAssesmentQuestionSet() {
         return this.assesmentQuestionSet;
     }
     
     public void Question.setAssesmentQuestionSet(Set<AssesmentQuestion> assesmentQuestionSet) {
         this.assesmentQuestionSet = assesmentQuestionSet;
+    }
+    
+    public Person Question.getCreatedBy() {
+        return this.createdBy;
+    }
+    
+    public void Question.setCreatedBy(Person createdBy) {
+        this.createdBy = createdBy;
+    }
+    
+    public Person Question.getModifiedBy() {
+        return this.modifiedBy;
+    }
+    
+    public void Question.setModifiedBy(Person modifiedBy) {
+        this.modifiedBy = modifiedBy;
     }
     
 }

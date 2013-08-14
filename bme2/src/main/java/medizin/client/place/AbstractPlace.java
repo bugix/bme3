@@ -1,3 +1,4 @@
+
 package medizin.client.place;
 
 import medizin.client.factory.request.McAppRequestFactory;
@@ -8,11 +9,18 @@ import com.google.gwt.place.shared.PlaceTokenizer;
 
 public abstract class AbstractPlace extends Place {
 	private final String placeName;
+	private boolean reload;
 
 	public AbstractPlace(String placeName) {
 		this.placeName = placeName;
+		reload = false;
 	}
 
+	public AbstractPlace(String placeName, boolean reload) {
+		this.placeName = placeName;
+		this.reload = reload;
+	}
+	
 	public final String getPlaceName() {
 		return placeName;
 	}
@@ -35,6 +43,12 @@ public abstract class AbstractPlace extends Place {
 	
 	@Override
 	public boolean equals(Object obj) {
+		
+		if (reload)
+		{
+			reload = false;
+			return reload;
+		}
 
 		if (obj == null) {
 			return false;

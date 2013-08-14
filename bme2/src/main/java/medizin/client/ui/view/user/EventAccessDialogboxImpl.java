@@ -5,17 +5,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import medizin.client.proxy.InstitutionProxy;
+import medizin.client.proxy.QuestionEventProxy;
+import medizin.client.proxy.UserAccessRightsProxy;
 import medizin.client.style.resources.MyCellTableResources;
 import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
-import medizin.client.ui.view.user.EventAccessDialogbox.Delegate;
-import medizin.client.ui.view.user.EventAccessDialogbox.Presenter;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.EventHandlingValueHolderItem;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
-
-
-import medizin.client.proxy.InstitutionProxy;
-import medizin.client.proxy.QuestionEventProxy;
+import medizin.shared.AccessRights;
 import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
@@ -29,6 +27,9 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.text.shared.Renderer;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -39,9 +40,7 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DialogBox;
-import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -67,6 +66,8 @@ public class EventAccessDialogboxImpl extends DialogBox implements EventAccessDi
 
 	public BmeConstants constants = GWT.create(BmeConstants.class);
 	
+	public List<UserAccessRightsProxy> userAccessRightsList = new ArrayList<UserAccessRightsProxy>();
+	
 	public EventAccessDialogboxImpl() {
 		
 		CellTable.Resources tableResources = GWT.create(MyCellTableResources.class);
@@ -83,11 +84,12 @@ public class EventAccessDialogboxImpl extends DialogBox implements EventAccessDi
 	    
 	    init();
 	    
+	    closeButton.setText(constants.close());
 	}
 
 	  private List<AbstractEditableCell<?, ?>> editableCells;
 	  
-	 protected Set<String> paths = new HashSet<String>();
+	  protected Set<String> paths = new HashSet<String>();
 
 	    public void init() {
 	    	
@@ -169,36 +171,20 @@ public class EventAccessDialogboxImpl extends DialogBox implements EventAccessDi
 	            }
 	        }, constants.eventName());
 	        
-	    	addColumn(new ActionCell<QuestionEventProxy>(
-	    	        constants.read(), new ActionCell.Delegate<QuestionEventProxy>() {
-	    	            public void execute(QuestionEventProxy questionEvent) {
-	    	              Log.debug("You clicked " + questionEvent.getEventName());
-	    	              delegate.addClicked(medizin.shared.AccessRights.AccRead, questionEvent);
-	    	            }
-	    	          }), constants.read(), new GetValue<QuestionEventProxy>() {
+	        
+	    	addColumn(getReadButtonCell(), constants.read(), new GetValue<QuestionEventProxy>() {
+	    	        public QuestionEventProxy getValue(QuestionEventProxy contact) {
+	    	          return contact;
+	    	        }
+	    	}, null);
+	    	
+	    	addColumn(getWriteButtonCell(), constants.write(), new GetValue<QuestionEventProxy>() {
 	    	        public QuestionEventProxy getValue(QuestionEventProxy contact) {
 	    	          return contact;
 	    	        }
 	    	      }, null);
 	    	
-	    	addColumn(new ActionCell<QuestionEventProxy>(
-	    			constants.write(), new ActionCell.Delegate<QuestionEventProxy>() {
-	    	            public void execute(QuestionEventProxy questionEvent) {
-	    	              Log.debug("You clicked " + questionEvent.getEventName());
-	    	              delegate.addClicked(medizin.shared.AccessRights.AccWrite, questionEvent);
-	    	            }
-	    	          }), constants.write(), new GetValue<QuestionEventProxy>() {
-	    	        public QuestionEventProxy getValue(QuestionEventProxy contact) {
-	    	          return contact;
-	    	        }
-	    	      }, null);
-	    	addColumn(new ActionCell<QuestionEventProxy>(
-	    			constants.addQuestions(), new ActionCell.Delegate<QuestionEventProxy>() {
-	    	            public void execute(QuestionEventProxy questionEvent) {
-	    	              Log.debug("You clicked " + questionEvent.getEventName());
-	    	              delegate.addClicked(medizin.shared.AccessRights.AccAddQuestions, questionEvent);
-	    	            }
-	    	          }), constants.addQuestions(), new GetValue<QuestionEventProxy>() {
+	    	addColumn(getAddQuestionButtonCell(), constants.addQuestions(), new GetValue<QuestionEventProxy>() {
 	    	        public QuestionEventProxy getValue(QuestionEventProxy contact) {
 	    	          return contact;
 	    	        }
@@ -304,10 +290,6 @@ public class EventAccessDialogboxImpl extends DialogBox implements EventAccessDi
 	@UiField
     TextBox searchEvent;
 	
-	
-	
-	
-
 	private Delegate delegate;
 
 	public DefaultSuggestBox<InstitutionProxy, EventHandlingValueHolderItem<InstitutionProxy>> getSearchInstitution() {
@@ -338,5 +320,116 @@ public class EventAccessDialogboxImpl extends DialogBox implements EventAccessDi
 		show();
 		
 	}
+	
+	public List<UserAccessRightsProxy> getUserAccessRightsList() {
+		return userAccessRightsList;
+	}
 
+	public void setUserAccessRightsList(List<UserAccessRightsProxy> userAccessRightsList) {
+		this.userAccessRightsList = userAccessRightsList;
+	}
+	
+	private static SafeHtml READ_DISABLED_BUTTON;
+	private static SafeHtml WRITE_DISABLED_BUTTON;
+	private static SafeHtml ADDQUESTION_DISABLED_BUTTON;
+	
+	public ActionCell<QuestionEventProxy> getReadButtonCell()
+	{
+		  READ_DISABLED_BUTTON = SafeHtmlUtils.fromSafeConstant("<button type=\"button\" tabindex=\"-1\" disabled=\"disabled\">" + constants.read() + "</button>");
+		  
+		  ActionCell<QuestionEventProxy> readButtonCell = new ActionCell<QuestionEventProxy>(
+	    	        constants.read(), new ActionCell.Delegate<QuestionEventProxy>() {
+	    	            public void execute(QuestionEventProxy questionEvent) {
+	    	              Log.debug("You clicked " + questionEvent.getEventName());
+	    	              delegate.addClicked(medizin.shared.AccessRights.AccRead, questionEvent);
+	    	            }
+	    	          })
+	    	          {
+	        			@Override
+	        			public void render(com.google.gwt.cell.client.Cell.Context context,QuestionEventProxy value, SafeHtmlBuilder sb) {
+	        				boolean readButtonFlag = checkAccessRights(value, AccessRights.AccRead);
+	        				
+	        				if (readButtonFlag == false)
+	        				{
+	        					boolean writeButtonFlag = checkAccessRights(value, AccessRights.AccWrite);
+	        					
+	        					if (writeButtonFlag)
+	        						sb.append(READ_DISABLED_BUTTON);
+	        					else
+	        						super.render(context, value, sb);
+	        				}
+	        				else if (readButtonFlag == true)
+	        				{
+	        					sb.append(READ_DISABLED_BUTTON);	        					
+	        				}	        				
+	        			}						
+	    	          };
+	    	          
+	    	return readButtonCell;
+	}
+	
+	public ActionCell<QuestionEventProxy> getWriteButtonCell()
+	{
+		WRITE_DISABLED_BUTTON = SafeHtmlUtils.fromSafeConstant("<button type=\"button\" tabindex=\"-1\" disabled=\"disabled\">" + constants.write() + "</button>");
+		
+		ActionCell<QuestionEventProxy> writeButtonCell = new ActionCell<QuestionEventProxy>(
+    			constants.write(), new ActionCell.Delegate<QuestionEventProxy>() {
+    	            public void execute(QuestionEventProxy questionEvent) {
+    	              Log.debug("You clicked " + questionEvent.getEventName());
+    	              delegate.addClicked(medizin.shared.AccessRights.AccWrite, questionEvent);
+    	            }
+    	          })
+    	          {
+					@Override
+					public void render(com.google.gwt.cell.client.Cell.Context context, QuestionEventProxy value, SafeHtmlBuilder sb) {
+						boolean writeButtonFlag = checkAccessRights(value, AccessRights.AccWrite);
+						if (writeButtonFlag == false)
+							super.render(context, value, sb);
+						else if (writeButtonFlag == true)
+							sb.append(WRITE_DISABLED_BUTTON);
+					}
+    	          };
+		
+    	return writeButtonCell;
+	}
+	
+	public ActionCell<QuestionEventProxy> getAddQuestionButtonCell()
+	{
+		ADDQUESTION_DISABLED_BUTTON = SafeHtmlUtils.fromSafeConstant("<button type=\"button\" tabindex=\"-1\" disabled=\"disabled\">" + constants.addQuestions() + "</button>");
+		
+		ActionCell<QuestionEventProxy> addQuestionCell = new ActionCell<QuestionEventProxy>(
+    			constants.addQuestions(), new ActionCell.Delegate<QuestionEventProxy>() {
+    	            public void execute(QuestionEventProxy questionEvent) {
+    	              Log.debug("You clicked " + questionEvent.getEventName());
+    	              delegate.addClicked(medizin.shared.AccessRights.AccAddQuestions, questionEvent);
+    	            }
+    	          })
+    	          {
+					@Override
+					public void render(com.google.gwt.cell.client.Cell.Context context, QuestionEventProxy value, SafeHtmlBuilder sb) {
+						boolean addQuestionFlag = checkAccessRights(value, AccessRights.AccAddQuestions);						
+						if (addQuestionFlag == false)
+							super.render(context, value, sb);
+						else if (addQuestionFlag == true)
+							sb.append(ADDQUESTION_DISABLED_BUTTON);
+					}
+    	          };
+    	         
+    	return addQuestionCell;
+	}
+	
+	private boolean checkAccessRights(QuestionEventProxy value, AccessRights access) {
+		
+		boolean flag = false;
+		for (UserAccessRightsProxy accessRights : userAccessRightsList)
+		{
+			if (value.getId().equals(accessRights.getQuestionEvent().getId()) && access.equals(accessRights.getAccRights()))
+			{
+				flag = true;
+				break;
+			}
+		}
+		return flag;
+	}
+	
 }

@@ -165,4 +165,20 @@ privileged aspect Answer_Roo_JavaBean {
         this.isForcedActive = isForcedActive;
     }
     
+    public Person Answer.getCreatedBy() {
+        return this.createdBy;
+    }
+    
+    public void Answer.setCreatedBy(Person createdBy) {
+        this.createdBy = createdBy;
+    }
+    
+    public Person Answer.getModifiedBy() {
+        return this.modifiedBy;
+    }
+    
+    public void Answer.setModifiedBy(Person modifiedBy) {
+        this.modifiedBy = modifiedBy;
+    }
+    
 }

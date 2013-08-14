@@ -148,30 +148,30 @@
 				<div class="{style.attributeGroup}">
 					<!-- Exam specific attributes -->
 					<g:Label styleName="{style.attributeGroupTitle}" ui:field="examGroupLbl" text="baseGroupLbl"></g:Label>
-						
-					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="sumAnswer" min="0"></lbl:LabeledIntegerBox>
-					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="sumTrueAnswer" min="0"></lbl:LabeledIntegerBox>
-					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="sumFalseAnswer" min="0"></lbl:LabeledIntegerBox>
-					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="column" min="0"></lbl:LabeledIntegerBox>
+			
+					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="sumAnswer" min="0" value="0"></lbl:LabeledIntegerBox>
+					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="sumTrueAnswer" min="0" value="0"></lbl:LabeledIntegerBox>
+					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="sumFalseAnswer" min="0" value="0"></lbl:LabeledIntegerBox>
+					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="column" min="0" value="0"></lbl:LabeledIntegerBox>
 					
 					<lbl:LabeledPanel addStyleNames="{style.labeledBox}" ui:field="richText">
 						<g:CheckBox ui:field="richTextChkBox"></g:CheckBox>
 					</lbl:LabeledPanel>
 					
-					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="minLength" min="0"></lbl:LabeledIntegerBox>
-					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="maxLength" min="0"></lbl:LabeledIntegerBox>
-					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="minWordCount" min="0"></lbl:LabeledIntegerBox>
-					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="maxWordCount" min="0"></lbl:LabeledIntegerBox>
+					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="minLength" min="0" value="0"></lbl:LabeledIntegerBox>
+					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="maxLength" min="0" value="0"></lbl:LabeledIntegerBox>
+					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="minWordCount" min="0" value="0"></lbl:LabeledIntegerBox>
+					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="maxWordCount" min="0" value="0"></lbl:LabeledIntegerBox>
 				</div>
 
 				<div class="{style.attributeGroup}">
 					<!-- Question specific attributes -->
 					<g:Label styleName="{style.attributeGroupTitle}" ui:field="questionGroupLbl" text="baseGroupLbl"></g:Label>
 					
-					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="questionLength" min="0"></lbl:LabeledIntegerBox>
-					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="answerLength" min="0"></lbl:LabeledIntegerBox>
-					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="shortAnswerLength" min="0"></lbl:LabeledIntegerBox>
-					<lbl:LabeledDoubleBox addStyleNames="{style.labeledBox}" ui:field="answerDiff" min="0" max="100"></lbl:LabeledDoubleBox>
+					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="questionLength" min="0" value="0"></lbl:LabeledIntegerBox>
+					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="answerLength" min="0" value="0"></lbl:LabeledIntegerBox>
+					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="shortAnswerLength" min="0" value="0"></lbl:LabeledIntegerBox>
+					<lbl:LabeledDoubleBox addStyleNames="{style.labeledBox}" ui:field="answerDiff" min="0" max="100" value="0"></lbl:LabeledDoubleBox>
 
 					<lbl:LabeledPanel addStyleNames="{style.labeledBox}" ui:field="queHasMedia">
 						<g:CheckBox ui:field="queHaveImgChkBox"></g:CheckBox>
@@ -179,7 +179,7 @@
 						<g:CheckBox ui:field="queHaveSoundChkBox"></g:CheckBox>
 					</lbl:LabeledPanel>
 					
-					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="keywordCount" min="0"></lbl:LabeledIntegerBox>
+					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="keywordCount" min="0" value="0"></lbl:LabeledIntegerBox>
 					
 					<lbl:LabeledPanel addStyleNames="{style.labeledBox}" ui:field="showAutoComplete">
 						<g:CheckBox ui:field="showAutoCompleteChkBox"></g:CheckBox>
@@ -194,7 +194,7 @@
 						<g:CheckBox ui:field="allowTypingChkBox"></g:CheckBox>
 					</lbl:LabeledPanel>
 
-					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="minLetterForAutoComp" min="0"></lbl:LabeledIntegerBox>
+					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="minLetterForAutoComp" min="0" value="0"></lbl:LabeledIntegerBox>
 
 					<lbl:LabeledPanel addStyleNames="{style.labeledBox}" ui:field="acceptNonKeyword">
 						<g:CheckBox ui:field="acceptNonKeywordChkBox"></g:CheckBox>
@@ -208,7 +208,7 @@
 					<!-- MCQ Type Field -->
 					<lbl:LabeledValueListBox addStyleNames="{style.labeledBox}" ui:field="multimediaType"></lbl:LabeledValueListBox>
 					<lbl:LabeledValueListBox addStyleNames="{style.labeledBox}" ui:field="selectionType"></lbl:LabeledValueListBox>
-					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="maxBytes" min="0"></lbl:LabeledIntegerBox>
+					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="maxBytes" min="0" value="0"></lbl:LabeledIntegerBox>
 				</div>
 
 				<div class="{style.attributeGroup}">

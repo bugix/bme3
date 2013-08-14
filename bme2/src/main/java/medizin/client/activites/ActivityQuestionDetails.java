@@ -24,7 +24,6 @@ import medizin.client.proxy.UserAccessRightsProxy;
 import medizin.client.request.AnswerRequest;
 import medizin.client.request.CommentRequest;
 import medizin.client.request.MatrixValidityRequest;
-import medizin.client.request.QuestionRequest;
 import medizin.client.request.QuestionResourceRequest;
 import medizin.client.ui.view.question.AnswerDialogbox;
 import medizin.client.ui.view.question.AnswerDialogboxImpl;
@@ -872,7 +871,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		});
 	}
 
-	@Override
+	/*@Override
 	public void updatePicturePathInQuestion(String picturePath) {
 		
 		if(question != null) {
@@ -909,7 +908,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		}else {
 			Log.error("Question is null");
 		}
-	}
+	}*/
 
 	@Override
 	public void deleteUploadedFiles(Set<String> paths) {
@@ -1062,18 +1061,30 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			editerAnswerProxy.setAutor(author);
 			editerAnswerProxy.setRewiewer(rewiewer);
 			editerAnswerProxy.setSubmitToReviewComitee(submitToReviewComitee);
-			editerAnswerProxy.setIsAnswerAcceptedAdmin(false);
+			//editerAnswerProxy.setIsAnswerAcceptedAdmin(false);
 			editerAnswerProxy.setIsAnswerAcceptedReviewWahrer(false);
 			//editerAnswerProxy.setIsAnswerActive(false);
 			editerAnswerProxy.getComment().setComment(comment);
 			editerAnswerProxy.setQuestion(question);
-			editerAnswerProxy.setStatus(Status.NEW);
+			//editerAnswerProxy.setStatus(Status.NEW);
 			editerAnswerProxy.setValidity(validity);
 			editerAnswerProxy.setPoints(points);
 			editerAnswerProxy.setMediaPath(mediaPath);
 			editerAnswerProxy.setIsMedia(mediaPath != null && mediaPath.length() > 0);
 			editerAnswerProxy.setAdditionalKeywords(additionalKeywords);
 			editerAnswerProxy.setSequenceNumber(sequenceNumber);
+			
+			if ( (personRightProxy.getIsAdmin() || personRightProxy.getIsInstitutionalAdmin()) && userLoggedIn != null && userLoggedIn.getId().equals(author.getId()))
+			{
+				editerAnswerProxy.setIsAnswerAcceptedAdmin(true);
+				editerAnswerProxy.setStatus(Status.ACCEPTED_ADMIN);
+			}
+			else
+			{
+				editerAnswerProxy.setIsAnswerAcceptedAdmin(false);
+				editerAnswerProxy.setStatus(Status.NEW);	
+			}
+			
 			/*if(answerProxy.getValidity() != null) {
 				editerAnswerProxy.setValidity(answerProxy.getValidity());
 			}else {
@@ -1098,7 +1109,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			newAnswerProxy.setAutor(author);
 			newAnswerProxy.setRewiewer(rewiewer);
 			newAnswerProxy.setSubmitToReviewComitee(submitToReviewComitee);
-			newAnswerProxy.setIsAnswerAcceptedAdmin(false);
+			//newAnswerProxy.setIsAnswerAcceptedAdmin(false);
 			newAnswerProxy.setIsAnswerAcceptedReviewWahrer(false);
 			//newAnswerProxy.setIsAnswerActive(false);
 			newAnswerProxy.setComment(commentProxy);
@@ -1111,7 +1122,18 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			newAnswerProxy.setAdditionalKeywords(additionalKeywords);
 			newAnswerProxy.setSequenceNumber(sequenceNumber);
 			
-			newAnswerProxy.setStatus(Status.NEW);
+			//newAnswerProxy.setStatus(Status.NEW);
+			
+			if ( (personRightProxy.getIsAdmin() || personRightProxy.getIsInstitutionalAdmin()) && userLoggedIn != null && userLoggedIn.getId().equals(author.getId()))
+			{
+				newAnswerProxy.setIsAnswerAcceptedAdmin(true);
+				newAnswerProxy.setStatus(Status.ACCEPTED_ADMIN);
+			}
+			else
+			{
+				newAnswerProxy.setIsAnswerAcceptedAdmin(false);
+				newAnswerProxy.setStatus(Status.NEW);	
+			}
 			
 			final AnswerProxy finalAnswerProxy = newAnswerProxy;
 			

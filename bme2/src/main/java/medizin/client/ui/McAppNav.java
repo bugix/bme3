@@ -107,68 +107,68 @@ public class McAppNav extends Composite {
 
 	@UiHandler("systemOverview")
 		void systemOverviewClicked(ClickEvent event) {
-			placeController.goTo(new PlaceSystemOverview(PlaceSystemOverview.PLACE_SYSTEM_OVERVIEW));
+			placeController.goTo(new PlaceSystemOverview(PlaceSystemOverview.PLACE_SYSTEM_OVERVIEW, true));
 		}
 	@UiHandler("acceptPerson")
 	void acceptPersonClicked(ClickEvent event) {
-		placeController.goTo(new PlaceAcceptPerson(PlaceAcceptPerson.PLACE_ACCEPT_PERSON));
+		placeController.goTo(new PlaceAcceptPerson(PlaceAcceptPerson.PLACE_ACCEPT_PERSON, true));
 	}
 	
 	@UiHandler("acceptQuestion")
 	void acceptQuestionClicked(ClickEvent event) {
-		placeController.goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));
+		placeController.goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION, true));
 	}
 	@UiHandler("acceptAnswer")
 	void PlaceAcceptAnswerClicked(ClickEvent event) {
-		placeController.goTo(new PlaceAcceptAnswer(PlaceAcceptAnswer.PLACE_ACCEPT_ANSWER));
+		placeController.goTo(new PlaceAcceptAnswer(PlaceAcceptAnswer.PLACE_ACCEPT_ANSWER, true));
 	}
 	@UiHandler("acceptAssQuestion")
 	void acceptAssQuestionClicked(ClickEvent event) {
-		placeController.goTo(new PlaceAcceptAssQuestion(PlaceAcceptAssQuestion.PLACE_ACCEPT_ASS_QUESTION));
+		placeController.goTo(new PlaceAcceptAssQuestion(PlaceAcceptAssQuestion.PLACE_ACCEPT_ASS_QUESTION, true));
 	}
 	@UiHandler("openDemand")
 	void openDemandClicked(ClickEvent event) {
-		placeController.goTo(new PlaceOpenDemand(PlaceOpenDemand.PLACE_OPEN_DEMAND));
+		placeController.goTo(new PlaceOpenDemand(PlaceOpenDemand.PLACE_OPEN_DEMAND, true));
 	}
 	@UiHandler("user")
 	void userClicked(ClickEvent event) {
-		placeController.goTo(new PlaceUser(PlaceUser.PLACE_USER));
+		placeController.goTo(new PlaceUser(PlaceUser.PLACE_USER, true));
 	}
 	@UiHandler("question")
 	void questionClicked(ClickEvent event) {
-		placeController.goTo(new PlaceQuestion(PlaceQuestion.PLACE_QUESTION));
+		placeController.goTo(new PlaceQuestion(PlaceQuestion.PLACE_QUESTION, true));
 	}
 	@UiHandler("notActivatedQuestion")
 	void notActivatedQuestionClicked(ClickEvent event) {
-		placeController.goTo(new PlaceNotActivatedQuestion(PlaceNotActivatedQuestion.PLACE_NOT_ACTIVATED_QUESTION));
+		placeController.goTo(new PlaceNotActivatedQuestion(PlaceNotActivatedQuestion.PLACE_NOT_ACTIVATED_QUESTION, true));
 	}
 	@UiHandler("questionType")
 	void questionTypeClicked(ClickEvent event) {
-		placeController.goTo(new PlaceQuestiontypes(PlaceQuestiontypes.PLACE_QUESTIONTYPES));
+		placeController.goTo(new PlaceQuestiontypes(PlaceQuestiontypes.PLACE_QUESTIONTYPES, true));
 	}
 	@UiHandler("institution")
 	void institutionClicked(ClickEvent event) {
-		placeController.goTo(new PlaceInstitution(PlaceInstitution.PLACE_INSTITUTION));
+		placeController.goTo(new PlaceInstitution(PlaceInstitution.PLACE_INSTITUTION, true));
 	}
 	@UiHandler("assesment")
 	void assesmentClicked(ClickEvent event) {
-		placeController.goTo(new PlaceAssesment(PlaceAssesment.PLACE_ASSESMENT));
+		placeController.goTo(new PlaceAssesment(PlaceAssesment.PLACE_ASSESMENT, true));
 	}
 	@UiHandler("asignAssQuestion")
 	void asignAssQuestionClicked(ClickEvent event) {
-		placeController.goTo(new PlaceAsignAssQuestion(PlaceAsignAssQuestion.PLACE_ASIGN_ASS_QUESTION));
+		placeController.goTo(new PlaceAsignAssQuestion(PlaceAsignAssQuestion.PLACE_ASIGN_ASS_QUESTION, true));
 	}
 	@UiHandler("bookAssesment")
 	void bookAssesmentClicked(ClickEvent event) {
-		placeController.goTo(new PlaceBookAssesment(PlaceBookAssesment.PLACE_BOOK_ASSESMENT));
+		placeController.goTo(new PlaceBookAssesment(PlaceBookAssesment.PLACE_BOOK_ASSESMENT, true));
 	}
 	@UiHandler("staticContent")
 	void staticContentClicked(ClickEvent event) {
-		placeController.goTo(new PlaceStaticContent(PlaceStaticContent.PLACE_STATIC_CONTENT));
+		placeController.goTo(new PlaceStaticContent(PlaceStaticContent.PLACE_STATIC_CONTENT, true));
 	}
 	@UiHandler("notActivatedAnswer")
 	void notActivatedAnswerClicked(ClickEvent event){
-		placeController.goTo(new PlaceNotActivatedAnswer(PlaceNotActivatedAnswer.PLACE_NOT_ACTIVATED_ANSWER));
+		placeController.goTo(new PlaceNotActivatedAnswer(PlaceNotActivatedAnswer.PLACE_NOT_ACTIVATED_ANSWER, true));
 	}
 //	public McAppNav() {
 //		initWidget(uiBinderUser.createAndBindUi(this));
@@ -189,10 +189,10 @@ public class McAppNav extends Composite {
         initWidget(uiBinder.createAndBindUi(this));
         
 		shell.setNavigation(this);
-        systemOweviewPanel.setOpen(false);
-        managementPanel.setOpen(false);
-        assementPanel.setOpen(false);
-        questionPanel.setOpen(false);
+        /*systemOweviewPanel.setOpen(true);
+        managementPanel.setOpen(true);
+        assementPanel.setOpen(true);
+        questionPanel.setOpen(true);*/
 
     	/*requests.personRequest().myGetLoggedPerson().fire(new Receiver<PersonProxy>(){
 

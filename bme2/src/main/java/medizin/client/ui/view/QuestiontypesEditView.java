@@ -1,16 +1,13 @@
 package medizin.client.ui.view;
 
-import medizin.client.ui.view.question.QuestionEditViewImpl;
 import medizin.client.ui.widget.IntegerBox;
 import medizin.client.proxy.InstitutionProxy;
-import medizin.client.proxy.QuestionProxy;
 import medizin.client.proxy.QuestionTypeProxy;
 import medizin.shared.MultimediaType;
 import medizin.shared.QuestionTypes;
 import medizin.shared.SelectionType;
 
 import com.google.gwt.place.shared.Place;
-import com.google.web.bindery.requestfactory.gwt.client.RequestFactoryEditorDriver;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.TextArea;

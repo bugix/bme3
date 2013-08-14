@@ -29,5 +29,13 @@ public interface QuestionResourceProxy extends EntityProxy {
 
     abstract void setQuestion(QuestionProxy question);
 
+    abstract Integer getImageHeight();
+
+    abstract void setImageHeight(Integer imageHeight);
+
+    abstract Integer getImageWidth();
+
+    abstract void setImageWidth(Integer imageWidth);
+
     abstract Integer getVersion();
 }

@@ -11,6 +11,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.PostRemove;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
@@ -124,6 +126,12 @@ public class Answer {
 	@Value("false")
 	@Column(columnDefinition="BIT", length = 1)
 	private Boolean isForcedActive;
+	
+	@ManyToOne
+	private Person createdBy;
+	
+	@ManyToOne
+	private Person modifiedBy;
     
 	public static List<Answer> findAnswersEntriesByQuestion(Long id, int start, int max){
         Question question = Question.findQuestion(id);
@@ -577,5 +585,20 @@ public class Answer {
 		
         TypedQuery<Answer> q = entityManager().createQuery(cq);
         return q.getResultList();
+	}
+	
+	@PrePersist
+	@PreUpdate
+	public void preAnswerPersist()
+	{
+		Person loggedPerson = Person.findLoggedPersonByShibId();
+		
+		if (loggedPerson == null)
+		{
+			if (this.createdBy == null)
+				this.setCreatedBy(loggedPerson);
+			else if (this.createdBy != null)
+				this.setModifiedBy(loggedPerson);
+		}
 	}
 }

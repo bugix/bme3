@@ -4,6 +4,7 @@ import java.util.List;
 
 import medizin.client.proxy.AnswerProxy;
 import medizin.client.proxy.QuestionProxy;
+import medizin.client.proxy.QuestionResourceProxy;
 import medizin.client.style.resources.MyCellTableResources;
 import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.DeclineEmailPopupDelagate;
@@ -27,13 +28,13 @@ import medizin.shared.QuestionTypes;
 import medizin.shared.Status;
 import medizin.shared.i18n.BmeConstants;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.collect.Lists;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.CloseEvent;
@@ -151,30 +152,48 @@ public class AcceptAnswerSubViewImpl extends Composite implements AcceptAnswerSu
 								{	
 									final List<Point> points = Point.getPoints(Lists.newArrayList(selectedObject.getPoints()));
 									
-									if (questionProxy.getImageWidth() != null && questionProxy.getImageHeight() != null)
-									{
-										ImageRectangleViewer viewer = new ImageRectangleViewer(questionProxy.getPicturePath(), questionProxy.getImageWidth(), questionProxy.getImageHeight(), points, false);
-										vp.add(viewer);
-									}
-									else
-									{
-										ClientUtility.getImageWidthHeight(questionProxy.getPicturePath(), new ImageWidthHeight() {
-											
-											@Override
-											public void apply(Integer width, Integer height) {
-												ImageRectangleViewer viewer = new ImageRectangleViewer(questionProxy.getPicturePath(), width, height, points, false);
-												vp.add(viewer);
-											}
-										});
+									
+									if(questionProxy.getQuestionResources() != null && questionProxy.getQuestionResources().isEmpty() == false) {
+										QuestionResourceProxy questionResourceProxy = Lists.newArrayList(questionProxy.getQuestionResources()).get(0);
+									
+										final Integer imageHeight = questionResourceProxy.getImageHeight();
+										final Integer imageWidth = questionResourceProxy.getImageWidth();
+										final String path = questionResourceProxy.getPath();
+										
+										if (imageWidth != null && imageHeight != null)
+										{
+											ImageRectangleViewer viewer = new ImageRectangleViewer(path, imageWidth, imageHeight, points, false);
+											vp.add(viewer);
+										}
+										else
+										{
+											ClientUtility.getImageWidthHeight(path, new ImageWidthHeight() {
+												
+												@Override
+												public void apply(Integer width, Integer height) {
+													ImageRectangleViewer viewer = new ImageRectangleViewer(path, width, height, points, false);
+													vp.add(viewer);
+												}
+											});
+										}
+									}else {
+										Log.error("Question resources are null imagekey");
 									}
 								}
 								else if (questionProxy.getQuestionType().getQuestionType().equals(QuestionTypes.ShowInImage))
 								{
-									List<PolygonPath> polygonPathList = PolygonPath.getPolygonPaths(Lists.newArrayList(selectedObject.getPoints()));
+									if(questionProxy.getQuestionResources() != null && questionProxy.getQuestionResources().isEmpty() == false) {
+										QuestionResourceProxy questionResourceProxy = Lists.newArrayList(questionProxy.getQuestionResources()).get(0);
+										final Integer imageHeight = questionResourceProxy.getImageHeight();
+										final Integer imageWidth = questionResourceProxy.getImageWidth();
+										final String path = questionResourceProxy.getPath();
+										List<PolygonPath> polygonPathList = PolygonPath.getPolygonPaths(Lists.newArrayList(selectedObject.getPoints()));
+										ImagePolygonViewer imgPolygonViewer = new ImagePolygonViewer(path,  imageWidth, imageHeight, polygonPathList, false);
+										vp.add(imgPolygonViewer);
+									}else {
+										Log.error("Question resources are null show in image");
+									}
 									
-									ImagePolygonViewer imgPolygonViewer = new ImagePolygonViewer(questionProxy.getPicturePath(), questionProxy.getImageWidth(), questionProxy.getImageHeight(), polygonPathList, false);
-									
-									vp.add(imgPolygonViewer);
 								}
 								else if (questionProxy.getQuestionType().getQuestionType().equals(QuestionTypes.MCQ))
 								{
@@ -182,22 +201,14 @@ public class AcceptAnswerSubViewImpl extends Composite implements AcceptAnswerSu
 									{
 										final ImageViewer imgViewer = new ImageViewer();
 										
-										if (questionProxy.getImageWidth() != null && questionProxy.getImageHeight() != null)
-										{
-											imgViewer.setUrl(selectedObject.getMediaPath(), questionProxy.getImageWidth(), questionProxy.getImageHeight(), questionProxy.getQuestionType().getQuestionType());
-										}
-										else
-										{
-											imgViewer.setUrl(selectedObject.getMediaPath(), null, null, questionProxy.getQuestionType().getQuestionType());
-											/*ClientUtility.getImageWidthHeight(selectedObject.getMediaPath(), new ImageWidthHeight() {
-												
-												@Override
-												public void apply(Integer width, Integer height) {
-													imgViewer.setUrl(selectedObject.getMediaPath(), width, height, questionProxy.getQuestionType().getQuestionType());											
-												}
-											});*/
-										}
+										imgViewer.setUrl(selectedObject.getMediaPath(), null, null, questionProxy.getQuestionType().getQuestionType());
+										/*ClientUtility.getImageWidthHeight(selectedObject.getMediaPath(), new ImageWidthHeight() {
 											
+											@Override
+											public void apply(Integer width, Integer height) {
+												imgViewer.setUrl(selectedObject.getMediaPath(), width, height, questionProxy.getQuestionType().getQuestionType());											
+											}
+										});*/
 										
 										vp.add(imgViewer);
 									}

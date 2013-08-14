@@ -41,4 +41,6 @@ public class McAppConstant {
 	public static int TABLE_PAGE_SIZE = 15;
 	public static final int TABLE_JUMP_SIZE = 30;
 	public static final int ENTRY_TIMEOUT_MS = 700;
+	
+	public static final String RESEND_TO_REVIEW_KEY = "resendToReview";
 }

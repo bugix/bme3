@@ -135,7 +135,7 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 		
 
 		questionPanel.clear();
-		requests.questionRequest().findQuestionsAnswersNonAcceptedAdmin().with("answers", "questionType").fire(new BMEReceiver<List<QuestionProxy>>() {
+		requests.questionRequest().findQuestionsAnswersNonAcceptedAdmin().with("answers", "questionType","questionResources").fire(new BMEReceiver<List<QuestionProxy>>() {
 			@Override
 			public void onSuccess(List<QuestionProxy> response) {
 				if (view == null) {

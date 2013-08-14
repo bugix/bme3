@@ -12,6 +12,10 @@ public class PlaceAcceptAssQuestion extends AbstractPlace {
 		super(placeName);
 	}
 
+	public PlaceAcceptAssQuestion(String placeName, boolean reload) {
+		super(placeName, reload);
+	}
+
 	@Prefix(PLACE_ACCEPT_ASS_QUESTION)
 	public static class Tokenizer extends AbstractPlace.AbstractTokenizer<PlaceAcceptAssQuestion> {
 

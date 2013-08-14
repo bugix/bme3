@@ -91,5 +91,13 @@ public interface AnswerProxy extends EntityProxy {
 
     abstract void setIsForcedActive(Boolean isForcedActive);
 
+    abstract PersonProxy getCreatedBy();
+
+    abstract void setCreatedBy(PersonProxy createdBy);
+
+    abstract PersonProxy getModifiedBy();
+
+    abstract void setModifiedBy(PersonProxy modifiedBy);
+
     abstract Integer getVersion();
 }

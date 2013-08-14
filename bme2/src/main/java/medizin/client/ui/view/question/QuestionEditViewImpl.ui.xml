@@ -4,7 +4,11 @@
 	xmlns:d="urn:import:com.google.gwt.user.datepicker.client" xmlns:t="urn:import:medizin.client.ui.richtext"
 	xmlns:r="urn:import:medizin.client.ui.view.roo" xmlns:m="urn:import:medizin.client.ui.widget"
 	xmlns:i="urn:import:medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl">
-	<ui:style src="../../styles.css" />
+	<ui:style src="../../styles.css" >
+		.valueLabel{
+			padding-bottom: 7px;
+		}
+	</ui:style>
 	<ui:with type="medizin.shared.i18n.BmeConstants" field="constants"></ui:with>
 	
 	<g:VerticalPanel addStyleNames="{style.tabStyle}">
@@ -98,6 +102,15 @@
 
 								</td>
 							</tr>
+							
+							<tr id="autherEdit">
+								<td>
+									<g:Label styleName="{style.label}" ui:field="lblAutherEdit" text="{constants.auther}" visible="false"></g:Label>
+								</td>
+								<td>
+									<g:Label styleName="{style.valueLabel}" ui:field="lblAutherValue" visible="false"></g:Label>
+								</td>
+							</tr>
 
 							<tr id="reviewer">
 								<td>
@@ -109,6 +122,16 @@
 
 								</td>
 							</tr>
+							
+							<tr id="reviewerEdit">
+								<td>
+									<g:Label styleName="{style.label}" ui:field="lblReviewerEdit" text="{constants.reviewer}" visible="false"></g:Label>
+								</td>
+								<td>
+									<g:Label styleName="{style.valueLabel}" ui:field="lblReviewerValue" visible="false"></g:Label>
+								</td>
+							</tr>
+							
 							<tr id="questionEvent">
 								<td>
 									<g:Label styleName="{style.label}" ui:field="lblQuestionEvent" text="{constants.questionEvent}"></g:Label>

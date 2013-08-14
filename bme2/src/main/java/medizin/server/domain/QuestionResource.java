@@ -44,6 +44,9 @@ public class QuestionResource {
 	@ManyToOne
 	private Question question;
 	
+	private Integer imageHeight;
+	
+	private Integer imageWidth;
 	
 	public static void persistSet(Set<QuestionResource> questionResources) {
 		

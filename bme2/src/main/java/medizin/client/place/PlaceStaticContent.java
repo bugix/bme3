@@ -12,6 +12,10 @@ public class PlaceStaticContent extends AbstractPlace {
 		super(placeName);
 	}
 
+	public PlaceStaticContent(String placeName, boolean reload) {
+		super(placeName, reload);
+	}
+
 	@Prefix(PLACE_STATIC_CONTENT)
 	public static class Tokenizer extends AbstractPlace.AbstractTokenizer<PlaceStaticContent> {
 

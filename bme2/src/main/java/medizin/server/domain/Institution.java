@@ -18,6 +18,7 @@ import medizin.client.ui.widget.Sorting;
 import medizin.server.utils.ServerConstants;
 import medizin.shared.AccessRights;
 
+import org.hibernate.Query;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
@@ -56,13 +57,21 @@ public class Institution {
 		return Institution.findInstitution(instId);
     }
     
-    public static List<Institution> findInstitutionByName(String text, int start, int length)
+    public static List<Institution> findInstitutionByName(String text, Long personId, int start, int length)
     {
     	CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
  		CriteriaQuery<Institution> criteriaQuery = criteriaBuilder.createQuery(Institution.class);
  		Root<Institution> from = criteriaQuery.from(Institution.class);
  		Expression<String> exp = from.get("institutionName");
- 		criteriaQuery.where(criteriaBuilder.like(exp, "%" + text +"%"));
+ 		
+ 		Subquery<UserAccessRights> subQuery = criteriaQuery.subquery(UserAccessRights.class);
+ 		Root userAccessRightsRoot = subQuery.from(UserAccessRights.class);
+ 		Predicate subPre1 = criteriaBuilder.equal(userAccessRightsRoot.get("person").get("id"), personId);
+ 		Predicate subPre2 = userAccessRightsRoot.get("institution").isNotNull();
+ 		subQuery.select(userAccessRightsRoot.get("institution").get("id")).where(criteriaBuilder.and(subPre1, subPre2));
+ 		
+ 		Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(exp, "%" + text +"%"), criteriaBuilder.not(criteriaBuilder.in(from.get("id")).value(subQuery)));
+ 		criteriaQuery.where(predicate);
  		
  		TypedQuery<Institution> query = entityManager().createQuery(criteriaQuery);
  		query.setFirstResult(start);
@@ -71,16 +80,26 @@ public class Institution {
  		return query.getResultList();
     }
     
-    public static Long countInstitutionByName(String text)
+    public static Long countInstitutionByName(String text, Long personId)
     {
     	CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
  		CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
  		Root<Institution> from = criteriaQuery.from(Institution.class);
  		criteriaQuery.select(criteriaBuilder.count(from)); 		
  		Expression<String> exp = from.get("institutionName");
- 		criteriaQuery.where(criteriaBuilder.like(exp, "%" + text +"%"));
+ 		
+ 		Subquery<UserAccessRights> subQuery = criteriaQuery.subquery(UserAccessRights.class);
+ 		Root userAccessRightsRoot = subQuery.from(UserAccessRights.class);
+ 		Predicate subPre1 = criteriaBuilder.equal(userAccessRightsRoot.get("person").get("id"), personId);
+ 		Predicate subPre2 = userAccessRightsRoot.get("institution").isNotNull();
+ 		subQuery.select(userAccessRightsRoot.get("institution").get("id")).where(criteriaBuilder.and(subPre1, subPre2));
+ 		
+ 		Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(exp, "%" + text +"%"), criteriaBuilder.not(criteriaBuilder.in(from.get("id")).value(subQuery)));
+ 		criteriaQuery.where(predicate);
  		
  		TypedQuery<Long> query = entityManager().createQuery(criteriaQuery);
+ 		
+ 		System.out.println("QUERY : " + query.unwrap(Query.class).getQueryString());
  		
  		return query.getSingleResult();
     }

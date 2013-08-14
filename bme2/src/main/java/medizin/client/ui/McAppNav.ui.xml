@@ -23,7 +23,7 @@
 			<g:Anchor ui:field="openDemand"></g:Anchor>
 		</g:VerticalPanel>
 	</g:DisclosurePanel>
-	<g:DisclosurePanel ui:field="managementPanel" width="100%" open="false" addStyleNames='{style.mainNavPanel}' visible="false">
+	<g:DisclosurePanel ui:field="managementPanel" width="100%" open="true" addStyleNames='{style.mainNavPanel}' visible="false">
 		<g:header ></g:header>
 		<g:VerticalPanel addStyleNames='{style.mainNavPanelContent}' width="100%">
 			<g:Anchor ui:field="acceptPerson"></g:Anchor>
@@ -31,7 +31,7 @@
 		</g:VerticalPanel>
 	</g:DisclosurePanel>
 	
-	<g:DisclosurePanel ui:field="questionPanel" width="100%" open="false" addStyleNames='{style.mainNavPanel}' visible="false">
+	<g:DisclosurePanel ui:field="questionPanel" width="100%" open="true" addStyleNames='{style.mainNavPanel}' visible="false">
 		<g:header></g:header>
 		<g:VerticalPanel addStyleNames='{style.mainNavPanelContent}' width="100%">		
 			<g:Anchor ui:field="questionType"></g:Anchor>
@@ -43,7 +43,7 @@
 			<g:Anchor ui:field="institution"></g:Anchor>
 		</g:VerticalPanel>
 	</g:DisclosurePanel>
-	<g:DisclosurePanel ui:field="assementPanel" width="100%" open="false" addStyleNames='{style.mainNavPanel}' visible="false">
+	<g:DisclosurePanel ui:field="assementPanel" width="100%" open="true" addStyleNames='{style.mainNavPanel}' visible="false">
 		<g:header></g:header>
 		<g:VerticalPanel addStyleNames='{style.mainNavPanelContent}' width="100%">
 			<g:Anchor ui:field="assesment"></g:Anchor>

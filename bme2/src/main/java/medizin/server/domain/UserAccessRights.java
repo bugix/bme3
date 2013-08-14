@@ -335,4 +335,131 @@ public class UserAccessRights {
 		return questions;
 		
 	}
+	
+	public static List<UserAccessRights> findQuestionEventAccessByPerson(Long personId)
+	{
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<UserAccessRights> criteriaQuery = criteriaBuilder.createQuery(UserAccessRights.class);
+		Root<UserAccessRights> from = criteriaQuery.from(UserAccessRights.class);
+		
+		Predicate pre1 = criteriaBuilder.equal(from.get("person"), personId);
+		Predicate pre2 = from.get("accRights").in(AccessRights.AccRead, AccessRights.AccWrite, AccessRights.AccAddQuestions);
+		Predicate pre3 = from.get("questionEvent").isNotNull();
+		
+		Predicate predicate = criteriaBuilder.and(pre1, pre2, pre3);
+		criteriaQuery.where(predicate);
+		
+		TypedQuery<UserAccessRights> query = entityManager().createQuery(criteriaQuery);
+		return query.getResultList();
+	}
+	
+	public static List<UserAccessRights> findQuestionAccessByPerson(Long personId)
+	{
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<UserAccessRights> criteriaQuery = criteriaBuilder.createQuery(UserAccessRights.class);
+		Root<UserAccessRights> from = criteriaQuery.from(UserAccessRights.class);
+		
+		Predicate pre1 = criteriaBuilder.equal(from.get("person"), personId);
+		Predicate pre2 = from.get("accRights").in(AccessRights.AccRead, AccessRights.AccWrite, AccessRights.AccAddAnswers);
+		Predicate pre3 = from.get("question").isNotNull();
+		
+		Predicate predicate = criteriaBuilder.and(pre1, pre2, pre3);
+		criteriaQuery.where(predicate);
+		
+		TypedQuery<UserAccessRights> query = entityManager().createQuery(criteriaQuery);
+		return query.getResultList();
+	}
+	
+	public static Boolean persistQuestionEventAccess(AccessRights rights, Long personId, Long questionEventId)
+	{
+		if (rights.equals(AccessRights.AccWrite))
+		{
+			UserAccessRights userAccessRights = checkAccessRightsForQuestionEvent(AccessRights.AccRead, personId, questionEventId);
+			if (userAccessRights != null)
+				userAccessRights.remove();
+		}
+		
+		UserAccessRights userAccRights = checkAccessRightsForQuestionEvent(rights, personId, questionEventId);
+		
+		if (userAccRights != null)
+			return false;
+		else
+		{
+			UserAccessRights userAccessRights = new UserAccessRights();
+			userAccessRights.setAccRights(rights);
+			userAccessRights.setPerson(Person.findPerson(personId));
+			userAccessRights.setQuestionEvent(QuestionEvent.findQuestionEvent(questionEventId));
+			userAccessRights.persist();
+			return true;
+		}
+	}
+	
+	public static Boolean persistQuestionAccess(AccessRights rights, Long personId, Long questionId)
+	{
+		if (rights.equals(AccessRights.AccWrite))
+		{
+			UserAccessRights readRights = checkAccessRightsForQuestion(AccessRights.AccRead, personId, questionId);
+			
+			if (readRights != null)
+				readRights.remove();			
+		}
+		
+		UserAccessRights userAccssRight = checkAccessRightsForQuestion(rights, personId, questionId);
+		
+		if (userAccssRight != null)
+			return false;
+		else
+		{
+			UserAccessRights userAccessRights = new UserAccessRights();
+			userAccessRights.setAccRights(rights);
+			userAccessRights.setPerson(Person.findPerson(personId));
+			userAccessRights.setQuestion(Question.findQuestion(questionId));
+			userAccessRights.persist();
+			return true;
+		}
+	}
+
+	public static UserAccessRights checkAccessRightsForQuestionEvent(AccessRights rights, Long personId, Long questionEventId)
+	{
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<UserAccessRights> criteriaQuery = criteriaBuilder.createQuery(UserAccessRights.class);
+		Root<UserAccessRights> from = criteriaQuery.from(UserAccessRights.class);
+		
+		Predicate pre1 = criteriaBuilder.equal(from.get("person").get("id"), personId);
+		Predicate pre2 = criteriaBuilder.equal(from.get("questionEvent").get("id"), questionEventId);
+		Predicate pre3 = criteriaBuilder.equal(from.get("accRights"), rights);
+		
+		Predicate predicate = criteriaBuilder.and(pre1, pre2, pre3);
+		
+		criteriaQuery.where(predicate);
+		
+		TypedQuery<UserAccessRights> query = entityManager().createQuery(criteriaQuery);
+		
+		if (query.getResultList() != null && query.getResultList().isEmpty() == false)
+			return query.getResultList().get(0);
+		else
+			return null;		
+	}
+	
+	public static UserAccessRights checkAccessRightsForQuestion(AccessRights rights, Long personId, Long questionId)
+	{
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<UserAccessRights> criteriaQuery = criteriaBuilder.createQuery(UserAccessRights.class);
+		Root<UserAccessRights> from = criteriaQuery.from(UserAccessRights.class);
+		
+		Predicate pre1 = criteriaBuilder.equal(from.get("person").get("id"), personId);
+		Predicate pre2 = criteriaBuilder.equal(from.get("question").get("id"), questionId);
+		Predicate pre3 = criteriaBuilder.equal(from.get("accRights"), rights);
+		
+		Predicate predicate = criteriaBuilder.and(pre1, pre2, pre3);
+		
+		criteriaQuery.where(predicate);
+		
+		TypedQuery<UserAccessRights> query = entityManager().createQuery(criteriaQuery);
+		
+		if (query.getResultList() != null && query.getResultList().isEmpty() == false)
+			return query.getResultList().get(0);
+		else
+			return null;
+	}
 }

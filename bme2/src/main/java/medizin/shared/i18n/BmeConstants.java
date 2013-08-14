@@ -676,4 +676,30 @@ public interface BmeConstants extends Constants {
 	public String evaluationGroupLbl();
 	
 	public String allowRichText();
+
+	public String mcsMayNotBeNull();
+	
+	public String questionEventAdvSearch();
+	
+	public String textSearch();
+			
+	public String date();
+			
+	public String userType();
+			
+	public String mediaAvailability();
+	
+	public String bindtype();
+	
+	public String criterion();
+	
+	public String mcAdvSearch();
+	
+	public String sumOfAnsValidateMsg();
+	
+	public String accRightsErrorMsg();
+	
+	public String acceptQueSaveMsg();
+	
+	public String neverShowMsg();
 }
