@@ -46,6 +46,8 @@ public interface QuestionEditView extends IsWidget {
 
 		void resendToReview();
 
+		void disableEnableAuthorReviewerSuggestBox();
+
 	}
 
 	void setRewiewerPickerValues(Collection<PersonProxy> values);
@@ -75,4 +77,6 @@ public interface QuestionEditView extends IsWidget {
 	Long getAuthorId();
 	
 	void addPictureToQuestionResources(QuestionResourceProxy questionResourceProxyForPicture);
+	
+	void disableEnableAuthorReviewerValue(boolean flag);
 }

@@ -40,6 +40,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
@@ -885,4 +886,24 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 	// updated in ActivityAcceptQuestionEdit 
 	@Override
 	public void resendToReview() {}
+
+	@Override
+	public void disableEnableAuthorReviewerSuggestBox() {
+		
+		if (question != null && Status.NEW.equals(question.getStatus()))
+		{
+			view.disableEnableAuthorReviewerValue(false);
+			Document.get().getElementById("autherEdit").removeFromParent();
+			Document.get().getElementById("reviewerEdit").removeFromParent();
+		}
+		else
+		{
+			view.disableEnableAuthorReviewerValue(true);
+			Document.get().getElementById("auther").removeFromParent();	
+			Document.get().getElementById("reviewer").removeFromParent();
+			Document.get().getElementById("autherEdit").getStyle().clearDisplay();			
+			Document.get().getElementById("reviewerEdit").getStyle().clearDisplay();
+		}	
+		
+	}
 }

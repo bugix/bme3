@@ -48,9 +48,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.DivElement;
-import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.SpanElement;
-import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.editor.client.Editor.Ignore;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -264,12 +262,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 			}
 		});
 		
-		lblAutherEdit.setVisible(false);
-		lblReviewerEdit.setVisible(false);
-		lblAutherValue.setVisible(false);
-		lblReviewerValue.setVisible(false);
-		Document.get().getElementById("autherEdit").getStyle().setDisplay(Display.NONE);
-		Document.get().getElementById("reviewerEdit").getStyle().setDisplay(Display.NONE);
+		
 	}
 
 	@Override
@@ -277,20 +270,13 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		Log.info(html);
 		questionTextArea.setHTML(html);
 	}
-
+	
 	@Override
 	public void setValue(QuestionProxy question) {
 		
 		DOM.setElementPropertyBoolean(questionType.getElement(), "disabled", true);
 		
-		lblAutherEdit.setVisible(true);
-		lblReviewerEdit.setVisible(true);
-		lblAutherValue.setVisible(true);
-		lblReviewerValue.setVisible(true);
-		Document.get().getElementById("auther").getStyle().setDisplay(Display.NONE);
-		Document.get().getElementById("autherEdit").getStyle().clearDisplay();
-		Document.get().getElementById("reviewer").getStyle().setDisplay(Display.NONE);
-		Document.get().getElementById("reviewerEdit").getStyle().clearDisplay();
+		delegate.disableEnableAuthorReviewerSuggestBox();
 		
 		questionShortName.setValue(question.getQuestionShortName()==null ? "": question.getQuestionShortName());
 		questionType.setValue(question.getQuestionType());
@@ -330,7 +316,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 
 	@Override
 	public void setDelegate(Delegate delegate) {
-		this.delegate = delegate;
+		this.delegate = delegate;		
 	}
 
 	@Override
@@ -864,6 +850,12 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		return author.getSelected().getId();
 	}
 
-	
+	public void disableEnableAuthorReviewerValue(boolean flag)
+	{
+		lblAutherEdit.setVisible(flag);
+		lblAutherValue.setVisible(flag);
+		lblReviewerEdit.setVisible(flag);
+		lblReviewerValue.setVisible(flag);
+	}
 
 }

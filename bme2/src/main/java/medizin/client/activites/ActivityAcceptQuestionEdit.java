@@ -12,6 +12,7 @@ import medizin.shared.Status;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.base.Function;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.place.shared.PlaceController;
@@ -216,5 +217,14 @@ public class ActivityAcceptQuestionEdit extends ActivityQuestionEdit {
 		/*if(Status.CORRECTION_FROM_ADMIN.equals(status) || Status.CORRECTION_FROM_REVIEWER.equals(status)) {
 			createNewQuestion(this.question,status,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor, gotoFunction);	
 		}*/
+	}
+	
+	@Override
+	public void disableEnableAuthorReviewerSuggestBox() {
+		view.disableEnableAuthorReviewerValue(true);
+		Document.get().getElementById("auther").removeFromParent();	
+		Document.get().getElementById("autherEdit").getStyle().clearDisplay();
+		Document.get().getElementById("reviewer").removeFromParent();
+		Document.get().getElementById("reviewerEdit").getStyle().clearDisplay();
 	}
 }
