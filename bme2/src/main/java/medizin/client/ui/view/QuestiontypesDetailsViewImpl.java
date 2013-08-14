@@ -48,18 +48,8 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 	    @UiField
 		IconButton delete;
 	    
-	   
-		/*@UiField
-	    HasClickHandlers edit;	
-	    */
-	    
 	    @UiField
-	    SpanElement displayRenderer;	 
-	    
-		
-
-		/*@UiField
-		Image arrow;*/
+	    SpanElement displayRenderer;
 		
 
 	    QuestionTypeProxy proxy;
@@ -193,36 +183,6 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 		@UiField
 		Label shortAnswerLengthValLbl;
 		
-		/*@UiField
-		Label imageWidthLbl;
-		 
-		@UiField
-		Label imageWidthValLbl;
-		
-		@UiField
-		Label imageLengthLbl;
-		 
-		@UiField
-		Label imageLengthValLbl;
-		
-		@UiField
-		Label imageProportionLbl;
-		 
-		@UiField
-		Label imageProportionValLbl;*/
-		
-		/*@UiField
-		Label linearPointLbl;
-		 
-		@UiField
-		Label linearPointValLbl;
-			
-		@UiField
-		Label linearPercentageLbl;
-		 
-		@UiField
-		Label linearPercentageValLbl;*/
-		
 		@UiField
 		Label keywordHighlightLbl;
 		
@@ -282,30 +242,6 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 		 
 		@UiField
 		Label columnValLbl;
-		
-		/*@UiField
-		Label thumbWidthLbl;
-		 
-		@UiField
-		Label thumbWidthValLbl;
-		
-		@UiField
-		Label thumbHeightLbl;
-		 
-		@UiField
-		Label thumbHeightValLbl;
-		
-		@UiField
-		Label allowZoomOutLbl;
-		
-		@UiField
-		Label allowZoomOutValLbl;
-		
-		@UiField
-		Label allowZoomInLbl;
-		
-		@UiField
-		Label allowZoomInValLbl;*/
 		
 		@UiField
 		Label maxBytesLbl;
@@ -380,19 +316,11 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 	    	   answerLengthValLbl.setText(toStringUtility(proxy.getAnswerLength()));
 	    	   acceptNonKeywordValLbl.setText(toStringUtility(proxy.getAcceptNonKeyword()));
 	    	   shortAnswerLengthValLbl.setText(toStringUtility(proxy.getLengthShortAnswer()));
-	    	   /*imageWidthValLbl.setText(toStringUtility(proxy.getImageWidth()));
-	    	   imageLengthValLbl.setText(toStringUtility(proxy.getImageHeight()));
-	    	   imageProportionValLbl.setText(toStringUtility(proxy.getImageProportion()));*/
 	       }
 	       else if (proxy.getQuestionType().equals(QuestionTypes.ShowInImage))
 	       {
 	    	   questionLengthValLbl.setText(toStringUtility(proxy.getQuestionLength()));
-	    	   answerLengthValLbl.setText(toStringUtility(proxy.getAnswerLength()));
-	    	  /* imageWidthValLbl.setText(toStringUtility(proxy.getImageWidth()));
-	    	   imageLengthValLbl.setText(toStringUtility(proxy.getImageHeight()));
-	    	   imageProportionValLbl.setText(toStringUtility(proxy.getImageProportion()));*/
-	    	   /*linearPointValLbl.setText(toStringUtility(proxy.getLinearPoint()));
-	    	   linearPercentageValLbl.setText(toStringUtility(proxy.getLinearPercentage()));*/	    	   
+	    	   answerLengthValLbl.setText(toStringUtility(proxy.getAnswerLength()));   	   
 	       }
 	       else if (proxy.getQuestionType().equals(QuestionTypes.LongText))
 	       {
@@ -406,7 +334,6 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 	       }
 	       else if (proxy.getQuestionType().equals(QuestionTypes.Matrix))
 	       {
-	    	   //maxLengthValLbl.setText(proxy.getMaxLength()));
 	    	   questionLengthValLbl.setText(toStringUtility(proxy.getQuestionLength()));
 	    	   answerLengthValLbl.setText(toStringUtility(proxy.getAnswerLength()));
 	    	   oneToOneAssValLbl.setText(toStringUtility(proxy.getAllowOneToOneAss()));
@@ -414,17 +341,10 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 	       else if (proxy.getQuestionType().equals(QuestionTypes.MCQ))
 	       {
 	    	   questionLengthValLbl.setText(toStringUtility(proxy.getQuestionLength()));
-	    	   /*imageWidthValLbl.setText(toStringUtility(proxy.getImageWidth()));
-	    	   imageLengthValLbl.setText(toStringUtility(proxy.getImageHeight()));
-	    	   imageProportionValLbl.setText(toStringUtility(proxy.getImageProportion()));*/
 	    	   multimediaTypeValLbl.setText(enumRenderer.render(proxy.getMultimediaType()));
 	    	   selectionTypeValLbl.setText(enumRenderer.render(proxy.getSelectionType()));
 	    	   columnValLbl.setText(toStringUtility(proxy.getColumns()));
 	    	   richTextValLbl.setText(toStringUtility(proxy.getRichText()));
-	    	   /*thumbWidthValLbl.setText(toStringUtility(proxy.getThumbWidth()));
-	    	   thumbHeightValLbl.setText(toStringUtility(proxy.getThumbHeight()));	    	   
-	    	   allowZoomOutValLbl.setText(toStringUtility(proxy.getAllowZoomOut()));
-	    	   allowZoomInValLbl.setText(toStringUtility(proxy.getAllowZoomIn()));*/
 	    	   maxBytesValLbl.setText(toStringUtility(proxy.getMaxBytes()));
 	       }
 	       
@@ -461,12 +381,6 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 			minLetterForAutoCompLbl.setText(constants.minLetterAutoComplete());
 			acceptNonKeywordLbl.setText(constants.acceptNonkeyword());
 			shortAnswerLengthLbl.setText(constants.lengthShortAns());
-			/*imageWidthLbl.setText(constants.imgWidth());
-			imageLengthLbl.setText(constants.imgLength());
-			imageProportionLbl.setText(constants.imgProportion());*/
-			
-			/*linearPointLbl.setText(constants.linearPoint());
-			linearPercentageLbl.setText(constants.linearPercentage());*/
 			
 			keywordHighlightLbl.setText(constants.keywordHighlight());
 			richTextLbl.setText(constants.richText());
@@ -480,10 +394,6 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 			multimediaTypeLbl.setText(constants.multimediaType());
 			selectionTypeLbl.setText(constants.selectionType());
 			columnLbl.setText(constants.column());
-			/*thumbWidthLbl.setText(constants.thumbWidth());
-			thumbHeightLbl.setText(constants.thumbHeight());
-			allowZoomOutLbl.setText(constants.allowZoomOut());
-			allowZoomInLbl.setText(constants.allowZoomIn());*/
 			maxBytesLbl.setText(constants.maxBytes());
 		}
 	
@@ -589,175 +499,5 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 			{
 				Document.get().getElementById(str).getStyle().setDisplay(Display.NONE);
 			}
-		}
-		
-		/*public void showTextualField()
-		{
-			Document.get().getElementById("sumAnswer").getStyle().clearDisplay();
-			Document.get().getElementById("sumTrueAnswer").getStyle().clearDisplay();
-			Document.get().getElementById("sumFalseAnswer").getStyle().clearDisplay();
-			Document.get().getElementById("questionLength").getStyle().clearDisplay();
-			Document.get().getElementById("answerLength").getStyle().clearDisplay();
-			Document.get().getElementById("answerDiff").getStyle().clearDisplay();
-			Document.get().getElementById("queHaveImg").getStyle().clearDisplay();
-			Document.get().getElementById("queHaveVideo").getStyle().clearDisplay();
-			Document.get().getElementById("queHaveSound").getStyle().clearDisplay();
-			
-		}
-		
-		public void disableTextualField()
-		{
-			Document.get().getElementById("sumAnswer").getStyle().setDisplay(Display.NONE);
-			Document.get().getElementById("sumTrueAnswer").getStyle().setDisplay(Display.NONE);
-			Document.get().getElementById("sumFalseAnswer").getStyle().setDisplay(Display.NONE);
-			Document.get().getElementById("questionLength").getStyle().setDisplay(Display.NONE);
-			Document.get().getElementById("answerLength").getStyle().setDisplay(Display.NONE);
-			Document.get().getElementById("answerDiff").getStyle().setDisplay(Display.NONE);
-			Document.get().getElementById("queHaveImg").getStyle().setDisplay(Display.NONE);
-			Document.get().getElementById("queHaveVideo").getStyle().setDisplay(Display.NONE);
-			Document.get().getElementById("queHaveSound").getStyle().setDisplay(Display.NONE);
-		}
-		
-		public void showImgKeyField()
-		{
-			Document.get().getElementById("questionLength").getStyle().clearDisplay();
-			Document.get().getElementById("keywordCount").getStyle().clearDisplay();
-			Document.get().getElementById("showAutoComplete").getStyle().clearDisplay();
-			Document.get().getElementById("isDictionaryKeyword").getStyle().clearDisplay();
-			Document.get().getElementById("allowTyping").getStyle().clearDisplay();
-			Document.get().getElementById("minLetterForAutoComp").getStyle().clearDisplay();
-			Document.get().getElementById("answerLength").getStyle().clearDisplay();
-			Document.get().getElementById("acceptNonKeyword").getStyle().clearDisplay();
-			Document.get().getElementById("shortAnswerLength").getStyle().clearDisplay();
-			Document.get().getElementById("imageWidth").getStyle().clearDisplay();
-			Document.get().getElementById("imageLength").getStyle().clearDisplay();
-			Document.get().getElementById("imageProportion").getStyle().clearDisplay();
-		}
-		
-		public void disableImgKeyField()
-		{
-			Document.get().getElementById("questionLength").getStyle().setDisplay(Display.NONE);
-			Document.get().getElementById("keywordCount").getStyle().setDisplay(Display.NONE);
-			Document.get().getElementById("showAutoComplete").getStyle().setDisplay(Display.NONE);
-			Document.get().getElementById("isDictionaryKeyword").getStyle().setDisplay(Display.NONE);
-			Document.get().getElementById("allowTyping").getStyle().setDisplay(Display.NONE);
-			Document.get().getElementById("minLetterForAutoComp").getStyle().setDisplay(Display.NONE);
-			Document.get().getElementById("answerLength").getStyle().setDisplay(Display.NONE);
-			Document.get().getElementById("acceptNonKeyword").getStyle().setDisplay(Display.NONE);
-			Document.get().getElementById("shortAnswerLength").getStyle().setDisplay(Display.NONE);
-			Document.get().getElementById("imageWidth").getStyle().setDisplay(Display.NONE);
-			Document.get().getElementById("imageLength").getStyle().setDisplay(Display.NONE);
-			Document.get().getElementById("imageProportion").getStyle().setDisplay(Display.NONE);
-		}
-		
-		public void showShowInImageField()
-		{
-			Document.get().getElementById("questionLength").getStyle().clearDisplay();
-			Document.get().getElementById("answerLength").getStyle().clearDisplay();
-			Document.get().getElementById("imageWidth").getStyle().clearDisplay();
-			Document.get().getElementById("imageLength").getStyle().clearDisplay();
-			Document.get().getElementById("imageProportion").getStyle().clearDisplay();
-			Document.get().getElementById("linearPoint").getStyle().clearDisplay();
-			Document.get().getElementById("linearPercentage").getStyle().clearDisplay();
-		}
-		
-		public void disableShowInImageField()
-		{
-			Document.get().getElementById("questionLength").getStyle().setDisplay(Display.NONE);
-			Document.get().getElementById("answerLength").getStyle().setDisplay(Display.NONE);
-			Document.get().getElementById("imageWidth").getStyle().setDisplay(Display.NONE);
-			Document.get().getElementById("imageLength").getStyle().setDisplay(Display.NONE);
-			Document.get().getElementById("imageProportion").getStyle().setDisplay(Display.NONE);
-			Document.get().getElementById("linearPoint").getStyle().setDisplay(Display.NONE);
-			Document.get().getElementById("linearPercentage").getStyle().setDisplay(Display.NONE);
-		}
-
-		public void showLongtextField()
-		{
-			Document.get().getElementById("keywordHighlight").getStyle().clearDisplay();
-			Document.get().getElementById("richText").getStyle().clearDisplay();
-			Document.get().getElementById("minLength").getStyle().clearDisplay();
-			Document.get().getElementById("maxLength").getStyle().clearDisplay();
-			Document.get().getElementById("minWordCount").getStyle().clearDisplay();
-			Document.get().getElementById("maxWordCount").getStyle().clearDisplay();
-		}
-		
-		public void disableLongtextField()
-		{
-			Document.get().getElementById("keywordHighlight").getStyle().setDisplay(Display.NONE);
-			Document.get().getElementById("richText").getStyle().setDisplay(Display.NONE);
-			Document.get().getElementById("minLength").getStyle().setDisplay(Display.NONE);
-			Document.get().getElementById("maxLength").getStyle().setDisplay(Display.NONE);
-			Document.get().getElementById("minWordCount").getStyle().setDisplay(Display.NONE);
-			Document.get().getElementById("maxWordCount").getStyle().setDisplay(Display.NONE);
-		}
-		
-		public void showMatrixField()
-		{
-			Document.get().getElementById("questionLength").getStyle().clearDisplay();
-			Document.get().getElementById("answerLength").getStyle().clearDisplay();
-			Document.get().getElementById("oneToOneAss").getStyle().clearDisplay();
-		}
-		
-		public void disableMatrixFied()
-		{
-			Document.get().getElementById("questionLength").getStyle().setDisplay(Display.NONE);
-			Document.get().getElementById("answerLength").getStyle().setDisplay(Display.NONE);
-			Document.get().getElementById("oneToOneAss").getStyle().setDisplay(Display.NONE);
-		}
-		
-		public void showMCQField()
-		{
-			Document.get().getElementById("imageWidth").getStyle().clearDisplay();
-			Document.get().getElementById("imageLength").getStyle().clearDisplay();
-			Document.get().getElementById("imageProportion").getStyle().clearDisplay();
-			Document.get().getElementById("multimediaType").getStyle().clearDisplay();
-			Document.get().getElementById("selectionType").getStyle().clearDisplay();
-			Document.get().getElementById("column").getStyle().clearDisplay();
-			Document.get().getElementById("thumbWidth").getStyle().clearDisplay();
-			Document.get().getElementById("thumbHeight").getStyle().clearDisplay();
-			Document.get().getElementById("richText").getStyle().clearDisplay();
-			Document.get().getElementById("allowZoomOut").getStyle().clearDisplay();
-			Document.get().getElementById("allowZoomIn").getStyle().clearDisplay();
-			Document.get().getElementById("maxBytes").getStyle().clearDisplay();
-		}
-		
-		public void disableMCQField()
-		{
-			Document.get().getElementById("imageWidth").getStyle().setDisplay(Display.NONE);
-			Document.get().getElementById("imageLength").getStyle().setDisplay(Display.NONE);
-			Document.get().getElementById("imageProportion").getStyle().setDisplay(Display.NONE);
-			Document.get().getElementById("multimediaType").getStyle().setDisplay(Display.NONE);
-			Document.get().getElementById("selectionType").getStyle().setDisplay(Display.NONE);
-			Document.get().getElementById("column").getStyle().setDisplay(Display.NONE);
-			Document.get().getElementById("thumbWidth").getStyle().setDisplay(Display.NONE);
-			Document.get().getElementById("thumbHeight").getStyle().setDisplay(Display.NONE);
-			Document.get().getElementById("richText").getStyle().setDisplay(Display.NONE);
-			Document.get().getElementById("allowZoomOut").getStyle().setDisplay(Display.NONE);
-			Document.get().getElementById("allowZoomIn").getStyle().setDisplay(Display.NONE);
-			Document.get().getElementById("maxBytes").getStyle().setDisplay(Display.NONE);
-		}*/
-		
-		/*@UiHandler("arrow")
-		void handleClick(ClickEvent e) {
-			if (questionTypeDisclosurePanel.isOpen()) {
-				questionTypeDisclosurePanel.setOpen(false);
-				arrow.setUrl("/ApplicationEntry/gwt/unibas/images/arrowdownselect.png");// set
-																					// url
-																					// of
-																					// up
-																					// image
-
-			} else {
-				
-				questionTypeDisclosurePanel.setOpen(true);
-				arrow.setUrl("/ApplicationEntry/gwt/unibas/images/arrowdownselect.png");// set
-																					// url
-																					// of
-																					// down
-																					// image
-			}
-
-		}*/
-		
+		}		
 }

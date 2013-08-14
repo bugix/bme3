@@ -14,6 +14,7 @@ public interface UiStyles extends ClientBundle {
 		public String backgroundHilight();
 		public String alignRight();
 		public String horizontalSpacing();
+		public String attributeSelected();
 	}
 
 	@Source("UiStyles.css")

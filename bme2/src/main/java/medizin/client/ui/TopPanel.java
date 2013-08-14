@@ -15,6 +15,7 @@ import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.PersonProxy;
+import medizin.client.style.resources.UiStyles;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.shared.Locale;
 import medizin.shared.i18n.BmeConstants;
@@ -96,6 +97,9 @@ public class TopPanel extends Composite {
    // private List<InstitutionProxy> temp = new ArrayList<InstitutionProxy>();
     
     @UiField
+    UiStyles uiStyles;
+    
+    @UiField
     Label languageLbl;
     
     @UiField
@@ -150,6 +154,7 @@ public class TopPanel extends Composite {
 	public TopPanel(final McAppRequestFactory requests, final PlaceController placeController) {
         this.requests = requests;
         //this.placeController = placeController;
+        
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		loggedUser.addValueChangeHandler(new ValueChangeHandler<PersonProxy>() {
@@ -198,6 +203,7 @@ public class TopPanel extends Composite {
 				requests.getEventBus().fireEvent(new RecordChangeEvent(recordViewListBox.getValue()));	
 			}
 		});
+        uiStyles.uiCss().ensureInjected();
 	}
 	
 	public void changeLanguage(Locale locale)

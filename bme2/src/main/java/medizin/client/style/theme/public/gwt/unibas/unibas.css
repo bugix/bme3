@@ -25,7 +25,7 @@ pre {
 body {
     font-size: 70%;
 	line-height: normal;
-	color: #222;
+	color: #333;
 	margin: 0px;
 	border: 0px;
 	padding: 0px;
@@ -69,10 +69,11 @@ a:hover, .gwt-Anchor:hover {
 	cursor: hand;
 	background: url("images/ui-bg_glass_75_dadada_1x400.png") repeat-x scroll 50% 50% #DADADA;
 	border: 1px solid #999;
+	box-shadow: 1px 1px 3px #aaa;
 	
-	height: 23px;
+	height: 26px;
 	/*align:center;*/
-	font-size: 90%;
+	font-size: 11px;
 	
 	border-radius: 2px;
 	white-space: nowrap;
@@ -85,6 +86,10 @@ a:hover, .gwt-Anchor:hover {
 .gwt-Button:active {
 	outline-style: none;
 	background: url("images/ui-bg_glass_75_f1b532_1x400.png") repeat-x scroll 50% 50% #f1b532;
+	position: relative;
+	top: 1px;
+	left: 1px;
+	box-shadow: 0px 0px 3px #aaa;
 }
 
 .gwt-Button:hover {
@@ -107,9 +112,14 @@ a:hover, .gwt-Anchor:hover {
 .gwt-CheckBox {
 }
 
+.gwt-CheckBox input {
+	
+}
+
 .gwt-CheckBox label {
-	bottom: 6px;
+	bottom: 2px;
     position: relative;
+    padding: 0 10px 0 0;
 }
 
 .gwt-CheckBox-disabled {
@@ -398,11 +408,12 @@ a:hover, .gwt-Anchor:hover {
 	
 }
 
-.gwt-ListBox {
+.gwt-ListBox { 
 	border: 1px solid #AAAAAA;
     border-radius: 2px;
-    font-size: 90%;
-    height: 23px;
+    box-shadow: 2px 1px 3px #CCCCCC inset;
+    font-size: 11px;
+    height: 24px;
     padding: 2px;
 }
 
@@ -576,11 +587,12 @@ a:hover, .gwt-Anchor:hover {
 }
 
 .gwt-PasswordTextBox {
-	padding: 2px;
+	padding: 0 6px;
 	border: 1px solid #212121;
 	border-radius: 2px;
-	
-	font-size: 90%;
+		
+	font-size: 12px;
+	box-shadow: 2px 1px 3px #CCCCCC inset;
 }
 
 .gwt-PasswordTextBox-readonly {
@@ -1337,26 +1349,56 @@ a:hover, .gwt-Anchor:hover {
 }
 
 .gwt-TextArea {
-	padding: 0 2px;
+	min-height: 26px;
+	padding: 0 6px;
 	border: 1px solid #AAAAAA;
 	border-radius: 2px;
+	font-family: Verdana, Arial, sans-serif;
+	font-size: 12px;
+	box-shadow: 2px 1px 3px #CCCCCC inset;
 }
 
 .gwt-TextArea-readonly {
 	color: #888;
 }
 
-.gwt-TextBox, .gwt-SuggestBox, input {
-	padding: 0 2px;
+.gwt-TextBox, .gwt-SuggestBox {
+	padding: 0 6px;
 	border-radius: 2px;
 	
 	border: 1px solid #AAAAAA;
-	height: 22px;
-	font-size: 90%;
+	height: 26px;
+	font-size: 12px;
+	box-shadow: 2px 1px 3px #CCCCCC inset;
 }
 
 .gwt-TextBox-readonly {
 	color: #888;
+}
+
+.unibas-LabelledTextBox {
+	background: linear-gradient(to right top, #FFFFF6 0px, #FFFFFF 100%) repeat scroll 0 0 transparent;
+    border-radius: 2px 2px 2px 2px;
+    box-shadow: 2px 2px 2px #DDDDDD;
+    margin: 4px 0 8px;
+    padding: 8px;
+}
+
+.unibas-LabelledTextBox .gwt-TextBox {
+	width: 94%;
+}
+
+.unibas-LabelledTextBox .gwt-TextArea {
+	width: 94%;
+}
+
+.unibas-LabelledTextBox-focused {
+	background: linear-gradient(to right top, #FFF2BE 0px, #FFFFFF 100%) !important;
+}
+
+.unibas-LabelledTextBox-Label {
+	font-weight: bold;
+    margin: 0 0 8px;
 }
 
 .gwt-ToggleButton-up,.gwt-ToggleButton-up-hovering,.gwt-ToggleButton-up-disabled,.gwt-ToggleButton-down,.gwt-ToggleButton-down-hovering,.gwt-ToggleButton-down-disabled
@@ -1684,7 +1726,7 @@ input[type="file"] > input[type="button"]::-moz-focus-inner {
 	float: left;
 	margin-left: -15px;
     margin-right: 4px;
-    margin-top: 1px;
+    margin-top: 2px;
 }
 
 .ui-icononly {

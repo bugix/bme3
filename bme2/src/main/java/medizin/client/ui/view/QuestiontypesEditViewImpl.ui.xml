@@ -1,614 +1,222 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:n="urn:import:medizin.client.ui" xmlns:a="urn:import:medizin.client.ui.widget">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:n="urn:import:medizin.client.ui"
+	xmlns:a="urn:import:medizin.client.ui.widget" xmlns:lbl="urn:import:medizin.client.ui.widget.labeled">
+	 <ui:with field='uiStyles' type='medizin.client.style.resources.UiStyles'/>
 	<ui:style src="../styles.css">
-   .panelHTML {
-		border: 0px solid #ddf;
-		height: 100%;
-		width: 100%;
+		.panelHTML {
+			border: 0px solid #ddf;
+			height: 100%;
+			width: 100%;
 		}
-		.fields {
-		margin:
-		0.5em;
-		padding-right: 1em;
-		white-space:nowrap;
-        width: 100%;
-		}
-		.label {
-		min-height: 25px;
-		font-weight: bold;
-		width: 200px;
-		}
-		.button {
-		margin-left: 0.5em;
-		float: right;
-		background: none;
-
-		cursor: pointer;
-		}
-
-		.header {
-		padding: 3px;
-		color: #4B4A4A;
-		text-shadow: #ddf 1px
-		1px 0;
-		margin-bottom: 0;
-		background-color: #E6EDED;
-		font-size: 1.2em;
-		font-weight: bold;
-
-		}
-		.underline {
-		border-bottom: 1px solid #6F7277;
-		}
-		.boundary{
-		padding-left: 10px;
-		padding-right: 10px;
-		}
-
-		.bar {
-		padding: 3px;
-
-
-		background-color: #E6EDED;
-
-		}
-		.details {
-
-		border: 1px solid #E6EDED;
-		width:
-		100%;
-
-		}
-				.nav {
-
-		border: 1px solid #E6EDED;
-		width: 100%;
-		background: #e3e8f3 url(images/hborder.png) repeat-x 0px -2003px;
 		
-
+		.labeledBox {
 		}
-				.textarea {
-
-		border: 1px solid #E6EDED;
-		width:
-		100%;
-
+		
+		.attribute {
+			background: linear-gradient(to right top, #FFFFF6 0px, #FFFFFF 100%) repeat scroll 0 0 transparent;
+    		border-radius: 2px 2px 2px 2px;
+    		box-shadow: 2px 2px 2px #DDDDDD;
+    		margin: 4px 0 8px;
+    		padding: 8px;
+		}
+		
+		.attributeGroup {
+			background: linear-gradient(to right top, #F0F0F0 0px, #FFFFFF 100%)
+				repeat scroll 0 0 transparent;
+			border: 1px solid #ddd;
+			border-radius: 2px;
+			margin: 18px 4px;
+			padding: 0 20px 8px;
+			box-shadow: 2px 1px 3px #CCCCCC;
+			width: 400px;
+		}
+		
+		.attributeGroupTitle {
+			background: linear-gradient(to right top, #F0F0F0 0px, #FFFFFF 100%)
+				repeat scroll 0 0 transparent;
+			border-radius: 2px;
+			border: 1px solid #DDDDDD;
+			color: #666666;
+			display: inline-block;
+			font-size: 12px;
+			font-weight: bold;
+			padding: 4px 40px;
+			position: relative;
+			top: -11px;
+		}
+		
+		.contextHelp {
+			min-width: 380px;
+			background: linear-gradient(to right top, #FDFDFD 0px, #FFFFFF 100%)
+				repeat scroll 0 0 transparent;
+			border-radius: 2px;
+			marging: 8px;
+			float: right;
+		}
+		
+		.label {
+			background: none;
+			font-weight: bold;
+			margin: 0 0 -6px;
+		}
+		
+		.button {
+			margin-left: 0.5em;
+			float: right;
+			background: none;
+			cursor: pointer;
+		}
+		
+		.header {
+			padding: 3px;
+			color: #4B4A4A;
+			text-shadow: #ddf 1px 1px 0;
+			margin-bottom: 0;
+			background-color: #E6EDED;
+			font-size: 1.2em;
+			font-weight: bold;
+		}
+		
+		.underline {
+			border-bottom: 1px solid #6F7277;
+		}
+		
+		.boundary {
+			padding-left: 10px;
+			padding-right: 10px;
+		}
+		
+		.bar {
+			padding: 3px;
+			background-color: #E6EDED;
+		}
+		
+		.details {
+			border: 1px solid #E6EDED;
+			width: 100%;
+		}
+		
+		.nav {
+			border: 1px solid #E6EDED;
+			width: 100%;
+			background: #e3e8f3 url(images/hborder.png) repeat-x 0px -2003px;
+		}
+		
+		.textarea {
+			border: 1px solid #E6EDED;
+			width: 100%;
 		}
 		
 		.rowHidden {
 			display: none;
 		}
-	</ui:style>
-  
-  
-  <g:VerticalPanel addStyleNames="{style.tabStyle}">
-	<g:HTMLPanel styleName="{style.patientControls}">
-	
-	    <div class="{style.controlsright}">
-	    
-						<!-- <div class="{style.header}" visible="false" ui:field="editTitle">
-							<ui:msg>Fragetyp bearbeiten</ui:msg>
-						</div>
-						<div class="{style.header}" visible="false" ui:field="createTitle">
-							<ui:msg>Neuen Fragetyp erstellen</ui:msg>
-						</div> -->
-			 <h3 class="{style.header}" style="display:inline"><span ui:field="title"></span></h3> 
-			<a:IconButton ui:field="save" icon="disk"></a:IconButton>
-			<a:IconButton ui:field="cancel" icon="closethick"></a:IconButton>
+		
+		.detailsControls {
 			
-		</div>
-	</g:HTMLPanel>
-	
-  <g:HTMLPanel >
-  <g:TabPanel ui:field="questionTypePanel"  width="100%"> 
-			<g:Tab>
-				<g:TabHTML></g:TabHTML>
-  	<!-- <div class="{style.boundary}">
-			<table class="{style.details}" cellpadding="0" cellspacing="0">
- -->
-<g:HTMLPanel>
-		<table >
+		}
+	</ui:style>
 
-				<!-- <tr>
-					<td class="{style.header}">
 
-						<div class="{style.header}" visible="false" ui:field="editTitle">
-							<ui:msg>Fragetyp bearbeiten</ui:msg>
-						</div>
-						<div class="{style.header}" visible="false" ui:field="createTitle">
-							<ui:msg>Neuen Fragetyp erstellen</ui:msg>
-						</div>
+	<g:VerticalPanel addStyleNames="{style.tabStyle}">
+		<g:HTMLPanel styleName="{style.patientControls}">
 
-					</td>
-					<td class="{style.bar}">
-						<div>
+			<div class="{style.controlsright}">
+
+				<!-- <div class="{style.header}" visible="false" ui:field="editTitle"> 
+					<ui:msg>Fragetyp bearbeiten</ui:msg> </div> <div class="{style.header}" visible="false" 
+					ui:field="createTitle"> <ui:msg>Neuen Fragetyp erstellen</ui:msg> </div> -->
+				<h3 class="{style.header}" style="display:inline">
+					<span ui:field="title"></span>
+				</h3>
+				<a:IconButton ui:field="save" icon="disk"></a:IconButton>
+				<a:IconButton ui:field="cancel" icon="closethick"></a:IconButton>
+			</div>
+		</g:HTMLPanel>
+			<g:HTMLPanel>
+				<div class="{style.attributeGroup}">
+					<!-- General / basic attributes -->
+					<g:Label styleName="{style.attributeGroupTitle}" ui:field="baseGroupLbl" text="baseGroupLbl"></g:Label>
 					
-							<a:IconButton ui:field="save" icon="disk"></a:IconButton>
-							<a:IconButton ui:field="cancel" icon="closethick"></a:IconButton>
+					<lbl:LabeledTextBox addStyleNames="{style.labeledBox}" ui:field="shortName"></lbl:LabeledTextBox>
+					<lbl:LabeledTextBox addStyleNames="{style.labeledBox}" ui:field="longName"></lbl:LabeledTextBox>
+					<lbl:LabeledTextArea addStyleNames="{style.labeledBox}" ui:field="description"></lbl:LabeledTextArea>
+					<lbl:LabeledValueListBox addStyleNames="{style.labeledBox}" ui:field="institute"></lbl:LabeledValueListBox>
+					<lbl:LabeledValueListBox addStyleNames="{style.labeledBox}" ui:field="questionType"></lbl:LabeledValueListBox>
+				</div>
 
-							<g:Button addStyleNames="{style.button}" ui:field="save">
-								<span class="ui-icon ui-icon-disk" style="float: left; margin-right: 0.3em;"></span>
-								Fragetyp speichern
-							</g:Button>
-							<g:Button addStyleNames="{style.button}" ui:field="cancel">
-								<span class="ui-icon ui-icon-closethick" style="float: left; margin-right: 0.3em;"></span>
-								Bearbeiten abbrechen
-							</g:Button>
-
-						</div>
-					</td>
-				</tr> -->
-				<tr>
-					<td colspan="2">
-						 <table class="{style.fields}" id="boundElementHolder">
+				<div class="{style.attributeGroup}">
+					<!-- Exam specific attributes -->
+					<g:Label styleName="{style.attributeGroupTitle}" ui:field="examGroupLbl" text="baseGroupLbl"></g:Label>
 						
-						 	  <tr id="shortName">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="shortNameLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:TextBox ui:field="shortNameTxtbox" width="300px"></g:TextBox>
-						 	  	</td>
-						 	  </tr>
-						 	  <tr id="longName">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="longNameLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:TextBox ui:field="longNameTxtbox" width="300px"></g:TextBox>
-						 	  	</td>
-						 	  </tr>
-						 	  <tr id="description">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="descriptionLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<!-- <g:TextBox ui:field="descriptionTxtbox"></g:TextBox> -->
-						 	  		<g:TextArea ui:field="descriptionTxtbox" width="300px"></g:TextArea>
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="institute">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="instituteLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:ValueListBox ui:field="instituteListBox" width="150px"></g:ValueListBox>
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	   <tr id="questionType">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="questionTypeLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:ValueListBox ui:field="questionTypeListBox" width="150px"></g:ValueListBox>
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="sumAnswer">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="sumAnswerLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:TextBox ui:field="sumAnswerTxtbox" width="150px"></g:TextBox>
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="sumTrueAnswer">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="sumTrueAnswerLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:TextBox ui:field="sumTrueAnswerTxtbox" width="150px"></g:TextBox>
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="sumFalseAnswer">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="sumFalseAnswerLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:TextBox ui:field="sumFalseAnswerTxtbox" width="150px"></g:TextBox>
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="questionLength">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="questionLengthLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:TextBox ui:field="questionLengthTxtbox" width="150px"></g:TextBox>
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="answerLength">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="answerLengthLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:TextBox ui:field="answerLengthTxtbox" width="150px"></g:TextBox>
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="answerDiff">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="answerDiffLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:TextBox ui:field="answerDiffTxtbox" width="150px"></g:TextBox>
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="queHaveImg">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="queHaveImgLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:CheckBox ui:field="queHaveImgChkBox" ></g:CheckBox>						 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="queHaveVideo">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="queHaveVideoLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:CheckBox ui:field="queHaveVideoChkBox"></g:CheckBox>						 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="queHaveSound">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="queHaveSoundLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:CheckBox ui:field="queHaveSoundChkBox"></g:CheckBox>						 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <!-- ImgKey Question Type Field -->
-						 	  
-						 	  <tr id="keywordCount" >
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="keywordCountLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:TextBox ui:field="keywordCountTxtbox" width="150px"></g:TextBox>				 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="showAutoComplete">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="showAutoCompleteLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:CheckBox ui:field="showAutoCompleteChkBox"></g:CheckBox>						 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="isDictionaryKeyword">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="isDictionaryKeywordLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:CheckBox ui:field="isDictionaryKeywordChkBox"></g:CheckBox>						 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="allowTyping">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="allowTypingLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:CheckBox ui:field="allowTypingChkBox"></g:CheckBox>						 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="minLetterForAutoComp">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="minLetterForAutoCompLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:TextBox ui:field="minLetterForAutoCompTxtbox" width="150px"></g:TextBox>				 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="acceptNonKeyword">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="acceptNonKeywordLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:CheckBox ui:field="acceptNonKeywordChkBox"></g:CheckBox>						 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="shortAnswerLength">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="shortAnswerLengthLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:TextBox ui:field="shortAnswerLengthTxtbox" width="150px"></g:TextBox>					 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <!--  <tr id="imageWidth">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="imageWidthLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:TextBox ui:field="imageWidthTxtbox" width="150px"></g:TextBox>					 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	   <tr id="imageLength">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="imageLengthLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:TextBox ui:field="imageLengthTxtbox" width="150px"></g:TextBox>					 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="imageProportion" >
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="imageProportionLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:TextBox ui:field="imageProportionTxtbox" width="150px"></g:TextBox>					 	  		
-						 	  	</td>
-						 	  </tr>
-						 	   -->
-						 	  <!-- Area Question Type Field -->
-						 	  
-						 	 <!--  <tr id="linearPoint">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="linearPointLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		
-						 	  		<g:CheckBox ui:field="linearPointChkBox"></g:CheckBox>					 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="linearPercentage">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="linearPercentageLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:TextBox ui:field="linearPercentageTxtbox" width="150px"></g:TextBox>						 	  		
-						 	  	</td>
-						 	  </tr> -->
-						 	  
-						 	  <!-- Long Text Type Field -->
-						 	  
-						 	  <tr id="keywordHighlight">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="keywordHighlightLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:CheckBox ui:field="keywordHighlightChkBox"></g:CheckBox>						 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="richText">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="richTextLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:CheckBox ui:field="richTextChkBox"></g:CheckBox>						 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="minLength">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="minLengthLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:TextBox ui:field="minLengthTxtbox" width="150px"></g:TextBox>					 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="maxLength">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="maxLengthLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:TextBox ui:field="maxLengthTxtbox" width="150px"></g:TextBox>					 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="minWordCount">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="minWordCountLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:TextBox ui:field="minWordCountTxtbox" value="0" width="150px"></g:TextBox>					 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="maxWordCount">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="maxWordCountLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:TextBox ui:field="maxWordCountTxtbox" value="0" width="150px"></g:TextBox>					 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <!-- Matrix Type Field -->
-						 	  
-						 	  <tr id="oneToOneAss">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="oneToOneAssLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:CheckBox ui:field="oneToOneAssChkBox"></g:CheckBox>						 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <!-- MCQ Type Field -->
-						 	  					
-						 	  <tr id="multimediaType">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="multimediaTypeLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:ValueListBox ui:field="multimediaTypeListBox" width="150px"></g:ValueListBox>
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="selectionType">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="selectionTypeLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:ValueListBox ui:field="selectionTypeListBox" width="150px"></g:ValueListBox>
-						 	  	</td>
-						 	  </tr>	  
-						 	  
-						 	  <tr id="column">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="columnLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:TextBox ui:field="columnTxtbox" width="150px"></g:TextBox>					 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <!-- <tr id="width">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="widthLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:TextBox ui:field="widthTxtbox"></g:TextBox>					 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="height">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="heightLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:TextBox ui:field="heightTxtbox"></g:TextBox>					 	  		
-						 	  	</td>
-						 	  </tr> -->
-						 	  
-						 	   <!-- <tr id="thumbWidth">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="thumbWidthLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:TextBox ui:field="thumbWidthTxtbox" width="150px"></g:TextBox>					 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="thumbHeight">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="thumbHeightLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:TextBox ui:field="thumbHeightTxtbox" width="150px"></g:TextBox>					 	  		
-						 	  	</td>
-						 	  </tr> -->
-						 	  
-						 	  <!-- <tr id="propostions">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="propostionsLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:TextBox ui:field="propostionsTxtbox"></g:TextBox>					 	  		
-						 	  	</td>
-						 	  </tr> -->
-						 	  
-						 	  <!-- <tr id="allowZoomOut">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="allowZoomOutLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:CheckBox ui:field="allowZoomOutChkBox"></g:CheckBox>						 	  		
-						 	  	</td>
-						 	  </tr>
-						 	  
-						 	  <tr id="allowZoomIn">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="allowZoomInLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:CheckBox ui:field="allowZoomInChkBox"></g:CheckBox>						 	  		
-						 	  	</td>
-						 	  </tr> -->
-						 	  
-						 	  <tr id="maxBytes">
-						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="maxBytesLbl"></g:Label>
-						 	  	</td>
-						 	  	<td>
-						 	  		<g:TextBox ui:field="maxBytesTxtbox" width="150px"></g:TextBox>					 	  		
-						 	  	</td>
-						 	  </tr>
-						      <!-- <tr id="questionTypeName">
-						                <td>
-						                    <div class="{style.label}">Question Type Name:</div>
-						                </td>
-						                <td>
-						                    <g:TextBox ui:field="questionTypeName"/>
-						                </td>
-						      </tr>
-						      <tr id="isWeil">
-						                <td>
-						                    <div class="{style.label}">Is Weil:</div>
-						                </td>
-						                <td>
-						                    <g:CheckBox ui:field="isWeil"/>
-						                </td>
-						            </tr>
-						      <tr id="trueAnswers">
-						                <td>
-						                    <div class="{style.label}">True Answers:</div>
-						                </td>
-						                <td>
-						                    <g:IntegerBox ui:field="trueAnswers"/>
-						                </td>
-						            </tr>
-						      <tr id="falseAnswers">
-						                <td>
-						                    <div class="{style.label}">False Answers:</div>
-						                </td>
-						                <td>
-						                    <g:IntegerBox ui:field="falseAnswers"/>
-						                </td>
-						            </tr>
-						      <tr id="sumAnswers">
-						                <td>
-						                    <div class="{style.label}">Sum Answers:</div>
-						                </td>
-						                <td>
-						                    <g:IntegerBox ui:field="sumAnswers"/>
-						                </td>
-						            </tr>
-						      <tr id="maxLetters">
-						                <td>
-						                    <div class="{style.label}">Max Letters:</div>
-						                </td>
-						                <td>
-						                    <g:IntegerBox ui:field="maxLetters"/>
-						                </td>
-						      </tr> -->
-						  </table>
-					</td>
-				</tr>
-			</table>
+					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="sumAnswer" min="0"></lbl:LabeledIntegerBox>
+					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="sumTrueAnswer" min="0"></lbl:LabeledIntegerBox>
+					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="sumFalseAnswer" min="0"></lbl:LabeledIntegerBox>
+					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="column" min="0"></lbl:LabeledIntegerBox>
+					
+					<lbl:LabeledPanel addStyleNames="{style.labeledBox}" ui:field="richText">
+						<g:CheckBox ui:field="richTextChkBox"></g:CheckBox>
+					</lbl:LabeledPanel>
+					
+					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="minLength" min="0"></lbl:LabeledIntegerBox>
+					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="maxLength" min="0"></lbl:LabeledIntegerBox>
+					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="minWordCount" min="0"></lbl:LabeledIntegerBox>
+					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="maxWordCount" min="0"></lbl:LabeledIntegerBox>
+				</div>
 
-<!-- 		</div> -->
+				<div class="{style.attributeGroup}">
+					<!-- Question specific attributes -->
+					<g:Label styleName="{style.attributeGroupTitle}" ui:field="questionGroupLbl" text="baseGroupLbl"></g:Label>
+					
+					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="questionLength" min="0"></lbl:LabeledIntegerBox>
+					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="answerLength" min="0"></lbl:LabeledIntegerBox>
+					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="shortAnswerLength" min="0"></lbl:LabeledIntegerBox>
+					<lbl:LabeledDoubleBox addStyleNames="{style.labeledBox}" ui:field="answerDiff" min="0" max="100"></lbl:LabeledDoubleBox>
 
-</g:HTMLPanel>
-</g:Tab>
+					<lbl:LabeledPanel addStyleNames="{style.labeledBox}" ui:field="queHasMedia">
+						<g:CheckBox ui:field="queHaveImgChkBox"></g:CheckBox>
+						<g:CheckBox ui:field="queHaveVideoChkBox"></g:CheckBox>
+						<g:CheckBox ui:field="queHaveSoundChkBox"></g:CheckBox>
+					</lbl:LabeledPanel>
+					
+					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="keywordCount" min="0"></lbl:LabeledIntegerBox>
+					
+					<lbl:LabeledPanel addStyleNames="{style.labeledBox}" ui:field="showAutoComplete">
+						<g:CheckBox ui:field="showAutoCompleteChkBox"></g:CheckBox>
+					</lbl:LabeledPanel>
+					
+					<lbl:LabeledPanel addStyleNames="{style.labeledBox}" ui:field="isDictionaryKeyword">
+						<g:CheckBox ui:field="isDictionaryKeywordChkBox"></g:CheckBox>
+					</lbl:LabeledPanel>
 
-		</g:TabPanel>
-	
-  </g:HTMLPanel>
-  </g:VerticalPanel>
+
+					<lbl:LabeledPanel addStyleNames="{style.labeledBox}" ui:field="allowTyping">
+						<g:CheckBox ui:field="allowTypingChkBox"></g:CheckBox>
+					</lbl:LabeledPanel>
+
+					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="minLetterForAutoComp" min="0"></lbl:LabeledIntegerBox>
+
+					<lbl:LabeledPanel addStyleNames="{style.labeledBox}" ui:field="acceptNonKeyword">
+						<g:CheckBox ui:field="acceptNonKeywordChkBox"></g:CheckBox>
+					</lbl:LabeledPanel>
+
+					<!-- Matrix Type Field -->
+					<lbl:LabeledPanel addStyleNames="{style.labeledBox}" ui:field="oneToOneAss">
+						<g:CheckBox ui:field="oneToOneAssChkBox"></g:CheckBox>
+					</lbl:LabeledPanel>
+
+					<!-- MCQ Type Field -->
+					<lbl:LabeledValueListBox addStyleNames="{style.labeledBox}" ui:field="multimediaType"></lbl:LabeledValueListBox>
+					<lbl:LabeledValueListBox addStyleNames="{style.labeledBox}" ui:field="selectionType"></lbl:LabeledValueListBox>
+					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="maxBytes" min="0"></lbl:LabeledIntegerBox>
+				</div>
+
+				<div class="{style.attributeGroup}">
+					<g:Label styleName="{style.attributeGroupTitle}" ui:field="evaluationGroupLbl" text="baseGroupLbl"></g:Label>
+					<lbl:LabeledPanel addStyleNames="{style.labeledBox}" ui:field="keywordHighlight">
+						<g:CheckBox ui:field="keywordHighlightChkBox"></g:CheckBox>
+					</lbl:LabeledPanel>
+				</div>
+			</g:HTMLPanel>
+	</g:VerticalPanel>
 </ui:UiBinder> 

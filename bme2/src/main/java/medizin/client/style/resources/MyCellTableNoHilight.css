@@ -49,6 +49,8 @@
   text-align: left;
   color: #212121;
   overflow: hidden;
+  
+  text-shadow: none;
 }
 
 .cellTableCell {

@@ -1,6 +1,7 @@
 package medizin.client.ui.view;
 
 import medizin.client.ui.view.question.QuestionEditViewImpl;
+import medizin.client.ui.widget.IntegerBox;
 import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.proxy.QuestionTypeProxy;
@@ -39,7 +40,7 @@ public interface QuestiontypesEditView extends IsWidget {
 		
 	}
 
-	void disableField(QuestionTypes questionTypes);
+	void showFieldsForQuestionType(QuestionTypes questionTypes);
 	
 	/*RequestFactoryEditorDriver<QuestionTypeProxy, QuestiontypesEditViewImpl> createEditorDriver();*/
 	void setEditTitle(boolean edit);
@@ -54,7 +55,7 @@ public interface QuestiontypesEditView extends IsWidget {
 
 	public ValueListBox<QuestionTypes> getQuestionTypeListBox();
 
-	public TextBox getSumAnswerTxtbox();
+	public IntegerBox getSumAnswerTxtbox();
 
 	public TextBox getSumTrueAnswerTxtbox();
 

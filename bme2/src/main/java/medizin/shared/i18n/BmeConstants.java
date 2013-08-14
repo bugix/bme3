@@ -65,6 +65,8 @@ public interface BmeConstants extends Constants {
 	public String answerLength();
 			
 	public String diffAnswer();
+	
+	public String queHaveMedia();	
 			
 	public String queHaveImg();
 			
@@ -664,4 +666,14 @@ public interface BmeConstants extends Constants {
 	public String printWithNonAcceptedQuestions();
 	
 	public String notActivatedAnswer();
+	
+	public String baseGroupLbl();
+	
+	public String questionGroupLbl();
+	
+	public String examGroupLbl();
+	
+	public String evaluationGroupLbl();
+	
+	public String allowRichText();
 }

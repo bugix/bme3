@@ -127,7 +127,7 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 		});
 
 		view.setDelegate(this);
-		view.disableField(QuestionTypes.Textual);
+		view.showFieldsForQuestionType(QuestionTypes.Textual);
 
 		if(this.operation==PlaceQuestiontypesDetails.Operation.EDIT){
 
