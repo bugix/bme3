@@ -18,7 +18,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RichTextArea;
 import com.google.gwt.user.client.ui.Widget;
@@ -81,11 +80,11 @@ public class SendMailPopupViewImpl extends PopupPanel implements SendMailPopupVi
 	@UiField
 	SpanElement varAssignment;
 	
-	@UiField
+	/*@UiField
 	HeadingElement onlyIfExaminer;
 	
 	@UiField
-	SpanElement assignmentFormatHead;
+	SpanElement assignmentFormatHead;*/
 	
 	@UiField
 	SpanElement mailVarStartDate;
@@ -183,11 +182,11 @@ public class SendMailPopupViewImpl extends PopupPanel implements SendMailPopupVi
 	@UiField
 	public Button loadTemplateButton;*/
 	
-	@UiHandler("sendMailButton")
+	/*@UiHandler("sendMailButton")
 	public void sendMailButtonClicked(ClickEvent event) {
 		// TODO export action
 		
-	}
+	}*/
 	/*
 	@UiHandler("saveTemplateButton")
 	public void saveTemplateButtonClicked(ClickEvent event) {
@@ -234,7 +233,7 @@ public class SendMailPopupViewImpl extends PopupPanel implements SendMailPopupVi
 		summoningsToName.setInnerText(constants.mailToName());
 		summoningsFromName.setInnerText(constants.mailFromName());
 		//onlyIfExaminer.setInnerText(constants.summoningsOnlyIfExaminer());
-		assignmentFormatHead.setInnerText(constants.mailAssesmentFormatHead());
+		//assignmentFormatHead.setInnerText(constants.mailAssesmentFormatHead());
 		//assignmentFormat.setInnerText(constants.summoningsAssignmentFormat());
 		
 		
@@ -244,43 +243,42 @@ public class SendMailPopupViewImpl extends PopupPanel implements SendMailPopupVi
 		
 		mailVarClosedDate.setInnerText(constants.mailClosedDate());
 		
-		 mailClosedDate.setInnerText(constants.mailClosedDate());
+		mailClosedDate.setInnerText(constants.mailClosedDate());
 		
 		mailVarMC.setInnerText(constants.mailVarMC());
 		
-		 mailMC.setInnerText(constants.mailMC());
-		 mailVarProposedCount.setInnerText(constants.mailVarProposedCount());
-		
-		 mailProposedCount.setInnerText(constants.mailProposedCount());
+		mailMC.setInnerText(constants.mailMC());
+		mailVarProposedCount.setInnerText(constants.mailVarProposedCount());
+		 
+		mailProposedCount.setInnerText(constants.mailProposedCount());
 		
 		mailVarTotalCount.setInnerText(constants.mailVarTotalCount());
 		
-		 mailTotalCount.setInnerText(constants.mailTotalCount());
-		 mailVarLoopStart.setInnerText(constants.mailVarLoopStart());
-		 mailLoopStart.setInnerText(constants.mailLoopStart());
-		 mailVarLoopEnd.setInnerText(constants.mailVarLoopEnd());
+		mailTotalCount.setInnerText(constants.mailTotalCount());
+		mailVarLoopStart.setInnerText(constants.mailVarLoopStart());
+		mailLoopStart.setInnerText(constants.mailLoopStart());
+		mailVarLoopEnd.setInnerText(constants.mailVarLoopEnd());
 		
-		 mailLoopEnd.setInnerText(constants.mailLoopEnd());
-		 mailVarAllocatedCount.setInnerText(constants.mailVarAllocatedCount());
+		mailLoopEnd.setInnerText(constants.mailLoopEnd());
+		mailVarAllocatedCount.setInnerText(constants.mailVarAllocatedCount());
 		
 		mailAllocatedCount.setInnerText(constants.mailAllocatedCount());
 		
-	mailQuestionType.setInnerText(constants.mailQuestionType());
+		mailQuestionType.setInnerText(constants.mailQuestionType());
 		
 		mailVarQuestionType.setInnerText(constants.mailVarQuestionType());
 		
-		 mailVarSpecialization.setInnerText(constants.mailVarSpecialization());
+		mailVarSpecialization.setInnerText(constants.mailVarSpecialization());
 		
-		 mailSpecialization.setInnerText(constants.mailSpecialization());
+		mailSpecialization.setInnerText(constants.mailSpecialization());
 		
+		mailVarTotalRemaining.setInnerText(constants.mailVarTotalRemaining());
 		
-		 mailVarTotalRemaining.setInnerText(constants.mailVarTotalRemaining());
+		mailTotalRemaining.setInnerText(constants.mailTotalRemaining());
 		
-	 mailTotalRemaining.setInnerText(constants.mailTotalRemaining());
+		mailVarTotalRemainingCount.setInnerText(constants.mailTotalRemainingCount());
 		
-		 mailVarTotalRemainingCount.setInnerText(constants.mailTotalRemainingCount());
-		
-	mailTotalRemainingCount.setInnerText(constants.mailTotalRemainingCount());
+		mailTotalRemainingCount.setInnerText(constants.mailTotalRemainingCount());
 		
 	}
 

@@ -10,10 +10,10 @@ import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionTypeCountPerExamProxy;
 import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.style.resources.MyCellTableNoHilightResources;
-import medizin.client.style.resources.MyCellTableResources;
 import medizin.client.style.resources.MySimplePagerResources;
 import medizin.shared.i18n.BmeConstants;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -255,23 +255,41 @@ public class AssesmentQuestionPanelImpl extends Composite implements AssesmentQu
 			sendMailPopupViewImpl=new SendMailPopupViewImpl();
 			
 			sendMailPopupViewImpl.setAnimationEnabled(true);
-			sendMailPopupViewImpl.center();
-			delegate.loadTemplate();
-			
+						
 			sendMailPopupViewImpl.getSendMailButton().addClickHandler(new ClickHandler() {
 				
 				@Override
-				public void onClick(ClickEvent event) {
-					
-					delegate.sendMail(sendMailPopupViewImpl.getMessageContent());
-					
+				public void onClick(ClickEvent event) {					
+					delegate.sendMail(sendMailPopupViewImpl.getMessageContent());					
 				}
 			});
+			
+			sendMailPopupViewImpl.getRestoreTemplateButton().addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					delegate.loadTemplate();
+				}
+			});		
 		}
-		sendMailPopupViewImpl.show();
-		
+		delegate.loadTemplate();
+		//sendMailPopupViewImpl.show();
+		//sendMailPopupViewImpl.center();
 	}
 	
-	
+	public void displayMail(String response)
+	{
+		if (sendMailPopupViewImpl != null)
+		{
+			sendMailPopupViewImpl.setMessageContent(response);
+			if (sendMailPopupViewImpl.isShowing() == false)
+				sendMailPopupViewImpl.center();
+		}
+		else
+		{
+			Log.error("PopupImpl is null");
+		}
+		
+	}
 
 }

@@ -51,6 +51,8 @@ public interface AssesmentQuestionPanel extends IsWidget {
 	public CellTable<QuestionTypeCountProxy> getTable();
 	
 	public Map<String, QuestionTypeCountProxy> getQuestionTypeModelMap();
+
+	void displayMail(String response);
 	
 
 
