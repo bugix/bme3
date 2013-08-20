@@ -1106,8 +1106,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 
 			@Override
 			public void onSuccess(String response) {
-				assementQuestionPanel.getSendMailPopupViewImpl().setMessageContent(response);
-				
+				assementQuestionPanel.displayMail(response);
 			}
 		});
 		
