@@ -2,10 +2,11 @@ package medizin.client.ui.widget.labeled;
 
 import java.util.Collection;
 
+import medizin.client.ui.widget.ContextHelpPopup;
 import medizin.client.ui.widget.FocusableValueListBox;
+import medizin.client.ui.widget.HasContextHelp;
 import medizin.client.ui.widget.handler.FocusDelegatingHandler;
 
-import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.editor.client.IsEditor;
 import com.google.gwt.editor.client.adapters.TakesValueEditor;
 import com.google.gwt.event.dom.client.BlurEvent;
@@ -25,13 +26,15 @@ import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class LabeledValueListBox<T> extends Composite implements Focusable, HasFocusHandlers, HasBlurHandlers, HasValue<T>, IsEditor<TakesValueEditor<T>>  {
+public class LabeledValueListBox<T> extends Composite implements Focusable, HasFocusHandlers, HasBlurHandlers, HasValue<T>, IsEditor<TakesValueEditor<T>>, HasContextHelp  {
 	protected final String styleName = "unibas-LabelledTextBox";
 	protected final String focusStyleName = "unibas-LabelledTextBox-focused";
 	private FocusableValueListBox<T> valueListBox;
 	protected Label label;
 	protected FocusPanel wrapper;
 	protected VerticalPanel panel;
+	protected boolean hasContextHelpHandlers = false;
+	protected ContextHelpPopup popup;
 	
 	public LabeledValueListBox(AbstractRenderer<T> renderer) {
 		valueListBox = new FocusableValueListBox<T>(renderer);
@@ -150,5 +153,33 @@ public class LabeledValueListBox<T> extends Composite implements Focusable, HasF
 		wrapper.setWidth(width);
 		panel.setWidth(width);
 		super.setWidth(width);
+	}
+
+	@Override
+	public void setHelpText(String helpText) {
+		addContextHelpHandlers();
+		popup.setHelpText(helpText);
+	}
+	
+	private void addContextHelpHandlers() {
+		if (!hasContextHelpHandlers) {
+			popup = new ContextHelpPopup();
+			valueListBox.addFocusHandler(new FocusHandler() {
+				
+				@Override
+				public void onFocus(FocusEvent event) {
+					popup.setPopupPosition(wrapper.getAbsoluteLeft() + wrapper.getOffsetWidth() + 30 , wrapper.getAbsoluteTop());
+					popup.show();
+				}
+			});
+			valueListBox.addBlurHandler(new BlurHandler() {
+				
+				@Override
+				public void onBlur(BlurEvent event) {
+					popup.hide();
+				}
+			});
+			hasContextHelpHandlers = true;
+		}
 	}
 }

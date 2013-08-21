@@ -31,6 +31,7 @@ body {
 	padding: 0px;
 	direction: ltr;
 	background-color: #fff;
+	overflow: hidden;
 }
 
 a,a:visited, .gwt-Anchor {
@@ -46,6 +47,25 @@ a:hover, .gwt-Anchor:hover {
 	text-decoration: none; 
 	 background-color: #DBBFD1;
 	 
+}
+
+::-moz-selection {
+	background: #CCC2A2;
+	color: #FFF;
+}
+
+::selection {
+	background: #CCC2A2;
+	color: #FFF;
+}
+
+.unibas-ContextHelp {
+	border: 0;
+	background: linear-gradient(to right top, #F0F0F0 0px, #FFFFFF 100%) repeat scroll 0 0 transparent;
+	padding: 10px;
+	border-radius: 2px;
+	box-shadow: 1px 1px 2px #ccc;
+	max-width: 360px;
 }
 
 /**

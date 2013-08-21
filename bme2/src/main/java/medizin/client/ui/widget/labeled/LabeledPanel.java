@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import medizin.client.ui.widget.ContextHelpPopup;
+import medizin.client.ui.widget.HasContextHelp;
 import medizin.client.ui.widget.handler.FocusDelegatingHandler;
 
-import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.FocusEvent;
@@ -27,7 +27,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class LabeledPanel extends Composite implements HasWidgets, Focusable, HasFocusHandlers, HasBlurHandlers {
+public class LabeledPanel extends Composite implements HasWidgets, Focusable, HasFocusHandlers, HasBlurHandlers, HasContextHelp {
 	private Map<Widget, List<HandlerRegistration>> widgetsWithHandlers = new HashMap<Widget, List<HandlerRegistration>>();
 	
 	protected final String styleName = "unibas-LabelledTextBox";
@@ -37,7 +37,10 @@ public class LabeledPanel extends Composite implements HasWidgets, Focusable, Ha
 	private VerticalPanel parentPanel;
 	private HorizontalPanel mainPanel;
 	private Label label;
-	
+
+	protected boolean hasContextHelpHandlers = false;
+	protected ContextHelpPopup popup;
+		
 	public LabeledPanel() {
 		mainPanel = new HorizontalPanel();
 		parentPanel = new VerticalPanel();
@@ -164,5 +167,33 @@ public class LabeledPanel extends Composite implements HasWidgets, Focusable, Ha
 			return mainPanel.remove(w);
 		}
 		return false;
+	}
+	
+	private void addContextHelpHandlers() {
+		if (!hasContextHelpHandlers) {
+			popup = new ContextHelpPopup();
+			wrapperPanel.addFocusHandler(new FocusHandler() {
+				
+				@Override
+				public void onFocus(FocusEvent event) {
+					popup.setPopupPosition(wrapperPanel.getAbsoluteLeft() + wrapperPanel.getOffsetWidth() + 30 , wrapperPanel.getAbsoluteTop());
+					popup.show();
+				}
+			});
+			wrapperPanel.addBlurHandler(new BlurHandler() {
+				
+				@Override
+				public void onBlur(BlurEvent event) {
+					popup.hide();
+				}
+			});
+			hasContextHelpHandlers = true;
+		}
+	}
+
+	@Override
+	public void setHelpText(String helpText) {
+		addContextHelpHandlers();
+		popup.setHelpText(helpText);
 	}
 }

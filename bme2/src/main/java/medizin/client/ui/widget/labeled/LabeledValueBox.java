@@ -1,8 +1,9 @@
 package medizin.client.ui.widget.labeled;
 
+import medizin.client.ui.widget.ContextHelpPopup;
+import medizin.client.ui.widget.HasContextHelp;
 import medizin.client.ui.widget.handler.FocusDelegatingHandler;
 
-import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.editor.client.IsEditor;
 import com.google.gwt.editor.ui.client.adapters.ValueBoxEditor;
 import com.google.gwt.event.dom.client.BlurEvent;
@@ -21,7 +22,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ValueBoxBase;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public abstract class LabeledValueBox<T> extends Composite implements Focusable, HasFocusHandlers, HasBlurHandlers, HasValue<T>, IsEditor<ValueBoxEditor<T>> {
+public abstract class LabeledValueBox<T> extends Composite implements Focusable, HasFocusHandlers, HasBlurHandlers, HasValue<T>, IsEditor<ValueBoxEditor<T>>, HasContextHelp {
 	
 	protected final String styleName = "unibas-LabelledTextBox";
 	protected final String focusStyleName = "unibas-LabelledTextBox-focused";
@@ -29,13 +30,19 @@ public abstract class LabeledValueBox<T> extends Composite implements Focusable,
 	protected Label label;
 	protected FocusPanel wrapper;
 	protected VerticalPanel panel;
+	protected boolean hasContextHelpHandlers = false;
+	protected ContextHelpPopup popup;
 	
 	protected LabeledValueBox(ValueBoxBase<T> valueBox) {
-		this.valueBox = valueBox;
-		init();
+		this(valueBox, null);
 	}
 	
-	private void init() {
+	protected LabeledValueBox(ValueBoxBase<T> valueBox, String helpText) {
+		this.valueBox = valueBox;
+		init(helpText);
+	}
+	
+	private void init(String helpText) {
 		panel = new VerticalPanel();
 		wrapper = new FocusPanel();
 		label = new Label();
@@ -52,6 +59,7 @@ public abstract class LabeledValueBox<T> extends Composite implements Focusable,
 		valueBox.addFocusHandler(new FocusHandler() {
 			@Override
 			public void onFocus(FocusEvent event) {
+				valueBox.selectAll();
 				wrapper.addStyleName(focusStyleName);
 			}
 		});
@@ -63,6 +71,10 @@ public abstract class LabeledValueBox<T> extends Composite implements Focusable,
 				wrapper.removeStyleName(focusStyleName);
 			}
 		});
+		
+		if (helpText != null && !"".equals(helpText)) {
+			setHelpText(helpText);
+		}
 		
 		initWidget(wrapper);
 		wrapper.setStyleName(styleName);
@@ -137,18 +149,46 @@ public abstract class LabeledValueBox<T> extends Composite implements Focusable,
 
 	@Override
 	public HandlerRegistration addFocusHandler(FocusHandler handler) {
-		return wrapper.addFocusHandler(handler);
+		return valueBox.addFocusHandler(handler);
 	}
 	
 	@Override
 	public HandlerRegistration addBlurHandler(BlurHandler handler) {
 		return valueBox.addBlurHandler(handler);
-	}
+	}  
 		
 	@Override
 	public void setWidth(String width) {
 		wrapper.setWidth(width);
 		panel.setWidth(width);
 		super.setWidth(width);
+	}
+	
+	@Override
+	public void setHelpText(String helpText) {
+		addContextHelpHandlers();
+		popup.setHelpText(helpText);
+	}
+	
+	private void addContextHelpHandlers() {
+		if (!hasContextHelpHandlers) {
+			popup = new ContextHelpPopup();
+			valueBox.addFocusHandler(new FocusHandler() {
+				
+				@Override
+				public void onFocus(FocusEvent event) {
+					popup.setPopupPosition(wrapper.getAbsoluteLeft() + wrapper.getOffsetWidth() + 30 , wrapper.getAbsoluteTop());
+					popup.show();
+				}
+			});
+			valueBox.addBlurHandler(new BlurHandler() {
+				
+				@Override
+				public void onBlur(BlurEvent event) {
+					popup.hide();
+				}
+			});
+			hasContextHelpHandlers = true;
+		}
 	}
 }

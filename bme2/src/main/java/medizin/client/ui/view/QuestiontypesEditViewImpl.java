@@ -2,13 +2,11 @@ package medizin.client.ui.view;
 
 import static medizin.client.util.ClientUtility.toStringUtility;
 
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.QuestionTypeProxy;
@@ -23,7 +21,6 @@ import medizin.client.ui.widget.labeled.LabeledIntegerBox;
 import medizin.client.ui.widget.labeled.LabeledPanel;
 import medizin.client.ui.widget.labeled.LabeledTextArea;
 import medizin.client.ui.widget.labeled.LabeledTextBox;
-import medizin.client.ui.widget.labeled.LabeledValueBox;
 import medizin.client.ui.widget.labeled.LabeledValueListBox;
 import medizin.client.util.ClientUtility;
 import medizin.shared.MultimediaType;
@@ -33,8 +30,8 @@ import medizin.shared.i18n.BmeConstants;
 import medizin.shared.i18n.BmeContextHelpConstants;
 import medizin.shared.i18n.BmeMessages;
 
-import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.SpanElement;
@@ -43,18 +40,15 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
-import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
@@ -83,6 +77,9 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
     public BmeMessages messages = GWT.create(BmeMessages.class);
     public BmeContextHelpConstants contextHelp = GWT.create(BmeContextHelpConstants.class);
 
+    @UiField
+    HTMLPanel panel;
+    
 	@UiField
 	SpanElement title;
 	
@@ -215,6 +212,13 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
     @UiField
     IconButton save;
     
+
+    @UiField
+    IconButton cancel2;
+
+    @UiField
+    IconButton save2;
+    
     @UiField
     LabeledPanel richText;
     
@@ -244,9 +248,19 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
     void onCancel(ClickEvent event) {
         delegate.cancelClicked();
     }
+    
+    @UiHandler("cancel2")
+    void onCancel2(ClickEvent event) {
+    	delegate.cancelClicked();
+    }
 
     @UiHandler("save")
     void onSave(ClickEvent event) {
+    	save();
+    }
+    
+    @UiHandler("save2")
+    void onSave2(ClickEvent event) {
     	save();
     }
 
@@ -317,6 +331,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
        
     }
     
+    private ArrayList<Widget> baseFields;
     private ArrayList<Widget> textualFields;
     private ArrayList<Widget> imgKeyFields;
     private ArrayList<Widget> showInImgFields;
@@ -325,23 +340,57 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
     private ArrayList<Widget> mcqFields;
     
     private ArrayList<LabeledTextBox> allTextBoxes;
+    private HashSet<Widget> allBoxes;
 
 	public QuestiontypesEditViewImpl(Map<String, Widget> reciverMap) {
 		initWidget(uiBinder.createAndBindUi(this));
 		
-		textualFields = Lists.newArrayList((Widget) sumAnswer, sumTrueAnswer, 
-	    		sumFalseAnswer, questionLength, answerLength, answerDiff, queHasMedia);
-	    imgKeyFields = Lists.newArrayList((Widget) questionLength, keywordCount, 
-	    		showAutoComplete, isDictionaryKeyword, /*allowTyping,*/ /*minLetterForAutoComp,*/ answerLength, 
-	    		/*acceptNonKeyword,*/shortAnswerLength);
-	    showInImgFields = Lists.newArrayList((Widget) questionLength);
-	    longTextFields = Lists.newArrayList((Widget) questionLength,keywordHighlight,richText,minLength,maxLength,minWordCount,maxWordCount);
-	    matrixFields = Lists.newArrayList((Widget) questionLength,answerLength,oneToOneAss);
-	    mcqFields = Lists.newArrayList((Widget) questionLength,multimediaType,selectionType,column,richText,maxBytes);
-	    
-	    allTextBoxes = Lists.newArrayList((LabeledTextBox) shortName, longName, sumAnswer, sumTrueAnswer, sumFalseAnswer, 
-	    		questionLength, answerLength, answerDiff, keywordCount, minLetterForAutoComp, shortAnswerLength, minLength, 
-	    		maxLength, minWordCount, maxWordCount,maxBytes);
+		baseFields = Lists.newArrayList((Widget) shortName, longName, description,
+				institute, questionType);
+		
+		textualFields = Lists.newArrayList((Widget) sumAnswer, sumTrueAnswer,
+				sumFalseAnswer, questionLength, answerLength, answerDiff,
+				queHasMedia);
+		textualFields.addAll(baseFields);
+		
+		imgKeyFields = Lists.newArrayList((Widget) shortName, longName, description,
+				institute, questionType, questionLength,
+				keywordCount, showAutoComplete, answerLength,
+				/* acceptNonKeyword, */shortAnswerLength);
+		imgKeyFields.addAll(baseFields);
+		
+		showInImgFields = Lists.newArrayList((Widget) shortName, longName, description,
+				institute, questionType, questionLength);
+		showInImgFields.addAll(baseFields);
+		
+		longTextFields = Lists.newArrayList((Widget) questionLength,
+				keywordHighlight, richText, minLength, maxLength, minWordCount,
+				maxWordCount);
+		longTextFields.addAll(baseFields);
+		
+		matrixFields = Lists.newArrayList((Widget) questionLength,
+				answerLength, oneToOneAss);
+		matrixFields.addAll(baseFields);
+		
+		mcqFields = Lists.newArrayList((Widget) questionLength, multimediaType,
+				selectionType, column, richText, maxBytes);
+		mcqFields.addAll(baseFields);
+
+		allTextBoxes = Lists.newArrayList((LabeledTextBox) shortName, longName,
+				sumAnswer, sumTrueAnswer, sumFalseAnswer, questionLength,
+				answerLength, answerDiff, keywordCount, minLetterForAutoComp,
+				shortAnswerLength, minLength, maxLength, minWordCount,
+				maxWordCount, maxBytes);
+
+		allBoxes = Sets.newHashSet((Widget) shortName, longName, description,
+				institute, questionType, sumAnswer, sumTrueAnswer,
+				sumFalseAnswer, questionLength, answerLength, answerDiff,
+				queHasMedia, keywordCount, isDictionaryKeyword, allowTyping,
+				minLetterForAutoComp, acceptNonKeyword, shortAnswerLength,
+				keywordHighlight, richText, minLength, maxLength, minWordCount,
+				maxWordCount, oneToOneAss, multimediaType, selectionType,
+				column, maxBytes, showAutoComplete);
+		allBoxes.addAll(baseFields);
 	    		
 		uiStyles.uiCss().ensureInjected();
 		
@@ -372,7 +421,9 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		reciverMap.put("maxWordCount", maxWordCount);
 		
 		save.setText(constants.save());
+		save2.setText(constants.save());
 		cancel.setText(constants.cancel());
+		cancel2.setText(constants.cancel());
 		
 		multimediaType.setValue(MultimediaType.Image);
 		multimediaType.setAcceptableValues(Arrays.asList(MultimediaType.values()));		
@@ -391,57 +442,96 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		evaluationGroupLbl.setText(constants.evaluationGroupLbl());
 		
 		shortName.setLabelText(constants.shortName());
+		shortName.setHelpText(contextHelp.shortName());
+		
 		longName.setLabelText(constants.longName());
+		longName.setHelpText(contextHelp.longName());
+		
 		description.setLabelText(constants.description());
+		description.setHelpText(contextHelp.description());
+		
 		institute.setLabelText(constants.institutionLbl());
+		institute.setHelpText(contextHelp.institution());
+		
 		questionType.setLabelText(constants.questionType());
+		questionType.setHelpText(contextHelp.questionType());
+		
 		sumAnswer.setLabelText(constants.sumAnswer());
+		sumAnswer.setHelpText(contextHelp.sumAnswer());
+		
 		sumTrueAnswer.setLabelText(constants.sumTrueAnswer());
+		sumTrueAnswer.setHelpText(contextHelp.sumTrueAnswer());
+		
 		sumFalseAnswer.setLabelText(constants.sumFalseAnswer());
+		sumFalseAnswer.setHelpText(contextHelp.sumFalseAnswer());
+		
 		questionLength.setLabelText(constants.questionLength());
+		questionLength.setHelpText(contextHelp.questionLength());
+		
 		answerLength.setLabelText(constants.answerLength());
+		answerLength.setHelpText(contextHelp.answerLength());
+		
 		answerDiff.setLabelText(constants.diffAnswer());
+		answerDiff.setHelpText(contextHelp.answerDiff());
 		
 		queHasMedia.setLabelText(constants.queHaveMedia());
+		queHasMedia.setHelpText(contextHelp.queHasMedia());
 		queHaveImgChkBox.setText(constants.queHaveImg());
 		queHaveVideoChkBox.setText(constants.queHaveVideo());
 		queHaveSoundChkBox.setText(constants.queHaveSound());
 		
 		keywordCount.setLabelText(constants.countKeyword());
+		keywordCount.setHelpText(contextHelp.keywordCount());
 		
 		showAutoComplete.setLabelText(constants.showAutocomplete());
+		showAutoComplete.setHelpText(contextHelp.showAutoComplete());
 		showAutoCompleteChkBox.setText(constants.showAutocomplete());
 		
 		isDictionaryKeyword.setLabelText(constants.isDictionaryKeyword());
+		isDictionaryKeyword.setHelpText(contextHelp.isDictionaryKeyword());
 		isDictionaryKeywordChkBox.setText(constants.isDictionaryKeyword());
 		
 		allowTyping.setVisible(false);
 		allowTyping.setLabelText(constants.allowTyping());
+		allowTyping.setHelpText(contextHelp.allowTyping());
 		allowTypingChkBox.setText(constants.allowTyping());
 		
 		minLetterForAutoComp.setLabelText(constants.minLetterAutoComplete());
+		minLetterForAutoComp.setHelpText(contextHelp.minAutoCompleteLetter());
 		
 		acceptNonKeyword.setLabelText(constants.acceptNonkeyword());
+		acceptNonKeyword.setHelpText(contextHelp.acceptNonKeyword());
 		acceptNonKeywordChkBox.setText(constants.acceptNonkeyword());
 		shortAnswerLength.setLabelText(constants.lengthShortAns());
 		
 		keywordHighlight.setLabelText(constants.keywordHighlight());
+		keywordHighlight.setHelpText(contextHelp.keywordHighlight());
 		keywordHighlightChkBox.setText(constants.keywordHighlight());
 		
 		minLength.setLabelText(constants.minLength());
+		minLength.setHelpText(contextHelp.minLength());
 		maxLength.setLabelText(constants.maxLength());
+		maxLength.setHelpText(contextHelp.maxLength());
 		minWordCount.setLabelText(constants.minWordCount());
+		minWordCount.setHelpText(contextHelp.minWordCount());
 		maxWordCount.setLabelText(constants.maxWordCount());
+		maxWordCount.setHelpText(contextHelp.maxWordCount());
 		
 		oneToOneAss.setLabelText(constants.oneToOneAss());
+		oneToOneAss.setHelpText(contextHelp.oneToOneAss());
 		oneToOneAssChkBox.setText(constants.oneToOneAss());
 		
 		multimediaType.setLabelText(constants.multimediaType());
+		multimediaType.setHelpText(contextHelp.multimediaType());
 		selectionType.setLabelText(constants.selectionType());
+		selectionType.setHelpText(contextHelp.selectionType());
 		column.setLabelText(constants.column());
+		column.setHelpText(contextHelp.columns());
 		maxBytes.setLabelText(constants.maxBytes());
+		maxBytes.setHelpText(contextHelp.maxBytes());
 		
 		richText.setLabelText(constants.allowRichText());
+		richText.setHelpText(contextHelp.richText());
 		richTextChkBox.setText(constants.allowRichText());
 		
 		for (final LabeledTextBox box : allTextBoxes) {
@@ -493,6 +583,25 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 			}
 		});
 		
+//		for (final Widget box : allBoxes) {
+//			((HasFocusHandlers)box).addFocusHandler(new FocusHandler() {
+//				
+//				@Override
+//				public void onFocus(FocusEvent event) {
+//					PopupPanel popup = new PopupPanel(true);
+//					popup.setStyleName("unibas-ContextHelp");
+//					popup.add(new HTML("<p>Test</p>"));
+//					Widget src = ((Widget) event.getSource()).getParent().getParent();
+//					int top = src.getAbsoluteTop();
+//					int left = src.getAbsoluteLeft() + src.getOffsetWidth();
+//					popup.setPopupPosition(left, top);
+//					popup.show();
+//				}
+//			});
+//			
+//			
+//		}
+		
 		shortName.setFocus(true);	
 	}
 	
@@ -502,7 +611,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
     	}
 	}
 	
-	private void changeVisibility(ArrayList<Widget> fields, boolean visibility) {
+	private void changeVisibility(Collection<Widget> fields, boolean visibility) {
 		for (Widget w : fields) {
 			w.setVisible(visibility);
 		}
@@ -520,13 +629,9 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 	@Override
 	public void setEditTitle(boolean edit) {
 	      if (edit) {
-	    	  title.setInnerText(constants.editQuestionType()); 
-	    	  /*editTitle.getStyle().clearDisplay();
-	            createTitle.getStyle().setDisplay(Display.NONE);*/
+	    	  title.setInnerText(constants.editQuestionType());
 	        } else {
 	        	title.setInnerText(constants.addQuestionType());
-	            /*editTitle.getStyle().setDisplay(Display.NONE);
-	            createTitle.getStyle().clearDisplay();*/
 	        }		
 	}
 
@@ -534,22 +639,14 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 	{
 		if (questionTypes.equals(QuestionTypes.Textual) || questionTypes.equals(QuestionTypes.Sort))
 		{
-			changeVisibility(mcqFields, false);
-			changeVisibility(imgKeyFields, false);
-			changeVisibility(matrixFields, false);
-			changeVisibility(longTextFields, false);
-			changeVisibility(showInImgFields, false);
+			changeVisibility(allBoxes, false);
 			changeVisibility(textualFields, true);
 			evaluationGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.NONE);
 			examGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.BLOCK);
 		}
 		else if (questionTypes.equals(QuestionTypes.Imgkey))
 		{
-			changeVisibility(mcqFields, false);
-			changeVisibility(textualFields, false);
-			changeVisibility(matrixFields, false);
-			changeVisibility(longTextFields, false);
-			changeVisibility(showInImgFields, false);
+			changeVisibility(allBoxes, false);
 			changeVisibility(imgKeyFields, true);
 			Document.get().getElementById("isDictionaryKeyword").getStyle().setDisplay(Display.NONE);
 			evaluationGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.NONE);
@@ -557,56 +654,35 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		}
 		else if (questionTypes.equals(QuestionTypes.ShowInImage))
 		{
-			changeVisibility(mcqFields, false);
-			changeVisibility(textualFields, false);
-			changeVisibility(imgKeyFields, false);
-			changeVisibility(matrixFields, false);
-			changeVisibility(longTextFields, false);
+			changeVisibility(allBoxes, false);
 			changeVisibility(showInImgFields, true);
 			evaluationGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.NONE);
 			examGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.NONE);
 		}
 		else if (questionTypes.equals(QuestionTypes.LongText))
 		{
-			changeVisibility(mcqFields, false);
-			changeVisibility(textualFields, false);
-			changeVisibility(imgKeyFields, false);
-			changeVisibility(matrixFields, false);
-			changeVisibility(showInImgFields, false);
+			changeVisibility(allBoxes, false);
 			changeVisibility(longTextFields, true);
 			evaluationGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.BLOCK);
 			examGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.BLOCK);
 		}
 		else if (questionTypes.equals(QuestionTypes.Matrix))
 		{
-			changeVisibility(mcqFields, false);
-			changeVisibility(textualFields, false);
-			changeVisibility(imgKeyFields, false);
-			changeVisibility(longTextFields, false);
-			changeVisibility(showInImgFields, false);
+			changeVisibility(allBoxes, false);
 			changeVisibility(matrixFields, true);
 			evaluationGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.NONE);
 			examGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.NONE);
 		} 
 		else if (questionTypes.equals(QuestionTypes.MCQ))
 		{
-			changeVisibility(textualFields, false);
-			changeVisibility(imgKeyFields, false);
-			changeVisibility(matrixFields, false);
-			changeVisibility(longTextFields, false);
-			changeVisibility(showInImgFields, false);
+			changeVisibility(allBoxes, false);
 			changeVisibility(mcqFields, true);
 			evaluationGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.NONE);
 			examGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.BLOCK);
 		} 
 		else
 		{
-			changeVisibility(mcqFields, false);
-			changeVisibility(textualFields, false);
-			changeVisibility(imgKeyFields, false);
-			changeVisibility(matrixFields, false);
-			changeVisibility(longTextFields, false);
-			changeVisibility(showInImgFields, false);
+			changeVisibility(allBoxes, false);
 			// when is "else" displayed??
 			evaluationGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.BLOCK);
 			examGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.BLOCK);
@@ -643,20 +719,11 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 	    	   answerLength.setValue("");
 	    	   acceptNonKeywordChkBox.setValue(false);
 	    	   shortAnswerLength.setValue("");
-	    	   /*imageWidth.setValue("");
-	    	   imageLength.setValue("");
-	    	   imageProportion.setValue("");*/
 	    	   
 	       }
 	       else if (questionTypes.equals(QuestionTypes.ShowInImage))
 	       {
-	    	   questionLength.setValue("");
-	    	   /*answerLength.setValue("");	    	   
-	    	   imageWidth.setValue("");
-	    	   imageLength.setValue("");
-	    	   imageProportion.setValue("");
-	    	   linearPointChkBox.setValue(false);
-	    	   linearPercentage.setValue("");*/	    	   
+	    	   questionLength.setValue("");  	   
 	       }
 	       else if (questionTypes.equals(QuestionTypes.LongText))
 	       {
@@ -670,7 +737,6 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 	       }
 	       else if (questionTypes.equals(QuestionTypes.Matrix))
 	       {
-	    	  //maxLength.setValue("");
 	    	   answerLength.setValue("");
 	    	   questionLength.setValue("");
 	    	   oneToOneAssChkBox.setValue(false);
@@ -678,17 +744,10 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 	       else if (questionTypes.equals(QuestionTypes.MCQ))
 	       {
 	    	   questionLength.setValue("");
-	    	   /*imageWidth.setValue("");
-	    	   imageLength.setValue("");
-	    	   imageProportion.setValue("");*/
 	    	   multimediaType.setValue(MultimediaType.Image);
 	    	   selectionType.setValue(SelectionType.SEL_CHOOSE);
 	    	   column.setValue("");
 	    	   richTextChkBox.setValue(false);
-	    	   /*thumbWidth.setValue("");
-	    	   thumbHeight.setValue("");
-	    	   allowZoomOutChkBox.setValue(false);
-	    	   allowZoomInChkBox.setValue(false);*/
 	    	   maxBytes.setValue("");
 	       }
 	}
@@ -696,14 +755,8 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 	public void setCreating(boolean creating) {
 		if (creating) {
 			title.setInnerText(constants.addQuestionType());
-			//editTitle.getStyle().setDisplay(Display.NONE);
-			// change{	//	createTitle.getStyle().clearDisplay();
-//			questionTypePanel.getTabBar().setTabText(0, constants.addQuestionType());
 		} else {
 			title.setInnerText(constants.editQuestionType());
-			//editTitle.getStyle().clearDisplay();
-			// change{	createTitle.getStyle().setDisplay(Display.NONE);
-//			questionTypePanel.getTabBar().setTabText(0, constants.editQuestionType());
 		}
 	}
 	
@@ -842,21 +895,17 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		
 		boolean flag = true;
 		boolean answerFlag = false;
-		
-		//StringBuilder errorString = new StringBuilder();
-		
+				
 		if (shortName.getText().isEmpty())
     	{	
 			flag = false;
-			//errorString.append(constants.shortName() + " " + constants.questionTypeErroMsg()).append("<br />");
-			errorMessage.add(constants.shortName() + " " + constants.questionTypeErroMsg());
+						errorMessage.add(constants.shortName() + " " + constants.questionTypeErroMsg());
 			shortName.getTextBox().addStyleName("higlight_onViolation");
     	}
 		
 		if (longName.getText().isEmpty())
 		{
 			flag = false;
-			//errorString.append(constants.longName() + " " + constants.questionTypeErroMsg()).append("<br />");
 			errorMessage.add(constants.longName() + " " + constants.questionTypeErroMsg());
 			longName.getTextBox().addStyleName("higlight_onViolation");
 		}
@@ -864,7 +913,6 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		if (description.getText().isEmpty())
 		{
 			flag = false;
-			//errorString.append(constants.description() + " " + constants.questionTypeErroMsg()).append("<br />");
 			errorMessage.add(constants.description() + " " + constants.questionTypeErroMsg());
 			description.getTextArea().addStyleName("higlight_onViolation");
 		}		
@@ -879,7 +927,6 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				{
 					flag = false;
 					answerFlag = true;
-					//errorString.append(constants.sumAnswer() + " " + msg).append("<br />");
 					errorMessage.add(constants.sumAnswer() + " " + msg);
 					sumAnswer.getTextBox().addStyleName("higlight_onViolation");
 				}
@@ -887,7 +934,6 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				{
 					flag = false;
 					answerFlag = true;
-					//errorString.append(constants.sumOfAnsMsg()).append("<br />");
 					errorMessage.add(constants.sumOfAnsMsg());
 					sumAnswer.getTextBox().addStyleName("higlight_onViolation");
 				}
@@ -897,7 +943,6 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				{
 					flag = false;
 					answerFlag = true;
-					//errorString.append(constants.sumTrueAnswer() + " " + msg).append("<br />");
 					errorMessage.add(constants.sumTrueAnswer() + " " + msg);
 					sumTrueAnswer.getTextBox().addStyleName("higlight_onViolation");
 				}
@@ -905,7 +950,6 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				{
 					flag = false;
 					answerFlag = true;
-					//errorString.append(constants.sumOfTrueAnsMsg()).append("<br />");
 					errorMessage.add(constants.sumOfTrueAnsMsg());
 					sumTrueAnswer.getTextBox().addStyleName("higlight_onViolation");
 				}
@@ -915,7 +959,6 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				{
 					flag = false;
 					answerFlag = true;
-					//errorString.append(constants.sumFalseAnswer() + " " + msg).append("<br />");
 					errorMessage.add(constants.sumFalseAnswer() + " " + msg);
 					sumFalseAnswer.getTextBox().addStyleName("higlight_onViolation");
 				}
@@ -923,7 +966,6 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				{
 					flag = false;
 					answerFlag = true;
-					//errorString.append(constants.sumOfFalseAnsMsg()).append("<br />");
 					errorMessage.add(constants.sumOfFalseAnsMsg());
 					sumFalseAnswer.getTextBox().addStyleName("higlight_onViolation");
 				}
@@ -943,7 +985,6 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(questionLength.getIntegerBox())) != "")
 				{
 					flag = false;
-					//errorString.append(constants.questionLength() + " " + msg).append("<br />");
 					errorMessage.add(constants.questionLength() + " " + msg);
 					questionLength.getTextBox().addStyleName("higlight_onViolation");
 				}
@@ -952,7 +993,6 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(answerLength.getIntegerBox())) != "")
 				{
 					flag = false;
-					//errorString.append(constants.answerLength() + " " + msg).append("<br />");
 					errorMessage.add(constants.answerLength() + " " + msg);
 					answerLength.getTextBox().addStyleName("higlight_onViolation");
 				}
@@ -961,7 +1001,6 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForDouble(answerDiff.getDoubleBox())) != "")
 				{
 					flag = false;
-					//errorString.append(constants.diffAnswer() + " " + msg).append("<br />");
 					errorMessage.add(constants.diffAnswer() + " " + msg);
 					answerDiff.getTextBox().addStyleName("higlight_onViolation");
 				}
@@ -975,7 +1014,6 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(keywordCount.getIntegerBox())) != "")
 				{
 					flag = false;
-					//errorString.append(constants.countKeyword() + " " + msg).append("<br />");
 					errorMessage.add(constants.countKeyword() + " " + msg);
 					keywordCount.getTextBox().addStyleName("higlight_onViolation");
 				}
@@ -984,7 +1022,6 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(minLetterForAutoComp.getIntegerBox())) != "")
 				{
 					flag = false;
-					//errorString.append(constants.minLetterAutoComplete() + " " + msg).append("<br />");
 					errorMessage.add(constants.minLetterAutoComplete() + " " + msg);
 					minLetterForAutoComp.getTextBox().addStyleName("higlight_onViolation");
 				}
@@ -993,7 +1030,6 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(questionLength.getIntegerBox())) != "")
 				{
 					flag = false;
-					//errorString.append(constants.questionLength() + " " + msg).append("<br />");
 					errorMessage.add(constants.questionLength() + " " + msg);
 					questionLength.getTextBox().addStyleName("higlight_onViolation");
 				}
@@ -1002,7 +1038,6 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(answerLength.getIntegerBox())) != "")
 				{
 					flag = false;
-					//errorString.append(constants.answerLength() + " " + msg).append("<br />");
 					errorMessage.add(constants.answerLength() + " " + msg);
 					answerLength.getTextBox().addStyleName("higlight_onViolation");
 				}
@@ -1011,7 +1046,6 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(shortAnswerLength.getIntegerBox())) != "")
 				{
 					flag = false;
-					//errorString.append(constants.lengthShortAns() + " " + msg).append("<br />");
 					errorMessage.add(constants.lengthShortAns() + " " + msg);
 					shortAnswerLength.getTextBox().addStyleName("higlight_onViolation");
 				}
@@ -1027,7 +1061,6 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(questionLength.getIntegerBox())) != "")
 				{
 					flag = false;
-					//errorString.append(constants.questionLength() + " " + msg).append("<br />");
 					errorMessage.add(constants.questionLength() + " " + msg);
 					questionLength.getTextBox().addStyleName("higlight_onViolation");
 				}
@@ -1041,7 +1074,6 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(minLength.getIntegerBox())) != "")
 				{
 					flag = false;
-					//errorString.append(constants.minLength() + " " + msg).append("<br />");
 					errorMessage.add(constants.minLength() + " " + msg);
 					minLength.getTextBox().addStyleName("higlight_onViolation");
 				}
@@ -1050,7 +1082,6 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(questionLength.getIntegerBox())) != "")
 				{
 					flag = false;
-					//errorString.append(constants.questionLength() + " " + msg).append("<br />");
 					errorMessage.add(constants.questionLength() + " " + msg);
 					questionLength.getTextBox().addStyleName("higlight_onViolation");
 				}
@@ -1059,7 +1090,6 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(maxLength.getIntegerBox())) != "")
 				{
 					flag = false;
-					//errorString.append(constants.maxLength() + " " + msg).append("<br />");
 					errorMessage.add(constants.maxLength() + " " + msg);
 					maxLength.getTextBox().addStyleName("higlight_onViolation");
 				}
@@ -1068,7 +1098,6 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(minWordCount.getIntegerBox())) != "")
 				{
 					flag = false;
-					//errorString.append(constants.minWordCount() + " " + msg).append("<br />");
 					errorMessage.add(constants.minWordCount() + " " + msg);
 					minWordCount.getTextBox().addStyleName("higlight_onViolation");
 				}
@@ -1077,7 +1106,6 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(maxWordCount.getIntegerBox())) != "")
 				{
 					flag = false;
-					//errorString.append(constants.maxWordCount() + " " + msg).append("<br />");
 					errorMessage.add(constants.maxWordCount() + " " + msg);
 					maxWordCount.getTextBox().addStyleName("higlight_onViolation");
 				}
@@ -1091,7 +1119,6 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(questionLength.getIntegerBox())) != "")
 				{
 					flag = false;
-					//errorString.append(constants.questionLength() + " " + msg).append("<br />");
 					errorMessage.add(constants.questionLength() + " " + msg);
 					questionLength.getTextBox().addStyleName("higlight_onViolation");
 				}
@@ -1100,7 +1127,6 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(answerLength.getIntegerBox())) != "")
 				{
 					flag = false;
-					//errorString.append(constants.answerLength() + " " + msg).append("<br />");
 					errorMessage.add(constants.answerLength() + " " + msg);
 					answerLength.getTextBox().addStyleName("higlight_onViolation");
 				}
@@ -1115,7 +1141,6 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(questionLength.getIntegerBox())) != "")
 				{
 					flag = false;
-					//errorString.append(constants.questionLength() + " " + msg).append("<br />");
 					errorMessage.add(constants.questionLength() + " " + msg);
 					questionLength.getTextBox().addStyleName("higlight_onViolation");
 				}
@@ -1123,7 +1148,6 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if (multimediaType.getValue().equals(null))
 				{
 					flag = false;
-					//errorString.append(constants.multimediaType() + " " + constants.questionTypeErroMsg()).append("<br />");
 					errorMessage.add(constants.multimediaType() + " " + constants.questionTypeErroMsg());
 					multimediaType.getValueListBox().addStyleName("higlight_onViolation");
 				}
@@ -1131,7 +1155,6 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if (selectionType.getValue().equals(null))
 				{
 					flag = false;
-					//errorString.append(constants.selectionType() + " " + constants.questionTypeErroMsg()).append("<br />");
 					errorMessage.add(constants.selectionType() + " " + constants.questionTypeErroMsg());
 					selectionType.getValueListBox().addStyleName("higlight_onViolation");
 				}
@@ -1140,7 +1163,6 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(column.getIntegerBox())) != "")
 				{
 					flag = false;
-					//errorString.append(constants.column() + " " + msg).append("<br />");
 					errorMessage.add(constants.column() + " " + msg);
 					column.getTextBox().addStyleName("higlight_onViolation");
 				}
@@ -1149,7 +1171,6 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(maxBytes.getIntegerBox())) != "")
 				{
 					flag = false;
-					//errorString.append(constants.maxBytes() + " " + msg).append("<br />");
 					errorMessage.add(constants.maxBytes() + " " + msg);
 					maxBytes.getTextBox().addStyleName("higlight_onViolation");
 				}

@@ -1,7 +1,6 @@
 package medizin.shared;
 
 public enum QuestionTypes {
-	
-	Textual, Imgkey, Matrix, ShowInImage, MCQ, LongText, Sort;
+	Textual, Matrix, MCQ, Imgkey, ShowInImage, LongText, Sort;
 
 }

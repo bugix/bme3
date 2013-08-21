@@ -13,23 +13,31 @@
 		.labeledBox {
 		}
 		
-		.attribute {
-			background: linear-gradient(to right top, #FFFFF6 0px, #FFFFFF 100%) repeat scroll 0 0 transparent;
-    		border-radius: 2px 2px 2px 2px;
-    		box-shadow: 2px 2px 2px #DDDDDD;
-    		margin: 4px 0 8px;
-    		padding: 8px;
+		.controlPanel {
+			background: linear-gradient(to right top, #E0E0E0 0px, #F0F0F0 100%) repeat scroll 0 0 transparent;
+		    border: medium none;
+		    border-radius: 2px 2px 2px 2px;
+		    box-shadow: 1px 1px 2px #AAAAAA;
+		    height: 30px;
+		    margin: 12px 20px;
+		    padding: 4px 20px;
+		    width: 50%;
 		}
 		
+		.controlPanel button {
+			float: right;
+			margin: 2px;
+		}
+				
 		.attributeGroup {
 			background: linear-gradient(to right top, #F0F0F0 0px, #FFFFFF 100%)
 				repeat scroll 0 0 transparent;
 			border: 1px solid #ddd;
 			border-radius: 2px;
-			margin: 18px 4px;
+			margin: 18px;
 			padding: 0 20px 8px;
 			box-shadow: 2px 1px 3px #CCCCCC;
-			width: 400px;
+			width: 50%;
 		}
 		
 		.attributeGroupTitle {
@@ -54,169 +62,105 @@
 			marging: 8px;
 			float: right;
 		}
-		
-		.label {
-			background: none;
-			font-weight: bold;
-			margin: 0 0 -6px;
-		}
-		
-		.button {
-			margin-left: 0.5em;
-			float: right;
-			background: none;
-			cursor: pointer;
-		}
-		
-		.header {
-			padding: 3px;
-			color: #4B4A4A;
-			text-shadow: #ddf 1px 1px 0;
-			margin-bottom: 0;
-			background-color: #E6EDED;
-			font-size: 1.2em;
-			font-weight: bold;
-		}
-		
-		.underline {
-			border-bottom: 1px solid #6F7277;
-		}
-		
-		.boundary {
-			padding-left: 10px;
-			padding-right: 10px;
-		}
-		
-		.bar {
-			padding: 3px;
-			background-color: #E6EDED;
-		}
-		
-		.details {
-			border: 1px solid #E6EDED;
-			width: 100%;
-		}
-		
-		.nav {
-			border: 1px solid #E6EDED;
-			width: 100%;
-			background: #e3e8f3 url(images/hborder.png) repeat-x 0px -2003px;
-		}
-		
-		.textarea {
-			border: 1px solid #E6EDED;
-			width: 100%;
-		}
-		
-		.rowHidden {
-			display: none;
-		}
-		
-		.detailsControls {
-			
-		}
 	</ui:style>
 
+	<g:HTMLPanel ui:field="panel">
 
-	<g:VerticalPanel addStyleNames="{style.tabStyle}">
-		<g:HTMLPanel styleName="{style.patientControls}">
-
-			<div class="{style.controlsright}">
-
-				<!-- <div class="{style.header}" visible="false" ui:field="editTitle"> 
-					<ui:msg>Fragetyp bearbeiten</ui:msg> </div> <div class="{style.header}" visible="false" 
-					ui:field="createTitle"> <ui:msg>Neuen Fragetyp erstellen</ui:msg> </div> -->
-				<h3 class="{style.header}" style="display:inline">
-					<span ui:field="title"></span>
-				</h3>
-				<a:IconButton ui:field="save" icon="disk"></a:IconButton>
-				<a:IconButton ui:field="cancel" icon="closethick"></a:IconButton>
-			</div>
-		</g:HTMLPanel>
-			<g:HTMLPanel>
-				<div class="{style.attributeGroup}">
-					<!-- General / basic attributes -->
-					<g:Label styleName="{style.attributeGroupTitle}" ui:field="baseGroupLbl" text="baseGroupLbl"></g:Label>
-					
-					<lbl:LabeledTextBox addStyleNames="{style.labeledBox}" ui:field="shortName"></lbl:LabeledTextBox>
-					<lbl:LabeledTextBox addStyleNames="{style.labeledBox}" ui:field="longName"></lbl:LabeledTextBox>
-					<lbl:LabeledTextArea addStyleNames="{style.labeledBox}" ui:field="description"></lbl:LabeledTextArea>
-					<lbl:LabeledValueListBox addStyleNames="{style.labeledBox}" ui:field="institute"></lbl:LabeledValueListBox>
-					<lbl:LabeledValueListBox addStyleNames="{style.labeledBox}" ui:field="questionType"></lbl:LabeledValueListBox>
-				</div>
-
-				<div class="{style.attributeGroup}">
-					<!-- Exam specific attributes -->
-					<g:Label styleName="{style.attributeGroupTitle}" ui:field="examGroupLbl" text="baseGroupLbl"></g:Label>
+		<div class="{style.controlPanel}">
+			<h3 class="{style.header}" style="display:inline">
+				<span ui:field="title"></span>
+			</h3>
+			<a:IconButton ui:field="save" icon="disk"></a:IconButton>
+			<a:IconButton ui:field="cancel" icon="closethick"></a:IconButton>
+		</div>
+		
+		<div class="{style.attributeGroup}">
+			<!-- General / basic attributes -->
+			<g:Label styleName="{style.attributeGroupTitle}" ui:field="baseGroupLbl" text="baseGroupLbl"></g:Label>
 			
-					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="sumAnswer" min="0" value="0"></lbl:LabeledIntegerBox>
-					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="sumTrueAnswer" min="0" value="0"></lbl:LabeledIntegerBox>
-					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="sumFalseAnswer" min="0" value="0"></lbl:LabeledIntegerBox>
-					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="column" min="0" value="0"></lbl:LabeledIntegerBox>
-					
-					<lbl:LabeledPanel addStyleNames="{style.labeledBox}" ui:field="richText">
-						<g:CheckBox ui:field="richTextChkBox"></g:CheckBox>
-					</lbl:LabeledPanel>
-					
-					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="minLength" min="0" value="0"></lbl:LabeledIntegerBox>
-					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="maxLength" min="0" value="0"></lbl:LabeledIntegerBox>
-					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="minWordCount" min="0" value="0"></lbl:LabeledIntegerBox>
-					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="maxWordCount" min="0" value="0"></lbl:LabeledIntegerBox>
-				</div>
+			<lbl:LabeledTextBox addStyleNames="{style.labeledBox}" ui:field="shortName"></lbl:LabeledTextBox>
+			<lbl:LabeledTextBox addStyleNames="{style.labeledBox}" ui:field="longName"></lbl:LabeledTextBox>
+			<lbl:LabeledTextArea addStyleNames="{style.labeledBox}" ui:field="description"></lbl:LabeledTextArea>
+			<lbl:LabeledValueListBox addStyleNames="{style.labeledBox}" ui:field="institute"></lbl:LabeledValueListBox>
+			<lbl:LabeledValueListBox addStyleNames="{style.labeledBox}" ui:field="questionType"></lbl:LabeledValueListBox>
+		</div>
 
-				<div class="{style.attributeGroup}">
-					<!-- Question specific attributes -->
-					<g:Label styleName="{style.attributeGroupTitle}" ui:field="questionGroupLbl" text="baseGroupLbl"></g:Label>
-					
-					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="questionLength" min="0" value="0"></lbl:LabeledIntegerBox>
-					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="answerLength" min="0" value="0"></lbl:LabeledIntegerBox>
-					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="shortAnswerLength" min="0" value="0"></lbl:LabeledIntegerBox>
-					<lbl:LabeledDoubleBox addStyleNames="{style.labeledBox}" ui:field="answerDiff" min="0" max="100" value="0"></lbl:LabeledDoubleBox>
+		<div class="{style.attributeGroup}">
+			<!-- Exam specific attributes -->
+			<g:Label styleName="{style.attributeGroupTitle}" ui:field="examGroupLbl" text="baseGroupLbl"></g:Label>
+	
+			<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="sumAnswer" min="0" value="0"></lbl:LabeledIntegerBox>
+			<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="sumTrueAnswer" min="0" value="0"></lbl:LabeledIntegerBox>
+			<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="sumFalseAnswer" min="0" value="0"></lbl:LabeledIntegerBox>
+			<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="column" min="0" value="0"></lbl:LabeledIntegerBox>
+			
+			<lbl:LabeledPanel addStyleNames="{style.labeledBox}" ui:field="richText">
+				<g:CheckBox ui:field="richTextChkBox"></g:CheckBox>
+			</lbl:LabeledPanel>
+			
+			<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="minLength" min="0" value="0"></lbl:LabeledIntegerBox>
+			<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="maxLength" min="0" value="0"></lbl:LabeledIntegerBox>
+			<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="minWordCount" min="0" value="0"></lbl:LabeledIntegerBox>
+			<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="maxWordCount" min="0" value="0"></lbl:LabeledIntegerBox>
+		</div>
 
-					<lbl:LabeledPanel addStyleNames="{style.labeledBox}" ui:field="queHasMedia">
-						<g:CheckBox ui:field="queHaveImgChkBox"></g:CheckBox>
-						<g:CheckBox ui:field="queHaveVideoChkBox"></g:CheckBox>
-						<g:CheckBox ui:field="queHaveSoundChkBox"></g:CheckBox>
-					</lbl:LabeledPanel>
-					
-					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="keywordCount" min="0" value="0"></lbl:LabeledIntegerBox>
-					
-					<lbl:LabeledPanel addStyleNames="{style.labeledBox}" ui:field="showAutoComplete">
-						<g:CheckBox ui:field="showAutoCompleteChkBox"></g:CheckBox>
-					</lbl:LabeledPanel>
-					
-					<lbl:LabeledPanel addStyleNames="{style.labeledBox}" ui:field="isDictionaryKeyword">
-						<g:CheckBox ui:field="isDictionaryKeywordChkBox"></g:CheckBox>
-					</lbl:LabeledPanel>
+		<div class="{style.attributeGroup}">
+			<!-- Question specific attributes -->
+			<g:Label styleName="{style.attributeGroupTitle}" ui:field="questionGroupLbl" text="baseGroupLbl"></g:Label>
+			
+			<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="questionLength" min="0" value="0"></lbl:LabeledIntegerBox>
+			<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="answerLength" min="0" value="0"></lbl:LabeledIntegerBox>
+			<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="shortAnswerLength" min="0" value="0"></lbl:LabeledIntegerBox>
+			<lbl:LabeledDoubleBox addStyleNames="{style.labeledBox}" ui:field="answerDiff" min="0" max="100" value="0"></lbl:LabeledDoubleBox>
+
+			<lbl:LabeledPanel addStyleNames="{style.labeledBox}" ui:field="queHasMedia">
+				<g:CheckBox ui:field="queHaveImgChkBox"></g:CheckBox>
+				<g:CheckBox ui:field="queHaveVideoChkBox"></g:CheckBox>
+				<g:CheckBox ui:field="queHaveSoundChkBox"></g:CheckBox>
+			</lbl:LabeledPanel>
+			
+			<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="keywordCount" min="0" value="0"></lbl:LabeledIntegerBox>
+			
+			<lbl:LabeledPanel addStyleNames="{style.labeledBox}" ui:field="showAutoComplete">
+				<g:CheckBox ui:field="showAutoCompleteChkBox"></g:CheckBox>
+			</lbl:LabeledPanel>
+			
+			<lbl:LabeledPanel addStyleNames="{style.labeledBox}" ui:field="isDictionaryKeyword">
+				<g:CheckBox ui:field="isDictionaryKeywordChkBox"></g:CheckBox>
+			</lbl:LabeledPanel>
 
 
-					<lbl:LabeledPanel addStyleNames="{style.labeledBox}" ui:field="allowTyping">
-						<g:CheckBox ui:field="allowTypingChkBox"></g:CheckBox>
-					</lbl:LabeledPanel>
+			<lbl:LabeledPanel addStyleNames="{style.labeledBox}" ui:field="allowTyping">
+				<g:CheckBox ui:field="allowTypingChkBox"></g:CheckBox>
+			</lbl:LabeledPanel>
 
-					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="minLetterForAutoComp" min="0" value="0"></lbl:LabeledIntegerBox>
+			<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="minLetterForAutoComp" min="0" value="0"></lbl:LabeledIntegerBox>
 
-					<lbl:LabeledPanel addStyleNames="{style.labeledBox}" ui:field="acceptNonKeyword">
-						<g:CheckBox ui:field="acceptNonKeywordChkBox"></g:CheckBox>
-					</lbl:LabeledPanel>
+			<lbl:LabeledPanel addStyleNames="{style.labeledBox}" ui:field="acceptNonKeyword">
+				<g:CheckBox ui:field="acceptNonKeywordChkBox"></g:CheckBox>
+			</lbl:LabeledPanel>
 
-					<!-- Matrix Type Field -->
-					<lbl:LabeledPanel addStyleNames="{style.labeledBox}" ui:field="oneToOneAss">
-						<g:CheckBox ui:field="oneToOneAssChkBox"></g:CheckBox>
-					</lbl:LabeledPanel>
+			<!-- Matrix Type Field -->
+			<lbl:LabeledPanel addStyleNames="{style.labeledBox}" ui:field="oneToOneAss">
+				<g:CheckBox ui:field="oneToOneAssChkBox"></g:CheckBox>
+			</lbl:LabeledPanel>
 
-					<!-- MCQ Type Field -->
-					<lbl:LabeledValueListBox addStyleNames="{style.labeledBox}" ui:field="multimediaType"></lbl:LabeledValueListBox>
-					<lbl:LabeledValueListBox addStyleNames="{style.labeledBox}" ui:field="selectionType"></lbl:LabeledValueListBox>
-					<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="maxBytes" min="0" value="0"></lbl:LabeledIntegerBox>
-				</div>
+			<!-- MCQ Type Field -->
+			<lbl:LabeledValueListBox addStyleNames="{style.labeledBox}" ui:field="multimediaType"></lbl:LabeledValueListBox>
+			<lbl:LabeledValueListBox addStyleNames="{style.labeledBox}" ui:field="selectionType"></lbl:LabeledValueListBox>
+			<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="maxBytes" min="0" value="0"></lbl:LabeledIntegerBox>
+		</div>
 
-				<div class="{style.attributeGroup}">
-					<g:Label styleName="{style.attributeGroupTitle}" ui:field="evaluationGroupLbl" text="baseGroupLbl"></g:Label>
-					<lbl:LabeledPanel addStyleNames="{style.labeledBox}" ui:field="keywordHighlight">
-						<g:CheckBox ui:field="keywordHighlightChkBox"></g:CheckBox>
-					</lbl:LabeledPanel>
-				</div>
-			</g:HTMLPanel>
-	</g:VerticalPanel>
+		<div class="{style.attributeGroup}">
+			<g:Label styleName="{style.attributeGroupTitle}" ui:field="evaluationGroupLbl" text="baseGroupLbl"></g:Label>
+			<lbl:LabeledPanel addStyleNames="{style.labeledBox}" ui:field="keywordHighlight">
+				<g:CheckBox ui:field="keywordHighlightChkBox"></g:CheckBox>
+			</lbl:LabeledPanel>
+		</div>
+
+		<div class="{style.controlPanel}">
+			<a:IconButton ui:field="save2" icon="disk"></a:IconButton>
+			<a:IconButton ui:field="cancel2" icon="closethick"></a:IconButton>
+		</div>		
+	</g:HTMLPanel>
 </ui:UiBinder> 
