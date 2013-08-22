@@ -3,6 +3,7 @@ package medizin.client.util;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -226,5 +227,12 @@ public final class ClientUtility {
 
 	public static String removeMathJax(String text) {
 		return text.replaceAll("\\[", "").replaceAll("\\]", "");		
+	}
+
+	@SuppressWarnings("deprecation")
+	public static Date getDateFromOneYear() {
+		Date date = new Date();
+		date.setYear((date.getYear()+1));
+		return date;
 	}
 }

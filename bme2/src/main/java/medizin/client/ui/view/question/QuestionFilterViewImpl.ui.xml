@@ -6,325 +6,58 @@
 	<ui:with type="medizin.shared.i18n.BmeConstants" field="constants"></ui:with>
 	
 	<ui:style src="../../styles.css">
-		.standardTable input {
-			width: 100%;
-			opacity: 0.8;
-		}
-		
-		.popupPanel {
-			margin: 6px 6px;
-		}
-		
-		.popupCheckboxes {
-			width: 135px;
-		}
-		
-		.noOutline {
-			outline-style: none;
-			overflow: hidden;
-		}
-		
 		.floatRight {
 			float: right;
+			margin: 5px;
 		}
-		
-		.complexity {
-			padding-right: 10px;
+		.labelPanelHp{
+			margin-top: 8px;
 		}
-		
-		.text {
-			padding-right: 10px;
-		}
-		
-		.Author {
-			padding-right: 37px;
-		}
-		
-		.Reviewer {
-			padding-right: 23px;
-		}
-		
-		.Specification {
-			padding-right: 6px;
-		}
-		
-		.StudyYear {
-			padding-right: 65px;
-		}
-		
-		.Keywordlbl {
-			padding-right: 28px;
-		}
-		
-		.startDatelbl {
-			padding-right: 20px;
-		}
-		
-		.endDateLbl {
-			padding-right: 27px;
-		}
-		
-		.labelSize {
-			width: 115px;
-			vertical-align: middle;
-		}
-		.labelVertical {
-			vertical-align: middle;
-		}
-		
-		<!-- .horizontal -->
 	</ui:style>
-	<g:FocusPanel ui:field="filterPanelRoot" addStyleNames="{style.noOutline}">
-		<g:HTMLPanel addStyleNames="{style.popupPanel}">
-			<span class="ui-icon ui-icon-wrench" style="margin: 0 10px 6px 0; float:left"></span>
-			<span style="margin-left: 0px">
-				<strong ui:field="labelSearch">Suche nach...</strong>
-			</span>
-			<m:IconButton icon="arrowreturnthick-1-w" ui:field="resetButton"
-				addStyleNames="{style.floatRight}"></m:IconButton>
+	
+	<g:HTMLPanel >
+		
+		<g:HorizontalPanel width="200px" ui:field="mainPanel">
+			<g:HorizontalPanel ui:field="labelPanel" addStyleNames="{style.labelPanelHp}">
+				<g:HTMLPanel>
+					<span class="ui-icon ui-icon-wrench" style="margin: 5px; float:left"></span>
+					<g:Label ui:field="labelSearch" width="130px"></g:Label>
+				</g:HTMLPanel>
+			</g:HorizontalPanel>
+		
+			<g:HorizontalPanel ui:field="buttonPanel">
+				<m:IconButton icon="arrowreturnthick-1-w" ui:field="resetButton" addStyleNames="{style.floatRight}" text="{constants.reset}"></m:IconButton>
+			</g:HorizontalPanel>
+		</g:HorizontalPanel>
 
-			<div style="clear:both">
-				<g:HorizontalPanel>
-					<g:VerticalPanel addStyleNames="{style.popupCheckboxes}">
+		<div style="clear:both">
+			<g:HorizontalPanel>
+				<g:VerticalPanel>
 					<g:HTMLPanel>
-					<table>
-						<tr>
-							<td>
-								<g:CheckBox ui:field="auther" text="{constants.auther}"></g:CheckBox>
-							</td>
+						<table>
+							<tr>
+								<td>
+									<g:CheckBox ui:field="questionText" text="{constants.questionText}"></g:CheckBox>
+								</td>
+								
+								<td>
+									<g:CheckBox ui:field="instructionText" text="{constants.instruction}"></g:CheckBox>
+								</td>
+							</tr>
 							
-							<td>
-								<g:CheckBox ui:field="reviewer" text="{constants.reviewer}"></g:CheckBox>
-							</td>
-						</tr>
-						
-						<tr>
-							<td>
-								<g:CheckBox ui:field="questionText" text="{constants.questionText}"></g:CheckBox>
-							</td>
-							
-							<td>
-								<g:CheckBox ui:field="instructionText" text="{constants.instruction}"></g:CheckBox>
-							</td>
-						</tr>
-						
-						<tr>
-							<td>
-								<g:CheckBox ui:field="keywordText" text="{constants.keyword}"></g:CheckBox>
-							</td>
-							
-							<td>
-								<g:CheckBox ui:field="showNew" text="{constants.showNew}"></g:CheckBox>
-							</td>
-						</tr>
-						
-						<!-- <tr>
-							<td>
-							
-								<g:Label addStyleNames="{style.labelSize}" text="{constants.institutionLbl}"></g:Label>
-							
-							</td>
-							
-							<td>
-								<g:ValueListBox ui:field="institutionListBox" />
-							</td>
-						</tr> -->
-						
-						<tr>
-							<td>
-							<g:Label addStyleNames="{style.labelSize}" text="{constants.specialiation}"></g:Label>
-							
-							</td>
-							
-							<td>
-							<g:ValueListBox ui:field="specialiationListBox" />
-							</td>
-						</tr>
-						<!-- <tr>
-							<td>
-								<g:Label addStyleNames="{style.labelSize}" text="{constants.status}"></g:Label>
-							</td>
-							
-							<td>
-							<g:ValueListBox ui:field="status" />
-							</td>
-						</tr> -->
-						
-						<tr>
-							<td>
-							<g:Label addStyleNames="{style.labelSize}" text="{constants.createdDate}"></g:Label>
-							
-							</td>
-							
-							<td>
-							<g:HorizontalPanel>
-							<g:Label text="{constants.from}"  addStyleNames="{style.labelVertical}"></g:Label>
-							<d:DateBox ui:field="createStartDate" ></d:DateBox>
-							<g:Label text="{constants.to}" addStyleNames="{style.labelVertical}"></g:Label>
-							<d:DateBox ui:field="createEndDate"></d:DateBox>
-							</g:HorizontalPanel>
-							</td>
-						</tr>
-						
-						<tr>
-							<td>
-						<g:Label addStyleNames="{style.labelSize}" text="{constants.usedinMC}"></g:Label>
-							
-							</td>
-							
-							<td>
-							<g:HorizontalPanel>
-							<g:Label text="{constants.from}" addStyleNames="{style.labelVertical}"></g:Label>
-							<d:DateBox ui:field="usedMcStartDate"></d:DateBox>
-							<g:Label text="{constants.to}" addStyleNames="{style.labelVertical}"></g:Label>
-							<d:DateBox ui:field="usedMcEndDate"></d:DateBox>
-							</g:HorizontalPanel>
-							</td>
-						</tr>
-						
-						
-							 
-							
-					</table>
+							<tr>
+								<td>
+									<g:CheckBox ui:field="keywordText" text="{constants.keyword}"></g:CheckBox>
+								</td>
+								
+								<td>
+									<g:CheckBox ui:field="showNew" text="{constants.showNew}"></g:CheckBox>
+								</td>
+							</tr>
+						</table>
 					</g:HTMLPanel>
-						<!-- <g:HorizontalPanel>
-							<g:CheckBox ui:field="auther" text="{constants.auther}"></g:CheckBox>
-							
-							<g:CheckBox ui:field="reviewer" text="{constants.reviewer}"></g:CheckBox>
-						</g:HorizontalPanel>
-						
-						<g:HorizontalPanel>
-							<g:CheckBox ui:field="questionText" text="{constants.questionText}"></g:CheckBox>							
-							<g:CheckBox ui:field="instructionText" text="{constants.instruction}"></g:CheckBox>
-						</g:HorizontalPanel>
-						
-						<g:HorizontalPanel>
-							<g:CheckBox ui:field="keywordText" text="{constants.keyword}"></g:CheckBox>
-						</g:HorizontalPanel>
-						
-						<g:HorizontalPanel>
-							<g:Label addStyleNames="{style.labelSize}" text="{constants.institutionLbl}"></g:Label>
-							<g:ValueListBox ui:field="institutionListBox" />	
-						</g:HorizontalPanel>
-						
-						<g:HorizontalPanel>
-							<g:Label addStyleNames="{style.labelSize}" text="{constants.specialiation}"></g:Label>
-							<g:ValueListBox ui:field="specialiationListBox" />
-						</g:HorizontalPanel>
-						
-						<g:HorizontalPanel>
-							<g:Label addStyleNames="{style.labelSize}" text="{constants.status}"></g:Label>
-							<g:ValueListBox ui:field="status" />
-						</g:HorizontalPanel>
-						
-						<g:HorizontalPanel>
-							<g:Label addStyleNames="{style.labelSize}" text="{constants.createdDate}"></g:Label>
-							<g:Label text="{constants.from}"></g:Label>
-							<d:DateBox ui:field="createStartDate"></d:DateBox>
-							<g:Label text="{constants.to}"></g:Label>
-							<d:DateBox ui:field="createEndDate"></d:DateBox> 
-						</g:HorizontalPanel>
-						
-						<g:HorizontalPanel>
-							<g:Label addStyleNames="{style.labelSize}" text="{constants.usedinMC}"></g:Label>
-							<g:Label text="{constants.from}"></g:Label>
-							<d:DateBox ui:field="usedMcStartDate"></d:DateBox>
-							<g:Label text="{constants.to}"></g:Label>
-							<d:DateBox ui:field="usedMcEndDate"></d:DateBox> 
-						</g:HorizontalPanel> -->
-						
-						<!-- <g:HorizontalPanel>
-							<g:Label addStyleNames="{style.labelSize}">Create Date To</g:Label>
-							<d:DateBox ui:field="createEndDate"></d:DateBox>
-						</g:HorizontalPanel> -->
-						
-						<!-- <g:HorizontalPanel>
-						</g:HorizontalPanel> -->
-						
-						<!-- <g:HTMLPanel>
-							<table>
-								<tr>
-									<td>
-										<g:Label addStyleNames="{style.labelSize}">Auther</g:Label>
-										<g:CheckBox ui:field="auther"></g:CheckBox>
-									</td>
-									<td >
-										<g:Label addStyleNames="{style.labelSize}">Reviwer</g:Label>
-										<g:CheckBox ui:field="reviewer"></g:CheckBox>
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<g:Label addStyleNames="{style.labelSize}">Question Text</g:Label>
-										<g:CheckBox ui:field="questionText"></g:CheckBox>
-									</td>
-									<td>
-										<g:CheckBox ui:field="instructionText"></g:CheckBox>
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<g:Label addStyleNames="{style.labelSize}">Instruction</g:Label>
-									</td>
-									<td>
-										<g:CheckBox ui:field="instructionText"></g:CheckBox>
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<g:Label addStyleNames="{style.labelSize}">Keyword</g:Label>
-										<g:CheckBox ui:field="keywordText"></g:CheckBox>
-									</td>
-									<td>
-										<g:CheckBox ui:field="keywordText"></g:CheckBox>
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<g:Label addStyleNames="{style.labelSize}">Institution</g:Label>
-									</td>
-									<td>
-										<g:ValueListBox ui:field="institutionListBox" />		
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<g:Label addStyleNames="{style.labelSize}">Specialiation</g:Label>
-									</td>
-									<td>
-										<g:ValueListBox ui:field="specialiationListBox" />		
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<g:Label addStyleNames="{style.labelSize}">Status</g:Label>
-									</td>
-									<td>
-										<g:ValueListBox ui:field="status" />
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<g:Label addStyleNames="{style.labelSize}">Created Date </g:Label>
-									</td>
-									<td>									
-										<g:Label>From</g:Label><d:DateBox ui:field="createStartDate"></d:DateBox>
-										<g:Label>To</g:Label><d:DateBox ui:field="createEndDate"></d:DateBox>
-									</td>
-								</tr>
-								<tr>	
-									<td>
-										<g:Label addStyleNames="{style.labelSize}">Create Date To</g:Label>
-									</td>
-									<td>
-										<d:DateBox ui:field="createEndDate"></d:DateBox>
-									</td>
-								</tr>
-							</table>
-						</g:HTMLPanel> -->
-					</g:VerticalPanel>
-				</g:HorizontalPanel>
-			</div>
-		</g:HTMLPanel>
-	</g:FocusPanel>
+				</g:VerticalPanel>
+			</g:HorizontalPanel>					
+		</div>
+	</g:HTMLPanel>
 </ui:UiBinder> 

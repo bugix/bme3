@@ -1,0 +1,18 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:m="urn:import:medizin.client.ui.widget">
+	<ui:style src="../../../styles.css">
+		.width20 {
+			width: 20px;
+		}
+	</ui:style>
+	
+	<g:HorizontalPanel ui:field="parentPanel" spacing="4" verticalAlignment="middle">
+		<g:ValueListBox ui:field="bindType"></g:ValueListBox>
+		<g:ValueListBox ui:field="searchColumn"></g:ValueListBox>
+		<g:ValueListBox ui:field="comparison"></g:ValueListBox>
+		<g:TextBox ui:field="searchText"></g:TextBox>		
+		<m:IconButton ui:field="addTextSearchButton" icon="plusthick"></m:IconButton>
+		<m:IconButton ui:field="closeButton" icon="closethick"></m:IconButton>
+	</g:HorizontalPanel>
+</ui:UiBinder> 

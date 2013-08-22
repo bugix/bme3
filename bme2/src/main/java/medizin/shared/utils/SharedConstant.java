@@ -6,7 +6,7 @@ public final class SharedConstant {
 
 	public static String getUploadBaseDIRPath() {
 		
-		//String UPLOAD_BASE_DIR_PATH = "d:/";
+		//String UPLOAD_BASE_DIR_PATH = "e:/";
 		String UPLOAD_BASE_DIR_PATH =  "/usr/local/bme/";
 		
 		if(GWT.isClient()) {
@@ -47,5 +47,13 @@ public final class SharedConstant {
 	public static String[] VIDEO_EXTENSIONS= {"WebM","ogv","mp4"};
 	
 	public static  String MAIL_TEMPLATE="/application/gwt/unibas/mailTemplate/defaultTemplate.txt";
+	
+	public static final String POSSIBLE_FIELD = "possiblefield";
+	
+	public static final String BINDTYPE = "bindtype";
+	
+	public static final String COMPARISON = "comparison";
+	
+	public static final String FIELDVALUE = "fieldvalue";
 
 }

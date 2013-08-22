@@ -1,0 +1,31 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:m="urn:import:medizin.client.ui.widget" xmlns:c="urn:import:com.google.gwt.user.cellview.client">
+	<ui:style src="../../../styles.css" >
+		.advSearchBtn
+		{
+			margin: 3px;
+		}
+	</ui:style>
+	
+	<g:HTMLPanel styleName="{style.listView}">
+	    <div style="height:1em;"/>
+
+		<g:FlowPanel ui:field="buttonFlowPanel">
+			<m:IconButton ui:field="addKeyword" icon="tag" addStyleNames="{style.advSearchBtn}"></m:IconButton>
+			<m:IconButton ui:field="addQuestionEvent" icon="link" addStyleNames="{style.advSearchBtn}"></m:IconButton>
+			<m:IconButton ui:field="addTextSearch" icon="comment" addStyleNames="{style.advSearchBtn}"></m:IconButton>
+			<m:IconButton ui:field="addDate" icon="calendar" addStyleNames="{style.advSearchBtn}"></m:IconButton>
+			<m:IconButton ui:field="addMc" icon="script" addStyleNames="{style.advSearchBtn}"></m:IconButton>
+			<m:IconButton ui:field="addUserType" icon="person" addStyleNames="{style.advSearchBtn}"></m:IconButton>
+			<m:IconButton ui:field="addMediaAvailability" icon="image" addStyleNames="{style.advSearchBtn}"></m:IconButton>
+			<m:IconButton ui:field="addQuestionType" icon="suitcase" addStyleNames="{style.advSearchBtn}"></m:IconButton>
+		</g:FlowPanel>
+		
+		<c:CellTable ui:field="table" width="100%" addStyleNames="{style.standardTableIcon}"></c:CellTable>
+		
+		<div class="{style.controls}">      
+			<c:SimplePager ui:field="pager" display="{table}"/>
+    	</div>
+  </g:HTMLPanel>
+</ui:UiBinder> 

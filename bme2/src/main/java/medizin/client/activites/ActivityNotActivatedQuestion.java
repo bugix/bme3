@@ -71,6 +71,7 @@ public class ActivityNotActivatedQuestion extends AbstractActivityWrapper implem
 		this.view = questionView;
 		Log.debug("start()");
 		widget.setWidget(questionView.asWidget());
+		questionView.removeAdvancedSearchFromView();
 
 		table = view.getTable();
 

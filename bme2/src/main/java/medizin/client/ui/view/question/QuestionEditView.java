@@ -50,7 +50,7 @@ public interface QuestionEditView extends IsWidget {
 
 	}
 
-	void setRewiewerPickerValues(Collection<PersonProxy> values);
+	void setRewiewerPickerValues(Collection<PersonProxy> values, PersonProxy lastSelectedReviewer);
 
 	void setQuestEventPickerValues(Collection<QuestionEventProxy> values);
 

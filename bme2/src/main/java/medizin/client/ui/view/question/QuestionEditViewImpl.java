@@ -18,6 +18,7 @@ import medizin.client.proxy.QuestionProxy;
 import medizin.client.proxy.QuestionResourceProxy;
 import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.ui.ErrorPanel;
+import medizin.client.ui.McAppConstant;
 import medizin.client.ui.richtext.RichTextToolbar;
 import medizin.client.ui.view.roo.McSetEditor;
 import medizin.client.ui.view.roo.QuestionTypeProxyRenderer;
@@ -59,6 +60,7 @@ import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
@@ -320,7 +322,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	}
 
 	@Override
-	public void setRewiewerPickerValues(Collection<PersonProxy> values) {
+	public void setRewiewerPickerValues(Collection<PersonProxy> values, PersonProxy lastSelectedReviewer) {
 		//rewiewer.setAcceptableValues(values);
 		DefaultSuggestOracle<PersonProxy> suggestOracle1 = (DefaultSuggestOracle<PersonProxy>) rewiewer.getSuggestOracle();
 		suggestOracle1.setPossiblilities((List<PersonProxy>) values);
@@ -343,6 +345,9 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		});
 		//change {
 		rewiewer.setWidth(150);
+		
+		if (lastSelectedReviewer != null)
+			rewiewer.setSelected(lastSelectedReviewer);
 	}
 
 	@Override
@@ -785,6 +790,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 
 	@Override
 	public void setValuesForQuestion(QuestionProxy question, CommentProxy commentProxy) {
+		Cookies.setCookie(McAppConstant.LAST_SELECTED_REVIEWER, String.valueOf(rewiewer.getSelected().getId()), ClientUtility.getDateFromOneYear());
 		question.setQuestionType(questionType.getValue());
 		question.setQuestionShortName(questionShortName.getText());
 		question.setQuestionText(questionTextArea.getHTML());

@@ -1,5 +1,7 @@
 package medizin.client.activites;
 
+import java.util.Date;
+
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.AbstractDetailsPlace.Operation;
 import medizin.client.place.PlaceAcceptQuestion;
@@ -8,6 +10,7 @@ import medizin.client.place.PlaceQuestionDetails;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.widget.dialogbox.ConfirmationCheckboxDialog;
+import medizin.client.util.ClientUtility;
 import medizin.shared.Status;
 
 import com.allen_sauer.gwt.log.client.Log;
@@ -90,7 +93,7 @@ public class ActivityAcceptQuestionEdit extends ActivityQuestionEdit {
 							checkBoxDialog.hide();
 							
 							if (checkBoxDialog.getCheckBoxValue())
-								Cookies.setCookie(McAppConstant.RESEND_TO_REVIEW_KEY, String.valueOf(true));
+								Cookies.setCookie(McAppConstant.RESEND_TO_REVIEW_KEY, String.valueOf(true), ClientUtility.getDateFromOneYear());
 							
 							goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));
 						}
@@ -122,7 +125,7 @@ public class ActivityAcceptQuestionEdit extends ActivityQuestionEdit {
 							checkBoxDialog.hide();
 							
 							if (checkBoxDialog.getCheckBoxValue())
-								Cookies.setCookie(McAppConstant.RESEND_TO_REVIEW_KEY, String.valueOf(true));
+								Cookies.setCookie(McAppConstant.RESEND_TO_REVIEW_KEY, String.valueOf(true), ClientUtility.getDateFromOneYear());
 							
 							goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));
 							goTo(new PlaceAcceptQuestionDetails(stableId,Operation.DETAILS));

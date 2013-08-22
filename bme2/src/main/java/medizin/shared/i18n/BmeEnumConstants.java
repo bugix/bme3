@@ -126,4 +126,17 @@ public interface BmeEnumConstants extends ConstantsWithLookup {
 	public String MEDIA_AVAILABILITY_EQUALS();
 	
 	public String MEDIA_AVAILABILITY_NOT_EQUALS();
+	
+	//Question type advanced Search
+	public String QUESTION_TYPE_EQUALS();
+	
+	public String QUESTION_TYPE_NOT_EQUALS();
+	
+	public String QUESTION_TYPE();
+	
+	public String QUESTION_TYPE_NAME();
+	
+	public String USERTYPE_EQUALS();
+	
+	public String USERTYPE_NOT_EQUALS();
 }

@@ -1,7 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:n="urn:import:medizin.client.ui"
-	xmlns:b="urn:import:com.google.gwt.user.cellview.client" xmlns:m="urn:import:medizin.client.ui.widget" xmlns:i="urn:import:medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl">
+	xmlns:b="urn:import:com.google.gwt.user.cellview.client" xmlns:m="urn:import:medizin.client.ui.widget" xmlns:i="urn:import:medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl" xmlns:c="urn:import:medizin.client.ui.view.question.criteria">
 
 	<ui:style src="../../styles.css" />
 		
@@ -22,6 +22,10 @@
 						<b:SimplePager ui:field="pager" display="{table}" />
 						
 						 <!-- <i:DefaultSuggestBox ui:field="copiedOsce"></i:DefaultSuggestBox> --> 
+					</div>
+					
+					<div id="advancedSearchViewDiv">
+						<c:QuestionAdvancedSearchSubViewImpl ui:field="questionAdvancedSearchSubViewImpl"></c:QuestionAdvancedSearchSubViewImpl>
 					</div>
 				</g:HTMLPanel>
 			</g:ScrollPanel>
