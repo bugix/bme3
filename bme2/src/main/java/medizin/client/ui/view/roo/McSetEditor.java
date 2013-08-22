@@ -8,6 +8,7 @@ import java.util.Set;
 
 import medizin.client.proxy.McProxy;
 
+import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.EditorDelegate;
 import com.google.gwt.editor.client.LeafValueEditor;
@@ -113,6 +114,9 @@ public class McSetEditor extends McSetEditor_Roo_Gwt {
     }
 
     public void setAcceptableValues(Collection<medizin.client.proxy.McProxy> proxies) {
+    	if (proxies != null && proxies.isEmpty() == false)
+    		picker.setValue(Lists.newArrayList(proxies).get(0));    		
+    		
         picker.setAcceptableValues(proxies);
     }
 

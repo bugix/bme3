@@ -15,6 +15,7 @@ import medizin.client.proxy.QuestionProxy;
 import medizin.client.style.resources.MyCellTableResources;
 import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
+import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchSubViewImpl;
 import medizin.client.ui.view.renderer.EnumRenderer;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.QuickSearchBox;
@@ -24,12 +25,12 @@ import medizin.shared.i18n.BmeConstants;
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.text.shared.AbstractRenderer;
@@ -166,6 +167,9 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 
 	@UiField
 	IconButton newQuestion;
+	
+	@UiField
+	QuestionAdvancedSearchSubViewImpl questionAdvancedSearchSubViewImpl;
 
 	@UiHandler(value = { "newQuestion" })
 	public void newButtonClicked(ClickEvent e) {
@@ -186,7 +190,16 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 	@Override
 	public void setSpecialisationFilter(List<QuestionEventProxy> values)
 	{
-		filterPanel.specialiationListBox.setAcceptableValues(values);	
+		//filterPanel.specialiationListBox.setAcceptableValues(values);	
+	}
+	
+	public QuestionAdvancedSearchSubViewImpl getQuestionAdvancedSearchSubViewImpl() {
+		return questionAdvancedSearchSubViewImpl;
+	}
+
+	public void setQuestionAdvancedSearchSubViewImpl(
+			QuestionAdvancedSearchSubViewImpl questionAdvancedSearchSubViewImpl) {
+		this.questionAdvancedSearchSubViewImpl = questionAdvancedSearchSubViewImpl;
 	}
 
 	
@@ -209,7 +222,7 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 			@Override
 			public void onSaveClicked(QuestionSaveEvent event) {
 				Log.info("Question Save Event Clicked");
-				filterPanel.showNew.setValue(true);
+				filterPanel.getShowNew().setValue(true);
 				setFieldForSearchBox();
 			}
 		});
@@ -361,7 +374,7 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 
 		filterPanel.setPopupPosition(x, y);
 		filterPanel.show();
-		filterPanel.setSize("415px", "235px");
+		//filterPanel.setSize("415px", "235px");
 		// Log.info(filterPanel.getSpecialisationBox().getValue());
 
 	}
@@ -818,7 +831,7 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 	{
 		searchField.clear();
 		
-		if (filterPanel.auther.getValue())
+		/*if (filterPanel.auther.getValue())
 		{	
 			searchField.add("author");
 			searchField.add(filterPanel.auther.getValue() ? "true" : "false");
@@ -830,30 +843,33 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 			searchField.add("reviewer");
 			searchField.add(filterPanel.reviewer.getValue()? "true" : "false");
 			//searchFileds.add(new SearchValue("reviewer", filterPanel.reviewer.isChecked()? "true" : "false"));
-		}
+		}*/
 		
-		if (filterPanel.questionText.getValue())
+		searchField.add("questionShortName");
+		searchField.add("true");
+		
+		if (filterPanel.getQuestionText().getValue())
 		{
 			searchField.add("quesitontext");
 			searchField.add(filterPanel.questionText.getValue()? "true" : "false");
 			//searchFileds.add(new SearchValue("quesitontext", filterPanel.questionText.isChecked()? "true" : "false"));
 		}
 		
-		if (filterPanel.instructionText.getValue())
+		if (filterPanel.getInstructionText().getValue())
 		{
 			searchField.add("instruction");
 			searchField.add(filterPanel.instructionText.getValue()? "true" : "false");
 			//searchFileds.add(new SearchValue("instruction", filterPanel.instructionText.isChecked()? "true" : "false"));
 		}
 		
-		if (filterPanel.keywordText.getValue())
+		if (filterPanel.getKeywordText().getValue())
 		{
 			searchField.add("keyword");
 			searchField.add(filterPanel.keywordText.getValue()? "true" : "false");
 			//searchFileds.add(new SearchValue("keyword", filterPanel.keywordText.isChecked()? "true" : "false"));
 		}
 		
-		if (filterPanel.showNew.getValue())
+		if (filterPanel.getShowNew().getValue())
 		{
 			searchField.add("showNew");
 			searchField.add(filterPanel.showNew.getValue() ? "true" : "false");
@@ -866,19 +882,19 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 			//searchFileds.add(new SearchValue("institution", filterPanel.institutionListBox.getValue().getId().toString()));
 		}*/
 		
-		if (filterPanel.specialiationListBox.getValue() != null)
+		/*if (filterPanel.specialiationListBox.getValue() != null)
 		{
 			searchField.add("specialiation");
 			searchField.add(filterPanel.specialiationListBox.getValue().getId().toString());
 			//searchFileds.add(new SearchValue("specialiation", filterPanel.specialiationListBox.getValue().getId().toString()));
 		}
 		
-		/*if (filterPanel.status.getValue() != null)
+		if (filterPanel.status.getValue() != null)
 		{
 			searchField.add("status");
 			searchField.add(filterPanel.status.getValue().toString());
 			//searchFileds.add(new SearchValue("status", filterPanel.status.getValue().toString()));
-		}*/
+		}
 		
 		if (filterPanel.createStartDate.getValue() != null)
 		{
@@ -906,7 +922,7 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 			searchField.add("usedMcTo");
 			searchField.add(DateTimeFormat.getFormat("dd-MM-yyyy").format(filterPanel.usedMcEndDate.getValue()));
 			//searchFileds.add(new SearchValue("usedMcTo", filterPanel.usedMcEndDate.getValue().toString()));
-		}
+		}*/
 		
 		delegate.performSearch(searchBox.getValue());
 	}
@@ -924,5 +940,10 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 		}
 
 		table.setPageSize(pagesize);		
+	}
+	
+	public void removeAdvancedSearchFromView()
+	{
+		Document.get().getElementById("advancedSearchViewDiv").removeFromParent();
 	}
 }

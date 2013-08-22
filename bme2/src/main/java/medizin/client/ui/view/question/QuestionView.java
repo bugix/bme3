@@ -6,6 +6,7 @@ import java.util.Map;
 import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
+import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchSubViewImpl;
 import medizin.client.ui.widget.QuickSearchBox;
 
 import com.google.gwt.place.shared.Place;
@@ -52,4 +53,7 @@ public interface QuestionView extends IsWidget {
 
 	List<String> getSearchValue();
 
+	QuestionAdvancedSearchSubViewImpl getQuestionAdvancedSearchSubViewImpl();
+	
+	 void removeAdvancedSearchFromView();
 }

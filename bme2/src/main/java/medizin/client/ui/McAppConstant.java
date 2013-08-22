@@ -43,4 +43,5 @@ public class McAppConstant {
 	public static final int ENTRY_TIMEOUT_MS = 700;
 	
 	public static final String RESEND_TO_REVIEW_KEY = "resendToReview";
+	public static final String LAST_SELECTED_REVIEWER = "lastSelectedReviewer";
 }

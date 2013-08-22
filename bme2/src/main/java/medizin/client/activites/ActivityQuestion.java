@@ -1,5 +1,6 @@
 package medizin.client.activites;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import medizin.client.events.RecordChangeEvent;
@@ -7,13 +8,31 @@ import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.PlaceQuestion;
 import medizin.client.place.PlaceQuestionDetails;
+import medizin.client.proxy.KeywordProxy;
+import medizin.client.proxy.McProxy;
+import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.proxy.UserAccessRightsProxy;
 import medizin.client.ui.view.question.QuestionView;
 import medizin.client.ui.view.question.QuestionViewImpl;
+import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchAbstractPopupViewImpl;
+import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchDatePopupViewImpl;
+import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchKeywordPopupViewImpl;
+import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchMCPopupViewImpl;
+import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchMediaAvailabilityPopupViewImpl;
+import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchPopupView;
+import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchQuestionEventPopupViewImpl;
+import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchQuestionTypePopupViewImpl;
+import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchSubView;
+import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchSubViewImpl;
+import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchTextSearchPopupViewImpl;
+import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchUserTypePopupViewImpl;
+import medizin.client.ui.widget.IconButton;
 import medizin.client.util.MathJaxs;
 import medizin.shared.AccessRights;
+import medizin.shared.criteria.AdvancedSearchCriteria;
+import medizin.shared.criteria.AdvancedSearchCriteriaUtils;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.activity.shared.ActivityManager;
@@ -34,7 +53,9 @@ import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
 
 public class ActivityQuestion extends AbstractActivityWrapper implements
-		QuestionView.Presenter, QuestionView.Delegate {
+		QuestionView.Presenter, QuestionView.Delegate,
+		QuestionAdvancedSearchSubView.Presenter, QuestionAdvancedSearchSubView.Delegate,
+		QuestionAdvancedSearchPopupView.Delegate{
 
 	private PlaceQuestion questionPlace;
 
@@ -55,6 +76,14 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 	/*private PersonProxy userLoggedIn;
 
 	private InstitutionProxy institutionActive;*/
+	
+	private QuestionAdvancedSearchSubViewImpl advancedSearchSubViewImpl;
+	
+	private List<AdvancedSearchCriteria> advancedSearchCriteriaList = new ArrayList<AdvancedSearchCriteria>();
+	
+	private CellTable<AdvancedSearchCriteria> criteriaTable;
+	
+	private QuestionAdvancedSearchAbstractPopupViewImpl advancedSearchAbstractPopupViewImpl;
 
 	@Inject
 	public ActivityQuestion(PlaceQuestion place, McAppRequestFactory requests,
@@ -152,6 +181,12 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 		widget.setWidget(questionView.asWidget());
 
 		table = view.getTable();
+		
+		advancedSearchSubViewImpl = view.getQuestionAdvancedSearchSubViewImpl();
+		advancedSearchSubViewImpl.setDelegate(this);
+		criteriaTable = advancedSearchSubViewImpl.getTable();
+		criteriaTable.setRowCount(advancedSearchCriteriaList.size());
+		criteriaTable.setRowData(advancedSearchCriteriaList);
 
 		Log.debug("start2()");
 		/*eventBus.addHandler(PlaceChangeEvent.TYPE,
@@ -174,6 +209,20 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 		
 		RecordChangeEvent.register(requests.getEventBus(), (QuestionViewImpl)questionView);
 
+		rangeChangeHandler = table.addRangeChangeHandler(new RangeChangeEvent.Handler() {
+			public void onRangeChange(RangeChangeEvent event) {
+				ActivityQuestion.this.onRangeChanged();
+			}
+		});
+	
+/*		requests.questionEventRequest().findQuestionEventByInstitution(this.institutionActive).fire(new BMEReceiver<List<QuestionEventProxy>>() {
+		
+			@Override
+			public void onSuccess(List<QuestionEventProxy> response) {
+				view.setSpecialisationFilter(response);
+			}
+		});*/
+		
 		init();
 		
 		/*requests.personRequest().myGetLoggedPerson()
@@ -280,7 +329,7 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 
 	private void init() {
 
-		if (institutionActive == null || userLoggedIn == null) {
+		/*if (institutionActive == null || userLoggedIn == null) {
 			// onStop();
 			return;
 		} else {
@@ -318,7 +367,7 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 						onRangeChanged();
 					}
 					
-					/*@Override
+					@Override
 					public void onFailure(ServerFailure error) {
 						System.out.println("ERROR : " + error.getMessage());
 					}
@@ -326,28 +375,21 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 					@Override
 					public void onViolation(Set<Violation> errors) {
 						System.out.println("ERRORS SIZE : " + errors.size());
-					}*/
-				});
-
-		rangeChangeHandler = table
-				.addRangeChangeHandler(new RangeChangeEvent.Handler() {
-					public void onRangeChange(RangeChangeEvent event) {
-						ActivityQuestion.this.onRangeChanged();
 					}
-				});
-	/*requests.institutionRequest().findAllInstitutions().fire(new BMEReceiver<List<InstitutionProxy>>() {
-
-			@Override
-			public void onSuccess(List<InstitutionProxy> response) {
-				view.setInstitutionFilter(response);
-			}
-		});*/
+				});*/
 		
-		requests.questionEventRequest().findQuestionEventByInstitution(this.institutionActive).fire(new BMEReceiver<List<QuestionEventProxy>>() {
+		List<String> encodedStringList = new ArrayList<String>();
+		encodedStringList = AdvancedSearchCriteriaUtils.encodeList(advancedSearchCriteriaList);
+		
+		requests.questionRequest().countQuestionByAdvancedSearchByLoginUserAndInstitute(encodedStringList, view.getSearchValue(), view.getSerachBox().getValue()).fire(new BMEReceiver<Integer>() {
 
 			@Override
-			public void onSuccess(List<QuestionEventProxy> response) {
-				view.setSpecialisationFilter(response);
+			public void onSuccess(Integer response) {
+				if (view == null) {
+					return;
+				}
+				view.getTable().setRowCount(response.intValue(), true);
+				onRangeChanged();
 			}
 		});
 	}
@@ -355,7 +397,7 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 	protected void onRangeChanged() {
 		final Range range = table.getVisibleRange();
 
-		requests.questionRequest()
+		/*requests.questionRequest()
 				.findQuestionEntriesByPerson(this.userLoggedIn.getShidId(),
 						this.institutionActive.getId(), view.getSerachBox().getValue(), view.getSearchValue(), range.getStart(),
 						range.getLength(),false,"","","").with(view.getPaths())
@@ -375,7 +417,28 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 						}
 						MathJaxs.delayRenderLatexResult(RootPanel.getBodyElement());
 					}
-				});
+				});*/
+		
+		List<String> encodedStringList = new ArrayList<String>();
+		encodedStringList = AdvancedSearchCriteriaUtils.encodeList(advancedSearchCriteriaList);
+		
+		requests.questionRequest().findQuestionByAdvancedSearchByLoginUserAndInstitute(encodedStringList, view.getSearchValue(), view.getSerachBox().getValue(), range.getStart(), range.getLength()).with(view.getPaths()).fire(new BMEReceiver<List<QuestionProxy>>() {
+
+			@Override
+			public void onSuccess(List<QuestionProxy> response) {
+				if (view == null) {
+					return;
+				}
+
+				table.setRowData(range.getStart(), response);
+
+				if (widget != null) {
+					widget.setWidget(view.asWidget());
+				}
+				
+				MathJaxs.delayRenderLatexResult(RootPanel.getBodyElement());
+			}
+		});
 
 	}
 
@@ -388,7 +451,7 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 
 	@Override
 	public void performSearch(String searchText) {
-		requests.questionRequest()
+		/*requests.questionRequest()
 		.countQuestionsByPerson(this.userLoggedIn.getShidId(),
 				this.institutionActive.getId(), view.getSerachBox().getValue(), view.getSearchValue())
 		.fire(new BMEReceiver<Long>() {
@@ -404,7 +467,7 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 				onRangeChanged();
 			}
 			
-		/*	@Override
+			@Override
 			public void onFailure(ServerFailure error) {
 				System.out.println("ERROR : " + error.getMessage());
 			}
@@ -412,8 +475,10 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 			@Override
 			public void onViolation(Set<Violation> errors) {
 				System.out.println("ERRORS SIZE : " + errors.size());
-			}*/
-		});
+			}
+		});*/
+		
+		init();
 	}
 
 	@Override
@@ -427,4 +492,128 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 		}
 	}
 
+	@Override
+	public void keywordAddClicked(final IconButton addKeyword) {		
+		requests.keywordRequest().findAllKeywords().fire(new BMEReceiver<List<KeywordProxy>>() {
+
+			@Override
+			public void onSuccess(List<KeywordProxy> response) {
+				QuestionAdvancedSearchKeywordPopupViewImpl keywordPopupView = new QuestionAdvancedSearchKeywordPopupViewImpl();
+				hidePreviousPopup(keywordPopupView);
+				keywordPopupView.setDelegate(ActivityQuestion.this);
+				keywordPopupView.setKeywordSuggsetBoxValue(response);
+				keywordPopupView.display(addKeyword);
+			}
+		});		
+	}
+
+	private void hidePreviousPopup(QuestionAdvancedSearchAbstractPopupViewImpl popupView) {
+		if (advancedSearchAbstractPopupViewImpl != null && advancedSearchAbstractPopupViewImpl.isShowing())
+			advancedSearchAbstractPopupViewImpl.hide();
+		
+		advancedSearchAbstractPopupViewImpl = popupView;
+	}
+
+	@Override
+	public void advancedSearchCriteriaClicked(AdvancedSearchCriteria criteria) {
+		advancedSearchCriteriaList.add(criteria);
+		initSearch();
+	}
+	
+	@Override
+	public void deleteAdvancedSearchCriteriaClicked(AdvancedSearchCriteria object) {
+		advancedSearchCriteriaList.remove(object);
+		initSearch();
+	}
+	
+	public void initSearch()
+	{
+		criteriaTable.setRowCount(advancedSearchCriteriaList.size());
+		criteriaTable.setRowData(advancedSearchCriteriaList);
+		init();
+	}
+
+	@Override
+	public void questionEventAddClicked(final IconButton addKeyword) {
+		if (institutionActive != null)
+		{
+			requests.questionEventRequest().findQuestionEventByInstitution(institutionActive).fire(new BMEReceiver<List<QuestionEventProxy>>() {
+
+				@Override
+				public void onSuccess(List<QuestionEventProxy> response) {
+					QuestionAdvancedSearchQuestionEventPopupViewImpl questionEventView = new QuestionAdvancedSearchQuestionEventPopupViewImpl();
+					hidePreviousPopup(questionEventView);
+					questionEventView.setDelegate(ActivityQuestion.this);
+					questionEventView.setQuestionEventSuggsetBoxValue(response);
+					questionEventView.display(addKeyword);
+				}
+			});
+		}
+		
+	}
+
+	@Override
+	public void textSearchAddClicked(IconButton addTextSearch) {
+		QuestionAdvancedSearchTextSearchPopupViewImpl textSearchView = new QuestionAdvancedSearchTextSearchPopupViewImpl();
+		hidePreviousPopup(textSearchView);
+		textSearchView.setDelegate(this);
+		textSearchView.display(addTextSearch);
+	}
+
+	@Override
+	public void dateAddClicked(IconButton addDate) {
+		QuestionAdvancedSearchDatePopupViewImpl dateSearchView = new QuestionAdvancedSearchDatePopupViewImpl();
+		hidePreviousPopup(dateSearchView);
+		dateSearchView.setDelegate(this);
+		dateSearchView.display(addDate);
+	}
+
+	@Override
+	public void mcAddClicked(final IconButton addMc)
+	{
+		requests.mcRequest().findAllMcs().fire(new BMEReceiver<List<McProxy>>() {
+
+			@Override
+			public void onSuccess(List<McProxy> response) {
+				QuestionAdvancedSearchMCPopupViewImpl mcSearchView = new QuestionAdvancedSearchMCPopupViewImpl();
+				hidePreviousPopup(mcSearchView);
+				mcSearchView.setDelegate(ActivityQuestion.this);
+				mcSearchView.setProxyToMcListBox(response);
+				mcSearchView.display(addMc);		
+			}
+		});
+	}
+	
+	@Override
+	public void userTypeAddClicked(final IconButton addUserType)
+	{
+		requests.personRequest().findAllPeople().fire(new BMEReceiver<List<PersonProxy>>() {
+
+			@Override
+			public void onSuccess(List<PersonProxy> response) {
+				QuestionAdvancedSearchUserTypePopupViewImpl userTypeView = new QuestionAdvancedSearchUserTypePopupViewImpl();
+				hidePreviousPopup(userTypeView);
+				userTypeView.setDelegate(ActivityQuestion.this);
+				userTypeView.setPersonSuggsetBoxValue(response);
+				userTypeView.display(addUserType);
+			}
+		});
+	}
+	
+	public void mediaAvailabilityAddClicked(IconButton addMediaAvailability)
+	{
+		QuestionAdvancedSearchMediaAvailabilityPopupViewImpl mediaAvailabilityView = new QuestionAdvancedSearchMediaAvailabilityPopupViewImpl();
+		hidePreviousPopup(mediaAvailabilityView);
+		mediaAvailabilityView.setDelegate(this);
+		mediaAvailabilityView.display(addMediaAvailability);
+	}
+	
+	public void questionTypeAddClicked(IconButton addQuestionType)
+	{
+		QuestionAdvancedSearchQuestionTypePopupViewImpl questionTypeView = new QuestionAdvancedSearchQuestionTypePopupViewImpl();
+		hidePreviousPopup(questionTypeView);
+		questionTypeView.setDelegate(this);
+		questionTypeView.display(addQuestionType);
+		questionTypeView.disableSearchTextBox();
+	}
 }

@@ -36,8 +36,14 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import medizin.server.utils.BMEUtils;
+import medizin.shared.MultimediaType;
 import medizin.shared.QuestionTypes;
 import medizin.shared.Status;
+import medizin.shared.criteria.AdvancedSearchCriteria;
+import medizin.shared.criteria.AdvancedSearchCriteriaUtils;
+import medizin.shared.criteria.BindType;
+import medizin.shared.criteria.Comparison;
+import medizin.shared.criteria.PossibleFields;
 import medizin.shared.utils.SharedConstant;
 
 import org.apache.commons.lang3.StringUtils;
@@ -174,6 +180,8 @@ public class Question {
 	@ManyToOne
 	private Person modifiedBy;
 	
+	private static final DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+		
 	public static long countQuestionAccessByPersonNonRoo(java.lang.Long personId) {
 		Person person = Person.findPerson(personId);
 		if (person == null)
@@ -1962,5 +1970,322 @@ public class Question {
 					this.setModifiedBy(loggedPerson);
 			}
 		}		
+	}
+	
+	public static CriteriaQuery<Question> findQusetionByAdvancedSearchCriteria(List<String> criteriaStringList, List<String> searchField, String searchText)
+	{
+		try
+		{
+			Person loggedUser = Person.myGetLoggedPerson();
+			Institution institution = Institution.myGetInstitutionToWorkWith();
+			if (loggedUser == null || institution == null)
+				throw new IllegalArgumentException("The person and institution arguments are required");
+			
+			CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+			CriteriaQuery<Question> criteriaQuery = criteriaBuilder.createQuery(Question.class);
+			Root<Question> from = criteriaQuery.from(Question.class);
+			criteriaQuery.distinct(true);
+			
+			Predicate mainPredicate = basicPredicateForQuestion(loggedUser, institution, criteriaBuilder, criteriaQuery, from);
+		
+			Predicate statusNewPredicate = criteriaBuilder.equal(from.get("status"),Status.ACTIVE);
+			Map<String, String> searchFilterMap = BMEUtils.convertToMap(searchField);
+			if (searchFilterMap.containsKey("showNew")) {
+				statusNewPredicate =  from.get("status").in(Status.NEW,Status.ACTIVE);
+			}			
+			mainPredicate = criteriaBuilder.and(mainPredicate, statusNewPredicate);
+			
+			Predicate basicSearchPredicate = simpleSearchForQuestion(searchFilterMap, searchText, criteriaBuilder, from);
+			
+			if (basicSearchPredicate != null)
+				mainPredicate = criteriaBuilder.and(mainPredicate, basicSearchPredicate);
+			
+			List<AdvancedSearchCriteria> criteriaList = AdvancedSearchCriteriaUtils.decodeList(criteriaStringList);
+			Predicate predicate = null;
+			Predicate advPredicate = null;
+			
+			for (AdvancedSearchCriteria criteria : criteriaList)
+			{
+				if (PossibleFields.KEYWORD.equals(criteria.getPossibleFields()))
+				{
+					SetJoin<Question, Keyword> keywordSetJoin = from.joinSet("keywords", JoinType.LEFT);
+					Expression<String> keywordTextExp = keywordSetJoin.get("name");
+					predicate = likeComparison(criteriaBuilder, criteria, keywordTextExp);
+				}
+				else if (PossibleFields.QUESTION_EVENT.equals(criteria.getPossibleFields()))
+				{
+					Expression<String> queEventNameExp = from.get("questEvent").get("eventName");
+					predicate = likeComparison(criteriaBuilder, criteria, queEventNameExp);
+				}
+				else if (PossibleFields.COMMENT.equals(criteria.getPossibleFields()))
+				{
+					Expression<String> commentExp = from.get("comment").get("comment");
+					predicate = likeComparison(criteriaBuilder, criteria, commentExp);
+				}
+				else if (PossibleFields.ANSWER_TEXT.equals(criteria.getPossibleFields()))
+				{
+					Subquery<Answer> subQuery = criteriaQuery.subquery(Answer.class);
+					Root answerRoot = subQuery.from(Answer.class);
+					Expression<String> answerTextPre = answerRoot.get("answerText");
+					Predicate subPre1 = likeComparison(criteriaBuilder, criteria, answerTextPre);
+					subQuery.select(answerRoot.get("question").get("id")).where(subPre1);
+					
+					predicate = criteriaBuilder.in(from.get("id")).value(subQuery);					
+				}
+				else if (PossibleFields.QUESTION_TEXT.equals(criteria.getPossibleFields()))
+				{
+					Expression<String> quesitonTextExp = from.get("questionText");
+					predicate = likeComparison(criteriaBuilder, criteria, quesitonTextExp);
+				}
+				else if (PossibleFields.QUESTION_SHORT_NAME.equals(criteria.getPossibleFields()))
+				{
+					Expression<String> quesitonShortTextExp = from.get("questionShortName");
+					predicate = likeComparison(criteriaBuilder, criteria, quesitonShortTextExp);				
+				}
+				else if (PossibleFields.CREATED_QUESTION_DATE.equals(criteria.getPossibleFields()))
+				{
+					Expression<Date> createdQueDateExp = from.get("dateAdded");
+					predicate = dateComparison(criteriaBuilder, criteria, createdQueDateExp);
+				}
+				else if (PossibleFields.CHANGED_QUESTION_DATE.equals(criteria.getPossibleFields()))
+				{
+					Expression<Date> changedQueDateExp = from.get("dateChanged");
+					predicate = dateComparison(criteriaBuilder, criteria, changedQueDateExp);
+				}	
+				else if (PossibleFields.USED_IN_MC_DATE.equals(criteria.getPossibleFields()))
+				{
+					Subquery<AssesmentQuestion> subQuery = criteriaQuery.subquery(AssesmentQuestion.class);
+					Root assQueRoot = subQuery.from(AssesmentQuestion.class);
+					Expression<Date> assessmentDateExp = assQueRoot.get("assesment").get("dateOfAssesment");
+					Predicate subPre1 = dateComparison(criteriaBuilder, criteria, assessmentDateExp);					
+					subQuery.select(assQueRoot.get("question").get("id")).where(subPre1);
+					
+					predicate = criteriaBuilder.in(from.get("id")).value(subQuery);
+				}
+				else if (PossibleFields.MC.equals(criteria.getPossibleFields()))
+				{
+					SetJoin<Question, Mc> mcSetJoin = from.joinSet("mcs", JoinType.LEFT);
+					Expression<String> mcTextExp = mcSetJoin.get("mcName");
+					predicate = likeComparison(criteriaBuilder, criteria, mcTextExp);
+				}
+				else if (PossibleFields.AUTHOR.equals(criteria.getPossibleFields()))
+				{
+					Expression<String> authorNameExp = from.get("autor").get("name");
+					Expression<String> authorPreNameExp = from.get("autor").get("prename");
+					Expression<String> authorFullNameExp = criteriaBuilder.concat(authorNameExp, authorPreNameExp);
+					
+					predicate = likeComparison(criteriaBuilder, criteria, authorFullNameExp);
+					//predicate = userTypeComparison(criteriaBuilder, criteria, authorNameExp, authorPreNameExp);
+				}
+				else if (PossibleFields.REVIEWER.equals(criteria.getPossibleFields()))
+				{
+					Expression<String> reviewerNameExp = from.get("rewiewer").get("name");
+					Expression<String> reviewerPreNameExp = from.get("rewiewer").get("prename");
+					Expression<String> reviewerFullNameExp = criteriaBuilder.concat(reviewerNameExp, reviewerPreNameExp);
+					
+					predicate = likeComparison(criteriaBuilder, criteria, reviewerFullNameExp);
+					//predicate = userTypeComparison(criteriaBuilder, criteria, reviewerNameExp, reviewerPreNameExp);
+				}
+				else if (PossibleFields.MEDIA_AVAILABILITY.equals(criteria.getPossibleFields()))
+				{
+					predicate = multimediaPredicate(criteriaBuilder, criteriaQuery, from, criteria);	
+				}
+				else if (PossibleFields.QUESTION_TYPE.equals(criteria.getPossibleFields()))
+				{
+					predicate = questionTypeComparison(criteriaBuilder, from, criteria);
+				}
+				else if (PossibleFields.QUESTION_TYPE_NAME.equals(criteria.getPossibleFields()))
+				{
+					Expression<String> quesitonTypeShortTextExp = from.get("questionType").get("shortName");
+					predicate = likeComparison(criteriaBuilder, criteria, quesitonTypeShortTextExp);	
+				}
+				
+				if (BindType.AND.equals(criteria.getBindType()))
+				{
+					if (advPredicate == null)
+						advPredicate = criteriaBuilder.and(predicate);
+					else
+						advPredicate = criteriaBuilder.and(advPredicate, predicate);
+				}
+				else if (BindType.OR.equals(criteria.getBindType()))
+				{
+					if (advPredicate == null)
+						advPredicate = criteriaBuilder.or(predicate);
+					else
+						advPredicate = criteriaBuilder.or(advPredicate, predicate);
+				}				
+			}
+			
+			if (advPredicate != null)
+				mainPredicate = criteriaBuilder.and(mainPredicate, advPredicate);
+			
+			criteriaQuery.where(mainPredicate);
+			
+			return criteriaQuery;
+			
+		}
+		catch(Exception e)
+		{
+			log.error(e.getMessage(), e);
+		}
+		
+		return null;
+	}
+
+	private static Predicate simpleSearchForQuestion(Map<String, String> searchFilterMap, String searchText, CriteriaBuilder criteriaBuilder, Root<Question> from) {
+		
+		Predicate basicSearchPredicate = null;
+		if (searchFilterMap.containsKey("questionShortName") && !searchText.equals("")) {
+			Expression<String> queShortTextExp = from.get("questionShortName");
+			Predicate queShortTextPre = criteriaBuilder.like(queShortTextExp, "%" + searchText + "%");
+			basicSearchPredicate = queShortTextPre;
+		}
+		
+		if (searchFilterMap.containsKey("quesitontext") && !searchText.equals("")) {
+			Expression<String> queTextExp = from.get("questionText");
+			Predicate queTextPre = criteriaBuilder.like(queTextExp, "%" + searchText + "%");
+			basicSearchPredicate = criteriaBuilder.or(basicSearchPredicate, queTextPre);
+		}
+
+		if (searchFilterMap.containsKey("instruction") && !searchText.equals("")) {
+			Expression<String> commentExp = from.get("comment").get("comment");
+			Predicate instructionPre = criteriaBuilder.like(commentExp, "%" + searchText + "%");
+			basicSearchPredicate = criteriaBuilder.or(basicSearchPredicate, instructionPre);
+		}
+
+		if (searchFilterMap.containsKey("keyword") && !searchText.equals("")) {
+			SetJoin<Question, Keyword> join1 = from.joinSet("keywords", JoinType.LEFT);
+			Expression<String> commentExp = join1.get("name");
+			Predicate commentPre = criteriaBuilder.like(commentExp, "%" + searchText + "%");
+			basicSearchPredicate = criteriaBuilder.or(basicSearchPredicate, commentPre);
+		}
+		
+		return basicSearchPredicate;
+	}
+
+	private static Predicate multimediaPredicate(CriteriaBuilder criteriaBuilder, CriteriaQuery<Question> criteriaQuery, Root<Question> from, AdvancedSearchCriteria criteria) {
+		Predicate predicate;
+		Subquery<QuestionResource> subQuery = criteriaQuery.subquery(QuestionResource.class);
+		Root queResourceRoot = subQuery.from(QuestionResource.class);
+		Predicate subPre1 = null;
+		
+		if (Comparison.EQUALS.equals(criteria.getComparison())) {
+			subPre1 = criteriaBuilder.equal(queResourceRoot.get("type"), MultimediaType.valueOf(criteria.getValue()));
+		} else if (Comparison.NOT_EQUALS.equals(criteria.getComparison()))
+			subPre1 = criteriaBuilder.notEqual(queResourceRoot.get("type"), MultimediaType.valueOf(criteria.getValue()));
+		
+		if(subPre1 != null) {
+			subQuery.select(queResourceRoot.get("question").get("id")).where(subPre1);
+			
+			predicate = criteriaBuilder.in(from.get("id")).value(subQuery);
+			return predicate;	
+		}else {
+			return null;
+		}
+		
+	}
+
+	private static Predicate questionTypeComparison(CriteriaBuilder criteriaBuilder, Root<Question> from,AdvancedSearchCriteria criteria) {
+		
+		Predicate predicate = null;
+		if (Comparison.EQUALS.equals(criteria.getComparison())) {
+			predicate = criteriaBuilder.equal(from.get("questionType").get("questionType"), QuestionTypes.valueOf(criteria.getValue()));
+		} else if (Comparison.NOT_EQUALS.equals(criteria.getComparison())) {
+			predicate = criteriaBuilder.notEqual(from.get("questionType").get("questionType"), QuestionTypes.valueOf(criteria.getValue()));
+		}
+		
+		return predicate;
+	}
+
+	private static Predicate basicPredicateForQuestion(Person loggedUser, Institution institution, CriteriaBuilder criteriaBuilder, CriteriaQuery<Question> criteriaQuery, Root<Question> from) {
+		
+		Predicate andAdminPredicate = null;
+		
+		Predicate institutionPre = criteriaBuilder.equal(from.get("questEvent").get("institution").get("id"), institution.getId());
+
+		if (!loggedUser.getIsAdmin()) {
+			
+			Predicate p1 = criteriaBuilder.equal(from.get("autor").get("id"), loggedUser.getId());
+			Predicate p2 = criteriaBuilder.equal(from.get("rewiewer").get("id"), loggedUser.getId());
+							
+			//Predicate mainpre1 = criteriaBuilder.equal(from.get("questEvent").get("institution").get("id"), institutionId);
+
+			Predicate mainpre1 = criteriaBuilder.and(criteriaBuilder.or(p2, p1));
+			
+			Subquery<UserAccessRights> subQry = criteriaQuery.subquery(UserAccessRights.class);
+			Root queAccRoot = subQry.from(UserAccessRights.class);
+			subQry.select(queAccRoot.get("question").get("id")).where(criteriaBuilder.equal(queAccRoot.get("person").get("id"), loggedUser.getId()));
+			Predicate mainpre2 = criteriaBuilder.in(from.get("id")).value(subQry);
+
+			Subquery<UserAccessRights> subQuery = criteriaQuery.subquery(UserAccessRights.class);
+			Root questionAccessRoot = subQuery.from(UserAccessRights.class);
+			subQuery.select(questionAccessRoot.get("questionEvent").get("id")).where(criteriaBuilder.equal(questionAccessRoot.get("person").get("id"),loggedUser.getId()));
+			Predicate mainpre3 = criteriaBuilder.in(from.get("questEvent").get("id")).value(subQuery);
+			
+			Subquery<UserAccessRights> instSubQuery = criteriaQuery.subquery(UserAccessRights.class);
+			Root instAccessRoot = instSubQuery.from(UserAccessRights.class);
+			Predicate instP1 = criteriaBuilder.equal(instAccessRoot.get("person").get("id"), loggedUser.getId());
+			Predicate instP2 = criteriaBuilder.equal(instAccessRoot.get("institution").get("id"), institution.getId());
+			instSubQuery.select(instAccessRoot.get("institution").get("id")).where(criteriaBuilder.and(instP1, instP2));
+			Predicate mainpre4 = criteriaBuilder.in(from.get("questEvent").get("institution").get("id")).value(instSubQuery);
+
+			andAdminPredicate = criteriaBuilder.or(mainpre1, criteriaBuilder.or(mainpre2, mainpre3, mainpre4));
+		}
+		
+		if (andAdminPredicate == null)
+			andAdminPredicate = institutionPre;
+		else
+			andAdminPredicate = criteriaBuilder.and(institutionPre, andAdminPredicate);
+		
+		return andAdminPredicate;
+	}
+
+	private static Predicate dateComparison(CriteriaBuilder criteriaBuilder, AdvancedSearchCriteria criteria, Expression<Date> createdQueDateExp) {
+		try
+		{
+			Predicate predicate = null;
+			Date userEnterdDate = df.parse(criteria.getValue());
+			
+			if (Comparison.EQUALS.equals(criteria.getComparison()))
+				predicate = criteriaBuilder.equal(createdQueDateExp, userEnterdDate);
+			else if (Comparison.NOT_EQUALS.equals(criteria.getComparison()))
+				predicate = criteriaBuilder.notEqual(createdQueDateExp, userEnterdDate);
+			else if (Comparison.MORE.equals(criteria.getComparison()))
+				predicate = criteriaBuilder.greaterThan(createdQueDateExp, userEnterdDate);
+			else if (Comparison.LESS.equals(criteria.getComparison()))
+				predicate = criteriaBuilder.lessThan(createdQueDateExp, userEnterdDate);
+			
+			return predicate;
+		}
+		catch(Exception e)
+		{
+			log.error(e.getMessage(), e);
+		}
+		return null;
+	}
+
+	private static Predicate likeComparison(CriteriaBuilder criteriaBuilder, AdvancedSearchCriteria criteria, Expression<String> expression) {
+		Predicate predicate = null;
+		if (Comparison.EQUALS.equals(criteria.getComparison()))
+			predicate = criteriaBuilder.like(expression, "%" + criteria.getValue() + "%");
+		else if (Comparison.NOT_EQUALS.equals(criteria.getComparison()))
+			predicate = criteriaBuilder.notLike(expression, "%" + criteria.getValue() + "%");
+		return predicate;
+	}
+	
+	public static List<Question> findQuestionByAdvancedSearchByLoginUserAndInstitute(List<String> criteriaStringList, List<String> searchField, String searchText, int start, int length)
+	{
+		TypedQuery<Question> query = entityManager().createQuery(findQusetionByAdvancedSearchCriteria(criteriaStringList, searchField, searchText));
+		log.info("ADVANCED QUERY : " + query.unwrap(Query.class).getQueryString());
+		log.info("RESULT SIZE : " + query.getResultList().size());
+		query.setFirstResult(start);
+		query.setMaxResults(length);
+		return query.getResultList();
+	}
+	
+	public static Integer countQuestionByAdvancedSearchByLoginUserAndInstitute(List<String> criteriaStringList, List<String> searchField, String searchText)
+	{
+		TypedQuery<Question> query = entityManager().createQuery(findQusetionByAdvancedSearchCriteria(criteriaStringList, searchField, searchText));
+		return query.getResultList().size();
 	}
 }

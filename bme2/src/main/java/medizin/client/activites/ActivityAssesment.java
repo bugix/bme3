@@ -8,7 +8,6 @@ import medizin.client.place.PlaceAssesment;
 import medizin.client.place.PlaceAssesmentDetails;
 import medizin.client.proxy.AssesmentProxy;
 import medizin.client.proxy.PersonProxy;
-import medizin.client.ui.view.InstitutionViewImpl;
 import medizin.client.ui.view.assesment.AssesmentView;
 import medizin.client.ui.view.assesment.AssesmentViewImpl;
 

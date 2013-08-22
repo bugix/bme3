@@ -26,6 +26,7 @@ import medizin.client.request.QuestionEventRequest;
 import medizin.client.request.QuestionRequest;
 import medizin.client.request.QuestionResourceRequest;
 import medizin.client.request.QuestionTypeRequest;
+import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.question.QuestionEditView;
 import medizin.client.ui.view.question.QuestionEditViewImpl;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
@@ -38,12 +39,16 @@ import medizin.shared.Status;
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
+import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.inject.Inject;
@@ -99,15 +104,16 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 		this.view = questionEditView;
 		view.setDelegate(this);
 		
-		view.setRewiewerPickerValues(Collections.<PersonProxy> emptyList());
+		view.setRewiewerPickerValues(Collections.<PersonProxy> emptyList(), null);
 		PersonRequest personRequestForReviewer = requests.personRequest();
 		personRequestForReviewer.findPersonEntries(0, 200).with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).to(new BMEReceiver<List<PersonProxy>>() {
 
 			public void onSuccess(List<PersonProxy> response) {
 				List<PersonProxy> values = new ArrayList<PersonProxy>();
+				PersonProxy lastSelectedReviewer = getPersonProxyFromCookie(response);
 				values.add(null);
 				values.addAll(response);
-				view.setRewiewerPickerValues(values);
+				view.setRewiewerPickerValues(values, lastSelectedReviewer);
 			}
 		});
 		
@@ -154,7 +160,7 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 
 			public void onSuccess(List<McProxy> response) {
 				List<McProxy> values = new ArrayList<McProxy>();
-				values.add(null);
+				//values.add(null);
 				values.addAll(response);
 				view.setMcsPickerValues(values);
 			}
@@ -164,6 +170,26 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 		widget.setWidget(questionEditView.asWidget());
 		
 		start2();
+	}
+
+	private PersonProxy getPersonProxyFromCookie(List<PersonProxy> values) {
+		
+		String cookie = Cookies.getCookie(McAppConstant.LAST_SELECTED_REVIEWER);
+		final Long personid;
+		if (cookie != null && cookie.isEmpty() == false)
+			personid = Long.parseLong(cookie);
+		else
+			personid = null;
+		
+		Optional<PersonProxy> firstMatch = FluentIterable.from(values).firstMatch(new Predicate<PersonProxy>() {
+
+			@Override
+			public boolean apply(PersonProxy input) {
+				return input.getId().equals(personid);
+			}
+		});
+		
+		return firstMatch.orNull();		
 	}
 
 	private void start2() {
