@@ -1,11 +1,8 @@
 package medizin.client.ui.widget.labeled;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import medizin.client.ui.widget.ContextHelpPopup;
 import medizin.client.ui.widget.HasContextHelp;
@@ -28,18 +25,33 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class LabeledPanel extends Composite implements HasWidgets, Focusable, HasFocusHandlers, HasBlurHandlers, HasContextHelp {
-	private Map<Widget, List<HandlerRegistration>> widgetsWithHandlers = new HashMap<Widget, List<HandlerRegistration>>();
+	private List<Widget> children = new ArrayList<Widget>();
 	
-	protected final String styleName = "unibas-LabelledTextBox";
-	protected final String focusStyleName = "unibas-LabelledTextBox-focused";
+	private final String styleName = "unibas-LabelledTextBox";
+	private final String focusStyleName = "unibas-LabelledTextBox-focused";
 	
 	private FocusPanel wrapperPanel;
 	private VerticalPanel parentPanel;
 	private HorizontalPanel mainPanel;
 	private Label label;
 
-	protected boolean hasContextHelpHandlers = false;
-	protected ContextHelpPopup popup;
+	private boolean hasContextHelpHandlers = false;
+	private ContextHelpPopup popup;
+	
+	public static class DelegatingHandlerRegistration implements HandlerRegistration {
+		private List<HandlerRegistration> regs = new ArrayList<HandlerRegistration>();
+		
+		public DelegatingHandlerRegistration(List<HandlerRegistration> regs) {
+			this.regs = regs;
+		}
+		
+		@Override
+		public void removeHandler() {
+			for (HandlerRegistration reg : regs) {
+				reg.removeHandler();
+			}
+		}
+	}
 		
 	public LabeledPanel() {
 		mainPanel = new HorizontalPanel();
@@ -69,17 +81,22 @@ public class LabeledPanel extends Composite implements HasWidgets, Focusable, Ha
 	// TODO: WrapperPanel will probably be blurred as soon as it is focused because of the focus delegation. the blur handler should be added to the widgets!
 	@Override
 	public HandlerRegistration addBlurHandler(BlurHandler handler) {
-		for (Entry<Widget,List<HandlerRegistration>> entry: widgetsWithHandlers.entrySet()) {
-			if (entry.getValue().size() > 0) {
-				((HasBlurHandlers)entry.getKey()).addBlurHandler(handler);
-			}
+		List<HandlerRegistration> regs = new ArrayList<HandlerRegistration>();
+		for (Widget w : children) {
+			regs.add(((HasBlurHandlers)w).addBlurHandler(handler));
 		}
-		return wrapperPanel.addBlurHandler(handler);
+		regs.add(wrapperPanel.addBlurHandler(handler));
+		return new DelegatingHandlerRegistration(regs);
 	}
 
 	@Override
 	public HandlerRegistration addFocusHandler(FocusHandler handler) {
-		return wrapperPanel.addFocusHandler(handler);
+		List<HandlerRegistration> regs = new ArrayList<HandlerRegistration>();
+		for (Widget w : children) {
+			regs.add(((HasFocusHandlers)w).addFocusHandler(handler));
+		}
+		regs.add(wrapperPanel.addFocusHandler(handler));
+		return new DelegatingHandlerRegistration(regs);
 	}
 
 	@Override
@@ -104,75 +121,64 @@ public class LabeledPanel extends Composite implements HasWidgets, Focusable, Ha
 
 	@Override
 	public void add(Widget w) {
-		List<HandlerRegistration> handlers = new ArrayList<HandlerRegistration>();
 		mainPanel.add(w);
 		
 		if (w instanceof Focusable) {
-			if (widgetsWithHandlers.size() < 1) {
+			if (children.size() < 1) {
 				FocusDelegatingHandler handler = new FocusDelegatingHandler((Focusable) w);		
-				handlers.add(wrapperPanel.addClickHandler(handler));
-				handlers.add(wrapperPanel.addFocusHandler(handler));
-				handlers.add(wrapperPanel.addMouseOverHandler(handler));
+				wrapperPanel.addClickHandler(handler);
+				wrapperPanel.addFocusHandler(handler);
+				wrapperPanel.addMouseOverHandler(handler);
 			}
 			
 			if (w instanceof HasFocusHandlers) {
-				handlers.add(((HasFocusHandlers) w).addFocusHandler(new FocusHandler() {
+				((HasFocusHandlers) w).addFocusHandler(new FocusHandler() {
 					
 					@Override
 					public void onFocus(FocusEvent event) {
 						wrapperPanel.addStyleName(focusStyleName);
 					}
-				}));
+				});
 			}
 			
 			if (w instanceof HasBlurHandlers) {
-				handlers.add(((HasBlurHandlers) w).addBlurHandler(new BlurHandler() {
+				((HasBlurHandlers) w).addBlurHandler(new BlurHandler() {
 					
 					@Override
 					public void onBlur(BlurEvent event) {
 						wrapperPanel.removeStyleName(focusStyleName);
 					}
-				}));
+				});
 			}
 		}
 		
-		widgetsWithHandlers.put(w, handlers);
+		children.add(w);
 	}
 
 	@Override
 	public void clear() {
-		Iterator<Entry<Widget, List<HandlerRegistration>>> it = widgetsWithHandlers.entrySet().iterator();
+		Iterator<Widget> it = children.iterator();
 		while (it.hasNext()) {
-			Entry<Widget, List<HandlerRegistration>> entry = it.next();
-			for (HandlerRegistration reg : entry.getValue()) {
-				reg.removeHandler();
-			}
-			mainPanel.remove(entry.getKey());
+			Widget w = it.next();
+			mainPanel.remove(w);
 			it.remove();
 		}
 	}
 
 	@Override
 	public Iterator<Widget> iterator() {
-		return widgetsWithHandlers.keySet().iterator();
+		return children.iterator();
 	}
 
 	@Override
 	public boolean remove(Widget w) {
-		if (widgetsWithHandlers.containsKey(w)) {
-			for (HandlerRegistration reg : widgetsWithHandlers.get(w)) {
-				reg.removeHandler();
-			}
-			widgetsWithHandlers.remove(w);
-			return mainPanel.remove(w);
-		}
-		return false;
+		return children.remove(w);
 	}
 	
 	private void addContextHelpHandlers() {
 		if (!hasContextHelpHandlers) {
 			popup = new ContextHelpPopup();
-			wrapperPanel.addFocusHandler(new FocusHandler() {
+			addFocusHandler(new FocusHandler() {
 				
 				@Override
 				public void onFocus(FocusEvent event) {
@@ -180,7 +186,7 @@ public class LabeledPanel extends Composite implements HasWidgets, Focusable, Ha
 					popup.show();
 				}
 			});
-			wrapperPanel.addBlurHandler(new BlurHandler() {
+			addBlurHandler(new BlurHandler() {
 				
 				@Override
 				public void onBlur(BlurEvent event) {

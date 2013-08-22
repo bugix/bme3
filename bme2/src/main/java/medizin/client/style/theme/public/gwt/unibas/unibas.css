@@ -65,7 +65,13 @@ a:hover, .gwt-Anchor:hover {
 	padding: 10px;
 	border-radius: 2px;
 	box-shadow: 1px 1px 2px #ccc;
-	max-width: 360px;
+	max-width: 400px;
+	text-align: justify;
+}
+
+.unibas-ContextHelp ul {
+	margin: 4px;
+	padding: 0 10px;
 }
 
 /**
