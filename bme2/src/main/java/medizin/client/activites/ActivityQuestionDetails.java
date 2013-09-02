@@ -24,6 +24,7 @@ import medizin.client.proxy.UserAccessRightsProxy;
 import medizin.client.request.AnswerRequest;
 import medizin.client.request.CommentRequest;
 import medizin.client.request.MatrixValidityRequest;
+import medizin.client.request.PersonRequest;
 import medizin.client.request.QuestionResourceRequest;
 import medizin.client.ui.view.question.AnswerDialogbox;
 import medizin.client.ui.view.question.AnswerDialogboxImpl;
@@ -1339,18 +1340,20 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			matrixAnswerView.setDelegate(this);
 			
 //			matrixAnswerView.setRewiewerPickerValues(Collections.<PersonProxy>emptyList());
-	        requests.personRequest().findPersonEntries(0, 50).with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).fire(new BMEReceiver<List<PersonProxy>>() {
+			PersonRequest personRequest = requests.personRequest();
+	        personRequest.findAllPeople().with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).to(new BMEReceiver<List<PersonProxy>>() {
 
 	            public void onSuccess(List<PersonProxy> response) {
 	                List<PersonProxy> values = new ArrayList<PersonProxy>();
 	                values.add(null);
 	                values.addAll(response);
 	                matrixAnswerView.setRewiewerPickerValues(values);
+	                matrixAnswerView.setAutherPickerValues(values,userLoggedIn);
 	            }
 	        });
 	        
 	       // answerDialogbox.setAutherPickerValues(Collections.<PersonProxy>emptyList());
-	        requests.personRequest().findPersonEntries(0, 50).with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).fire(new BMEReceiver<List<PersonProxy>>() {
+	        /*requests.personRequest().findPersonEntries(0, 50).with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).fire(new BMEReceiver<List<PersonProxy>>() {
 
 	            public void onSuccess(List<PersonProxy> response) {
 	                List<PersonProxy> values = new ArrayList<PersonProxy>();
@@ -1358,9 +1361,10 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	                values.addAll(response);
 	                matrixAnswerView.setAutherPickerValues(values,userLoggedIn);
 	            }
-	        });
+	        });*/
 			
-			requests.MatrixValidityRequest().findAllMatrixValidityForQuestion(question.getId()).with("answerX","answerY","answerX.autor","answerX.rewiewer","answerX.comment","answerY.autor","answerY.rewiewer","answerY.comment").fire(new BMEReceiver<List<MatrixValidityProxy>>() {
+	        MatrixValidityRequest matrixValidityRequest = personRequest.append(requests.MatrixValidityRequest());
+			matrixValidityRequest.findAllMatrixValidityForQuestion(question.getId()).with("answerX","answerY","answerX.autor","answerX.rewiewer","answerX.comment","answerY.autor","answerY.rewiewer","answerY.comment").to(new BMEReceiver<List<MatrixValidityProxy>>() {
 
 				@Override
 				public void onSuccess(List<MatrixValidityProxy> response) {
@@ -1369,6 +1373,8 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			        matrixAnswerView.display();
 				}
 			});			
+			
+			matrixValidityRequest.fire();
 		}
 	}
 
@@ -1397,17 +1403,25 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		
 		answerDialogbox.setValidityPickerValues(Arrays.asList(Validity.values()));
 		answerDialogbox.setRewiewerPickerValues(Collections.<PersonProxy>emptyList());
-        requests.personRequest().findPersonEntries(0, 50).with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).fire(new BMEReceiver<List<PersonProxy>>() {
+		
+		PersonRequest personRequest = requests.personRequest();
+        personRequest.findAllPeople().with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).to(new BMEReceiver<List<PersonProxy>>() {
 
             public void onSuccess(List<PersonProxy> response) {
                 List<PersonProxy> values = new ArrayList<PersonProxy>();
                 values.add(null);
                 values.addAll(response);
-                answerDialogbox.setRewiewerPickerValues(values);
-                sync.apply(null);
+                answerDialogbox.setRewiewerPickerValues(values);                
+                answerDialogbox.setAutherPickerValues(values,userLoggedIn);
+                
+                if(answer != null) {
+		        	answerDialogbox.setValues(answer);
+		        }
+		        answerDialogbox.display(question.getQuestionType().getQuestionType());
+               // sync.apply(null);
             }
         });
-        requests.personRequest().findPersonEntries(0, 50).with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).fire(new BMEReceiver<List<PersonProxy>>() {
+       /* requests.personRequest().findPersonEntries(0, 50).with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).fire(new BMEReceiver<List<PersonProxy>>() {
 
             public void onSuccess(List<PersonProxy> response) {
                 List<PersonProxy> values = new ArrayList<PersonProxy>();
@@ -1416,14 +1430,16 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
                 answerDialogbox.setAutherPickerValues(values,userLoggedIn);
                 sync.apply(null);
             }
-        });
+        });*/
 	      
+        AnswerRequest answerRequest = null;
         Long answerId = answer != null ? answer.getId() : null;
         Long questionId = question!= null ? question.getId() : null;
         if(question != null && question.getQuestionType()!= null && question.getQuestionType().getQuestionType() != null) {
         	if(QuestionTypes.Textual.equals(question.getQuestionType().getQuestionType()) || QuestionTypes.Sort.equals(question.getQuestionType().getQuestionType())) {
         		
-        		requests.answerRequest().maxDifferenceBetweenAnswerForQuestion(answerId,questionId).fire(new BMEReceiver<List<Long>>() {
+        		answerRequest = personRequest.append(requests.answerRequest());
+        		answerRequest.maxDifferenceBetweenAnswerForQuestion(answerId,questionId).to(new BMEReceiver<List<Long>>() {
 
         			@Override
         			public void onSuccess(List<Long> response) {
@@ -1443,6 +1459,13 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
         		});
         	}
         }
+        
+        if (answerRequest == null)
+        	personRequest.fire();
+        else
+        	answerRequest.fire();
+        
+        
         return answerDialogbox;
 	}
 	

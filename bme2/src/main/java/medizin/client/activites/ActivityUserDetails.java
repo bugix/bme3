@@ -322,12 +322,9 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 					public void onSuccess(Object response) {
 						if(response instanceof InstitutionProxy){
 							Log.info(((InstitutionProxy) response).getInstitutionName());
-							
-						}
-
-						
+					 	}						
 					}
-				    });
+				 });
 				
 			}
 			else{

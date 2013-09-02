@@ -1,0 +1,35 @@
+<div>
+Dear [toName],
+<p>
+You have following assesments:
+<br/>
+[ASSESSMENT LOOP]
+<br/>
+<b>Assesment Name : </b> [assesmentName]
+<br/>
+<b>Assesment Start Date : </b> [assesmentStartDate]
+<br/>
+<b>Assesment Closed Date : </b> [assesmentClosedDate]
+<br/>
+<b>MC : </b> [assesmentMC]
+<br />
+<br/>
+You have total [assesmentQuestionProposedCount] question to be accepted.
+<br/> <br />
+You should reach upto <br/>
+[LOOP][totalCount]
+[[assesmentQuestionType]([assesmentSpecialization]) : [assesmentQuestionAllocatedCount]]
+<br/>
+[END LOOP]
+<br/>
+You have total remaining <br/>
+[LOOP][totalRemaining]
+[[assesmentQuestionType]([assesmentSpecialization]) : [assesmentQuestionRemainingCount]]
+[END LOOP]
+<br/>
+[ASSESSMENT END LOOP]
+</p>
+<br/>
+Regards,<br/>
+[fromName]
+</div>

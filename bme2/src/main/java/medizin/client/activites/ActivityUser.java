@@ -8,7 +8,6 @@ import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.PlaceUser;
 import medizin.client.place.PlaceUserDetails;
 import medizin.client.proxy.PersonProxy;
-import medizin.client.ui.view.QuestiontypesViewImpl;
 import medizin.client.ui.view.user.UserView;
 import medizin.client.ui.view.user.UserViewImpl;
 

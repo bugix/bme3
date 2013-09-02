@@ -359,6 +359,12 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 
     @UiField
     IconButton save;
+    
+    @UiField
+    Label instituteValueLbl;
+    
+    @UiField
+    Label questionTypeValueLbl;
 
     private Delegate delegate;
 	
@@ -399,8 +405,11 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
        this.proxy = proxy;
        disableField(proxy.getQuestionType());
        DOM.setElementPropertyBoolean(questionTypeListBox.getElement(), "disabled", true);
-       instituteListBox.setValue(proxy.getInstitution());
-       questionTypeListBox.setValue(proxy.getQuestionType());
+       //instituteListBox.setValue(proxy.getInstitution());
+       //questionTypeListBox.setValue(proxy.getQuestionType());
+       instituteValueLbl.setText(proxy.getInstitution().getInstitutionName());
+       questionTypeValueLbl.setText(String.valueOf(proxy.getQuestionType()));
+       
        shortNameTxtbox.setValue(proxy.getShortName());
        longNameTxtbox.setValue(proxy.getLongName());
        descriptionTxtbox.setValue(proxy.getDescription());
@@ -543,7 +552,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		/*instituteListBox.setWidth("120px");
 		questionTypeListBox.setWidth("120px");*/
 		
-		shortNameLbl.setText(constants.shortName());
+		/*shortNameLbl.setText(constants.shortName());
 		longNameLbl.setText(constants.longName());
 		descriptionLbl.setText(constants.description());
 		instituteLbl.setText(constants.institutionLbl());
@@ -565,12 +574,12 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		minLetterForAutoCompLbl.setText(constants.minLetterAutoComplete());
 		acceptNonKeywordLbl.setText(constants.acceptNonkeyword());
 		shortAnswerLengthLbl.setText(constants.lengthShortAns());
-		/*imageWidthLbl.setText(constants.imgWidth());
+		imageWidthLbl.setText(constants.imgWidth());
 		imageLengthLbl.setText(constants.imgLength());
-		imageProportionLbl.setText(constants.imgProportion());*/
+		imageProportionLbl.setText(constants.imgProportion());
 		
-		/*linearPointLbl.setText(constants.linearPoint());
-		linearPercentageLbl.setText(constants.linearPercentage());*/
+		linearPointLbl.setText(constants.linearPoint());
+		linearPercentageLbl.setText(constants.linearPercentage());
 		
 		keywordHighlightLbl.setText(constants.keywordHighlight());
 		richTextLbl.setText(constants.richText());
@@ -584,14 +593,14 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		multimediaTypeLbl.setText(constants.multimediaType());
 		selectionTypeLbl.setText(constants.selectionType());
 		columnLbl.setText(constants.column());
-		/*widthLbl.setText(constants.width());
-		heightLbl.setText(constants.height());*/
-		/*thumbWidthLbl.setText(constants.thumbWidth());
-		thumbHeightLbl.setText(constants.thumbHeight());*/
+		widthLbl.setText(constants.width());
+		heightLbl.setText(constants.height());
+		thumbWidthLbl.setText(constants.thumbWidth());
+		thumbHeightLbl.setText(constants.thumbHeight());
 		//propostionsLbl.setText(constants.propostions());
-		/*allowZoomOutLbl.setText(constants.allowZoomOut());
-		allowZoomInLbl.setText(constants.allowZoomIn());*/
-		maxBytesLbl.setText(constants.maxBytes());
+		allowZoomOutLbl.setText(constants.allowZoomOut());
+		allowZoomInLbl.setText(constants.allowZoomIn());
+		maxBytesLbl.setText(constants.maxBytes());*/
 		
 		showAutoCompleteChkBox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 
@@ -659,10 +668,14 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 	@Override
 	public void setEditTitle(boolean edit) {
 	      if (edit) {
+	    	  DOM.getElementById("instituteListboxDiv").removeFromParent();
+	    	  DOM.getElementById("questionTypeListboxDiv").removeFromParent();
 	    	  title.setInnerText(constants.editQuestionType()); 
 	    	  /*editTitle.getStyle().clearDisplay();
 	            createTitle.getStyle().setDisplay(Display.NONE);*/
 	        } else {
+	        	DOM.getElementById("instituteLabelDiv").removeFromParent();
+	        	DOM.getElementById("questionTypeLabelDiv").removeFromParent();
 	        	title.setInnerText(constants.addQuestionType());
 	            /*editTitle.getStyle().setDisplay(Display.NONE);
 	            createTitle.getStyle().clearDisplay();*/

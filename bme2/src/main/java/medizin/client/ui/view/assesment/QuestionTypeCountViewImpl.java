@@ -250,11 +250,12 @@ public class QuestionTypeCountViewImpl extends Composite implements QuestionType
 
     	tableQuestionTypeCount.addColumnStyleName(4, "iconColumn");
     	tableQuestionTypeCount.addColumnStyleName(5, "iconColumn");
+    	tableQuestionTypeCount.addColumnStyleName(6, "iconColumn");
     	
     	tableQuestionTypeCount.getColumn(3).setCellStyleNames("cellStyleWithTransparentButton");
     	tableQuestionTypeCount.getColumn(4).setCellStyleNames("cellStyleWithTransparentButton");
     	tableQuestionTypeCount.getColumn(5).setCellStyleNames("cellStyleWithTransparentButton");
-    	
+    	tableQuestionTypeCount.getColumn(6).setCellStyleNames("cellStyleWithTransparentButton");
     }
 	@Override
 	public CellTable<QuestionTypeCountPerExamProxy> getTable() {

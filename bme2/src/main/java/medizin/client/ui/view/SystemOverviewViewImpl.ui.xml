@@ -2,16 +2,23 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:n="urn:import:medizin.client.ui">
-	<ui:style>
-    .panelHTML {
-       border: 0px solid #ddf;
+	<ui:style src="../styles.css">
+    .mainVerticalPanelCss {
        height: 100%;
        width: 100%;
      }
+     
+     .scrollPanelCss{
+		height: 100%;
+		width: 100%;
+		background: #F5F5F5;
+        border-radius: 25px 25px 25px 25px;
+        margin-top: 5px;
+	}
 	</ui:style>
-	<n:SlidingPanel styleName='{style.panelHTML}' ui:field="slidingPanel">
-	
-	<g:Button ui:field="myButton"></g:Button>
-	
-	</n:SlidingPanel>
+		
+	<g:ScrollPanel styleName="{style.scrollPanelCss}">
+		<g:VerticalPanel ui:field="mainVerticalPanel" styleName="{style.mainVerticalPanelCss}">
+		</g:VerticalPanel>	
+	</g:ScrollPanel>
 </ui:UiBinder> 

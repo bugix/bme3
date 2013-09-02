@@ -1,108 +1,260 @@
 package medizin.client.activites;
 
-import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.PlaceSystemOverview;
-import medizin.client.proxy.McProxy;
+import medizin.client.proxy.AssesmentProxy;
+import medizin.client.proxy.PersonProxy;
+import medizin.client.proxy.QuestionSumPerPersonProxy;
+import medizin.client.proxy.QuestionTypeCountPerExamProxy;
+import medizin.client.proxy.QuestionTypeProxy;
+import medizin.client.request.AnswerRequest;
+import medizin.client.request.AssesmentRequest;
+import medizin.client.request.PersonRequest;
+import medizin.client.request.QuestionRequest;
+import medizin.client.ui.view.SystemOverviewExaminerSubView;
+import medizin.client.ui.view.SystemOverviewExaminerSubViewImpl;
 import medizin.client.ui.view.SystemOverviewView;
 import medizin.client.ui.view.SystemOverviewViewImpl;
+import medizin.client.util.ClientUtility;
 
-import com.allen_sauer.gwt.log.client.Log;
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Maps;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 import com.google.web.bindery.requestfactory.shared.Receiver;
 
-public class ActivitySystemOverview extends AbstractActivityWrapper implements SystemOverviewView.Presenter, SystemOverviewView.Delegate {
+public class ActivitySystemOverview extends AbstractActivityWrapper implements SystemOverviewView.Delegate, SystemOverviewExaminerSubView.Delegate {
 
 	private PlaceSystemOverview overviewPlace;
-
 	private AcceptsOneWidget widget;
-
-
 	private McAppRequestFactory requests;
 	private PlaceController placeController;
+	private Long acceptQuestionCount = 0l;
+	private Long acceptAnswerCount = 0l;
+	private SystemOverviewView view;
+	private static final Function<QuestionTypeProxy, String> QUESTIONTYPE_TO_SHORTNAME = new Function<QuestionTypeProxy, String>() {
 
-
+		@Override
+		public String apply(QuestionTypeProxy input) {
+			return input.getShortName();
+		}
+	};
+	
 	@Inject
 	public ActivitySystemOverview(PlaceSystemOverview place,
 			McAppRequestFactory requests, PlaceController placeController) {
 		super(place, requests, placeController);
-		Log.debug("ActivitySystemOverview.Konstruktor");
 		this.overviewPlace = place;
         this.requests = requests;
         this.placeController = placeController;
 	}
 
 	@Override
-	public String mayStop() {
-		return null;
-	}
-
-	@Override
-	public void onCancel() {
-		onStop();
-
-	}
-
-	@Override
-	public void onStop() {
-	
-//		((SimplePanel)widget).clear();
-
-	}
-	
-	/*@Override
-	public void start(AcceptsOneWidget widget, EventBus eventBus) {
-		super.start(widget, eventBus);
-
-	}*/
-
-	@Override
 	public void start2(AcceptsOneWidget widget, EventBus eventBus) {
-		Log.debug("ActivitySystemOverview.Start");
 		SystemOverviewView systemOverview = new SystemOverviewViewImpl();
-        systemOverview.setName("hallo");
-        systemOverview.setPresenter(this);
-        systemOverview.setDelegate(this);
-        this.widget = widget;
+		systemOverview.setDelegate(this);
+		this.widget = widget;
         widget.setWidget(systemOverview.asWidget());
-		Log.debug("ActivitySystemOverview.Started");
+        view = systemOverview;
+        init();
+	}
+	
+	public void init()
+	{
+		if (personRightProxy.getIsAdmin() || personRightProxy.getIsInstitutionalAdmin())
+		{
+			QuestionRequest questionRequest = requests.questionRequest();
+			questionRequest.countQuestionByLoggedUser(userLoggedIn.getId(), true).to(new BMEReceiver<Long>() {
 
+				@Override
+				public void onSuccess(Long response) {
+					acceptQuestionCount = response;
+				}
+			});
+			
+			AnswerRequest answerRequest = questionRequest.append(requests.answerRequest());
+			answerRequest.countAnswerByLoggedUser(true, userLoggedIn.getId()).to(new BMEReceiver<Long>() {
+
+				@Override
+				public void onSuccess(Long response) {
+					acceptAnswerCount = response;
+					view.setAcceptQuestionAndAnswer(acceptQuestionCount, acceptAnswerCount);
+				}
+			});
+			
+			PersonRequest personRequest = answerRequest.append(requests.personRequest());
+			personRequest.findAllPeople().to(new BMEReceiver<List<PersonProxy>>() {
+
+				@Override
+				public void onSuccess(List<PersonProxy> response) {
+					createExaminerSubView(response);
+				}				
+			});
+			
+			personRequest.fire();
+		}
+		else
+		{
+			createExaminerView();
+		}
 	}
 
-	@Override
-	public void goTo(Place place) {
-		 placeController.goTo(place);
-
-		
-	}
-
-	@Override
-	public void buttonClicked() {
-		requests.mcRequest().findAllMcs().fire(new Receiver<List<McProxy>>(){
+	private void createExaminerView() {
+		QuestionRequest questionRequest = requests.questionRequest();
+		questionRequest.countQuestionByLoggedUser(userLoggedIn.getId(), false).to(new BMEReceiver<Long>() {
 
 			@Override
-			public void onSuccess(List<McProxy> response) {
-				Iterator<McProxy> iter = response.iterator();
-				while(iter.hasNext()){
-					Log.info(iter.next().getMcName());
-				}
-				
+			public void onSuccess(Long response) {
+				acceptQuestionCount = response;
 			}
-			
 		});
 		
+		AnswerRequest answerRequest = questionRequest.append(requests.answerRequest());
+		answerRequest.countAnswerByLoggedUser(false, userLoggedIn.getId()).to(new BMEReceiver<Long>() {
+
+			@Override
+			public void onSuccess(Long response) {
+				acceptAnswerCount = response;
+				view.setAcceptQuestionAndAnswer(acceptQuestionCount, acceptAnswerCount);
+				view.addMainLabel();
+			}
+		});
+		
+		AssesmentRequest assesmentRequest = answerRequest.append(requests.assesmentRequest());
+		assesmentRequest.findAssessmentByLoggedUser(userLoggedIn.getId(), false).with("mc", "questionSumPerPerson", "questionTypeCountPerExams", "questionTypeCountPerExams.questionTypesAssigned").to(new BMEReceiver<List<AssesmentProxy>>() {
+
+			@Override
+			public void onSuccess(List<AssesmentProxy> response) {
+				for (AssesmentProxy assesmentProxy : response)
+				{
+					Map<String, String> quesitonTypeCountMap = countQuestionTypeCountPerAssesment(assesmentProxy);
+					
+					view.setQuestionTypesCountByAssessment(assesmentProxy.getMc().getMcName(), ClientUtility.SHORT_FORMAT.format(assesmentProxy.getDateClosed()), quesitonTypeCountMap);
+				}
+			}
+		});
+		
+		assesmentRequest.fire();
+	}
+	
+	private void createExaminerSubView(List<PersonProxy> response) {
+		AssesmentRequest finalAssesmentRequest = null;
+		for (PersonProxy personProxy : response)
+		{
+			if (personProxy.getId().equals(userLoggedIn.getId()) == false)
+			{
+				final PersonProxy tempPersonProxy = personProxy;
+				final SystemOverviewExaminerSubView examinerSubView = new SystemOverviewExaminerSubViewImpl();
+				examinerSubView.setDelegate(ActivitySystemOverview.this);
+				examinerSubView.setPersonProxy(personProxy);
+				
+				QuestionRequest questionRequest;
+				if(finalAssesmentRequest != null) {
+					questionRequest = finalAssesmentRequest.append(requests.questionRequest());
+				}else {
+					questionRequest = requests.questionRequest();
+				}
+				
+				questionRequest.countQuestionByLoggedUser(personProxy.getId(), false).to(new BMEReceiver<Long>() {
+
+					@Override
+					public void onSuccess(Long response) {
+						acceptQuestionCount = response;
+					}
+				});
+				
+				AnswerRequest answerRequest = questionRequest.append(requests.answerRequest());
+				answerRequest.countAnswerByLoggedUser(false, personProxy.getId()).to(new BMEReceiver<Long>() {
+
+					@Override
+					public void onSuccess(Long response) {
+						acceptAnswerCount = response;		
+						examinerSubView.setAcceptAnswerAndQuestion((tempPersonProxy.getPrename() + " " + tempPersonProxy.getName()), acceptQuestionCount, acceptAnswerCount);
+					}
+				});
+				
+				finalAssesmentRequest = answerRequest.append(requests.assesmentRequest());
+				finalAssesmentRequest.findAssessmentByLoggedUser(personProxy.getId(), false).with("mc", "questionSumPerPerson", "questionTypeCountPerExams", "questionTypeCountPerExams.questionTypesAssigned").to(new BMEReceiver<List<AssesmentProxy>>() {
+
+					@Override
+					public void onSuccess(List<AssesmentProxy> response) {
+						examinerSubView.setAssesmentProxy(response);
+						for (AssesmentProxy assesmentProxy : response)
+						{
+							Map<String, String> quesitonTypeCountMap = countQuestionTypeCountPerAssesment(assesmentProxy);
+							
+							view.setQuestionTypesCountByAssessmentExaminer(assesmentProxy.getMc().getMcName(), ClientUtility.SHORT_FORMAT.format(assesmentProxy.getDateClosed()), quesitonTypeCountMap, examinerSubView);
+							
+							view.getMainVerticalPanel().setSpacing(5);
+							
+							if (view.getMainVerticalPanel().getWidgetCount() == 1)
+								examinerSubView.getExaminerDisclosurePanel().setOpen(true); 
+								
+							view.getMainVerticalPanel().add(examinerSubView);
+						}
+					}
+				});
+				
+				//assesmentRequest.fire();
+			}
+		}
+		
+		if(finalAssesmentRequest != null)
+			finalAssesmentRequest.fire();
+	}
+	
+	private Map<String, String> countQuestionTypeCountPerAssesment(AssesmentProxy assesmentProxy)
+	{
+		Map<String, String> quesitonTypeCountMap = Maps.newHashMap();
+		for (QuestionSumPerPersonProxy questionSumPerPersonProxy : assesmentProxy.getQuestionSumPerPerson())
+		{
+			for (QuestionTypeCountPerExamProxy questionTypeCountPerExamProxy : assesmentProxy.getQuestionTypeCountPerExams())
+			{
+				Long count = 0l;
+				count = (long) ((questionTypeCountPerExamProxy.getQuestionTypeCount() * questionSumPerPersonProxy.getQuestionSum()) / 100);
+				String questionType = Joiner.on(", ").join(FluentIterable.from(questionTypeCountPerExamProxy.getQuestionTypesAssigned()).transform(QUESTIONTYPE_TO_SHORTNAME));
+				quesitonTypeCountMap.put(questionType, String.valueOf(count));
+			}
+		}
+		
+		return quesitonTypeCountMap;
 	}
 
 	@Override
-	public void placeChanged(Place place) {
-		// TODO add place changed code here
-		
-	}
+	public void placeChanged(Place place) {}
 
+	@Override
+	public void sendMailBtnClicked(PersonProxy personProxy, List<AssesmentProxy> assesmentProxy, String messageContent) {
+		requests.assesmentRequest().systemOverviewSendMail(personProxy.getId(), assesmentProxy, messageContent, constants.mailSubject()).fire(new BMEReceiver<Boolean>() {
+
+			@Override
+			public void onSuccess(Boolean response) {
+				if (response)
+					Window.alert("Mail Sent Successfully");
+				else
+					Window.alert("Error in sending mail");
+			}
+		});
+	}
+	
+	@Override
+	public void loadTemplate(final SystemOverviewExaminerSubViewImpl examinerSubViewImpl) {
+		requests.assesmentQuestionRequest().loadSystemOverviewTemplate().fire(new Receiver<String>() {
+
+			@Override
+			public void onSuccess(String response) {
+				examinerSubViewImpl.displayMail(response);
+			}
+		});
+	}
 }

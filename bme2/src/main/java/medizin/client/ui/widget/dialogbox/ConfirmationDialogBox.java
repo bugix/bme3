@@ -1,6 +1,7 @@
 package medizin.client.ui.widget.dialogbox;
 
 
+import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxOkButtonEvent;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxOkButtonEventHandler;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEvent;
@@ -8,32 +9,29 @@ import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEvent
 import medizin.shared.i18n.BmeConstants;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class ConfirmationDialogBox extends DialogBox {
 
-	private static final BmeConstants constants = GWT
-			.create(BmeConstants.class);
+	private static final BmeConstants constants = GWT.create(BmeConstants.class);
 
-	private final EventBus eventBus = new SimpleEventBus();
-	
 	private Label msgLbl;
 	private HorizontalPanel hp;
 	private VerticalPanel vp;
-	private Button yesBtn;
-	private Button noBtnl;
-	private Button okBtnl;
+	private IconButton yesBtn;
+	private IconButton noBtn;
+	private IconButton okBtn;
 
 	private Button getNoBtnl() {
-		return this.noBtnl;
+		return this.noBtn;
 	}
 
 	private Button getYesBtn() {
@@ -48,21 +46,27 @@ public class ConfirmationDialogBox extends DialogBox {
 	{
 		vp = new VerticalPanel();
 		hp = new HorizontalPanel();
+		hp.setWidth("100%");
 		
-		yesBtn = new Button();
-		noBtnl = new Button();
-		okBtnl = new Button();
+		yesBtn = new IconButton();
+		noBtn = new IconButton();
+		okBtn = new IconButton();
+		
+		yesBtn.setIcon("check");
+		noBtn.setIcon("close");
+		okBtn.setIcon("check");		
+		
 		yesBtn.setText(constants.yes());
-		noBtnl.setText(constants.no());
-		
-		okBtnl.setText(constants.okBtn());
+		noBtn.setText(constants.no());		
+		okBtn.setText(constants.okBtn());
 
 		msgLbl = new Label();
 		
+		vp.getElement().getStyle().setMarginLeft(5, Unit.PX);
+		vp.getElement().getStyle().setMarginTop(5, Unit.PX);
+		vp.getElement().getStyle().setMarginRight(5, Unit.PX);
+		
 		vp.add(msgLbl);
-		hp.add(yesBtn);
-		hp.add(noBtnl);
-		hp.add(okBtnl);
 		hp.setSpacing(10);
 		vp.add(hp);
 		
@@ -86,16 +90,19 @@ public class ConfirmationDialogBox extends DialogBox {
 	}
 
 	private void showYesNoDialog(final ConfirmationDialogBox dialogBox, String caption, String str, final ConfirmDialogBoxYesNoButtonEventHandler handler) {
-		msgLbl.setText(str);
-		this.getYesBtn().setVisible(true);
-		this.getNoBtnl().setVisible(true);
-		this.okBtnl.setVisible(false);
+		msgLbl.setText(str);		
+		
+		hp.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		HorizontalPanel btnHP = new HorizontalPanel();
+		btnHP.add(yesBtn);
+		btnHP.add(noBtn);
+		hp.add(btnHP);
+		
+		yesBtn.getElement().getStyle().setMarginRight(10, Unit.PX);
 		
 		this.getNoBtnl().setText(constants.no());
 		this.getYesBtn().setText(constants.yes());
 		this.showBaseDialog(caption);
-		
-		eventBus.addHandler(ConfirmDialogBoxYesNoButtonEvent.TYPE, handler);
 		
 		this.getYesBtn().addClickHandler(new ClickHandler() {
 
@@ -103,7 +110,7 @@ public class ConfirmationDialogBox extends DialogBox {
 			public void onClick(ClickEvent arg0) 
 			{
 				dialogBox.hide();
-				eventBus.fireEvent(new ConfirmDialogBoxYesNoButtonEvent(true));
+				handler.onYesButtonClicked(new ConfirmDialogBoxYesNoButtonEvent(true));				
 			}
 		});
 		
@@ -112,46 +119,44 @@ public class ConfirmationDialogBox extends DialogBox {
 			@Override
 			public void onClick(ClickEvent event) {
 				dialogBox.hide();
-				eventBus.fireEvent(new ConfirmDialogBoxYesNoButtonEvent(false));
+				handler.onNoButtonClicked(new ConfirmDialogBoxYesNoButtonEvent(false));				
 			}
 		});
 
 	}
-
-	private void showConfirmationDialog(final ConfirmationDialogBox dialogBox, String caption, String msg, final ConfirmDialogBoxOkButtonEventHandler handler) {
-		this.getYesBtn().setVisible(false);
-		this.getNoBtnl().setVisible(false);
-		this.okBtnl.setVisible(true);
+	
+	private void initOkConfirmationDialog(String caption, String msg) {
+		hp.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		
+		hp.add(okBtn);
+		
 		msgLbl.setText(msg);
 
 		this.showBaseDialog(caption);
+	}
+
+	private void showConfirmationDialog(final ConfirmationDialogBox dialogBox, String caption, String msg, final ConfirmDialogBoxOkButtonEventHandler handler) {
 		
-		this.okBtnl.addClickHandler(new ClickHandler() {
+		initOkConfirmationDialog(caption, msg);
+		
+		this.okBtn.addClickHandler(new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent arg0) {
-				
 				dialogBox.hide();
-				eventBus.addHandler(ConfirmDialogBoxOkButtonEvent.TYPE, handler);
-				eventBus.fireEvent(new ConfirmDialogBoxOkButtonEvent());
+				handler.onOkButtonClicked(new ConfirmDialogBoxOkButtonEvent());
 			}
 		});
 	}
 	
-	private void showConfirmationDialog(final ConfirmationDialogBox dialogBox,
-			String caption, String message) {
-		this.getYesBtn().setVisible(false);
-		this.getNoBtnl().setVisible(false);
-		this.okBtnl.setVisible(true);
-		msgLbl.setText(message);
+	private void showConfirmationDialog(final ConfirmationDialogBox dialogBox, String caption, String message) {
 
-		this.showBaseDialog(caption);
+		initOkConfirmationDialog(caption, message);
 		
-		this.okBtnl.addClickHandler(new ClickHandler() {
+		this.okBtn.addClickHandler(new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent arg0) {
-		
 				dialogBox.hide();
 			}
 		});

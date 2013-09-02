@@ -17,5 +17,8 @@ public interface BmeMessages extends Messages {
 	public String sumOfTrueAnswer(int sum);
 	
 	public String sumOfFalseAnswer(int sum);
+
+	public String acceptQuestionAndAnswer(long acceptQuestionCount, long acceptAnswerCount);
 	
+	public String acceptQuestionAndAnswerExaminer(long acceptQuestionCount, long acceptAnswerCount);
 }

@@ -4736,3 +4736,36 @@ background: url("images/colorpicker.png");
 .matrix-textbox-y {
 	margin-top: 4px;
 }
+
+/* system overview accept question and answer label css */
+.acceptQueAnswerLabel{
+	font-weight: bold;
+	font-size: 15px;
+	
+	margin-top: 10px;
+	margin-left: 10px;
+	margin-right: 10px;
+	margin-bottom: 0px;
+	
+	border-bottom: 1px groove;
+	padding-bottom: 10px;
+}
+
+.systemOverviewReachinLbl{
+	font-weight: bold;
+	font-size: 15px;
+	margin-left: 10px;
+	margin-top: 10px;
+}
+
+.systemOverviewExaminerDisclosurePanel{
+	width: 99%;
+	margin: 3px;
+}
+
+.sendMailParams {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 140px;
+}

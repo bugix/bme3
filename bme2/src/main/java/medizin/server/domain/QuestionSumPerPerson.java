@@ -1,10 +1,16 @@
 package medizin.server.domain;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.ManyToOne;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.roo.addon.javabean.RooJavaBean;
@@ -134,5 +140,39 @@ public class QuestionSumPerPerson {
 		
 		return q.getResultList();
 
+	}
+	
+	public static List<QuestionSumPerPerson> findQuestionSumPerPersonByLoggedUser(boolean isAdminOrInstitutionalAdmin)
+	{
+		Person loggedUser = Person.myGetLoggedPerson();
+		Institution institution = Institution.myGetInstitutionToWorkWith();
+		if (loggedUser == null || institution == null)
+			throw new IllegalArgumentException("The person and institution arguments are required");
+				
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<QuestionSumPerPerson> criteriaQuery = criteriaBuilder.createQuery(QuestionSumPerPerson.class);
+		Root<QuestionSumPerPerson> from = criteriaQuery.from(QuestionSumPerPerson.class);
+
+		Date dateClosed =new Date();
+    	Date dateOpen = new Date(); 
+    	Boolean isClosed=false;
+		
+		if (isAdminOrInstitutionalAdmin)
+		{
+			//write code remaining
+		}
+		
+		Predicate pre1 = criteriaBuilder.equal(from.get("responsiblePerson").get("id"), loggedUser.getId());
+		Expression<Date> closedDateExp = from.get("assesment").get("dateClosed");
+		Expression<Date> openDateExp = from.get("assesment").get("dateOpen");
+		Predicate pre2 = criteriaBuilder.greaterThanOrEqualTo(closedDateExp, dateClosed);
+		Predicate pre3 = criteriaBuilder.lessThanOrEqualTo(openDateExp, dateOpen);
+		Predicate pre4 = criteriaBuilder.equal(from.get("isClosed"), isClosed);
+		
+		criteriaQuery.where(criteriaBuilder.and(pre1, pre2, pre3, pre4));
+		
+		TypedQuery<QuestionSumPerPerson> query = entityManager().createQuery(criteriaQuery);
+		
+		return query.getResultList();
 	}
 }

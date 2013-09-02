@@ -23,5 +23,4 @@ public interface QuestionSumPerPersonRequest extends QuestionSumPerPersonRequest
 	Request<QuestionSumPerPersonProxy>  findQuestionSumPerPersonByEventNonRoo(Long questionEventId);
 	
 	Request<List<QuestionSumPerPersonProxy>>  findPercentageOfQuestionAssignedToExaminer(AssesmentProxy a, PersonProxy p);
-
 }

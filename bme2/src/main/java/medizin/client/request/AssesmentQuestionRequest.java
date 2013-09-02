@@ -52,6 +52,7 @@ public interface AssesmentQuestionRequest extends AssesmentQuestionRequest_Roo_G
 			String mailSubject, AssesmentProxy activeTab);
 
 	abstract Request<Void> shuffleQuestionsAnswers(Long assessmentID);
-
+	
+	abstract Request<String> loadSystemOverviewTemplate();
 
 }

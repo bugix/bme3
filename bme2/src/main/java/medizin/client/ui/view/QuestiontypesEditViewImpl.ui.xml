@@ -80,8 +80,12 @@
 		.rowHidden {
 			display: none;
 		}
+		
+		.valueLbl{
+			min-height: 25px;
+		}
 	</ui:style>
-  
+  <ui:with type="medizin.shared.i18n.BmeConstants" field="constants"></ui:with>
   
   <g:VerticalPanel addStyleNames="{style.tabStyle}">
 	<g:HTMLPanel styleName="{style.patientControls}">
@@ -146,7 +150,7 @@
 						
 						 	  <tr id="shortName">
 						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="shortNameLbl"></g:Label>
+						 	  		<g:Label styleName="{style.label}" ui:field="shortNameLbl" text="{constants.shortName}"></g:Label>
 						 	  	</td>
 						 	  	<td>
 						 	  		<g:TextBox ui:field="shortNameTxtbox" width="300px"></g:TextBox>
@@ -154,7 +158,7 @@
 						 	  </tr>
 						 	  <tr id="longName">
 						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="longNameLbl"></g:Label>
+						 	  		<g:Label styleName="{style.label}" ui:field="longNameLbl" text="{constants.longName}"></g:Label>
 						 	  	</td>
 						 	  	<td>
 						 	  		<g:TextBox ui:field="longNameTxtbox" width="300px"></g:TextBox>
@@ -162,7 +166,7 @@
 						 	  </tr>
 						 	  <tr id="description">
 						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="descriptionLbl"></g:Label>
+						 	  		<g:Label styleName="{style.label}" ui:field="descriptionLbl" text="{constants.description}"></g:Label>
 						 	  	</td>
 						 	  	<td>
 						 	  		<!-- <g:TextBox ui:field="descriptionTxtbox"></g:TextBox> -->
@@ -172,25 +176,35 @@
 						 	  
 						 	  <tr id="institute">
 						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="instituteLbl"></g:Label>
+						 	  		<g:Label styleName="{style.label}" ui:field="instituteLbl" text="{constants.institutionLbl}"></g:Label>
 						 	  	</td>
 						 	  	<td>
-						 	  		<g:ValueListBox ui:field="instituteListBox" width="150px"></g:ValueListBox>
+						 	  		<div id="instituteListboxDiv">
+						 	  			<g:ValueListBox ui:field="instituteListBox" width="150px"></g:ValueListBox>
+						 	  		</div>
+						 	  		<div id="instituteLabelDiv">
+						 	  			<g:Label styleName="{style.valueLbl}" ui:field="instituteValueLbl"></g:Label>
+						 	  		</div>
 						 	  	</td>
 						 	  </tr>
 						 	  
 						 	   <tr id="questionType">
 						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="questionTypeLbl"></g:Label>
+						 	  		<g:Label styleName="{style.label}" ui:field="questionTypeLbl" text="{constants.questionType}"></g:Label>
 						 	  	</td>
 						 	  	<td>
-						 	  		<g:ValueListBox ui:field="questionTypeListBox" width="150px"></g:ValueListBox>
+						 	  		<div id="questionTypeListboxDiv">
+						 	  			<g:ValueListBox ui:field="questionTypeListBox" width="150px"></g:ValueListBox>
+						 	  		</div>
+						 	  		<div id="questionTypeLabelDiv">
+						 	  			<g:Label styleName="{style.valueLbl}" ui:field="questionTypeValueLbl"></g:Label>
+						 	  		</div>
 						 	  	</td>
-						 	  </tr>
+						 	  </tr> 	
 						 	  
 						 	  <tr id="sumAnswer">
 						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="sumAnswerLbl"></g:Label>
+						 	  		<g:Label styleName="{style.label}" ui:field="sumAnswerLbl" text="{constants.sumAnswer}"></g:Label>
 						 	  	</td>
 						 	  	<td>
 						 	  		<g:TextBox ui:field="sumAnswerTxtbox" width="150px"></g:TextBox>
@@ -199,7 +213,7 @@
 						 	  
 						 	  <tr id="sumTrueAnswer">
 						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="sumTrueAnswerLbl"></g:Label>
+						 	  		<g:Label styleName="{style.label}" ui:field="sumTrueAnswerLbl" text="{constants.sumTrueAnswer}"></g:Label>
 						 	  	</td>
 						 	  	<td>
 						 	  		<g:TextBox ui:field="sumTrueAnswerTxtbox" value="0" width="150px"></g:TextBox>
@@ -208,7 +222,7 @@
 						 	  
 						 	  <tr id="sumFalseAnswer">
 						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="sumFalseAnswerLbl"></g:Label>
+						 	  		<g:Label styleName="{style.label}" ui:field="sumFalseAnswerLbl" text="{constants.sumFalseAnswer}"></g:Label>
 						 	  	</td>
 						 	  	<td>
 						 	  		<g:TextBox ui:field="sumFalseAnswerTxtbox" value="0" width="150px"></g:TextBox>
@@ -217,7 +231,7 @@
 						 	  
 						 	  <tr id="questionLength">
 						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="questionLengthLbl"></g:Label>
+						 	  		<g:Label styleName="{style.label}" ui:field="questionLengthLbl" text="{constants.questionLength}"></g:Label>
 						 	  	</td>
 						 	  	<td>
 						 	  		<g:TextBox ui:field="questionLengthTxtbox" width="150px"></g:TextBox>
@@ -226,7 +240,7 @@
 						 	  
 						 	  <tr id="answerLength">
 						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="answerLengthLbl"></g:Label>
+						 	  		<g:Label styleName="{style.label}" ui:field="answerLengthLbl" text="{constants.answerLength}"></g:Label>
 						 	  	</td>
 						 	  	<td>
 						 	  		<g:TextBox ui:field="answerLengthTxtbox" width="150px"></g:TextBox>
@@ -235,7 +249,7 @@
 						 	  
 						 	  <tr id="answerDiff">
 						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="answerDiffLbl"></g:Label>
+						 	  		<g:Label styleName="{style.label}" ui:field="answerDiffLbl" text="{constants.diffAnswer}"></g:Label>
 						 	  	</td>
 						 	  	<td>
 						 	  		<g:TextBox ui:field="answerDiffTxtbox" width="150px"></g:TextBox>
@@ -244,7 +258,7 @@
 						 	  
 						 	  <tr id="queHaveImg">
 						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="queHaveImgLbl"></g:Label>
+						 	  		<g:Label styleName="{style.label}" ui:field="queHaveImgLbl" text="{constants.queHaveImg}"></g:Label>
 						 	  	</td>
 						 	  	<td>
 						 	  		<g:CheckBox ui:field="queHaveImgChkBox" ></g:CheckBox>						 	  		
@@ -253,7 +267,7 @@
 						 	  
 						 	  <tr id="queHaveVideo">
 						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="queHaveVideoLbl"></g:Label>
+						 	  		<g:Label styleName="{style.label}" ui:field="queHaveVideoLbl" text="{constants.queHaveVideo}"></g:Label>
 						 	  	</td>
 						 	  	<td>
 						 	  		<g:CheckBox ui:field="queHaveVideoChkBox"></g:CheckBox>						 	  		
@@ -262,7 +276,7 @@
 						 	  
 						 	  <tr id="queHaveSound">
 						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="queHaveSoundLbl"></g:Label>
+						 	  		<g:Label styleName="{style.label}" ui:field="queHaveSoundLbl" text="{constants.queHaveSound}"></g:Label>
 						 	  	</td>
 						 	  	<td>
 						 	  		<g:CheckBox ui:field="queHaveSoundChkBox"></g:CheckBox>						 	  		
@@ -273,7 +287,7 @@
 						 	  
 						 	  <tr id="keywordCount" >
 						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="keywordCountLbl"></g:Label>
+						 	  		<g:Label styleName="{style.label}" ui:field="keywordCountLbl" text="{constants.countKeyword}"></g:Label>
 						 	  	</td>
 						 	  	<td>
 						 	  		<g:TextBox ui:field="keywordCountTxtbox" width="150px"></g:TextBox>				 	  		
@@ -282,7 +296,7 @@
 						 	  
 						 	  <tr id="showAutoComplete">
 						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="showAutoCompleteLbl"></g:Label>
+						 	  		<g:Label styleName="{style.label}" ui:field="showAutoCompleteLbl" text="{constants.showAutocomplete}"></g:Label>
 						 	  	</td>
 						 	  	<td>
 						 	  		<g:CheckBox ui:field="showAutoCompleteChkBox"></g:CheckBox>						 	  		
@@ -291,7 +305,7 @@
 						 	  
 						 	  <tr id="isDictionaryKeyword">
 						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="isDictionaryKeywordLbl"></g:Label>
+						 	  		<g:Label styleName="{style.label}" ui:field="isDictionaryKeywordLbl" text="{constants.isDictionaryKeyword}"></g:Label>
 						 	  	</td>
 						 	  	<td>
 						 	  		<g:CheckBox ui:field="isDictionaryKeywordChkBox"></g:CheckBox>						 	  		
@@ -300,7 +314,7 @@
 						 	  
 						 	  <tr id="allowTyping">
 						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="allowTypingLbl"></g:Label>
+						 	  		<g:Label styleName="{style.label}" ui:field="allowTypingLbl" text="{constants.allowTyping}"></g:Label>
 						 	  	</td>
 						 	  	<td>
 						 	  		<g:CheckBox ui:field="allowTypingChkBox"></g:CheckBox>						 	  		
@@ -309,7 +323,7 @@
 						 	  
 						 	  <tr id="minLetterForAutoComp">
 						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="minLetterForAutoCompLbl"></g:Label>
+						 	  		<g:Label styleName="{style.label}" ui:field="minLetterForAutoCompLbl" text="{constants.minLetterAutoComplete}"></g:Label>
 						 	  	</td>
 						 	  	<td>
 						 	  		<g:TextBox ui:field="minLetterForAutoCompTxtbox" width="150px"></g:TextBox>				 	  		
@@ -318,7 +332,7 @@
 						 	  
 						 	  <tr id="acceptNonKeyword">
 						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="acceptNonKeywordLbl"></g:Label>
+						 	  		<g:Label styleName="{style.label}" ui:field="acceptNonKeywordLbl" text="{constants.acceptNonkeyword}"></g:Label>
 						 	  	</td>
 						 	  	<td>
 						 	  		<g:CheckBox ui:field="acceptNonKeywordChkBox"></g:CheckBox>						 	  		
@@ -327,7 +341,7 @@
 						 	  
 						 	  <tr id="shortAnswerLength">
 						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="shortAnswerLengthLbl"></g:Label>
+						 	  		<g:Label styleName="{style.label}" ui:field="shortAnswerLengthLbl" text="{constants.lengthShortAns}"></g:Label>
 						 	  	</td>
 						 	  	<td>
 						 	  		<g:TextBox ui:field="shortAnswerLengthTxtbox" width="150px"></g:TextBox>					 	  		
@@ -386,7 +400,7 @@
 						 	  
 						 	  <tr id="keywordHighlight">
 						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="keywordHighlightLbl"></g:Label>
+						 	  		<g:Label styleName="{style.label}" ui:field="keywordHighlightLbl" text="{constants.keywordHighlight}"></g:Label>
 						 	  	</td>
 						 	  	<td>
 						 	  		<g:CheckBox ui:field="keywordHighlightChkBox"></g:CheckBox>						 	  		
@@ -395,7 +409,7 @@
 						 	  
 						 	  <tr id="richText">
 						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="richTextLbl"></g:Label>
+						 	  		<g:Label styleName="{style.label}" ui:field="richTextLbl" text="{constants.richText}"></g:Label>
 						 	  	</td>
 						 	  	<td>
 						 	  		<g:CheckBox ui:field="richTextChkBox"></g:CheckBox>						 	  		
@@ -404,7 +418,7 @@
 						 	  
 						 	  <tr id="minLength">
 						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="minLengthLbl"></g:Label>
+						 	  		<g:Label styleName="{style.label}" ui:field="minLengthLbl" text="{constants.minLength}"></g:Label>
 						 	  	</td>
 						 	  	<td>
 						 	  		<g:TextBox ui:field="minLengthTxtbox" width="150px"></g:TextBox>					 	  		
@@ -413,7 +427,7 @@
 						 	  
 						 	  <tr id="maxLength">
 						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="maxLengthLbl"></g:Label>
+						 	  		<g:Label styleName="{style.label}" ui:field="maxLengthLbl" text="{constants.maxLength}"></g:Label>
 						 	  	</td>
 						 	  	<td>
 						 	  		<g:TextBox ui:field="maxLengthTxtbox" width="150px"></g:TextBox>					 	  		
@@ -422,7 +436,7 @@
 						 	  
 						 	  <tr id="minWordCount">
 						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="minWordCountLbl"></g:Label>
+						 	  		<g:Label styleName="{style.label}" ui:field="minWordCountLbl" text="{constants.minWordCount}"></g:Label>
 						 	  	</td>
 						 	  	<td>
 						 	  		<g:TextBox ui:field="minWordCountTxtbox" value="0" width="150px"></g:TextBox>					 	  		
@@ -431,7 +445,7 @@
 						 	  
 						 	  <tr id="maxWordCount">
 						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="maxWordCountLbl"></g:Label>
+						 	  		<g:Label styleName="{style.label}" ui:field="maxWordCountLbl" text="{constants.maxWordCount}"></g:Label>
 						 	  	</td>
 						 	  	<td>
 						 	  		<g:TextBox ui:field="maxWordCountTxtbox" value="0" width="150px"></g:TextBox>					 	  		
@@ -442,7 +456,7 @@
 						 	  
 						 	  <tr id="oneToOneAss">
 						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="oneToOneAssLbl"></g:Label>
+						 	  		<g:Label styleName="{style.label}" ui:field="oneToOneAssLbl" text="{constants.oneToOneAss}"></g:Label>
 						 	  	</td>
 						 	  	<td>
 						 	  		<g:CheckBox ui:field="oneToOneAssChkBox"></g:CheckBox>						 	  		
@@ -453,7 +467,7 @@
 						 	  					
 						 	  <tr id="multimediaType">
 						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="multimediaTypeLbl"></g:Label>
+						 	  		<g:Label styleName="{style.label}" ui:field="multimediaTypeLbl" text="{constants.multimediaType}"></g:Label>
 						 	  	</td>
 						 	  	<td>
 						 	  		<g:ValueListBox ui:field="multimediaTypeListBox" width="150px"></g:ValueListBox>
@@ -462,7 +476,7 @@
 						 	  
 						 	  <tr id="selectionType">
 						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="selectionTypeLbl"></g:Label>
+						 	  		<g:Label styleName="{style.label}" ui:field="selectionTypeLbl" text="{constants.selectionType}"></g:Label>
 						 	  	</td>
 						 	  	<td>
 						 	  		<g:ValueListBox ui:field="selectionTypeListBox" width="150px"></g:ValueListBox>
@@ -471,7 +485,7 @@
 						 	  
 						 	  <tr id="column">
 						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="columnLbl"></g:Label>
+						 	  		<g:Label styleName="{style.label}" ui:field="columnLbl" text="{constants.column}"></g:Label>
 						 	  	</td>
 						 	  	<td>
 						 	  		<g:TextBox ui:field="columnTxtbox" width="150px"></g:TextBox>					 	  		
@@ -543,7 +557,7 @@
 						 	  
 						 	  <tr id="maxBytes">
 						 	  	<td>
-						 	  		<g:Label styleName="{style.label}" ui:field="maxBytesLbl"></g:Label>
+						 	  		<g:Label styleName="{style.label}" ui:field="maxBytesLbl" text="{constants.maxBytes}"></g:Label>
 						 	  	</td>
 						 	  	<td>
 						 	  		<g:TextBox ui:field="maxBytesTxtbox" width="150px"></g:TextBox>					 	  		

@@ -23,6 +23,8 @@ import medizin.client.proxy.PersonAccessRightProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.proxy.UserAccessRightsProxy;
+import medizin.client.request.InstitutionRequest;
+import medizin.client.request.PersonRequest;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxOkButtonEvent;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxOkButtonEventHandler;
@@ -78,7 +80,8 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 
 			Log.info("start method called");
 			
-			requests.personRequest().myGetLoggedPerson().fire(new BMEReceiver<PersonProxy>() {
+			PersonRequest personRequest = requests.personRequest();
+			personRequest.myGetLoggedPerson().to(new BMEReceiver<PersonProxy>() {
 
 				@Override
 				public void onSuccess(PersonProxy response) {
@@ -86,21 +89,46 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 					newStart(panel, eventBus);
 					
 				}
-				
-				
-
 			});
 			
-			requests.institutionRequest().myGetInstitutionToWorkWith().fire(new BMEReceiver<InstitutionProxy>() {
+			InstitutionRequest institutionRequest = personRequest.append(requests.institutionRequest());
+			institutionRequest.myGetInstitutionToWorkWith().to(new BMEReceiver<InstitutionProxy>() {
 
 				@Override
 				public void onSuccess(InstitutionProxy response) {
 					institutionActive = response;
 					newStart(panel, eventBus);
 				}
-
 			});
 			
+			PersonRequest personRequest2 = institutionRequest.append(requests.personRequest());
+			personRequest2.getLoggedPersonAccessRights().with("question", "questionEvent", "institution").to(new Receiver<PersonAccessRightProxy>() {
+
+				@Override
+				public void onSuccess(PersonAccessRightProxy response) {
+					personRightProxy = response;		
+					
+					if(checkIfUserHasRightsToMenu() == true) {
+						start2(panel, eventBus);	
+					}else {
+						ConfirmationDialogBox.showOkDialogBox(constants.information(), constants.mayNotHaveRights(),new ConfirmDialogBoxOkButtonEventHandler(){
+
+							@Override
+							public void onOkButtonClicked(ConfirmDialogBoxOkButtonEvent event) {
+								placeController.goTo(new PlaceSystemOverview(PlaceSystemOverview.PLACE_SYSTEM_OVERVIEW));
+							}
+						});
+					}
+				}
+			});
+			
+			eventBus.addHandler(PlaceChangeEvent.TYPE,new PlaceChangeEvent.Handler() {
+				public void onPlaceChange(PlaceChangeEvent event) {
+					Place place = event.getNewPlace();
+					placeChanged(place);
+				}
+			});
+			personRequest2.fire();
 			
 	}
 	
@@ -133,32 +161,7 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 			Document.get().getElementById("institutionActive").setInnerHTML("Institution: " + institutionActive.getInstitutionName());
 		}
 		
-		requests.personRequest().getLoggedPersonAccessRights().with("question", "questionEvent", "institution").fire(new Receiver<PersonAccessRightProxy>() {
-
-			@Override
-			public void onSuccess(PersonAccessRightProxy response) {
-				personRightProxy = response;		
-				
-				if(checkIfUserHasRightsToMenu() == true) {
-					start2(panel, eventBus);	
-				}else {
-					ConfirmationDialogBox.showOkDialogBox(constants.information(), constants.mayNotHaveRights(),new ConfirmDialogBoxOkButtonEventHandler(){
-
-						@Override
-						public void onOkButtonClicked(ConfirmDialogBoxOkButtonEvent event) {
-							placeController.goTo(new PlaceSystemOverview(PlaceSystemOverview.PLACE_SYSTEM_OVERVIEW));
-						}
-					});
-				}
-			}
-		});
 		
-		eventBus.addHandler(PlaceChangeEvent.TYPE,new PlaceChangeEvent.Handler() {
-			public void onPlaceChange(PlaceChangeEvent event) {
-				Place place = event.getNewPlace();
-				placeChanged(place);
-			}
-		});
 	}
 	
 	private final boolean checkIfUserHasRightsToMenu() {

@@ -2,16 +2,14 @@ package medizin.client.ui.widget.dialogbox.receiver;
 
 import java.util.ArrayList;
 
+import medizin.client.ui.widget.IconButton;
 import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Float;
-import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -22,7 +20,7 @@ public class ReceiverDialog extends DialogBox {
 	private final BmeConstants constants = GWT.create(BmeConstants.class);
 	private final VerticalPanel panel = new VerticalPanel();
 	private final HorizontalPanel HPbtn = new HorizontalPanel();
-	private final Button btnOk = new Button();
+	private final IconButton btnClose = new IconButton();
 	private final DialogBox dialogBox;
 	private final HTML html = new HTML();
 	private static ReceiverDialog receiverDialog = new ReceiverDialog();
@@ -34,27 +32,22 @@ public class ReceiverDialog extends DialogBox {
 		Log.info("Call OSCEReceiverPopupViewImpl() Constructor");
 
 		this.add(panel);
-		// center();
 		setGlassEnabled(true);
 		setAnimationEnabled(true);
 		setAutoHideEnabled(true);
-		// setWidth("500px");
-		// setVisible(false);
 		this.hide();
 		
 		HPbtn.setWidth("100%");
-		HPbtn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		HPbtn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		HPbtn.getElement().getStyle().setMarginTop(10, Unit.PX);
 		
-		btnOk.setText(constants.close());
-		//btnOk.addStyleName("marginTop15");
-		btnOk.setWidth("100px");
-		btnOk.getElement().getStyle().setMarginBottom(5, Unit.PX);
-		btnOk.getElement().getStyle().setMarginRight(10, Unit.PX);
+		btnClose.setText(constants.close());
+		btnClose.setIcon("close");
 		
-		HPbtn.add(btnOk);
+		HPbtn.add(btnClose);
 		
 		this.getElement().getStyle().setZIndex(1);
-		btnOk.addClickHandler(new ClickHandler() {
+		btnClose.addClickHandler(new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
@@ -62,21 +55,20 @@ public class ReceiverDialog extends DialogBox {
 			}
 		});
 
-		panel.setWidth("350px");
+		panel.getElement().getStyle().setMargin(5, Unit.PX);
+		panel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		panel.add(html);
 		panel.add(HPbtn);
 	}
 
 	private void showMessage(String message) {
 		Log.info("Call showMessage" + message);
-
 		html.setHTML(message);
 		display();
 	}
 
 	private void display() {
 		Log.info("display() call....." + panel.getWidgetCount());
-		// dialogBox.setVisible(true);
 		dialogBox.show();
 		dialogBox.center();
 
@@ -103,8 +95,4 @@ public class ReceiverDialog extends DialogBox {
 		}
 		
 	}
-	/*
-	 * public void setDelegate(Delegate delegate) { this.delegate = delegate; }
-	 */
-
 }
