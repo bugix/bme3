@@ -49,6 +49,8 @@ public interface BmeContextHelpConstants extends ConstantsWithLookup {
 	
 	public String queHasMedia();
 	
+	public String shortAnswerLength();
+	
 	public String showAutoComplete();
 	
 	public String isDictionaryKeyword();

@@ -503,6 +503,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		acceptNonKeyword.setHelpText(contextHelp.acceptNonKeyword());
 		acceptNonKeywordChkBox.setText(constants.acceptNonkeyword());
 		shortAnswerLength.setLabelText(constants.lengthShortAns());
+		shortAnswerLength.setHelpText(contextHelp.shortAnswerLength());
 		
 		keywordHighlight.setLabelText(constants.keywordHighlight());
 		keywordHighlight.setHelpText(contextHelp.keywordHighlight());
