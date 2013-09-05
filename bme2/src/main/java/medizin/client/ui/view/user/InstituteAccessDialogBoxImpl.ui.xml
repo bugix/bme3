@@ -58,7 +58,7 @@
 		
 		.right {
 			float: right;
-			margin: 3px;
+			margin-right: 5px;
 		}
 		.displayRight {
 			float: right;
@@ -83,8 +83,7 @@
 		</div> -->
 
 		<div class="{style.barNew}">
-			<my:IconButton ui:field="closeButton" icon="closethick"
-				addStyleNames="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only {style.right}"></my:IconButton>
+			<my:IconButton ui:field="closeButton" icon="closethick" addStyleNames="{style.right}"></my:IconButton>
 		</div>
 	</g:HTMLPanel>
 </ui:UiBinder> 

@@ -4769,3 +4769,20 @@ background: url("images/colorpicker.png");
     white-space: nowrap;
     width: 140px;
 }
+
+.imageAltTextViewerVpCss {
+    overflow: auto;
+    display: block;
+    padding: 20px;
+}
+
+.imageAltText {
+	font-weight: bold;
+	font-size: large;			
+	text-align: center;
+}
+
+.questionAccDialogCss{
+	min-height: 600px;
+	min-width: 800px;
+}

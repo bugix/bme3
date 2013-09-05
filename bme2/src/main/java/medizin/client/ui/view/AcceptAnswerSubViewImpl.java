@@ -14,6 +14,7 @@ import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEvent;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEventHandler;
 import medizin.client.ui.widget.resource.audio.AudioViewer;
+import medizin.client.ui.widget.resource.image.ImageAltTextViewer;
 import medizin.client.ui.widget.resource.image.ImageViewer;
 import medizin.client.ui.widget.resource.image.polygon.ImagePolygonViewer;
 import medizin.client.ui.widget.resource.image.rectangle.ImageRectangleViewer;
@@ -145,6 +146,8 @@ public class AcceptAnswerSubViewImpl extends Composite implements AcceptAnswerSu
 							if (questionProxy.getQuestionType().getQuestionType().equals(QuestionTypes.Imgkey) || questionProxy.getQuestionType().getQuestionType().equals(QuestionTypes.ShowInImage) || questionProxy.getQuestionType().getQuestionType().equals(QuestionTypes.MCQ))
 							{					
 							 	dialogBox = new DialogBox();
+							 	dialogBox.setTitle(constants.imageViewer());
+							 	dialogBox.setText(constants.imageViewer());
 							 	
 							 	final VerticalPanel vp = new VerticalPanel();
 								 
@@ -178,6 +181,8 @@ public class AcceptAnswerSubViewImpl extends Composite implements AcceptAnswerSu
 										}
 									}else {
 										Log.error("Question resources are null imagekey");
+										ImageAltTextViewer viewer = new ImageAltTextViewer();
+										vp.add(viewer);
 									}
 								}
 								else if (questionProxy.getQuestionType().getQuestionType().equals(QuestionTypes.ShowInImage))
@@ -192,6 +197,8 @@ public class AcceptAnswerSubViewImpl extends Composite implements AcceptAnswerSu
 										vp.add(imgPolygonViewer);
 									}else {
 										Log.error("Question resources are null show in image");
+										ImageAltTextViewer viewer = new ImageAltTextViewer();
+										vp.add(viewer);
 									}
 									
 								}

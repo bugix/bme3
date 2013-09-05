@@ -31,6 +31,7 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 public class AnswerListViewImpl extends Composite implements  AnswerListView {
@@ -43,6 +44,9 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 	interface AnswerViewImplUiBinder extends
 			UiBinder<Widget, AnswerListViewImpl> {
 	}
+	
+	@UiField
+	Label headerText;
 
 	public AnswerListViewImpl(boolean isEditable) {
 		CellTable.Resources tableResources = GWT
@@ -59,6 +63,9 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 		
 		newAnswer.setVisible(isEditable);
 		init(isEditable);
+		
+		headerText.setText("");
+		headerText.setHeight("23px");
 	}
 
 

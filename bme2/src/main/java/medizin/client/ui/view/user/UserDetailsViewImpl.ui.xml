@@ -15,11 +15,8 @@
 		
 	<g:HTMLPanel >
 	
-	<g:VerticalPanel addStyleNames="{style.tabStyle} {style.patientTopContainer}">
-			<g:HorizontalPanel styleName="{style.patientControls} {style.tabStyle}">
-				<g:Image ui:field="arrow" styleName="{style.padleft5}"
-					url="application/gwt/unibas/images/down.png"></g:Image>
-				<g:Label addStyleNames="{style.label}" ui:field="labelLongNameHeader"></g:Label>
+		<g:VerticalPanel addStyleNames="{style.tabStyle}">
+			<g:HTMLPanel styleName="{style.patientControls}">
 				<g:HTMLPanel>
 					<div class="{style.controlsright}">
 						<h3 class="{style.header}" style="display:inline">
@@ -29,32 +26,9 @@
 						<m:IconButton ui:field="delete" icon="trash" text="{constants.delete}"></m:IconButton>
 					</div>
 				</g:HTMLPanel>
-			</g:HorizontalPanel>
-	
-		<!-- <g:VerticalPanel addStyleNames="{style.tabStyle}">
-			<g:HorizontalPanel styleName="{style.patientControls} {style.tabStyle}">
-		<g:Image ui:field="arrow" styleName="{style.padleft5}" url="/bme2/src/main/java/medizin/client/ui/upArrow.png"></g:Image>
-			<g:HTMLPanel addStyleNames="{style.patientControls}">
-
-
-				<g:HTMLPanel>
-					<div class="{style.controlsright}">
-						<h3 class="{style.header}" style="display:inline">
-							<span ui:field="displayRenderer"></span>
-						</h3>
-
-						
-
-
-					</div>
-				</g:HTMLPanel>
-				
 			</g:HTMLPanel>
-			</g:HorizontalPanel> -->
-			<g:DisclosurePanel animationEnabled="true" open="true"
-				ui:field="userDisclosurePanel" width="100%">
-			<g:TabPanel ui:field="userDetailPanel" addStyleNames="gwt-InvertedTabPanel"
-				width="100%">
+	
+			<g:TabPanel ui:field="userDetailPanel" addStyleNames="gwt-InvertedTabPanel" width="100%">
 
 				<g:Tab>
 					<g:TabHTML></g:TabHTML>
@@ -137,7 +111,7 @@
 					</g:HTMLPanel>
 				</g:Tab>
 			</g:TabPanel>
-		</g:DisclosurePanel>
+		<!-- </g:DisclosurePanel> -->
 			<g:TabPanel ui:field="userAccessDetailPanel" width="100%">
 
 				<g:Tab>

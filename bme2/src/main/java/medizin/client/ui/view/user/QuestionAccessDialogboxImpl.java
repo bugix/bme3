@@ -172,7 +172,7 @@ public class QuestionAccessDialogboxImpl extends DialogBox implements QuestionAc
 
 	            @Override
 	            public String getValue(QuestionProxy object) {
-	                return renderer.render(object.getQuestionText());
+	                return renderer.render(object == null ? null : object.getQuestionText());
 	            }
 	        }, constants.question());
 	        
@@ -381,7 +381,7 @@ public class QuestionAccessDialogboxImpl extends DialogBox implements QuestionAc
 
 	@Override
 	public void display() {
-		setWidth("800px");
+		addStyleName("questionAccDialogCss");
 		center();
 		show();
 		
@@ -495,5 +495,5 @@ public class QuestionAccessDialogboxImpl extends DialogBox implements QuestionAc
 			}
 		}
 		return flag;
-	}	
+	}
 }

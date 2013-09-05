@@ -47,5 +47,4 @@ public interface QuestionAccessDialogbox extends IsWidget {
 	DefaultSuggestBox<QuestionEventProxy, EventHandlingValueHolderItem<QuestionEventProxy>> getSearchEvent();
 	
 	void setUserAccessRightsList(List<UserAccessRightsProxy> userAccessRightsList);
-
 }

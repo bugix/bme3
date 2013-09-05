@@ -31,6 +31,7 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 public class MatrixAnswerListViewImpl extends Composite implements MatrixAnswerListView {
@@ -41,6 +42,9 @@ public class MatrixAnswerListViewImpl extends Composite implements MatrixAnswerL
 	interface MatrixAnswerListViewImplUiBinder extends
 			UiBinder<Widget, MatrixAnswerListViewImpl> {
 	}
+	
+	@UiField
+	Label headerText;
 
 	public MatrixAnswerListViewImpl(boolean isEditable) {
 		CellTable.Resources tableResources = GWT
@@ -52,9 +56,12 @@ public class MatrixAnswerListViewImpl extends Composite implements MatrixAnswerL
 				.create(MySimplePagerResources.class);
 		pager = new SimplePager(SimplePager.TextLocation.RIGHT, pagerResources,
 				true, McAppConstant.TABLE_JUMP_SIZE, true);
-
+		
 		initWidget(uiBinder.createAndBindUi(this));
+		newAnswer.setVisible(isEditable);
 		init(isEditable);
+		headerText.setText("");
+		headerText.setHeight("23px");
 	}
 
 

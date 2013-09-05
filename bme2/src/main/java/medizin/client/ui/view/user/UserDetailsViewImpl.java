@@ -14,8 +14,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.DisclosurePanel;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -59,11 +57,11 @@ public class UserDetailsViewImpl extends Composite implements UserDetailsView
 
     private Delegate delegate;
     
-    @UiField
-	DisclosurePanel userDisclosurePanel;
+   /* @UiField
+	DisclosurePanel userDisclosurePanel;*/
     
-	@UiField
-	Image arrow;
+	/*@UiField
+	Image arrow;*/
 
 	
 //    @UiField
@@ -167,7 +165,7 @@ public class UserDetailsViewImpl extends Composite implements UserDetailsView
 //        displayRenderer.setInnerText(medizin.client.ui.view.roo.PersonProxyRenderer.instance().render(proxy));
     }
 
-    @UiHandler("arrow")
+   /* @UiHandler("arrow")
 	void handleClick(ClickEvent e) {
 		if (userDisclosurePanel.isOpen()) {
 			userDisclosurePanel.setOpen(false);
@@ -190,14 +188,14 @@ public class UserDetailsViewImpl extends Composite implements UserDetailsView
 																				// image
 		}
 
-	}
+	}*/
     
 	public UserDetailsViewImpl() {
 		initWidget(uiBinder.createAndBindUi(this));
 		
-		userDisclosurePanel.setOpen(true);
+		/*userDisclosurePanel.setOpen(true);
 		userDisclosurePanel.setContent(userDetailPanel);
-		userDisclosurePanel.setStyleName("");
+		userDisclosurePanel.setStyleName("");*/
 
 		userDetailPanel.selectTab(0);
 		userDetailPanel.getTabBar().setTabText(0, "Users");

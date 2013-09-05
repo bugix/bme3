@@ -7,21 +7,25 @@
 	<ui:with type="medizin.shared.i18n.BmeConstants" field="cc"></ui:with>
 			
 	<g:HTMLPanel>
-	
-	
-
-		<div class="{style.controls} {style.controlsleft}">
-
-			<m:IconButton ui:field="newAnswer" icon="plusthick" text="{cc.newAnswer}"></m:IconButton>
-			<b:SimplePager ui:field="pager" display="{tableAnswer}" />
-
-			<!-- <i:DefaultSuggestBox ui:field="copiedOsce"></i:DefaultSuggestBox> -->
-		</div>
-
-		<b:CellTable ui:field="tableAnswer" addStyleNames="{style.standardTableIcon}"
-			width="500" />
-
-
+		<g:DisclosurePanel width="100%" open="true">
+			<g:customHeader>
+				<g:HorizontalPanel width="100%" ui:field="headerHorizontalPanel">
+					<g:cell verticalAlignment="ALIGN_MIDDLE">
+						<g:Label ui:field="headerText"></g:Label>
+					</g:cell>					
+				</g:HorizontalPanel>
+			</g:customHeader>
+			<g:VerticalPanel>
+				<g:HTMLPanel styleName="{style.listView}">
+					<b:CellTable ui:field="tableAnswer" addStyleNames="{style.standardTableIcon}" width="500" />
+					
+					<div class="{style.controls} {style.controlsleft}">
+						<m:IconButton ui:field="newAnswer" icon="plusthick" text="{cc.newAnswer}"></m:IconButton>
+						<b:SimplePager ui:field="pager" display="{tableAnswer}" />
+					</div>
+				</g:HTMLPanel>
+			</g:VerticalPanel>
+		</g:DisclosurePanel>
 
 		<!-- <div style="height:2em;" /> <table class="{style.details}" cellpadding="0" 
 			cellspacing="0"> <tr class="{style.headerLine}"> <td class="{style.header}"> 

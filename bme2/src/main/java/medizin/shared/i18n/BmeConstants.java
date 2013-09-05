@@ -701,5 +701,7 @@ public interface BmeConstants extends Constants {
 	
 	public String mailVarAssessmentEndLoop();
 			
-	public String mailAssessmentEndLoop(); 
+	public String mailAssessmentEndLoop();
+	
+	public String imageViewer();
 }
