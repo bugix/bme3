@@ -1,6 +1,6 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:gwtgraphics="urn:import:org.vaadin.gwtgraphics.client">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:gwtgraphics="urn:import:org.vaadin.gwtgraphics.client" xmlns:m="urn:import:medizin.client.ui.widget">
 	<ui:style>
 		.imageBox {
 			overflow: auto;
@@ -10,13 +10,18 @@
 		}
 	</ui:style>
 	<ui:with type="medizin.shared.i18n.BmeConstants" field="cc"></ui:with>
-	<g:HTMLPanel styleName="{style.imageBox}">
+	
+	<g:HTMLPanel>
 		<g:VerticalPanel>
-			<g:HorizontalPanel horizontalAlignment="left">
-				<g:Button ui:field="btnAdd" height="20px" width="50px" text="{cc.add}"></g:Button>
-				<g:Button ui:field="btnClear" height="20px" width="50px" text="{cc.clear}"></g:Button>
+			<g:HorizontalPanel horizontalAlignment="left" spacing="5">
+				<m:IconButton ui:field="btnAdd" text="{cc.add}" icon="plus"></m:IconButton>
+				<m:IconButton ui:field="btnClear" text="{cc.clear}" icon="cancel"></m:IconButton>				
 			</g:HorizontalPanel>
-			<gwtgraphics:DrawingArea ui:field="drawingArea"></gwtgraphics:DrawingArea>
+			<g:HTMLPanel styleName="{style.imageBox}">
+				<g:VerticalPanel>
+					<gwtgraphics:DrawingArea ui:field="drawingArea"></gwtgraphics:DrawingArea>
+				</g:VerticalPanel>
+			</g:HTMLPanel>
 		</g:VerticalPanel>
 	</g:HTMLPanel>
 </ui:UiBinder> 

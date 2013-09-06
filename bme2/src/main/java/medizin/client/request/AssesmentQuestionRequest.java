@@ -29,9 +29,9 @@ public interface AssesmentQuestionRequest extends AssesmentQuestionRequest_Roo_G
 //	    
 	abstract Request<java.util.List<medizin.client.proxy.AssesmentQuestionProxy>> findAssesmentQuestionsByQuestionEvent(Long id, Long assesmentId);
 
-	abstract Request<List<AssesmentQuestionProxy>> findAssesmentQuestionsByMc(Long assesmentId,Long id, String questionId, String questionType, String questionName,PersonProxy author);
+	abstract Request<List<AssesmentQuestionProxy>> findAssesmentQuestionsByMc(Long assesmentId,Long id, List<String> criteriaStringList, String questionId, String questionType, String questionName,PersonProxy author);
 	abstract Request<List<PersonProxy>> findAuthorListByAssesment(AssesmentProxy assesment);
-	abstract Request<List<AssesmentQuestionProxy>> findAssesmentQuestionsByMcProposal(Long id, String questionId, String questionType, String questionName);
+	abstract Request<List<AssesmentQuestionProxy>> findAssesmentQuestionsByMcProposal(Long id, List<String> encodedStringList, String questionId, String questionType, String questionName);
 	abstract Request<List<AssesmentQuestionProxy>> findAssesmentQuestionsByAssesment(Long id,PersonProxy author);
 	abstract Request<AssesmentQuestionProxy> copyAssesmentQuestion(Long assementQuestionId, Long assementId,PersonProxy selectedAuthor);
 
@@ -54,5 +54,5 @@ public interface AssesmentQuestionRequest extends AssesmentQuestionRequest_Roo_G
 	abstract Request<Void> shuffleQuestionsAnswers(Long assessmentID);
 	
 	abstract Request<String> loadSystemOverviewTemplate();
-
+	
 }

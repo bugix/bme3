@@ -2,6 +2,7 @@ package medizin.client.ui.widget.resource.image.polygon;
 
 import java.util.List;
 
+import medizin.client.ui.widget.IconButton;
 import medizin.client.util.ClientUtility;
 import medizin.client.util.ImageWidthHeight;
 import medizin.client.util.Point;
@@ -11,7 +12,6 @@ import org.vaadin.gwtgraphics.client.DrawingArea;
 import org.vaadin.gwtgraphics.client.shape.Path;
 
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.common.base.Function;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.MouseDownEvent;
@@ -21,7 +21,6 @@ import com.google.gwt.event.dom.client.MouseMoveHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -37,10 +36,10 @@ public class ImagePolygonViewer extends Composite implements ImageWidthHeight {
 	DrawingArea drawingArea;
 	
 	@UiField
-	Button btnPolyLine;
+	IconButton btnPolyLine;
 	
 	@UiField
-	Button btnClear;
+	IconButton btnClear;
 	
 	private PolygonPath currentPolygonPath = null;
 	private Path currentPath = null;

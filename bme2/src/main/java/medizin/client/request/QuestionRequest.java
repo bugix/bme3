@@ -29,7 +29,9 @@ public interface QuestionRequest extends QuestionRequest_Roo_Gwt {
 			Long institutionId, Long eventId, String questiuonStringFilter,
 			Boolean filterQuestionText, Boolean filterKeywords, int start, int length);
 	
-	Request<List<QuestionProxy>> findQuestionsByMc(Long mcId, String questionId, String questionType, String questionName,AssesmentProxy a,PersonProxy author);
+	//Request<List<QuestionProxy>> findQuestionsByMc(Long mcId, List<String> criteriaStringList, String questionId, String questionType, String questionName,AssesmentProxy a,PersonProxy author);
+	
+	Request<List<QuestionProxy>> findQuestionsByMc(Long assessmentId, Long authorId, List<String> criteriaStringList, String questionId, String questionName, String questionType);
 
 	Request<java.lang.Long> countQuestionsNonAcceptedAdmin();
 

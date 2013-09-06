@@ -139,7 +139,7 @@ public class Assesment {
         
         Person userLoggedIn=Person.myGetLoggedPerson();
         Boolean isAdmin=userLoggedIn.getIsAdmin();
-        PersonAccessRight accessRights=userLoggedIn.getLoggedPersonAccessRights();
+        PersonAccessRight accessRights=userLoggedIn.fetchLoggedPersonAccessRights();
         Institution institution=Institution.myGetInstitutionToWorkWith();
         Boolean isInstitutionAdmin=accessRights.getIsInstitutionalAdmin();
         TypedQuery<Assesment> q=null;

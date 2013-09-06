@@ -9,20 +9,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.PlaceAsignAssQuestion;
 import medizin.client.proxy.AnswerProxy;
 import medizin.client.proxy.AnswerToAssQuestionProxy;
 import medizin.client.proxy.AssesmentProxy;
 import medizin.client.proxy.AssesmentQuestionProxy;
+import medizin.client.proxy.KeywordProxy;
+import medizin.client.proxy.McProxy;
 import medizin.client.proxy.PersonProxy;
+import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.proxy.QuestionSumPerPersonProxy;
 import medizin.client.proxy.QuestionTypeCountPerExamProxy;
 import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.request.AssesmentQuestionRequest;
 import medizin.client.ui.ErrorPanel;
-import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.assignquestion.AddQuestionsTabPanel;
 import medizin.client.ui.view.assignquestion.AddQuestionsTabPanelImpl;
 import medizin.client.ui.view.assignquestion.AnswerView;
@@ -40,11 +43,25 @@ import medizin.client.ui.view.assignquestion.QuestionTypeCountProxy;
 import medizin.client.ui.view.assignquestion.QuestionTypeCountViewImpl;
 import medizin.client.ui.view.assignquestion.QuestionView;
 import medizin.client.ui.view.assignquestion.QuestionViewImpl;
+import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchAbstractPopupViewImpl;
+import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchDatePopupViewImpl;
+import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchKeywordPopupViewImpl;
+import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchMCPopupViewImpl;
+import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchMediaAvailabilityPopupViewImpl;
+import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchPopupView;
+import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchQuestionEventPopupViewImpl;
+import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchQuestionTypePopupViewImpl;
+import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchSubView;
+import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchSubViewImpl;
+import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchTextSearchPopupViewImpl;
+import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchUserTypePopupViewImpl;
+import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.shared.BlockingTypes;
 import medizin.shared.QuestionTypes;
-import medizin.shared.Status;
 import medizin.shared.Validity;
+import medizin.shared.criteria.AdvancedSearchCriteria;
+import medizin.shared.criteria.AdvancedSearchCriteriaUtils;
 
 import com.allen_sauer.gwt.dnd.client.DragEndEvent;
 import com.allen_sauer.gwt.dnd.client.DragHandler;
@@ -56,17 +73,17 @@ import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
+import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ValueListBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.google.web.bindery.requestfactory.shared.Receiver;
-import com.google.web.bindery.requestfactory.shared.ServerFailure;
-import com.google.web.bindery.requestfactory.shared.Violation;
 
 public class ActivityAsignAssQuestion extends AbstractActivityWrapper implements DragHandler, AsignAssQuestionView.Presenter,
-AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, AssesmentQuestionView.Delegate, AssesmentTabPanel.Delegate,AssesmentQuestionPanel.Delegate {
+AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, AssesmentQuestionView.Delegate, AssesmentTabPanel.Delegate,AssesmentQuestionPanel.Delegate, QuestionAdvancedSearchSubView.Presenter, QuestionAdvancedSearchSubView.Delegate,
+QuestionAdvancedSearchPopupView.Delegate {
 
 	private PlaceAsignAssQuestion asignAssQuestionPlace;
 	private AcceptsOneWidget widget;
@@ -83,6 +100,18 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 	private List<QuestionTypeCountProxy> questionTypeCountProxyList=new ArrayList<QuestionTypeCountProxy>();
 	
 	private List<AssesmentQuestionView> proposedQuestionViewList=new ArrayList<AssesmentQuestionView>();
+	
+	private QuestionAdvancedSearchSubViewImpl advancedSearchSubViewImpl;
+	
+	private List<AdvancedSearchCriteria> advancedSearchCriteriaList = new ArrayList<AdvancedSearchCriteria>();
+	
+	private CellTable<AdvancedSearchCriteria> criteriaTable;
+	
+	private QuestionAdvancedSearchAbstractPopupViewImpl advancedSearchAbstractPopupViewImpl;
+	
+	private String questionShortName = "";
+	private String questionId = "";
+	private String questionType = "";
 	
 	@Inject
 	public ActivityAsignAssQuestion(PlaceAsignAssQuestion place,
@@ -130,8 +159,11 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
         widget.setWidget(asignAssQuestionView.asWidget());
         addQuestionsTabPanel = view.getAddQuestionsTabPanel();
         
-        
-        
+        advancedSearchSubViewImpl = view.getQuestionAdvancedSearchSubViewImpl();
+		advancedSearchSubViewImpl.setDelegate(this);
+		criteriaTable = advancedSearchSubViewImpl.getTable();
+		criteriaTable.setRowCount(advancedSearchCriteriaList.size());
+		criteriaTable.setRowData(advancedSearchCriteriaList);
         
         questionPanel = view.getQuestionPanel();
         questionPanel.setDelegate(this);
@@ -176,7 +208,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 	}
 	
 	private void initAssementTabPanel() {
-		requests.assesmentRequest().findAssesmentsOpenBetween().with("mc","questionTypeCountPerExams","questionTypeCountPerExams.questionTypesAssigned").fire(new Receiver<List<AssesmentProxy>>(){
+		requests.assesmentRequest().findAssesmentsOpenBetween().with("mc","questionTypeCountPerExams","questionTypeCountPerExams.questionTypesAssigned").fire(new BMEReceiver<List<AssesmentProxy>>(){
 
 			@Override
 			public void onSuccess(List<AssesmentProxy> response) {
@@ -224,9 +256,10 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 	/**
 	 * 
 	 * Init Rigt side view
+	 * @param advancedSearchCriteriaList2 
 	 * 
 	 * */
-	private void initQuestionPanel(int action, AssesmentProxy assesment,String questionName,String questionId,String questionType) {
+	private void initQuestionPanel(int action, AssesmentProxy assesment,List<AdvancedSearchCriteria> advancedSearchCriteriaList, String questionName,String questionId,String questionType) {
 		
 		PersonProxy author=null;
 		
@@ -276,9 +309,12 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 				action=2;
 		}*/
 		
+		List<String> encodedStringList = new ArrayList<String>();
+		encodedStringList = AdvancedSearchCriteriaUtils.encodeList(advancedSearchCriteriaList);
+		
 		//proposed Question
 		if (action==0){
-			requests.assesmentQuestionRequest().findAssesmentQuestionsByMcProposal(assesment.getId(),questionId,questionType,questionName).with("question.rewiewer","question.autor","question.keywords","question.questEvent","question.comment","question.questionType").fire(new Receiver<List<AssesmentQuestionProxy>>() {
+			requests.assesmentQuestionRequest().findAssesmentQuestionsByMcProposal(assesment.getId(), encodedStringList, questionId,questionType,questionName).with("question.rewiewer","question.autor","question.keywords","question.questEvent","question.comment","question.questionType").fire(new BMEReceiver<List<AssesmentQuestionProxy>>() {
 
 				@Override
 				public void onSuccess(List<AssesmentQuestionProxy> response) {
@@ -296,39 +332,14 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 						
 					}
 					
-				}
-				
-		           @Override
-					public void onFailure(ServerFailure error) {
-							Log.warn(McAppConstant.ERROR_WHILE_DELETE + " in Institution:Event -" + error.getMessage());
-							if(error.getMessage().contains("ConstraintViolationException")){
-								Log.debug("Fehlen beim erstellen: Doppelter name");
-								// TODO mcAppFactory.getErrorPanel().setErrorMessage(McAppConstant.EVENT_IS_REFERENCED);
-							}
-							
-						
-					}
-					@Override
-					public void onViolation(Set<Violation> errors) {
-						Iterator<Violation> iter = errors.iterator();
-						String message = "";
-						while(iter.hasNext()){
-							message += iter.next().getMessage() + "<br>";
-						}
-						Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Event -" + message);
-						
-						ErrorPanel erorPanel = new ErrorPanel();
-			        	  erorPanel.setWarnMessage(message);
-
-						
-					}
+				} 
 			});
 		}//past Question
 		else if (action == 1){
-				findPastAssesmentQuestion(assesment,questionName,questionId,questionType);
+				findPastAssesmentQuestion(assesment,questionName,questionId,questionType, encodedStringList);
 		}//new Question
 		else if (action == 2){
-			requests.questionRequest().findQuestionsByMc(assesment.getMc().getId(),questionId,questionType,questionName,assesment,author).with("rewiewer", "questEvent", "autor", "questionType", "keywords").fire(new Receiver<List<QuestionProxy>>() {
+			requests.questionRequest().findQuestionsByMc(assesment.getId(), author.getId(), encodedStringList, questionId, questionType, questionName).with("rewiewer", "questEvent", "autor", "questionType", "keywords").fire(new BMEReceiver<List<QuestionProxy>>() {
 
 				@Override
 				public void onSuccess(List<QuestionProxy> response) {
@@ -345,38 +356,13 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 					}
 					
 				}
-				
-		           @Override
-					public void onFailure(ServerFailure error) {
-							Log.warn(McAppConstant.ERROR_WHILE_DELETE + " in Institution:Event -" + error.getMessage());
-							if(error.getMessage().contains("ConstraintViolationException")){
-								Log.debug("Fehlen beim erstellen: Doppelter name");
-								// TODO mcAppFactory.getErrorPanel().setErrorMessage(McAppConstant.EVENT_IS_REFERENCED);
-							}
-							
-						
-					}
-					@Override
-					public void onViolation(Set<Violation> errors) {
-						Iterator<Violation> iter = errors.iterator();
-						String message = "";
-						while(iter.hasNext()){
-							message += iter.next().getMessage() + "<br>";
-						}
-						Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Event -" + message);
-						
-						ErrorPanel erorPanel = new ErrorPanel();
-			        	  erorPanel.setWarnMessage(message);
-
-						
-					}
 			});
 		}
 		
 	}
 
 	/*finds past assesment question according to selected author*/
-	private void findPastAssesmentQuestion(AssesmentProxy assesment,String questionName,String questionId,String questionType) {
+	private void findPastAssesmentQuestion(AssesmentProxy assesment,String questionName,String questionId,String questionType, List<String> encodedStringList) {
 		
 		PersonProxy author=null;
 		
@@ -388,7 +374,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 		{
 			author=userLoggedIn;
 		}
-		requests.assesmentQuestionRequest().findAssesmentQuestionsByMc(assesment.getId(),assesment.getMc().getId(),questionId,questionType,questionName,questionPanel.getAuthorListBox().getValue()).with("question.rewiewer","question.autor","question.keywords","question.questEvent","question.comment","question.questionType").fire(new Receiver<List<AssesmentQuestionProxy>>() {
+		requests.assesmentQuestionRequest().findAssesmentQuestionsByMc(assesment.getId(),assesment.getMc().getId(), encodedStringList, questionId,questionType,questionName,questionPanel.getAuthorListBox().getValue()).with("question.rewiewer","question.autor","question.keywords","question.questEvent","question.comment","question.questionType").fire(new BMEReceiver<List<AssesmentQuestionProxy>>() {
 
 			@Override
 			public void onSuccess(List<AssesmentQuestionProxy> response) {
@@ -403,33 +389,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 				}
 				
 			}
-			
-	           @Override
-				public void onFailure(ServerFailure error) {
-						Log.warn(McAppConstant.ERROR_WHILE_DELETE + " in Institution:Event -" + error.getMessage());
-						if(error.getMessage().contains("ConstraintViolationException")){
-							Log.debug("Fehlen beim erstellen: Doppelter name");
-							// TODO mcAppFactory.getErrorPanel().setErrorMessage(McAppConstant.EVENT_IS_REFERENCED);
-						}
-						
-					
-				}
-				@Override
-				public void onViolation(Set<Violation> errors) {
-					Iterator<Violation> iter = errors.iterator();
-					String message = "";
-					while(iter.hasNext()){
-						message += iter.next().getMessage() + "<br>";
-					}
-					Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Event -" + message);
-					
-					ErrorPanel erorPanel = new ErrorPanel();
-		        	  erorPanel.setWarnMessage(message);
-
-					
-				}
 		});
-		
 	}
 
 	/*
@@ -442,7 +402,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 	 * */
 	private void populateAuthorListBox(final ValueListBox<PersonProxy> authorListBox,final AssesmentProxy assesment,final boolean isRightSide) {
 		
-		requests.assesmentQuestionRequest().findAuthorListByAssesment(assesment).fire(new Receiver<List<PersonProxy>>() {
+		requests.assesmentQuestionRequest().findAuthorListByAssesment(assesment).fire(new BMEReceiver<List<PersonProxy>>() {
 
 			@Override
 			public void onSuccess( List<PersonProxy> response) {
@@ -501,7 +461,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 			
 			
 		//}
-		requests.assesmentQuestionRequest().findAssesmentQuestionsByAssesment(assesmentTabPanel.getActiveTab().getId(),author).with("question.rewiewer","question.autor","question.keywords","question.questEvent","question.comment","question.questionType").fire(new Receiver<List<AssesmentQuestionProxy>>() {
+		requests.assesmentQuestionRequest().findAssesmentQuestionsByAssesment(assesmentTabPanel.getActiveTab().getId(),author).with("question.rewiewer","question.autor","question.keywords","question.questEvent","question.comment","question.questionType").fire(new BMEReceiver<List<AssesmentQuestionProxy>>() {
 
 			@Override
 			public void onSuccess(List<AssesmentQuestionProxy> response) {
@@ -531,31 +491,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 				
 			}
 			
-	           @Override
-				public void onFailure(ServerFailure error) {
-						Log.warn(McAppConstant.ERROR_WHILE_DELETE + " in Institution:Event -" + error.getMessage());
-						if(error.getMessage().contains("ConstraintViolationException")){
-							Log.debug("Fehlen beim erstellen: Doppelter name");
-							// TODO mcAppFactory.getErrorPanel().setErrorMessage(McAppConstant.EVENT_IS_REFERENCED);
-						}
-						
-					
-				}
-				@Override
-				public void onViolation(Set<Violation> errors) {
-					Iterator<Violation> iter = errors.iterator();
-					String message = "";
-					while(iter.hasNext()){
-						message += iter.next().getMessage() + "<br>";
-					}
-					Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Event -" + message);
-					
-					ErrorPanel erorPanel = new ErrorPanel();
-			        	  erorPanel.setWarnMessage(message);
-
-					
-				}
-		});
+	  	});
 		
 	}
 
@@ -723,14 +659,14 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 
 	@Override
 	public void tabQuestionClicked(int index) {
-		initQuestionPanel(index, assesmentTabPanel.getActiveTab(),"","","");
+		initQuestionPanel(index, assesmentTabPanel.getActiveTab(), advancedSearchCriteriaList, "","","");
 		
 	}
 
 	@Override
 	public void twistieOpenQuestionClicked(final QuestionView questionView) {
 		
-		requests.answerRequest().findAnswersByQuestion(questionView.getProxy().getId()).fire(new Receiver<List<AnswerProxy>>() {
+		requests.answerRequest().findAnswersByQuestion(questionView.getProxy().getId()).fire(new BMEReceiver<List<AnswerProxy>>() {
 
 			@Override
 			public void onSuccess(List<AnswerProxy> response) {
@@ -803,7 +739,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 		{
 			assementQuestionPanel.getSendMail().removeFromParent();
 		}
-		 initQuestionPanel(addQuestionsTabPanel.getActiveTab(), assesment,"","","");
+		 initQuestionPanel(addQuestionsTabPanel.getActiveTab(), assesment, advancedSearchCriteriaList, "","","");
 		 
 		 
 		
@@ -932,7 +868,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 				   
 				   requests.assesmentQuestionRequest()
 				   			.findAssesmentQuestionByAssesmentAndQuestion(((QuestionView)widget)
-						   .getProxy().getId(), assesment.getId()).with("question.rewiewer","question.autor","question.keywords","question.questEvent","question.comment","question.questionType").fire(new Receiver<AssesmentQuestionProxy>(){
+						   .getProxy().getId(), assesment.getId()).with("question.rewiewer","question.autor","question.keywords","question.questEvent","question.comment","question.questionType").fire(new BMEReceiver<AssesmentQuestionProxy>(){
 
 							@Override
 							public void onSuccess(AssesmentQuestionProxy responce) {
@@ -963,39 +899,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 
 								
 							}
-							
-					           @Override
-								public void onFailure(ServerFailure error) {
-										Log.warn(McAppConstant.ERROR_WHILE_DELETE + " in Institution:Event -" + error.getMessage());
-										if(error.getMessage().contains("ConstraintViolationException")){
-											Log.debug("Fehlen beim erstellen: Doppelter name");
-											// TODO mcAppFactory.getErrorPanel().setErrorMessage(McAppConstant.EVENT_IS_REFERENCED);
-										}
-										
-										
-										
-									
-								}
-								@Override
-								public void onViolation(Set<Violation> errors) {
-									Iterator<Violation> iter = errors.iterator();
-									String message = "";
-									while(iter.hasNext()){
-										message += iter.next().getMessage() + "<br>";
-									}
-									Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Event -" + message);
-									
-									ErrorPanel erorPanel = new ErrorPanel();
-			        	  erorPanel.setWarnMessage(message);
-
-									
-								}
-						   
-						   });
-				   
-				   
-				   
-				  
+					   });
 			   }
 		}
 		
@@ -1014,7 +918,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 
 	@Override
 	public void twistieOpenAssQuestionClicked(final AssesmentQuestionView questionView, final boolean isInAssement) {
-		requests.answerToAssQuestionRequest().findAnswerToAssQuestionByAssesmentQuestion(questionView.getProxy().getId()).with("answers").fire(new Receiver<List<AnswerToAssQuestionProxy>>() {
+		requests.answerToAssQuestionRequest().findAnswerToAssQuestionByAssesmentQuestion(questionView.getProxy().getId()).with("answers").fire(new BMEReceiver<List<AnswerToAssQuestionProxy>>() {
 
 			@Override
 			public void onSuccess(List<AnswerToAssQuestionProxy> response) {
@@ -1082,7 +986,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 			public void onSuccess(Void response) {
 				
 				assesmentQuestionViewImpl.getForceAcceptButton().removeFromParent();	
-				requests.assesmentQuestionRequest().findAssesmentQuestion(assesmentQuestionViewImpl.getProxy().getId()).with("question.rewiewer","question.autor","question.keywords","question.questEvent","question.comment","question.questionType").fire(new Receiver<AssesmentQuestionProxy>() {
+				requests.assesmentQuestionRequest().findAssesmentQuestion(assesmentQuestionViewImpl.getProxy().getId()).with("question.rewiewer","question.autor","question.keywords","question.questEvent","question.comment","question.questionType").fire(new BMEReceiver<AssesmentQuestionProxy>() {
 
 					@Override
 					public void onSuccess(AssesmentQuestionProxy response) {
@@ -1102,7 +1006,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 	@Override
 	public void loadTemplate() {
 		
-		requests.assesmentQuestionRequest().loadTemplate().fire(new Receiver<String>() {
+		requests.assesmentQuestionRequest().loadTemplate().fire(new BMEReceiver<String>() {
 
 			@Override
 			public void onSuccess(String response) {
@@ -1296,7 +1200,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 		   
 		   
 		   assQuestion.setAnswersToAssQuestion(answerToAssQuestionProxySet);
-	     assesmentQuestionRequest.persist().using(assQuestion).with("answersToAssQuestion").fire(new Receiver<Void>() {
+	     assesmentQuestionRequest.persist().using(assQuestion).with("answersToAssQuestion").fire(new BMEReceiver<Void>() {
 
 				@Override
 				public void onSuccess(Void ignore) {
@@ -1315,36 +1219,8 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 					
 					 }
 					 replaceQuestionThroughAssesmentQuestion(assesmentTabPanel.getActiveTab());
-					 
-					
 				}
 				
-		           @Override
-					public void onFailure(ServerFailure error) {
-							Log.warn(McAppConstant.ERROR_WHILE_DELETE + " in Institution:Event -" + error.getMessage());
-							if(error.getMessage().contains("ConstraintViolationException")){
-								Log.debug("Fehlen beim erstellen: Doppelter name");
-								// TODO mcAppFactory.getErrorPanel().setErrorMessage(McAppConstant.EVENT_IS_REFERENCED);
-							}
-							
-							
-							
-						
-					}
-					@Override
-					public void onViolation(Set<Violation> errors) {
-						Iterator<Violation> iter = errors.iterator();
-						String message = "";
-						while(iter.hasNext()){
-							message += iter.next().getMessage() + "<br>";
-						}
-						Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Event -" + message);
-						
-						ErrorPanel erorPanel = new ErrorPanel();
-	        	  erorPanel.setWarnMessage(message);
-
-						
-					}
 			});
 	}
 	
@@ -1368,7 +1244,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 		  
 		  
 		   
-		   requests.assesmentQuestionRequest().copyAssesmentQuestion(assesmentQuestionViewAktiv.getProxy().getId(), assesmentTabPanel.getActiveTab().getId(),selectedAuthor).with("question.rewiewer","question.autor","question.keywords","question.questEvent","question.comment","question.questionType").fire(new Receiver<AssesmentQuestionProxy>() {
+		   requests.assesmentQuestionRequest().copyAssesmentQuestion(assesmentQuestionViewAktiv.getProxy().getId(), assesmentTabPanel.getActiveTab().getId(),selectedAuthor).with("question.rewiewer","question.autor","question.keywords","question.questEvent","question.comment","question.questionType").fire(new BMEReceiver<AssesmentQuestionProxy>() {
 
 				@Override
 				public void onSuccess(AssesmentQuestionProxy response) {
@@ -1393,31 +1269,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 					changedeleteAssesmentButtonVisiblilty(assesmentQuestionViewAktiv);
 					}
 				
-		           @Override
-					public void onFailure(ServerFailure error) {
-							Log.warn(McAppConstant.ERROR_WHILE_DELETE + " in Institution:Event -" + error.getMessage());
-							if(error.getMessage().contains("ConstraintViolationException")){
-								Log.debug("Fehlen beim erstellen: Doppelter name");
-								// TODO mcAppFactory.getErrorPanel().setErrorMessage(McAppConstant.EVENT_IS_REFERENCED);
-							}
-							
-						
-					}
-					@Override
-					public void onViolation(Set<Violation> errors) {
-						Iterator<Violation> iter = errors.iterator();
-						String message = "";
-						while(iter.hasNext()){
-							message += iter.next().getMessage() + "<br>";
-						}
-						Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Event -" + message);
-						
-						ErrorPanel erorPanel = new ErrorPanel();
-	        	  erorPanel.setWarnMessage(message);
-
-						
-					}
-			});
+				});
 	}
 	
 	/*Add button clicked from past and proposed tab*/
@@ -1457,8 +1309,12 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 		if(questionId !=null)
 		{
 			qId=questionId.toString();
+			this.questionId = qId;
 		}
-		initQuestionPanel(addQuestionsTabPanel.getActiveTab(), assesmentTabPanel.getActiveTab(),questionshortName,qId,questionType);
+		
+		this.questionShortName = questionshortName;
+		this.questionType = questionType;			
+		initQuestionPanel(addQuestionsTabPanel.getActiveTab(), assesmentTabPanel.getActiveTab(), advancedSearchCriteriaList, questionshortName,qId,questionType);
 	}
 
 	@Override
@@ -1474,7 +1330,7 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 			public void onSuccess(Void response) {
 				assesmentQuestionViewImpl.removeFromParent();
 				decrementBlockingCounter(questionTypeCountProxy);
-				initQuestionPanel(addQuestionsTabPanel.getActiveTab(), assesmentTabPanel.getActiveTab(),"","","");
+				initQuestionPanel(addQuestionsTabPanel.getActiveTab(), assesmentTabPanel.getActiveTab(), advancedSearchCriteriaList, "","","");
 
 			}
 		});
@@ -1679,6 +1535,131 @@ AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, As
 		
 		if(end <= questionTypeCountProxyList.size())
 		assementQuestionPanel.getTable().setRowData(start,questionTypeCountProxyList.subList(start, end));
+	}
+
+	@Override
+	public void keywordAddClicked(final IconButton addKeyword) {		
+		requests.keywordRequest().findAllKeywords().fire(new BMEReceiver<List<KeywordProxy>>() {
+
+			@Override
+			public void onSuccess(List<KeywordProxy> response) {
+				QuestionAdvancedSearchKeywordPopupViewImpl keywordPopupView = new QuestionAdvancedSearchKeywordPopupViewImpl();
+				hidePreviousPopup(keywordPopupView);
+				keywordPopupView.setDelegate(ActivityAsignAssQuestion.this);
+				keywordPopupView.setKeywordSuggsetBoxValue(response);
+				keywordPopupView.display(addKeyword);
+			}
+		});		
+	}
+
+	private void hidePreviousPopup(QuestionAdvancedSearchAbstractPopupViewImpl popupView) {
+		if (advancedSearchAbstractPopupViewImpl != null && advancedSearchAbstractPopupViewImpl.isShowing())
+			advancedSearchAbstractPopupViewImpl.hide();
+		
+		advancedSearchAbstractPopupViewImpl = popupView;
+	}
+
+	@Override
+	public void advancedSearchCriteriaClicked(AdvancedSearchCriteria criteria) {
+		advancedSearchCriteriaList.add(criteria);
+		initSearch();
+	}
+	
+	@Override
+	public void deleteAdvancedSearchCriteriaClicked(AdvancedSearchCriteria object) {
+		advancedSearchCriteriaList.remove(object);
+		initSearch();
+	}
+	
+	public void initSearch()
+	{
+		criteriaTable.setRowCount(advancedSearchCriteriaList.size());
+		criteriaTable.setRowData(advancedSearchCriteriaList);
+		initQuestionPanel(addQuestionsTabPanel.getActiveTab(), assesmentTabPanel.getActiveTab(), advancedSearchCriteriaList, questionShortName, questionId, questionType);
+	}
+
+	@Override
+	public void questionEventAddClicked(final IconButton addKeyword) {
+		if (institutionActive != null)
+		{
+			requests.questionEventRequest().findQuestionEventByInstitution(institutionActive).fire(new BMEReceiver<List<QuestionEventProxy>>() {
+
+				@Override
+				public void onSuccess(List<QuestionEventProxy> response) {
+					QuestionAdvancedSearchQuestionEventPopupViewImpl questionEventView = new QuestionAdvancedSearchQuestionEventPopupViewImpl();
+					hidePreviousPopup(questionEventView);
+					questionEventView.setDelegate(ActivityAsignAssQuestion.this);
+					questionEventView.setQuestionEventSuggsetBoxValue(response);
+					questionEventView.display(addKeyword);
+				}
+			});
+		}
+		
+	}
+
+	@Override
+	public void textSearchAddClicked(IconButton addTextSearch) {
+		QuestionAdvancedSearchTextSearchPopupViewImpl textSearchView = new QuestionAdvancedSearchTextSearchPopupViewImpl();
+		hidePreviousPopup(textSearchView);
+		textSearchView.setDelegate(this);
+		textSearchView.display(addTextSearch);
+	}
+
+	@Override
+	public void dateAddClicked(IconButton addDate) {
+		QuestionAdvancedSearchDatePopupViewImpl dateSearchView = new QuestionAdvancedSearchDatePopupViewImpl();
+		hidePreviousPopup(dateSearchView);
+		dateSearchView.setDelegate(this);
+		dateSearchView.display(addDate);
+	}
+
+	@Override
+	public void mcAddClicked(final IconButton addMc)
+	{
+		requests.mcRequest().findAllMcs().fire(new BMEReceiver<List<McProxy>>() {
+
+			@Override
+			public void onSuccess(List<McProxy> response) {
+				QuestionAdvancedSearchMCPopupViewImpl mcSearchView = new QuestionAdvancedSearchMCPopupViewImpl();
+				hidePreviousPopup(mcSearchView);
+				mcSearchView.setDelegate(ActivityAsignAssQuestion.this);
+				mcSearchView.setProxyToMcListBox(response);
+				mcSearchView.display(addMc);		
+			}
+		});
+	}
+	
+	@Override
+	public void userTypeAddClicked(final IconButton addUserType)
+	{
+		requests.personRequest().findAllPeople().fire(new BMEReceiver<List<PersonProxy>>() {
+
+			@Override
+			public void onSuccess(List<PersonProxy> response) {
+				QuestionAdvancedSearchUserTypePopupViewImpl userTypeView = new QuestionAdvancedSearchUserTypePopupViewImpl();
+				hidePreviousPopup(userTypeView);
+				userTypeView.setDelegate(ActivityAsignAssQuestion.this);
+				userTypeView.setPersonSuggsetBoxValue(response);
+				userTypeView.display(addUserType);
+			}
+		});
+	}
+	
+	public void mediaAvailabilityAddClicked(IconButton addMediaAvailability)
+	{
+		QuestionAdvancedSearchMediaAvailabilityPopupViewImpl mediaAvailabilityView = new QuestionAdvancedSearchMediaAvailabilityPopupViewImpl();
+		hidePreviousPopup(mediaAvailabilityView);
+		mediaAvailabilityView.setDelegate(this);
+		mediaAvailabilityView.display(addMediaAvailability);
+	}
+	
+	public void questionTypeAddClicked(IconButton addQuestionType)
+	{
+		QuestionAdvancedSearchQuestionTypePopupViewImpl questionTypeView = new QuestionAdvancedSearchQuestionTypePopupViewImpl();
+		hidePreviousPopup(questionTypeView);
+		questionTypeView.setDelegate(this);
+		questionTypeView.display(addQuestionType);
+		questionTypeView.disableSearchTextBox();
 	}
 
 }

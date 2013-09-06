@@ -241,6 +241,10 @@ public class QuestionAdvancedSearchSubViewImpl extends Composite implements
 		delegate.questionTypeAddClicked(addQuestionType);
 	}
 	
+	public IconButton getAddMc() {
+		return addMc;
+	}
+
 	public CellTable<AdvancedSearchCriteria> getTable() {
 		return table;
 	}

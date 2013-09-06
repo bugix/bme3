@@ -1,5 +1,7 @@
 package medizin.client.ui.view.assignquestion;
 
+import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchSubViewImpl;
+
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.ui.IsWidget;
 
@@ -15,6 +17,5 @@ public interface AsignAssQuestionView extends IsWidget {
 	AssesmentTabPanelImpl getAssesmentTabPanel();
 	AssesmentQuestionPanelImpl getAssesmentQuestionPanel();
 	AddQuestionsTabPanelImpl getAddQuestionsTabPanel();
-	
-
+	QuestionAdvancedSearchSubViewImpl getQuestionAdvancedSearchSubViewImpl();
 }
