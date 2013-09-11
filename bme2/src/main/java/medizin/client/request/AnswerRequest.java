@@ -37,4 +37,6 @@ public interface AnswerRequest extends AnswerRequest_Roo_Gwt {
 	Request<Long> countAnswersForForceActiveByQuestion(Long questionId);
 	
 	Request<List<AnswerProxy>> findAnswersForForceActiveByQuestion(Long questionId, Integer start, Integer length);
+	
+	Request<Long> countAnswerByLoggedUser(boolean isAdminOrInstitutionalAdmin, Long loggedUserId);
 }

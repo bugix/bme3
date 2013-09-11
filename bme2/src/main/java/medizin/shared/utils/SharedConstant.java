@@ -18,9 +18,9 @@ public final class SharedConstant {
 	 
 	public static final String DOWNLOAD_DIR = "download/";
 	
-	public static final String UPLOAD_QUESTION_PATH =  getUploadBaseDIRPath() + DOWNLOAD_DIR +  "question/";
+	/*public static final String UPLOAD_QUESTION_PATH =  getUploadBaseDIRPath() + DOWNLOAD_DIR +  "question/";
 	
-	public static final String UPLOAD_ANSWER_PATH  =  getUploadBaseDIRPath() + DOWNLOAD_DIR + "answer/";
+	public static final String UPLOAD_ANSWER_PATH  =  getUploadBaseDIRPath() + DOWNLOAD_DIR + "answer/";*/
 	
 	public static final String UPLOAD_MEDIA_PATH =  getUploadBaseDIRPath() + DOWNLOAD_DIR +  "media/";
 	
@@ -47,6 +47,8 @@ public final class SharedConstant {
 	public static String[] VIDEO_EXTENSIONS= {"WebM","ogv","mp4"};
 	
 	public static  String MAIL_TEMPLATE="/application/gwt/unibas/mailTemplate/defaultTemplate.txt";
+	
+	public static  String SYSTEM_OVERVIEW_MAIL_TEMPLATE="/application/gwt/unibas/mailTemplate/DefaultSystemOverviewTemplate.txt";
 	
 	public static final String POSSIBLE_FIELD = "possiblefield";
 	

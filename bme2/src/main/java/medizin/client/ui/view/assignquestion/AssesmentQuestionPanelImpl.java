@@ -11,9 +11,11 @@ import medizin.client.proxy.QuestionTypeCountPerExamProxy;
 import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.style.resources.MyCellTableNoHilightResources;
 import medizin.client.style.resources.MySimplePagerResources;
+import medizin.client.ui.widget.sendmail.SendMailPopupViewImpl;
 import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.common.collect.Maps;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -252,11 +254,9 @@ public class AssesmentQuestionPanelImpl extends Composite implements AssesmentQu
 	{
 		if(sendMailPopupViewImpl==null)
 		{
-			sendMailPopupViewImpl=new SendMailPopupViewImpl();
+			sendMailPopupViewImpl=new SendMailPopupViewImpl(getSendMailParamsMap());
 			
-			sendMailPopupViewImpl.setAnimationEnabled(true);
-						
-			sendMailPopupViewImpl.getSendMailButton().addClickHandler(new ClickHandler() {
+			sendMailPopupViewImpl.addSendClickHandler(new ClickHandler() {
 				
 				@Override
 				public void onClick(ClickEvent event) {					
@@ -264,7 +264,7 @@ public class AssesmentQuestionPanelImpl extends Composite implements AssesmentQu
 				}
 			});
 			
-			sendMailPopupViewImpl.getRestoreTemplateButton().addClickHandler(new ClickHandler() {
+			sendMailPopupViewImpl.addRestoreClickHandler(new ClickHandler() {
 				
 				@Override
 				public void onClick(ClickEvent event) {
@@ -273,8 +273,27 @@ public class AssesmentQuestionPanelImpl extends Composite implements AssesmentQu
 			});		
 		}
 		delegate.loadTemplate();
-		//sendMailPopupViewImpl.show();
-		//sendMailPopupViewImpl.center();
+	}
+	
+	private Map<String, String> getSendMailParamsMap() {
+		Map<String, String> paramMap = Maps.newHashMap();
+		
+		paramMap.put(constants.mailVarAssesment(), constants.mailAssesment());
+		paramMap.put(constants.mailVarTo(), constants.mailToName());
+		paramMap.put(constants.mailVarFrom(), constants.mailFromName());
+		paramMap.put(constants.mailVarStartDate(), constants.mailStartDate());
+		paramMap.put(constants.mailVarClosedDate(), constants.mailClosedDate());
+		paramMap.put(constants.mailVarMC(), constants.mailMC());
+		paramMap.put(constants.mailVarProposedCount(), constants.mailProposedCount());
+		paramMap.put(constants.mailVarTotalCount(), constants.mailTotalCount());
+		paramMap.put(constants.mailVarLoopStart(), constants.mailLoopStart());
+		paramMap.put(constants.mailVarLoopEnd(), constants.mailLoopEnd());
+		paramMap.put(constants.mailVarAllocatedCount(), constants.mailAllocatedCount());
+		paramMap.put(constants.mailVarQuestionType(), constants.mailQuestionType());
+		paramMap.put(constants.mailVarSpecialization(), constants.mailSpecialization());
+		paramMap.put(constants.mailVarTotalRemaining(), constants.mailTotalRemaining());
+		paramMap.put(constants.mailVarTotalRemainingCount(), constants.mailTotalRemainingCount());
+		return paramMap;
 	}
 	
 	public void displayMail(String response)

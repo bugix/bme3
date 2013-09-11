@@ -21,6 +21,8 @@ import medizin.client.proxy.QuestionTypeCountPerExamProxy;
 import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.request.AnswerToAssQuestionRequest;
 import medizin.client.request.AssesmentQuestionRequest;
+import medizin.client.request.AssesmentRequest;
+import medizin.client.request.QuestionEventRequest;
 import medizin.client.request.QuestionSumPerPersonRequest;
 import medizin.client.ui.AssesmenBookDialogbox;
 import medizin.client.ui.AssesmenBookDialogboxImpl;
@@ -171,8 +173,10 @@ public class ActivityBookAssementDetails extends AbstractActivityWrapper impleme
 					Log.debug("view ist null");
 					return;
 				}
+				
 				Log.debug("Liste QuestionTYpeCountPerExamproxy-Size: "+ values.size());
 				Iterator<QuestionTypeCountPerExamProxy> iterQuestionTypeCount = values.iterator();
+				QuestionEventRequest questionEventRequest = null;
 				while(iterQuestionTypeCount.hasNext()){
 					QuestionTypeCountPerExamProxy questionTypeCount = iterQuestionTypeCount.next();
 					Set<QuestionTypeProxy> questionTypesAssigned = questionTypeCount.getQuestionTypesAssigned();
@@ -180,8 +184,16 @@ public class ActivityBookAssementDetails extends AbstractActivityWrapper impleme
 					/**
 					 * For each questionTypeCount-object fill design elements.
 					 */
-					fillQuestiontype(questionTypeCount);
+					if (questionEventRequest == null)
+						questionEventRequest = requests.questionEventRequest();
+					else
+						questionEventRequest = questionEventRequest.append(requests.questionEventRequest());
+				
+					fillQuestiontype(questionTypeCount, questionEventRequest);
 				}
+				
+				if (questionEventRequest != null)
+					questionEventRequest.fire();
 				
 				
 			if (widget != null) {
@@ -255,9 +267,10 @@ public void moveQuestionTypeCountPerExamRequestUp(QuestionTypeCountPerExamProxy 
 	
 	/**
 	 * Insert design-elements for questionTypeCountPerExamProxy
+	 * @param questionEventRequest 
 	 * 
 	 */
-	protected void fillQuestiontype(QuestionTypeCountPerExamProxy questionTypeCountProxy){
+	protected void fillQuestiontype(QuestionTypeCountPerExamProxy questionTypeCountProxy, QuestionEventRequest questionEventRequest){
 		
 		
 		QuestionTypeCountPerExamProxy questionTypeCountProxyTemp = questionTypeCountProxy;
@@ -300,10 +313,11 @@ public void moveQuestionTypeCountPerExamRequestUp(QuestionTypeCountPerExamProxy 
 		/**
 		 * Request all question Events for each questionTypeProxy
 		 */
-		requests.questionEventRequest().findAllQuestionEventsByQuestionTypeAndAssesmentID(assesment.getId(), questionTypesId  ).fire(new BMEReceiver <java.util.List<medizin.client.proxy.QuestionEventProxy>>(){
+		questionEventRequest.findAllQuestionEventsByQuestionTypeAndAssesmentID(assesment.getId(), questionTypesId  ).to(new BMEReceiver <java.util.List<medizin.client.proxy.QuestionEventProxy>>(){
 
 			@Override
 			public void onSuccess(List<QuestionEventProxy> response) {
+				AssesmentQuestionRequest assesmentQuestionRequest = null;
 				Iterator<QuestionEventProxy> iterQuestionEventProxy = response.iterator();
 				while(iterQuestionEventProxy.hasNext()){
 					QuestionEventProxy questionEventProxy = iterQuestionEventProxy.next();
@@ -311,11 +325,16 @@ public void moveQuestionTypeCountPerExamRequestUp(QuestionTypeCountPerExamProxy 
 					/**
 					 * For each questionEvent in callback setup event-area
 					 */
-					insertQuestionEvents(questionEventProxy,  eventsContainer, /*eventDragController,*/ questionTypesId);
 					
+					if (assesmentQuestionRequest == null)
+						assesmentQuestionRequest = requests.assesmentQuestionRequest();
+					else
+						assesmentQuestionRequest = assesmentQuestionRequest.append(requests.assesmentQuestionRequest());
 					
+					insertQuestionEvents(questionEventProxy,  eventsContainer, /*eventDragController,*/ questionTypesId, assesmentQuestionRequest);
 				}
-				
+				if (assesmentQuestionRequest != null)
+					assesmentQuestionRequest.fire();
 			}
 			
 		}
@@ -332,8 +351,9 @@ public void moveQuestionTypeCountPerExamRequestUp(QuestionTypeCountPerExamProxy 
 	
 	/**
 	 * Add QuestionEvent to the eventsContainer of Questiontype.
+	 * @param assesmentQuestionRequest 
 	 */
-	protected void insertQuestionEvents(QuestionEventProxy questionEvent, VerticalPanel eventsContainer, /*PickupDragController eventDragController,*/ List<Long> questionTypesId){
+	protected void insertQuestionEvents(QuestionEventProxy questionEvent, VerticalPanel eventsContainer, /*PickupDragController eventDragController,*/ List<Long> questionTypesId, AssesmentQuestionRequest assesmentQuestionRequest){
 		//final QuestionTypeProxy questionTypeProxy= questionTypesId;
 		/**
 		 * New DropController that allows dropping eventsContainer inside eventsContainer.
@@ -361,7 +381,7 @@ public void moveQuestionTypeCountPerExamRequestUp(QuestionTypeCountPerExamProxy 
 		 * request all Assesmentquestions by QuestinEvent, Assesment and QuestionType
 		 */
 		
-		requests.assesmentQuestionRequest().findAssesmentQuestionsByQuestionEventAssIdQuestType(questionEvent.getId(), assesment.getId(), questionTypesId,true,false).with("question").fire(new BMEReceiver <java.util.List<medizin.client.proxy.AssesmentQuestionProxy>>(){
+		assesmentQuestionRequest.findAssesmentQuestionsByQuestionEventAssIdQuestType(questionEvent.getId(), assesment.getId(), questionTypesId,true,false).with("question").to(new BMEReceiver <java.util.List<medizin.client.proxy.AssesmentQuestionProxy>>(){
 			
 			@Override
 			public void onSuccess(List<AssesmentQuestionProxy> response) {
@@ -372,6 +392,8 @@ public void moveQuestionTypeCountPerExamRequestUp(QuestionTypeCountPerExamProxy 
 					return;
 				}
 				Iterator<AssesmentQuestionProxy> iterAssQuestionProxy = response.iterator();
+				
+				AnswerToAssQuestionRequest answerToAssQuestionRequest = null; 
 				
 				/**
 				 * For each assessment-question create new QuestionViewImpl.
@@ -396,9 +418,13 @@ public void moveQuestionTypeCountPerExamRequestUp(QuestionTypeCountPerExamProxy 
 				    		  questionVert);
 				      widgetDragController.registerDropController(widgetDropController);
 */    
-		      
+				    if(answerToAssQuestionRequest != null) {
+				    	  answerToAssQuestionRequest = answerToAssQuestionRequest.append(requests.answerToAssQuestionRequest());
+				      }else {
+				    	  answerToAssQuestionRequest = requests.answerToAssQuestionRequest();
+				      }
 				      
-				    final BMEReceiver<List<AnswerToAssQuestionProxy>> callbackanswerToAssQuest = new BMEReceiver<List<AnswerToAssQuestionProxy>>() {
+				      answerToAssQuestionRequest.findAnswerToAssQuestionByAssesmentQuestion(assQuestionProxy.getId()).with("answers").to(new BMEReceiver<List<AnswerToAssQuestionProxy>>() {
 				    
 						@Override
 						public void onSuccess(List<AnswerToAssQuestionProxy> values) {
@@ -426,17 +452,15 @@ public void moveQuestionTypeCountPerExamRequestUp(QuestionTypeCountPerExamProxy 
 							}
 							//loadingPopup.hide();
 						}
-						
-				    	  
-				      };
+				      });
 
-				      fireGetAnswerToAssQuest(callbackanswerToAssQuest, assQuestionProxy);
-				
-		
-				      
-				      
+				    
+				      //fireGetAnswerToAssQuest(callbackanswerToAssQuest, assQuestionProxy);
 				      
 				}//End Iteration of Ass Question Proxys
+				
+				answerToAssQuestionRequest.fire();
+				
 		        if (widget != null) {
 		          widget.setWidget(view.asWidget());
 				}
@@ -454,14 +478,14 @@ public void moveQuestionTypeCountPerExamRequestUp(QuestionTypeCountPerExamProxy 
 	
 
 	//Part of Request for answerToAssQuestions	
-	private void fireGetAnswerToAssQuest( final BMEReceiver<List<AnswerToAssQuestionProxy>> callbackanswerToAssQuest, AssesmentQuestionProxy assesmentQuestionproxy) {
+	/*private void fireGetAnswerToAssQuest( final BMEReceiver<List<AnswerToAssQuestionProxy>> callbackanswerToAssQuest, AssesmentQuestionProxy assesmentQuestionproxy) {
 		createfireGetAnswerToAssQuest(assesmentQuestionproxy).fire(callbackanswerToAssQuest);
 	}
 	
 	
 	protected Request<java.util.List<medizin.client.proxy.AnswerToAssQuestionProxy>> createfireGetAnswerToAssQuest(AssesmentQuestionProxy assesmentQuestionproxy) {
         return requests.answerToAssQuestionRequest().findAnswerToAssQuestionByAssesmentQuestion(assesmentQuestionproxy.getId()).with("answers");
-    }
+    }*/
 	//End Request for answerToAssQuestions
 	
 

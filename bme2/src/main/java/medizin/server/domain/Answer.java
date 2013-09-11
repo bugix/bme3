@@ -601,4 +601,34 @@ public class Answer {
 				this.setModifiedBy(loggedPerson);
 		}
 	}
+	
+	public static Long countAnswerByLoggedUser(boolean isAdminOrInstitutionalAdmin, Long loggedUserId)
+	{
+		Person loggedUser = Person.myGetLoggedPerson();
+		Institution institution = Institution.myGetInstitutionToWorkWith();
+		if (loggedUser == null || institution == null)
+			throw new IllegalArgumentException("The person and institution arguments are required");
+		
+		CriteriaBuilder cb = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+		Root<Answer> from = cq.from(Answer.class);
+		
+		cq.select(cb.count(from));
+		
+		Predicate pre1 = cb.equal(from.get("question").get("questEvent").get("institution"), institution);
+		
+		if (isAdminOrInstitutionalAdmin)
+			pre1 = cb.and(pre1, from.get("status").in(Status.NEW, Status.ACCEPTED_REVIEWER));
+		else
+		{
+			pre1 = cb.and(pre1, from.get("status").in(Status.NEW, Status.ACCEPTED_ADMIN));
+			pre1 = cb.and(pre1, cb.equal(from.get("rewiewer"), loggedUserId));
+		}
+		
+		cq.where(pre1);
+		
+        TypedQuery<Long> q = entityManager().createQuery(cq);
+        
+        return q.getSingleResult();
+	}
 }

@@ -1,11 +1,5 @@
 package medizin.client.ui.view.assignquestion;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import medizin.client.ui.view.assignquestion.SendMailPopupView.Delegate;
-import medizin.client.ui.view.assignquestion.SendMailPopupView.Presenter;
-import medizin.client.ui.view.assignquestion.SendMailPopupViewImpl.Binder;
 import medizin.shared.i18n.BmeConstants;
 
 import com.google.gwt.core.client.GWT;

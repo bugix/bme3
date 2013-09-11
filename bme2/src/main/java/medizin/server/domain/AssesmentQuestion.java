@@ -21,6 +21,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -596,6 +597,33 @@ public class AssesmentQuestion {
         return q.getResultList();
     }
     
+    public static List<AssesmentQuestion> findAssesmentQuestionsByMcProposalForSystemOverview(Long assesmentId, Long personId){
+        Boolean isAssQuestionAdminProposal = true;
+        Assesment assesment = Assesment.findAssesment(assesmentId);
+        Person userLoggedIn=Person.myGetLoggedPerson();
+        //get institution
+		Institution institution = Institution.myGetInstitutionToWorkWith();
+		
+		if (userLoggedIn == null || institution == null)
+			return new ArrayList<AssesmentQuestion>();
+		
+		if (assesment == null) throw new IllegalArgumentException("The mcs argument is required");
+		
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<AssesmentQuestion> criteriaQuery = criteriaBuilder.createQuery(AssesmentQuestion.class);
+		Root<AssesmentQuestion> from = criteriaQuery.from(AssesmentQuestion.class);
+		
+		Expression<Boolean> queProExpression = from.get("isAssQuestionAdminProposal");
+		Predicate userPredicate = criteriaBuilder.equal(from.get("autor").get("id"), personId);
+		Predicate institutePredicate = criteriaBuilder.equal(from.get("assesment").get("id"), assesmentId);
+		Predicate quePropsalPredicate = criteriaBuilder.equal(queProExpression, isAssQuestionAdminProposal);
+		
+		criteriaQuery.where(criteriaBuilder.and(userPredicate, institutePredicate, quePropsalPredicate));
+		
+		TypedQuery<AssesmentQuestion> query = entityManager().createQuery(criteriaQuery);
+		return query.getResultList();
+	}
+    
     /**
      * This medthod is common to past and proposed tab
      * 
@@ -888,6 +916,19 @@ public class AssesmentQuestion {
 		}
 	}
 	
+	// load system overview mail template
+	public static String loadSystemOverviewTemplate()
+	{
+		String filePath=RequestFactoryServlet.getThreadLocalServletContext().getRealPath(SharedConstant.SYSTEM_OVERVIEW_MAIL_TEMPLATE);
+		File file=new File(filePath);
+		try{
+			return FileUtils.readFileToString(file);
+		}catch(IOException e)
+		{
+			return "";
+		}
+	}
+	
 	/*Send Mail*/
 	public static Boolean sendMail(List<Person> toExaminerList, String messageContent,	String mailSubject, Assesment assesment)
 	{
@@ -1020,12 +1061,12 @@ public class AssesmentQuestion {
 			}
 			
 			return true;
-			}
-			catch(Exception e)
-			{
-				log.info("sendMail exception : " + e.getMessage());
-				return false;
-			}
+		}
+		catch(Exception e)
+		{
+			log.info("sendMail exception : " + e.getMessage());
+			return false;
+		}
 	}
 	
 	/* 
@@ -1195,5 +1236,5 @@ public class AssesmentQuestion {
 			log.info("Answer Order : " + answerToAssQuestion.getId() + "Validity : " + answerToAssQuestion.getAnswers().getValidity());
 		}
 		return newtrueAnswerSequence;
-	}
+	}	
 }

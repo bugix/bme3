@@ -85,7 +85,9 @@
 			<lbl:LabeledPanel addStyleNames="{style.labeledBox}" ui:field="oneToOneAss">
 				<g:CheckBox ui:field="oneToOneAssChkBox"></g:CheckBox>
 			</lbl:LabeledPanel>
+		</div>
 
+		<div class="{style.attributeGroup}">
 			<!-- MCQ Type Field -->
 			<lbl:LabeledValueListBox addStyleNames="{style.labeledBox}" ui:field="multimediaType"></lbl:LabeledValueListBox>
 			<lbl:LabeledValueListBox addStyleNames="{style.labeledBox}" ui:field="selectionType"></lbl:LabeledValueListBox>

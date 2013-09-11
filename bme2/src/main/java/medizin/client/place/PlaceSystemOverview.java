@@ -28,5 +28,10 @@ public class PlaceSystemOverview extends AbstractPlace {
 			return new PlaceSystemOverview(token);
 		}
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		return false;
+	}
 
 }

@@ -1,7 +1,5 @@
 package medizin.client.ui.view;
 
-import static medizin.client.util.ClientUtility.toStringUtility;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.ArrayList;
@@ -22,7 +20,6 @@ import medizin.client.ui.widget.labeled.LabeledPanel;
 import medizin.client.ui.widget.labeled.LabeledTextArea;
 import medizin.client.ui.widget.labeled.LabeledTextBox;
 import medizin.client.ui.widget.labeled.LabeledValueListBox;
-import medizin.client.util.ClientUtility;
 import medizin.shared.MultimediaType;
 import medizin.shared.QuestionTypes;
 import medizin.shared.SelectionType;
@@ -211,7 +208,6 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 
     @UiField
     IconButton save;
-    
 
     @UiField
     IconButton cancel2;
@@ -461,7 +457,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		
 		sumTrueAnswer.setLabelText(constants.sumTrueAnswer());
 		sumTrueAnswer.setHelpText(contextHelp.sumTrueAnswer());
-		
+
 		sumFalseAnswer.setLabelText(constants.sumFalseAnswer());
 		sumFalseAnswer.setHelpText(contextHelp.sumFalseAnswer());
 		
@@ -632,6 +628,8 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 	      if (edit) {
 	    	  title.setInnerText(constants.editQuestionType());
 	        } else {
+	        	DOM.getElementById("instituteLabelDiv").removeFromParent();
+	        	DOM.getElementById("questionTypeLabelDiv").removeFromParent();
 	        	title.setInnerText(constants.addQuestionType());
 	        }		
 	}

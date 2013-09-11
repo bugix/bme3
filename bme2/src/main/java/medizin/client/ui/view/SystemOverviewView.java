@@ -1,22 +1,25 @@
 package medizin.client.ui.view;
 
-import medizin.client.ui.view.SystemOverviewView.Delegate;
+import java.util.Map;
 
-import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 public interface SystemOverviewView extends IsWidget {
-    void setName(String helloName);
-    void setPresenter(Presenter presenter);
-
-    public interface Presenter {
-        void goTo(Place place);
-    }
     
-    public interface Delegate {
-        void buttonClicked();
+	public interface Delegate {
+       
     }
 
 	void setDelegate(Delegate delegate);
 
+	void setAcceptQuestionAndAnswer(Long acceptQuestionCount, Long acceptAnswerCount);
+
+	void setQuestionTypesCountByAssessment(String mcName, String closedDate, Map<String, String> quesitonTypeCountMap);
+
+	void setQuestionTypesCountByAssessmentExaminer(String mcName, String closedDate, Map<String, String> quesitonTypeCountMap, SystemOverviewExaminerSubView examinerSubView);
+	
+	void addMainLabel();
+	
+	VerticalPanel getMainVerticalPanel();
 }

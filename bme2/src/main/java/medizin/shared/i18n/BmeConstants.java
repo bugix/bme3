@@ -702,4 +702,16 @@ public interface BmeConstants extends Constants {
 	public String acceptQueSaveMsg();
 	
 	public String neverShowMsg();
+	
+	public String systemOverviewReachInMsg();
+			
+	public String closedDate();
+	
+	public String mailVarAssessmentLoop();
+			
+	public String mailAssessmentLoop(); 
+	
+	public String mailVarAssessmentEndLoop();
+			
+	public String mailAssessmentEndLoop();
 }

@@ -5,7 +5,7 @@ import java.util.Map;
 
 import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionTypeCountPerExamProxy;
-import medizin.client.ui.view.assignquestion.QuestionPanel.Delegate;
+import medizin.client.ui.widget.sendmail.SendMailPopupViewImpl;
 
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.Button;

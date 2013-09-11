@@ -70,4 +70,6 @@ public interface QuestionRequest extends QuestionRequest_Roo_Gwt {
 	
 	Request<Integer> countQuestionByAdvancedSearchByLoginUserAndInstitute(List<String> criteriaStringList, List<String> searchField, String searchText);
 	
+	Request<Long> countQuestionByLoggedUser(Long loggedUserId, boolean isAdminOrInstitutionalAdmin);
+	
 }

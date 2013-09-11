@@ -2288,4 +2288,38 @@ public class Question {
 		TypedQuery<Question> query = entityManager().createQuery(findQusetionByAdvancedSearchCriteria(criteriaStringList, searchField, searchText));
 		return query.getResultList().size();
 	}
+	
+	public static Long countQuestionByLoggedUser(Long loggedUserId, boolean isAdminOrInstitutionalAdmin)
+	{
+		Person loggedUser = Person.myGetLoggedPerson();
+		Institution institution = Institution.myGetInstitutionToWorkWith();
+		if (loggedUser == null || institution == null)
+			throw new IllegalArgumentException(
+					"The person and institution arguments are required");
+		
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+		Root<Question> from = criteriaQuery.from(Question.class);
+		criteriaQuery.select(criteriaBuilder.count(from));	
+
+		Predicate pre1 = criteriaBuilder.and(criteriaBuilder.equal(from.get("questEvent").get("institution").get("id"), institution.getId()), criteriaBuilder.notEqual(from.get("status"), Status.DEACTIVATED),criteriaBuilder.notEqual(from.get("isForcedActive"), true));
+
+		if (isAdminOrInstitutionalAdmin)
+		{
+			pre1 = criteriaBuilder.and(pre1, criteriaBuilder.equal(from.get("isAcceptedAdmin"), false));
+		}
+		else
+		{
+			Predicate pre2 = criteriaBuilder.and(criteriaBuilder.equal(from.get("isAcceptedRewiever"), false), criteriaBuilder.equal(from.get("rewiewer").get("id"), loggedUserId));
+			Predicate pre3 = criteriaBuilder.and(criteriaBuilder.equal(from.get("autor").get("id"), loggedUserId), criteriaBuilder.equal(from.get("isAcceptedAuthor"), false));
+
+			pre1 = criteriaBuilder.and(pre1, criteriaBuilder.or(pre2, pre3));
+		}
+
+		criteriaQuery.where(pre1);
+		
+		TypedQuery<Long> q = entityManager().createQuery(criteriaQuery);
+
+		return q.getSingleResult();
+	}
 }

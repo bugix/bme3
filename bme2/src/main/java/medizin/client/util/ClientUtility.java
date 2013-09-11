@@ -19,12 +19,15 @@ import medizin.shared.utils.SharedConstant;
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.base.Function;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.safehtml.shared.SafeUri;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
 public final class ClientUtility {
+
+	public static final DateTimeFormat SHORT_FORMAT = DateTimeFormat.getFormat("yyyy-MM-dd");
 	
 	public static void setUserAccess(Widget widget, PersonProxy personProxy,
 			UserType userType, boolean isVisible) {

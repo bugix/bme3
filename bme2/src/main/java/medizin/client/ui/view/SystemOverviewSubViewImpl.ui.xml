@@ -1,0 +1,37 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style src="../styles.css">
+	.mainHTMLPanel {
+   	   margin-left: 10px;
+   	   height: 100%;
+       width: 99%;	    
+     }
+    .innerVerticalPanel{
+		margin-left: 20px;
+	}
+	.mcLabelStyle{
+		font-weight: bold;
+		font-size: 13px;		
+		text-decoration: underline;
+	}
+	.closeDateLabelStyle{
+		font-weight: bold;		
+	}
+	</ui:style>
+	
+	<g:HTMLPanel styleName="{style.mainHTMLPanel}">
+		<table>
+			<tr>
+				<td><g:Label ui:field="mcNameLbl" styleName="{style.mcLabelStyle}"></g:Label></td>
+			</tr>
+			<tr>
+				<td><g:Label ui:field="closedDateLbl" styleName="{style.closeDateLabelStyle}"></g:Label></td>
+			</tr>
+			<tr>
+				<td><g:VerticalPanel ui:field="questionTypeVP" styleName="{style.innerVerticalPanel}"></g:VerticalPanel></td>
+			</tr>
+		</table>
+	</g:HTMLPanel>
+	
+</ui:UiBinder> 
