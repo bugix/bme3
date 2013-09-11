@@ -13,7 +13,9 @@ import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEvent;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEventHandler;
+import medizin.client.ui.widget.pager.MySimplePager;
 import medizin.client.ui.widget.resource.audio.AudioViewer;
+import medizin.client.ui.widget.resource.image.ImageAltTextViewer;
 import medizin.client.ui.widget.resource.image.ImageViewer;
 import medizin.client.ui.widget.resource.image.polygon.ImagePolygonViewer;
 import medizin.client.ui.widget.resource.image.rectangle.ImageRectangleViewer;
@@ -47,7 +49,6 @@ import com.google.gwt.user.cellview.client.AbstractHasData;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.Header;
-import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.DisclosurePanel;
@@ -80,7 +81,7 @@ public class AcceptAnswerSubViewImpl extends Composite implements AcceptAnswerSu
 	CellTable<AnswerProxy> table;
 		
     @UiField(provided = true)
-	public SimplePager pager;
+	public MySimplePager pager;
 	
 	@Override
 	public AbstractHasData<AnswerProxy> getTable(){
@@ -117,8 +118,8 @@ public class AcceptAnswerSubViewImpl extends Composite implements AcceptAnswerSu
 		CellTable.Resources tableResources = GWT.create(MyCellTableResources.class);
 		table = new CellTable<AnswerProxy>(McAppConstant.TABLE_PAGE_SIZE, tableResources);
 		
-		SimplePager.Resources pagerResources = GWT.create(MySimplePagerResources.class);
-		pager = new SimplePager(SimplePager.TextLocation.RIGHT, pagerResources, true, McAppConstant.TABLE_JUMP_SIZE, true);
+		MySimplePager.Resources pagerResources = GWT.create(MySimplePagerResources.class);
+		pager = new MySimplePager(MySimplePager.TextLocation.RIGHT, pagerResources, true, McAppConstant.TABLE_JUMP_SIZE, true);
 		
 		initWidget(uiBinder.createAndBindUi(this));
 		
@@ -145,6 +146,8 @@ public class AcceptAnswerSubViewImpl extends Composite implements AcceptAnswerSu
 							if (questionProxy.getQuestionType().getQuestionType().equals(QuestionTypes.Imgkey) || questionProxy.getQuestionType().getQuestionType().equals(QuestionTypes.ShowInImage) || questionProxy.getQuestionType().getQuestionType().equals(QuestionTypes.MCQ))
 							{					
 							 	dialogBox = new DialogBox();
+							 	dialogBox.setTitle(constants.imageViewer());
+							 	dialogBox.setText(constants.imageViewer());
 							 	
 							 	final VerticalPanel vp = new VerticalPanel();
 								 
@@ -178,6 +181,8 @@ public class AcceptAnswerSubViewImpl extends Composite implements AcceptAnswerSu
 										}
 									}else {
 										Log.error("Question resources are null imagekey");
+										ImageAltTextViewer viewer = new ImageAltTextViewer();
+										vp.add(viewer);
 									}
 								}
 								else if (questionProxy.getQuestionType().getQuestionType().equals(QuestionTypes.ShowInImage))
@@ -192,6 +197,8 @@ public class AcceptAnswerSubViewImpl extends Composite implements AcceptAnswerSu
 										vp.add(imgPolygonViewer);
 									}else {
 										Log.error("Question resources are null show in image");
+										ImageAltTextViewer viewer = new ImageAltTextViewer();
+										vp.add(viewer);
 									}
 									
 								}

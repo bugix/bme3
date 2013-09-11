@@ -23,7 +23,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
-import static medizin.client.util.ClientUtility.toStringUtility;
+import static medizin.client.util.ClientUtility.defaultString;
 
 public class QuestiontypesDetailsViewImpl extends Composite implements QuestiontypesDetailsView  {
 
@@ -38,8 +38,6 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 	
 		public BmeConstants constants = GWT.create(BmeConstants.class);
 		 
-		private Presenter presenter;
-	
 		private Delegate delegate;
 		
 	    @UiField
@@ -295,57 +293,73 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 	    	
 	       if (proxy.getQuestionType().equals(QuestionTypes.Textual) || proxy.getQuestionType().equals(QuestionTypes.Sort))
 	       {
-	    	   sumAnswerValLbl.setText(toStringUtility(proxy.getSumAnswer()));
-	    	   sumTrueAnswerValLbl.setText(toStringUtility(proxy.getSumTrueAnswer()));
-	    	   sumFalseAnswerValLbl.setText(toStringUtility(proxy.getSumFalseAnswer()));
-	    	   questionLengthValLbl.setText(toStringUtility(proxy.getQuestionLength()));
-	    	   answerLengthValLbl.setText(toStringUtility(proxy.getAnswerLength()));
-	    	   answerDiffValLbl.setText(toStringUtility(proxy.getDiffBetAnswer()));
-	    	   queHaveImgValLbl.setText(toStringUtility(proxy.getQueHaveImage()));
-	    	   queHaveVideoValLbl.setText(toStringUtility(proxy.getQueHaveVideo()));
-	    	   queHaveSoundValLbl.setText(toStringUtility(proxy.getQueHaveSound()));
+	    	   sumAnswerValLbl.setText(defaultString(proxy.getSumAnswer()));
+	    	   sumTrueAnswerValLbl.setText(defaultString(proxy.getSumTrueAnswer()));
+	    	   sumFalseAnswerValLbl.setText(defaultString(proxy.getSumFalseAnswer()));
+	    	   questionLengthValLbl.setText(defaultString(proxy.getQuestionLength()));
+	    	   answerLengthValLbl.setText(defaultString(proxy.getAnswerLength()));
+	    	   answerDiffValLbl.setText(defaultString(proxy.getDiffBetAnswer()));
+	    	   queHaveImgValLbl.setText(defaultString(proxy.getQueHaveImage()));
+	    	   queHaveVideoValLbl.setText(defaultString(proxy.getQueHaveVideo()));
+	    	   queHaveSoundValLbl.setText(defaultString(proxy.getQueHaveSound()));
 	       }
 	       else if (proxy.getQuestionType().equals(QuestionTypes.Imgkey))
 	       {
-	    	   questionLengthValLbl.setText(toStringUtility(proxy.getQuestionLength()));
-	    	   keywordCountValLbl.setText(toStringUtility(proxy.getKeywordCount()));
-	    	   showAutoCompleteValLbl.setText(toStringUtility(proxy.getShowAutocomplete()));
-	    	   isDictionaryKeywordValLbl.setText(toStringUtility(proxy.getIsDictionaryKeyword()));
-	    	   allowTypingValLbl.setText(toStringUtility(proxy.getAllowTyping()));
-	    	   minLetterForAutoCompValLbl.setText(toStringUtility(proxy.getMinAutoCompleteLetter()));
-	    	   answerLengthValLbl.setText(toStringUtility(proxy.getAnswerLength()));
-	    	   acceptNonKeywordValLbl.setText(toStringUtility(proxy.getAcceptNonKeyword()));
-	    	   shortAnswerLengthValLbl.setText(toStringUtility(proxy.getLengthShortAnswer()));
+	    	   questionLengthValLbl.setText(defaultString(proxy.getQuestionLength()));
+	    	   keywordCountValLbl.setText(defaultString(proxy.getKeywordCount()));
+	    	   showAutoCompleteValLbl.setText(defaultString(proxy.getShowAutocomplete()));
+	    	   isDictionaryKeywordValLbl.setText(defaultString(proxy.getIsDictionaryKeyword()));
+	    	   allowTypingValLbl.setText(defaultString(proxy.getAllowTyping()));
+	    	   minLetterForAutoCompValLbl.setText(defaultString(proxy.getMinAutoCompleteLetter()));
+	    	   answerLengthValLbl.setText(defaultString(proxy.getAnswerLength()));
+	    	   acceptNonKeywordValLbl.setText(defaultString(proxy.getAcceptNonKeyword()));
+	    	   shortAnswerLengthValLbl.setText(defaultString(proxy.getLengthShortAnswer()));
+	    	   /*imageWidthValLbl.setText(defaultString(proxy.getImageWidth()));
+	    	   imageLengthValLbl.setText(defaultString(proxy.getImageHeight()));
+	    	   imageProportionValLbl.setText(defaultString(proxy.getImageProportion()));*/
 	       }
 	       else if (proxy.getQuestionType().equals(QuestionTypes.ShowInImage))
 	       {
-	    	   questionLengthValLbl.setText(toStringUtility(proxy.getQuestionLength()));
-	    	   answerLengthValLbl.setText(toStringUtility(proxy.getAnswerLength()));   	   
+	    	   questionLengthValLbl.setText(defaultString(proxy.getQuestionLength()));
+	    	   answerLengthValLbl.setText(defaultString(proxy.getAnswerLength()));
+	    	  /* imageWidthValLbl.setText(defaultString(proxy.getImageWidth()));
+	    	   imageLengthValLbl.setText(defaultString(proxy.getImageHeight()));
+	    	   imageProportionValLbl.setText(defaultString(proxy.getImageProportion()));*/
+	    	   /*linearPointValLbl.setText(defaultString(proxy.getLinearPoint()));
+	    	   linearPercentageValLbl.setText(defaultString(proxy.getLinearPercentage()));*/	    	   
 	       }
 	       else if (proxy.getQuestionType().equals(QuestionTypes.LongText))
 	       {
-	    	   questionLengthValLbl.setText(toStringUtility(proxy.getQuestionLength()));
-	    	   keywordHighlightValLbl.setText(toStringUtility(proxy.getKeywordHighlight()));
-	    	   richTextValLbl.setText(toStringUtility(proxy.getRichText()));
-	    	   minLengthValLbl.setText(toStringUtility(proxy.getMinLength()));
-	    	   maxLengthValLbl.setText(toStringUtility(proxy.getMaxLength()));
-	    	   minWordCountValLbl.setText(toStringUtility(proxy.getMinWordCount()));
-	    	   maxWordCountValLbl.setText(toStringUtility(proxy.getMaxWordCount()));
+	    	   questionLengthValLbl.setText(defaultString(proxy.getQuestionLength()));
+	    	   keywordHighlightValLbl.setText(defaultString(proxy.getKeywordHighlight()));
+	    	   richTextValLbl.setText(defaultString(proxy.getRichText()));
+	    	   minLengthValLbl.setText(defaultString(proxy.getMinLength()));
+	    	   maxLengthValLbl.setText(defaultString(proxy.getMaxLength()));
+	    	   minWordCountValLbl.setText(defaultString(proxy.getMinWordCount()));
+	    	   maxWordCountValLbl.setText(defaultString(proxy.getMaxWordCount()));
 	       }
 	       else if (proxy.getQuestionType().equals(QuestionTypes.Matrix))
 	       {
-	    	   questionLengthValLbl.setText(toStringUtility(proxy.getQuestionLength()));
-	    	   answerLengthValLbl.setText(toStringUtility(proxy.getAnswerLength()));
-	    	   oneToOneAssValLbl.setText(toStringUtility(proxy.getAllowOneToOneAss()));
+	    	   //maxLengthValLbl.setText(proxy.getMaxLength()));
+	    	   questionLengthValLbl.setText(defaultString(proxy.getQuestionLength()));
+	    	   answerLengthValLbl.setText(defaultString(proxy.getAnswerLength()));
+	    	   oneToOneAssValLbl.setText(defaultString(proxy.getAllowOneToOneAss()));
 	       }
 	       else if (proxy.getQuestionType().equals(QuestionTypes.MCQ))
 	       {
-	    	   questionLengthValLbl.setText(toStringUtility(proxy.getQuestionLength()));
+	    	   questionLengthValLbl.setText(defaultString(proxy.getQuestionLength()));
+	    	   /*imageWidthValLbl.setText(defaultString(proxy.getImageWidth()));
+	    	   imageLengthValLbl.setText(defaultString(proxy.getImageHeight()));
+	    	   imageProportionValLbl.setText(defaultString(proxy.getImageProportion()));*/
 	    	   multimediaTypeValLbl.setText(enumRenderer.render(proxy.getMultimediaType()));
 	    	   selectionTypeValLbl.setText(enumRenderer.render(proxy.getSelectionType()));
-	    	   columnValLbl.setText(toStringUtility(proxy.getColumns()));
-	    	   richTextValLbl.setText(toStringUtility(proxy.getRichText()));
-	    	   maxBytesValLbl.setText(toStringUtility(proxy.getMaxBytes()));
+	    	   columnValLbl.setText(defaultString(proxy.getColumns()));
+	    	   richTextValLbl.setText(defaultString(proxy.getRichText()));
+	    	   /*thumbWidthValLbl.setText(defaultString(proxy.getThumbWidth()));
+	    	   thumbHeightValLbl.setText(defaultString(proxy.getThumbHeight()));	    	   
+	    	   allowZoomOutValLbl.setText(defaultString(proxy.getAllowZoomOut()));
+	    	   allowZoomInValLbl.setText(defaultString(proxy.getAllowZoomIn()));*/
+	    	   maxBytesValLbl.setText(defaultString(proxy.getMaxBytes()));
 	       }
 	       
 	       disableField(proxy.getQuestionType());
@@ -401,14 +415,6 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 		@Override
 		public void setName(String helloName) {
 			// TODO Auto-generated method stub
-			
-		}
-	
-	
-	
-		@Override
-		public void setPresenter(Presenter presenter) {
-			this.presenter = presenter;
 			
 		}
 	

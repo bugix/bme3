@@ -18,6 +18,8 @@ import medizin.client.place.PlaceQuestiontypes;
 import medizin.client.place.PlaceQuestiontypesDetails;
 import medizin.client.place.PlaceStaticContent;
 import medizin.client.place.PlaceSystemOverview;
+import medizin.client.place.PlaceUser;
+import medizin.client.place.PlaceUserDetails;
 import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.PersonAccessRightProxy;
 import medizin.client.proxy.PersonProxy;
@@ -102,7 +104,7 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 			});
 			
 			PersonRequest personRequest2 = institutionRequest.append(requests.personRequest());
-			personRequest2.getLoggedPersonAccessRights().with("question", "questionEvent", "institution").to(new Receiver<PersonAccessRightProxy>() {
+			personRequest2.fetchLoggedPersonAccessRights().with("question", "questionEvent", "institution").to(new Receiver<PersonAccessRightProxy>() {
 
 				@Override
 				public void onSuccess(PersonAccessRightProxy response) {
@@ -179,6 +181,7 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 						|| place instanceof PlaceAssesment 		|| place instanceof PlaceAssesmentDetails
 						|| place instanceof PlaceBookAssesment	|| place instanceof PlaceBookAssesmentDetails
 						|| place instanceof PlaceStaticContent  || place instanceof PlaceNotActivatedAnswer
+						|| place instanceof PlaceUser 			|| place instanceof PlaceUserDetails
 				) {
 					flag = false;
 				}else {

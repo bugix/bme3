@@ -11,6 +11,7 @@ import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.QuickSearchBox;
+import medizin.client.ui.widget.pager.MySimplePager;
 import medizin.shared.i18n.BmeConstants;
 
 import com.google.gwt.core.client.GWT;
@@ -21,7 +22,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Composite;
@@ -49,8 +49,8 @@ public class QuestiontypesViewImpl extends Composite implements QuestiontypesVie
 		CellTable.Resources tableResources = GWT.create(MyCellTableResources.class);
 		table = new CellTable<QuestionTypeProxy>(McAppConstant.TABLE_PAGE_SIZE, tableResources);
 		
-		SimplePager.Resources pagerResources = GWT.create(MySimplePagerResources.class);
-		pager = new SimplePager(SimplePager.TextLocation.RIGHT, pagerResources, true, McAppConstant.TABLE_JUMP_SIZE, true);
+		MySimplePager.Resources pagerResources = GWT.create(MySimplePagerResources.class);
+		pager = new MySimplePager(MySimplePager.TextLocation.RIGHT, pagerResources, true, McAppConstant.TABLE_JUMP_SIZE, true);
 		
 		searchBox = new QuickSearchBox(new QuickSearchBox.Delegate() {
 			@Override
@@ -91,7 +91,7 @@ public class QuestiontypesViewImpl extends Composite implements QuestiontypesVie
 	CellTable<QuestionTypeProxy> table;
 	
 	@UiField(provided = true)
-	public SimplePager pager;
+	public MySimplePager pager;
 	
 	
 	@UiField

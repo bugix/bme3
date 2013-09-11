@@ -1,6 +1,6 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:m="urn:import:medizin.client.ui.widget" xmlns:c="urn:import:com.google.gwt.user.cellview.client">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:m="urn:import:medizin.client.ui.widget" xmlns:c="urn:import:com.google.gwt.user.cellview.client" xmlns:p="urn:import:medizin.client.ui.widget.pager">
 	<ui:style src="../../../styles.css" >
 		.advSearchBtn
 		{
@@ -24,8 +24,9 @@
 		
 		<c:CellTable ui:field="table" width="100%" addStyleNames="{style.standardTableIcon}"></c:CellTable>
 		
-		<div class="{style.controls}">      
-			<c:SimplePager ui:field="pager" display="{table}"/>
+		<div class="{style.controls}">
+			<p:MySimplePager ui:field="pager" display="{table}"></p:MySimplePager>      
+			<!-- <c:SimplePager ui:field="pager" display="{table}"/> -->
     	</div>
   </g:HTMLPanel>
 </ui:UiBinder> 

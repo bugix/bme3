@@ -271,7 +271,7 @@ public class Person {
 		return value;
 	}
 
-	public static PersonAccessRight getLoggedPersonAccessRights()
+	public static PersonAccessRight fetchLoggedPersonAccessRights()
 	{
 		PersonAccessRight personAccess = new PersonAccessRight();
 		Person person = myGetLoggedPerson();

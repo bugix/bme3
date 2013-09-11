@@ -76,8 +76,6 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 			UiBinder<Widget, AnswerDialogboxImpl> {
 	}
 
-	private Presenter presenter;
-
 	@UiField
 	IconButton save;
 
@@ -618,7 +616,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 	}*/
 	
 	@Override
-	public void setAutherPickerValues(Collection<PersonProxy> values, PersonProxy logedUser) {	
+	public void setAutherPickerValues(Collection<PersonProxy> values, PersonProxy logedUser,  boolean isAdminOrInstitutionalAdmin) {	
 		
 		DefaultSuggestOracle<PersonProxy> suggestOracle1 = (DefaultSuggestOracle<PersonProxy>) author.getSuggestOracle();
 		suggestOracle1.setPossiblilities((List<PersonProxy>) values);
@@ -640,8 +638,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 			}
 		});
 		
-		if(logedUser.getIsAdmin() == false) {
-			
+		if(isAdminOrInstitutionalAdmin == false) {
 			author.setSelected(logedUser);
 			author.setEnabled(false);
 		}

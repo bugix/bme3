@@ -10,6 +10,7 @@ import medizin.client.style.resources.MyCellTableResources;
 import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.widget.IconButton;
+import medizin.client.ui.widget.pager.MySimplePager;
 import medizin.shared.Status;
 import medizin.shared.i18n.BmeConstants;
 
@@ -31,6 +32,7 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 public class MatrixAnswerListViewImpl extends Composite implements MatrixAnswerListView {
@@ -41,6 +43,9 @@ public class MatrixAnswerListViewImpl extends Composite implements MatrixAnswerL
 	interface MatrixAnswerListViewImplUiBinder extends
 			UiBinder<Widget, MatrixAnswerListViewImpl> {
 	}
+	
+	@UiField
+	Label headerText;
 
 	public MatrixAnswerListViewImpl(boolean isEditable) {
 		CellTable.Resources tableResources = GWT
@@ -48,13 +53,16 @@ public class MatrixAnswerListViewImpl extends Composite implements MatrixAnswerL
 		tableAnswer = new CellTable<MatrixValidityProxy>(McAppConstant.TABLE_PAGE_SIZE,
 				tableResources);
 
-		SimplePager.Resources pagerResources = GWT
+		MySimplePager.Resources pagerResources = GWT
 				.create(MySimplePagerResources.class);
-		pager = new SimplePager(SimplePager.TextLocation.RIGHT, pagerResources,
+		pager = new MySimplePager(MySimplePager.TextLocation.RIGHT, pagerResources,
 				true, McAppConstant.TABLE_JUMP_SIZE, true);
-
+		
 		initWidget(uiBinder.createAndBindUi(this));
+		newAnswer.setVisible(isEditable);
 		init(isEditable);
+		headerText.setText("");
+		headerText.setHeight("23px");
 	}
 
 
@@ -71,7 +79,7 @@ public class MatrixAnswerListViewImpl extends Composite implements MatrixAnswerL
 	CellTable<MatrixValidityProxy> tableAnswer;
 
 	@UiField(provided = true)
-	public SimplePager pager;
+	public MySimplePager pager;
 	
 	@UiHandler("newAnswer")
 	void addEventClicked(ClickEvent event) {

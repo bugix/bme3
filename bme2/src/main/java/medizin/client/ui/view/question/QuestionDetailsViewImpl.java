@@ -1,9 +1,12 @@
 package medizin.client.ui.view.question;
 
+import static medizin.client.util.ClientUtility.defaultString;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import medizin.client.proxy.KeywordProxy;
+import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.style.resources.MyCellTableNoHilightResources;
 import medizin.client.style.resources.MySimplePagerResources;
@@ -13,6 +16,7 @@ import medizin.client.ui.widget.TabPanelHelper;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEvent;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEventHandler;
+import medizin.client.ui.widget.pager.MySimplePager;
 import medizin.client.ui.widget.resource.dndview.ResourceView;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.EventHandlingValueHolderItem;
@@ -24,6 +28,7 @@ import medizin.shared.i18n.BmeMessages;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 import com.google.gwt.cell.client.AbstractEditableCell;
 import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.Cell;
@@ -53,14 +58,13 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 
 	private static QuestionDetailsViewImplUiBinder uiBinder = GWT.create(QuestionDetailsViewImplUiBinder.class);
 
-	interface QuestionDetailsViewImplUiBinder extends UiBinder<Widget, QuestionDetailsViewImpl> {
-	}
+	interface QuestionDetailsViewImplUiBinder extends UiBinder<Widget, QuestionDetailsViewImpl> {}
 
 	public BmeMessages bmeMessages = GWT.create(BmeMessages.class);
 	public BmeConstants constants = GWT.create(BmeConstants.class);
-	private Presenter presenter;
 	private Delegate delegate;
 	private QuestionProxy proxy;
+	private EventBus eventBus;
 	
 	@UiField
 	TabPanel questionTypeDetailPanel;
@@ -122,79 +126,8 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 	@UiField
 	HorizontalPanel resourceViewPanel;
 	
-	// @UiField
-	// SpanElement id;
-	//
-	// @UiField
-	// SpanElement version;
-
-	/*@UiField
-	SpanElement dateAdded;
-
-	@UiField
-	SpanElement dateChanged;
-
-	@UiField
-	SpanElement rewiewer;
-
-	@UiField
-	SpanElement autor;
-
-	@UiField
-	SpanElement questionText;
-
-	@UiField
-	SpanElement picturePath;
-
-	@UiField
-	SpanElement questionVersion;
-
-	@UiField
-	SpanElement isAcceptedRewiever;
-
-	@UiField
-	SpanElement isAcceptedAdmin;
-
-	@UiField
-	SpanElement isActive;
-
-	@UiField
-	SpanElement previousVersion;
-
-	@UiField
-	SpanElement keywords;
-
-	@UiField
-	SpanElement questEvent;
-
-	@UiField
-	SpanElement comment;
-
-	@UiField
-	SpanElement questionType;
-
-	@UiField
-	SpanElement mcs;*/
-
-	// @UiField
-	// SpanElement answers;
-
-	
-
 	@UiField(provided=true)
 	AnswerListViewImpl answerListViewImpl;
-	private EventBus eventBus;
-
-	// @UiField
-	// EventAccessViewImpl eventAccessView;
-	//
-	// @UiField
-	// QuestionAccessViewImpl questionAccessView;
-
-	// @Override
-	// public EventAccessViewImpl getEventAccessView(){
-	// return eventAccessView;
-	// }
 
 	@UiField
 	VerticalPanel answerVerticalPanel;
@@ -203,7 +136,7 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 	CellTable<KeywordProxy> keywordTable;
 	
 	@UiField(provided = true)
-	SimplePager keywordTablePager;
+	MySimplePager keywordTablePager;
 	
 	@UiField
 	public DefaultSuggestBox<KeywordProxy, EventHandlingValueHolderItem<KeywordProxy>> keywordSuggestBox;
@@ -312,21 +245,21 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 	@Override
 	public void setValue(QuestionProxy proxy) {
 		this.proxy = proxy;
-		String qVersion = proxy.getQuestionVersion() == null ? "0" : proxy.getQuestionVersion().toString();
-		String qSubVersion = proxy.getQuestionSubVersion() == null ? "0" : proxy.getQuestionSubVersion().toString();
-		String version = "(" + qVersion + "." + qSubVersion + ")";
+		final String qVersion = defaultString(proxy.getQuestionVersion(), "0");
+		final String qSubVersion = defaultString(proxy.getQuestionSubVersion(),"0");
+		final String version = "(" + qVersion + "." + qSubVersion + ")";
 		
-		displayRenderer.setInnerText(proxy.getQuestionShortName()==null?proxy.getId().toString():proxy.getQuestionShortName());
-		displayRenderer.setTitle(proxy.getQuestionShortName()==null?proxy.getId().toString():proxy.getQuestionShortName());
+		final String title = proxy.getQuestionShortName()==null?proxy.getId().toString():proxy.getQuestionShortName();
+		displayRenderer.setInnerText(title);
+		displayRenderer.setTitle(title);
 		
 		displayVersionRenderer.setInnerText(version);
 		
 		lblQuestionTypeValue.setText(proxy.getQuestionType()==null?"":proxy.getQuestionType().getShortName());
-		lblQuestionShortNameValue.setText(proxy.getQuestionShortName()==null?"":proxy.getQuestionShortName());
-		//lblQuestionTextValue.setText(proxy.getQuestionText()==null?"":proxy.getQuestionText());
-		lblQuestionTextValue.setHTML(proxy.getQuestionText()==null?"":proxy.getQuestionText());
-		lblAutherValue.setText(proxy.getAutor()==null?"":proxy.getAutor().getName());
-		lblReviewerValue.setText(proxy.getRewiewer()==null?"":proxy.getRewiewer().getName());
+		lblQuestionShortNameValue.setText(defaultString(proxy.getQuestionShortName()));
+		lblQuestionTextValue.setHTML(defaultString(proxy.getQuestionText()));
+		lblAutherValue.setText(getPersonName(proxy.getAutor()));
+		lblReviewerValue.setText(getPersonName(proxy.getRewiewer()));
 		lblQuestionEventValue.setText(proxy.getQuestEvent()==null?"":proxy.getQuestEvent().getEventName());
 		lblCommentValue.setText(proxy.getComment()==null?"":proxy.getComment().getComment());
 		lblMcsValue.setText(proxy.getMcs() == null ? "": medizin.client.ui.view.roo.CollectionRenderer.of(medizin.client.ui.view.roo.McProxyRenderer.instance()).render(proxy.getMcs()));
@@ -335,7 +268,6 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 			lblReviewerValue.setText(constants.submitToReviewComitee());
 		}
 		addSecondTabForQuestionResource(proxy);
-		
 		
 		if(proxy.getPreviousVersion() == null) {
 			previous.setEnabled(false);
@@ -421,12 +353,16 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 
 	}
 
+	private final static String getPersonName(PersonProxy person) {
+		return person == null ? "" : person.getName();
+	}
+
 	private void addSecondTabForQuestionResource(final QuestionProxy proxy) {
 		
 		resourceUploadPanel.clear();
 		resourceViewPanel.clear();
 		boolean isAdded = false;
-		List<QuestionResourceClient> questionResourceClients = new ArrayList<QuestionResourceClient>();
+		List<QuestionResourceClient> questionResourceClients = Lists.newArrayList();
 		boolean haveImage = false;
 		boolean haveSound = false;
 		boolean haveVideo = false;
@@ -455,14 +391,7 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 			case ShowInImage:
 			{
 				if(proxy != null && proxy.getQuestionType()!= null && proxy.getQuestionType().getQuestionType() != null /*&& proxy.getPicturePath() != null*/) {
-					//imageViewer(proxy.getQuestionType(),proxy,QuestionTypes.Imgkey);
 					questionResourceClients = ClientUtility.getQuestionResourceClient(proxy.getQuestionResources());
-					/*QuestionResourceClient client = new QuestionResourceClient();
-					client.setPath(proxy.getPicturePath());
-					client.setSequenceNumber(0);
-					client.setState(State.CREATED);
-					client.setType(MultimediaType.Image);
-					questionResourceClients.add(client);*/
 					haveImage = true;
 					isAdded = true;
 				}
@@ -472,8 +401,8 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 			default:
 			{
 				Log.info("in default case");
-				if(questionTypeDetailPanel.getTabBar().getTabCount() > 1) 
-					questionTypeDetailPanel.remove(1);
+				if(questionTypeDetailPanel.getTabBar().getTabCount() > 2) 
+					questionTypeDetailPanel.remove(2);
 				isAdded = false;
 				break;	
 			}
@@ -486,29 +415,24 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 		}
 	}
 
-	public QuestionDetailsViewImpl(EventBus eventBus, Boolean flag, boolean isAnswerEditable) {
+	public QuestionDetailsViewImpl(EventBus eventBus, Boolean editDeleteflag, boolean isAnswerEditable) {
 		CellTable.Resources tableResources = GWT.create(MyCellTableNoHilightResources.class);
 		keywordTable = new CellTable<KeywordProxy>(5, tableResources);
 		
-		SimplePager.Resources pagerResources = GWT.create(MySimplePagerResources.class);
-		keywordTablePager = new SimplePager(SimplePager.TextLocation.RIGHT, pagerResources, true, 10, true);
+		MySimplePager.Resources pagerResources = GWT.create(MySimplePagerResources.class);
+		keywordTablePager = new MySimplePager(MySimplePager.TextLocation.RIGHT, pagerResources, true, 10, true);
 		
 		answerListViewImpl = new AnswerListViewImpl(isAnswerEditable);
 		matrixAnswerListViewImpl = new MatrixAnswerListViewImpl(isAnswerEditable);
 		initWidget(uiBinder.createAndBindUi(this));
 		
-		setVisibleEditAndDeleteBtn(flag);
+		setVisibleEditAndDeleteBtn(editDeleteflag);
 		
 		this.eventBus = eventBus;
 		
 		questionTypeDetailPanel.selectTab(0);
-		questionTypeDetailPanel.getTabBar().setTabText(0, constants.manageQuestion());
-		questionTypeDetailPanel.getTabBar().setTabText(1, constants.media());
-		questionTypeDetailPanel.getTabBar().setTabText(2, constants.keywords());
 		TabPanelHelper.moveTabBarToBottom(questionTypeDetailPanel);
-		
-		keywordAddButton.setText(constants.addKeyword());
-		
+			
 		initKeyword(isAnswerEditable);
 	}
 	
@@ -539,7 +463,7 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 
 			@Override
 			public String getValue(KeywordProxy object) {
-				return object == null ? null : object.getName();
+				return renderer.render(object == null ? null : object.getName());
 			}
 		}, constants.keywords());
 		
@@ -573,18 +497,6 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 		}
 		
 		keywordTable.addColumnStyleName(0, "questionTextColumn");
-	}
-
-	/*@Override
-	public void setName(String helloName) {
-		// todo Auto-generated method stub
-
-	}*/
-
-	@Override
-	public void setPresenter(Presenter presenter) {
-		this.presenter = presenter;
-
 	}
 
 	@Override

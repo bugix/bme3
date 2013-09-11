@@ -24,6 +24,12 @@
 			<lbl:LabeledTextArea addStyleNames="{style.labeledBox}" ui:field="description"></lbl:LabeledTextArea>
 			<lbl:LabeledValueListBox addStyleNames="{style.labeledBox}" ui:field="institute"></lbl:LabeledValueListBox>
 			<lbl:LabeledValueListBox addStyleNames="{style.labeledBox}" ui:field="questionType"></lbl:LabeledValueListBox>
+			<lbl:LabeledPanel addStyleNames="{style.labeledBox}" ui:field="instituteLblPanel">
+				<g:Label ui:field="instituteLbl"></g:Label>
+			</lbl:LabeledPanel>
+			<lbl:LabeledPanel addStyleNames="{style.labeledBox}" ui:field="questionTypeLblPanel">
+				<g:Label ui:field="questionTypeLbl"></g:Label>
+			</lbl:LabeledPanel>
 		</div>
 
 		<div class="{style.attributeGroup}">

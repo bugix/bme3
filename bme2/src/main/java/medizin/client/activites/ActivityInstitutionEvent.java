@@ -82,6 +82,8 @@ public class ActivityInstitutionEvent extends AbstractActivityWrapper implements
 
 	}*/
 	
+	InstitutionProxy selectedInstitutionProxy = null;
+	
 	@Override
 	public void start2(AcceptsOneWidget widget, EventBus eventBus) {
 		EventView eventView = new EventViewImpl(reciverMap);
@@ -109,6 +111,7 @@ public class ActivityInstitutionEvent extends AbstractActivityWrapper implements
 			public void onSuccess(Object response) {
 				if(response instanceof InstitutionProxy){
 					Log.info(((InstitutionProxy) response).getInstitutionName());
+					selectedInstitutionProxy = (InstitutionProxy) response; 
 					init((InstitutionProxy) response);
 				}
 
@@ -307,9 +310,18 @@ public class ActivityInstitutionEvent extends AbstractActivityWrapper implements
 	}
 
 	@Override
-	public void editClicked() {
-		// TODO Auto-generated method stub
+	public void editClicked(QuestionEventProxy proxy, String questionEventName) {
+		QuestionEventRequest request = requests.questionEventRequest();
+		proxy = request.edit(proxy);
+		proxy.setEventName(questionEventName);
 		
+		request.persist().using(proxy).fire(new BMEReceiver<Void>(reciverMap) {
+
+            public void onSuccess(Void ignore) {
+            	if (selectedInstitutionProxy != null)
+            		init(selectedInstitutionProxy);
+            }
+		});
 	}
 
 	@Override

@@ -1,5 +1,7 @@
 package medizin.client.ui.view.assignquestion;
 
+import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchSubViewImpl;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -19,7 +21,7 @@ public class AsignAssQuestionViewImpl extends Composite implements AsignAssQuest
 
 	public AsignAssQuestionViewImpl() {
 		initWidget(uiBinder.createAndBindUi(this));
-
+		questionAdvancedSearchSubViewImpl.getAddMc().setVisible(false);
 	}
 
 	@Override
@@ -55,14 +57,18 @@ public class AsignAssQuestionViewImpl extends Composite implements AsignAssQuest
 	@UiField
 	QuestionPanelImpl questionPanel;
 
-
-
+	@UiField
+	QuestionAdvancedSearchSubViewImpl questionAdvancedSearchSubViewImpl;
 
 	@Override
 	public void setPresenter(Presenter presenter) {
 		this.presenter = presenter;
-		
 	}
 
+	public QuestionAdvancedSearchSubViewImpl getQuestionAdvancedSearchSubViewImpl() {
+		return questionAdvancedSearchSubViewImpl;
+	}
+
+	
 
 }

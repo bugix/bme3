@@ -1,19 +1,12 @@
 package medizin.client.ui.view.assignquestion;
 
-import medizin.client.ui.McAppConstant;
-import medizin.client.ui.view.assesment.AssesmentDetailsView.Presenter;
-import medizin.client.ui.view.assignquestion.AddQuestionsTabPanel.Delegate;
 import medizin.shared.i18n.BmeConstants;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabBar;
-import com.google.gwt.user.client.ui.TabListener;
-import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class AddQuestionsTabPanelImpl extends TabBar implements  AddQuestionsTabPanel {

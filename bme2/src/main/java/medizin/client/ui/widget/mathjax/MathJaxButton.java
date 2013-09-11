@@ -81,12 +81,12 @@ public class MathJaxButton extends Button {
 	};
 	
 	public enum MyMath20Symbol implements Symbol{
-		times("times","\\times"),
-		div("div","\\div"),
-		pm("pm","\\pm"),
-		mp("mp","\\mp"),
-		cdot("cdot","\\cdot"),
-		star("star","\\star");
+		times("times","\\times "),
+		div("div","\\div "),
+		pm("pm","\\pm "),
+		mp("mp","\\mp "),
+		cdot("cdot","\\cdot "),
+		star("star","\\star ");
 		
 		private String name,value;
 		

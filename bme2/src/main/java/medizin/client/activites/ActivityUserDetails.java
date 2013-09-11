@@ -746,33 +746,8 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 					// This activity is dead
 					return;
 				}
-				questionAccessTable.setRowData(range.getStart(), values);
-
+				questionAccessTable.setRowData(range.getStart(), values);	
 			}
-			  /* @Override
-				public void onFailure(ServerFailure error) {
-						Log.warn(McAppConstant.ERROR_WHILE_DELETE + " in Institution:Event -" + error.getMessage());
-						if(error.getMessage().contains("ConstraintViolationException")){
-							Log.debug("Fehlen beim erstellen: Doppelter name");
-							// TODO mcAppFactory.getErrorPanel().setErrorMessage(McAppConstant.EVENT_IS_REFERENCED);
-						}
-					
-				}
-				
-	         @Override
-				public void onViolation(Set<Violation> errors) {
-					Iterator<Violation> iter = errors.iterator();
-					String message = "";
-					while(iter.hasNext()){
-						message += iter.next().getMessage() + "<br>";
-					}
-					Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Event -" + message);
-					
-					ErrorPanel erorPanel = new ErrorPanel();
-			        	  erorPanel.setWarnMessage(message);
-
-					
-				}*/
 		};
 
 		fireQuestionAccessByInstitutionOrEventOrQuestionNameOrKeywordRequest(range, callback);
@@ -924,18 +899,11 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 		institutionFilter=null;
 		questiuonStringFilter="";
 		dialogBoxQuestion = new QuestionAccessDialogboxImpl();
-		
-		dialogBoxQuestion.display();
 		Log.info("addNewQuestionClicked");
-		
 		this.questionAccessTable = dialogBoxQuestion.getTable();
 		dialogBoxQuestion.setPresenter(this);
 		dialogBoxQuestion.setDelegate(this);
 		
-		//institutionListbox = dialogBoxQuestion.getSearchInstitution();
-		//eventListbox = dialogBoxQuestion.getSearchEvent();
-		
-		// Fill the Institution Box
 		final BMEReceiver<List<InstitutionProxy>> callback2 = new BMEReceiver<List<InstitutionProxy>>() {
 			@Override
 			public void onSuccess(List<InstitutionProxy> values) {
@@ -963,45 +931,11 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 						}
 					}
 				});
-				
-				/*Iterator<InstitutionProxy> iter = values.iterator();
-				institutionListbox.addItem("", "");
-				while(iter.hasNext()){
-					InstitutionProxy institution = iter.next();
-					institutionListbox.addItem(institution.getInstitutionName(), institution.stableId().toString());
-				}*/
-				
-				//eventAccessTable.setRowData( values);
-
 			}
-			/* @Override
-				public void onFailure(ServerFailure error) {
-						Log.warn(McAppConstant.ERROR_WHILE_DELETE + " in Institution:Event -" + error.getMessage());
-						if(error.getMessage().contains("ConstraintViolationException")){
-							Log.debug("Fehlen beim erstellen: Doppelter name");
-							// TODO mcAppFactory.getErrorPanel().setErrorMessage(McAppConstant.EVENT_IS_REFERENCED);
-						}
-					
-				}
-			@Override
-				public void onViolation(Set<Violation> errors) {
-					Iterator<Violation> iter = errors.iterator();
-					String message = "";
-					while(iter.hasNext()){
-						message += iter.next().getMessage() + "<br>";
-					}
-					Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Event -" + message);
-					
-					ErrorPanel erorPanel = new ErrorPanel();
-			        	  erorPanel.setWarnMessage(message);
-
-					
-				}*/
 		};
 
 		fireRequestAllInstitution( callback2);
 		
-		// Fill the Event Box
 		final BMEReceiver<List<QuestionEventProxy>> callback3 = new BMEReceiver<List<QuestionEventProxy>>() {
 			@Override
 			public void onSuccess(List<QuestionEventProxy> values) {
@@ -1018,7 +952,6 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 
 					@Override
 					public String render(QuestionEventProxy object) {
-						// TODO Auto-generated method stub
 						if(object!=null)
 						{
 							return object.getEventName();
@@ -1030,39 +963,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 					}
 				});
 				
-				/*Iterator<QuestionEventProxy> iter = values.iterator();
-				eventListbox.addItem("", "");
-				while(iter.hasNext()){
-					QuestionEventProxy questionEvent = iter.next();
-					eventListbox.addItem(questionEvent.getEventName(), questionEvent.stableId().toString());
-				}*/
-				
-				//eventAccessTable.setRowData( values);
-
 			}
-			/*@Override
-				public void onFailure(ServerFailure error) {
-						Log.warn(McAppConstant.ERROR_WHILE_DELETE + " in Institution:Event -" + error.getMessage());
-						if(error.getMessage().contains("ConstraintViolationException")){
-							Log.debug("Fehlen beim erstellen: Doppelter name");
-							// TODO mcAppFactory.getErrorPanel().setErrorMessage(McAppConstant.EVENT_IS_REFERENCED);
-						}
-					
-				}
-				@Override
-				public void onViolation(Set<Violation> errors) {
-					Iterator<Violation> iter = errors.iterator();
-					String message = "";
-					while(iter.hasNext()){
-						message += iter.next().getMessage() + "<br>";
-					}
-					Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Event -" + message);
-					
-					ErrorPanel erorPanel = new ErrorPanel();
-			        	  erorPanel.setWarnMessage(message);
-
-					
-				}*/
 		};
 
 		fireRequestAllEvent( callback3);
@@ -1074,6 +975,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 			}
 		});
 		
+		dialogBoxQuestion.display();
 	}
 
 	@Override

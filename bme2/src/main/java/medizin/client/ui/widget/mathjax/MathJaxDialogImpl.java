@@ -5,6 +5,7 @@ import medizin.client.ui.widget.mathjax.MathJaxButton.MyMath20Symbol;
 import medizin.client.ui.widget.mathjax.MathJaxButton.Symbol;
 import medizin.client.util.MathJaxs;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -186,8 +187,11 @@ public class MathJaxDialogImpl extends DialogBox implements MathJaxDialog,ClickH
 		
 		if(source instanceof MathJaxButton) {
 			MathJaxButton b = (MathJaxButton) source;
-			String newTxt = txtInputBox.getText() + b.getValue();
-			txtInputBox.setText(newTxt);
+			Log.info("cursor position : " + txtInputBox.getCursorPos());
+			StringBuilder text = new StringBuilder(txtInputBox.getText());
+			text.insert(txtInputBox.getCursorPos(), b.getValue());
+			txtInputBox.setText(text.toString());
+			txtInputBox.setFocus(true);
 			callMathJax(txtInputBox, lblOutput);
 		}
 		

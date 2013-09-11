@@ -19,6 +19,7 @@ import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchSubViewImp
 import medizin.client.ui.view.renderer.EnumRenderer;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.QuickSearchBox;
+import medizin.client.ui.widget.pager.MySimplePager;
 import medizin.shared.Status;
 import medizin.shared.i18n.BmeConstants;
 
@@ -160,7 +161,7 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 	CellTable<QuestionProxy> table;
 
 	@UiField(provided = true)
-	public SimplePager pager;
+	public MySimplePager pager;
 
 	@UiField
 	public IconButton filterButton;
@@ -211,9 +212,9 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 		table = new CellTable<QuestionProxy>(McAppConstant.TABLE_PAGE_SIZE,
 				tableResources);
 
-		SimplePager.Resources pagerResources = GWT
+		MySimplePager.Resources pagerResources = GWT
 				.create(MySimplePagerResources.class);
-		pager = new SimplePager(SimplePager.TextLocation.RIGHT, pagerResources,
+		pager = new MySimplePager(MySimplePager.TextLocation.RIGHT, pagerResources,
 				true, McAppConstant.TABLE_JUMP_SIZE, true);
 
 		Log.info("Question Save Event Register");

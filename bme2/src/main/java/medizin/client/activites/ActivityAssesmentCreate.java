@@ -109,7 +109,7 @@ public class ActivityAssesmentCreate  extends AbstractActivityWrapper  implement
 		view.setDelegate(this);
 		
         view.setMcPickerValues(Collections.<McProxy>emptyList());
-        requests.mcRequest().findMcEntries(0, 50).with(medizin.client.ui.view.roo.McProxyRenderer.instance().getPaths()).fire(new Receiver<List<McProxy>>() {
+        requests.mcRequest().findAllMcs().with(medizin.client.ui.view.roo.McProxyRenderer.instance().getPaths()).fire(new Receiver<List<McProxy>>() {
 
             public void onSuccess(List<McProxy> response) {
                 List<McProxy> values = new ArrayList<McProxy>();

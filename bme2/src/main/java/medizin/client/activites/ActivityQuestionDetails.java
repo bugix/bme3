@@ -64,7 +64,7 @@ import com.google.gwt.view.client.RangeChangeEvent;
 
 public class ActivityQuestionDetails extends AbstractActivityWrapper implements 
 	QuestionDetailsView.Delegate, QuestionDetailsView.Presenter, AnswerDialogbox.Delegate, 
-	 AnswerListView.Delegate, MatrixAnswerView.Presenter , MatrixAnswerView.Delegate, 
+	 AnswerListView.Delegate, MatrixAnswerView.Delegate, 
 	 MatrixAnswerListView.Delegate, MatrixAnswerListView.Presenter{
 
 	private AcceptsOneWidget widget;
@@ -116,7 +116,6 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	public void initDetailsView(QuestionProxy questionProxy) {
 		startForAccessRights();
 		QuestionDetailsViewImpl questionDetailsView = new QuestionDetailsViewImpl(eventBus, editDeleteBtnFlag,hasAnswerRights(questionProxy).hasWriteRight());
-		questionDetailsView.setPresenter(this);
 		this.view = questionDetailsView;
         widget.setWidget(questionDetailsView.asWidget());
 		view.setDelegate(this);
@@ -393,29 +392,6 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
             	placeController.goTo(new PlaceQuestion(PlaceQuestion.PLACE_QUESTION));
             	
             }
-           /* @Override
-			public void onFailure(ServerFailure error) {
-					Log.warn(McAppConstant.ERROR_WHILE_DELETE + " in Assesment -" + error.getMessage());
-					if(error.getMessage().contains("ConstraintViolationException")){
-						Log.debug("Fehlen beim erstellen: Doppelter name");
-						//TODO mcAppFactory.getErrorPanel().setErrorMessage(McAppConstant.EVENT_IS_REFERENCED);
-					}
-				
-			}
-			@Override
-			public void onViolation(Set<Violation> errors) {
-				Iterator<Violation> iter = errors.iterator();
-				String message = "";
-				while(iter.hasNext()){
-					message += iter.next().getMessage() + "<br>";
-				}
-				Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Event -" + message);
-				
-				//TODO mcAppFactory.getErrorPanel().setErrorMessage(message);
-
-				
-			}*/
-            
         });
 		
 	}
@@ -1348,7 +1324,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	                values.add(null);
 	                values.addAll(response);
 	                matrixAnswerView.setRewiewerPickerValues(values);
-	                matrixAnswerView.setAutherPickerValues(values,userLoggedIn);
+	                matrixAnswerView.setAutherPickerValues(values,userLoggedIn,isAdminOrInstitutionalAdmin());
 	            }
 	        });
 	        
@@ -1384,7 +1360,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		answerDialogbox.setDelegate(this);
 		
 		// because display need to be called after author and reviewer list.  
-		final Function<Void, Void> sync = new Function<Void, Void>() {
+		/*final Function<Void, Void> sync = new Function<Void, Void>() {
 			
 			private int count = 0;  
 			@Override
@@ -1398,7 +1374,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 				}
 				return null;
 			}
-		}; 
+		};*/ 
 		
 		
 		answerDialogbox.setValidityPickerValues(Arrays.asList(Validity.values()));
@@ -1412,7 +1388,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
                 values.add(null);
                 values.addAll(response);
                 answerDialogbox.setRewiewerPickerValues(values);                
-                answerDialogbox.setAutherPickerValues(values,userLoggedIn);
+                answerDialogbox.setAutherPickerValues(values,userLoggedIn,isAdminOrInstitutionalAdmin());
                 
                 if(answer != null) {
 		        	answerDialogbox.setValues(answer);
@@ -1479,7 +1455,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		matrixAnswerView.setDelegate(this);
 				
 		matrixAnswerView.setRewiewerPickerValues(Collections.<PersonProxy>emptyList());
-        requests.personRequest().findPersonEntries(0, 50).with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).fire(new BMEReceiver<List<PersonProxy>>() {
+        requests.personRequest().findAllPeople().with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).fire(new BMEReceiver<List<PersonProxy>>() {
 
             public void onSuccess(List<PersonProxy> response) {
                 List<PersonProxy> values = new ArrayList<PersonProxy>();
@@ -1490,13 +1466,13 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
         });
         
        // answerDialogbox.setAutherPickerValues(Collections.<PersonProxy>emptyList());
-        requests.personRequest().findPersonEntries(0, 50).with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).fire(new BMEReceiver<List<PersonProxy>>() {
+        requests.personRequest().findAllPeople().with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).fire(new BMEReceiver<List<PersonProxy>>() {
 
             public void onSuccess(List<PersonProxy> response) {
                 List<PersonProxy> values = new ArrayList<PersonProxy>();
                 values.add(null);
                 values.addAll(response);
-                matrixAnswerView.setAutherPickerValues(values,userLoggedIn);
+                matrixAnswerView.setAutherPickerValues(values,userLoggedIn,isAdminOrInstitutionalAdmin());
             }
         });
 		

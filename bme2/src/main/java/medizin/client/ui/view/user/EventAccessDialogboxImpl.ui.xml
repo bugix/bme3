@@ -1,6 +1,6 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:b="urn:import:com.google.gwt.user.cellview.client" xmlns:i="urn:import:medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl" xmlns:m="urn:import:medizin.client.ui.widget">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:b="urn:import:com.google.gwt.user.cellview.client" xmlns:i="urn:import:medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl" xmlns:m="urn:import:medizin.client.ui.widget" xmlns:p="urn:import:medizin.client.ui.widget.pager">
 
 	<ui:style src="../../styles.css">
 		.panelHTML {
@@ -56,7 +56,7 @@
 		
 		.right {
 			float: right;
-			margin: 3px;
+			margin-right: 5px;
 		}
 		
 		.displayRight {
@@ -70,7 +70,8 @@
 		<g:HorizontalPanel spacing="3">
 			<i:DefaultSuggestBox ui:field="searchInstitution"></i:DefaultSuggestBox>
 			<g:TextBox ui:field="searchEvent"></g:TextBox>
-			<b:SimplePager ui:field="pager" display="{tableEvent}" addStyleNames="{style.displayRight}" />
+			<p:MySimplePager ui:field="pager" display="{tableEvent}" addStyleNames="{style.displayRight}" ></p:MySimplePager>
+			<!-- <b:SimplePager ui:field="pager" display="{tableEvent}" addStyleNames="{style.displayRight}" /> -->
 		</g:HorizontalPanel>
 		
 		<b:CellTable ui:field="tableEvent" addStyleNames="{style.standardTable}"
@@ -89,8 +90,7 @@
 		<div class="{style.barNew}">
 			<!-- <g:Button ui:field="closeButton" addStyleNames="{style.right}"></g:Button> -->
 			
-			<m:IconButton ui:field="closeButton" icon="closethick"
-				addStyleNames="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only {style.right}"></m:IconButton>
+			<m:IconButton ui:field="closeButton" icon="closethick" addStyleNames="{style.right}"></m:IconButton>
 			<!-- <g:Button ui:field="closeButton" addStyleNames="ui-button ui-widget 
 				ui-state-default ui-corner-all ui-button-text-only {style.right}">Schliessen</g:Button> -->
 		</div>

@@ -83,7 +83,9 @@ public class LabeledPanel extends Composite implements HasWidgets, Focusable, Ha
 	public HandlerRegistration addBlurHandler(BlurHandler handler) {
 		List<HandlerRegistration> regs = new ArrayList<HandlerRegistration>();
 		for (Widget w : children) {
-			regs.add(((HasBlurHandlers)w).addBlurHandler(handler));
+			if (w instanceof HasBlurHandlers) {
+				regs.add(((HasBlurHandlers)w).addBlurHandler(handler));
+			}
 		}
 		regs.add(wrapperPanel.addBlurHandler(handler));
 		return new DelegatingHandlerRegistration(regs);
@@ -93,7 +95,9 @@ public class LabeledPanel extends Composite implements HasWidgets, Focusable, Ha
 	public HandlerRegistration addFocusHandler(FocusHandler handler) {
 		List<HandlerRegistration> regs = new ArrayList<HandlerRegistration>();
 		for (Widget w : children) {
-			regs.add(((HasFocusHandlers)w).addFocusHandler(handler));
+			if (w instanceof HasFocusHandlers) {
+				regs.add(((HasFocusHandlers)w).addFocusHandler(handler));
+			}
 		}
 		regs.add(wrapperPanel.addFocusHandler(handler));
 		return new DelegatingHandlerRegistration(regs);

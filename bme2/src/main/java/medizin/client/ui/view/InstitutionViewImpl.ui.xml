@@ -1,7 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" 
-	xmlns:b="urn:import:com.google.gwt.user.cellview.client" xmlns:p="urn:import:javax.persistence" xmlns:a="urn:import:medizin.client.ui.widget">
+	xmlns:b="urn:import:com.google.gwt.user.cellview.client" xmlns:p="urn:import:javax.persistence" xmlns:a="urn:import:medizin.client.ui.widget" xmlns:pager="urn:import:medizin.client.ui.widget.pager">
 	
 	
 
@@ -98,7 +98,8 @@
 								+Add
 							</g:Button>  -->
 							<!-- <b:SimplePager ui:field="pager" display="{table}" addStyleNames="{style.displayRight}" /> -->
-							<b:SimplePager ui:field="pager" display="{table}" />
+							<pager:MySimplePager ui:field="pager" display="{table}"></pager:MySimplePager>
+							<!-- <b:SimplePager ui:field="pager" display="{table}" /> -->
 							</g:HorizontalPanel>
 						<!-- </div> -->
 					

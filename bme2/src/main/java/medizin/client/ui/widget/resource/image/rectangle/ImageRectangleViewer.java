@@ -2,6 +2,7 @@ package medizin.client.ui.widget.resource.image.rectangle;
 
 import java.util.List;
 
+import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.resource.image.rectangle.custom.Target;
 import medizin.client.util.Point;
 
@@ -18,7 +19,6 @@ import com.google.gwt.event.dom.client.MouseMoveHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -34,10 +34,10 @@ public class ImageRectangleViewer extends Composite{
 	DrawingArea drawingArea;
 
 	@UiField
-	Button btnAdd;
+	IconButton btnAdd;
 	
 	@UiField
-	Button btnClear;
+	IconButton btnClear;
 	
 	private boolean validRectangle = false;
 	private boolean btnAddClicked = false;

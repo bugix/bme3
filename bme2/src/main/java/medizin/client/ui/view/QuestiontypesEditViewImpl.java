@@ -2,6 +2,9 @@ package medizin.client.ui.view;
 
 import java.util.Collection;
 import java.util.HashSet;
+
+import static medizin.client.util.ClientUtility.defaultString;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
@@ -20,6 +23,7 @@ import medizin.client.ui.widget.labeled.LabeledPanel;
 import medizin.client.ui.widget.labeled.LabeledTextArea;
 import medizin.client.ui.widget.labeled.LabeledTextBox;
 import medizin.client.ui.widget.labeled.LabeledValueListBox;
+import medizin.client.util.ClientUtility;
 import medizin.shared.MultimediaType;
 import medizin.shared.QuestionTypes;
 import medizin.shared.SelectionType;
@@ -117,7 +121,19 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 	});
     	
     @UiField (provided = true)
-	LabeledValueListBox<QuestionTypes> questionType = new LabeledValueListBox<QuestionTypes>(new EnumRenderer<QuestionTypes>());    
+	LabeledValueListBox<QuestionTypes> questionType = new LabeledValueListBox<QuestionTypes>(new EnumRenderer<QuestionTypes>());
+    
+    @UiField
+    LabeledPanel instituteLblPanel;
+    
+    @UiField
+    Label instituteLbl;
+    
+    @UiField
+    LabeledPanel questionTypeLblPanel;
+    
+    @UiField
+    Label questionTypeLbl;
     	
 	@UiField
 	LabeledIntegerBox sumAnswer;	
@@ -266,63 +282,66 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
        questionType.setEnabled(false);
        //DOM.setElementPropertyBoolean(questionType.getValueListBox().getElement(), "disabled", true);
        institute.setValue(proxy.getInstitution());
+       instituteLbl.setText((proxy.getInstitution() != null) ? defaultString(proxy.getInstitution().getInstitutionName()) : "");
        questionType.setValue(proxy.getQuestionType());
+       questionTypeLbl.setText(new EnumRenderer<QuestionTypes>().render(proxy.getQuestionType()));
+       
        shortName.setValue(proxy.getShortName());
        longName.setValue(proxy.getLongName());
        description.setValue(proxy.getDescription());
        
        if (proxy.getQuestionType().equals(QuestionTypes.Textual) || proxy.getQuestionType().equals(QuestionTypes.Sort))
        {
-    	   sumAnswer.setValue(toStringUtility(proxy.getSumAnswer()));
-    	   sumTrueAnswer.setValue(toStringUtility(proxy.getSumTrueAnswer()));
-    	   sumFalseAnswer.setValue(toStringUtility(proxy.getSumFalseAnswer()));
-    	   questionLength.setValue(toStringUtility(proxy.getQuestionLength()));
-    	   answerLength.setValue(toStringUtility(proxy.getAnswerLength()));
-    	   answerDiff.setValue(toStringUtility(proxy.getDiffBetAnswer()));
+    	   sumAnswer.setValue(defaultString(proxy.getSumAnswer()));
+    	   sumTrueAnswer.setValue(defaultString(proxy.getSumTrueAnswer()));
+    	   sumFalseAnswer.setValue(defaultString(proxy.getSumFalseAnswer()));
+    	   questionLength.setValue(defaultString(proxy.getQuestionLength()));
+    	   answerLength.setValue(defaultString(proxy.getAnswerLength()));
+    	   answerDiff.setValue(defaultString(proxy.getDiffBetAnswer()));
     	   queHaveImgChkBox.setValue(proxy.getQueHaveImage());
     	   queHaveVideoChkBox.setValue(proxy.getQueHaveVideo());
     	   queHaveSoundChkBox.setValue(proxy.getQueHaveSound());
        }
        else if (proxy.getQuestionType().equals(QuestionTypes.Imgkey))
        {
-    	   questionLength.setValue(toStringUtility(proxy.getQuestionLength()));
-    	   keywordCount.setValue(toStringUtility(proxy.getKeywordCount()));
+    	   questionLength.setValue(defaultString(proxy.getQuestionLength()));
+    	   keywordCount.setValue(defaultString(proxy.getKeywordCount()));
     	   showAutoCompleteChkBox.setValue(proxy.getShowAutocomplete());
     	   isDictionaryKeywordChkBox.setValue(proxy.getIsDictionaryKeyword());
     	   allowTypingChkBox.setValue(proxy.getAllowTyping());
-    	   minLetterForAutoComp.setValue(toStringUtility(proxy.getMinAutoCompleteLetter()));
-    	   answerLength.setValue(toStringUtility(proxy.getAnswerLength()));
+    	   minLetterForAutoComp.setValue(defaultString(proxy.getMinAutoCompleteLetter()));
+    	   answerLength.setValue(defaultString(proxy.getAnswerLength()));
     	   acceptNonKeywordChkBox.setValue(proxy.getAcceptNonKeyword());
-    	   shortAnswerLength.setValue(toStringUtility(proxy.getLengthShortAnswer()));
+    	   shortAnswerLength.setValue(defaultString(proxy.getLengthShortAnswer()));
        }
        else if (proxy.getQuestionType().equals(QuestionTypes.ShowInImage))
        {
-    	   questionLength.setValue(toStringUtility(proxy.getQuestionLength()));  	   
+    	   questionLength.setValue(defaultString(proxy.getQuestionLength()));  	   
        }
        else if (proxy.getQuestionType().equals(QuestionTypes.LongText))
        {
-    	   questionLength.setValue(toStringUtility(proxy.getQuestionLength()));
+    	   questionLength.setValue(defaultString(proxy.getQuestionLength()));
     	   keywordHighlightChkBox.setValue(proxy.getKeywordHighlight());
     	   richTextChkBox.setValue(proxy.getRichText());
-    	   minLength.setValue(toStringUtility(proxy.getMinLength()));
-    	   maxLength.setValue(toStringUtility(proxy.getMaxLength()));
-    	   minWordCount.setValue(toStringUtility(proxy.getMinWordCount()));
-    	   maxWordCount.setValue(toStringUtility(proxy.getMaxWordCount()));
+    	   minLength.setValue(defaultString(proxy.getMinLength()));
+    	   maxLength.setValue(defaultString(proxy.getMaxLength()));
+    	   minWordCount.setValue(defaultString(proxy.getMinWordCount()));
+    	   maxWordCount.setValue(defaultString(proxy.getMaxWordCount()));
        }
        else if (proxy.getQuestionType().equals(QuestionTypes.Matrix))
        {
-    	   questionLength.setValue(toStringUtility(proxy.getQuestionLength()));
-    	   answerLength.setValue(toStringUtility(proxy.getAnswerLength()));
+    	   questionLength.setValue(defaultString(proxy.getQuestionLength()));
+    	   answerLength.setValue(defaultString(proxy.getAnswerLength()));
     	   oneToOneAssChkBox.setValue(proxy.getAllowOneToOneAss());
        }
        else if (proxy.getQuestionType().equals(QuestionTypes.MCQ))
        {
-    	   questionLength.setValue(toStringUtility(proxy.getQuestionLength()));
+    	   questionLength.setValue(defaultString(proxy.getQuestionLength()));
     	   multimediaType.setValue(proxy.getMultimediaType());
     	   selectionType.setValue(proxy.getSelectionType());
-    	   column.setValue(toStringUtility(proxy.getColumns()));
+    	   column.setValue(defaultString(proxy.getColumns()));
     	   richTextChkBox.setValue(proxy.getRichText());
-    	   maxBytes.setValue(toStringUtility(proxy.getMaxBytes()));
+    	   maxBytes.setValue(defaultString(proxy.getMaxBytes()));
        }
        
     }
@@ -448,7 +467,11 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		
 		institute.setLabelText(constants.institutionLbl());
 		institute.setHelpText(contextHelp.institution());
+		instituteLblPanel.setLabelText(constants.institutionLbl());
+		instituteLblPanel.setHelpText(contextHelp.institution());
 		
+		questionTypeLblPanel.setLabelText(constants.questionType());
+		questionTypeLblPanel.setHelpText(contextHelp.questionType());
 		questionType.setLabelText(constants.questionType());
 		questionType.setHelpText(contextHelp.questionType());
 		
@@ -551,7 +574,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		}
 		
 		description.addValueChangeHandler(new ValueChangeHandler<String>() {
-			@Override
+			//@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
 				description.getTextArea().removeStyleName("higlight_onViolation");
 			}
@@ -615,10 +638,6 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 	}
 	
 	@Override
-	public void setPresenter(Presenter presenter) {
-	}
-
-	@Override
 	public void setDelegate(Delegate delegate) {
 		this.delegate = delegate;	
 	}
@@ -627,9 +646,15 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 	public void setEditTitle(boolean edit) {
 	      if (edit) {
 	    	  title.setInnerText(constants.editQuestionType());
+	    	  instituteLblPanel.setVisible(true);
+	    	  questionTypeLblPanel.setVisible(true);
+	    	  institute.setVisible(false);
+	    	  questionType.setVisible(false);
 	        } else {
-	        	DOM.getElementById("instituteLabelDiv").removeFromParent();
-	        	DOM.getElementById("questionTypeLabelDiv").removeFromParent();
+		    	  instituteLblPanel.setVisible(false);
+		    	  questionTypeLblPanel.setVisible(false);
+		    	  institute.setVisible(true);
+		    	  questionType.setVisible(true);
 	        	title.setInnerText(constants.addQuestionType());
 	        }		
 	}
@@ -997,11 +1022,10 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				}
 				
 				msg = "";
-				if ((msg = checkTextWidgetForDouble(answerDiff.getDoubleBox())) != "")
-				{
+				if((msg = checkTextWidgetForDoubleWithRange(answerDiff.getTextBox(),0,100)) != "") {
 					flag = false;
 					errorMessage.add(constants.diffAnswer() + " " + msg);
-					answerDiff.getTextBox().addStyleName("higlight_onViolation");
+					answerDiff.addStyleName("higlight_onViolation");
 				}
 				
 				break;
@@ -1211,9 +1235,8 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		
 		return message;
 	}
-	
-	private String checkTextWidgetForDouble(TextBox textBox)
-	{
+		
+	private String checkTextWidgetForDoubleWithRange(TextBox textBox, int start, int end) {
 		String message = "";
 		if (textBox.getText().isEmpty())
 		{
@@ -1222,6 +1245,11 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		else if (!ClientUtility.isDouble(textBox.getText()))
 		{
 			message = constants.questionTypeNumErrorMsg();
+		}else if (ClientUtility.isDouble(textBox.getText()) == true) {
+			double value = Double.parseDouble(textBox.getText());
+			if(value < 0 || value > 100) {
+				message = constants.questionTypeNumRanageErrorMsg();
+			}
 		}
 		
 		return message;

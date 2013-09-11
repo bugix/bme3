@@ -54,7 +54,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.inject.Inject;
 import com.google.web.bindery.requestfactory.shared.EntityProxyId;
 
-public class ActivityQuestionEdit extends AbstractActivityWrapper implements QuestionEditView.Presenter, QuestionEditView.Delegate {
+public class ActivityQuestionEdit extends AbstractActivityWrapper implements QuestionEditView.Delegate {
 
 	private PlaceQuestionDetails questionPlace;
 	protected QuestionEditView view;
@@ -100,13 +100,12 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 	public void start2(AcceptsOneWidget widget, EventBus eventBus) {
 		this.eventBus = eventBus;
 		QuestionEditView questionEditView = new QuestionEditViewImpl(reciverMap, eventBus, userLoggedIn);
-		questionEditView.setPresenter(this);
 		this.view = questionEditView;
 		view.setDelegate(this);
 		
 		view.setRewiewerPickerValues(Collections.<PersonProxy> emptyList(), null);
 		PersonRequest personRequestForReviewer = requests.personRequest();
-		personRequestForReviewer.findPersonEntries(0, 200).with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).to(new BMEReceiver<List<PersonProxy>>() {
+		personRequestForReviewer.findAllPeople().with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).to(new BMEReceiver<List<PersonProxy>>() {
 
 			public void onSuccess(List<PersonProxy> response) {
 				List<PersonProxy> values = new ArrayList<PersonProxy>();
@@ -119,7 +118,7 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 		
 		view.setAutorPickerValues(Collections.<PersonProxy> emptyList());
 		PersonRequest personRequestForAuthor = personRequestForReviewer.append(requests.personRequest());
-		personRequestForAuthor.findPersonEntries(0, 200).with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).to(new BMEReceiver<List<PersonProxy>>() {
+		personRequestForAuthor.findAllPeople().with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).to(new BMEReceiver<List<PersonProxy>>() {
 
 			public void onSuccess(List<PersonProxy> response) {
 				List<PersonProxy> values = new ArrayList<PersonProxy>();
@@ -156,7 +155,7 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 		view.setMcsPickerValues(Collections.<McProxy> emptyList());
 		
 		McRequest mcRequest = questionTypeRequest.append(requests.mcRequest());
-		mcRequest.findMcEntries(0, 50).with(medizin.client.ui.view.roo.McProxyRenderer.instance().getPaths()).to(new BMEReceiver<List<McProxy>>() {
+		mcRequest.findAllMcs().with(medizin.client.ui.view.roo.McProxyRenderer.instance().getPaths()).to(new BMEReceiver<List<McProxy>>() {
 
 			public void onSuccess(List<McProxy> response) {
 				List<McProxy> values = new ArrayList<McProxy>();
@@ -224,7 +223,6 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 		}
 	}
 
-	@Override
 	public void goTo(Place place) {
 		placeController.goTo(place);
 	}

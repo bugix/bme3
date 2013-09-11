@@ -18,7 +18,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public interface QuestionDetailsView extends IsWidget {
     /*void setName(String helloName);*/
 
-    void setPresenter(Presenter activityQuestionDetails);
+    /*void setPresenter(Presenter activityQuestionDetails);*/
     void setDelegate(Delegate delegate);
     void setValue(QuestionProxy proxy);
    // public EventAccessViewImpl getEventAccessView();

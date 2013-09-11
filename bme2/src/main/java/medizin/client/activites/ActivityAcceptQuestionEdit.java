@@ -1,7 +1,5 @@
 package medizin.client.activites;
 
-import java.util.Date;
-
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.AbstractDetailsPlace.Operation;
 import medizin.client.place.PlaceAcceptQuestion;

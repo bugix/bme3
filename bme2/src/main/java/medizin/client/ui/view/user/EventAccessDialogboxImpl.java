@@ -11,6 +11,7 @@ import medizin.client.proxy.UserAccessRightsProxy;
 import medizin.client.style.resources.MyCellTableResources;
 import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
+import medizin.client.ui.widget.pager.MySimplePager;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.EventHandlingValueHolderItem;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
 import medizin.shared.AccessRights;
@@ -73,8 +74,8 @@ public class EventAccessDialogboxImpl extends DialogBox implements EventAccessDi
 		CellTable.Resources tableResources = GWT.create(MyCellTableResources.class);
 		tableEvent = new CellTable<QuestionEventProxy>(McAppConstant.TABLE_PAGE_SIZE,tableResources);
 
-		SimplePager.Resources pagerResources = GWT.create(MySimplePagerResources.class);
-		pager = new SimplePager(SimplePager.TextLocation.RIGHT, pagerResources,true, McAppConstant.TABLE_JUMP_SIZE, true);
+		MySimplePager.Resources pagerResources = GWT.create(MySimplePagerResources.class);
+		pager = new MySimplePager(MySimplePager.TextLocation.RIGHT, pagerResources,true, McAppConstant.TABLE_JUMP_SIZE, true);
 		
 		setWidget(uiBinder.createAndBindUi(this));
 	    setGlassEnabled(true);
@@ -275,7 +276,7 @@ public class EventAccessDialogboxImpl extends DialogBox implements EventAccessDi
 		CellTable<QuestionEventProxy> tableEvent;
 
 		@UiField(provided = true)
-		public SimplePager pager;
+		public MySimplePager pager;
 
 		
 		

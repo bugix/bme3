@@ -2,7 +2,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:n="urn:import:medizin.client.ui"
-	xmlns:b="urn:import:com.google.gwt.user.cellview.client"  xmlns:m="urn:import:medizin.client.ui.widget" >
+	xmlns:b="urn:import:com.google.gwt.user.cellview.client"  xmlns:m="urn:import:medizin.client.ui.widget" xmlns:p="urn:import:medizin.client.ui.widget.pager">
 	
 
 	<ui:style src="../../styles.css" >
@@ -22,7 +22,8 @@
 						
 						
 						<m:IconButton  ui:field="newButton" icon="plusthick">neuer Prüfung erstellen</m:IconButton>
-						<b:SimplePager ui:field="pager" display="{table}" />
+						<p:MySimplePager ui:field="pager" display="{table}" ></p:MySimplePager>
+						<!-- <b:SimplePager ui:field="pager" display="{table}" /> -->
 						
 						 <!-- <i:DefaultSuggestBox ui:field="copiedOsce"></i:DefaultSuggestBox> --> 
 					</div>
