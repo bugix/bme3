@@ -6,16 +6,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.style.resources.MyCellTableNoHilightResources;
-import medizin.client.style.resources.MyCellTableResources;
 import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.widget.IconButton;
+import medizin.client.ui.widget.TextPopupViewImpl;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEvent;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEventHandler;
-import medizin.client.proxy.InstitutionProxy;
-import medizin.client.proxy.QuestionEventProxy;
 import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
@@ -25,6 +24,7 @@ import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.text.shared.Renderer;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -34,10 +34,7 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -115,6 +112,11 @@ public class EventViewImpl extends Composite implements EventView  {
     CellTable<QuestionEventProxy> tableEvent ;
     */
     protected Set<String> paths = new HashSet<String>();
+    
+    private int left = 0;
+
+	private int top = 0;
+
 
     public void init() {
     	
@@ -178,7 +180,14 @@ public class EventViewImpl extends Composite implements EventView  {
 //            }
 //        }, "Institution");
     	
-  
+    	tableEvent.addDomHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				left = event.getClientX();
+				top = event.getClientY();
+			}
+		}, ClickEvent.getType());
 
         paths.add("eventName");
         tableEvent.addColumn(new TextColumn<QuestionEventProxy>() {
@@ -195,6 +204,35 @@ public class EventViewImpl extends Composite implements EventView  {
                 return renderer.render(object.getEventName());
             }
         }, "Name des Themenbereichs");
+        
+    	addColumn(new ActionCell<QuestionEventProxy>(
+      			McAppConstant.EDIT_ICON, new ActionCell.Delegate<QuestionEventProxy>() {
+    	            public void execute(final QuestionEventProxy questionEvent) {
+    	            	final TextPopupViewImpl popupView = new TextPopupViewImpl();
+						popupView.setText(questionEvent.getEventName());
+						popupView.addSaveClickHandler(new ClickHandler() {
+							
+							@Override
+							public void onClick(ClickEvent event) {
+								delegate.editClicked(questionEvent, popupView.getText());
+								popupView.hide();
+							}
+						});
+						popupView.addCancelClickHandler(new ClickHandler() {
+							
+							@Override
+							public void onClick(ClickEvent event) {
+								popupView.hide();
+							}
+						});
+						popupView.setPopupPosition((left-225), (top-50));
+						popupView.show();
+    	            }
+    	          }), "", new GetValue<QuestionEventProxy>() {
+    	        public QuestionEventProxy getValue(QuestionEventProxy contact) {
+    	          return contact;
+    	        }
+    	      }, null);
         
       	addColumn(new ActionCell<QuestionEventProxy>(
       			McAppConstant.DELETE_ICON, new ActionCell.Delegate<QuestionEventProxy>() {
@@ -220,6 +258,7 @@ public class EventViewImpl extends Composite implements EventView  {
     	        }
     	      }, null);
       	
+      	tableEvent.addColumnStyleName(2, "iconColumn");
       	tableEvent.addColumnStyleName(1, "iconColumn");
       	tableEvent.addColumnStyleName(0, "questionTextColumn");
     }

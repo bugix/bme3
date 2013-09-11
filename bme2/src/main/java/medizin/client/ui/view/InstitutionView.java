@@ -20,7 +20,7 @@ public interface InstitutionView extends IsWidget {
 	 */
 	interface Delegate {
 		void deleteClicked(InstitutionProxy institution);
-		void editClicked();
+		void editClicked(InstitutionProxy proxy, String instituionName);
 		void newClicked(String institutionName);
 		void performSearch(String value);
 	}

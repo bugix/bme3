@@ -340,9 +340,17 @@ public class ActivityInstitution extends AbstractActivityWrapper implements
 	}
 
 	@Override
-	public void editClicked() {
-		// TODO Auto-generated method stub
+	public void editClicked(InstitutionProxy proxy, String institutionName) {
+		InstitutionRequest request = requests.institutionRequest();
+		proxy = request.edit(proxy);
+		proxy.setInstitutionName(institutionName);
 
+		request.persist().using(proxy).fire(new BMEReceiver<Void>(reciverMap) {
+
+			public void onSuccess(Void ignore) {
+				init();
+			}
+		});
 	}
 
 	@Override

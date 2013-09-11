@@ -19,10 +19,7 @@ public interface EventView extends IsWidget {
 	 */
 	interface Delegate {
 		void deleteClicked(QuestionEventProxy event);
-
-		void editClicked();
-		
-
+		void editClicked(QuestionEventProxy proxy, String questionEventName);
 		void newClicked(String eventName);
 	}
 

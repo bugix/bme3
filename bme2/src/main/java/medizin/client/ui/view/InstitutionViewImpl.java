@@ -14,6 +14,7 @@ import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.QuickSearchBox;
+import medizin.client.ui.widget.TextPopupViewImpl;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEvent;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEventHandler;
@@ -27,6 +28,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Float;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.text.shared.Renderer;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -37,7 +39,6 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -147,6 +148,10 @@ public class InstitutionViewImpl extends Composite implements InstitutionView, R
     */
     protected Set<String> paths = new HashSet<String>();
 
+	private int left = 0;
+
+	private int top = 0;
+
     public void init(Boolean flag) {
     	editableCells = new ArrayList<AbstractEditableCell<?, ?>>();
     	
@@ -183,6 +188,15 @@ public class InstitutionViewImpl extends Composite implements InstitutionView, R
         }, "Version");*/
     	
 
+    	table.addDomHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				left = event.getClientX();
+				top = event.getClientY();
+			}
+		}, ClickEvent.getType());
+
 
         paths.add("institutionName");
         table.addColumn(new TextColumn<InstitutionProxy>() {
@@ -202,6 +216,35 @@ public class InstitutionViewImpl extends Composite implements InstitutionView, R
         
         if (flag)
         {
+        	addColumn(new ActionCell<InstitutionProxy>(
+            		McAppConstant.EDIT_ICON, new ActionCell.Delegate<InstitutionProxy>() {
+    					public void execute(final InstitutionProxy institution) {
+    						final TextPopupViewImpl popupView = new TextPopupViewImpl();
+    						popupView.setText(institution.getInstitutionName());
+    						popupView.addSaveClickHandler(new ClickHandler() {
+								
+								@Override
+								public void onClick(ClickEvent event) {
+									delegate.editClicked(institution, popupView.getText());
+									popupView.hide();
+								}
+							});
+    						popupView.addCancelClickHandler(new ClickHandler() {
+								
+								@Override
+								public void onClick(ClickEvent event) {
+									popupView.hide();
+								}
+							});
+    						popupView.setPopupPosition((left-200), (top-50));
+    						popupView.show();
+    					}	
+    				}), "", new GetValue<InstitutionProxy>() {
+    			public InstitutionProxy getValue(InstitutionProxy institution) {
+    				return institution;
+    			}
+    		}, null);
+        	
         	addColumn(new ActionCell<InstitutionProxy>(
             		McAppConstant.DELETE_ICON, new ActionCell.Delegate<InstitutionProxy>() {
     					public void execute(final InstitutionProxy institution) {
@@ -228,6 +271,7 @@ public class InstitutionViewImpl extends Composite implements InstitutionView, R
     		}, null);
         	
         	table.addColumnStyleName(1, "iconColumn");
+        	table.addColumnStyleName(2, "iconColumn");
         }
         
         
