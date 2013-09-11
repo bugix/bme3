@@ -21,7 +21,6 @@ import medizin.client.proxy.QuestionTypeCountPerExamProxy;
 import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.request.AnswerToAssQuestionRequest;
 import medizin.client.request.AssesmentQuestionRequest;
-import medizin.client.request.AssesmentRequest;
 import medizin.client.request.QuestionEventRequest;
 import medizin.client.request.QuestionSumPerPersonRequest;
 import medizin.client.ui.AssesmenBookDialogbox;
@@ -52,7 +51,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.google.web.bindery.requestfactory.shared.EntityProxyId;
-import com.google.web.bindery.requestfactory.shared.Request;
 /**
  * Provides Activity for BookAssemsentDetailsView, makes extensive use of  gwt-dnd ( <a href="http://code.google.com/p/gwt-dnd">Drag-and-drop Library for Google-Web-toolkit</a>). Allows to
  * sort elements of an assesment-book. All the design elemnts of draggable Elements (questiontype counts(Fragetypen), question events(Themengebiete),questions and answers are excluded in view-classes. 
@@ -459,7 +457,10 @@ public void moveQuestionTypeCountPerExamRequestUp(QuestionTypeCountPerExamProxy 
 				      
 				}//End Iteration of Ass Question Proxys
 				
-				answerToAssQuestionRequest.fire();
+				if(answerToAssQuestionRequest != null) {
+					answerToAssQuestionRequest.fire();
+				}
+					
 				
 		        if (widget != null) {
 		          widget.setWidget(view.asWidget());

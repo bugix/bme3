@@ -15,6 +15,7 @@ import medizin.client.ui.widget.TextPopupViewImpl;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEvent;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEventHandler;
+import medizin.client.ui.widget.pager.MySimplePager;
 import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
@@ -32,7 +33,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.TextBox;
@@ -75,8 +75,8 @@ public class EventViewImpl extends Composite implements EventView  {
 		CellTable.Resources tableResources = GWT.create(MyCellTableNoHilightResources.class);
 		tableEvent = new CellTable<QuestionEventProxy>(McAppConstant.TABLE_PAGE_SIZE, tableResources);
 				
-		SimplePager.Resources pagerResources = GWT.create(MySimplePagerResources.class);
-		pager = new SimplePager(SimplePager.TextLocation.RIGHT, pagerResources, true, McAppConstant.TABLE_JUMP_SIZE, true);
+		MySimplePager.Resources pagerResources = GWT.create(MySimplePagerResources.class);
+		pager = new MySimplePager(MySimplePager.TextLocation.RIGHT, pagerResources, true, McAppConstant.TABLE_JUMP_SIZE, true);
 		
 		initWidget(uiBinder.createAndBindUi(this));
 		//DOM.setElementAttribute(this.getElement(), "style", "position: absolute; left: 5px; top: 0px; right: 0px; bottom: 0px; overflow: auto;");
@@ -106,7 +106,7 @@ public class EventViewImpl extends Composite implements EventView  {
 	CellTable<QuestionEventProxy> tableEvent;
 	
 	@UiField(provided = true)
-	public SimplePager pager;
+	public MySimplePager pager;
 	
     /*@UiField
     CellTable<QuestionEventProxy> tableEvent ;

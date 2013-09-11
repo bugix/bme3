@@ -1,6 +1,6 @@
 package medizin.client.ui.view;
 
-import static medizin.client.util.ClientUtility.toStringUtility;
+import static medizin.client.util.ClientUtility.defaultString;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,7 +60,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 */
     public BmeConstants constants = GWT.create(BmeConstants.class);
 
-	private Presenter presenter;
+	//private Presenter presenter;
 
 
    /* @UiField
@@ -416,73 +416,73 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
        
        if (proxy.getQuestionType().equals(QuestionTypes.Textual) || proxy.getQuestionType().equals(QuestionTypes.Sort))
        {
-    	   sumAnswerTxtbox.setValue(toStringUtility(proxy.getSumAnswer()));
-    	   sumTrueAnswerTxtbox.setValue(toStringUtility(proxy.getSumTrueAnswer()));
-    	   sumFalseAnswerTxtbox.setValue(toStringUtility(proxy.getSumFalseAnswer()));
-    	   questionLengthTxtbox.setValue(toStringUtility(proxy.getQuestionLength()));
-    	   answerLengthTxtbox.setValue(toStringUtility(proxy.getAnswerLength()));
-    	   answerDiffTxtbox.setValue(toStringUtility(proxy.getDiffBetAnswer()));
+    	   sumAnswerTxtbox.setValue(defaultString(proxy.getSumAnswer()));
+    	   sumTrueAnswerTxtbox.setValue(defaultString(proxy.getSumTrueAnswer()));
+    	   sumFalseAnswerTxtbox.setValue(defaultString(proxy.getSumFalseAnswer()));
+    	   questionLengthTxtbox.setValue(defaultString(proxy.getQuestionLength()));
+    	   answerLengthTxtbox.setValue(defaultString(proxy.getAnswerLength()));
+    	   answerDiffTxtbox.setValue(defaultString(proxy.getDiffBetAnswer()));
     	   queHaveImgChkBox.setValue(proxy.getQueHaveImage());
     	   queHaveVideoChkBox.setValue(proxy.getQueHaveVideo());
     	   queHaveSoundChkBox.setValue(proxy.getQueHaveSound());
        }
        else if (proxy.getQuestionType().equals(QuestionTypes.Imgkey))
        {
-    	   questionLengthTxtbox.setValue(toStringUtility(proxy.getQuestionLength()));
-    	   keywordCountTxtbox.setValue(toStringUtility(proxy.getKeywordCount()));
+    	   questionLengthTxtbox.setValue(defaultString(proxy.getQuestionLength()));
+    	   keywordCountTxtbox.setValue(defaultString(proxy.getKeywordCount()));
     	   showAutoCompleteChkBox.setValue(proxy.getShowAutocomplete());
     	   isDictionaryKeywordChkBox.setValue(proxy.getIsDictionaryKeyword());
     	   allowTypingChkBox.setValue(proxy.getAllowTyping());
-    	   minLetterForAutoCompTxtbox.setValue(toStringUtility(proxy.getMinAutoCompleteLetter()));
-    	   answerLengthTxtbox.setValue(toStringUtility(proxy.getAnswerLength()));
+    	   minLetterForAutoCompTxtbox.setValue(defaultString(proxy.getMinAutoCompleteLetter()));
+    	   answerLengthTxtbox.setValue(defaultString(proxy.getAnswerLength()));
     	   acceptNonKeywordChkBox.setValue(proxy.getAcceptNonKeyword());
-    	   shortAnswerLengthTxtbox.setValue(toStringUtility(proxy.getLengthShortAnswer()));
-    	   /*imageWidthTxtbox.setValue(toStringUtility(proxy.getImageWidth()));
-    	   imageLengthTxtbox.setValue(toStringUtility(proxy.getImageHeight()));
-    	   imageProportionTxtbox.setValue(toStringUtility(proxy.getImageProportion()));*/
+    	   shortAnswerLengthTxtbox.setValue(defaultString(proxy.getLengthShortAnswer()));
+    	   /*imageWidthTxtbox.setValue(defaultString(proxy.getImageWidth()));
+    	   imageLengthTxtbox.setValue(defaultString(proxy.getImageHeight()));
+    	   imageProportionTxtbox.setValue(defaultString(proxy.getImageProportion()));*/
        }
        else if (proxy.getQuestionType().equals(QuestionTypes.ShowInImage))
        {
-    	   questionLengthTxtbox.setValue(toStringUtility(proxy.getQuestionLength()));
-    	   /*answerLengthTxtbox.setValue(toStringUtility(proxy.getAnswerLength()));    	  
-    	   imageWidthTxtbox.setValue(toStringUtility(proxy.getImageWidth()));
-    	   imageLengthTxtbox.setValue(toStringUtility(proxy.getImageHeight()));
-    	   imageProportionTxtbox.setValue(toStringUtility(proxy.getImageProportion()));
+    	   questionLengthTxtbox.setValue(defaultString(proxy.getQuestionLength()));
+    	   /*answerLengthTxtbox.setValue(defaultString(proxy.getAnswerLength()));    	  
+    	   imageWidthTxtbox.setValue(defaultString(proxy.getImageWidth()));
+    	   imageLengthTxtbox.setValue(defaultString(proxy.getImageHeight()));
+    	   imageProportionTxtbox.setValue(defaultString(proxy.getImageProportion()));
     	   linearPointChkBox.setValue(proxy.getLinearPoint());
-    	   linearPercentageTxtbox.setValue(toStringUtility(proxy.getLinearPercentage()));*/	    	   
+    	   linearPercentageTxtbox.setValue(defaultString(proxy.getLinearPercentage()));*/	    	   
        }
        else if (proxy.getQuestionType().equals(QuestionTypes.LongText))
        {
-    	   questionLengthTxtbox.setValue(toStringUtility(proxy.getQuestionLength()));
+    	   questionLengthTxtbox.setValue(defaultString(proxy.getQuestionLength()));
     	   keywordHighlightChkBox.setValue(proxy.getKeywordHighlight());
     	   richTextChkBox.setValue(proxy.getRichText());
-    	   minLengthTxtbox.setValue(toStringUtility(proxy.getMinLength()));
-    	   maxLengthTxtbox.setValue(toStringUtility(proxy.getMaxLength()));
-    	   minWordCountTxtbox.setValue(toStringUtility(proxy.getMinWordCount()));
-    	   maxWordCountTxtbox.setValue(toStringUtility(proxy.getMaxWordCount()));
+    	   minLengthTxtbox.setValue(defaultString(proxy.getMinLength()));
+    	   maxLengthTxtbox.setValue(defaultString(proxy.getMaxLength()));
+    	   minWordCountTxtbox.setValue(defaultString(proxy.getMinWordCount()));
+    	   maxWordCountTxtbox.setValue(defaultString(proxy.getMaxWordCount()));
        }
        else if (proxy.getQuestionType().equals(QuestionTypes.Matrix))
        {
-    	   questionLengthTxtbox.setValue(toStringUtility(proxy.getQuestionLength()));
-    	   answerLengthTxtbox.setValue(toStringUtility(proxy.getAnswerLength()));
-    	   //maxLengthTxtbox.setValue(toStringUtility(proxy.getMaxLength()));
+    	   questionLengthTxtbox.setValue(defaultString(proxy.getQuestionLength()));
+    	   answerLengthTxtbox.setValue(defaultString(proxy.getAnswerLength()));
+    	   //maxLengthTxtbox.setValue(defaultString(proxy.getMaxLength()));
     	   oneToOneAssChkBox.setValue(proxy.getAllowOneToOneAss());
        }
        else if (proxy.getQuestionType().equals(QuestionTypes.MCQ))
        {
-    	   questionLengthTxtbox.setValue(toStringUtility(proxy.getQuestionLength()));
-    	  /* imageWidthTxtbox.setValue(toStringUtility(proxy.getImageWidth()));
-    	   imageLengthTxtbox.setValue(toStringUtility(proxy.getImageHeight()));
-    	   imageProportionTxtbox.setValue(toStringUtility(proxy.getImageProportion()));*/
+    	   questionLengthTxtbox.setValue(defaultString(proxy.getQuestionLength()));
+    	  /* imageWidthTxtbox.setValue(defaultString(proxy.getImageWidth()));
+    	   imageLengthTxtbox.setValue(defaultString(proxy.getImageHeight()));
+    	   imageProportionTxtbox.setValue(defaultString(proxy.getImageProportion()));*/
     	   multimediaTypeListBox.setValue(proxy.getMultimediaType());
     	   selectionTypeListBox.setValue(proxy.getSelectionType());
-    	   columnTxtbox.setValue(toStringUtility(proxy.getColumns()));
+    	   columnTxtbox.setValue(defaultString(proxy.getColumns()));
     	   richTextChkBox.setValue(proxy.getRichText());
-    	   /*thumbWidthTxtbox.setValue(toStringUtility(proxy.getThumbWidth()));
-    	   thumbHeightTxtbox.setValue(toStringUtility(proxy.getThumbHeight()));    	   
+    	   /*thumbWidthTxtbox.setValue(defaultString(proxy.getThumbWidth()));
+    	   thumbHeightTxtbox.setValue(defaultString(proxy.getThumbHeight()));    	   
     	   allowZoomOutChkBox.setValue(proxy.getAllowZoomOut());
     	   allowZoomInChkBox.setValue(proxy.getAllowZoomIn());*/
-    	   maxBytesTxtbox.setValue(toStringUtility(proxy.getMaxBytes()));
+    	   maxBytesTxtbox.setValue(defaultString(proxy.getMaxBytes()));
        }
        
     }
@@ -639,12 +639,6 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		{
 			Document.get().getElementById(str).getStyle().setDisplay(Display.NONE);
 		}
-	}
-
-	@Override
-	public void setPresenter(Presenter presenter) {
-		this.presenter = presenter;
-		
 	}
 
 	@Override
@@ -1302,8 +1296,14 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				}
 				
 				msg = "";
-				if ((msg = checkTextWidgetForDouble(answerDiffTxtbox)) != "")
+				/*if ((msg = checkTextWidgetForDouble(answerDiffTxtbox)) != "")
 				{
+					flag = false;
+					//errorString.append(constants.diffAnswer() + " " + msg).append("<br />");
+					errorMessage.add(constants.diffAnswer() + " " + msg);
+					answerDiffTxtbox.addStyleName("higlight_onViolation");
+				}*/ 
+				if((msg = checkTextWidgetForDoubleWithRange(answerDiffTxtbox,0,100)) != "") {
 					flag = false;
 					//errorString.append(constants.diffAnswer() + " " + msg).append("<br />");
 					errorMessage.add(constants.diffAnswer() + " " + msg);
@@ -1656,7 +1656,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		return message;
 	}
 	
-	private String checkTextWidgetForDouble(TextBox textBox)
+	/*private String checkTextWidgetForDouble(TextBox textBox)
 	{
 		String message = "";
 		if (textBox.getText().isEmpty())
@@ -1669,7 +1669,27 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		}
 		
 		return message;
+	}*/
+	
+	private String checkTextWidgetForDoubleWithRange(TextBox textBox, int start, int end) {
+		String message = "";
+		if (textBox.getText().isEmpty())
+		{
+			message = constants.questionTypeErroMsg();
+		}
+		else if (!ClientUtility.isDouble(textBox.getText()))
+		{
+			message = constants.questionTypeNumErrorMsg();
+		}else if (ClientUtility.isDouble(textBox.getText()) == true) {
+			double value = Double.parseDouble(textBox.getText());
+			if(value < 0 || value > 100) {
+				message = constants.questionTypeNumRanageErrorMsg();
+			}
+		}
+		
+		return message;
 	}
+	
 	private void removeStyles()
 	{
 		shortNameTxtbox.removeStyleName("higlight_onViolation");

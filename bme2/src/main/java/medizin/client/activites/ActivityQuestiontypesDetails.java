@@ -17,7 +17,7 @@ import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 
-public class ActivityQuestiontypesDetails extends AbstractActivityWrapper implements QuestiontypesDetailsView.Presenter, QuestiontypesDetailsView.Delegate {
+public class ActivityQuestiontypesDetails extends AbstractActivityWrapper implements QuestiontypesDetailsView.Delegate {
 
 	private PlaceQuestiontypesDetails questiontypePlace;
 
@@ -70,7 +70,6 @@ public class ActivityQuestiontypesDetails extends AbstractActivityWrapper implem
 	public void start2(AcceptsOneWidget widget, EventBus eventBus) {
 		QuestiontypesDetailsView questionTypeDetailsView = new QuestiontypesDetailsViewImpl();
 		questionTypeDetailsView.setName("hallo");
-		questionTypeDetailsView.setPresenter(this);
 		this.widget = widget;
 		this.view = questionTypeDetailsView;
         widget.setWidget(questionTypeDetailsView.asWidget());
@@ -135,7 +134,6 @@ public class ActivityQuestiontypesDetails extends AbstractActivityWrapper implem
 //	//	mcAppFactory.getPlaceController().goTo(new PlaceInstitutionEvent(questionEvent.stableId(), PlaceInstitutionEvent.Operation.DETAILS));
 //	}
 
-	@Override
 	public void goTo(Place place) {
 		  placeController.goTo(place);
 	}

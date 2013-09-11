@@ -36,13 +36,13 @@ import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.RangeChangeEvent;
 
-public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper implements QuestionDetailsView.Delegate, QuestionDetailsView.Presenter, AnswerDialogbox.Delegate, AnswerListView.Delegate, MatrixAnswerView.Presenter, MatrixAnswerView.Delegate, MatrixAnswerListView.Delegate, MatrixAnswerListView.Presenter {
+public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper implements QuestionDetailsView.Delegate, QuestionDetailsView.Presenter, AnswerDialogbox.Delegate, AnswerListView.Delegate, MatrixAnswerView.Delegate, MatrixAnswerListView.Delegate, MatrixAnswerListView.Presenter {
 
 	private final PlaceNotActivatedQuestionDetails placeNotActivatedQuestionDetails;
 	private final McAppRequestFactory requests;
 	private final PlaceController placeController;
 	private AcceptsOneWidget widget;
-	private EventBus eventBus;
+	//private EventBus eventBus;
 	private QuestionDetailsViewImpl view;
 	private QuestionProxy question;
 	private HandlerRegistration answerRangeChangeHandler;
@@ -77,11 +77,10 @@ public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper
 		QuestionDetailsViewImpl questionDetailsView = new QuestionDetailsViewImpl(eventBus, false,false);
 		this.view = questionDetailsView;
 		
-		questionDetailsView.setPresenter(this);
 		questionDetailsView.setDelegate(this);
 		
 		this.widget = panel;
-		this.eventBus = eventBus;
+		//this.eventBus = eventBus;
         widget.setWidget(questionDetailsView.asWidget());
                 	
 		start2();

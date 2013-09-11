@@ -12,6 +12,7 @@ import medizin.client.proxy.UserAccessRightsProxy;
 import medizin.client.style.resources.MyCellTableResources;
 import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
+import medizin.client.ui.widget.pager.MySimplePager;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.EventHandlingValueHolderItem;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
 import medizin.shared.AccessRights;
@@ -39,7 +40,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -76,8 +76,8 @@ public class QuestionAccessDialogboxImpl extends DialogBox implements QuestionAc
 		CellTable.Resources tableResources = GWT.create(MyCellTableResources.class);
 		tableEvent = new CellTable<QuestionProxy>(McAppConstant.TABLE_PAGE_SIZE,tableResources);
 
-		SimplePager.Resources pagerResources = GWT.create(MySimplePagerResources.class);
-		pager = new SimplePager(SimplePager.TextLocation.RIGHT, pagerResources,true, McAppConstant.TABLE_JUMP_SIZE, true);
+		MySimplePager.Resources pagerResources = GWT.create(MySimplePagerResources.class);
+		pager = new MySimplePager(MySimplePager.TextLocation.RIGHT, pagerResources,true, McAppConstant.TABLE_JUMP_SIZE, true);
 		
 		
 		
@@ -325,7 +325,7 @@ public class QuestionAccessDialogboxImpl extends DialogBox implements QuestionAc
 			CellTable<QuestionProxy> tableEvent;
 
 			@UiField(provided = true)
-			public SimplePager pager;
+			public MySimplePager pager;
 
 			
 			

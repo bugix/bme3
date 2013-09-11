@@ -4,28 +4,22 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-
-import medizin.client.style.resources.MyCellTableResources;
-import medizin.client.style.resources.MySimplePagerResources;
-import medizin.client.ui.McAppConstant;
-import medizin.client.ui.view.assesment.AssesmentView.Delegate;
-import medizin.client.ui.widget.IconButton;
-
 import medizin.client.events.RecordChangeEvent;
 import medizin.client.events.RecordChangeHandler;
 import medizin.client.proxy.AssesmentProxy;
-import medizin.client.proxy.QuestionProxy;
+import medizin.client.style.resources.MyCellTableResources;
+import medizin.client.style.resources.MySimplePagerResources;
+import medizin.client.ui.McAppConstant;
+import medizin.client.ui.widget.IconButton;
+import medizin.client.ui.widget.pager.MySimplePager;
 import medizin.shared.i18n.BmeConstants;
 
-import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.text.client.DateTimeFormatRenderer;
-import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.text.shared.Renderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -65,9 +59,9 @@ public class AssesmentViewImpl extends Composite implements AssesmentView, Recor
 		table = new CellTable<AssesmentProxy>(McAppConstant.TABLE_PAGE_SIZE,
 				tableResources);
 
-		SimplePager.Resources pagerResources = GWT
+		MySimplePager.Resources pagerResources = GWT
 				.create(MySimplePagerResources.class);
-		pager = new SimplePager(SimplePager.TextLocation.RIGHT, pagerResources,
+		pager = new MySimplePager(MySimplePager.TextLocation.RIGHT, pagerResources,
 				true, McAppConstant.TABLE_JUMP_SIZE, true);
 
 		initWidget(uiBinder.createAndBindUi(this));
@@ -104,7 +98,7 @@ public class AssesmentViewImpl extends Composite implements AssesmentView, Recor
 	
     
     @UiField(provided = true)
-	public SimplePager pager;
+	public MySimplePager pager;
     
 	protected Set<String> paths = new HashSet<String>();
 

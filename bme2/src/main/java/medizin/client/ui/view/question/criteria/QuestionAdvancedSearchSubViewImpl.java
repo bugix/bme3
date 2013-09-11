@@ -5,6 +5,7 @@ import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.renderer.EnumRenderer;
 import medizin.client.ui.widget.IconButton;
+import medizin.client.ui.widget.pager.MySimplePager;
 import medizin.shared.criteria.AdvancedSearchCriteria;
 import medizin.shared.criteria.BindType;
 import medizin.shared.i18n.BmeConstants;
@@ -70,15 +71,15 @@ public class QuestionAdvancedSearchSubViewImpl extends Composite implements
 	CellTable<AdvancedSearchCriteria> table;
 	
 	@UiField(provided = true)
-	SimplePager pager;
+	MySimplePager pager;
 		
 	public QuestionAdvancedSearchSubViewImpl() {
 		
 		CellTable.Resources tableResources = GWT.create(MyCellTableResources.class);
 		table = new CellTable<AdvancedSearchCriteria>(McAppConstant.TABLE_PAGE_SIZE,tableResources);
 
-		SimplePager.Resources pagerResources = GWT.create(MySimplePagerResources.class);
-		pager = new SimplePager(SimplePager.TextLocation.RIGHT, pagerResources,true, McAppConstant.TABLE_JUMP_SIZE, true);
+		MySimplePager.Resources pagerResources = GWT.create(MySimplePagerResources.class);
+		pager = new MySimplePager(MySimplePager.TextLocation.RIGHT, pagerResources,true, McAppConstant.TABLE_JUMP_SIZE, true);
 		
 		initWidget(uiBinder.createAndBindUi(this));
 		addKeyword.setText(constants.keyword());

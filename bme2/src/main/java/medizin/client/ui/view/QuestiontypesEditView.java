@@ -18,16 +18,11 @@ import com.google.gwt.user.client.ui.ValueListBox;
 
 public interface QuestiontypesEditView extends IsWidget {
 
-    void setPresenter(Presenter activityAcceptAnswer);
     void setDelegate(Delegate delegate);
     void setValue(QuestionTypeProxy proxy);
     
     void setNullValue(QuestionTypes questionTypes);
 
-    public interface Presenter {
-        void goTo(Place place);
-    }
-    
 	interface Delegate {
 		void cancelClicked();
 

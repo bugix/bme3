@@ -12,6 +12,7 @@ import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.QuestionTextViewDialogBoxImpl;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
+import medizin.client.ui.widget.pager.MySimplePager;
 import medizin.client.ui.widget.process.ApplicationLoadingPopupView;
 import medizin.shared.i18n.BmeConstants;
 
@@ -57,7 +58,7 @@ public class StudentViewImpl extends Composite implements StudentView {
 	private StudentViewImpl StudentSubDetailsViewImpl;
 	
 	@UiField (provided = true)
-	SimplePager pager;
+	MySimplePager pager;
 
 	@UiField (provided = true)
 	CellTable<StudentToAssesmentProxy> table;
@@ -100,8 +101,8 @@ public class StudentViewImpl extends Composite implements StudentView {
 		CellTable.Resources tableResources = GWT.create(MyCellTableResources.class);
 		table = new CellTable<StudentToAssesmentProxy>(McAppConstant.TABLE_PAGE_SIZE, tableResources);
 		
-		SimplePager.Resources pagerResources = GWT.create(MySimplePagerResources.class);
-		pager = new SimplePager(SimplePager.TextLocation.RIGHT, pagerResources, true, McAppConstant.TABLE_JUMP_SIZE, true);
+		MySimplePager.Resources pagerResources = GWT.create(MySimplePagerResources.class);
+		pager = new MySimplePager(MySimplePager.TextLocation.RIGHT, pagerResources, true, McAppConstant.TABLE_JUMP_SIZE, true);
 		
 		initWidget(uiBinder.createAndBindUi(this));
 		

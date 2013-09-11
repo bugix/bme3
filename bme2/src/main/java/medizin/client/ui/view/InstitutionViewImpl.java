@@ -18,6 +18,7 @@ import medizin.client.ui.widget.TextPopupViewImpl;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEvent;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEventHandler;
+import medizin.client.ui.widget.pager.MySimplePager;
 import medizin.shared.i18n.BmeConstants;
 
 import com.google.gwt.cell.client.AbstractEditableCell;
@@ -36,7 +37,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Composite;
@@ -83,8 +83,8 @@ public class InstitutionViewImpl extends Composite implements InstitutionView, R
 		CellTable.Resources tableResources = GWT.create(MyCellTableResources.class);
 		table = new CellTable<InstitutionProxy>(McAppConstant.TABLE_PAGE_SIZE, tableResources);
 				
-		SimplePager.Resources pagerResources = GWT.create(MySimplePagerResources.class);
-		pager = new SimplePager(SimplePager.TextLocation.RIGHT, pagerResources, true, McAppConstant.TABLE_JUMP_SIZE, true);
+		MySimplePager.Resources pagerResources = GWT.create(MySimplePagerResources.class);
+		pager = new MySimplePager(MySimplePager.TextLocation.RIGHT, pagerResources, true, McAppConstant.TABLE_JUMP_SIZE, true);
 		
 		searchBox = new QuickSearchBox(new QuickSearchBox.Delegate() {
 			@Override
@@ -136,7 +136,7 @@ public class InstitutionViewImpl extends Composite implements InstitutionView, R
 	CellTable<InstitutionProxy> table;
 	
 	@UiField(provided = true)
-	public SimplePager pager;
+	public MySimplePager pager;
 	
 	 @UiField (provided = true)
 	 QuickSearchBox searchBox;

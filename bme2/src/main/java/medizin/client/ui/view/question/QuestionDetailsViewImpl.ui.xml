@@ -2,7 +2,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:n="urn:import:medizin.client.ui"
 	xmlns:s="urn:import:medizin.client.ui.view.user" xmlns:m="urn:import:medizin.client.ui.view.question"
-	xmlns:medizin="urn:import:medizin.client.ui.widget" xmlns:c="urn:import:com.google.gwt.user.cellview.client" xmlns:i="urn:import:medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl">
+	xmlns:medizin="urn:import:medizin.client.ui.widget" xmlns:c="urn:import:com.google.gwt.user.cellview.client" xmlns:i="urn:import:medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl" xmlns:p="urn:import:medizin.client.ui.widget.pager">
 	
 	<ui:with type="medizin.shared.i18n.BmeConstants" field="constants"></ui:with>
 	<ui:style src="../../styles.css" >
@@ -68,8 +68,7 @@
 			<g:TabPanel ui:field="questionTypeDetailPanel"
 				addStyleNames="gwt-InvertedTabPanel" width="100%">
 
-				<g:Tab>
-					<g:TabHTML></g:TabHTML>
+				<g:Tab text="{constants.manageQuestion}">
 					<!-- <g:HorizontalPanel > -->
 					<g:HTMLPanel addStyleNames="{style.patientDetails}">
 						<table class="{style.fields}">
@@ -149,23 +148,22 @@
 						</table>
 					</g:HTMLPanel>
 				</g:Tab>
-				<g:Tab addStyleNames="{style.ovreflowStyle}">
-					<g:TabHTML></g:TabHTML>
-					<g:VerticalPanel width="100%">
-						<g:HorizontalPanel ui:field="resourceUploadPanel">
-						</g:HorizontalPanel>
-						<g:HorizontalPanel ui:field="resourceViewPanel" width="100%">
-						</g:HorizontalPanel>
-					</g:VerticalPanel>
-				</g:Tab>
-				<g:Tab addStyleNames="{style.ovreflowStyle}">
-					<g:TabHTML></g:TabHTML>
+				<g:Tab addStyleNames="{style.ovreflowStyle}" text="{constants.keywords}">
 					<g:VerticalPanel width="100%">
 						<c:CellTable ui:field="keywordTable" width="100%" addStyleNames="{style.standardTableIcon}"></c:CellTable>
 						<g:HorizontalPanel spacing="3">
 							<i:DefaultSuggestBox ui:field="keywordSuggestBox"></i:DefaultSuggestBox>
-							<medizin:IconButton ui:field="keywordAddButton" icon="plusthick"></medizin:IconButton>
-							<c:SimplePager display="{keywordTable}" ui:field="keywordTablePager" ></c:SimplePager>							
+							<medizin:IconButton ui:field="keywordAddButton" icon="plusthick" text="{constants.addKeyword}"></medizin:IconButton>
+							<p:MySimplePager display="{keywordTable}" ui:field="keywordTablePager" ></p:MySimplePager>
+							<!-- <c:SimplePager display="{keywordTable}" ui:field="keywordTablePager" ></c:SimplePager> -->							
+						</g:HorizontalPanel>
+					</g:VerticalPanel>
+				</g:Tab>
+				<g:Tab addStyleNames="{style.ovreflowStyle}" text="{constants.media}">
+					<g:VerticalPanel width="100%">
+						<g:HorizontalPanel ui:field="resourceUploadPanel">
+						</g:HorizontalPanel>
+						<g:HorizontalPanel ui:field="resourceViewPanel" width="100%">
 						</g:HorizontalPanel>
 					</g:VerticalPanel>
 				</g:Tab>

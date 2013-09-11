@@ -3,85 +3,77 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:n="urn:import:medizin.client.ui" xmlns:a="urn:import:medizin.client.ui.widget">
 	<ui:style src="../styles.css">
-   .panelHTML {
-		border: 0px solid #ddf;
-		height: 100%;
-		width: 100%;
+		.panelHTML {
+			border: 0px solid #ddf;
+			height: 100%;
+			width: 100%;
 		}
-		.fields {
-		margin:
-		0.5em;
-		padding-right: 1em;
-		white-space:nowrap;
-        width: 100%;
-		}
-		.label {
-		min-height: 25px;
-		font-weight: bold;
-		width: 200px;
-		}
-		.button {
-		margin-left: 0.5em;
-		float: right;
-		background: none;
-
-		cursor: pointer;
-		}
-
-		.header {
-		padding: 3px;
-		color: #4B4A4A;
-		text-shadow: #ddf 1px
-		1px 0;
-		margin-bottom: 0;
-		background-color: #E6EDED;
-		font-size: 1.2em;
-		font-weight: bold;
-
-		}
-		.underline {
-		border-bottom: 1px solid #6F7277;
-		}
-		.boundary{
-		padding-left: 10px;
-		padding-right: 10px;
-		}
-
-		.bar {
-		padding: 3px;
-
-
-		background-color: #E6EDED;
-
-		}
-		.details {
-
-		border: 1px solid #E6EDED;
-		width:
-		100%;
-
-		}
-				.nav {
-
-		border: 1px solid #E6EDED;
-		width: 100%;
-		background: #e3e8f3 url(images/hborder.png) repeat-x 0px -2003px;
 		
-
+		.fields {
+			margin: 0.5em;
+			padding-right: 1em;
+			white-space: nowrap;
+			width: 100%;
 		}
-				.textarea {
-
-		border: 1px solid #E6EDED;
-		width:
-		100%;
-
+		
+		.label {
+			min-height: 25px;
+			font-weight: bold;
+			min-width: 200px;
+		}
+		
+		.button {
+			margin-left: 0.5em;
+			float: right;
+			background: none;
+			cursor: pointer;
+		}
+		
+		.header {
+			padding: 3px;
+			color: #4B4A4A;
+			text-shadow: #ddf 1px 1px 0;
+			margin-bottom: 0;
+			background-color: #E6EDED;
+			font-size: 1.2em;
+			font-weight: bold;
+		}
+		
+		.underline {
+			border-bottom: 1px solid #6F7277;
+		}
+		
+		.boundary {
+			padding-left: 10px;
+			padding-right: 10px;
+		}
+		
+		.bar {
+			padding: 3px;
+			background-color: #E6EDED;
+		}
+		
+		.details {
+			border: 1px solid #E6EDED;
+			width: 100%;
+		}
+		
+		.nav {
+			border: 1px solid #E6EDED;
+			width: 100%;
+			background: #e3e8f3 url(images/hborder.png) repeat-x 0px -2003px;
+		}
+		
+		.textarea {
+			border: 1px solid #E6EDED;
+			width: 100%;
 		}
 		
 		.rowHidden {
 			display: none;
 		}
 		
-		.valueLbl{
+		.valueLbl {
 			min-height: 25px;
 		}
 	</ui:style>

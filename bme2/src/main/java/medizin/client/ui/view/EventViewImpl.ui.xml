@@ -2,7 +2,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:n="urn:import:medizin.client.ui"
-	xmlns:b="urn:import:com.google.gwt.user.cellview.client" xmlns:m="urn:import:medizin.client.ui.widget">
+	xmlns:b="urn:import:com.google.gwt.user.cellview.client" xmlns:m="urn:import:medizin.client.ui.widget" xmlns:p="urn:import:medizin.client.ui.widget.pager">
 
 	<ui:style src="../styles.css">
     .panelHTML {
@@ -68,8 +68,8 @@
 						<g:TextBox ui:field="eventName" addStyleNames="{style.paddingLeft}" ></g:TextBox>
 							
 							<m:IconButton ui:field="addEvent" icon="plusthick" text="{cc.newTopic}"></m:IconButton>
-							
-							<b:SimplePager ui:field="pager" display="{tableEvent}" addStyleNames="{style.displayRight}" />
+							<p:MySimplePager ui:field="pager" display="{tableEvent}" addStyleNames="{style.displayRight}"></p:MySimplePager>
+							<!-- <b:SimplePager ui:field="pager" display="{tableEvent}" addStyleNames="{style.displayRight}" /> -->
 							</g:HorizontalPanel>
 						<!-- </div> -->
 					

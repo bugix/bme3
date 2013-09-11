@@ -10,19 +10,13 @@ import medizin.shared.QuestionTypes;
 import medizin.shared.Validity;
 
 import com.google.common.base.Function;
-import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.ui.IsWidget;
 
 public interface AnswerDialogbox extends IsWidget {
  
-
-
     void display(QuestionTypes questionTypes);
 
-    public interface Presenter {
-        void goTo(Place place);
-    }
-	/**
+    /**
 	 * Implemented by the owner of the view.
 	 */
 	interface Delegate {
@@ -54,7 +48,7 @@ public interface AnswerDialogbox extends IsWidget {
 
 	ValueListBox<Validity> getValidity();*/
 
-	void setAutherPickerValues(Collection<PersonProxy> values,PersonProxy logedUser);
+	void setAutherPickerValues(Collection<PersonProxy> values,PersonProxy userLoggedIn, boolean isAdminOrInstitutionalAdmin);
 
 	void setValues(AnswerProxy answer);
 

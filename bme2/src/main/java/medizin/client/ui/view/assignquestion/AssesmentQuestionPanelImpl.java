@@ -11,6 +11,7 @@ import medizin.client.proxy.QuestionTypeCountPerExamProxy;
 import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.style.resources.MyCellTableNoHilightResources;
 import medizin.client.style.resources.MySimplePagerResources;
+import medizin.client.ui.widget.pager.MySimplePager;
 import medizin.client.ui.widget.sendmail.SendMailPopupViewImpl;
 import medizin.shared.i18n.BmeConstants;
 
@@ -99,7 +100,7 @@ public class AssesmentQuestionPanelImpl extends Composite implements AssesmentQu
 	}
 
 	@UiField(provided = true)
-	public SimplePager pager;
+	public MySimplePager pager;
 	
 	public Button getSendMail() {
 		return sendMail;
@@ -140,9 +141,9 @@ public class AssesmentQuestionPanelImpl extends Composite implements AssesmentQu
 		table = new CellTable<QuestionTypeCountProxy>(pageSize,
 				tableResources);
 
-		SimplePager.Resources pagerResources = GWT
+		MySimplePager.Resources pagerResources = GWT
 				.create(MySimplePagerResources.class);
-		pager = new SimplePager(SimplePager.TextLocation.RIGHT, pagerResources,
+		pager = new MySimplePager(MySimplePager.TextLocation.RIGHT, pagerResources,
 				true, pageSize*2, true);
 
 		

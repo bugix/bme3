@@ -24,7 +24,7 @@ import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 
-public class ActivityQuestiontypesCreate extends AbstractActivityWrapper implements QuestiontypesEditView.Presenter, QuestiontypesEditView.Delegate {
+public class ActivityQuestiontypesCreate extends AbstractActivityWrapper implements QuestiontypesEditView.Delegate {
 
 	private PlaceQuestiontypesDetails questiontypePlace;
 
@@ -95,8 +95,6 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 	@Override
 	public void start2(AcceptsOneWidget widget, EventBus eventBus) {
 		QuestiontypesEditView questionTypeDetailsView = new QuestiontypesEditViewImpl(reciverMap);
-
-		questionTypeDetailsView.setPresenter(this);
 
 		this.widget = widget;
 		this.view = questionTypeDetailsView;
@@ -185,11 +183,8 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 
 	}
 
-
-	@Override
 	public void goTo(Place place) {
 		placeController.goTo(place);
-
 	}
 
 	@Override

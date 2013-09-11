@@ -27,18 +27,26 @@ public class FileDownloadServlet extends HttpServlet {
 	}
 
 	public void fileCopy(ServletContext servletContext) {
-		try {
-			log.info("In init method");
+		final String copyToPath = BMEUtils.getRealPath(servletContext, "/") + SharedConstant.DOWNLOAD_DIR;
+		final String copyFromPath = SharedConstant.getUploadBaseDIRPath() + SharedConstant.DOWNLOAD_DIR;
+		
+		new Thread(new Runnable() {
 			
-			File copyTo = new File(BMEUtils.getRealPath(servletContext, "/") + SharedConstant.DOWNLOAD_DIR);
-			File copyFrom = new File(SharedConstant.getUploadBaseDIRPath() + SharedConstant.DOWNLOAD_DIR);
-			log.info("copy to : " + copyTo.getAbsolutePath());
-			log.info("Copy from :" + copyFrom.getAbsolutePath());
-			
-			FileUtils.copyDirectory(copyFrom, copyTo, true);
-		}catch (Exception e) {
-			log.error("Error in copying file ",e);
-		}
+			@Override
+			public void run() {
+		
+				try {
+					log.info("In init method");
+					final File copyTo = new File(copyToPath);
+					final File copyFrom = new File(copyFromPath);
+					log.info("copy to : " + copyTo.getAbsolutePath());
+					log.info("Copy from :" + copyFrom.getAbsolutePath());
+					FileUtils.copyDirectory(copyFrom, copyTo, true);
+				}catch (Exception e) {
+					log.error("Error in copying file ",e);
+				}
+			}
+		}).start();
 	}
 	
 	@Override

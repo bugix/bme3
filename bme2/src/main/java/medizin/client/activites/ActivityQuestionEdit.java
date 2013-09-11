@@ -54,7 +54,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.inject.Inject;
 import com.google.web.bindery.requestfactory.shared.EntityProxyId;
 
-public class ActivityQuestionEdit extends AbstractActivityWrapper implements QuestionEditView.Presenter, QuestionEditView.Delegate {
+public class ActivityQuestionEdit extends AbstractActivityWrapper implements QuestionEditView.Delegate {
 
 	private PlaceQuestionDetails questionPlace;
 	protected QuestionEditView view;
@@ -100,7 +100,6 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 	public void start2(AcceptsOneWidget widget, EventBus eventBus) {
 		this.eventBus = eventBus;
 		QuestionEditView questionEditView = new QuestionEditViewImpl(reciverMap, eventBus, userLoggedIn);
-		questionEditView.setPresenter(this);
 		this.view = questionEditView;
 		view.setDelegate(this);
 		
@@ -224,7 +223,6 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 		}
 	}
 
-	@Override
 	public void goTo(Place place) {
 		placeController.goTo(place);
 	}

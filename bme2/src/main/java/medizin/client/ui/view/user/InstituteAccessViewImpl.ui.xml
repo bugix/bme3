@@ -1,6 +1,6 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:b="urn:import:com.google.gwt.user.cellview.client" xmlns:m="urn:import:medizin.client.ui.widget">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:b="urn:import:com.google.gwt.user.cellview.client" xmlns:m="urn:import:medizin.client.ui.widget" xmlns:p="urn:import:medizin.client.ui.widget.pager">
 	<ui:with type="medizin.shared.i18n.BmeConstants" field="cc"></ui:with>
 	<ui:style src="../../styles.css" >
 		.panelHTML {
@@ -112,7 +112,8 @@
 						<m:IconButton ui:field="newAccess" icon="plusthick" text="{cc.newAccess}"></m:IconButton>
 							</g:HorizontalPanel>
 							<g:HorizontalPanel addStyleNames="{style.rightAlign}" >
-						<b:SimplePager ui:field="pager" display="{tableEvent}" addStyleNames="{style.displayRight}" />
+								<p:MySimplePager ui:field="pager" display="{tableEvent}" addStyleNames="{style.displayRight}"></p:MySimplePager>
+						<!-- <b:SimplePager ui:field="pager" display="{tableEvent}" addStyleNames="{style.displayRight}" /> -->
 							</g:HorizontalPanel>
 						
 						</g:HorizontalPanel>

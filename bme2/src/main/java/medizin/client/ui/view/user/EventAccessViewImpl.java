@@ -9,10 +9,8 @@ import medizin.client.proxy.UserAccessRightsProxy;
 import medizin.client.style.resources.MyCellTableResources;
 import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
-import medizin.client.ui.view.EventView.Delegate;
-import medizin.client.ui.view.EventView.Presenter;
 import medizin.client.ui.widget.IconButton;
-
+import medizin.client.ui.widget.pager.MySimplePager;
 import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
@@ -31,12 +29,7 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.HasText;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class EventAccessViewImpl extends Composite implements EventAccessView {
@@ -52,8 +45,8 @@ public class EventAccessViewImpl extends Composite implements EventAccessView {
 		CellTable.Resources tableResources = GWT.create(MyCellTableResources.class);
 		tableEvent = new CellTable<UserAccessRightsProxy>(McAppConstant.TABLE_PAGE_SIZE,tableResources);
 
-		SimplePager.Resources pagerResources = GWT.create(MySimplePagerResources.class);
-		pager = new SimplePager(SimplePager.TextLocation.RIGHT, pagerResources,true, McAppConstant.TABLE_JUMP_SIZE, true);
+		MySimplePager.Resources pagerResources = GWT.create(MySimplePagerResources.class);
+		pager = new MySimplePager(MySimplePager.TextLocation.RIGHT, pagerResources,true, McAppConstant.TABLE_JUMP_SIZE, true);
 		
 		initWidget(uiBinder.createAndBindUi(this));
 		init();
@@ -101,7 +94,7 @@ public class EventAccessViewImpl extends Composite implements EventAccessView {
 	CellTable<UserAccessRightsProxy> tableEvent;
 
 	@UiField(provided = true)
-	public SimplePager pager;
+	public MySimplePager pager;
 
 	/*
     @UiField

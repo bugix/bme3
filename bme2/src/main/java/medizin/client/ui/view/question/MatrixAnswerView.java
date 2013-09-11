@@ -15,10 +15,6 @@ import com.google.gwt.place.shared.Place;
 
 public interface MatrixAnswerView {
 
-	public interface Presenter {
-        void goTo(Place place);
-    }
-	
 	/**
 	 * Implemented by the owner of the view.
 	 */
@@ -40,7 +36,7 @@ public interface MatrixAnswerView {
 	
 	void setDelegate(Delegate delegate);
 
-	void setAutherPickerValues(Collection<PersonProxy> values,PersonProxy logedUser);
+	void setAutherPickerValues(Collection<PersonProxy> values,PersonProxy logedUser, boolean isAdminOrInstitutionalAdmin);
 
 	void setRewiewerPickerValues(Collection<PersonProxy> values);
 

@@ -14,6 +14,7 @@ import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEvent;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEventHandler;
 import medizin.client.ui.widget.matrix.MatrixAnswerViewer;
+import medizin.client.ui.widget.pager.MySimplePager;
 import medizin.client.util.ClientUtility;
 import medizin.client.util.MathJaxs;
 import medizin.shared.Status;
@@ -34,7 +35,6 @@ import com.google.gwt.user.cellview.client.AbstractHasData;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.Header;
-import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.DisclosurePanel;
@@ -62,7 +62,7 @@ public class AcceptMatrixAnswerSubViewImpl extends Composite implements AcceptMa
 	CellTable<MatrixValidityProxy> table;
 		
     @UiField(provided = true)
-	public SimplePager pager;
+	public MySimplePager pager;
 	
 	@Override
 	public AbstractHasData<MatrixValidityProxy> getTable(){
@@ -98,8 +98,8 @@ public class AcceptMatrixAnswerSubViewImpl extends Composite implements AcceptMa
 		CellTable.Resources tableResources = GWT.create(MyCellTableResources.class);
 		table = new CellTable<MatrixValidityProxy>(McAppConstant.TABLE_PAGE_SIZE, tableResources);
 		
-		SimplePager.Resources pagerResources = GWT.create(MySimplePagerResources.class);
-		pager = new SimplePager(SimplePager.TextLocation.RIGHT, pagerResources, true, McAppConstant.TABLE_JUMP_SIZE, true);
+		MySimplePager.Resources pagerResources = GWT.create(MySimplePagerResources.class);
+		pager = new MySimplePager(MySimplePager.TextLocation.RIGHT, pagerResources, true, McAppConstant.TABLE_JUMP_SIZE, true);
 		
 		initWidget(uiBinder.createAndBindUi(this));
 		

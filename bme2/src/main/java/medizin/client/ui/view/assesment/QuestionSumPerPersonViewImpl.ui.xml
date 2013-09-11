@@ -3,7 +3,7 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" 	
 	xmlns:b="urn:import:com.google.gwt.user.cellview.client"
 	xmlns:m="urn:import:medizin.client.ui.widget" 
-	>
+	xmlns:p="urn:import:medizin.client.ui.widget.pager">
 	
 	<ui:style src="../../styles.css" />
     
@@ -15,7 +15,8 @@
 						width="500" />
 					<div class="{style.controls} {style.controlsleft}">
 						<m:IconButton ui:field="newQuestionSumPerPerson" icon="plusthick">neue Fragesummen pro Person erfassen</m:IconButton>
-						<b:SimplePager ui:field="pager" display="{tableQuestionSumPerPerson}" />
+						<p:MySimplePager ui:field="pager" display="{tableQuestionSumPerPerson}" ></p:MySimplePager>
+						<!-- <b:SimplePager ui:field="pager" display="{tableQuestionSumPerPerson}" /> -->
 						
 						 <!-- <i:DefaultSuggestBox ui:field="copiedOsce"></i:DefaultSuggestBox> --> 
 					</div>

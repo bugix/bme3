@@ -1,6 +1,5 @@
 package medizin.client.util;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -18,6 +17,7 @@ import medizin.shared.utils.SharedConstant;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.safehtml.shared.SafeUri;
@@ -29,8 +29,15 @@ public final class ClientUtility {
 
 	public static final DateTimeFormat SHORT_FORMAT = DateTimeFormat.getFormat("yyyy-MM-dd");
 	
-	public static void setUserAccess(Widget widget, PersonProxy personProxy,
-			UserType userType, boolean isVisible) {
+	public static final Comparator<QuestionResourceProxy> QUESTION_RESOURCE_SEQUENCE_COMARATOR = new Comparator<QuestionResourceProxy>() {
+
+		@Override
+		public int compare(QuestionResourceProxy o1, QuestionResourceProxy o2) {
+			return o1.getSequenceNumber().compareTo(o2.getSequenceNumber());
+		}
+	};
+	
+	public static void setUserAccess(Widget widget, PersonProxy personProxy, UserType userType, boolean isVisible) {
 		Log.info("in setUserAccess usertype : " + userType);
 
 		switch (userType) {
@@ -59,9 +66,8 @@ public final class ClientUtility {
 		}
 	}
 
-	public static List<QuestionResourceClient> getQuestionResourceClient(
-			List<QuestionResourceProxy> questionResources) {
-		List<QuestionResourceClient> clients = new ArrayList<QuestionResourceClient>();
+	public static List<QuestionResourceClient> getQuestionResourceClient(List<QuestionResourceProxy> questionResources) {
+		List<QuestionResourceClient> clients = Lists.newArrayList();
 
 		for (QuestionResourceProxy proxy : questionResources) {
 
@@ -76,24 +82,10 @@ public final class ClientUtility {
 		return clients;
 	}
 
-	public static List<QuestionResourceClient> getQuestionResourceClient(
-			Set<QuestionResourceProxy> questionResourcesSet) {
-		
-		List<QuestionResourceProxy> questionResourcesList = new ArrayList<QuestionResourceProxy>();
-
+	public static List<QuestionResourceClient> getQuestionResourceClient(Set<QuestionResourceProxy> questionResourcesSet) {
+		List<QuestionResourceProxy> questionResourcesList = Lists.newArrayList();
 		questionResourcesList.addAll(questionResourcesSet);
-		Collections.sort(questionResourcesList,
-				new Comparator<QuestionResourceProxy>() {
-
-					@Override
-					public int compare(QuestionResourceProxy o1,
-							QuestionResourceProxy o2) {
-
-						return o1.getSequenceNumber().compareTo(
-								o2.getSequenceNumber());
-					}
-				});
-		
+		Collections.sort(questionResourcesList,QUESTION_RESOURCE_SEQUENCE_COMARATOR);
 		return getQuestionResourceClient(questionResourcesList);
 
 	}
@@ -135,18 +127,15 @@ public final class ClientUtility {
 			
 		switch (multimediaType) {
 		case Image: {
-			fileName = path.replace(
-					SharedConstant.UPLOAD_MEDIA_IMAGES_PATH, "");
+			fileName = path.replace(SharedConstant.UPLOAD_MEDIA_IMAGES_PATH, "");
 			break;
 		}
 		case Sound: {
-			fileName = path.replace(
-					SharedConstant.UPLOAD_MEDIA_SOUND_PATH, "");
+			fileName = path.replace(SharedConstant.UPLOAD_MEDIA_SOUND_PATH, "");
 			break;
 		}
 		case Video: {
-			fileName = path.replace(
-					SharedConstant.UPLOAD_MEDIA_VIDEO_PATH, "");
+			fileName = path.replace(SharedConstant.UPLOAD_MEDIA_VIDEO_PATH, "");
 			break;
 		}
 		default:
@@ -190,8 +179,13 @@ public final class ClientUtility {
 		  return true;  
 	}
 	
-	public static String toStringUtility(Object object){
+	public static String defaultString(Object object){
 		return object == null ? "" : object.toString();
+	}
+	
+	public static String defaultString(Object object,String defaultValue){
+		if(defaultValue == null) defaultValue = "";
+		return object == null ? defaultValue : object.toString();
 	}
 	
 	private static BmeConstants constants = GWT.create(BmeConstants.class);

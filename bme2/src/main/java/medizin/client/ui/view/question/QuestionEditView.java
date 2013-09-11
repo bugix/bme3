@@ -19,13 +19,7 @@ import com.google.gwt.user.client.ui.ValueListBox;
 
 public interface QuestionEditView extends IsWidget {
 
-    void setPresenter(Presenter activityQuestionEdit);
     void setDelegate(Delegate delegate);
-
-
-    public interface Presenter {
-        void goTo(Place place);
-    }
     
 	interface Delegate {
 		void cancelClicked();
