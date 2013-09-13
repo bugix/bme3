@@ -501,9 +501,7 @@ public class ActivityQuestiontypes extends AbstractActivityWrapper implements Qu
 		public void placeChanged(Place place) {
 			if (place instanceof PlaceQuestiontypesDetails) {
 				if (((PlaceQuestiontypesDetails)place).getProxyId() != null)
-					proxyId = ((PlaceQuestiontypesDetails)place).getProxyId();	
-				
-				init();
+					proxyId = ((PlaceQuestiontypesDetails)place).getProxyId();				
 			}	
 			
 			if (place instanceof PlaceQuestiontypes)
