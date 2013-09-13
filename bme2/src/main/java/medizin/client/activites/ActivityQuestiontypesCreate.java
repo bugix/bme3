@@ -301,6 +301,7 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 
 					public void onSuccess(Void response) {
 						view.setNullValue(selectedQuestionType);
+						placeController.goTo(new PlaceQuestiontypes(PlaceQuestiontypes.PLACE_QUESTIONTYPES));
 						placeController.goTo(new PlaceQuestiontypesDetails(finalQuestionTypeProxy.stableId(),PlaceQuestiontypesDetails.Operation.DETAILS));
 					}
 				});

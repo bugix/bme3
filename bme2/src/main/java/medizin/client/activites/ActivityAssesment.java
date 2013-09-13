@@ -269,10 +269,11 @@ public class ActivityAssesment extends AbstractActivityWrapper implements Assesm
 		public void placeChanged(Place place) {
 			if(place instanceof PlaceAssesmentDetails){
 				if (((PlaceAssesmentDetails)place).getProxyId() != null)
-					proxyId = ((PlaceAssesmentDetails)place).getProxyId();
-					
-				init();
+					proxyId = ((PlaceAssesmentDetails)place).getProxyId();				
 			}
+			
+			if (place instanceof PlaceAssesment)
+				init();
 		}
 
 

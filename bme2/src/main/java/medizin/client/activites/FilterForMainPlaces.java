@@ -95,8 +95,8 @@ public class FilterForMainPlaces implements FilteredActivityMapper.Filter {
 		 if (place instanceof PlaceQuestion)
 	            return  (PlaceQuestion) place;
 		 
-		 if (place instanceof PlaceQuestiontypes)
-	            return  (PlaceQuestiontypes) place;
+		 /*if (place instanceof PlaceQuestiontypes)
+	            return  (PlaceQuestiontypes) place;*/
 		 
 		 if (place instanceof PlaceStaticContent)
 	            return  (PlaceStaticContent) place;
