@@ -44,6 +44,7 @@ import medizin.shared.criteria.AdvancedSearchCriteriaUtils;
 import medizin.shared.criteria.BindType;
 import medizin.shared.criteria.Comparison;
 import medizin.shared.criteria.PossibleFields;
+import medizin.shared.utils.PersonAccessRight;
 import medizin.shared.utils.SharedConstant;
 
 import org.apache.commons.lang3.StringUtils;
@@ -708,6 +709,7 @@ public class Question {
 
 	public static Long countQuestionsNonAcceptedAdmin() {
 		// Gets the Sessionattributes
+		PersonAccessRight personAccessRight = Person.fetchPersonAccessFromSession();
 		Person loggedUser = Person.myGetLoggedPerson();
 		Institution institution = Institution.myGetInstitutionToWorkWith();
 		if (loggedUser == null || institution == null)
@@ -737,7 +739,7 @@ public class Question {
 
 		Predicate pre1 = criteriaBuilder.and(criteriaBuilder.equal(from.get("questEvent").get("institution").get("id"), institution.getId()), criteriaBuilder.notEqual(from.get("status"), Status.DEACTIVATED),criteriaBuilder.notEqual(from.get("isForcedActive"), true));
 
-		if (loggedUser.getIsAdmin())
+		if (personAccessRight.getIsAdmin() || personAccessRight.getIsInstitutionalAdmin())
 		{
 			pre1 = criteriaBuilder.and(pre1, criteriaBuilder.equal(from.get("isAcceptedAdmin"), false));
 		}
@@ -759,6 +761,7 @@ public class Question {
 	public static List<Question> findQuestionsEntriesNonAcceptedAdmin(
 			int start, int length) {
 		// Gets the Sessionattributes
+		PersonAccessRight personAccessRights = Person.fetchPersonAccessFromSession();
 		Person loggedUser = Person.myGetLoggedPerson();
 		Institution institution = Institution.myGetInstitutionToWorkWith();
 		if (loggedUser == null || institution == null)
@@ -785,10 +788,11 @@ public class Question {
 		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
 		CriteriaQuery<Question> criteriaQuery = criteriaBuilder.createQuery(Question.class);
 		Root<Question> from = criteriaQuery.from(Question.class);
+		criteriaQuery.orderBy(criteriaBuilder.asc(from.get("id")));
 		
 		Predicate pre1 = criteriaBuilder.and(criteriaBuilder.equal(from.get("questEvent").get("institution").get("id"), institution.getId()), criteriaBuilder.notEqual(from.get("status"), Status.DEACTIVATED),criteriaBuilder.notEqual(from.get("isForcedActive"), true));
 
-		if (loggedUser.getIsAdmin())
+		if (personAccessRights.getIsAdmin() || personAccessRights.getIsInstitutionalAdmin())
 		{
 			pre1 = criteriaBuilder.and(pre1, criteriaBuilder.equal(from.get("isAcceptedAdmin"), false));
 		}
@@ -2010,13 +2014,11 @@ public class Question {
 				newUserAccessRights.persist();
 			}
 			
-			/*List<AssesmentQuestion> assesmentQuestions = AssesmentQuestion.findAssesmentQuestionsByQuestion(oldQuestion.getId());
+			List<AssesmentQuestion> assesmentQuestions = AssesmentQuestion.findAssesmentQuestionsByQuestion(oldQuestion.getId());
 			for (AssesmentQuestion assesmentQuestion : assesmentQuestions) {
-				AssesmentQuestion newAssesmentQuestion = new AssesmentQuestion();
-				BMEUtils.copyValues(assesmentQuestion, newAssesmentQuestion, AssesmentQuestion.class);
-				newAssesmentQuestion.setQuestion(this);
-				newAssesmentQuestion.persist();
-			}*/
+				assesmentQuestion.setQuestion(this);
+				assesmentQuestion.persist();
+			}
 			
 			HashSet<Keyword> keywordSet = new HashSet<Keyword>(oldQuestion.getKeywords());
 			this.setKeywords(keywordSet);
@@ -2103,6 +2105,7 @@ public class Question {
 			CriteriaQuery<Question> criteriaQuery = criteriaBuilder.createQuery(Question.class);
 			Root<Question> from = criteriaQuery.from(Question.class);
 			criteriaQuery.distinct(true);
+			criteriaQuery.orderBy(criteriaBuilder.asc(from.get("id")));
 			
 			Predicate mainPredicate = basicPredicateForQuestion(loggedUser, institution, criteriaBuilder, criteriaQuery, from);
 		

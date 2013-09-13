@@ -223,9 +223,13 @@ public class ActivityAcceptQuestionEdit extends ActivityQuestionEdit {
 	@Override
 	public void disableEnableAuthorReviewerSuggestBox() {
 		view.disableEnableAuthorReviewerValue(true);
-		Document.get().getElementById("auther").removeFromParent();	
-		Document.get().getElementById("autherEdit").getStyle().clearDisplay();
-		Document.get().getElementById("reviewer").removeFromParent();
-		Document.get().getElementById("reviewerEdit").getStyle().clearDisplay();
+		
+		if (Document.get().getElementById("auther") != null)
+			Document.get().getElementById("auther").removeFromParent();	
+		//Document.get().getElementById("autherEdit").getStyle().clearDisplay();
+		
+		if (Document.get().getElementById("reviewer") != null)
+			Document.get().getElementById("reviewer").removeFromParent();
+		//Document.get().getElementById("reviewerEdit").getStyle().clearDisplay();
 	}
 }

@@ -2772,9 +2772,10 @@ background: rgb(201,201,253)  ;
 }
 
 .eu-nextstreet-SuggestMatchingString {
-	color: #f1b532;
-    text-shadow: 1px 1px 1px #95ff8f;
-    filter: dropshadow(color=#95ff8f, offx=1, offy=1);
+	color: black;
+	font-weight: bolder;
+    /* text-shadow: 1px 1px 1px red;
+    filter: dropshadow(color=red, offx=1, offy=1); */
 }
 
 .eu-nextstreet-SuggestField-top {
@@ -4853,4 +4854,12 @@ background: url("images/colorpicker.png");
 .questionAccDialogCss{
 	min-height: 600px;
 	min-width: 800px;
+}
+
+.cellTableSelectedRowTest {
+  gwt-image: 'cellTableSelectedBackground';
+  background-color: #d3ae50;
+  color: #000000;
+  height: auto;
+  overflow: auto;
 }

@@ -804,15 +804,19 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 			}
 			String beginn = "<div style=\"";
 			String end = "</div>";
-			if (!value.getIsAcceptedAdmin()) {
-				beginn += "color:red; ";
-			}
-			if (!value.getIsAcceptedRewiever()) {
-				beginn += "font-style:italic; ";
-			}
-			//if (!value.getIsActive()) {
-			if (!Status.ACTIVE.equals(value.getStatus())) {
-				beginn += "text-decoration: line-through; ";
+			
+			if (Status.ACTIVE.equals(value.getStatus()) == false)
+			{
+				if (!value.getIsAcceptedAdmin()) {
+					beginn += "color:red; ";
+				}
+				if (!value.getIsAcceptedRewiever()) {
+					beginn += "font-style:italic; ";
+				}
+				//if (!value.getIsActive()) {
+				if (!Status.ACTIVE.equals(value.getStatus())) {
+					beginn += "text-decoration: line-through; ";
+				}
 			}
 
 			beginn += "\">";

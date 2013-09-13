@@ -38,6 +38,7 @@ public class Institution {
     public void mySetCurrentInstitution(){
     	HttpSession session = RequestFactoryServlet.getThreadLocalRequest().getSession();
 		session.setAttribute(ServerConstants.SESSION_INSTITUTION_ID_KEY, this.getId());
+		Person.fetchLoggedPersonAccessRights();
     }
     
     public static void fillCurrentInstitutionNull()
@@ -181,7 +182,7 @@ public class Institution {
 		CriteriaQuery<Institution> criteriaQuery = criteriaBuilder.createQuery(Institution.class);
 		Root<Institution> from = criteriaQuery.from(Institution.class);
 		
-		criteriaQuery.orderBy(criteriaBuilder.asc(from.get("institutionName")));
+		criteriaQuery.orderBy(criteriaBuilder.asc(from.get("id")));
 		
 		Expression<String> shortNameExp = from.get("institutionName");
 		Predicate pre1 = criteriaBuilder.like(shortNameExp, "%" + searchText + "%");

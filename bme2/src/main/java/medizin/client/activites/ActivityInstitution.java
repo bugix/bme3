@@ -1,8 +1,6 @@
 package medizin.client.activites;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import medizin.client.events.RecordChangeEvent;
 import medizin.client.factory.receiver.BMEReceiver;
@@ -13,7 +11,6 @@ import medizin.client.proxy.InstitutionProxy;
 import medizin.client.request.InstitutionRequest;
 import medizin.client.ui.view.InstitutionView;
 import medizin.client.ui.view.InstitutionViewImpl;
-import medizin.client.ui.view.QuestiontypesViewImpl;
 import medizin.client.ui.widget.Sorting;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 
@@ -48,8 +45,8 @@ public class ActivityInstitution extends AbstractActivityWrapper implements
 
 	private HandlerRegistration rangeChangeHandler;
 
-	private final Map<EntityProxyId<InstitutionProxy>, Integer> idToRow = new HashMap<EntityProxyId<InstitutionProxy>, Integer>();
-	private final Map<EntityProxyId<InstitutionProxy>, InstitutionProxy> idToProxy = new HashMap<EntityProxyId<InstitutionProxy>, InstitutionProxy>();
+	//private final Map<EntityProxyId<InstitutionProxy>, Integer> idToRow = new HashMap<EntityProxyId<InstitutionProxy>, Integer>();
+	//private final Map<EntityProxyId<InstitutionProxy>, InstitutionProxy> idToProxy = new HashMap<EntityProxyId<InstitutionProxy>, InstitutionProxy>();
 	private Boolean pendingSelection;
 	private ActivityManager activityManger;
 	private ActivityInstitutionMapper activityInstitutionMapper;
@@ -59,7 +56,9 @@ public class ActivityInstitution extends AbstractActivityWrapper implements
 	private PlaceController placeController;
 	
 	public String sortname = "institutionName";
-	 public Sorting sortorder = Sorting.ASC; 
+	 public Sorting sortorder = Sorting.ASC;
+	 
+	 private InstitutionProxy selectedInstitution = null;
 	
 	 String searchValue = "";
 	 Long loggedPersonId = 0l;
@@ -130,15 +129,13 @@ public class ActivityInstitution extends AbstractActivityWrapper implements
 				});*/
 		
 		RecordChangeEvent.register(requests.getEventBus(), (InstitutionViewImpl)view);
-		init();
+		
 
 		activityManger.setDisplay(view.getDetailsPanel());
 
 		// Inherit the view's key provider
-		ProvidesKey<InstitutionProxy> keyProvider = ((AbstractHasData<InstitutionProxy>) table)
-				.getKeyProvider();
-		selectionModel = new SingleSelectionModel<InstitutionProxy>(keyProvider);
-		table.setSelectionModel(selectionModel);
+		
+		
 
 		table.addCellPreviewHandler(new Handler<InstitutionProxy>() {
 
@@ -159,6 +156,8 @@ public class ActivityInstitution extends AbstractActivityWrapper implements
 			    }
 			}
 		});
+		
+		init();
 		
 		/*selectionModel
 				.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
@@ -206,6 +205,8 @@ public class ActivityInstitution extends AbstractActivityWrapper implements
 
 	private void init() {
 
+		
+		
 		fireCountRequest(new BMEReceiver<Long>() {
 			@Override
 			public void onSuccess(Long response) {
@@ -248,7 +249,7 @@ public class ActivityInstitution extends AbstractActivityWrapper implements
 					// This activity is dead
 					return;
 				}
-				idToRow.clear();
+				/*idToRow.clear();
 				idToProxy.clear();
 				for (int i = 0, row = range.getStart(); i < values.size(); i++, row++) {
 					InstitutionProxy institution = values.get(i);
@@ -258,8 +259,11 @@ public class ActivityInstitution extends AbstractActivityWrapper implements
 							.stableId();
 					idToRow.put(proxyId, row);
 					idToProxy.put(proxyId, institution);
-				}
+				}*/
+				
 				table.setRowData(range.getStart(), values);
+				
+				selectRow(range);
 
 				// finishPendingSelection();
 				if (widget != null) {
@@ -270,6 +274,20 @@ public class ActivityInstitution extends AbstractActivityWrapper implements
 
 		fireRangeRequest(range, callback);
 
+	}
+
+	private void selectRow(Range range) {
+		ProvidesKey<InstitutionProxy> keyProvider = ((AbstractHasData<InstitutionProxy>) table)
+				.getKeyProvider();
+		selectionModel = new SingleSelectionModel<InstitutionProxy>(keyProvider);
+		if (selectedInstitution != null)
+		{
+			selectionModel.setSelected(selectedInstitution, true);
+			int start = table.getRowCount() - range.getLength();
+			table.setPageStart((start < 0 ? 0 : start));
+			selectedInstitution = null;
+		}
+		table.setSelectionModel(selectionModel);
 	}
 
 	private void getLastPage() {
@@ -306,7 +324,7 @@ public class ActivityInstitution extends AbstractActivityWrapper implements
 	 * Finish selecting a proxy that hadn't yet arrived when
 	 * {@link #select(EntityProxyId)} was called.
 	 */
-	private void finishPendingSelection() {
+	/*private void finishPendingSelection() {
 		if (pendingSelection != null) {
 			InstitutionProxy selectMe = idToProxy.get(pendingSelection);
 			pendingSelection = null;
@@ -315,7 +333,7 @@ public class ActivityInstitution extends AbstractActivityWrapper implements
 				selectionModel.setSelected(selectMe, true);
 			}
 		}
-	}
+	}*/
 
 	@Override
 	public void deleteClicked(InstitutionProxy institution) {
@@ -341,13 +359,16 @@ public class ActivityInstitution extends AbstractActivityWrapper implements
 
 	@Override
 	public void editClicked(InstitutionProxy proxy, String institutionName) {
+		
 		InstitutionRequest request = requests.institutionRequest();
 		proxy = request.edit(proxy);
 		proxy.setInstitutionName(institutionName);
 
+		final InstitutionProxy tempProxy = proxy;
 		request.persist().using(proxy).fire(new BMEReceiver<Void>(reciverMap) {
 
 			public void onSuccess(Void ignore) {
+				selectedInstitution = tempProxy;
 				init();
 			}
 		});
@@ -357,7 +378,7 @@ public class ActivityInstitution extends AbstractActivityWrapper implements
 	public void newClicked(String institutionName) {
 		Log.debug("new Institution Clicked");
 		InstitutionRequest request = requests.institutionRequest();
-		InstitutionProxy institution = request.create(InstitutionProxy.class);
+		final InstitutionProxy institution = request.create(InstitutionProxy.class);
 		institution.setInstitutionName(institutionName);
 //		institution.setVersion(0);
 
@@ -365,37 +386,9 @@ public class ActivityInstitution extends AbstractActivityWrapper implements
 
 			public void onSuccess(Void ignore) {
 				Log.debug("Sucessfull created");
-				getLastPage();
-
+				selectedInstitution = institution;
+				init();
 			}
-
-		/*	@Override
-			public void onFailure(ServerFailure error) {
-				Log.warn(McAppConstant.ERROR_WHILE_CREATE + " in Institution -"
-						+ error.getMessage());
-				if (error.getMessage().contains("ConstraintViolationException")) {
-					Log.debug("Fehlen beim erstellen: Doppelter name");
-					//TODO mcAppFactory.getErrorPanel().setErrorMessage(McAppConstant.CONTENT_NOT_UNIQUE);
-				}
-
-			}
-
-			@Override
-			public void onViolation(Set<Violation> errors) {
-				Log.debug("Fehlen beim erstellen, volation: "
-						+ errors.toString());
-				Iterator<Violation> iter = errors.iterator();
-				String message = "";
-				while (iter.hasNext()) {
-					message += iter.next().getMessage() + "<br>";
-				}
-				Log.warn(McAppConstant.ERROR_WHILE_CREATE_VIOLATION
-						+ " in Institution -" + message);
-
-				//TODO mcAppFactory.getErrorPanel().setErrorMessage(message);
-
-			}*/
-
 		});
 	}
 	

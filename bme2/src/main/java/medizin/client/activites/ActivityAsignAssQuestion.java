@@ -1395,25 +1395,24 @@ QuestionAdvancedSearchPopupView.Delegate {
 		{
 			Integer sumOfAnswer=questionProxy.getQuestionType().getSumAnswer();
 			Integer sumOfTrueAnsw=questionProxy.getQuestionType().getSumTrueAnswer();
-			
+			int totalAnswerSelected=0;
 			//check true question
 			if(questionProxy.getQuestionType().getSumTrueAnswer() > 0)
 			{
 				int totalAnswers=questionViewImpl.getAnswerPanel().getWidgetCount();
-				int trueAnswer=0;
-				int totalAnswerSelected=0;
+				int trueAnswer=0;				
 				for(int i=0;i<totalAnswers;i++)
 				{
 					
 					AnswerViewImpl answerViewImpl=(AnswerViewImpl)questionViewImpl.getAnswerPanel().getWidget(i);
-					if(answerViewImpl.getChecked() && answerViewImpl.getProxy().getValidity()== Validity.Wahr)
-					{
-						trueAnswer++;
-					}
-					if(answerViewImpl.getChecked())
+					if(answerViewImpl.getChecked() )
 					{
 						totalAnswerSelected++;
+						
+						if(answerViewImpl.getProxy().getValidity()== Validity.Wahr)
+							trueAnswer++;
 					}
+					
 				}
 				
 				if(sumOfTrueAnsw==trueAnswer && totalAnswerSelected==sumOfAnswer)
@@ -1421,13 +1420,9 @@ QuestionAdvancedSearchPopupView.Delegate {
 				else
 				{
 					if(sumOfTrueAnsw!=trueAnswer)
-					ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.sumOfTrueAnswer(sumOfTrueAnsw));
-					
-					if(totalAnswerSelected != sumOfAnswer)
-					{
+						ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.sumOfTrueAnswer(sumOfTrueAnsw));
+					else if(totalAnswerSelected != sumOfAnswer)
 						ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.sumOfAnswer(sumOfAnswer));
-
-					}
 					
 					return false;
 				}
@@ -1438,24 +1433,37 @@ QuestionAdvancedSearchPopupView.Delegate {
 				int totalAnswers=questionViewImpl.getAnswerPanel().getWidgetCount();
 				int sumFalseAnswers=questionViewImpl.getProxy().getQuestionType().getSumFalseAnswer();
 				int falseAnswerSelected=0;
+				boolean isAllAnswerFalse = true;
 				for(int i=0;i<totalAnswers;i++)
 				{
 					AnswerViewImpl answerViewImpl=(AnswerViewImpl)questionViewImpl.getAnswerPanel().getWidget(i);
-					
-					if(answerViewImpl.getChecked() && answerViewImpl.getProxy().getValidity()== Validity.Falsch)
+					totalAnswerSelected++;
+					if(answerViewImpl.getChecked() )
 					{
-						falseAnswerSelected++;
+						if(answerViewImpl.getProxy().getValidity()== Validity.Falsch)
+							falseAnswerSelected++;
+						else
+						{
+							isAllAnswerFalse=false;
+							break;
+							
+						}
 					}
+					
 					
 				}
 				
-				if(sumFalseAnswers==falseAnswerSelected)
+				//if(sumFalseAnswers==falseAnswerSelected)
+				if(isAllAnswerFalse && totalAnswerSelected==sumOfAnswer)
 				{
 					return true;					
 				}
 				else
 				{
-					ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.sumOfFalseAnswer(sumFalseAnswers));
+					if(!isAllAnswerFalse)
+						ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.sumOfFalseAnswer(sumOfAnswer));
+					else if(totalAnswerSelected != sumOfAnswer)
+						ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.sumOfAnswer(sumOfAnswer));
 					return false;
 				}
 			}

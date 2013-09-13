@@ -7,6 +7,12 @@ import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import javax.persistence.criteria.SetJoin;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -72,6 +78,22 @@ public class Keyword {
     	
     	question.setKeywords(keywordSet);
     	question.persist();
+    	
+    	CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+    	CriteriaQuery<Question> criteriaQuery = criteriaBuilder.createQuery(Question.class);
+    	Root<Question> from = criteriaQuery.from(Question.class);
+    	
+    	SetJoin<Question, Keyword> keywordJoin = from.joinSet("keywords", JoinType.LEFT);
+    	Predicate pre1 = criteriaBuilder.equal(keywordJoin.get("id"), keyword.getId());
+    	
+    	criteriaQuery.where(pre1);
+    	
+    	TypedQuery<Question> query = entityManager().createQuery(criteriaQuery);
+    	
+    	if (query.getResultList() != null && query.getResultList().size() == 0)
+    	{
+    		keyword.remove();
+    	}
     	
     	return question;
     }

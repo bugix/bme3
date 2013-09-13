@@ -14,17 +14,9 @@ public abstract class AbstractDetailsPlace extends AbstractPlace {
 	}
 
 	protected static final String SEPARATOR = "!";
-	private EntityProxyId<?> proxyId;
 	private Operation operation = null;
 
-	public final EntityProxyId<?> getProxyId() {
-		return proxyId;
-	}
-
-	public final void setProxyId(EntityProxyId<?> id) {
-		this.proxyId = id;
-	}
-
+	
 	public AbstractDetailsPlace(String placeName) {
 		super(placeName);
 	}
@@ -40,10 +32,9 @@ public abstract class AbstractDetailsPlace extends AbstractPlace {
 	}
 
 	public AbstractDetailsPlace(EntityProxyId<?> stableId, Operation operation) {
-		super("");
+		super("",stableId);
 		Log.debug("AbstractDetailsPlace wird erstellt");
 		this.operation = operation;
-		proxyId = stableId;
 		assert (operation != Operation.CREATE);
 	}
 

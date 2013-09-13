@@ -36,6 +36,7 @@ import medizin.shared.criteria.AdvancedSearchCriteriaUtils;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.activity.shared.ActivityManager;
+import com.google.gwt.dom.client.TableRowElement;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.place.shared.Place;
@@ -50,6 +51,7 @@ import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
+import com.google.web.bindery.requestfactory.shared.EntityProxyId;
 
 public class ActivityQuestion extends AbstractActivityWrapper implements
 		QuestionView.Presenter, QuestionView.Delegate,
@@ -83,6 +85,8 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 	private CellTable<AdvancedSearchCriteria> criteriaTable;
 	
 	private QuestionAdvancedSearchAbstractPopupViewImpl advancedSearchAbstractPopupViewImpl;
+		
+	private EntityProxyId<?> proxyId = null;
 
 	@Inject
 	public ActivityQuestion(PlaceQuestion place, McAppRequestFactory requests,
@@ -293,10 +297,14 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 
 				});*/
 		// Inherit the view's key provider
+		
 		ProvidesKey<QuestionProxy> keyProvider = ((AbstractHasData<QuestionProxy>) table)
 				.getKeyProvider();
 		selectionModel = new SingleSelectionModel<QuestionProxy>(keyProvider);
-		table.setSelectionModel(selectionModel);
+		
+		
+		
+		table.setSelectionModel(selectionModel);		
 
 		selectionModel
 				.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
@@ -430,6 +438,8 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 				}
 
 				table.setRowData(range.getStart(), response);
+				
+				selectRow(range);
 
 				if (widget != null) {
 					widget.setWidget(view.asWidget());
@@ -439,6 +449,26 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 			}
 		});
 
+	}
+	
+	private void selectRow(final Range range) {
+		if (proxyId != null)
+		{
+			requests.find(proxyId).fire(new BMEReceiver<Object>() {
+
+				@Override
+				public void onSuccess(Object response) {
+					if (response != null && response instanceof QuestionProxy)
+					{
+						QuestionProxy selectedProxy = (QuestionProxy) response;
+						selectionModel.setSelected(selectedProxy, true);
+						int start = table.getRowCount() - range.getLength();
+						table.setPageStart((start < 0 ? 0 : start));
+					}
+					proxyId = null;
+				}
+			});					
+		}
 	}
 
 	@Override
@@ -482,9 +512,10 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 
 	@Override
 	public void placeChanged(Place place) {
-		/*if (place instanceof PlaceQuestionDetails) {
-			init();
-		}*/
+		if (place instanceof PlaceQuestionDetails) {
+			if (((PlaceQuestionDetails)place).getProxyId() != null)
+				proxyId = ((PlaceQuestionDetails)place).getProxyId();			
+		}
 		
 		if (place instanceof PlaceQuestion) {
 			init();

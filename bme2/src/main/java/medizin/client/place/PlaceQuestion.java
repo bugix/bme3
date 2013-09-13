@@ -1,6 +1,7 @@
 package medizin.client.place;
 
 import com.google.gwt.place.shared.Prefix;
+import com.google.web.bindery.requestfactory.shared.EntityProxyId;
 
 import medizin.client.factory.request.McAppRequestFactory;
 
@@ -16,6 +17,10 @@ public class PlaceQuestion extends AbstractPlace {
 		super(placeName, reload);
 	}
 
+	public PlaceQuestion(String placeName, EntityProxyId<?> stableId) {
+		super(placeName,stableId);
+	}
+
 	@Prefix(PLACE_QUESTION)
 	public static class Tokenizer extends AbstractPlace.AbstractTokenizer<PlaceQuestion> {
 
@@ -28,7 +33,7 @@ public class PlaceQuestion extends AbstractPlace {
 			return new PlaceQuestion(token);
 		}
 	}
-
+	
 	/*@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
