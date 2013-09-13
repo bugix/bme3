@@ -802,7 +802,7 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 			if (value == null) {
 				return;
 			}
-			String beginn = "<div style=\"";
+			String beginn = "<div style=\"white-space:normal;";
 			String end = "</div>";
 			
 			if (Status.ACTIVE.equals(value.getStatus()) == false)

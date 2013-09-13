@@ -422,7 +422,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 			setMediaView(questionType.getValue(),question);
 		}
 		questionType.setAcceptableValues(values);
-		
+		setDigitCount();
 	}
 
 	@Override
