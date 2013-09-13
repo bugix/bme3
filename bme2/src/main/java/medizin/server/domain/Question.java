@@ -820,7 +820,8 @@ public class Question {
 		
 		Person loggedUser = Person.myGetLoggedPerson();
 		Institution institution = Institution.myGetInstitutionToWorkWith();
-		if (loggedUser == null || institution == null)
+		PersonAccessRight accessRight = Person.fetchPersonAccessFromSession();
+		if (loggedUser == null || institution == null || accessRight == null)
 			throw new IllegalArgumentException("The person and institution arguments are required");
 
 		/*EntityManager em = Question.entityManager();
@@ -853,16 +854,22 @@ public class Question {
 		//Predicate subPre = criteriaBuilder.equal(from.get("question").get("questEvent").get("institution").get("id"), institution.getId());
 		Predicate subPre1 = null;
 		
-		if (!loggedUser.getIsAdmin())
+		if (accessRight.getIsAdmin() || accessRight.getIsInstitutionalAdmin())
 		{
-			Predicate subPre2 = criteriaBuilder.equal(answerRoot.get("rewiewer"), loggedUser.getId());
-			subPre1 = criteriaBuilder.and(answerRoot.get("status").in(Status.NEW, Status.ACCEPTED_ADMIN), subPre2);
+			subPre1 = criteriaBuilder.equal(answerRoot.get("isAnswerAcceptedAdmin"), false);
+			//subPre1 = answerRoot.get("status").in(Status.NEW, Status.ACCEPTED_REVIEWER);
+			
 		}
 		else
 		{
-			subPre1 = answerRoot.get("status").in(Status.NEW, Status.ACCEPTED_REVIEWER);
+			final Predicate pre2 = criteriaBuilder.and(criteriaBuilder.equal(answerRoot.get("isAnswerAcceptedReviewWahrer"), false), criteriaBuilder.equal(answerRoot.get("rewiewer").get("id"), loggedUser.getId()));
+			final Predicate pre3 = criteriaBuilder.and(criteriaBuilder.equal(answerRoot.get("isAnswerAcceptedAutor"), false), criteriaBuilder.equal(answerRoot.get("autor").get("id"), loggedUser.getId()));
+			subPre1  = criteriaBuilder.or(pre2, pre3);
+
+			/*Predicate subPre2 = criteriaBuilder.equal(answerRoot.get("rewiewer"), loggedUser.getId());
+			subPre1 = criteriaBuilder.and(answerRoot.get("status").in(Status.NEW, Status.ACCEPTED_ADMIN), subPre2);*/
 		}
-			
+	
 		subQuery.select(answerRoot.get("question").get("id")).where(subPre1);
 		
 		Predicate mainPre1 = criteriaBuilder.equal(from.get("status"), Status.ACTIVE);

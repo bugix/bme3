@@ -1020,56 +1020,23 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 				initMatrixAnswerView();
 			}
 		});
-		
-		
 	}
 
 	@Override
 	public void saveAnswerProxy(AnswerProxy answerProxy, String answerText, PersonProxy author, PersonProxy rewiewer, Boolean submitToReviewComitee, String comment, Validity validity, String points, String mediaPath, String additionalKeywords,Integer sequenceNumber, final Function<AnswerProxy, Void> function) {
 		
 		Log.info("in saveAnswerProxy method");
-		final AnswerRequest answerRequest = requests.answerRequest();
-		CommentRequest commentRequest = requests.commentRequest();
+		final CommentRequest commentRequest = requests.commentRequest();
+		final AnswerRequest answerRequest = commentRequest.append(requests.answerRequest());
 		
 		if(answerProxy != null) {
-			AnswerProxy editerAnswerProxy  = answerRequest.edit(answerProxy);
-			editerAnswerProxy.setDateChanged(new Date());
-			editerAnswerProxy.setAnswerText(answerText);
-			editerAnswerProxy.setAutor(author);
-			editerAnswerProxy.setRewiewer(rewiewer);
-			editerAnswerProxy.setSubmitToReviewComitee(submitToReviewComitee);
-			//editerAnswerProxy.setIsAnswerAcceptedAdmin(false);
-			editerAnswerProxy.setIsAnswerAcceptedReviewWahrer(false);
-			//editerAnswerProxy.setIsAnswerActive(false);
-			editerAnswerProxy.getComment().setComment(comment);
-			editerAnswerProxy.setQuestion(question);
-			//editerAnswerProxy.setStatus(Status.NEW);
-			editerAnswerProxy.setValidity(validity);
-			editerAnswerProxy.setPoints(points);
-			editerAnswerProxy.setMediaPath(mediaPath);
-			editerAnswerProxy.setIsMedia(mediaPath != null && mediaPath.length() > 0);
-			editerAnswerProxy.setAdditionalKeywords(additionalKeywords);
-			editerAnswerProxy.setSequenceNumber(sequenceNumber);
+			AnswerProxy newAnswerProxy  = answerRequest.edit(answerProxy);
+			newAnswerProxy.setDateChanged(new Date());
 			
-			if ( (personRightProxy.getIsAdmin() || personRightProxy.getIsInstitutionalAdmin()) && userLoggedIn != null && userLoggedIn.getId().equals(author.getId()))
-			{
-				editerAnswerProxy.setIsAnswerAcceptedAdmin(true);
-				editerAnswerProxy.setStatus(Status.ACCEPTED_ADMIN);
-			}
-			else
-			{
-				editerAnswerProxy.setIsAnswerAcceptedAdmin(false);
-				editerAnswerProxy.setStatus(Status.NEW);	
-			}
-			
-			/*if(answerProxy.getValidity() != null) {
-				editerAnswerProxy.setValidity(answerProxy.getValidity());
-			}else {
-				editerAnswerProxy.setValidity(Validity.Falsch);
-			}*/
-			
-			final AnswerProxy finalAnswerProxy = editerAnswerProxy;
-			answerRequest.persist().using(editerAnswerProxy).fire(new BMEReceiver<Void>(reciverMap) {
+			fillAnswerData(answerText, author, rewiewer, submitToReviewComitee, comment, validity, points, mediaPath, additionalKeywords, sequenceNumber, newAnswerProxy);
+					
+			final AnswerProxy finalAnswerProxy = newAnswerProxy;
+			answerRequest.persist().using(newAnswerProxy).fire(new BMEReceiver<Void>(reciverMap) {
 
 				@Override
 				public void onSuccess(Void response) {
@@ -1082,67 +1049,57 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			CommentProxy commentProxy = commentRequest.create(CommentProxy.class);
 			
 			newAnswerProxy.setDateAdded(new Date());
-			newAnswerProxy.setAnswerText(answerText);
-			newAnswerProxy.setAutor(author);
-			newAnswerProxy.setRewiewer(rewiewer);
-			newAnswerProxy.setSubmitToReviewComitee(submitToReviewComitee);
-			//newAnswerProxy.setIsAnswerAcceptedAdmin(false);
-			newAnswerProxy.setIsAnswerAcceptedReviewWahrer(false);
-			//newAnswerProxy.setIsAnswerActive(false);
 			newAnswerProxy.setComment(commentProxy);
-			commentProxy.setComment(comment);
-			newAnswerProxy.setValidity(validity);
-			newAnswerProxy.setQuestion(question);
-			newAnswerProxy.setPoints(points);
-			newAnswerProxy.setMediaPath(mediaPath);
-			newAnswerProxy.setIsMedia(mediaPath != null && mediaPath.length() > 0);
-			newAnswerProxy.setAdditionalKeywords(additionalKeywords);
-			newAnswerProxy.setSequenceNumber(sequenceNumber);
 			
-			//newAnswerProxy.setStatus(Status.NEW);
-			
-			if ( (personRightProxy.getIsAdmin() || personRightProxy.getIsInstitutionalAdmin()) && userLoggedIn != null && userLoggedIn.getId().equals(author.getId()))
-			{
-				newAnswerProxy.setIsAnswerAcceptedAdmin(true);
-				newAnswerProxy.setStatus(Status.ACCEPTED_ADMIN);
-			}
-			else
-			{
-				newAnswerProxy.setIsAnswerAcceptedAdmin(false);
-				newAnswerProxy.setStatus(Status.NEW);	
-			}
+			fillAnswerData(answerText, author, rewiewer, submitToReviewComitee, comment, validity, points, mediaPath, additionalKeywords, sequenceNumber, newAnswerProxy);
 			
 			final AnswerProxy finalAnswerProxy = newAnswerProxy;
 			
-			commentRequest.persist().using(commentProxy).fire(new BMEReceiver<Void>(reciverMap) {
-
+			answerRequest.persist().using(finalAnswerProxy).fire(new BMEReceiver<Void>(reciverMap) {
+	
 				@Override
 				public void onSuccess(Void response) {
 					
-					answerRequest.persist().using(finalAnswerProxy).fire(new BMEReceiver<Void>(reciverMap) {
-
+					requests.answerRequest().find(finalAnswerProxy.stableId()).with("autor","rewiewer","comment").fire(new BMEReceiver<Object>() {
+	
 						@Override
-						public void onSuccess(Void response) {
-							
-							requests.answerRequest().find(finalAnswerProxy.stableId()).with("autor","rewiewer","comment").fire(new BMEReceiver<Object>() {
-
-								@Override
-								public void onSuccess(Object response) {
-									if(response instanceof AnswerProxy) {
-										function.apply((AnswerProxy) response);	
-										initAnswerView();
-									}		
-								}
-							});
-								
+						public void onSuccess(Object response) {
+							if(response instanceof AnswerProxy) {
+								function.apply((AnswerProxy) response);	
+								initAnswerView();
+							}		
 						}
 					});
-					
+						
 				}
-				
 			});
+				
 		}
 
+	}
+
+	public void fillAnswerData(String answerText, PersonProxy author, PersonProxy rewiewer, Boolean submitToReviewComitee, String comment, Validity validity, String points, String mediaPath, String additionalKeywords, Integer sequenceNumber, AnswerProxy newAnswerProxy) {
+		newAnswerProxy.setAnswerText(answerText);
+		newAnswerProxy.setAutor(author);
+		newAnswerProxy.setRewiewer(rewiewer);
+		newAnswerProxy.setSubmitToReviewComitee(submitToReviewComitee);
+		newAnswerProxy.setIsAnswerAcceptedAutor(userLoggedIn.getId().equals(author.getId()));
+		newAnswerProxy.setIsAnswerAcceptedAdmin(isAdminOrInstitutionalAdmin());
+		newAnswerProxy.setIsAnswerAcceptedReviewWahrer(false);
+		newAnswerProxy.getComment().setComment(comment);
+		newAnswerProxy.setQuestion(question);
+		newAnswerProxy.setValidity(validity);
+		newAnswerProxy.setPoints(points);
+		newAnswerProxy.setMediaPath(mediaPath);
+		newAnswerProxy.setIsMedia(mediaPath != null && mediaPath.length() > 0);
+		newAnswerProxy.setAdditionalKeywords(additionalKeywords);
+		newAnswerProxy.setSequenceNumber(sequenceNumber);
+		
+		if ((isAdminOrInstitutionalAdmin())) {
+			newAnswerProxy.setStatus(Status.ACCEPTED_ADMIN);
+		} else {
+			newAnswerProxy.setStatus(Status.NEW);
+		}
 	}
 
 	@Override
@@ -1455,7 +1412,8 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		matrixAnswerView.setDelegate(this);
 				
 		matrixAnswerView.setRewiewerPickerValues(Collections.<PersonProxy>emptyList());
-        requests.personRequest().findAllPeople().with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).fire(new BMEReceiver<List<PersonProxy>>() {
+		PersonRequest personRequest = requests.personRequest();
+        personRequest.findAllPeople().with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).to(new BMEReceiver<List<PersonProxy>>() {
 
             public void onSuccess(List<PersonProxy> response) {
                 List<PersonProxy> values = new ArrayList<PersonProxy>();
@@ -1466,7 +1424,8 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
         });
         
        // answerDialogbox.setAutherPickerValues(Collections.<PersonProxy>emptyList());
-        requests.personRequest().findAllPeople().with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).fire(new BMEReceiver<List<PersonProxy>>() {
+        PersonRequest newPersonRequest = personRequest.append(requests.personRequest());
+        newPersonRequest.findAllPeople().with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).to(new BMEReceiver<List<PersonProxy>>() {
 
             public void onSuccess(List<PersonProxy> response) {
                 List<PersonProxy> values = new ArrayList<PersonProxy>();
@@ -1476,7 +1435,8 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
             }
         });
 		
-		requests.MatrixValidityRequest().findAllMatrixValidityForQuestion(question.getId()).with("answerX","answerY","answerX.autor","answerX.rewiewer","answerX.comment","answerY.autor","answerY.rewiewer","answerY.comment").fire(new BMEReceiver<List<MatrixValidityProxy>>() {
+        MatrixValidityRequest matrixValidityRequest = newPersonRequest.append(requests.MatrixValidityRequest());
+        matrixValidityRequest.findAllMatrixValidityForQuestion(question.getId()).with("answerX","answerY","answerX.autor","answerX.rewiewer","answerX.comment","answerY.autor","answerY.rewiewer","answerY.comment").to(new BMEReceiver<List<MatrixValidityProxy>>() {
 
 			@Override
 			public void onSuccess(List<MatrixValidityProxy> response) {
@@ -1485,6 +1445,8 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		        matrixAnswerView.display();
 			}
 		});
+        
+        matrixValidityRequest.fire();
 	}
 	
 	@Override
@@ -1628,18 +1590,12 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 				
 				proxy.setValidity(vo.getValidity());
 				if(proxy.getAnswerX() != null) {
-					proxy.getAnswerX().setDateChanged(new Date());
-					proxy.getAnswerX().setAnswerText(vo.getAnswerX().getAnswer());
-					proxy.getAnswerX().setAutor(author);
-					proxy.getAnswerX().setRewiewer(rewiewer);
-					proxy.getAnswerX().setSubmitToReviewComitee(submitToReviewComitee);
-					proxy.getAnswerX().setIsAnswerAcceptedAdmin(false);
-					proxy.getAnswerX().setIsAnswerAcceptedReviewWahrer(false);
-					proxy.getAnswerX().getComment().setComment(comment);
-					proxy.getAnswerX().setQuestion(question);
-					proxy.getAnswerX().setValidity(vo.getValidity());
-					proxy.getAnswerX().setStatus(Status.NEW);
-					answerXIndex.put(xIndex,proxy.getAnswerX());
+					final AnswerProxy answerX = proxy.getAnswerX();
+					answerX.setDateChanged(new Date());
+					answerX.getComment().setComment(comment);
+					
+					setMatrixAnswerValues(author, rewiewer, submitToReviewComitee, vo, answerX);
+					answerXIndex.put(xIndex,answerX);
 				} else {
 					
 					if(answerXIndex.containsKey(xIndex) == false) {
@@ -1649,18 +1605,8 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 						newCommentProxy.setComment(comment);
 						newAnswerProxy.setComment(newCommentProxy);
 						
-						
 						newAnswerProxy.setDateAdded(new Date());
-						newAnswerProxy.setAnswerText(vo.getAnswerX().getAnswer());
-						newAnswerProxy.setAutor(author);
-						newAnswerProxy.setRewiewer(rewiewer);
-						newAnswerProxy.setSubmitToReviewComitee(submitToReviewComitee);
-						newAnswerProxy.setIsAnswerAcceptedAdmin(false);
-						newAnswerProxy.setIsAnswerAcceptedReviewWahrer(false);
-						
-						newAnswerProxy.setQuestion(question);
-						newAnswerProxy.setValidity(vo.getValidity());
-						newAnswerProxy.setStatus(Status.NEW);
+						setMatrixAnswerValues(author, rewiewer, submitToReviewComitee, vo, newAnswerProxy);
 						
 						proxy.setAnswerX(newAnswerProxy);
 						answerXIndex.put(xIndex,newAnswerProxy);
@@ -1675,19 +1621,10 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 				
 				if(proxy.getAnswerY() != null) {
 				
-					proxy.getAnswerY().setDateChanged(new Date());
-					proxy.getAnswerY().setAnswerText(vo.getAnswerY().getAnswer());
-					proxy.getAnswerY().setAutor(author);
-					proxy.getAnswerY().setRewiewer(rewiewer);
-					proxy.getAnswerY().setSubmitToReviewComitee(submitToReviewComitee);
-					proxy.getAnswerY().setIsAnswerAcceptedAdmin(false);
-					proxy.getAnswerY().setIsAnswerAcceptedReviewWahrer(false);
-					//proxy.getAnswerY().setIsAnswerActive(false);
-					proxy.getAnswerY().getComment().setComment(comment);
-					proxy.getAnswerY().setQuestion(question);
-					proxy.getAnswerY().setValidity(vo.getValidity());
-					proxy.getAnswerY().setStatus(Status.NEW);
-
+					AnswerProxy answerY = proxy.getAnswerY();
+					answerY.setDateChanged(new Date());
+					answerY.getComment().setComment(comment);
+					setMatrixAnswerValues(author, rewiewer, submitToReviewComitee, vo, answerY);
 					answerYIndex.put(yIndex,proxy.getAnswerY());
 				}else {
 
@@ -1701,17 +1638,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 						proxy.setAnswerY(newAnswerProxy);
 						
 						newAnswerProxy.setDateAdded(new Date());
-						newAnswerProxy.setAnswerText(vo.getAnswerY().getAnswer());
-						newAnswerProxy.setAutor(author);
-						newAnswerProxy.setRewiewer(rewiewer);
-						newAnswerProxy.setSubmitToReviewComitee(submitToReviewComitee);
-						newAnswerProxy.setIsAnswerAcceptedAdmin(false);
-						newAnswerProxy.setIsAnswerAcceptedReviewWahrer(false);
-						
-						newAnswerProxy.setQuestion(question);
-						newAnswerProxy.setValidity(vo.getValidity());
-						newAnswerProxy.setStatus(Status.NEW);
-
+						setMatrixAnswerValues(author, rewiewer, submitToReviewComitee, vo, newAnswerProxy);
 						answerYIndex.put(yIndex,newAnswerProxy);
 						
 						answerRequest.persist().using(newAnswerProxy);
@@ -1739,6 +1666,24 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		});
 		
 		
+	}
+
+	private void setMatrixAnswerValues(PersonProxy author, PersonProxy rewiewer, Boolean submitToReviewComitee, MatrixValidityVO vo, final AnswerProxy answer) {
+		answer.setAnswerText(vo.getAnswerX().getAnswer());
+		answer.setAutor(author);
+		answer.setRewiewer(rewiewer);
+		answer.setSubmitToReviewComitee(submitToReviewComitee);
+		answer.setIsAnswerAcceptedAdmin(isAdminOrInstitutionalAdmin());
+		answer.setIsAnswerAcceptedReviewWahrer(false);
+		answer.setIsAnswerAcceptedAutor(userLoggedIn.getId().equals(author.getId()));
+		answer.setQuestion(question);
+		answer.setValidity(vo.getValidity());
+		
+		if ((isAdminOrInstitutionalAdmin())) {
+			answer.setStatus(Status.ACCEPTED_ADMIN);
+		} else {
+			answer.setStatus(Status.NEW);
+		}
 	}
 
 }

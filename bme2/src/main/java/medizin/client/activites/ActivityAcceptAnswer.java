@@ -132,7 +132,6 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 	
 	
 	private void init() {
-		
 
 		questionPanel.clear();
 		requests.questionRequest().findQuestionsAnswersNonAcceptedAdmin().with("answers", "questionType","questionResources").fire(new BMEReceiver<List<QuestionProxy>>() {
@@ -168,9 +167,9 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 		});
 
 	}
+	
 	@Override
-	public void onRangeChanged(final QuestionProxy questionProxy,
-			final AbstractHasData<AnswerProxy> table) {
+	public void onRangeChanged(final QuestionProxy questionProxy, final AbstractHasData<AnswerProxy> table) {
 		final Range range = table.getVisibleRange();
 		
 		requests.answerRequest().countAnswersNonAcceptedAdminByQuestion(questionProxy.getId()).with("question", "autor", "rewiewer").fire(new BMEReceiver<Long>() {
@@ -204,44 +203,24 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 	}
 	@Override
 	public void acceptClicked(final AnswerProxy answerProxy2, final AcceptAnswerSubView acceptAnswerSubView) {
-		
 
 			AnswerRequest req = requests.answerRequest();
 			AnswerProxy answerProxy =  req.edit((AnswerProxy)answerProxy2);
 			if(userLoggedIn.getIsAdmin() || personRightProxy.getIsInstitutionalAdmin()){
 				answerProxy.setIsAnswerAcceptedAdmin(true);
-				
-				if (answerProxy.getIsAnswerAcceptedReviewWahrer())
-				{
-					//answerProxy.setIsAnswerActive(true);
-					answerProxy.setStatus(Status.ACTIVE);
-				}
-				else
-				{
-					answerProxy.setStatus(Status.ACCEPTED_ADMIN);
-				}
+				answerProxy.setStatus(Status.ACCEPTED_ADMIN);
 			} 
-			
 			if(answerProxy2.getRewiewer().getId() == userLoggedIn.getId()) {
-				
 				answerProxy.setIsAnswerAcceptedReviewWahrer(true);
-				
-				if (answerProxy.getIsAnswerAcceptedAdmin())
-				{
-					//answerProxy.setIsAnswerActive(true);
-					answerProxy.setStatus(Status.ACTIVE);
-				}
-				else
-				{
-					answerProxy.setStatus(Status.ACCEPTED_REVIEWER);
-				}
+				answerProxy.setStatus(Status.ACCEPTED_REVIEWER);
 			}
-			/*if(answerProxy2.getAutor().getId() == userLoggedIn.getId())
-			{
+			if(answerProxy2.getAutor().getId() == userLoggedIn.getId())	{
 				answerProxy.setIsAnswerAcceptedAutor(true);
-			}*/
+			}
 			
-			
+			if(answerProxy.getIsAnswerAcceptedAdmin() == true && answerProxy.getIsAnswerAcceptedAutor() == true && answerProxy.getIsAnswerAcceptedReviewWahrer() == true) {
+				answerProxy.setStatus(Status.ACTIVE);
+			}
 			
 			req.persist().using(answerProxy).fire(new BMEReceiver<Void>(){
 

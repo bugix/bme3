@@ -39,6 +39,7 @@ import medizin.client.util.ClientUtility;
 import medizin.shared.MultimediaType;
 import medizin.shared.QuestionTypes;
 import medizin.shared.i18n.BmeConstants;
+import medizin.shared.i18n.BmeMessages;
 import medizin.shared.utils.SharedConstant;
 
 import com.allen_sauer.gwt.log.client.Log;
@@ -52,6 +53,8 @@ import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.editor.client.Editor.Ignore;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
@@ -63,6 +66,7 @@ import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RichTextArea;
@@ -82,7 +86,8 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 
 	private Delegate delegate;
 	
-	public BmeConstants constants = GWT.create(BmeConstants.class);
+	public static BmeConstants constants = GWT.create(BmeConstants.class);
+	public static BmeMessages messages = GWT.create(BmeMessages.class);
 
 	@UiField
 	public IconButton cancel;
@@ -185,6 +190,9 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	@UiField
 	Label lblReviewerValue;
 	
+	@UiField
+	HTML lblDigitCount;
+	
 	private ResourceView viewer;
 	private ImageViewer imageViewer;
 	private QuestionProxy question = null;
@@ -212,6 +220,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		}
 	}
 
+	
 	public QuestionEditViewImpl(Map<String, Widget> reciverMap, EventBus eventBus, PersonProxy userLoggedIn) {
 
 		this.eventBus = eventBus;
@@ -259,12 +268,36 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 			public void onValueChange(ValueChangeEvent<QuestionTypeProxy> event) {
 				//Note: question is null in create mode 
 				setMediaView(event.getValue(),question);
+				setDigitCount();
+			}
+
+		});
+		questionTextArea.addKeyUpHandler(new KeyUpHandler() {
+			
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				setDigitCount();
 			}
 		});
 		
-		
+		setDigitCount();
 	}
 
+	private void setDigitCount() {
+		if(questionType.getValue() != null) {
+			final int length = questionTextArea.getText().length();
+			final String lengthText;
+			if(length > questionType.getValue().getQuestionLength()) {
+				lengthText =  "<span style='color:red'>" + length + "</span>";
+			}else {
+				lengthText =  String.valueOf(length);
+			}
+			lblDigitCount.setHTML(messages.questionDigitCount(lengthText, String.valueOf(questionType.getValue().getQuestionLength())));	
+		} else {
+			lblDigitCount.setHTML(messages.questionDigitCount("0", "0"));
+		}
+	}
+	
 	@Override
 	public void setRichPanelHTML(String html) {
 		Log.info(html);
@@ -307,6 +340,8 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		// question is not null
 		setMediaView(question.getQuestionType(), question);
 		resendToReview.setVisible(delegate.isAdminOrReviewer() && delegate.isAcceptQuestionView());
+		
+		setDigitCount();
 	}
 
 	@Override
@@ -381,12 +416,17 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	}
 
 	@Override
-	public void setQuestionTypePickerValues(Collection<QuestionTypeProxy> values) {
+	public void setQuestionTypePickerValues(List<QuestionTypeProxy> values) {
+		if(values != null && values.isEmpty() == false) {
+			questionType.setValue(values.get(0));
+			setMediaView(questionType.getValue(),question);
+		}
 		questionType.setAcceptableValues(values);
+		
 	}
 
 	@Override
-	public void setMcsPickerValues(Collection<McProxy> values) {
+	public void setMcsPickerValues(List<McProxy> values) {
 		 mcs.setAcceptableValues(values);
 	}
 

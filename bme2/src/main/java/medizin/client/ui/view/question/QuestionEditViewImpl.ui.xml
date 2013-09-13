@@ -8,6 +8,10 @@
 		.valueLabel{
 			padding-bottom: 7px;
 		}
+		.digitCount {
+			text-align: right;
+
+		}
 	</ui:style>
 	<ui:with type="medizin.shared.i18n.BmeConstants" field="constants"></ui:with>
 	
@@ -69,6 +73,10 @@
 										</div>
 										<g:RichTextArea ui:field='questionTextArea'
 											enabled="false" />
+									</div>
+									<div>
+									<g:HTML ui:field="lblDigitCount" styleName="{style.digitCount}"></g:HTML>
+										<!-- <g:Label ui:field="lblDigitCount" styleName="{style.digitCount}"></g:Label> -->
 									</div>
 
 								</td>

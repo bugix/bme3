@@ -141,18 +141,17 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 			}
 		});
 
-		view.setQuestionTypePickerValues(Collections.<QuestionTypeProxy> emptyList());
+		view.setQuestionTypePickerValues(new ArrayList<QuestionTypeProxy>());
 		QuestionTypeRequest questionTypeRequest = questionEventRequest.append(requests.questionTypeRequest());
 		questionTypeRequest.findAllQuestionTypesForInstituteInSession().to(new BMEReceiver<List<QuestionTypeProxy>>() {
 
 			public void onSuccess(List<QuestionTypeProxy> response) {
-				List<QuestionTypeProxy> values = new ArrayList<QuestionTypeProxy>();
-				values.add(null);
+				List<QuestionTypeProxy> values = Lists.newArrayList();
 				values.addAll(response);
 				view.setQuestionTypePickerValues(values);
 			}
 		});
-		view.setMcsPickerValues(Collections.<McProxy> emptyList());
+		view.setMcsPickerValues(new ArrayList<McProxy>());
 		
 		McRequest mcRequest = questionTypeRequest.append(requests.mcRequest());
 		mcRequest.findAllMcs().with(medizin.client.ui.view.roo.McProxyRenderer.instance().getPaths()).to(new BMEReceiver<List<McProxy>>() {

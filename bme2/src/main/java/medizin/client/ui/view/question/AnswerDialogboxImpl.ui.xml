@@ -28,6 +28,10 @@
 						</div>
 						<g:RichTextArea ui:field='answerTextArea' enabled="false" />
 					</div>
+					<div style=" text-align: right;" ui:field="digitCount">
+						<ui:text from="{cc.digitCount}"></ui:text>
+						<span ui:field="digitMin"></span> / <span ui:field="digitCurrent"></span> / <span ui:field="digitMax"></span>
+					</div>
 
 				</td>
 				<!-- <td colspan="2"> <g:SimplePanel ui:field="toolbarPanel" addStyleNames="{style.nav}"></g:SimplePanel> 
@@ -128,8 +132,8 @@
 
 		<!-- <div class="{style.barPopup}"> -->
 		<div>
-			<m:IconButton ui:field="save" icon="disk"></m:IconButton>
-			<m:IconButton ui:field="closeButton" icon="closethick"></m:IconButton>
+			<m:IconButton ui:field="save" icon="disk" text="{cc.save}"></m:IconButton>
+			<m:IconButton ui:field="closeButton" icon="closethick" text="{cc.cancel}"></m:IconButton>
 
 
 

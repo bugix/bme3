@@ -718,4 +718,6 @@ public interface BmeConstants extends Constants {
 	public String mailAssessmentEndLoop();
 	
 	public String imageViewer();
+	
+	public String digitCount();
 }

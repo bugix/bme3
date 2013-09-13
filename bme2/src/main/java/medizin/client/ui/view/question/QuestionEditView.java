@@ -1,6 +1,7 @@
 package medizin.client.ui.view.question;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import medizin.client.proxy.CommentProxy;
@@ -13,7 +14,6 @@ import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 
 import com.google.common.base.Function;
-import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.ValueListBox;
 
@@ -50,9 +50,9 @@ public interface QuestionEditView extends IsWidget {
 
 	void setAutorPickerValues(Collection<PersonProxy> values);
 
-	void setQuestionTypePickerValues(Collection<QuestionTypeProxy> values);
+	void setQuestionTypePickerValues(List<QuestionTypeProxy> values);
 
-	void setMcsPickerValues(Collection<McProxy> values);
+	void setMcsPickerValues(List<McProxy> values);
 
 	void setRichPanelHTML(String html);
 
