@@ -403,17 +403,22 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 			      }
 			      String beginn = "<div style=\"";
 			      String end = "</div>";
-			      if(!value.getIsAnswerAcceptedAdmin())
+			      
+			      if (Status.ACTIVE.equals(value.getStatus()) == false)
 			      {
-			    	  beginn += "color:red; ";		    	  
+			    	  if(!value.getIsAnswerAcceptedAdmin())
+				      {
+				    	  beginn += "color:red; ";		    	  
+				      }
+				      if(!value.getIsAnswerAcceptedReviewWahrer()){
+				    	  beginn += "font-style:italic; ";			    	  
+				      }
+				      //if(!value.getIsAnswerActive()){
+				      if(!Status.ACTIVE.equals(value.getStatus())){
+				    	  beginn += "text-decoration: line-through; ";		    	  
+				      }
 			      }
-			      if(!value.getIsAnswerAcceptedReviewWahrer()){
-			    	  beginn += "font-style:italic; ";			    	  
-			      }
-			      //if(!value.getIsAnswerActive()){
-			      if(!Status.ACTIVE.equals(value.getStatus())){
-			    	  beginn += "text-decoration: line-through; ";		    	  
-			      }
+			      
 
 			      beginn += "\">";
 			      sb.appendHtmlConstant(beginn);

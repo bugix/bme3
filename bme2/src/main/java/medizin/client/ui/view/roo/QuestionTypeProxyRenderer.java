@@ -1,11 +1,8 @@
 package medizin.client.ui.view.roo;
 
-import com.google.web.bindery.requestfactory.gwt.ui.client.ProxyRenderer;
-import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.QuestionTypeProxy;
-import medizin.shared.MultimediaType;
-import medizin.shared.QuestionTypes;
-import medizin.shared.SelectionType;
+
+import com.google.web.bindery.requestfactory.gwt.ui.client.ProxyRenderer;
 
 public class QuestionTypeProxyRenderer extends ProxyRenderer<QuestionTypeProxy> {
 
@@ -26,6 +23,6 @@ public class QuestionTypeProxyRenderer extends ProxyRenderer<QuestionTypeProxy> 
         if (object == null) {
             return "";
         }
-        return object.getShortName() + " (" + object.getShortName() + ")";
+        return object.getShortName();
     }
 }

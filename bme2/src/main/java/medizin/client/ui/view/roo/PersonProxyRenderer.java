@@ -23,6 +23,6 @@ public class PersonProxyRenderer extends ProxyRenderer<PersonProxy> {
         if (object == null) {
             return "";
         }
-        return object.getName() + " (" + object.getName() + ")";
+        return object.getName();
     }
 }

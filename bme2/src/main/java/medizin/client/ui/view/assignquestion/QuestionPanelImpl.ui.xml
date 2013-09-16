@@ -35,8 +35,8 @@ border-bottom: 1px solid #AAAAAA;
 	            <td>
 	               <g:HorizontalPanel spacing="5">
 	                 <m:IconButton ui:field="searchButton" icon="wrench" addStyleNames ="{style.float-right}"></m:IconButton>
-	                <g:ValueListBox ui:field="authorListBox" visible="false" styleName="{style.float-right}">
-					</g:ValueListBox>
+	              <!--   <g:ValueListBox ui:field="authorListBox" visible="false" styleName="{style.float-right}">
+					</g:ValueListBox> -->
 	                </g:HorizontalPanel>
 	            </td>
 	        </tr>

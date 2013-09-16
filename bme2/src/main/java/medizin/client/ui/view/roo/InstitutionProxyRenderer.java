@@ -22,6 +22,6 @@ public class InstitutionProxyRenderer extends ProxyRenderer<InstitutionProxy> {
         if (object == null) {
             return "";
         }
-        return object.getInstitutionName() + " (" + object.getInstitutionName() + ")";
+        return object.getInstitutionName();
     }
 }

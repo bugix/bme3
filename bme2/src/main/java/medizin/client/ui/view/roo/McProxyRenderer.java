@@ -22,6 +22,6 @@ public class McProxyRenderer extends ProxyRenderer<McProxy> {
         if (object == null) {
             return "";
         }
-        return object.getMcName() + " (" + object.getMcName() + ")";
+        return object.getMcName();
     }
 }
