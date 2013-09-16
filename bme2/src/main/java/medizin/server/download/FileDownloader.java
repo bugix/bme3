@@ -8,10 +8,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import medizin.server.domain.Person;
 import medizin.server.utils.docx.DocxPaperMHTML;
 import medizin.server.utils.docx.XmlPaper;
 import medizin.shared.utils.FileDownloaderProps;
 import medizin.shared.utils.FileDownloaderProps.Method;
+import medizin.shared.utils.PersonAccessRight;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang3.StringUtils;
@@ -51,29 +53,40 @@ public class FileDownloader extends HttpServlet{
 			os = new ByteArrayOutputStream();
 			String fileName = "error.txt";
 			
+			Person loggedPerson = Person.myGetLoggedPerson(request.getSession());
+			PersonAccessRight accessRights = Person.fetchPersonAccessFromSession(request.getSession());
 			
-			switch (method) {
-			case DOCX_PAPER: 
-			{
-				fileName = createDocxPaperForExam(request,response,os);
-				break;
+			if(loggedPerson == null || accessRights == null) {
+				throw new IllegalArgumentException("User Need to login before downloading this Document.");
 			}
-			case XML_PAPER:
-			{
-				fileName = createXmlPaperForExam(request,response,os);
-				break;
-			}
-			case DOCX_PAPER_ALL:
-			{
-				fileName = createDocxPaperForExamWithAllQuestions(request,response,os);
-				
-			}
-			default:
-				log.error("Error in method ordinal");
-				break;
-			}
+			
+			if(loggedPerson.getIsAdmin() == true || accessRights.getIsInstitutionalAdmin() == true) {
+				switch (method) {
+				case DOCX_PAPER: 
+				{
+					fileName = createDocxPaperForExam(request,response,os);
+					break;
+				}
+				case XML_PAPER:
+				{
+					fileName = createXmlPaperForExam(request,response,os);
+					break;
+				}
+				case DOCX_PAPER_ALL:
+				{
+					fileName = createDocxPaperForExamWithAllQuestions(request,response,os);
+					
+				}
+				default:
+					log.error("Error in method ordinal");
+					break;
+				}
 
-			sendFile(response, os.toByteArray(), fileName);
+				sendFile(response, os.toByteArray(), fileName);
+			}else {
+				throw new IllegalArgumentException("User may not have rights to download this Document.");
+			}
+			
 		}finally {
 
 			if(os != null) {

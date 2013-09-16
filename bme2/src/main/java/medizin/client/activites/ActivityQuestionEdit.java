@@ -811,6 +811,7 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 		question.setIsAcceptedAdmin(isAcceptedByAdmin);
 		question.setIsAcceptedAuthor(isAcceptedByAuthor);
 		question.setIsAcceptedRewiever(isAcceptedByReviewer);
+		question.setIsForcedActive(false);
 		question.setQuestionVersion(previousQuestionProxy != null ? previousQuestionProxy.getQuestionVersion()+1 : 0);
 		question.setQuestionSubVersion(0);
 		question.setDateAdded(new Date());
@@ -858,6 +859,7 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 		questionProxy.setIsAcceptedAdmin(isAcceptedByAdmin);
 		questionProxy.setIsAcceptedAuthor(isAcceptedByAuthor);
 		questionProxy.setIsAcceptedRewiever(isAcceptedByReviewer);
+		questionProxy.setIsForcedActive(false);
 		questionProxy.setQuestionVersion(question.getQuestionVersion());
 		questionProxy.setQuestionSubVersion(question.getQuestionSubVersion() + 1);
 		questionProxy.setDateChanged(new Date());

@@ -61,7 +61,7 @@ public class ActivityInstitution extends AbstractActivityWrapper implements
 	 private InstitutionProxy selectedInstitution = null;
 	
 	 String searchValue = "";
-	 Long loggedPersonId = 0l;
+	 //Long loggedPersonId = 0l;
 
 	@Inject
 	public ActivityInstitution(PlaceInstitution place,
@@ -109,8 +109,8 @@ public class ActivityInstitution extends AbstractActivityWrapper implements
 	@Override
 	public void start2(AcceptsOneWidget widget, EventBus eventBus) {
 		Log.info("Activity Institution start");
-		if (!userLoggedIn.getIsAdmin())
-			loggedPersonId = userLoggedIn.getId();
+		/*if (!userLoggedIn.getIsAdmin())
+			loggedPersonId = userLoggedIn.getId();*/
 			
 		InstitutionView institutionView = new InstitutionViewImpl(reciverMap, userLoggedIn.getIsAdmin());
 		institutionView.setName("hallo");
@@ -194,13 +194,13 @@ public class ActivityInstitution extends AbstractActivityWrapper implements
 	{
 		//return requests.institutionRequest().findInstitutionEntries(range.getStart(), range.getLength());		
 		//return requests.institutionRequest().findAllInstitutions(range.getStart(),range.getLength(),sortname,sortorder,searchValue);
-		return requests.institutionRequest().findAllInstitutionsBySearchValue(searchValue, loggedPersonId, range.getStart(), range.getLength());				
+		return requests.institutionRequest().findAllInstitutionsBySearchValue(searchValue, userLoggedIn.getId(), range.getStart(), range.getLength());				
 	}
 
 	protected void fireCountRequest(BMEReceiver<Long> callback) {
 		//requests.institutionRequest().countInstitutions().fire(callback);
 		
-		requests.institutionRequest().countAllInstitutionsBySearchValue(searchValue, loggedPersonId).fire(callback);
+		requests.institutionRequest().countAllInstitutionsBySearchValue(searchValue, userLoggedIn.getId()).fire(callback);
 	}
 
 	private void init() {

@@ -148,6 +148,15 @@ public class Person {
         return person;
     }
     
+    public static Person myGetLoggedPerson(HttpSession session) {
+        Person person = null;
+        if (session.getAttribute(ServerConstants.SESSION_SHIBD_ID_KEY) != null)
+        {
+        	person = findPersonByShibId(session.getAttribute(ServerConstants.SESSION_SHIBD_ID_KEY).toString());
+        }
+        return person;
+    }
+    
     public static Boolean checkAdminRightToLoggedPerson()
     {
     	Person person = Person.myGetLoggedPerson();
@@ -350,6 +359,16 @@ public class Person {
 			personAccessRights = fetchLoggedPersonAccessRights();
 		}
 		
+		return personAccessRights;
+	}
+	
+	public static PersonAccessRight fetchPersonAccessFromSession(HttpSession session)
+	{
+		PersonAccessRight personAccessRights = null;
+		Object object = session.getAttribute(ServerConstants.SESSION_PERSON_ACCESS_KEY);
+		if (object != null && object instanceof PersonAccessRight){
+			personAccessRights = (PersonAccessRight) object;
+		}
 		return personAccessRights;
 	}
 	
