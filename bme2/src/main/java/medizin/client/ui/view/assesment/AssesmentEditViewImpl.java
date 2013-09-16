@@ -202,7 +202,7 @@ public class AssesmentEditViewImpl extends Composite implements AssesmentEditVie
 		assessmentTabPanel.getTabBar().setTabText(0, constants.manageAssessment());
 		save.setText(constants.saveTest());
 		cancel.setText(constants.cancelEdit());
-		//lblQuestionShortName.setText(constants.nameOfTest());
+		lblQuestionShortName.setInnerText(constants.nameOfTest());
 		lbldateOfAssesment.setInnerText(constants.willBeHeldOn());
 		lbldateOpen.setInnerText(constants.openFrom());
 		lbldateClosed.setInnerText(constants.closedFrom());

@@ -853,7 +853,7 @@ public class Question {
 		
 		//Predicate subPre = criteriaBuilder.equal(from.get("question").get("questEvent").get("institution").get("id"), institution.getId());
 		Predicate subPre1 = null;
-		
+		Predicate preActive = criteriaBuilder.notEqual(answerRoot.get("status"), Status.ACTIVE);
 		if (accessRight.getIsAdmin() || accessRight.getIsInstitutionalAdmin())
 		{
 			subPre1 = criteriaBuilder.equal(answerRoot.get("isAnswerAcceptedAdmin"), false);
@@ -870,7 +870,7 @@ public class Question {
 			subPre1 = criteriaBuilder.and(answerRoot.get("status").in(Status.NEW, Status.ACCEPTED_ADMIN), subPre2);*/
 		}
 	
-		subQuery.select(answerRoot.get("question").get("id")).where(subPre1);
+		subQuery.select(answerRoot.get("question").get("id")).where(criteriaBuilder.and(subPre1,preActive));
 		
 		Predicate mainPre1 = criteriaBuilder.equal(from.get("status"), Status.ACTIVE);
 		Predicate mainPre2 = criteriaBuilder.equal(from.get("questEvent").get("institution").get("id"), institution.getId());

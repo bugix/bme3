@@ -296,6 +296,7 @@ public class Answer {
 	public static Predicate nonAcceptAnswerPredicate(Long questionId, Person loggedUser, Institution institution, PersonAccessRight accessRight, CriteriaBuilder cb, Root<Answer> from) {
 		final Predicate pre0 = cb.equal(from.get("question").get("questEvent").get("institution"), institution);
 		Predicate pre1 = cb.equal(from.get("question").get("id"), questionId);
+		Predicate preActive = cb.notEqual(from.get("status"), Status.ACTIVE);
 		
 		if (accessRight.getIsAdmin() || accessRight.getIsInstitutionalAdmin())
 		{
@@ -309,7 +310,7 @@ public class Answer {
 			pre1 = cb.and(pre1, cb.or(pre2, pre3));
 		}
 		
-		return cb.and(pre0,pre1);
+		return cb.and(pre0,pre1,preActive);
 	}
 	
 	public static List<String> findAllAnswersPoints(Long questionId,Long currentAnswerId) {
@@ -530,7 +531,14 @@ public class Answer {
             	range.add(Math.round(min));
             	log.info(Objects.toStringHelper("Answer Diff").add("Max", range.get(0)).add("Min", range.get(1)).add("Total", total).add("Diff", diff).toString());
             }
-        } 
+        }else {
+        	Question question = Question.findQuestion(questionId);
+        	if(question != null) {
+        		Integer max = question.getQuestionType().getAnswerLength();
+        		range.add(Long.valueOf(Math.round(max)));
+            	range.add(0L);
+        	}
+        }
 		return range;
 	}
 	

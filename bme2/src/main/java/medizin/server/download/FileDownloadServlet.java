@@ -41,6 +41,8 @@ public class FileDownloadServlet extends HttpServlet {
 					final File copyFrom = new File(copyFromPath);
 					log.info("copy to : " + copyTo.getAbsolutePath());
 					log.info("Copy from :" + copyFrom.getAbsolutePath());
+					FileUtils.forceMkdir(copyTo);
+					FileUtils.forceMkdir(copyFrom);
 					FileUtils.copyDirectory(copyFrom, copyTo, true);
 				}catch (Exception e) {
 					log.error("Error in copying file ",e);

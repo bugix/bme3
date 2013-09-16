@@ -92,10 +92,12 @@ public class MatrixValidity {
 	private static Predicate matrixValidityForQuestionForAcceptAnswerViewPredicate(Long id, Boolean isInstitutionalAdmin, Person userLoggedIn, CriteriaBuilder criteriaBuilder, Root<MatrixValidity> from) {
 		Predicate p1 = criteriaBuilder.equal(from.get("answerX").get("question").get("id"), id);
 		Predicate p2 = criteriaBuilder.equal(from.get("answerY").get("question").get("id"), id);
-		Expression<Status> exp1 = from.get("answerX").get("status");
+		Predicate preActiveX = criteriaBuilder.notEqual(from.get("answerX").get("status"), Status.ACTIVE);
+		Predicate preActiveY = criteriaBuilder.notEqual(from.get("answerY").get("status"), Status.ACTIVE);
+		/*Expression<Status> exp1 = from.get("answerX").get("status");
 		Expression<Status> exp2 = from.get("answerY").get("status");
 		
-		/*List<Status> statusList = Lists.newArrayList(Status.NEW);
+		List<Status> statusList = Lists.newArrayList(Status.NEW);
 		if(userLoggedIn != null) {
 			if(userLoggedIn.getIsAdmin() || isInstitutionalAdmin == true) {
 				// it is admin
@@ -124,7 +126,7 @@ public class MatrixValidity {
 			final Predicate preY3 = criteriaBuilder.and(criteriaBuilder.equal(from.get("answerY").get("isAnswerAcceptedAutor"), false), criteriaBuilder.equal(from.get("answerX").get("autor").get("id"), userLoggedIn.getId()));
 			p4 = criteriaBuilder.or(preY2, preY3);
 		}
-		return criteriaBuilder.and(p1, p2, p3, p4);
+		return criteriaBuilder.and(p1, p2, p3, p4,preActiveX,preActiveY);
 	}
 	
 	public static Long countAllMatrixValidityForQuestionForAcceptAnswerView(Long id,Boolean isInstitutionalAdmin) {

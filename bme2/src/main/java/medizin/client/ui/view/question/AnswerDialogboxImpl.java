@@ -73,9 +73,9 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,Editor<AnswerProxy>*/{
 
-	private static EventAccessDialogboxImplUiBinder uiBinder = GWT.create(EventAccessDialogboxImplUiBinder.class);
+	private static AnswerDialogboxImplUiBinder uiBinder = GWT.create(AnswerDialogboxImplUiBinder.class);
 
-	interface EventAccessDialogboxImplUiBinder extends UiBinder<Widget, AnswerDialogboxImpl> {}
+	interface AnswerDialogboxImplUiBinder extends UiBinder<Widget, AnswerDialogboxImpl> {}
 
 	@UiField
 	IconButton save;
@@ -227,6 +227,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 		setAnimationEnabled(true);
 		setTitle(constants.answerDialogBoxTitle());
 		setText(constants.answerDialogBoxTitle());
+		setHeight("100%");
 		/*questionTypePanel.selectTab(0);
 		questionTypePanel.getTabBar().setTabText(0, "Manage Answer");
 		questionTypePanel.getTabBar().setTabText(1, "Media");*/
@@ -260,6 +261,8 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 			}
 		});
 		digitCount();
+		
+		this.addStyleName("mainAnswerDialogPanel");
 	}
 	
 	private void digitCount() {
