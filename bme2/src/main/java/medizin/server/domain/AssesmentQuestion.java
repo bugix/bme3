@@ -47,7 +47,6 @@ import medizin.shared.utils.SharedConstant;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
-import org.docx4j.model.datastorage.XPathEnhancerParser.orExpr_return;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -908,10 +907,11 @@ public class AssesmentQuestion {
 		CriteriaQuery<AssesmentQuestion> cq = cb.createQuery(AssesmentQuestion.class);
 		Root<AssesmentQuestion> from = cq.from(AssesmentQuestion.class);
 		Predicate pre = cb.equal(from.get("question").get("id"), questionId);
-		cq.where(pre);
-		
+		Expression<Date> closeDateExp = from.get("assesment").get("dateClosed");
+		Date currDate = new Date();
+		Predicate pre2 = cb.greaterThan(closeDateExp, currDate);
+		cq.where(cb.and(pre, pre2));		
 		TypedQuery<AssesmentQuestion> query = entityManager().createQuery(cq);
-	 
 		return query.getResultList();
 	}
 	

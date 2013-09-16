@@ -1774,11 +1774,26 @@ public class Question {
 		}
 
 		if (Status.ACTIVE.equals(question.getStatus()))
+		{
 			inActivePreviousQuestion(question.getPreviousVersion());
+			question.replaceAssessmentQuestionWithNewQue();
+		}
 
 		question.persist();
 	}
 
+	private void replaceAssessmentQuestionWithNewQue()
+	{
+		if (this.getPreviousVersion() == null)
+			return;
+		
+		List<AssesmentQuestion> assesmentQuestions = AssesmentQuestion.findAssesmentQuestionsByQuestion(this.getPreviousVersion().getId());
+		for (AssesmentQuestion assesmentQuestion : assesmentQuestions) {
+			assesmentQuestion.setQuestion(this);
+			assesmentQuestion.persist();
+		}
+	}
+	
 	private static void inActivePreviousQuestion(Question tempQuestion) {
 		if (tempQuestion == null)
 			return;
@@ -1954,7 +1969,10 @@ public class Question {
 		question.setIsForcedActive(true);
 				
 		if (Status.ACTIVE.equals(question.getStatus()))
+		{
 			inActivePreviousQuestion(question.getPreviousVersion());
+			question.replaceAssessmentQuestionWithNewQue();
+		}
 
 		question.persist();	
 	}
@@ -2019,14 +2037,8 @@ public class Question {
 				BMEUtils.copyValues(userAccessRight, newUserAccessRights, UserAccessRights.class);
 				newUserAccessRights.setQuestion(this);
 				newUserAccessRights.persist();
-			}
-			
-			List<AssesmentQuestion> assesmentQuestions = AssesmentQuestion.findAssesmentQuestionsByQuestion(oldQuestion.getId());
-			for (AssesmentQuestion assesmentQuestion : assesmentQuestions) {
-				assesmentQuestion.setQuestion(this);
-				assesmentQuestion.persist();
-			}
-			
+			}			
+				
 			HashSet<Keyword> keywordSet = new HashSet<Keyword>(oldQuestion.getKeywords());
 			this.setKeywords(keywordSet);
 			
