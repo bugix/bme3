@@ -958,6 +958,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 	public void authorValueChanged(PersonProxy value) {
 		
 		initAssementQuestionPanel(value);
+		initQuestionPanel(addQuestionsTabPanel.getActiveTab(), assesmentTabPanel.getActiveTab(), advancedSearchCriteriaList, "","","");
 		questionPanel.getAuthorListBox().setValue(value);
 		
 	}
@@ -1383,6 +1384,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 		assementQuestionPanel.getAuthorListBox().setValue(value);	
 		
 		initAssementQuestionPanel(value);
+		initQuestionPanel(addQuestionsTabPanel.getActiveTab(), assesmentTabPanel.getActiveTab(), advancedSearchCriteriaList, "","","");
 		
 		
 	}

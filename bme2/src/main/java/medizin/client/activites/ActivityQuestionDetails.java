@@ -39,6 +39,7 @@ import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.ui.widget.resource.dndview.vo.State;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.simple.DefaultSuggestOracle;
+import medizin.client.util.AnswerVO;
 import medizin.client.util.MathJaxs;
 import medizin.client.util.Matrix;
 import medizin.client.util.MatrixValidityVO;
@@ -1594,7 +1595,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 					answerX.setDateChanged(new Date());
 					answerX.getComment().setComment(comment);
 					
-					setMatrixAnswerValues(author, rewiewer, submitToReviewComitee, vo, answerX);
+					setMatrixAnswerValues(author, rewiewer, submitToReviewComitee, vo, answerX, vo.getAnswerX());
 					answerXIndex.put(xIndex,answerX);
 				} else {
 					
@@ -1606,7 +1607,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 						newAnswerProxy.setComment(newCommentProxy);
 						
 						newAnswerProxy.setDateAdded(new Date());
-						setMatrixAnswerValues(author, rewiewer, submitToReviewComitee, vo, newAnswerProxy);
+						setMatrixAnswerValues(author, rewiewer, submitToReviewComitee, vo, newAnswerProxy, vo.getAnswerX());
 						
 						proxy.setAnswerX(newAnswerProxy);
 						answerXIndex.put(xIndex,newAnswerProxy);
@@ -1624,7 +1625,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 					AnswerProxy answerY = proxy.getAnswerY();
 					answerY.setDateChanged(new Date());
 					answerY.getComment().setComment(comment);
-					setMatrixAnswerValues(author, rewiewer, submitToReviewComitee, vo, answerY);
+					setMatrixAnswerValues(author, rewiewer, submitToReviewComitee, vo, answerY, vo.getAnswerY());
 					answerYIndex.put(yIndex,proxy.getAnswerY());
 				}else {
 
@@ -1638,7 +1639,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 						proxy.setAnswerY(newAnswerProxy);
 						
 						newAnswerProxy.setDateAdded(new Date());
-						setMatrixAnswerValues(author, rewiewer, submitToReviewComitee, vo, newAnswerProxy);
+						setMatrixAnswerValues(author, rewiewer, submitToReviewComitee, vo, newAnswerProxy, vo.getAnswerY());
 						answerYIndex.put(yIndex,newAnswerProxy);
 						
 						answerRequest.persist().using(newAnswerProxy);
@@ -1668,8 +1669,8 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		
 	}
 
-	private void setMatrixAnswerValues(PersonProxy author, PersonProxy rewiewer, Boolean submitToReviewComitee, MatrixValidityVO vo, final AnswerProxy answer) {
-		answer.setAnswerText(vo.getAnswerX().getAnswer());
+	private void setMatrixAnswerValues(PersonProxy author, PersonProxy rewiewer, Boolean submitToReviewComitee, MatrixValidityVO vo, final AnswerProxy answer, AnswerVO answerVO) {
+		answer.setAnswerText(answerVO.getAnswer());
 		answer.setAutor(author);
 		answer.setRewiewer(rewiewer);
 		answer.setSubmitToReviewComitee(submitToReviewComitee);
