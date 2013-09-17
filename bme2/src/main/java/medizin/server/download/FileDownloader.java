@@ -64,17 +64,17 @@ public class FileDownloader extends HttpServlet{
 				switch (method) {
 				case DOCX_PAPER: 
 				{
-					fileName = createDocxPaperForExam(request,response,os);
+					fileName = createDocxPaperForExam(request,response,os,loggedPerson);
 					break;
 				}
 				case XML_PAPER:
 				{
-					fileName = createXmlPaperForExam(request,response,os);
+					fileName = createXmlPaperForExam(request,response,os,loggedPerson);
 					break;
 				}
 				case DOCX_PAPER_ALL:
 				{
-					fileName = createDocxPaperForExamWithAllQuestions(request,response,os);
+					fileName = createDocxPaperForExamWithAllQuestions(request,response,os,loggedPerson);
 					
 				}
 				default:
@@ -108,7 +108,7 @@ public class FileDownloader extends HttpServlet{
 		stream.close();
 	}
 
-	private String createDocxPaperForExam(HttpServletRequest request, HttpServletResponse response, ByteArrayOutputStream os) {
+	private String createDocxPaperForExam(HttpServletRequest request, HttpServletResponse response, ByteArrayOutputStream os, Person loggedPerson) {
 		
 		Integer assignment = null; 
 		boolean isVersionA = true;
@@ -145,13 +145,13 @@ public class FileDownloader extends HttpServlet{
 			
 		/*DocxPaper paper = new DocxPaper(os,assignment,isVersionA);*/
 		/*DocxPaperHTML paper = new DocxPaperHTML(os,assignment,isVersionA);*/
-		DocxPaperMHTML paper = new DocxPaperMHTML(os,assignment,isVersionA,printAllQuestions);
+		DocxPaperMHTML paper = new DocxPaperMHTML(os,assignment,isVersionA,printAllQuestions,loggedPerson);
 		paper.createWordFile();
 		
 		return paper.getFileName();
 	}
 
-	private String createDocxPaperForExamWithAllQuestions(HttpServletRequest request, HttpServletResponse response, ByteArrayOutputStream os) {
+	private String createDocxPaperForExamWithAllQuestions(HttpServletRequest request, HttpServletResponse response, ByteArrayOutputStream os, Person loggedPerson) {
 		
 		final Integer assignment; 
 		final boolean isVersionA = true;
@@ -164,14 +164,14 @@ public class FileDownloader extends HttpServlet{
 			return "error.docx";
 		}
 		
-		DocxPaperMHTML paper = new DocxPaperMHTML(os,assignment,isVersionA,printAllQuestions);
+		DocxPaperMHTML paper = new DocxPaperMHTML(os,assignment,isVersionA,printAllQuestions,loggedPerson);
 		paper.createWordFile();
 		
 		return paper.getFileName();
 
 	}
 	
-	private String createXmlPaperForExam(HttpServletRequest request, HttpServletResponse response, ByteArrayOutputStream os) {
+	private String createXmlPaperForExam(HttpServletRequest request, HttpServletResponse response, ByteArrayOutputStream os, Person loggedPerson) {
 		Integer assignment = null; 
 		
 		if(StringUtils.isNotBlank(request.getParameter(FileDownloaderProps.ASSIGNMENT))) {
@@ -187,7 +187,7 @@ public class FileDownloader extends HttpServlet{
 			return "error.docx";
 		}
 			
-		XmlPaper paper = new XmlPaper(os, assignment);
+		XmlPaper paper = new XmlPaper(os, assignment,loggedPerson);
 		paper.createXMLFile();
 		
 		return paper.getFileName();

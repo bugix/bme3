@@ -31,6 +31,7 @@ import medizin.server.domain.Answer;
 import medizin.server.domain.AnswerToAssQuestion;
 import medizin.server.domain.AssesmentQuestion;
 import medizin.server.domain.MatrixValidity;
+import medizin.server.domain.Person;
 import medizin.server.domain.Question;
 import medizin.server.domain.QuestionResource;
 import medizin.server.domain.QuestionType;
@@ -66,6 +67,7 @@ import com.google.common.collect.Maps;
 
 public final class DocxPaperMHTML {
 
+	private static final String EXTENSION_DOCX = ".docx";
 	private static final Logger log = Logger.getLogger(DocxPaperMHTML.class);
 	private final ByteArrayOutputStream os;
 	private final Integer assessment;
@@ -76,13 +78,16 @@ public final class DocxPaperMHTML {
 	private final Map<String,BufferedImage> equationMap = Maps.newHashMap();
 	private final boolean printAllQuestions;
 	
-	public DocxPaperMHTML(ByteArrayOutputStream os, Integer assessment, boolean isVersionA, boolean printAllQuestions) {
+	public DocxPaperMHTML(ByteArrayOutputStream os, Integer assessment, boolean isVersionA, boolean printAllQuestions, Person loggedPerson) {
 		this.os = os;
 		this.assessment = assessment;
 		this.isVersionA = isVersionA;
 		this.printAllQuestions = printAllQuestions;
+		fileName = PaperUtils.getDocumentName(assessment.longValue(), PaperUtils.getVersionString(isVersionA), loggedPerson.getShidId(), EXTENSION_DOCX);
+		log.info("fileName : " + fileName);
 		log.info("isVersionA : " + isVersionA);
 		log.info("printAllQuestions : " + printAllQuestions);
+		
 	}
 
 	public String getFileName() {
@@ -156,6 +161,7 @@ public final class DocxPaperMHTML {
 		MimeMultipart mpart = new MimeMultipart("related");
 		
 		mpart.addBodyPart(bodyPart(new StringSource("text/html", "index.html", htmlPage)));
+		message.setContent(mpart);
 		
 		addEquationImageToMessage(message, mpart);
 		

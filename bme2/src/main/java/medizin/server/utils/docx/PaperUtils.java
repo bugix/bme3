@@ -14,6 +14,7 @@ import java.util.UUID;
 import javax.imageio.ImageIO;
 
 import medizin.server.domain.AnswerToAssQuestion;
+import medizin.server.domain.Assesment;
 import medizin.server.domain.AssesmentQuestion;
 import medizin.server.domain.MatrixValidity;
 import medizin.server.domain.QuestionEvent;
@@ -22,6 +23,7 @@ import medizin.server.domain.QuestionTypeCountPerExam;
 import medizin.shared.utils.SharedConstant;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.scilab.forge.jlatexmath.TeXConstants;
 import org.scilab.forge.jlatexmath.TeXFormula;
@@ -160,5 +162,18 @@ public final class PaperUtils {
 		String path = SharedConstant.UPLOAD_MEDIA_PATH + fileName;
 		ImageIO.write(generateImageFromLaTex, ext, new File(path));
 		return path;
+	}
+	
+	public static String getDocumentName(Long assessmentID,String version,String shibId, String extension) {
+		Assesment assesmentObj = Assesment.findAssesment(assessmentID);
+		final StringBuilder nameBuilder = new StringBuilder(assesmentObj.getName());
+		if(version != null) {
+			nameBuilder.append("_").append(version);
+		}
+		return nameBuilder.append("_").append(shibId).append(extension).toString().replaceAll(" ", "_") ;
+	}
+
+	public static String getVersionString(boolean isVersionA) {
+		return isVersionA == true ? "A" : "B";
 	}
 }
