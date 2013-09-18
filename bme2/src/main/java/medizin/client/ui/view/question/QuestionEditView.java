@@ -28,19 +28,11 @@ public interface QuestionEditView extends IsWidget {
 
 		void deleteMediaFileFromDisk(String path);
 
-		boolean isAcceptQuestionView();
-
-		boolean isAdminOrReviewer();
-
-		boolean isAuthor();
-
 		boolean isAdminOrInstitutionalAdmin();
 
 		void saveQuestionWithDetails();
 
 		void resendToReview();
-
-		void disableEnableAuthorReviewerSuggestBox();
 
 	}
 
@@ -60,7 +52,7 @@ public interface QuestionEditView extends IsWidget {
 
 	ValueListBox<QuestionEventProxy> getQuestionEvent();
 
-	void setValue(QuestionProxy question);
+	void setValue(QuestionProxy question,boolean isAuthorReviewerEditable);
 
 	Set<QuestionResourceClient> getQuestionResources();
 	
@@ -73,4 +65,6 @@ public interface QuestionEditView extends IsWidget {
 	void addPictureToQuestionResources(QuestionResourceProxy questionResourceProxyForPicture);
 	
 	void disableEnableAuthorReviewerValue(boolean flag);
+
+	void setResendToReviewBtn(boolean isResendToReview);
 }

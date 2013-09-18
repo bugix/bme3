@@ -71,9 +71,10 @@
 				<i:DefaultSuggestBox ui:field="reviewer"></i:DefaultSuggestBox>
 				<g:Label ui:field="lblReviewerValue" visible="false"></g:Label>
 			</lbl:LabeledPanel>
-			
+			 
 			<lbl:LabeledPanel addStyleNames="{style.labeledBox}" ui:field="reviewCommitteePanel">
 				<g:CheckBox ui:field="submitToReviewComitee" />
+				<g:Label styleName="{style.valueLabel}" ui:field="lblSubmitToReviewComitee" visible="false"></g:Label>
 			</lbl:LabeledPanel>
 		</div>
 
