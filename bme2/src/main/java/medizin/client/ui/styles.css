@@ -1,4 +1,58 @@
+/* updated control panel / attribute Groups */
 
+.labeledBox {
+}
+
+.controlPanel {
+	background: linear-gradient(to right top, #E0E0E0 0px, #F0F0F0 100%) repeat scroll 0 0 transparent;
+    border: medium none;
+    border-radius: 2px 2px 2px 2px;
+    box-shadow: 1px 1px 2px #AAAAAA;
+    height: 30px;
+    margin: 12px 20px;
+    padding: 4px 20px;
+    width: 50%;
+}
+
+.controlPanel button {
+	float: right;
+	margin: 2px;
+}
+		
+.attributeGroup {
+	background: linear-gradient(to right top, #F0F0F0 0px, #FFFFFF 100%)
+		repeat scroll 0 0 transparent;
+	border: 1px solid #ddd;
+	border-radius: 2px;
+	margin: 18px;
+	padding: 0 20px 8px;
+	box-shadow: 2px 1px 3px #CCCCCC;
+	width: 50%;
+}
+
+.attributeGroupTitle {
+	background: linear-gradient(to right top, #F0F0F0 0px, #FFFFFF 100%)
+		repeat scroll 0 0 transparent;
+	border-radius: 2px;
+	border: 1px solid #DDDDDD;
+	color: #666666;
+	display: inline-block;
+	font-size: 12px;
+	font-weight: bold;
+	padding: 4px 40px;
+	position: relative;
+	top: -11px;
+}
+
+.contextHelp {
+	min-width: 380px;
+	background: linear-gradient(to right top, #FDFDFD 0px, #FFFFFF 100%)
+		repeat scroll 0 0 transparent;
+	border-radius: 2px;
+	marging: 8px;
+	float: right;
+}
+		
 /*spec*/
 .popUpBorder{
 	margin: 15px auto;
