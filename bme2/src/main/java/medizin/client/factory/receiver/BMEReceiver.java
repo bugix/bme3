@@ -117,7 +117,8 @@ public abstract class BMEReceiver<T> extends Receiver<T> {
 			String path = constraintViolation.getPropertyPath().toString();
 			String message;
 			try {
-				message = enumConstants.getString(constraintViolation.getMessage());	
+				Log.debug("constraintViolation message: " + constraintViolation.getMessage());
+				message = enumConstants.getString(constraintViolation.getMessage());
 			}catch (Exception e) {
 				message = path + " " + constraintViolation.getMessage();
 			}

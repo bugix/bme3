@@ -204,18 +204,14 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 	}
 
 	
-	public QuestionViewImpl(EventBus eventBus,Boolean flag) {
+	public QuestionViewImpl(EventBus eventBus,Boolean questionAddRightsFlag) {
 		this.eventBus = eventBus;
 		
-		CellTable.Resources tableResources = GWT
-				.create(MyCellTableResources.class);
-		table = new CellTable<QuestionProxy>(McAppConstant.TABLE_PAGE_SIZE,
-				tableResources);
+		CellTable.Resources tableResources = GWT.create(MyCellTableResources.class);
+		table = new CellTable<QuestionProxy>(McAppConstant.TABLE_PAGE_SIZE, tableResources);
 
-		MySimplePager.Resources pagerResources = GWT
-				.create(MySimplePagerResources.class);
-		pager = new MySimplePager(MySimplePager.TextLocation.RIGHT, pagerResources,
-				true, McAppConstant.TABLE_JUMP_SIZE, true);
+		MySimplePager.Resources pagerResources = GWT.create(MySimplePagerResources.class);
+		pager = new MySimplePager(MySimplePager.TextLocation.RIGHT, pagerResources,true, McAppConstant.TABLE_JUMP_SIZE, true);
 
 		Log.info("Question Save Event Register");
 		QuestionSaveEvent.register(this.eventBus, new QuestionSaveEvent.Handler() {
@@ -341,15 +337,14 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 		});
 
 		initWidget(uiBinder.createAndBindUi(this));
-		DOM.setElementAttribute(splitLayoutPanel.getElement(), "style",
-				"position: absolute; left: 0px; top: 0px; right: 5px; bottom: 0px;");
+		DOM.setElementAttribute(splitLayoutPanel.getElement(), "style","position: absolute; left: 0px; top: 0px; right: 5px; bottom: 0px;");
 		
 		newQuestion.setText(constants.newQuestion());
 		
-		if (flag)
-			newQuestion.setVisible(true);
-		else
-			newQuestion.setVisible(false);
+		if (questionAddRightsFlag == false){
+			newQuestion.removeFromParent();
+			//Document.get().getElementById("queAddBtnDiv").removeFromParent();
+		}	
 		
 		init();
 
@@ -802,17 +797,21 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 			if (value == null) {
 				return;
 			}
-			String beginn = "<div style=\"";
+			String beginn = "<div style=\"white-space:normal;";
 			String end = "</div>";
-			if (!value.getIsAcceptedAdmin()) {
-				beginn += "color:red; ";
-			}
-			if (!value.getIsAcceptedRewiever()) {
-				beginn += "font-style:italic; ";
-			}
-			//if (!value.getIsActive()) {
-			if (!Status.ACTIVE.equals(value.getStatus())) {
-				beginn += "text-decoration: line-through; ";
+			
+			if (Status.ACTIVE.equals(value.getStatus()) == false)
+			{
+				if (!value.getIsAcceptedAdmin()) {
+					beginn += "color:red; ";
+				}
+				if (!value.getIsAcceptedRewiever()) {
+					beginn += "font-style:italic; ";
+				}
+				//if (!value.getIsActive()) {
+				if (!Status.ACTIVE.equals(value.getStatus())) {
+					beginn += "text-decoration: line-through; ";
+				}
 			}
 
 			beginn += "\">";

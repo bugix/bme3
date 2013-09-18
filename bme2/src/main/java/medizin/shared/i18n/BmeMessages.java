@@ -21,4 +21,6 @@ public interface BmeMessages extends Messages {
 	public String acceptQuestionAndAnswer(long acceptQuestionCount, long acceptAnswerCount);
 	
 	public String acceptQuestionAndAnswerExaminer(long acceptQuestionCount, long acceptAnswerCount);
+	
+	public String questionDigitCount(String actual,String total);
 }

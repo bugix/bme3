@@ -8,6 +8,7 @@ import java.util.Set;
 
 import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionResourceProxy;
+import medizin.client.ui.McAppConstant;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.ui.widget.resource.dndview.vo.State;
 import medizin.shared.MultimediaType;
@@ -17,10 +18,14 @@ import medizin.shared.utils.SharedConstant;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.safehtml.shared.SafeUri;
+import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
@@ -231,5 +236,29 @@ public final class ClientUtility {
 		Date date = new Date();
 		date.setYear((date.getYear()+1));
 		return date;
+	}
+	
+	public static PersonProxy getPersonProxyFromCookie(List<PersonProxy> values) {
+		
+		String cookie = Cookies.getCookie(McAppConstant.LAST_SELECTED_REVIEWER);
+		final Long personid;
+		if (cookie != null && cookie.isEmpty() == false)
+			personid = Long.parseLong(cookie);
+		else
+			personid = null;
+		
+		Optional<PersonProxy> firstMatch = FluentIterable.from(values).firstMatch(personComparator(personid));
+		
+		return firstMatch.orNull();		
+	}
+
+	private static Predicate<PersonProxy> personComparator(final Long personid) {
+		return new Predicate<PersonProxy>() {
+
+			@Override
+			public boolean apply(PersonProxy input) {
+				return input.getId().equals(personid);
+			}
+		};
 	}
 }

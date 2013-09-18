@@ -1,8 +1,8 @@
 package medizin.client.ui.view.roo;
 
-import com.google.web.bindery.requestfactory.gwt.ui.client.ProxyRenderer;
 import medizin.client.proxy.AssesmentProxy;
-import medizin.client.proxy.McProxy;
+
+import com.google.web.bindery.requestfactory.gwt.ui.client.ProxyRenderer;
 
 public class AssesmentProxyRenderer extends ProxyRenderer<AssesmentProxy> {
 
@@ -23,6 +23,6 @@ public class AssesmentProxyRenderer extends ProxyRenderer<AssesmentProxy> {
         if (object == null) {
             return "";
         }
-        return object.getName() + " (" + object.getName() + ")";
+        return object.getName();
     }
 }

@@ -1,5 +1,6 @@
 package medizin.server.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -38,6 +39,7 @@ public class Institution {
     public void mySetCurrentInstitution(){
     	HttpSession session = RequestFactoryServlet.getThreadLocalRequest().getSession();
 		session.setAttribute(ServerConstants.SESSION_INSTITUTION_ID_KEY, this.getId());
+		Person.fetchLoggedPersonAccessRights();
     }
     
     public static void fillCurrentInstitutionNull()
@@ -59,6 +61,11 @@ public class Institution {
     
     public static List<Institution> findInstitutionByName(String text, Long personId, int start, int length)
     {
+    	Person loggedPerson = Person.myGetLoggedPerson();
+    	Institution loggedInstitution = Institution.myGetInstitutionToWorkWith();
+    	if (loggedPerson == null || loggedInstitution == null)
+    		return new ArrayList<Institution>();
+    	
     	CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
  		CriteriaQuery<Institution> criteriaQuery = criteriaBuilder.createQuery(Institution.class);
  		Root<Institution> from = criteriaQuery.from(Institution.class);
@@ -71,6 +78,13 @@ public class Institution {
  		subQuery.select(userAccessRightsRoot.get("institution").get("id")).where(criteriaBuilder.and(subPre1, subPre2));
  		
  		Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(exp, "%" + text +"%"), criteriaBuilder.not(criteriaBuilder.in(from.get("id")).value(subQuery)));
+ 		
+ 		if (loggedPerson.getIsAdmin() == false)
+ 		{
+ 			Predicate pre = criteriaBuilder.equal(from.get("id"), loggedInstitution.getId());
+ 			predicate = criteriaBuilder.and(pre, predicate);
+ 		}
+ 		
  		criteriaQuery.where(predicate);
  		
  		TypedQuery<Institution> query = entityManager().createQuery(criteriaQuery);
@@ -82,6 +96,11 @@ public class Institution {
     
     public static Long countInstitutionByName(String text, Long personId)
     {
+    	Person loggedPerson = Person.myGetLoggedPerson();
+    	Institution loggedInstitution = Institution.myGetInstitutionToWorkWith();
+    	if (loggedPerson == null || loggedInstitution == null)
+    		return 0l;
+    	
     	CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
  		CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
  		Root<Institution> from = criteriaQuery.from(Institution.class);
@@ -95,6 +114,13 @@ public class Institution {
  		subQuery.select(userAccessRightsRoot.get("institution").get("id")).where(criteriaBuilder.and(subPre1, subPre2));
  		
  		Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(exp, "%" + text +"%"), criteriaBuilder.not(criteriaBuilder.in(from.get("id")).value(subQuery)));
+ 		
+ 		if (loggedPerson.getIsAdmin() == false)
+ 		{
+ 			Predicate pre = criteriaBuilder.equal(from.get("id"), loggedInstitution.getId());
+ 			predicate = criteriaBuilder.and(pre, predicate);
+ 		}
+ 			
  		criteriaQuery.where(predicate);
  		
  		TypedQuery<Long> query = entityManager().createQuery(criteriaQuery);
@@ -181,7 +207,7 @@ public class Institution {
 		CriteriaQuery<Institution> criteriaQuery = criteriaBuilder.createQuery(Institution.class);
 		Root<Institution> from = criteriaQuery.from(Institution.class);
 		
-		criteriaQuery.orderBy(criteriaBuilder.asc(from.get("institutionName")));
+		criteriaQuery.orderBy(criteriaBuilder.asc(from.get("id")));
 		
 		Expression<String> shortNameExp = from.get("institutionName");
 		Predicate pre1 = criteriaBuilder.like(shortNameExp, "%" + searchText + "%");

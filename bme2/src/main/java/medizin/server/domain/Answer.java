@@ -26,6 +26,7 @@ import javax.validation.constraints.Size;
 
 import medizin.shared.Status;
 import medizin.shared.Validity;
+import medizin.shared.utils.PersonAccessRight;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
@@ -182,7 +183,9 @@ public class Answer {
 		
 		Person loggedUser = Person.myGetLoggedPerson();
 		Institution institution = Institution.myGetInstitutionToWorkWith();
-		if (loggedUser == null || institution == null)
+		PersonAccessRight accessRight = Person.fetchPersonAccessFromSession();
+		
+		if (loggedUser == null || institution == null || accessRight == null)
 			throw new IllegalArgumentException("The person and institution arguments are required");
 		
 		// End filter fuctionality
@@ -217,20 +220,8 @@ public class Answer {
 		
 		cq.select(cb.count(from));
 		
-		Predicate pre0 = cb.equal(from.get("question").get("questEvent").get("institution"), institution);
-		Predicate pre1 = cb.equal(from.get("question").get("id"), questionId);
-		
-		if (!loggedUser.getIsAdmin())
-		{
-			pre1 = cb.and(from.get("status").in(Status.NEW, Status.ACCEPTED_ADMIN), pre1);
-			pre1 = cb.and(pre1, cb.equal(from.get("rewiewer"), loggedUser.getId()));
-		}
-		else
-		{
-			pre1 = cb.and(from.get("status").in(Status.NEW, Status.ACCEPTED_REVIEWER), pre1);
-		}
-		
-		cq.where(cb.and(pre0,pre1));
+		Predicate predicate = nonAcceptAnswerPredicate(questionId, loggedUser, institution, accessRight, cb, from);
+		cq.where(predicate);
 		
         TypedQuery<Long> q = entityManager().createQuery(cq);
         
@@ -250,8 +241,8 @@ public class Answer {
 //	        q.setParameter("isAnswerAcceptedAdmin", isAnswerAcceptedAdmin);
 //	        return q.getSingleResult();
 	}
-	public static List<Answer> findAnswersEntriesNonAcceptedAdminByQuestion(
-			Long questionId, Integer start, Integer length){
+
+	public static List<Answer> findAnswersEntriesNonAcceptedAdminByQuestion(Long questionId, Integer start, Integer length){
 //		boolean isAnswerAcceptedAdmin = false;
 //		 Question question = Question.findQuestion(questionId);
 //	        if (question == null) throw new IllegalArgumentException("The question argument is required");
@@ -263,7 +254,8 @@ public class Answer {
 		
 		Person loggedUser = Person.myGetLoggedPerson();
 		Institution institution = Institution.myGetInstitutionToWorkWith();
-		if (loggedUser == null || institution == null)
+		PersonAccessRight accessRight = Person.fetchPersonAccessFromSession();
+		if (loggedUser == null || institution == null || accessRight == null)
 			throw new IllegalArgumentException("The person and institution arguments are required");
 		
 		// End filter fuctionality
@@ -295,25 +287,31 @@ public class Answer {
 		CriteriaBuilder cb = entityManager().getCriteriaBuilder();
 		CriteriaQuery<Answer> cq = cb.createQuery(Answer.class);
 		Root<Answer> from = cq.from(Answer.class);
-		
-		Predicate pre0 = cb.equal(from.get("question").get("questEvent").get("institution"), institution);
-		Predicate pre1 = cb.equal(from.get("question").get("id"), questionId);
-		
-		if (!loggedUser.getIsAdmin())
-		{
-			pre1 = cb.and(from.get("status").in(Status.NEW, Status.ACCEPTED_ADMIN), pre1);
-			pre1 = cb.and(pre1, cb.equal(from.get("rewiewer"), loggedUser.getId()));
-		}
-		else
-		{
-			pre1 = cb.and(from.get("status").in(Status.NEW, Status.ACCEPTED_REVIEWER), pre1);
-		}
-		
-		cq.where(cb.and(pre0,pre1));
-		
+		Predicate predicate = nonAcceptAnswerPredicate(questionId, loggedUser, institution, accessRight, cb, from);
+		cq.where(predicate);
         TypedQuery<Answer> q = entityManager().createQuery(cq);
         return q.getResultList();
 	}	
+	
+	public static Predicate nonAcceptAnswerPredicate(Long questionId, Person loggedUser, Institution institution, PersonAccessRight accessRight, CriteriaBuilder cb, Root<Answer> from) {
+		final Predicate pre0 = cb.equal(from.get("question").get("questEvent").get("institution"), institution);
+		Predicate pre1 = cb.equal(from.get("question").get("id"), questionId);
+		Predicate preActive = cb.notEqual(from.get("status"), Status.ACTIVE);
+		
+		if (accessRight.getIsAdmin() || accessRight.getIsInstitutionalAdmin())
+		{
+			pre1 = cb.and(cb.equal(from.get("isAnswerAcceptedAdmin"), false),pre1);
+		}
+		else
+		{
+			final Predicate pre2 = cb.and(cb.equal(from.get("isAnswerAcceptedReviewWahrer"), false), cb.equal(from.get("rewiewer").get("id"), loggedUser.getId()));
+			final Predicate pre3 = cb.and(cb.equal(from.get("isAnswerAcceptedAutor"), false), cb.equal(from.get("autor").get("id"), loggedUser.getId()));
+
+			pre1 = cb.and(pre1, cb.or(pre2, pre3));
+		}
+		
+		return cb.and(pre0,pre1,preActive);
+	}
 	
 	public static List<String> findAllAnswersPoints(Long questionId,Long currentAnswerId) {
 		
@@ -372,6 +370,24 @@ public class Answer {
 		
 		for (Answer answer : question.getAnswers())
 		{ 
+			
+			if(isAdmin || isInstitutionalAdmin){
+				answer.setIsAnswerAcceptedAdmin(true);
+				answer.setStatus(Status.ACCEPTED_ADMIN);
+			} 
+			if(answer.getRewiewer().getId() == userLoggedIn.getId()) {
+				answer.setIsAnswerAcceptedReviewWahrer(true);
+				answer.setStatus(Status.ACCEPTED_REVIEWER);
+			}
+			if(answer.getAutor().getId() == userLoggedIn.getId())	{
+				answer.setIsAnswerAcceptedAutor(true);
+			}
+			
+			if(answer.getIsAnswerAcceptedAdmin() == true && answer.getIsAnswerAcceptedAutor() == true && answer.getIsAnswerAcceptedReviewWahrer() == true) {
+				answer.setStatus(Status.ACTIVE);
+			}
+			answer.persist();
+			/*
 			if(isAdmin || isInstitutionalAdmin){
 				answer.setIsAnswerAcceptedAdmin(true);
 				if (answer.getIsAnswerAcceptedReviewWahrer())
@@ -401,9 +417,9 @@ public class Answer {
 			if(answer.getAutor().getId() == userLoggedIn.getId())
 			{
 				answer.setIsAnswerAcceptedAutor(true);
-			}
+			}*/
 
-			answer.persist();
+			
 		}
 	  
 		return true;
@@ -515,7 +531,14 @@ public class Answer {
             	range.add(Math.round(min));
             	log.info(Objects.toStringHelper("Answer Diff").add("Max", range.get(0)).add("Min", range.get(1)).add("Total", total).add("Diff", diff).toString());
             }
-        } 
+        }else {
+        	Question question = Question.findQuestion(questionId);
+        	if(question != null) {
+        		Integer max = question.getQuestionType().getAnswerLength();
+        		range.add(Long.valueOf(Math.round(max)));
+            	range.add(0L);
+        	}
+        }
 		return range;
 	}
 	
@@ -593,7 +616,7 @@ public class Answer {
 	{
 		Person loggedPerson = Person.findLoggedPersonByShibId();
 		
-		if (loggedPerson == null)
+		if (loggedPerson != null)
 		{
 			if (this.createdBy == null)
 				this.setCreatedBy(loggedPerson);

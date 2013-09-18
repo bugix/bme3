@@ -23,6 +23,6 @@ public class AnswerProxyRenderer extends ProxyRenderer<AnswerProxy> {
         if (object == null) {
             return "";
         }
-        return object.getAnswerText() + " (" + object.getAnswerText() + ")";
+        return object.getAnswerText();
     }
 }

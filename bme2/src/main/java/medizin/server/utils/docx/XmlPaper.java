@@ -11,6 +11,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import medizin.server.domain.AnswerToAssQuestion;
+import medizin.server.domain.Person;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.log4j.Logger;
@@ -23,14 +24,17 @@ import com.google.common.collect.Lists;
 public class XmlPaper {
 		
 	private static final Logger log = Logger.getLogger(XmlPaper.class);
+	private static final String EXTENSION_XML = ".xml";
 	private final ByteArrayOutputStream os;
 	private final Integer assessment;
 	private String fileName = "Paper.xml";
 	private List<QuestionVO> questionVOs = Lists.newArrayList();
 	
-	public XmlPaper(ByteArrayOutputStream os, Integer assessment) {
+	public XmlPaper(ByteArrayOutputStream os, Integer assessment, Person loggedPerson) {
 		this.os = os;
 		this.assessment = assessment;
+		fileName = PaperUtils.getDocumentName(assessment.longValue(), null,loggedPerson.getShidId(), EXTENSION_XML);
+		log.info("fileName : " + fileName);
 	}
 	
 	public String getFileName() {

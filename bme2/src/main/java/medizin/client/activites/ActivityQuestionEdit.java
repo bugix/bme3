@@ -26,11 +26,11 @@ import medizin.client.request.QuestionEventRequest;
 import medizin.client.request.QuestionRequest;
 import medizin.client.request.QuestionResourceRequest;
 import medizin.client.request.QuestionTypeRequest;
-import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.question.QuestionEditView;
 import medizin.client.ui.view.question.QuestionEditViewImpl;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.ui.widget.resource.dndview.vo.State;
+import medizin.client.util.ClientUtility;
 import medizin.client.util.MathJaxs;
 import medizin.shared.MultimediaType;
 import medizin.shared.QuestionTypes;
@@ -39,16 +39,11 @@ import medizin.shared.Status;
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
-import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
-import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
-import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.inject.Inject;
@@ -57,11 +52,11 @@ import com.google.web.bindery.requestfactory.shared.EntityProxyId;
 public class ActivityQuestionEdit extends AbstractActivityWrapper implements QuestionEditView.Delegate {
 
 	private PlaceQuestionDetails questionPlace;
-	protected QuestionEditView view;
-	protected McAppRequestFactory requests;
+	private QuestionEditView view;
+	private McAppRequestFactory requests;
 	private PlaceController placeController;
 	private Operation operation;
-	protected QuestionProxy question;
+	private QuestionProxy question;
 	private EventBus eventBus;
 
 	@Inject
@@ -99,7 +94,7 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 	@Override
 	public void start2(AcceptsOneWidget widget, EventBus eventBus) {
 		this.eventBus = eventBus;
-		QuestionEditView questionEditView = new QuestionEditViewImpl(reciverMap, eventBus, userLoggedIn);
+		QuestionEditView questionEditView = new QuestionEditViewImpl(reciverMap, eventBus, userLoggedIn,false);
 		this.view = questionEditView;
 		view.setDelegate(this);
 		
@@ -109,7 +104,7 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 
 			public void onSuccess(List<PersonProxy> response) {
 				List<PersonProxy> values = new ArrayList<PersonProxy>();
-				PersonProxy lastSelectedReviewer = getPersonProxyFromCookie(response);
+				PersonProxy lastSelectedReviewer = ClientUtility.getPersonProxyFromCookie(response);
 				values.add(null);
 				values.addAll(response);
 				view.setRewiewerPickerValues(values, lastSelectedReviewer);
@@ -141,18 +136,17 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 			}
 		});
 
-		view.setQuestionTypePickerValues(Collections.<QuestionTypeProxy> emptyList());
+		view.setQuestionTypePickerValues(new ArrayList<QuestionTypeProxy>());
 		QuestionTypeRequest questionTypeRequest = questionEventRequest.append(requests.questionTypeRequest());
 		questionTypeRequest.findAllQuestionTypesForInstituteInSession().to(new BMEReceiver<List<QuestionTypeProxy>>() {
 
 			public void onSuccess(List<QuestionTypeProxy> response) {
-				List<QuestionTypeProxy> values = new ArrayList<QuestionTypeProxy>();
-				values.add(null);
+				List<QuestionTypeProxy> values = Lists.newArrayList();
 				values.addAll(response);
 				view.setQuestionTypePickerValues(values);
 			}
 		});
-		view.setMcsPickerValues(Collections.<McProxy> emptyList());
+		view.setMcsPickerValues(new ArrayList<McProxy>());
 		
 		McRequest mcRequest = questionTypeRequest.append(requests.mcRequest());
 		mcRequest.findAllMcs().with(medizin.client.ui.view.roo.McProxyRenderer.instance().getPaths()).to(new BMEReceiver<List<McProxy>>() {
@@ -168,30 +162,12 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 		mcRequest.fire();
 		widget.setWidget(questionEditView.asWidget());
 		
-		start2();
+		createOrEditQuestion();
 	}
 
-	private PersonProxy getPersonProxyFromCookie(List<PersonProxy> values) {
-		
-		String cookie = Cookies.getCookie(McAppConstant.LAST_SELECTED_REVIEWER);
-		final Long personid;
-		if (cookie != null && cookie.isEmpty() == false)
-			personid = Long.parseLong(cookie);
-		else
-			personid = null;
-		
-		Optional<PersonProxy> firstMatch = FluentIterable.from(values).firstMatch(new Predicate<PersonProxy>() {
+	
 
-			@Override
-			public boolean apply(PersonProxy input) {
-				return input.getId().equals(personid);
-			}
-		});
-		
-		return firstMatch.orNull();		
-	}
-
-	private void start2() {
+	private void createOrEditQuestion() {
 		if (this.operation == PlaceQuestionDetails.Operation.EDIT) {
 			Log.info("edit");
 			requests.find(questionPlace.getProxyId()).with("previousVersion", "keywords", "questEvent", "comment", "questionType", "mcs", "rewiewer", "autor", "answers", "answers.autor", "answers.rewiewer", "questionResources").fire(new BMEReceiver<Object>() {
@@ -218,9 +194,18 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 			view.setEditTitle(false);
 		} else {
 			Log.info(question.getQuestionText());
-			view.setValue(question);
+			view.setValue(question,checkIsAuthorReviewerEditable());
 			view.setEditTitle(true);
 		}
+	}
+
+	private boolean checkIsAuthorReviewerEditable() {
+		if(question == null || question.getStatus() == null) {
+			return true;
+		}else if(Objects.equal(question.getStatus(), Status.NEW) || Objects.equal(question.getStatus(), Status.ACTIVE)) {
+			return true;
+		}
+		return false;
 	}
 
 	public void goTo(Place place) {
@@ -672,19 +657,14 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 
 	}
 
-	protected void showNewDisplay() {
+	private void showNewDisplay() {
 		Log.info("Question Save Event Fired");
 		this.eventBus.fireEvent(new QuestionSaveEvent());
 	}
 
 	// also overriden in subclass 
-	protected void cancelClickedGoto(QuestionProxy questionProxy) {
+	private void cancelClickedGoto(QuestionProxy questionProxy) {
 		goTo(new PlaceQuestionDetails(questionProxy.stableId(), Operation.DETAILS));
-	}
-		
-	@Override
-	public boolean isAcceptQuestionView() {
-		return false;
 	}
 
 	@Override
@@ -692,33 +672,7 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 		// updateSelection(event.getNewPlace());
 		// TODO implement
 	}
-
-	@Override
-	public final boolean isAdminOrReviewer() {
-		
-		// for admin 
-		if(isAdminOrInstitutionalAdmin()) {
-			return true;
-		}
-		// Reviewer
-		if(isReviewer()) {
-			return true;
-		}
-		return  false;
-	}
-
-	public final boolean isReviewer() {
-		return question != null && question.getRewiewer() != null && question.getRewiewer().getId().equals(userLoggedIn.getId());
-	}
 	
-	@Override
-	public final boolean isAuthor() {
-		if(question != null && userLoggedIn != null && question.getAutor() != null && question.getAutor().getId().equals(userLoggedIn.getId())) {
-			return true;
-		}
-		return false;
-	}
-
 	@Override
 	public void saveQuestionWithDetails() {
 		
@@ -806,12 +760,13 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 		CommentProxy commentProxy = commentRequest.create(CommentProxy.class);
 		Set<QuestionResourceProxy> questionResourceProxies = Sets.newHashSet();
 		
+		question.setStatus(status);
 		view.setValuesForQuestion(question,commentProxy);
 		
-		question.setStatus(status);
 		question.setIsAcceptedAdmin(isAcceptedByAdmin);
 		question.setIsAcceptedAuthor(isAcceptedByAuthor);
 		question.setIsAcceptedRewiever(isAcceptedByReviewer);
+		question.setIsForcedActive(false);
 		question.setQuestionVersion(previousQuestionProxy != null ? previousQuestionProxy.getQuestionVersion()+1 : 0);
 		question.setQuestionSubVersion(0);
 		question.setDateAdded(new Date());
@@ -853,12 +808,13 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 		final CommentProxy commentProxy = commentRequest.edit(this.question.getComment());
 		final Set<QuestionResourceProxy> questionResourceProxies = Sets.newHashSet();
 		
+		questionProxy.setStatus(status);
 		view.setValuesForQuestion(questionProxy,commentProxy);
 		
-		questionProxy.setStatus(status);
 		questionProxy.setIsAcceptedAdmin(isAcceptedByAdmin);
 		questionProxy.setIsAcceptedAuthor(isAcceptedByAuthor);
 		questionProxy.setIsAcceptedRewiever(isAcceptedByReviewer);
+		questionProxy.setIsForcedActive(false);
 		questionProxy.setQuestionVersion(question.getQuestionVersion());
 		questionProxy.setQuestionSubVersion(question.getQuestionSubVersion() + 1);
 		questionProxy.setDateChanged(new Date());
@@ -911,7 +867,7 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 	@Override
 	public void resendToReview() {}
 
-	@Override
+	/*@Override
 	public void disableEnableAuthorReviewerSuggestBox() {
 		
 		if (question != null && Status.NEW.equals(question.getStatus()))
@@ -929,5 +885,5 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 			Document.get().getElementById("reviewerEdit").getStyle().clearDisplay();
 		}	
 		
-	}
+	}*/
 }

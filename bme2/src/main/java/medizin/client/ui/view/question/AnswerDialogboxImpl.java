@@ -45,10 +45,14 @@ import com.google.common.collect.Sets;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.SpanElement;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.editor.client.Editor.Ignore;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
@@ -69,12 +73,9 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,Editor<AnswerProxy>*/{
 
-	private static EventAccessDialogboxImplUiBinder uiBinder = GWT
-			.create(EventAccessDialogboxImplUiBinder.class);
+	private static AnswerDialogboxImplUiBinder uiBinder = GWT.create(AnswerDialogboxImplUiBinder.class);
 
-	interface EventAccessDialogboxImplUiBinder extends
-			UiBinder<Widget, AnswerDialogboxImpl> {
-	}
+	interface AnswerDialogboxImplUiBinder extends UiBinder<Widget, AnswerDialogboxImpl> {}
 
 	@UiField
 	IconButton save;
@@ -126,16 +127,42 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 	@UiField
 	TextBox txtSequenceNumber;
 	
-	public BmeMessages bmeMessages = GWT.create(BmeMessages.class);
-	public BmeConstants constants = GWT.create(BmeConstants.class);
+	@UiField
+	DivElement descriptionValue;
+	
+	@UiField(provided = true)
+	RichTextToolbar toolbar;
+	
+	@UiField(provided = true)
+	RichTextArea answerTextArea;
+	
+	@UiField
+	SpanElement digitMin;
+	
+	@UiField
+	SpanElement digitMax;
+	
+	@UiField
+	SpanElement digitCurrent;
+	
+	@UiField
+	DivElement digitCount;
+
+	private Delegate delegate;
+	private AnswerProxy answer;
+    private final QuestionProxy question;
+	private final EventBus eventBus;
+	
+	public final static BmeMessages bmeMessages = GWT.create(BmeMessages.class);
+	public final static BmeConstants constants = GWT.create(BmeConstants.class);
 
 	private ImagePolygonViewer imagePolygonViewer;
 	private ImageRectangleViewer imageRectangleViewer;
 	private SimpleImageViewer simpleImageViewer;
 	private AudioViewer audioViewer;
 	private VideoViewer videoViewer;
-	private Long answerTextMaxDiff = null;
-	private Long answerTextMinDiff = null;
+	private Long answerTextMaxDiff = 0l;
+	private Long answerTextMinDiff = 0l;
 
 	@UiHandler("closeButton")
 	public void onCloseButtonClick(ClickEvent event) {
@@ -172,21 +199,6 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 	/*
 	 * @UiField SimplePanel toolbarPanel;
 	 */
-	@UiField
-	public DivElement descriptionValue;
-	
-	@UiField(provided = true)
-	public RichTextToolbar toolbar;
-	
-	@UiField(provided = true)
-	RichTextArea answerTextArea;
-
-	private Delegate delegate;
-	private AnswerProxy answer;
-	
-    private final QuestionProxy question;
-
-	private final EventBus eventBus;
 		
 	public AnswerDialogboxImpl(QuestionProxy questionProxy, EventBus eventBus, Map<String, Widget> reciverMap) {
 		
@@ -215,6 +227,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 		setAnimationEnabled(true);
 		setTitle(constants.answerDialogBoxTitle());
 		setText(constants.answerDialogBoxTitle());
+		setHeight("100%");
 		/*questionTypePanel.selectTab(0);
 		questionTypePanel.getTabBar().setTabText(0, "Manage Answer");
 		questionTypePanel.getTabBar().setTabText(1, "Media");*/
@@ -239,11 +252,50 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 				}
 			}
 		});
-
-		save.setText(constants.save());
-		closeButton.setText(constants.cancel());	
+		
+		answerTextArea.addKeyUpHandler(new KeyUpHandler() {
+			
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				digitCount();
+			}
+		});
+		digitCount();
+		
+		this.addStyleName("mainAnswerDialogPanel");
 	}
 	
+	private void digitCount() {
+		
+		if(QuestionTypes.Textual.equals(question.getQuestionType().getQuestionType()) || QuestionTypes.Sort.equals(question.getQuestionType().getQuestionType())) {
+			int currentCount = answerTextArea.getText().length();
+			final Style style = digitCurrent.getStyle();
+			String color = style.getColor();
+			if(currentCount < answerTextMinDiff || currentCount > answerTextMaxDiff ) {
+				if("red".equalsIgnoreCase(color) == false) {
+					style.clearColor();
+					style.setColor("red");
+				}
+			}else{
+				if("green".equalsIgnoreCase(color) == false) {
+					style.clearColor();
+					style.setColor("green");
+				}
+			}
+			
+			digitMin.setInnerHTML(String.valueOf(answerTextMinDiff));
+			digitMax.setInnerHTML(String.valueOf(answerTextMaxDiff));
+			digitCurrent.setInnerHTML(String.valueOf(currentCount));
+	
+		}else {
+			Style style = digitCount.getStyle();
+			String display = style.getDisplay();
+			if("none".equalsIgnoreCase(display) == false) {
+				style.setDisplay(Display.NONE);
+			}
+		}
+	}
+
 	private void addForShowInImage() {
 
 		Log.info("Question id :" + question.getId());
@@ -914,7 +966,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 	public void setMaxDifferenceBetween(long max, long min) {
 		this.answerTextMaxDiff = max;
 		this.answerTextMinDiff = min;
-		
+		digitCount();
 	}
 
 	/*@Override

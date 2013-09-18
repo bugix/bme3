@@ -27,6 +27,7 @@ import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
+import com.google.web.bindery.requestfactory.shared.EntityProxyId;
 /**
  * Activity Handling UserViews.
  * @author masterthesis
@@ -48,6 +49,8 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 
 	private McAppRequestFactory requests;
 	private PlaceController placeController;
+
+	private EntityProxyId<?> proxyId = null;
 
 
 	@Inject
@@ -270,6 +273,8 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 				}
 
 				table.setRowData(range.getStart(), values);
+				
+				selectRow(range);
 
 				if (widget != null) {
 					widget.setWidget(view.asWidget());
@@ -280,6 +285,26 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 		
 		);
 
+	}
+
+	private void selectRow(final Range range) {
+		if (proxyId != null)
+		{
+			requests.find(proxyId).fire(new BMEReceiver<Object>() {
+
+				@Override
+				public void onSuccess(Object response) {
+					if (response != null && response instanceof PersonProxy)
+					{
+						PersonProxy selectedProxy = (PersonProxy) response;
+						selectionModel.setSelected(selectedProxy, true);
+						int start = table.getRowCount() - range.getLength();
+						table.setPageStart((start < 0 ? 0 : start));
+					}
+					proxyId = null;
+				}
+			});
+		}
 	}
 
 	private void getLastPage() {
@@ -345,9 +370,10 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 
 	@Override
 	public void placeChanged(Place place) {
-		/*if(place instanceof PlaceUserDetails){
-			init();
-		}*/
+		if(place instanceof PlaceUserDetails){
+			if (((PlaceUserDetails)place).getProxyId() != null)
+				proxyId  = ((PlaceUserDetails)place).getProxyId();
+		}
 		
 		if(place instanceof PlaceUser) {
 			init();

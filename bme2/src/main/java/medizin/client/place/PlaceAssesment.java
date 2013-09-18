@@ -1,6 +1,7 @@
 package medizin.client.place;
 
 import com.google.gwt.place.shared.Prefix;
+import com.google.web.bindery.requestfactory.shared.EntityProxyId;
 
 import medizin.client.factory.request.McAppRequestFactory;
 
@@ -14,6 +15,10 @@ public class PlaceAssesment extends AbstractPlace {
 
 	public PlaceAssesment(String placeName, boolean reload) {
 		super(placeName, reload);
+	}
+
+	public PlaceAssesment(String placeName, EntityProxyId<?> proxyId) {
+		super(placeName, proxyId);
 	}
 
 	@Prefix(PLACE_ASSESMENT)

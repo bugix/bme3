@@ -1,12 +1,8 @@
 package medizin.client.ui.view.roo;
 
-import com.google.web.bindery.requestfactory.gwt.ui.client.ProxyRenderer;
-
-import medizin.client.proxy.PersonProxy;
-import medizin.client.proxy.QuestionEventProxy;
-import medizin.client.proxy.QuestionProxy;
 import medizin.client.proxy.UserAccessRightsProxy;
-import medizin.shared.AccessRights;
+
+import com.google.web.bindery.requestfactory.gwt.ui.client.ProxyRenderer;
 
 public class QuestionAccessProxyRenderer extends ProxyRenderer<UserAccessRightsProxy> {
 
@@ -27,6 +23,6 @@ public class QuestionAccessProxyRenderer extends ProxyRenderer<UserAccessRightsP
         if (object == null) {
             return "";
         }
-        return object.getId() + " (" + object.getId() + ")";
+        return object.getId().toString();
     }
 }

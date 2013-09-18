@@ -22,6 +22,6 @@ public class KeywordProxyRenderer extends ProxyRenderer<KeywordProxy> {
         if (object == null) {
             return "";
         }
-        return object.getName() + " (" + object.getName() + ")";
+        return object.getName();
     }
 }

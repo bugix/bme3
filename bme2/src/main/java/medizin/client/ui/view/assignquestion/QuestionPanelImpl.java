@@ -2,7 +2,6 @@ package medizin.client.ui.view.assignquestion;
 
 import java.text.ParseException;
 
-import medizin.client.proxy.PersonProxy;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.shared.i18n.BmeConstants;
@@ -10,14 +9,10 @@ import medizin.shared.i18n.BmeConstants;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.ValueListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -46,7 +41,7 @@ public class QuestionPanelImpl extends Composite implements QuestionPanel {
 	@UiField
 	IconButton searchButton;
 	
-	@UiField(provided = true)
+	/*@UiField(provided = true)
 	ValueListBox<PersonProxy> authorListBox=new ValueListBox<PersonProxy>(new AbstractRenderer<PersonProxy>() {
 
 		@Override
@@ -63,7 +58,7 @@ public class QuestionPanelImpl extends Composite implements QuestionPanel {
 
 	public ValueListBox<PersonProxy> getAuthorListBox() {
 		return authorListBox;
-	}
+	}*/
 
 	
 
@@ -71,14 +66,14 @@ public class QuestionPanelImpl extends Composite implements QuestionPanel {
 		initWidget(uiBinder.createAndBindUi(this));
 		questionPanel.setSpacing(5);
 		
-		authorListBox.addValueChangeHandler(new ValueChangeHandler<PersonProxy>() {
+		/*authorListBox.addValueChangeHandler(new ValueChangeHandler<PersonProxy>() {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<PersonProxy> event) {
 				delegate.authorValueChangedFromRightSide(event.getValue());
 				
 			}
-		});
+		});*/
 		
 	}
 

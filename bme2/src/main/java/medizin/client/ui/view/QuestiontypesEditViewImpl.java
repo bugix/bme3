@@ -1,5 +1,8 @@
 package medizin.client.ui.view;
 
+import java.util.Collection;
+import java.util.HashSet;
+
 import static medizin.client.util.ClientUtility.defaultString;
 
 import java.util.ArrayList;
@@ -8,35 +11,48 @@ import java.util.Map;
 
 import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.QuestionTypeProxy;
+import medizin.client.style.resources.UiStyles;
 import medizin.client.ui.view.renderer.EnumRenderer;
+import medizin.client.ui.widget.FocusableValueListBox;
 import medizin.client.ui.widget.IconButton;
+import medizin.client.ui.widget.IntegerBox;
 import medizin.client.ui.widget.dialogbox.receiver.ReceiverDialog;
+import medizin.client.ui.widget.labeled.LabeledDoubleBox;
+import medizin.client.ui.widget.labeled.LabeledIntegerBox;
+import medizin.client.ui.widget.labeled.LabeledPanel;
+import medizin.client.ui.widget.labeled.LabeledTextArea;
+import medizin.client.ui.widget.labeled.LabeledTextBox;
+import medizin.client.ui.widget.labeled.LabeledValueListBox;
 import medizin.client.util.ClientUtility;
 import medizin.shared.MultimediaType;
 import medizin.shared.QuestionTypes;
 import medizin.shared.SelectionType;
 import medizin.shared.i18n.BmeConstants;
+import medizin.shared.i18n.BmeContextHelpConstants;
+import medizin.shared.i18n.BmeMessages;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.ValueListBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class QuestiontypesEditViewImpl extends Composite implements QuestiontypesEditView/*, Editor<QuestionTypeProxy>*/  {
@@ -59,51 +75,41 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
     }
 */
     public BmeConstants constants = GWT.create(BmeConstants.class);
-
-	//private Presenter presenter;
-
-
-   /* @UiField
-    TextBox questionTypeName;
+    public BmeMessages messages = GWT.create(BmeMessages.class);
+    public BmeContextHelpConstants contextHelp = GWT.create(BmeContextHelpConstants.class);
 
     @UiField
-    CheckBox isWeil;
-
-    @UiField
-    IntegerBox trueAnswers;
-
-    @UiField
-    IntegerBox falseAnswers;
-
-    @UiField
-    IntegerBox sumAnswers;
-
-    @UiField
-    IntegerBox maxLetters;*/
+    HTMLPanel panel;
+    
+	@UiField
+	SpanElement title;
+	
+	@UiField 
+	UiStyles uiStyles;
 	
 	@UiField
-    Label shortNameLbl;
+	Label baseGroupLbl;
 	
 	@UiField
-	TextBox shortNameTxtbox;
+	Label examGroupLbl;
 	
 	@UiField
-    Label longNameLbl;
+	Label questionGroupLbl;
 	
 	@UiField
-	TextBox longNameTxtbox;
+	Label evaluationGroupLbl;
 	
 	@UiField
-    Label descriptionLbl;
+	LabeledTextBox shortName;
 	
 	@UiField
-	TextArea descriptionTxtbox;	
+	LabeledTextBox longName;
 	
 	@UiField
-    Label instituteLbl;
+	LabeledTextArea description;	
 	
-    @UiField (provided = true)
-	ValueListBox<InstitutionProxy> instituteListBox = new ValueListBox<InstitutionProxy>(new AbstractRenderer<InstitutionProxy>() {
+	@UiField (provided = true)
+	LabeledValueListBox<InstitutionProxy> institute = new LabeledValueListBox<InstitutionProxy>(new AbstractRenderer<InstitutionProxy>() {
 
 		@Override
 		public String render(InstitutionProxy object) {
@@ -113,261 +119,140 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				return "";
 		}
 	});
-    
-	@UiField
-    Label questionTypeLbl;
-	
+    	
     @UiField (provided = true)
-	ValueListBox<QuestionTypes> questionTypeListBox = new ValueListBox<QuestionTypes>(new EnumRenderer<QuestionTypes>());    
+	LabeledValueListBox<QuestionTypes> questionType = new LabeledValueListBox<QuestionTypes>(new EnumRenderer<QuestionTypes>());
     
     @UiField
-    Label sumAnswerLbl;
-	
+    LabeledPanel instituteLblPanel;
+    
+    @UiField
+    Label instituteLbl;
+    
+    @UiField
+    LabeledPanel questionTypeLblPanel;
+    
+    @UiField
+    Label questionTypeLbl;
+    	
 	@UiField
-	TextBox sumAnswerTxtbox;	
+	LabeledIntegerBox sumAnswer;	
 
 	@UiField
-	Label sumTrueAnswerLbl;
-	 
-	@UiField
-	TextBox sumTrueAnswerTxtbox;
+	LabeledIntegerBox sumTrueAnswer;
 	
 	@UiField
-	Label sumFalseAnswerLbl;
+	LabeledIntegerBox sumFalseAnswer;
+		 
+	@UiField
+	LabeledIntegerBox questionLength;
 	 
 	@UiField
-	TextBox sumFalseAnswerTxtbox;
+	LabeledIntegerBox answerLength;
 	
 	@UiField
-	Label questionLengthLbl;
-	 
-	@UiField
-	TextBox questionLengthTxtbox;
+	LabeledDoubleBox answerDiff;
 	
 	@UiField
-	Label answerLengthLbl;
-	 
-	@UiField
-	TextBox answerLengthTxtbox;
-	
-	@UiField
-	Label answerDiffLbl;
-	 
-	@UiField
-	TextBox answerDiffTxtbox;
-	
-	@UiField
-	Label queHaveImgLbl;
+	LabeledPanel queHasMedia;
 	
 	@UiField
     CheckBox queHaveImgChkBox;
 	
 	@UiField
-	Label queHaveVideoLbl;
-	
-	@UiField
     CheckBox queHaveVideoChkBox;
 	
 	@UiField
-	Label queHaveSoundLbl;
-	
-	@UiField
     CheckBox queHaveSoundChkBox;
-	
+		 
 	@UiField
-	Label keywordCountLbl;
-	 
-	@UiField
-	TextBox keywordCountTxtbox;
-	
-	@UiField
-	Label showAutoCompleteLbl;
+	LabeledIntegerBox keywordCount;
 	
 	@UiField
     CheckBox showAutoCompleteChkBox;
 	
 	@UiField
-	Label isDictionaryKeywordLbl;
-	
-	@UiField
     CheckBox isDictionaryKeywordChkBox;
 	
 	@UiField
-	Label allowTypingLbl;
-	
-	@UiField
     CheckBox allowTypingChkBox;
-	
-	@UiField
-	Label minLetterForAutoCompLbl;
 	 
 	@UiField
-	TextBox minLetterForAutoCompTxtbox;
-	
-	@UiField
-	Label acceptNonKeywordLbl;
+	LabeledIntegerBox minLetterForAutoComp;
 	
 	@UiField
     CheckBox acceptNonKeywordChkBox;
-	
-	@UiField
-	Label shortAnswerLengthLbl;
 	 
 	@UiField
-	TextBox shortAnswerLengthTxtbox;
-	
-	/*@UiField
-	Label imageWidthLbl;
-	 
-	@UiField
-	TextBox imageWidthTxtbox;
-	
-	@UiField
-	Label imageLengthLbl;
-	 
-	@UiField
-	TextBox imageLengthTxtbox;
-	
-	@UiField
-	Label imageProportionLbl;
-	 
-	@UiField
-	TextBox imageProportionTxtbox;*/
-	
-	/*@UiField
-	Label linearPointLbl;
-	 
-	@UiField
-	CheckBox linearPointChkBox;
-		
-	@UiField
-	Label linearPercentageLbl;
-	 
-	@UiField
-	TextBox linearPercentageTxtbox;*/
-	
-	@UiField
-	Label keywordHighlightLbl;
+	LabeledIntegerBox shortAnswerLength;
 	
 	@UiField
     CheckBox keywordHighlightChkBox;
-	
-	@UiField
-	Label richTextLbl;
-	
+		
 	@UiField
     CheckBox richTextChkBox;
 	
 	@UiField
-	Label minLengthLbl;
-	 
+	LabeledIntegerBox minLength;
+		 
 	@UiField
-	TextBox minLengthTxtbox;
+	LabeledIntegerBox maxLength;
 	
 	@UiField
-	Label maxLengthLbl;
-	 
+	LabeledIntegerBox minWordCount;
+		 
 	@UiField
-	TextBox maxLengthTxtbox;
-	
-	@UiField
-	Label minWordCountLbl;
-	 
-	@UiField
-	TextBox minWordCountTxtbox;
-	
-	@UiField
-	Label maxWordCountLbl;
-	 
-	@UiField
-	TextBox maxWordCountTxtbox;
-	
-	@UiField
-	Label oneToOneAssLbl;
+	LabeledIntegerBox maxWordCount;
 	
 	@UiField
     CheckBox oneToOneAssChkBox;
 	
-	@UiField
-    Label multimediaTypeLbl;
-	
     @UiField (provided = true)
-	ValueListBox<MultimediaType> multimediaTypeListBox = new ValueListBox<MultimediaType>(new EnumRenderer<MultimediaType>());
-    
-    @UiField
-    Label selectionTypeLbl;
-	
+    LabeledValueListBox<MultimediaType> multimediaType = new LabeledValueListBox<MultimediaType>(new EnumRenderer<MultimediaType>());
+    	
     @UiField (provided = true)
-	ValueListBox<SelectionType> selectionTypeListBox = new ValueListBox<SelectionType>(new EnumRenderer<SelectionType>());
-    
-    @UiField
-	Label columnLbl;
-	 
+    LabeledValueListBox<SelectionType> selectionType = new LabeledValueListBox<SelectionType>(new EnumRenderer<SelectionType>());
+    	 
 	@UiField
-	TextBox columnTxtbox;
-	
-	/*@UiField
-	Label widthLbl;
-	 
+	LabeledIntegerBox column;
+		 
 	@UiField
-	TextBox widthTxtbox;
-	
-	@UiField
-	Label heightLbl;
-	 
-	@UiField
-	TextBox heightTxtbox;*/
-	
-	/*@UiField
-	Label thumbWidthLbl;
-	 
-	@UiField
-	TextBox thumbWidthTxtbox;
-	
-	@UiField
-	Label thumbHeightLbl;
-	 
-	@UiField
-	TextBox thumbHeightTxtbox;*/
-	
-	/*@UiField
-	Label propostionsLbl;
-	 
-	@UiField
-	TextBox propostionsTxtbox;*/
-	
-	/*@UiField
-	Label allowZoomOutLbl;
-	
-	@UiField
-    CheckBox allowZoomOutChkBox;
-	
-	@UiField
-	Label allowZoomInLbl;
-	
-	@UiField
-    CheckBox allowZoomInChkBox;*/
-	
-	@UiField
-	Label maxBytesLbl;
-	 
-	@UiField
-	TextBox maxBytesTxtbox;
+	LabeledIntegerBox maxBytes;
 
     @UiField
     IconButton cancel;
 
     @UiField
     IconButton save;
-    
-    @UiField
-    Label instituteValueLbl;
-    
-    @UiField
-    Label questionTypeValueLbl;
 
+    @UiField
+    IconButton cancel2;
+
+    @UiField
+    IconButton save2;
+    
+    @UiField
+    LabeledPanel richText;
+    
+    @UiField
+    LabeledPanel showAutoComplete;
+    
+    @UiField
+    LabeledPanel isDictionaryKeyword;
+    
+    @UiField
+    LabeledPanel allowTyping;
+    
+    @UiField
+    LabeledPanel acceptNonKeyword;
+    
+    @UiField
+    LabeledPanel oneToOneAss;
+    
+    @UiField
+    LabeledPanel keywordHighlight;
+    
     private Delegate delegate;
-	
 
 	private QuestionTypeProxy proxy;
 	
@@ -375,836 +260,685 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
     void onCancel(ClickEvent event) {
         delegate.cancelClicked();
     }
+    
+    @UiHandler("cancel2")
+    void onCancel2(ClickEvent event) {
+    	delegate.cancelClicked();
+    }
 
     @UiHandler("save")
     void onSave(ClickEvent event) {
-    	if (validationOfFields(questionTypeListBox.getValue()))
-    	{
-    		delegate.saveClicked(proxy);
-    	}
+    	save();
     }
-
-    private static final ArrayList<String> textualSortList = Lists.newArrayList("sumAnswer","sumTrueAnswer","sumFalseAnswer","questionLength","answerLength","answerDiff","queHaveImg","queHaveVideo","queHaveSound");
-	
-	private static final ArrayList<String> imgKeyList = Lists.newArrayList("questionLength","keywordCount","showAutoComplete","isDictionaryKeyword","allowTyping","minLetterForAutoComp","answerLength","acceptNonKeyword","shortAnswerLength"/*,"imageWidth","imageLength","imageProportion"*/);
-
-	private static final ArrayList<String> showInImgList = Lists.newArrayList("questionLength"/*,"answerLength","imageWidth","imageLength","imageProportion","linearPoint","linearPercentage"*/);
-	
-	private static final ArrayList<String> longTextList = Lists.newArrayList("questionLength","keywordHighlight","richText","minLength","maxLength","minWordCount","maxWordCount");
-	
-	private static final ArrayList<String> matrixList = Lists.newArrayList("questionLength","answerLength","oneToOneAss");
-	
-	//private static final ArrayList<String> mcqList = Lists.newArrayList("questionLength",/*"imageWidth","imageLength","imageProportion",*/"multimediaType","selectionType","column",/*"thumbWidth","thumbHeight",*/"richText",/*"allowZoomOut","allowZoomIn",*/"maxBytes");
-	
-	private static final ArrayList<String> mcqList = Lists.newArrayList("questionLength","multimediaType","selectionType","column","richText","maxBytes");
-	
-//    @UiField
-//    SpanElement displayRenderer;
+    
+    @UiHandler("save2")
+    void onSave2(ClickEvent event) {
+    	save();
+    }
 
     public void setValue(QuestionTypeProxy proxy) {
        this.proxy = proxy;
-       disableField(proxy.getQuestionType());
-       DOM.setElementPropertyBoolean(questionTypeListBox.getElement(), "disabled", true);
-       //instituteListBox.setValue(proxy.getInstitution());
-       //questionTypeListBox.setValue(proxy.getQuestionType());
-       instituteValueLbl.setText(proxy.getInstitution().getInstitutionName());
-       questionTypeValueLbl.setText(String.valueOf(proxy.getQuestionType()));
+       showFieldsForQuestionType(proxy.getQuestionType());
+       questionType.setEnabled(false);
+       //DOM.setElementPropertyBoolean(questionType.getValueListBox().getElement(), "disabled", true);
+       institute.setValue(proxy.getInstitution());
+       instituteLbl.setText((proxy.getInstitution() != null) ? defaultString(proxy.getInstitution().getInstitutionName()) : "");
+       questionType.setValue(proxy.getQuestionType());
+       questionTypeLbl.setText(new EnumRenderer<QuestionTypes>().render(proxy.getQuestionType()));
        
-       shortNameTxtbox.setValue(proxy.getShortName());
-       longNameTxtbox.setValue(proxy.getLongName());
-       descriptionTxtbox.setValue(proxy.getDescription());
+       shortName.setValue(proxy.getShortName());
+       longName.setValue(proxy.getLongName());
+       description.setValue(proxy.getDescription());
        
        if (proxy.getQuestionType().equals(QuestionTypes.Textual) || proxy.getQuestionType().equals(QuestionTypes.Sort))
        {
-    	   sumAnswerTxtbox.setValue(defaultString(proxy.getSumAnswer()));
-    	   sumTrueAnswerTxtbox.setValue(defaultString(proxy.getSumTrueAnswer()));
-    	   sumFalseAnswerTxtbox.setValue(defaultString(proxy.getSumFalseAnswer()));
-    	   questionLengthTxtbox.setValue(defaultString(proxy.getQuestionLength()));
-    	   answerLengthTxtbox.setValue(defaultString(proxy.getAnswerLength()));
-    	   answerDiffTxtbox.setValue(defaultString(proxy.getDiffBetAnswer()));
+    	   sumAnswer.setValue(defaultString(proxy.getSumAnswer()));
+    	   sumTrueAnswer.setValue(defaultString(proxy.getSumTrueAnswer()));
+    	   sumFalseAnswer.setValue(defaultString(proxy.getSumFalseAnswer()));
+    	   questionLength.setValue(defaultString(proxy.getQuestionLength()));
+    	   answerLength.setValue(defaultString(proxy.getAnswerLength()));
+    	   answerDiff.setValue(defaultString(proxy.getDiffBetAnswer()));
     	   queHaveImgChkBox.setValue(proxy.getQueHaveImage());
     	   queHaveVideoChkBox.setValue(proxy.getQueHaveVideo());
     	   queHaveSoundChkBox.setValue(proxy.getQueHaveSound());
        }
        else if (proxy.getQuestionType().equals(QuestionTypes.Imgkey))
        {
-    	   questionLengthTxtbox.setValue(defaultString(proxy.getQuestionLength()));
-    	   keywordCountTxtbox.setValue(defaultString(proxy.getKeywordCount()));
+    	   questionLength.setValue(defaultString(proxy.getQuestionLength()));
+    	   keywordCount.setValue(defaultString(proxy.getKeywordCount()));
     	   showAutoCompleteChkBox.setValue(proxy.getShowAutocomplete());
     	   isDictionaryKeywordChkBox.setValue(proxy.getIsDictionaryKeyword());
     	   allowTypingChkBox.setValue(proxy.getAllowTyping());
-    	   minLetterForAutoCompTxtbox.setValue(defaultString(proxy.getMinAutoCompleteLetter()));
-    	   answerLengthTxtbox.setValue(defaultString(proxy.getAnswerLength()));
+    	   minLetterForAutoComp.setValue(defaultString(proxy.getMinAutoCompleteLetter()));
+    	   answerLength.setValue(defaultString(proxy.getAnswerLength()));
     	   acceptNonKeywordChkBox.setValue(proxy.getAcceptNonKeyword());
-    	   shortAnswerLengthTxtbox.setValue(defaultString(proxy.getLengthShortAnswer()));
-    	   /*imageWidthTxtbox.setValue(defaultString(proxy.getImageWidth()));
-    	   imageLengthTxtbox.setValue(defaultString(proxy.getImageHeight()));
-    	   imageProportionTxtbox.setValue(defaultString(proxy.getImageProportion()));*/
+    	   shortAnswerLength.setValue(defaultString(proxy.getLengthShortAnswer()));
        }
        else if (proxy.getQuestionType().equals(QuestionTypes.ShowInImage))
        {
-    	   questionLengthTxtbox.setValue(defaultString(proxy.getQuestionLength()));
-    	   /*answerLengthTxtbox.setValue(defaultString(proxy.getAnswerLength()));    	  
-    	   imageWidthTxtbox.setValue(defaultString(proxy.getImageWidth()));
-    	   imageLengthTxtbox.setValue(defaultString(proxy.getImageHeight()));
-    	   imageProportionTxtbox.setValue(defaultString(proxy.getImageProportion()));
-    	   linearPointChkBox.setValue(proxy.getLinearPoint());
-    	   linearPercentageTxtbox.setValue(defaultString(proxy.getLinearPercentage()));*/	    	   
+    	   questionLength.setValue(defaultString(proxy.getQuestionLength()));  	   
        }
        else if (proxy.getQuestionType().equals(QuestionTypes.LongText))
        {
-    	   questionLengthTxtbox.setValue(defaultString(proxy.getQuestionLength()));
+    	   questionLength.setValue(defaultString(proxy.getQuestionLength()));
     	   keywordHighlightChkBox.setValue(proxy.getKeywordHighlight());
     	   richTextChkBox.setValue(proxy.getRichText());
-    	   minLengthTxtbox.setValue(defaultString(proxy.getMinLength()));
-    	   maxLengthTxtbox.setValue(defaultString(proxy.getMaxLength()));
-    	   minWordCountTxtbox.setValue(defaultString(proxy.getMinWordCount()));
-    	   maxWordCountTxtbox.setValue(defaultString(proxy.getMaxWordCount()));
+    	   minLength.setValue(defaultString(proxy.getMinLength()));
+    	   maxLength.setValue(defaultString(proxy.getMaxLength()));
+    	   minWordCount.setValue(defaultString(proxy.getMinWordCount()));
+    	   maxWordCount.setValue(defaultString(proxy.getMaxWordCount()));
        }
        else if (proxy.getQuestionType().equals(QuestionTypes.Matrix))
        {
-    	   questionLengthTxtbox.setValue(defaultString(proxy.getQuestionLength()));
-    	   answerLengthTxtbox.setValue(defaultString(proxy.getAnswerLength()));
-    	   //maxLengthTxtbox.setValue(defaultString(proxy.getMaxLength()));
+    	   questionLength.setValue(defaultString(proxy.getQuestionLength()));
+    	   answerLength.setValue(defaultString(proxy.getAnswerLength()));
     	   oneToOneAssChkBox.setValue(proxy.getAllowOneToOneAss());
        }
        else if (proxy.getQuestionType().equals(QuestionTypes.MCQ))
        {
-    	   questionLengthTxtbox.setValue(defaultString(proxy.getQuestionLength()));
-    	  /* imageWidthTxtbox.setValue(defaultString(proxy.getImageWidth()));
-    	   imageLengthTxtbox.setValue(defaultString(proxy.getImageHeight()));
-    	   imageProportionTxtbox.setValue(defaultString(proxy.getImageProportion()));*/
-    	   multimediaTypeListBox.setValue(proxy.getMultimediaType());
-    	   selectionTypeListBox.setValue(proxy.getSelectionType());
-    	   columnTxtbox.setValue(defaultString(proxy.getColumns()));
+    	   questionLength.setValue(defaultString(proxy.getQuestionLength()));
+    	   multimediaType.setValue(proxy.getMultimediaType());
+    	   selectionType.setValue(proxy.getSelectionType());
+    	   column.setValue(defaultString(proxy.getColumns()));
     	   richTextChkBox.setValue(proxy.getRichText());
-    	   /*thumbWidthTxtbox.setValue(defaultString(proxy.getThumbWidth()));
-    	   thumbHeightTxtbox.setValue(defaultString(proxy.getThumbHeight()));    	   
-    	   allowZoomOutChkBox.setValue(proxy.getAllowZoomOut());
-    	   allowZoomInChkBox.setValue(proxy.getAllowZoomIn());*/
-    	   maxBytesTxtbox.setValue(defaultString(proxy.getMaxBytes()));
+    	   maxBytes.setValue(defaultString(proxy.getMaxBytes()));
        }
        
     }
+    
+    private ArrayList<Widget> baseFields;
+    private ArrayList<Widget> textualFields;
+    private ArrayList<Widget> imgKeyFields;
+    private ArrayList<Widget> showInImgFields;
+    private ArrayList<Widget> longTextFields;
+    private ArrayList<Widget> matrixFields;
+    private ArrayList<Widget> mcqFields;
+    
+    private ArrayList<LabeledTextBox> allTextBoxes;
+    private HashSet<Widget> allBoxes;
 
 	public QuestiontypesEditViewImpl(Map<String, Widget> reciverMap) {
-		
 		initWidget(uiBinder.createAndBindUi(this));
 		
-		reciverMap.put("shortName",shortNameTxtbox );
-		reciverMap.put("longName", longNameTxtbox);
-		reciverMap.put("description", descriptionTxtbox);
-		reciverMap.put("institution", instituteListBox);
-		reciverMap.put("questionType", questionTypeListBox);
-		reciverMap.put("sumAnswer",sumAnswerTxtbox );
-		reciverMap.put("sumTrueAnswer", sumTrueAnswerTxtbox);
-		reciverMap.put("sumFalseAnswer", sumFalseAnswerTxtbox);
-		reciverMap.put("questionLength", questionLengthTxtbox);
-		reciverMap.put("answerLength", answerLengthTxtbox);
-		reciverMap.put("diffBetAnswer", answerDiffTxtbox);
+		baseFields = Lists.newArrayList((Widget) shortName, longName, description,
+				institute, questionType);
+		
+		textualFields = Lists.newArrayList((Widget) sumAnswer, sumTrueAnswer,
+				sumFalseAnswer, questionLength, answerLength, answerDiff,
+				queHasMedia);
+		textualFields.addAll(baseFields);
+		
+		imgKeyFields = Lists.newArrayList((Widget) shortName, longName, description,
+				institute, questionType, questionLength,
+				keywordCount, showAutoComplete, answerLength,
+				/* acceptNonKeyword, */shortAnswerLength);
+		imgKeyFields.addAll(baseFields);
+		
+		showInImgFields = Lists.newArrayList((Widget) shortName, longName, description,
+				institute, questionType, questionLength);
+		showInImgFields.addAll(baseFields);
+		
+		longTextFields = Lists.newArrayList((Widget) questionLength,
+				keywordHighlight, richText, minLength, maxLength, minWordCount,
+				maxWordCount);
+		longTextFields.addAll(baseFields);
+		
+		matrixFields = Lists.newArrayList((Widget) questionLength,
+				answerLength, oneToOneAss);
+		matrixFields.addAll(baseFields);
+		
+		mcqFields = Lists.newArrayList((Widget) questionLength, multimediaType,
+				selectionType, column, richText, maxBytes);
+		mcqFields.addAll(baseFields);
+
+		allTextBoxes = Lists.newArrayList((LabeledTextBox) shortName, longName,
+				sumAnswer, sumTrueAnswer, sumFalseAnswer, questionLength,
+				answerLength, answerDiff, keywordCount, minLetterForAutoComp,
+				shortAnswerLength, minLength, maxLength, minWordCount,
+				maxWordCount, maxBytes);
+
+		allBoxes = Sets.newHashSet((Widget) shortName, longName, description,
+				institute, questionType, sumAnswer, sumTrueAnswer,
+				sumFalseAnswer, questionLength, answerLength, answerDiff,
+				queHasMedia, keywordCount, isDictionaryKeyword, allowTyping,
+				minLetterForAutoComp, acceptNonKeyword, shortAnswerLength,
+				keywordHighlight, richText, minLength, maxLength, minWordCount,
+				maxWordCount, oneToOneAss, multimediaType, selectionType,
+				column, maxBytes, showAutoComplete);
+		allBoxes.addAll(baseFields);
+	    		
+		uiStyles.uiCss().ensureInjected();
+		
+		reciverMap.put("shortName", shortName);
+		reciverMap.put("longName", longName);
+		reciverMap.put("description", description);
+		reciverMap.put("institution", institute);
+		reciverMap.put("questionType", questionType);
+		reciverMap.put("sumAnswer",sumAnswer );
+		reciverMap.put("sumTrueAnswer", sumTrueAnswer);
+		reciverMap.put("sumFalseAnswer", sumFalseAnswer);
+		reciverMap.put("questionLength", questionLength);
+		reciverMap.put("answerLength", answerLength);
+		reciverMap.put("diffBetAnswer", answerDiff);
 		reciverMap.put("queHaveImage", queHaveImgChkBox);
 		reciverMap.put("queHaveVideo", queHaveVideoChkBox);
 		reciverMap.put("queHaveSound", queHaveSoundChkBox);
-		reciverMap.put("keywordCount", keywordCountTxtbox);
-		reciverMap.put("minAutoCompleteLetter", minLetterForAutoCompTxtbox);
-		reciverMap.put("lengthShortAnswer",shortAnswerLengthTxtbox );
-		/*reciverMap.put("imageWidth", imageWidthTxtbox);
-		reciverMap.put("imageHeight", imageLengthTxtbox);
-		reciverMap.put("imageProportion", imageProportionTxtbox);*/
-		//reciverMap.put("linearPercentage", linearPercentageTxtbox);
-		reciverMap.put("multimediaType", multimediaTypeListBox);
-		reciverMap.put("selectionType", selectionTypeListBox);
-		reciverMap.put("columns", columnTxtbox);
-		/*reciverMap.put("thumbWidth",thumbWidthTxtbox );
-		reciverMap.put("thumbHeight", thumbHeightTxtbox);*/
-		reciverMap.put("maxBytes", maxBytesTxtbox);
-		reciverMap.put("minLength", minLengthTxtbox);
-		reciverMap.put("maxLength", maxLengthTxtbox);
-		reciverMap.put("minWordCount", minWordCountTxtbox);
-		reciverMap.put("maxWordCount", maxWordCountTxtbox);
-				
-		questionTypePanel.selectTab(0);
-		questionTypePanel.getTabBar().setTabText(0, constants.manageQuestionType());
+		reciverMap.put("keywordCount", keywordCount);
+		reciverMap.put("minAutoCompleteLetter", minLetterForAutoComp);
+		reciverMap.put("lengthShortAnswer",shortAnswerLength );
+		reciverMap.put("multimediaType", multimediaType);
+		reciverMap.put("selectionType", selectionType);
+		reciverMap.put("columns", column);
+		reciverMap.put("maxBytes", maxBytes);
+		reciverMap.put("minLength", minLength);
+		reciverMap.put("maxLength", maxLength);
+		reciverMap.put("minWordCount", minWordCount);
+		reciverMap.put("maxWordCount", maxWordCount);
 		
 		save.setText(constants.save());
+		save2.setText(constants.save());
 		cancel.setText(constants.cancel());
+		cancel2.setText(constants.cancel());
 		
-		multimediaTypeListBox.setValue(MultimediaType.Image);
-		multimediaTypeListBox.setAcceptableValues(Arrays.asList(MultimediaType.values()));		
+		multimediaType.setValue(MultimediaType.Image);
+		multimediaType.setAcceptableValues(Arrays.asList(MultimediaType.values()));		
 		
-		selectionTypeListBox.setValue(SelectionType.SEL_CHOOSE);
-		selectionTypeListBox.setAcceptableValues(Arrays.asList(SelectionType.values()));		
+		selectionType.setValue(SelectionType.SEL_CHOOSE);
+		selectionType.setAcceptableValues(Arrays.asList(SelectionType.values()));		
 		
-		questionTypeListBox.setValue(QuestionTypes.Textual);
-		questionTypeListBox.setAcceptableValues(Arrays.asList(QuestionTypes.values()));
+		questionType.setValue(QuestionTypes.Textual);
+		questionType.setAcceptableValues(Arrays.asList(QuestionTypes.values()));
 		
-		questionTypeListBox.addValueChangeHandler(new ValueChangeHandler<QuestionTypes>() {
+		institute.setEnabled(false);
+		
+		baseGroupLbl.setText(constants.baseGroupLbl());
+		examGroupLbl.setText(constants.examGroupLbl());
+		questionGroupLbl.setText(constants.questionGroupLbl());
+		evaluationGroupLbl.setText(constants.evaluationGroupLbl());
+		
+		shortName.setLabelText(constants.shortName());
+		shortName.setHelpText(contextHelp.shortName());
+		
+		longName.setLabelText(constants.longName());
+		longName.setHelpText(contextHelp.longName());
+		
+		description.setLabelText(constants.description());
+		description.setHelpText(contextHelp.description());
+		
+		institute.setLabelText(constants.institutionLbl());
+		institute.setHelpText(contextHelp.institution());
+		instituteLblPanel.setLabelText(constants.institutionLbl());
+		instituteLblPanel.setHelpText(contextHelp.institution());
+		
+		questionTypeLblPanel.setLabelText(constants.questionType());
+		questionTypeLblPanel.setHelpText(contextHelp.questionType());
+		questionType.setLabelText(constants.questionType());
+		questionType.setHelpText(contextHelp.questionType());
+		
+		sumAnswer.setLabelText(constants.sumAnswer());
+		sumAnswer.setHelpText(contextHelp.sumAnswer());
+		
+		sumTrueAnswer.setLabelText(constants.sumTrueAnswer());
+		sumTrueAnswer.setHelpText(contextHelp.sumTrueAnswer());
+
+		sumFalseAnswer.setLabelText(constants.sumFalseAnswer());
+		sumFalseAnswer.setHelpText(contextHelp.sumFalseAnswer());
+		
+		questionLength.setLabelText(constants.questionLength());
+		questionLength.setHelpText(contextHelp.questionLength());
+		
+		answerLength.setLabelText(constants.answerLength());
+		answerLength.setHelpText(contextHelp.answerLength());
+		
+		answerDiff.setLabelText(constants.diffAnswer());
+		answerDiff.setHelpText(contextHelp.answerDiff());
+		
+		queHasMedia.setLabelText(constants.queHaveMedia());
+		queHasMedia.setHelpText(contextHelp.queHasMedia());
+		queHaveImgChkBox.setText(constants.queHaveImg());
+		queHaveVideoChkBox.setText(constants.queHaveVideo());
+		queHaveSoundChkBox.setText(constants.queHaveSound());
+		
+		keywordCount.setLabelText(constants.countKeyword());
+		keywordCount.setHelpText(contextHelp.keywordCount());
+		
+		showAutoComplete.setLabelText(constants.showAutocomplete());
+		showAutoComplete.setHelpText(contextHelp.showAutoComplete());
+		showAutoCompleteChkBox.setText(constants.showAutocomplete());
+		
+		isDictionaryKeyword.setLabelText(constants.isDictionaryKeyword());
+		isDictionaryKeyword.setHelpText(contextHelp.isDictionaryKeyword());
+		isDictionaryKeywordChkBox.setText(constants.isDictionaryKeyword());
+		
+		allowTyping.setVisible(false);
+		allowTyping.setLabelText(constants.allowTyping());
+		allowTyping.setHelpText(contextHelp.allowTyping());
+		allowTypingChkBox.setText(constants.allowTyping());
+		
+		minLetterForAutoComp.setLabelText(constants.minLetterAutoComplete());
+		minLetterForAutoComp.setHelpText(contextHelp.minAutoCompleteLetter());
+		
+		acceptNonKeyword.setLabelText(constants.acceptNonkeyword());
+		acceptNonKeyword.setHelpText(contextHelp.acceptNonKeyword());
+		acceptNonKeywordChkBox.setText(constants.acceptNonkeyword());
+		shortAnswerLength.setLabelText(constants.lengthShortAns());
+		shortAnswerLength.setHelpText(contextHelp.shortAnswerLength());
+		
+		keywordHighlight.setLabelText(constants.keywordHighlight());
+		keywordHighlight.setHelpText(contextHelp.keywordHighlight());
+		keywordHighlightChkBox.setText(constants.keywordHighlight());
+		
+		minLength.setLabelText(constants.minLength());
+		minLength.setHelpText(contextHelp.minLength());
+		maxLength.setLabelText(constants.maxLength());
+		maxLength.setHelpText(contextHelp.maxLength());
+		minWordCount.setLabelText(constants.minWordCount());
+		minWordCount.setHelpText(contextHelp.minWordCount());
+		maxWordCount.setLabelText(constants.maxWordCount());
+		maxWordCount.setHelpText(contextHelp.maxWordCount());
+		
+		oneToOneAss.setLabelText(constants.oneToOneAss());
+		oneToOneAss.setHelpText(contextHelp.oneToOneAss());
+		oneToOneAssChkBox.setText(constants.oneToOneAss());
+		
+		multimediaType.setLabelText(constants.multimediaType());
+		multimediaType.setHelpText(contextHelp.multimediaType());
+		selectionType.setLabelText(constants.selectionType());
+		selectionType.setHelpText(contextHelp.selectionType());
+		column.setLabelText(constants.column());
+		column.setHelpText(contextHelp.columns());
+		maxBytes.setLabelText(constants.maxBytes());
+		maxBytes.setHelpText(contextHelp.maxBytes());
+		
+		richText.setLabelText(constants.allowRichText());
+		richText.setHelpText(contextHelp.richText());
+		richTextChkBox.setText(constants.allowRichText());
+		
+		for (final LabeledTextBox box : allTextBoxes) {
+			box.addValueChangeHandler(new ValueChangeHandler<String>() {
+				@Override
+				public void onValueChange(ValueChangeEvent<String> event) {
+					box.getTextBox().removeStyleName("higlight_onViolation");
+				}
+			});
+			
+			box.getTextBox().addKeyDownHandler(new KeyDownHandler() {
+				
+				@Override
+				public void onKeyDown(KeyDownEvent event) {
+					if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
+						save();
+					}
+				}
+			});
+		}
+		
+		description.addValueChangeHandler(new ValueChangeHandler<String>() {
+			//@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				description.getTextArea().removeStyleName("higlight_onViolation");
+			}
+		});
+		
+		questionType.addValueChangeHandler(new ValueChangeHandler<QuestionTypes>() {
 
 			@Override
 			public void onValueChange(ValueChangeEvent<QuestionTypes> event) {
 				removeStyles();
-				disableField(questionTypeListBox.getValue());
+				showFieldsForQuestionType(questionType.getValue());
 			}
 		});
-		
-		DOM.setElementPropertyBoolean(instituteListBox.getElement(), "disabled", true);
-		
-		/*instituteListBox.setWidth("120px");
-		questionTypeListBox.setWidth("120px");*/
-		
-		/*shortNameLbl.setText(constants.shortName());
-		longNameLbl.setText(constants.longName());
-		descriptionLbl.setText(constants.description());
-		instituteLbl.setText(constants.institutionLbl());
-		questionTypeLbl.setText(constants.questionType());
-		sumAnswerLbl.setText(constants.sumAnswer());
-		sumTrueAnswerLbl.setText(constants.sumTrueAnswer());
-		sumFalseAnswerLbl.setText(constants.sumFalseAnswer());
-		questionLengthLbl.setText(constants.questionLength());
-		answerLengthLbl.setText(constants.answerLength());
-		answerDiffLbl.setText(constants.diffAnswer());
-		queHaveImgLbl.setText(constants.queHaveImg());
-		queHaveVideoLbl.setText(constants.queHaveVideo());
-		queHaveSoundLbl.setText(constants.queHaveSound());
-		
-		keywordCountLbl.setText(constants.countKeyword());
-		showAutoCompleteLbl.setText(constants.showAutocomplete());
-		isDictionaryKeywordLbl.setText(constants.isDictionaryKeyword());
-		allowTypingLbl.setText(constants.allowTyping());
-		minLetterForAutoCompLbl.setText(constants.minLetterAutoComplete());
-		acceptNonKeywordLbl.setText(constants.acceptNonkeyword());
-		shortAnswerLengthLbl.setText(constants.lengthShortAns());
-		imageWidthLbl.setText(constants.imgWidth());
-		imageLengthLbl.setText(constants.imgLength());
-		imageProportionLbl.setText(constants.imgProportion());
-		
-		linearPointLbl.setText(constants.linearPoint());
-		linearPercentageLbl.setText(constants.linearPercentage());
-		
-		keywordHighlightLbl.setText(constants.keywordHighlight());
-		richTextLbl.setText(constants.richText());
-		minLengthLbl.setText(constants.minLength());
-		maxLengthLbl.setText(constants.maxLength());
-		minWordCountLbl.setText(constants.minWordCount());
-		maxWordCountLbl.setText(constants.maxWordCount());
-		
-		oneToOneAssLbl.setText(constants.oneToOneAss());
-		
-		multimediaTypeLbl.setText(constants.multimediaType());
-		selectionTypeLbl.setText(constants.selectionType());
-		columnLbl.setText(constants.column());
-		widthLbl.setText(constants.width());
-		heightLbl.setText(constants.height());
-		thumbWidthLbl.setText(constants.thumbWidth());
-		thumbHeightLbl.setText(constants.thumbHeight());
-		//propostionsLbl.setText(constants.propostions());
-		allowZoomOutLbl.setText(constants.allowZoomOut());
-		allowZoomInLbl.setText(constants.allowZoomIn());
-		maxBytesLbl.setText(constants.maxBytes());*/
 		
 		showAutoCompleteChkBox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 
 			@Override
 			public void onValueChange(ValueChangeEvent<Boolean> event) {
-				if (event.getValue() == true)
-					Document.get().getElementById("isDictionaryKeyword").getStyle().clearDisplay();
-				else
-					Document.get().getElementById("isDictionaryKeyword").getStyle().setDisplay(Display.NONE);
+				if (event.getValue()) {
+					isDictionaryKeyword.setVisible(true);
+					minLetterForAutoComp.setVisible(true);
+				} else {
+					isDictionaryKeyword.setVisible(false);
+					minLetterForAutoComp.setVisible(false);
+				}
 			}
 		});
 		
-		/*linearPercentageTxtbox.setEnabled(false);
+//		for (final Widget box : allBoxes) {
+//			((HasFocusHandlers)box).addFocusHandler(new FocusHandler() {
+//				
+//				@Override
+//				public void onFocus(FocusEvent event) {
+//					PopupPanel popup = new PopupPanel(true);
+//					popup.setStyleName("unibas-ContextHelp");
+//					popup.add(new HTML("<p>Test</p>"));
+//					Widget src = ((Widget) event.getSource()).getParent().getParent();
+//					int top = src.getAbsoluteTop();
+//					int left = src.getAbsoluteLeft() + src.getOffsetWidth();
+//					popup.setPopupPosition(left, top);
+//					popup.show();
+//				}
+//			});
+//			
+//			
+//		}
 		
-		linearPointChkBox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-
-			@Override
-			public void onValueChange(ValueChangeEvent<Boolean> event) {
-				
-				linearPercentageTxtbox.setEnabled(event.getValue());			
-			}
-		});*/
+		shortName.setFocus(true);	
 	}
 	
-	public void showField(ArrayList<String> list)
-	{
-		for(String str : list)
-		{
-			Document.get().getElementById(str).getStyle().clearDisplay();
+	private void save() {
+		if (validationOfFields(questionType.getValue())) {
+    		delegate.saveClicked(proxy);
+    	}
+	}
+	
+	private void changeVisibility(Collection<Widget> fields, boolean visibility) {
+		for (Widget w : fields) {
+			w.setVisible(visibility);
 		}
 	}
 	
-	public void disableQuestionField(ArrayList<String> list)
-	{
-		for(String str : list)
-		{
-			Document.get().getElementById(str).getStyle().setDisplay(Display.NONE);
-		}
-	}
-
 	@Override
 	public void setDelegate(Delegate delegate) {
-		this.delegate = delegate;
-		
+		this.delegate = delegate;	
 	}
-	
-	@UiField
-	TabPanel questionTypePanel;
-	
-	@UiField
-	SpanElement title;
 
-	
-	/*@UiField
-	Element  editTitle;
-	@UiField
-	Element  createTitle;
-*/
 	@Override
 	public void setEditTitle(boolean edit) {
 	      if (edit) {
-	    	  DOM.getElementById("instituteListboxDiv").removeFromParent();
-	    	  DOM.getElementById("questionTypeListboxDiv").removeFromParent();
-	    	  title.setInnerText(constants.editQuestionType()); 
-	    	  /*editTitle.getStyle().clearDisplay();
-	            createTitle.getStyle().setDisplay(Display.NONE);*/
+	    	  title.setInnerText(constants.editQuestionType());
+	    	  instituteLblPanel.setVisible(true);
+	    	  questionTypeLblPanel.setVisible(true);
+	    	  institute.setVisible(false);
+	    	  questionType.setVisible(false);
 	        } else {
-	        	DOM.getElementById("instituteLabelDiv").removeFromParent();
-	        	DOM.getElementById("questionTypeLabelDiv").removeFromParent();
+		    	  instituteLblPanel.setVisible(false);
+		    	  questionTypeLblPanel.setVisible(false);
+		    	  institute.setVisible(true);
+		    	  questionType.setVisible(true);
 	        	title.setInnerText(constants.addQuestionType());
-	            /*editTitle.getStyle().setDisplay(Display.NONE);
-	            createTitle.getStyle().clearDisplay();*/
-	        }
-		
+	        }		
 	}
 
-	public void disableField(QuestionTypes questionTypes)
+	public void showFieldsForQuestionType(QuestionTypes questionTypes)
 	{
 		if (questionTypes.equals(QuestionTypes.Textual) || questionTypes.equals(QuestionTypes.Sort))
 		{
-			disableQuestionField(mcqList);
-			disableQuestionField(imgKeyList);
-			disableQuestionField(matrixList);
-			disableQuestionField(longTextList);
-			disableQuestionField(showInImgList);
-			showField(textualSortList);				
+			changeVisibility(allBoxes, false);
+			changeVisibility(textualFields, true);
+			evaluationGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.NONE);
+			examGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.BLOCK);
 		}
 		else if (questionTypes.equals(QuestionTypes.Imgkey))
 		{
-			disableQuestionField(mcqList);
-			disableQuestionField(textualSortList);
-			disableQuestionField(matrixList);
-			disableQuestionField(longTextList);
-			disableQuestionField(showInImgList);
-			showField(imgKeyList);
+			changeVisibility(allBoxes, false);
+			changeVisibility(imgKeyFields, true);
 			Document.get().getElementById("isDictionaryKeyword").getStyle().setDisplay(Display.NONE);
+			evaluationGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.NONE);
+			examGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.NONE);
 		}
 		else if (questionTypes.equals(QuestionTypes.ShowInImage))
 		{
-			disableQuestionField(mcqList);
-			disableQuestionField(textualSortList);
-			disableQuestionField(imgKeyList);
-			disableQuestionField(matrixList);
-			disableQuestionField(longTextList);
-			showField(showInImgList);
+			changeVisibility(allBoxes, false);
+			changeVisibility(showInImgFields, true);
+			evaluationGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.NONE);
+			examGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.NONE);
 		}
 		else if (questionTypes.equals(QuestionTypes.LongText))
 		{
-			disableQuestionField(mcqList);
-			disableQuestionField(textualSortList);
-			disableQuestionField(imgKeyList);
-			disableQuestionField(matrixList);
-			disableQuestionField(showInImgList);
-			showField(longTextList);
+			changeVisibility(allBoxes, false);
+			changeVisibility(longTextFields, true);
+			evaluationGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.BLOCK);
+			examGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.BLOCK);
 		}
 		else if (questionTypes.equals(QuestionTypes.Matrix))
 		{
-			disableQuestionField(mcqList);
-			disableQuestionField(textualSortList);
-			disableQuestionField(imgKeyList);
-			disableQuestionField(longTextList);
-			disableQuestionField(showInImgList);
-			showField(matrixList);
+			changeVisibility(allBoxes, false);
+			changeVisibility(matrixFields, true);
+			evaluationGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.NONE);
+			examGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.NONE);
 		} 
 		else if (questionTypes.equals(QuestionTypes.MCQ))
 		{
-			disableQuestionField(textualSortList);
-			disableQuestionField(imgKeyList);
-			disableQuestionField(matrixList);
-			disableQuestionField(longTextList);
-			disableQuestionField(showInImgList);
-			showField(mcqList);
+			changeVisibility(allBoxes, false);
+			changeVisibility(mcqFields, true);
+			evaluationGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.NONE);
+			examGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.BLOCK);
 		} 
 		else
 		{
-			disableQuestionField(mcqList);
-			disableQuestionField(textualSortList);
-			disableQuestionField(imgKeyList);
-			disableQuestionField(matrixList);
-			disableQuestionField(longTextList);
-			disableQuestionField(showInImgList);
+			changeVisibility(allBoxes, false);
+			// when is "else" displayed??
+			evaluationGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.BLOCK);
+			examGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.BLOCK);
 		}
 	}
 	
 	public void setNullValue(QuestionTypes questionTypes)
 	{
-		questionTypeListBox.setValue(QuestionTypes.Textual);
-		shortNameTxtbox.setValue("");
-		longNameTxtbox.setValue("");
-		descriptionTxtbox.setValue("");
+		questionType.setValue(QuestionTypes.Textual);
+		shortName.getTextBox().setValue("");
+		longName.setValue("");
+		description.setValue("");
 		
 		if (questionTypes.equals(QuestionTypes.Textual) || questionTypes.equals(QuestionTypes.Sort))
 	       {
-	    	   sumAnswerTxtbox.setValue("");
-	    	   sumTrueAnswerTxtbox.setValue("");
-	    	   sumFalseAnswerTxtbox.setValue("");
-	    	   questionLengthTxtbox.setValue("");
-	    	   answerLengthTxtbox.setValue("");
-	    	   answerDiffTxtbox.setValue("");
+	    	   sumAnswer.setValue("");
+	    	   sumTrueAnswer.setValue("");
+	    	   sumFalseAnswer.setValue("");
+	    	   questionLength.setValue("");
+	    	   answerLength.setValue("");
+	    	   answerDiff.setValue("");
 	    	   queHaveImgChkBox.setValue(false);
 	    	   queHaveVideoChkBox.setValue(false);
 	    	   queHaveSoundChkBox.setValue(false);
 	       }
 	       else if (questionTypes.equals(QuestionTypes.Imgkey))
 	       {
-	    	   keywordCountTxtbox.setValue("");
+	    	   keywordCount.setValue("");
 	    	   showAutoCompleteChkBox.setValue(false);
 	    	   isDictionaryKeywordChkBox.setValue(false);
 	    	   allowTypingChkBox.setValue(false);
-	    	   minLetterForAutoCompTxtbox.setValue("");
-	    	   questionLengthTxtbox.setValue("");
-	    	   answerLengthTxtbox.setValue("");
+	    	   minLetterForAutoComp.setValue("");
+	    	   questionLength.setValue("");
+	    	   answerLength.setValue("");
 	    	   acceptNonKeywordChkBox.setValue(false);
-	    	   shortAnswerLengthTxtbox.setValue("");
-	    	   /*imageWidthTxtbox.setValue("");
-	    	   imageLengthTxtbox.setValue("");
-	    	   imageProportionTxtbox.setValue("");*/
+	    	   shortAnswerLength.setValue("");
 	    	   
 	       }
 	       else if (questionTypes.equals(QuestionTypes.ShowInImage))
 	       {
-	    	   questionLengthTxtbox.setValue("");
-	    	   /*answerLengthTxtbox.setValue("");	    	   
-	    	   imageWidthTxtbox.setValue("");
-	    	   imageLengthTxtbox.setValue("");
-	    	   imageProportionTxtbox.setValue("");
-	    	   linearPointChkBox.setValue(false);
-	    	   linearPercentageTxtbox.setValue("");*/	    	   
+	    	   questionLength.setValue("");  	   
 	       }
 	       else if (questionTypes.equals(QuestionTypes.LongText))
 	       {
-	    	   questionLengthTxtbox.setValue("");
+	    	   questionLength.setValue("");
 	    	   keywordHighlightChkBox.setValue(false);
 	    	   richTextChkBox.setValue(false);
-	    	   minLengthTxtbox.setValue("");
-	    	   maxLengthTxtbox.setValue("");
-	    	   minWordCountTxtbox.setValue("0");
-	    	   maxWordCountTxtbox.setValue("0");
+	    	   minLength.setValue("");
+	    	   maxLength.setValue("");
+	    	   minWordCount.setValue("0");
+	    	   maxWordCount.setValue("0");
 	       }
 	       else if (questionTypes.equals(QuestionTypes.Matrix))
 	       {
-	    	  //maxLengthTxtbox.setValue("");
-	    	   answerLengthTxtbox.setValue("");
-	    	   questionLengthTxtbox.setValue("");
+	    	   answerLength.setValue("");
+	    	   questionLength.setValue("");
 	    	   oneToOneAssChkBox.setValue(false);
 	       }
 	       else if (questionTypes.equals(QuestionTypes.MCQ))
 	       {
-	    	   questionLengthTxtbox.setValue("");
-	    	   /*imageWidthTxtbox.setValue("");
-	    	   imageLengthTxtbox.setValue("");
-	    	   imageProportionTxtbox.setValue("");*/
-	    	   multimediaTypeListBox.setValue(MultimediaType.Image);
-	    	   selectionTypeListBox.setValue(SelectionType.SEL_CHOOSE);
-	    	   columnTxtbox.setValue("");
+	    	   questionLength.setValue("");
+	    	   multimediaType.setValue(MultimediaType.Image);
+	    	   selectionType.setValue(SelectionType.SEL_CHOOSE);
+	    	   column.setValue("");
 	    	   richTextChkBox.setValue(false);
-	    	   /*thumbWidthTxtbox.setValue("");
-	    	   thumbHeightTxtbox.setValue("");
-	    	   allowZoomOutChkBox.setValue(false);
-	    	   allowZoomInChkBox.setValue(false);*/
-	    	   maxBytesTxtbox.setValue("");
+	    	   maxBytes.setValue("");
 	       }
 	}
 
 	public void setCreating(boolean creating) {
 		if (creating) {
 			title.setInnerText(constants.addQuestionType());
-			//editTitle.getStyle().setDisplay(Display.NONE);
-			// change{	//	createTitle.getStyle().clearDisplay();
-			questionTypePanel.getTabBar().setTabText(0, constants.addQuestionType());
 		} else {
 			title.setInnerText(constants.editQuestionType());
-			//editTitle.getStyle().clearDisplay();
-			// change{	createTitle.getStyle().setDisplay(Display.NONE);
-			questionTypePanel.getTabBar().setTabText(0, constants.editQuestionType());
 		}
 	}
 	
 	public TextBox getShortNameTxtbox() {
-		return shortNameTxtbox;
-	}
-
-	public void setShortNameTxtbox(TextBox shortNameTxtbox) {
-		this.shortNameTxtbox = shortNameTxtbox;
+		return shortName.getTextBox();
 	}
 
 	public TextBox getLongNameTxtbox() {
-		return longNameTxtbox;
+		return longName.getTextBox();
 	}
-
-	public void setLongNameTxtbox(TextBox longNameTxtbox) {
-		this.longNameTxtbox = longNameTxtbox;
-	}
-
+	
 	public TextArea getDescriptionTxtbox() {
-		return descriptionTxtbox;
+		return description.getTextArea();
 	}
 
-	public void setDescriptionTxtbox(TextArea descriptionTxtbox) {
-		this.descriptionTxtbox = descriptionTxtbox;
+	public FocusableValueListBox<InstitutionProxy> getInstituteListBox() {
+		return institute.getValueListBox();
 	}
 
-	public ValueListBox<InstitutionProxy> getInstituteListBox() {
-		return instituteListBox;
+	public FocusableValueListBox<QuestionTypes> getQuestionTypeListBox() {
+		return questionType.getValueListBox();
 	}
 
-	public void setInstituteListBox(ValueListBox<InstitutionProxy> instituteListBox) {
-		this.instituteListBox = instituteListBox;
-	}
-
-	public ValueListBox<QuestionTypes> getQuestionTypeListBox() {
-		return questionTypeListBox;
-	}
-
-	public void setQuestionTypeListBox(
-			ValueListBox<QuestionTypes> questionTypeListBox) {
-		this.questionTypeListBox = questionTypeListBox;
-	}
-
-	public TextBox getSumAnswerTxtbox() {
-		return sumAnswerTxtbox;
-	}
-
-	public void setSumAnswerTxtbox(TextBox sumAnswerTxtbox) {
-		this.sumAnswerTxtbox = sumAnswerTxtbox;
+	public IntegerBox getSumAnswerTxtbox() {
+		return sumAnswer.getIntegerBox();
 	}
 
 	public TextBox getSumTrueAnswerTxtbox() {
-		return sumTrueAnswerTxtbox;
-	}
-
-	public void setSumTrueAnswerTxtbox(TextBox sumTrueAnswerTxtbox) {
-		this.sumTrueAnswerTxtbox = sumTrueAnswerTxtbox;
+		return sumTrueAnswer.getIntegerBox();
 	}
 
 	public TextBox getSumFalseAnswerTxtbox() {
-		return sumFalseAnswerTxtbox;
-	}
-
-	public void setSumFalseAnswerTxtbox(TextBox sumFalseAnswerTxtbox) {
-		this.sumFalseAnswerTxtbox = sumFalseAnswerTxtbox;
+		return sumFalseAnswer.getIntegerBox();
 	}
 
 	public TextBox getQuestionLengthTxtbox() {
-		return questionLengthTxtbox;
-	}
-
-	public void setQuestionLengthTxtbox(TextBox questionLengthTxtbox) {
-		this.questionLengthTxtbox = questionLengthTxtbox;
+		return questionLength.getIntegerBox();
 	}
 
 	public TextBox getAnswerLengthTxtbox() {
-		return answerLengthTxtbox;
-	}
-
-	public void setAnswerLengthTxtbox(TextBox answerLengthTxtbox) {
-		this.answerLengthTxtbox = answerLengthTxtbox;
+		return answerLength.getIntegerBox();
 	}
 
 	public TextBox getAnswerDiffTxtbox() {
-		return answerDiffTxtbox;
-	}
-
-	public void setAnswerDiffTxtbox(TextBox answerDiffTxtbox) {
-		this.answerDiffTxtbox = answerDiffTxtbox;
+		return answerDiff.getDoubleBox();
 	}
 
 	public CheckBox getQueHaveImgChkBox() {
 		return queHaveImgChkBox;
 	}
 
-	public void setQueHaveImgChkBox(CheckBox queHaveImgChkBox) {
-		this.queHaveImgChkBox = queHaveImgChkBox;
-	}
-
 	public CheckBox getQueHaveVideoChkBox() {
 		return queHaveVideoChkBox;
-	}
-
-	public void setQueHaveVideoChkBox(CheckBox queHaveVideoChkBox) {
-		this.queHaveVideoChkBox = queHaveVideoChkBox;
 	}
 
 	public CheckBox getQueHaveSoundChkBox() {
 		return queHaveSoundChkBox;
 	}
 
-	public void setQueHaveSoundChkBox(CheckBox queHaveSoundChkBox) {
-		this.queHaveSoundChkBox = queHaveSoundChkBox;
-	}
-
 	public TextBox getKeywordCountTxtbox() {
-		return keywordCountTxtbox;
-	}
-
-	public void setKeywordCountTxtbox(TextBox keywordCountTxtbox) {
-		this.keywordCountTxtbox = keywordCountTxtbox;
+		return keywordCount.getIntegerBox();
 	}
 
 	public CheckBox getShowAutoCompleteChkBox() {
 		return showAutoCompleteChkBox;
 	}
 
-	public void setShowAutoCompleteChkBox(CheckBox showAutoCompleteChkBox) {
-		this.showAutoCompleteChkBox = showAutoCompleteChkBox;
-	}
-
 	public CheckBox getIsDictionaryKeywordChkBox() {
 		return isDictionaryKeywordChkBox;
-	}
-
-	public void setIsDictionaryKeywordChkBox(CheckBox isDictionaryKeywordChkBox) {
-		this.isDictionaryKeywordChkBox = isDictionaryKeywordChkBox;
 	}
 
 	public CheckBox getAllowTypingChkBox() {
 		return allowTypingChkBox;
 	}
 
-	public void setAllowTypingChkBox(CheckBox allowTypingChkBox) {
-		this.allowTypingChkBox = allowTypingChkBox;
-	}
-
 	public TextBox getMinLetterForAutoCompTxtbox() {
-		return minLetterForAutoCompTxtbox;
-	}
-
-	public void setMinLetterForAutoCompTxtbox(TextBox minLetterForAutoCompTxtbox) {
-		this.minLetterForAutoCompTxtbox = minLetterForAutoCompTxtbox;
+		return minLetterForAutoComp.getIntegerBox();
 	}
 
 	public CheckBox getAcceptNonKeywordChkBox() {
 		return acceptNonKeywordChkBox;
 	}
 
-	public void setAcceptNonKeywordChkBox(CheckBox acceptNonKeywordChkBox) {
-		this.acceptNonKeywordChkBox = acceptNonKeywordChkBox;
-	}
-
 	public TextBox getShortAnswerLengthTxtbox() {
-		return shortAnswerLengthTxtbox;
+		return shortAnswerLength.getIntegerBox();
 	}
-
-	public void setShortAnswerLengthTxtbox(TextBox shortAnswerLengthTxtbox) {
-		this.shortAnswerLengthTxtbox = shortAnswerLengthTxtbox;
-	}
-
-	/*public TextBox getImageWidthTxtbox() {
-		return imageWidthTxtbox;
-	}
-
-	public void setImageWidthTxtbox(TextBox imageWidthTxtbox) {
-		this.imageWidthTxtbox = imageWidthTxtbox;
-	}
-
-	public TextBox getImageLengthTxtbox() {
-		return imageLengthTxtbox;
-	}
-
-	public void setImageLengthTxtbox(TextBox imageLengthTxtbox) {
-		this.imageLengthTxtbox = imageLengthTxtbox;
-	}
-
-	public TextBox getImageProportionTxtbox() {
-		return imageProportionTxtbox;
-	}
-
-	public void setImageProportionTxtbox(TextBox imageProportionTxtbox) {
-		this.imageProportionTxtbox = imageProportionTxtbox;
-	}*/
-
-	/*public CheckBox getLinearPointChkBox() {
-		return linearPointChkBox;
-	}
-
-	public void setLinearPointChkBox(CheckBox linearPointChkBox) {
-		this.linearPointChkBox = linearPointChkBox;
-	}
-
-	public TextBox getLinearPercentageTxtbox() {
-		return linearPercentageTxtbox;
-	}
-
-	public void setLinearPercentageTxtbox(TextBox linearPercentageTxtbox) {
-		this.linearPercentageTxtbox = linearPercentageTxtbox;
-	}*/
 
 	public CheckBox getKeywordHighlightChkBox() {
 		return keywordHighlightChkBox;
-	}
-
-	public void setKeywordHighlightChkBox(CheckBox keywordHighlightChkBox) {
-		this.keywordHighlightChkBox = keywordHighlightChkBox;
 	}
 
 	public CheckBox getRichTextChkBox() {
 		return richTextChkBox;
 	}
 
-	public void setRichTextChkBox(CheckBox richTextChkBox) {
-		this.richTextChkBox = richTextChkBox;
-	}
-
 	public TextBox getMinLengthTxtbox() {
-		return minLengthTxtbox;
-	}
-
-	public void setMinLengthTxtbox(TextBox minLengthTxtbox) {
-		this.minLengthTxtbox = minLengthTxtbox;
+		return minLength.getIntegerBox();
 	}
 
 	public TextBox getMaxLengthTxtbox() {
-		return maxLengthTxtbox;
-	}
-
-	public void setMaxLengthTxtbox(TextBox maxLengthTxtbox) {
-		this.maxLengthTxtbox = maxLengthTxtbox;
+		return maxLength.getIntegerBox();
 	}
 
 	public TextBox getMinWordCountTxtbox() {
-		return minWordCountTxtbox;
-	}
-
-	public void setMinWordCountTxtbox(TextBox minWordCountTxtbox) {
-		this.minWordCountTxtbox = minWordCountTxtbox;
+		return minWordCount.getIntegerBox();
 	}
 
 	public TextBox getMaxWordCountTxtbox() {
-		return maxWordCountTxtbox;
-	}
-
-	public void setMaxWordCountTxtbox(TextBox maxWordCountTxtbox) {
-		this.maxWordCountTxtbox = maxWordCountTxtbox;
+		return maxWordCount.getIntegerBox();
 	}
 
 	public CheckBox getOneToOneAssChkBox() {
 		return oneToOneAssChkBox;
 	}
 
-	public void setOneToOneAssChkBox(CheckBox oneToOneAssChkBox) {
-		this.oneToOneAssChkBox = oneToOneAssChkBox;
+	public FocusableValueListBox<MultimediaType> getMultimediaTypeListBox() {
+		return multimediaType.getValueListBox();
 	}
 
-	public ValueListBox<MultimediaType> getMultimediaTypeListBox() {
-		return multimediaTypeListBox;
-	}
-
-	public void setMultimediaTypeListBox(
-			ValueListBox<MultimediaType> multimediaTypeListBox) {
-		this.multimediaTypeListBox = multimediaTypeListBox;
-	}
-
-	public ValueListBox<SelectionType> getSelectionTypeListBox() {
-		return selectionTypeListBox;
-	}
-
-	public void setSelectionTypeListBox(
-			ValueListBox<SelectionType> selectionTypeListBox) {
-		this.selectionTypeListBox = selectionTypeListBox;
+	public FocusableValueListBox<SelectionType> getSelectionTypeListBox() {
+		return selectionType.getValueListBox();
 	}
 
 	public TextBox getColumnTxtbox() {
-		return columnTxtbox;
+		return column.getIntegerBox();
 	}
-
-	public void setColumnTxtbox(TextBox columnTxtbox) {
-		this.columnTxtbox = columnTxtbox;
-	}
-
-	/*public TextBox getThumbWidthTxtbox() {
-		return thumbWidthTxtbox;
-	}
-
-	public void setThumbWidthTxtbox(TextBox thumbWidthTxtbox) {
-		this.thumbWidthTxtbox = thumbWidthTxtbox;
-	}
-
-	public TextBox getThumbHeightTxtbox() {
-		return thumbHeightTxtbox;
-	}
-
-	public void setThumbHeightTxtbox(TextBox thumbHeightTxtbox) {
-		this.thumbHeightTxtbox = thumbHeightTxtbox;
-	}
-
-	public CheckBox getAllowZoomOutChkBox() {
-		return allowZoomOutChkBox;
-	}
-
-	public void setAllowZoomOutChkBox(CheckBox allowZoomOutChkBox) {
-		this.allowZoomOutChkBox = allowZoomOutChkBox;
-	}
-
-	public CheckBox getAllowZoomInChkBox() {
-		return allowZoomInChkBox;
-	}
-
-	public void setAllowZoomInChkBox(CheckBox allowZoomInChkBox) {
-		this.allowZoomInChkBox = allowZoomInChkBox;
-	}*/
 
 	public TextBox getMaxBytesTxtbox() {
-		return maxBytesTxtbox;
+		return maxBytes.getIntegerBox();
 	}
-
-	public void setMaxBytesTxtbox(TextBox maxBytesTxtbox) {
-		this.maxBytesTxtbox = maxBytesTxtbox;
-	}
-	
-	
 	
 	private boolean validationOfFields(QuestionTypes questionType)
 	{
 		removeStyles();
-		
 		ArrayList<String> errorMessage = Lists.newArrayList();
 		
 		boolean flag = true;
 		boolean answerFlag = false;
-		
-		//StringBuilder errorString = new StringBuilder();
-		
-		if (shortNameTxtbox.getText().isEmpty())
+				
+		if (shortName.getText().isEmpty())
     	{	
 			flag = false;
-			//errorString.append(constants.shortName() + " " + constants.questionTypeErroMsg()).append("<br />");
-			errorMessage.add(constants.shortName() + " " + constants.questionTypeErroMsg());
-			shortNameTxtbox.addStyleName("higlight_onViolation");
+						errorMessage.add(constants.shortName() + " " + constants.questionTypeErroMsg());
+			shortName.getTextBox().addStyleName("higlight_onViolation");
     	}
 		
-		if (longNameTxtbox.getText().isEmpty())
+		if (longName.getText().isEmpty())
 		{
 			flag = false;
-			//errorString.append(constants.longName() + " " + constants.questionTypeErroMsg()).append("<br />");
 			errorMessage.add(constants.longName() + " " + constants.questionTypeErroMsg());
-			longNameTxtbox.addStyleName("higlight_onViolation");
+			longName.getTextBox().addStyleName("higlight_onViolation");
 		}
 		
-		if (descriptionTxtbox.getText().isEmpty())
+		if (description.getText().isEmpty())
 		{
 			flag = false;
-			//errorString.append(constants.description() + " " + constants.questionTypeErroMsg()).append("<br />");
 			errorMessage.add(constants.description() + " " + constants.questionTypeErroMsg());
-			descriptionTxtbox.addStyleName("higlight_onViolation");
+			description.getTextArea().addStyleName("higlight_onViolation");
 		}		
 		
 		switch (questionType)
@@ -1213,101 +947,85 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 			case Textual:
 			{
 				String msg = "";				
-				if ((msg = checkTextWidgetForNumber(sumAnswerTxtbox)) != "")
+				if ((msg = checkTextWidgetForNumber(sumAnswer.getIntegerBox())) != "")
 				{
 					flag = false;
 					answerFlag = true;
-					//errorString.append(constants.sumAnswer() + " " + msg).append("<br />");
 					errorMessage.add(constants.sumAnswer() + " " + msg);
-					sumAnswerTxtbox.addStyleName("higlight_onViolation");
+					sumAnswer.getTextBox().addStyleName("higlight_onViolation");
 				}
-				else if (Integer.parseInt(sumAnswerTxtbox.getValue()) < 2)
+				else if (Integer.parseInt(sumAnswer.getValue()) < 2)
 				{
 					flag = false;
 					answerFlag = true;
-					//errorString.append(constants.sumOfAnsMsg()).append("<br />");
 					errorMessage.add(constants.sumOfAnsMsg());
-					sumAnswerTxtbox.addStyleName("higlight_onViolation");
+					sumAnswer.getTextBox().addStyleName("higlight_onViolation");
 				}
 				
 				msg = "";
-				if ((msg = checkTextWidgetForNumber(sumTrueAnswerTxtbox)) != "")
+				if ((msg = checkTextWidgetForNumber(sumTrueAnswer.getIntegerBox())) != "")
 				{
 					flag = false;
 					answerFlag = true;
-					//errorString.append(constants.sumTrueAnswer() + " " + msg).append("<br />");
 					errorMessage.add(constants.sumTrueAnswer() + " " + msg);
-					sumTrueAnswerTxtbox.addStyleName("higlight_onViolation");
+					sumTrueAnswer.getTextBox().addStyleName("higlight_onViolation");
 				}
-				else if (Integer.parseInt(sumTrueAnswerTxtbox.getValue()) < 0)
+				else if (Integer.parseInt(sumTrueAnswer.getValue()) < 0)
 				{
 					flag = false;
 					answerFlag = true;
-					//errorString.append(constants.sumOfTrueAnsMsg()).append("<br />");
 					errorMessage.add(constants.sumOfTrueAnsMsg());
-					sumTrueAnswerTxtbox.addStyleName("higlight_onViolation");
+					sumTrueAnswer.getTextBox().addStyleName("higlight_onViolation");
 				}
 				
 				msg = "";
-				if ((msg = checkTextWidgetForNumber(sumFalseAnswerTxtbox)) != "")
+				if ((msg = checkTextWidgetForNumber(sumFalseAnswer.getIntegerBox())) != "")
 				{
 					flag = false;
 					answerFlag = true;
-					//errorString.append(constants.sumFalseAnswer() + " " + msg).append("<br />");
 					errorMessage.add(constants.sumFalseAnswer() + " " + msg);
-					sumFalseAnswerTxtbox.addStyleName("higlight_onViolation");
+					sumFalseAnswer.getTextBox().addStyleName("higlight_onViolation");
 				}
-				else if (Integer.parseInt(sumFalseAnswerTxtbox.getValue()) < 0)
+				else if (Integer.parseInt(sumFalseAnswer.getValue()) < 0)
 				{
 					flag = false;
 					answerFlag = true;
-					//errorString.append(constants.sumOfFalseAnsMsg()).append("<br />");
 					errorMessage.add(constants.sumOfFalseAnsMsg());
-					sumFalseAnswerTxtbox.addStyleName("higlight_onViolation");
+					sumFalseAnswer.getTextBox().addStyleName("higlight_onViolation");
 				}
 				
 				if (answerFlag == false)
 				{
-					if (checkTextualAnswerCondition(Integer.parseInt(sumAnswerTxtbox.getValue()), Integer.parseInt(sumTrueAnswerTxtbox.getValue()), Integer.parseInt(sumFalseAnswerTxtbox.getValue())) == false)
+					if (checkTextualAnswerCondition(Integer.parseInt(sumAnswer.getValue()), Integer.parseInt(sumTrueAnswer.getValue()), Integer.parseInt(sumFalseAnswer.getValue())) == false)
 					{
 						flag = false;
 						errorMessage.add(constants.sumOfAnsValidateMsg());
-						sumTrueAnswerTxtbox.addStyleName("higlight_onViolation");
-						sumFalseAnswerTxtbox.addStyleName("higlight_onViolation");
+						sumTrueAnswer.getTextBox().addStyleName("higlight_onViolation");
+						sumFalseAnswer.getTextBox().addStyleName("higlight_onViolation");
 					}
 				}
 				
 				msg = "";
-				if ((msg = checkTextWidgetForNumber(questionLengthTxtbox)) != "")
+				if ((msg = checkTextWidgetForNumber(questionLength.getIntegerBox())) != "")
 				{
 					flag = false;
-					//errorString.append(constants.questionLength() + " " + msg).append("<br />");
 					errorMessage.add(constants.questionLength() + " " + msg);
-					questionLengthTxtbox.addStyleName("higlight_onViolation");
+					questionLength.getTextBox().addStyleName("higlight_onViolation");
 				}
 				
 				msg = "";
-				if ((msg = checkTextWidgetForNumber(answerLengthTxtbox)) != "")
+				if ((msg = checkTextWidgetForNumber(answerLength.getIntegerBox())) != "")
 				{
 					flag = false;
-					//errorString.append(constants.answerLength() + " " + msg).append("<br />");
 					errorMessage.add(constants.answerLength() + " " + msg);
-					answerLengthTxtbox.addStyleName("higlight_onViolation");
+					answerLength.getTextBox().addStyleName("higlight_onViolation");
 				}
 				
 				msg = "";
-				/*if ((msg = checkTextWidgetForDouble(answerDiffTxtbox)) != "")
-				{
+				if((msg = checkTextWidgetForDoubleWithRange(answerDiff.getTextBox(),0,100)) != "") {
 					flag = false;
-					//errorString.append(constants.diffAnswer() + " " + msg).append("<br />");
 					errorMessage.add(constants.diffAnswer() + " " + msg);
-					answerDiffTxtbox.addStyleName("higlight_onViolation");
-				}*/ 
-				if((msg = checkTextWidgetForDoubleWithRange(answerDiffTxtbox,0,100)) != "") {
-					flag = false;
-					//errorString.append(constants.diffAnswer() + " " + msg).append("<br />");
-					errorMessage.add(constants.diffAnswer() + " " + msg);
-					answerDiffTxtbox.addStyleName("higlight_onViolation");
+					answerDiff.addStyleName("higlight_onViolation");
 				}
 				
 				break;
@@ -1316,76 +1034,44 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 			case Imgkey:
 			{
 				String msg = "";				
-				if ((msg = checkTextWidgetForNumber(keywordCountTxtbox)) != "")
+				if ((msg = checkTextWidgetForNumber(keywordCount.getIntegerBox())) != "")
 				{
 					flag = false;
-					//errorString.append(constants.countKeyword() + " " + msg).append("<br />");
 					errorMessage.add(constants.countKeyword() + " " + msg);
-					keywordCountTxtbox.addStyleName("higlight_onViolation");
+					keywordCount.getTextBox().addStyleName("higlight_onViolation");
 				}
 				
 				msg = "";
-				if ((msg = checkTextWidgetForNumber(minLetterForAutoCompTxtbox)) != "")
+				if ((msg = checkTextWidgetForNumber(minLetterForAutoComp.getIntegerBox())) != "")
 				{
 					flag = false;
-					//errorString.append(constants.minLetterAutoComplete() + " " + msg).append("<br />");
 					errorMessage.add(constants.minLetterAutoComplete() + " " + msg);
-					minLetterForAutoCompTxtbox.addStyleName("higlight_onViolation");
+					minLetterForAutoComp.getTextBox().addStyleName("higlight_onViolation");
 				}
 				
 				msg = "";
-				if ((msg = checkTextWidgetForNumber(questionLengthTxtbox)) != "")
+				if ((msg = checkTextWidgetForNumber(questionLength.getIntegerBox())) != "")
 				{
 					flag = false;
-					//errorString.append(constants.questionLength() + " " + msg).append("<br />");
 					errorMessage.add(constants.questionLength() + " " + msg);
-					questionLengthTxtbox.addStyleName("higlight_onViolation");
+					questionLength.getTextBox().addStyleName("higlight_onViolation");
 				}
 				
 				msg = "";
-				if ((msg = checkTextWidgetForNumber(answerLengthTxtbox)) != "")
+				if ((msg = checkTextWidgetForNumber(answerLength.getIntegerBox())) != "")
 				{
 					flag = false;
-					//errorString.append(constants.answerLength() + " " + msg).append("<br />");
 					errorMessage.add(constants.answerLength() + " " + msg);
-					answerLengthTxtbox.addStyleName("higlight_onViolation");
+					answerLength.getTextBox().addStyleName("higlight_onViolation");
 				}
 				
 				msg = "";
-				if ((msg = checkTextWidgetForNumber(shortAnswerLengthTxtbox)) != "")
+				if ((msg = checkTextWidgetForNumber(shortAnswerLength.getIntegerBox())) != "")
 				{
 					flag = false;
-					//errorString.append(constants.lengthShortAns() + " " + msg).append("<br />");
 					errorMessage.add(constants.lengthShortAns() + " " + msg);
-					shortAnswerLengthTxtbox.addStyleName("higlight_onViolation");
+					shortAnswerLength.getTextBox().addStyleName("higlight_onViolation");
 				}
-				
-				/*msg = "";
-				if ((msg = checkTextWidgetForNumber(imageWidthTxtbox)) != "")
-				{
-					flag = false;
-					//errorString.append(constants.imgWidth() + " " + msg).append("<br />");
-					errorMessage.add(constants.imgWidth() + " " + msg);
-					imageWidthTxtbox.addStyleName("higlight_onViolation");
-				}
-				
-				msg = "";
-				if ((msg = checkTextWidgetForNumber(imageLengthTxtbox)) != "")
-				{
-					flag = false;
-					//errorString.append(constants.imgLength() + " " + msg).append("<br />");
-					errorMessage.add(constants.imgLength() + " " + msg);
-					imageLengthTxtbox.addStyleName("higlight_onViolation");
-				}
-				
-				msg = "";
-				if (imageProportionTxtbox.getText().isEmpty())
-				{
-					flag = false;
-					//errorString.append(constants.imgProportion() + " " + constants.questionTypeErroMsg()).append("<br />");
-					errorMessage.add(constants.imgProportion() + " " + constants.questionTypeErroMsg());
-					imageProportionTxtbox.addStyleName("higlight_onViolation");
-				}*/
 				
 				break;
 			}
@@ -1393,58 +1079,14 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 			case ShowInImage:
 			{
 				String msg = "";
-				/*if ((msg = checkTextWidgetForNumber(imageWidthTxtbox)) != "")
-				{
-					flag = false;
-					//errorString.append(constants.imgWidth() + " " + msg).append("<br />");
-					errorMessage.add(constants.imgWidth() + " " + msg);
-					imageWidthTxtbox.addStyleName("higlight_onViolation");
-				}
 				
 				msg = "";
-				if ((msg = checkTextWidgetForNumber(answerLengthTxtbox)) != "")
+				if ((msg = checkTextWidgetForNumber(questionLength.getIntegerBox())) != "")
 				{
 					flag = false;
-					//errorString.append(constants.answerLength() + " " + msg).append("<br />");
-					errorMessage.add(constants.answerLength() + " " + msg);
-					answerLengthTxtbox.addStyleName("higlight_onViolation");
-				}*/
-				
-				msg = "";
-				if ((msg = checkTextWidgetForNumber(questionLengthTxtbox)) != "")
-				{
-					flag = false;
-					//errorString.append(constants.questionLength() + " " + msg).append("<br />");
 					errorMessage.add(constants.questionLength() + " " + msg);
-					questionLengthTxtbox.addStyleName("higlight_onViolation");
+					questionLength.getTextBox().addStyleName("higlight_onViolation");
 				}
-				
-				/*msg = "";
-				if ((msg = checkTextWidgetForNumber(imageLengthTxtbox)) != "")
-				{
-					flag = false;
-					//errorString.append(constants.imgLength() + " " + msg).append("<br />");
-					errorMessage.add(constants.imgLength() + " " + msg);
-					imageLengthTxtbox.addStyleName("higlight_onViolation");
-				}
-				
-				msg = "";
-				if (imageProportionTxtbox.getText().isEmpty())
-				{
-					flag = false;
-					//errorString.append(constants.imgProportion() + " " + constants.questionTypeErroMsg()).append("<br />");
-					errorMessage.add(constants.imgProportion() + " " + constants.questionTypeErroMsg());
-					imageProportionTxtbox.addStyleName("higlight_onViolation");
-				}
-				
-				msg = "";
-				if (linearPointChkBox.getValue() == true && (msg = checkTextWidgetForNumber(linearPercentageTxtbox)) != "")
-				{
-					flag = false;
-					//errorString.append(constants.imgProportion() + " " + msg).append("<br />");
-					errorMessage.add(constants.imgProportion() + " " + msg);
-					linearPercentageTxtbox.addStyleName("higlight_onViolation");
-				}*/
 				
 				break;
 			}
@@ -1452,78 +1094,64 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 			case LongText:
 			{
 				String msg = "";
-				if ((msg = checkTextWidgetForNumber(minLengthTxtbox)) != "")
+				if ((msg = checkTextWidgetForNumber(minLength.getIntegerBox())) != "")
 				{
 					flag = false;
-					//errorString.append(constants.minLength() + " " + msg).append("<br />");
 					errorMessage.add(constants.minLength() + " " + msg);
-					minLengthTxtbox.addStyleName("higlight_onViolation");
+					minLength.getTextBox().addStyleName("higlight_onViolation");
 				}
 				
 				msg = "";
-				if ((msg = checkTextWidgetForNumber(questionLengthTxtbox)) != "")
+				if ((msg = checkTextWidgetForNumber(questionLength.getIntegerBox())) != "")
 				{
 					flag = false;
-					//errorString.append(constants.questionLength() + " " + msg).append("<br />");
 					errorMessage.add(constants.questionLength() + " " + msg);
-					questionLengthTxtbox.addStyleName("higlight_onViolation");
+					questionLength.getTextBox().addStyleName("higlight_onViolation");
 				}
 				
 				msg = "";
-				if ((msg = checkTextWidgetForNumber(maxLengthTxtbox)) != "")
+				if ((msg = checkTextWidgetForNumber(maxLength.getIntegerBox())) != "")
 				{
 					flag = false;
-					//errorString.append(constants.maxLength() + " " + msg).append("<br />");
 					errorMessage.add(constants.maxLength() + " " + msg);
-					maxLengthTxtbox.addStyleName("higlight_onViolation");
+					maxLength.getTextBox().addStyleName("higlight_onViolation");
 				}
 				
 				msg = "";
-				if ((msg = checkTextWidgetForNumber(minWordCountTxtbox)) != "")
+				if ((msg = checkTextWidgetForNumber(minWordCount.getIntegerBox())) != "")
 				{
 					flag = false;
-					//errorString.append(constants.minWordCount() + " " + msg).append("<br />");
 					errorMessage.add(constants.minWordCount() + " " + msg);
-					minWordCountTxtbox.addStyleName("higlight_onViolation");
+					minWordCount.getTextBox().addStyleName("higlight_onViolation");
 				}
 				
 				msg = "";
-				if ((msg = checkTextWidgetForNumber(maxWordCountTxtbox)) != "")
+				if ((msg = checkTextWidgetForNumber(maxWordCount.getIntegerBox())) != "")
 				{
 					flag = false;
-					//errorString.append(constants.maxWordCount() + " " + msg).append("<br />");
 					errorMessage.add(constants.maxWordCount() + " " + msg);
-					maxWordCountTxtbox.addStyleName("higlight_onViolation");
+					maxWordCount.getTextBox().addStyleName("higlight_onViolation");
 				}
 				
 				break;
 			}
 			
 			case Matrix:
-			{			
-				/*String msg = "";
-				if ((msg = checkTextWidgetForNumber(maxLengthTxtbox)) != "")
-				{
-					flag = false;
-					errorString.append(constants.maxLength() + " " + msg).append("<br />");
-					maxLengthTxtbox.addStyleName("higlight_onViolation");
-				}*/
+			{
 				String msg = "";
-				if ((msg = checkTextWidgetForNumber(questionLengthTxtbox)) != "")
+				if ((msg = checkTextWidgetForNumber(questionLength.getIntegerBox())) != "")
 				{
 					flag = false;
-					//errorString.append(constants.questionLength() + " " + msg).append("<br />");
 					errorMessage.add(constants.questionLength() + " " + msg);
-					questionLengthTxtbox.addStyleName("higlight_onViolation");
+					questionLength.getTextBox().addStyleName("higlight_onViolation");
 				}
 				
 				msg = "";
-				if ((msg = checkTextWidgetForNumber(answerLengthTxtbox)) != "")
+				if ((msg = checkTextWidgetForNumber(answerLength.getIntegerBox())) != "")
 				{
 					flag = false;
-					//errorString.append(constants.answerLength() + " " + msg).append("<br />");
 					errorMessage.add(constants.answerLength() + " " + msg);
-					answerLengthTxtbox.addStyleName("higlight_onViolation");
+					answerLength.getTextBox().addStyleName("higlight_onViolation");
 				}
 				break;
 			}
@@ -1531,91 +1159,43 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 			case MCQ:
 			{
 				String msg = "";
-				/*if ((msg = checkTextWidgetForNumber(imageWidthTxtbox)) != "")
-				{
-					flag = false;
-					//errorString.append(constants.imgWidth() + " " + msg).append("<br />");
-					errorMessage.add(constants.imgWidth() + " " + msg);
-					imageWidthTxtbox.addStyleName("higlight_onViolation");
-				}*/
 				
 				msg = "";
-				if ((msg = checkTextWidgetForNumber(questionLengthTxtbox)) != "")
+				if ((msg = checkTextWidgetForNumber(questionLength.getIntegerBox())) != "")
 				{
 					flag = false;
-					//errorString.append(constants.questionLength() + " " + msg).append("<br />");
 					errorMessage.add(constants.questionLength() + " " + msg);
-					questionLengthTxtbox.addStyleName("higlight_onViolation");
+					questionLength.getTextBox().addStyleName("higlight_onViolation");
 				}
 				
-				/*msg = "";
-				if ((msg = checkTextWidgetForNumber(imageLengthTxtbox)) != "")
+				if (multimediaType.getValue().equals(null))
 				{
 					flag = false;
-					//errorString.append(constants.imgLength() + " " + msg).append("<br />");
-					errorMessage.add(constants.imgLength() + " " + msg);
-					imageLengthTxtbox.addStyleName("higlight_onViolation");
-				}*/
-				
-				/*msg = "";
-				if (imageProportionTxtbox.getText().isEmpty())
-				{
-					flag = false;
-					//errorString.append(constants.imgProportion() + " " + constants.questionTypeErroMsg()).append("<br />");
-					errorMessage.add(constants.imgProportion() + " " + constants.questionTypeErroMsg());
-					imageProportionTxtbox.addStyleName("higlight_onViolation");
-				}*/
-				
-				if (multimediaTypeListBox.getValue().equals(null))
-				{
-					flag = false;
-					//errorString.append(constants.multimediaType() + " " + constants.questionTypeErroMsg()).append("<br />");
 					errorMessage.add(constants.multimediaType() + " " + constants.questionTypeErroMsg());
-					multimediaTypeListBox.addStyleName("higlight_onViolation");
+					multimediaType.getValueListBox().addStyleName("higlight_onViolation");
 				}
 				
-				if (selectionTypeListBox.getValue().equals(null))
+				if (selectionType.getValue().equals(null))
 				{
 					flag = false;
-					//errorString.append(constants.selectionType() + " " + constants.questionTypeErroMsg()).append("<br />");
 					errorMessage.add(constants.selectionType() + " " + constants.questionTypeErroMsg());
-					selectionTypeListBox.addStyleName("higlight_onViolation");
+					selectionType.getValueListBox().addStyleName("higlight_onViolation");
 				}
 				
 				msg = "";
-				if ((msg = checkTextWidgetForNumber(columnTxtbox)) != "")
+				if ((msg = checkTextWidgetForNumber(column.getIntegerBox())) != "")
 				{
 					flag = false;
-					//errorString.append(constants.column() + " " + msg).append("<br />");
 					errorMessage.add(constants.column() + " " + msg);
-					columnTxtbox.addStyleName("higlight_onViolation");
+					column.getTextBox().addStyleName("higlight_onViolation");
 				}
-				
-				/*msg = "";
-				if ((msg = checkTextWidgetForNumber(thumbWidthTxtbox)) != "")
-				{
-					flag = false;
-					//errorString.append(constants.thumbWidth() + " " + msg).append("<br />");
-					errorMessage.add(constants.thumbWidth() + " " + msg);
-					thumbWidthTxtbox.addStyleName("higlight_onViolation");
-				}
-				
-				msg = "";
-				if ((msg = checkTextWidgetForNumber(thumbHeightTxtbox)) != "")
-				{
-					flag = false;
-					//errorString.append(constants.thumbHeight() + " " + msg).append("<br />");
-					errorMessage.add(constants.thumbHeight() + " " + msg);
-					thumbHeightTxtbox.addStyleName("higlight_onViolation");
-				}*/
 
 				msg = "";
-				if ((msg = checkTextWidgetForNumber(maxBytesTxtbox)) != "")
+				if ((msg = checkTextWidgetForNumber(maxBytes.getIntegerBox())) != "")
 				{
 					flag = false;
-					//errorString.append(constants.maxBytes() + " " + msg).append("<br />");
 					errorMessage.add(constants.maxBytes() + " " + msg);
-					maxBytesTxtbox.addStyleName("higlight_onViolation");
+					maxBytes.getTextBox().addStyleName("higlight_onViolation");
 				}
 				break;
 			}
@@ -1655,22 +1235,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		
 		return message;
 	}
-	
-	/*private String checkTextWidgetForDouble(TextBox textBox)
-	{
-		String message = "";
-		if (textBox.getText().isEmpty())
-		{
-			message = constants.questionTypeErroMsg();
-		}
-		else if (!ClientUtility.isDouble(textBox.getText()))
-		{
-			message = constants.questionTypeNumErrorMsg();
-		}
 		
-		return message;
-	}*/
-	
 	private String checkTextWidgetForDoubleWithRange(TextBox textBox, int start, int end) {
 		String message = "";
 		if (textBox.getText().isEmpty())
@@ -1692,37 +1257,30 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 	
 	private void removeStyles()
 	{
-		shortNameTxtbox.removeStyleName("higlight_onViolation");
-		longNameTxtbox.removeStyleName("higlight_onViolation");
-		descriptionTxtbox.removeStyleName("higlight_onViolation");
+		shortName.getTextBox().removeStyleName("higlight_onViolation");
+		longName.getTextBox().removeStyleName("higlight_onViolation");
+		description.getTextArea().removeStyleName("higlight_onViolation");
 		
-		sumAnswerTxtbox.removeStyleName("higlight_onViolation");
-		sumTrueAnswerTxtbox.removeStyleName("higlight_onViolation");
-		sumFalseAnswerTxtbox.removeStyleName("higlight_onViolation");
-		questionLengthTxtbox.removeStyleName("higlight_onViolation");
-		answerLengthTxtbox.removeStyleName("higlight_onViolation");
-		answerDiffTxtbox.removeStyleName("higlight_onViolation");
+		sumAnswer.getTextBox().removeStyleName("higlight_onViolation");
+		sumTrueAnswer.getTextBox().removeStyleName("higlight_onViolation");
+		sumFalseAnswer.getTextBox().removeStyleName("higlight_onViolation");
+		questionLength.getTextBox().removeStyleName("higlight_onViolation");
+		answerLength.getTextBox().removeStyleName("higlight_onViolation");
+		answerDiff.getTextBox().removeStyleName("higlight_onViolation");
 		
-		keywordCountTxtbox.removeStyleName("higlight_onViolation");
-		minLetterForAutoCompTxtbox.removeStyleName("higlight_onViolation");
-		answerLengthTxtbox.removeStyleName("higlight_onViolation");
-		shortAnswerLengthTxtbox.removeStyleName("higlight_onViolation");
-		/*imageWidthTxtbox.removeStyleName("higlight_onViolation");
-		imageLengthTxtbox.removeStyleName("higlight_onViolation");
-		imageProportionTxtbox.removeStyleName("higlight_onViolation");*/
+		keywordCount.getTextBox().removeStyleName("higlight_onViolation");
+		minLetterForAutoComp.getTextBox().removeStyleName("higlight_onViolation");
+		answerLength.getTextBox().removeStyleName("higlight_onViolation");
+		shortAnswerLength.getTextBox().removeStyleName("higlight_onViolation");
 		
-		//linearPercentageTxtbox.removeStyleName("higlight_onViolation");
+		minLength.getTextBox().removeStyleName("higlight_onViolation");
+		maxLength.getTextBox().removeStyleName("higlight_onViolation");
+		minWordCount.getTextBox().removeStyleName("higlight_onViolation");
+		maxWordCount.getTextBox().removeStyleName("higlight_onViolation");
 		
-		minLengthTxtbox.removeStyleName("higlight_onViolation");
-		maxLengthTxtbox.removeStyleName("higlight_onViolation");
-		minWordCountTxtbox.removeStyleName("higlight_onViolation");
-		maxWordCountTxtbox.removeStyleName("higlight_onViolation");
-		
-		columnTxtbox.removeStyleName("higlight_onViolation");
-		maxBytesTxtbox.removeStyleName("higlight_onViolation");
-		/*thumbWidthTxtbox.removeStyleName("higlight_onViolation");
-		thumbHeightTxtbox.removeStyleName("higlight_onViolation");*/
-		selectionTypeListBox.removeStyleName("higlight_onViolation");
-		multimediaTypeListBox.removeStyleName("higlight_onViolation");
+		column.getTextBox().removeStyleName("higlight_onViolation");
+		maxBytes.getTextBox().removeStyleName("higlight_onViolation");
+		selectionType.getValueListBox().removeStyleName("higlight_onViolation");
+		multimediaType.getValueListBox().removeStyleName("higlight_onViolation");
 	}
 }

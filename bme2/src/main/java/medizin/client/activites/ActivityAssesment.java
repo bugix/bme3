@@ -3,6 +3,7 @@ package medizin.client.activites;
 import java.util.List;
 
 import medizin.client.events.RecordChangeEvent;
+import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.PlaceAssesment;
 import medizin.client.place.PlaceAssesmentDetails;
@@ -26,6 +27,7 @@ import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
+import com.google.web.bindery.requestfactory.shared.EntityProxyId;
 import com.google.web.bindery.requestfactory.shared.Receiver;
 import com.google.web.bindery.requestfactory.shared.Request;
 
@@ -57,6 +59,8 @@ public class ActivityAssesment extends AbstractActivityWrapper implements Assesm
 	private ActivityAssesmentMapper activityAssesmentMapper;
 	private SingleSelectionModel<AssesmentProxy> selectionModel;
 	private HandlerRegistration rangeChangeHandler;
+
+	private EntityProxyId<?> proxyId = null;
 
 	@Inject
 	public ActivityAssesment(PlaceAssesment place,
@@ -204,6 +208,8 @@ public class ActivityAssesment extends AbstractActivityWrapper implements Assesm
 ////						idToProxy.put(proxyId, assesment);
 //					}
 					table.setRowData(range.getStart(), values);
+					
+					selectRow(range);
 //					finishPendingSelection();
 				if (widget != null) {
 			          widget.setWidget(view.asWidget());
@@ -214,6 +220,26 @@ public class ActivityAssesment extends AbstractActivityWrapper implements Assesm
 			fireRangeRequest(range, callback);
 			
 		}
+		private void selectRow(final Range range) {
+			if (proxyId != null)
+			{
+				requests.find(proxyId).fire(new BMEReceiver<Object>() {
+
+					@Override
+					public void onSuccess(Object response) {
+						if (response != null && response instanceof AssesmentProxy)
+						{
+							AssesmentProxy selectedProxy = (AssesmentProxy) response;
+							selectionModel.setSelected(selectedProxy, true);
+							int start = table.getRowCount() - range.getLength();
+							table.setPageStart((start < 0 ? 0 : start));
+						}
+					}
+				});
+				proxyId = null;
+			}
+		}
+
 		private void fireRangeRequest(final Range range,
 	            final Receiver<List<AssesmentProxy>> callback) {
 				createRangeRequest(range).with(view.getPaths()).fire(callback);
@@ -242,8 +268,12 @@ public class ActivityAssesment extends AbstractActivityWrapper implements Assesm
 		@Override
 		public void placeChanged(Place place) {
 			if(place instanceof PlaceAssesmentDetails){
-				init();
+				if (((PlaceAssesmentDetails)place).getProxyId() != null)
+					proxyId = ((PlaceAssesmentDetails)place).getProxyId();				
 			}
+			
+			if (place instanceof PlaceAssesment)
+				init();
 		}
 
 

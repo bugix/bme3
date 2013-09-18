@@ -5,13 +5,11 @@ import java.util.List;
 import medizin.client.events.RecordChangeEvent;
 import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
-import medizin.client.place.AbstractDetailsPlace.Operation;
 import medizin.client.place.PlaceQuestiontypes;
 import medizin.client.place.PlaceQuestiontypesDetails;
 import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.ui.view.QuestiontypesView;
 import medizin.client.ui.view.QuestiontypesViewImpl;
-import medizin.client.ui.view.question.QuestionViewImpl;
 import medizin.client.ui.widget.Sorting;
 
 import com.allen_sauer.gwt.log.client.Log;
@@ -32,6 +30,7 @@ import com.google.gwt.view.client.RangeChangeEvent.Handler;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
+import com.google.web.bindery.requestfactory.shared.EntityProxyId;
 
 public class ActivityQuestiontypes extends AbstractActivityWrapper implements QuestiontypesView.Presenter, QuestiontypesView.Delegate {
 
@@ -108,6 +107,8 @@ public class ActivityQuestiontypes extends AbstractActivityWrapper implements Qu
 		}*/
 	}
 	private QuestionTypeProxy questionType;
+
+	private EntityProxyId<?> proxyId = null;
 		
 //	public void  setTable(CellTable<QuestionTypeProxy> table){
 //		this.table = table;
@@ -220,10 +221,10 @@ public class ActivityQuestiontypes extends AbstractActivityWrapper implements Qu
 		requests.questionTypeRequest().countAllQuestionType(searchValue).fire(new  BMEReceiver<Long>() {
 
 			@Override
-			public void onSuccess(Long arg0) {
+			public void onSuccess(final Long count) {
 				// TODO Auto-generated method stub
-				Log.info("count total--"+arg0);
-				table.setRowCount(arg0.intValue());
+				Log.info("count total--"+count);
+				table.setRowCount(count.intValue());
 				
 			//	System.out.println("Start: " + range.getStart() + " Length: " + range.getLength());
 				requests.questionTypeRequest().findAllQuestionType(range.getStart(),range.getLength(),sortname,sortorder,searchValue).fire(new BMEReceiver<List<QuestionTypeProxy>>() {
@@ -233,6 +234,7 @@ public class ActivityQuestiontypes extends AbstractActivityWrapper implements Qu
 						// TODO Auto-generated method stub
 						Log.info("response of all list--"+arg0.size());
 						table.setRowData(range.getStart(), arg0);
+						selectRow(range, count);
 					}
 				});
 			}
@@ -246,7 +248,7 @@ public class ActivityQuestiontypes extends AbstractActivityWrapper implements Qu
 			requests.questionTypeRequest().countAllQuestionType(searchValue).fire(new  BMEReceiver<Long>() {
 
 				@Override
-				public void onSuccess(Long response) {
+				public void onSuccess(final Long response) {
 					// TODO Auto-generated method stub
 					Log.info("count total--"+response);
 					table.setRowCount(response.intValue());
@@ -259,6 +261,7 @@ public class ActivityQuestiontypes extends AbstractActivityWrapper implements Qu
 							// TODO Auto-generated method stub
 							Log.info("response of all list--"+arg0.size());
 							table.setRowData(range.getStart(), arg0);
+							selectRow(range, response);
 						}
 					});
 				}
@@ -389,8 +392,10 @@ public class ActivityQuestiontypes extends AbstractActivityWrapper implements Qu
 						Log.debug("view ist null");
 						return;
 					}
+					
 					table.setRowData(range.getStart(), values);
-				
+					
+					selectRow(range, 0l);
 				
 				if (widget != null) {
 			          widget.setWidget(view.asWidget());
@@ -399,7 +404,34 @@ public class ActivityQuestiontypes extends AbstractActivityWrapper implements Qu
 			});
 			
 		}//End onRangeChanged
-		
+				
+		private void selectRow(final Range range, final Long count) {
+			if (proxyId != null)
+			{
+				requests.find(proxyId).fire(new BMEReceiver<Object>() {
+
+					@Override
+					public void onSuccess(final Object response) {
+						if (response != null && response instanceof QuestionTypeProxy)
+						{
+							requests.questionTypeRequest().findAllQuestionType(range.getStart(), count.intValue(), sortname, sortorder, searchValue).fire(new BMEReceiver<List<QuestionTypeProxy>>() {
+
+								@Override
+								public void onSuccess(List<QuestionTypeProxy> questionTypeList) {
+									QuestionTypeProxy selectedProxy = (QuestionTypeProxy) response;
+									selectionModel.setSelected(selectedProxy, true);							
+									int index = questionTypeList.indexOf(selectedProxy);							
+									int start = ((index / range.getLength()) * range.getLength());
+									table.setPageStart((start < 0 ? 0 : start));
+								}
+							});							
+						}
+						proxyId = null;
+					}
+				});
+			}
+		}
+
 //		private void fireRangeRequest(final Range range,
 //	            final Receiver<List<QuestionTypeProxy>> callback) {
 //				createRangeRequest(range).with(view.getPaths()).fire(callback);
@@ -465,19 +497,18 @@ public class ActivityQuestiontypes extends AbstractActivityWrapper implements Qu
 		@Override
 		public void placeChanged(Place place) {
 			if (place instanceof PlaceQuestiontypesDetails) {
-				
-				
-				
-				PlaceQuestiontypesDetails placeDetails = (PlaceQuestiontypesDetails) place;
-				if (placeDetails.getOperation() == Operation.DETAILS) {
-					init();
-					//requests.getEventBus().fireEvent(new ApplicationLoadingScreenEvent(false));
+				if (((PlaceQuestiontypesDetails)place).getProxyId() != null)
+				{
+					proxyId = ((PlaceQuestiontypesDetails)place).getProxyId();
+					//init();
 				}
 			}	
 			
 			if (place instanceof PlaceQuestiontypes)
+			{
 				init();
-		}
+			}
+	    }
 	
 		
 

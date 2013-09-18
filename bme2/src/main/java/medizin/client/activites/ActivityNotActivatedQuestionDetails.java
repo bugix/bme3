@@ -36,7 +36,7 @@ import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.RangeChangeEvent;
 
-public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper implements QuestionDetailsView.Delegate, QuestionDetailsView.Presenter, AnswerDialogbox.Delegate, AnswerListView.Delegate, MatrixAnswerView.Delegate, MatrixAnswerListView.Delegate, MatrixAnswerListView.Presenter {
+public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper implements QuestionDetailsView.Delegate, AnswerDialogbox.Delegate, AnswerListView.Delegate, MatrixAnswerView.Delegate, MatrixAnswerListView.Delegate {
 
 	private final PlaceNotActivatedQuestionDetails placeNotActivatedQuestionDetails;
 	private final McAppRequestFactory requests;
@@ -54,7 +54,6 @@ public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper
 		this.placeController = placeController;
 	}
 
-	@Override
 	public void goTo(Place place) {
 		placeController.goTo(place);
 	}
@@ -74,7 +73,7 @@ public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper
 	
 	@Override
 	public void start2(AcceptsOneWidget panel, EventBus eventBus) {
-		QuestionDetailsViewImpl questionDetailsView = new QuestionDetailsViewImpl(eventBus, false,false);
+		QuestionDetailsViewImpl questionDetailsView = new QuestionDetailsViewImpl(eventBus, false,false,false,true,false);
 		this.view = questionDetailsView;
 		
 		questionDetailsView.setDelegate(this);
@@ -128,10 +127,7 @@ public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper
 			view.getAnswerListViewImpl().setVisible(true);
 			initAnswerView();
 		}
-		
-		view.getAcceptBtn().setVisible(false);
-		view.getForcedActiveBtn().setVisible(true);
-		
+				
 		initKeywordView();
 	}
 	
@@ -259,12 +255,6 @@ public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper
 		});
 	}
 	
-
-	@Override
-	public boolean isQuestionDetailsPlace() {
-		return false;
-	}
-	
 	@Override
 	public void placeChanged(Place place) {
 		placeController.goTo(place);
@@ -293,15 +283,15 @@ public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper
 	}
 	
 	@Override
-	public void getLatestQuestionDetails(Function<QuestionProxy, Void> function) {
-		function.apply(question);
+	public QuestionProxy getLatestQuestionDetails() {
+		return question;
 	}
 	
 	@Override
 	public void enableBtnOnLatestClicked() {
 		view.setVisibleEditAndDeleteBtn(false);
 		view.getAcceptBtn().setVisible(false);
-		view.getForcedActiveBtn().setVisible(true);
+		view.setVisibleForcedActiveBtn(true);
 	}
 	
 	@Override
@@ -350,25 +340,7 @@ public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper
 	public void editClicked() {}
 
 	@Override
-	public void newClicked() {}
-
-	@Override
-	public void deleteSelectedQuestionResource(Long qestionResourceId) {}
-
-	@Override
-	public void addNewQuestionResource(QuestionResourceClient questionResourceClient) {}
-
-	/*@Override
-	public void updatePicturePathInQuestion(String picturePath) {}
-
-	@Override
-	public void deleteUploadedPicture(String picturePath) {}*/
-
-	@Override
 	public void deleteUploadedFiles(Set<String> paths) {}
-
-	@Override
-	public void changedResourceSequence(Set<QuestionResourceClient> questionResourceClients) {}
 
 	@Override
 	public void acceptQuestionClicked(QuestionProxy proxy) {}

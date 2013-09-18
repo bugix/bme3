@@ -28,3 +28,7 @@
 	padding-left: 5px;
 	padding-right: 5px;
 }
+
+.attributeSelected {
+	background: linear-gradient(to right top, #FFF2BE 0px, #FFFFFF 100%) !important;
+}

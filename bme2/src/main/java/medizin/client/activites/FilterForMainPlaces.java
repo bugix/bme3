@@ -95,8 +95,8 @@ public class FilterForMainPlaces implements FilteredActivityMapper.Filter {
 		 if (place instanceof PlaceQuestion)
 	            return  (PlaceQuestion) place;
 		 
-		 if (place instanceof PlaceQuestiontypes)
-	            return  (PlaceQuestiontypes) place;
+		 /*if (place instanceof PlaceQuestiontypes)
+	            return  (PlaceQuestiontypes) place;*/
 		 
 		 if (place instanceof PlaceStaticContent)
 	            return  (PlaceStaticContent) place;
@@ -121,37 +121,37 @@ public class FilterForMainPlaces implements FilteredActivityMapper.Filter {
 			 
 		 }
 		 if (place instanceof PlaceUserDetails){
-			 //PlaceUserDetails placeUserDetails= (PlaceUserDetails)place;
+			 PlaceUserDetails placeUserDetails= (PlaceUserDetails)place;
 			 /*if(placeUserDetails.getOperation()!=PlaceUserDetails.Operation.CREATE)
 				 return  new PlaceUser(placeUserDetails.getProxyId());
 			 else
 				 return  new PlaceUser(placeUserDetails.getOperation().toString());*/
 			 
-			 return new PlaceUser(PlaceUser.PLACE_USER);
+			 return new PlaceUser(PlaceUser.PLACE_USER, placeUserDetails.getProxyId());
 			 
 		 }
 		 if (place instanceof PlaceQuestiontypesDetails){
-			 //PlaceQuestiontypesDetails placeQuestiontypesDetails = (PlaceQuestiontypesDetails)place;
-			 return  new PlaceQuestiontypes(PlaceQuestiontypes.PLACE_QUESTIONTYPES);
-			 //return new PlaceQuestiontypes(placeQuestiontypesDetails.getProxyId());
+			 PlaceQuestiontypesDetails placeQuestiontypesDetails = (PlaceQuestiontypesDetails)place;
+			 //return  new PlaceQuestiontypes(PlaceQuestiontypes.PLACE_QUESTIONTYPES);
+			 return new PlaceQuestiontypes(PlaceQuestiontypes.PLACE_QUESTIONTYPES, placeQuestiontypesDetails.getProxyId());
 			
 		 }
 		 if (place instanceof PlaceAssesmentDetails){
-			 //PlaceAssesmentDetails placeAssesmentDetails= (PlaceAssesmentDetails)place;
-			 return new PlaceAssesment(PlaceAssesment.PLACE_ASSESMENT);
-			 //return new PlaceAssesment(placeAssesmentDetails.getProxyId());
+			 PlaceAssesmentDetails placeAssesmentDetails= (PlaceAssesmentDetails)place;
+			 //return new PlaceAssesment(PlaceAssesment.PLACE_ASSESMENT);
+			 return new PlaceAssesment(PlaceAssesment.PLACE_ASSESMENT, placeAssesmentDetails.getProxyId());
 		 }
 		 
 		 if (place instanceof PlaceQuestionDetails){
-			 //PlaceQuestionDetails placeQuestionDetails = (PlaceQuestionDetails)place;
-			 return new PlaceQuestion(PlaceQuestion.PLACE_QUESTION);
-			 //return new PlaceQuestion(placeQuestionDetails.getProxyId());
+			 PlaceQuestionDetails placeQuestionDetails = (PlaceQuestionDetails)place;
+			 //return new PlaceQuestion(PlaceQuestion.PLACE_QUESTION);
+			 return new PlaceQuestion(PlaceQuestion.PLACE_QUESTION, placeQuestionDetails.getProxyId());
 		 }
 		
 		 if(place instanceof PlaceAcceptQuestionDetails) {
-			 //PlaceAcceptQuestionDetails placeAcceptQuestionDetails = (PlaceAcceptQuestionDetails) place;
-			 return new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION);
-			 //return new PlaceAcceptQuestion(paceAcceptQuestionDetails.getProxyId());
+			 PlaceAcceptQuestionDetails placeAcceptQuestionDetails = (PlaceAcceptQuestionDetails) place;
+			 //return new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION);
+			 return new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION, placeAcceptQuestionDetails.getProxyId());
 		 }
 		 
 		 if (place instanceof PlaceNotActivatedQuestion)

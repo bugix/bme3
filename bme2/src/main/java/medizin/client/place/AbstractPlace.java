@@ -6,9 +6,11 @@ import medizin.client.factory.request.McAppRequestFactory;
 import com.google.common.base.Objects;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceTokenizer;
+import com.google.web.bindery.requestfactory.shared.EntityProxyId;
 
 public abstract class AbstractPlace extends Place {
 	private final String placeName;
+	private EntityProxyId<?> proxyId;
 	private boolean reload;
 
 	public AbstractPlace(String placeName) {
@@ -21,9 +23,23 @@ public abstract class AbstractPlace extends Place {
 		this.reload = reload;
 	}
 	
+	public AbstractPlace(String placeName, EntityProxyId<?> proxyId) {
+		this.placeName = placeName;
+		this.proxyId = proxyId;
+	}
+	
 	public final String getPlaceName() {
 		return placeName;
 	}
+	
+	public final EntityProxyId<?> getProxyId() {
+		return proxyId;
+	}
+
+	public final void setProxyId(EntityProxyId<?> id) {
+		this.proxyId = id;
+	}
+
 
 	public static abstract class AbstractTokenizer<P extends AbstractPlace> implements PlaceTokenizer<P> {
 		protected final McAppRequestFactory requestFactory;

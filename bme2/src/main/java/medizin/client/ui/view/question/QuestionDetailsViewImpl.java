@@ -44,7 +44,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
@@ -193,46 +192,17 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 
 	@UiHandler("latest")
 	public void onlatestClicked(ClickEvent e) {
-		/*//remove edit and delete btn
+		QuestionProxy proxy = delegate.getLatestQuestionDetails();	
+		setValue(proxy);
+		//remove edit and delete btn
+		delegate.enableBtnOnLatestClicked();
 		
-		if(delegate.isQuestionDetailsPlace() && proxy != null && proxy.getIsReadOnly() == false) {
-			setVisibleIconButton(true);	
+		latest.setEnabled(false);
+		if(proxy.getPreviousVersion()== null) {
+			previous.setEnabled(false);	
+		}else {
+			previous.setEnabled(true);
 		}
-		else if(delegate.isQuestionDetailsPlace() && proxy != null && proxy.getIsReadOnly() == true) {
-			setVisibleIconButton(false);
-		}
-		else  if(delegate.isQuestionDetailsPlace() == false){
-			setVisibleAcceptButton();
-		}*/
-		
-		delegate.getLatestQuestionDetails(new Function<QuestionProxy, Void>() {
-
-			@Override
-			public Void apply(QuestionProxy input) {
-				setValue(input);
-				
-				//remove edit and delete btn
-				
-				delegate.enableBtnOnLatestClicked();
-				/*if(delegate.isQuestionDetailsPlace() && proxy != null && proxy.getIsReadOnly() == false) {
-					setVisibleIconButton(true);	
-				}
-				else if(delegate.isQuestionDetailsPlace() && proxy != null && proxy.getIsReadOnly() == true) {
-					setVisibleIconButton(false);
-				}
-				else  if(delegate.isQuestionDetailsPlace() == false){
-					setVisibleAcceptButton();
-				}*/
-				
-				latest.setEnabled(false);
-				if(input.getPreviousVersion()== null) {
-					previous.setEnabled(false);	
-				}else {
-					previous.setEnabled(true);
-				}
-				return null;
-			}
-		});	
 	}
 
 	@UiHandler("forcedActive")
@@ -273,11 +243,11 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 			previous.setEnabled(false);
 		}
 		
-		delegate.checkForResendToReview();
-		
+		//delegate.checkForResendToReview();
+		/*
 		if(proxy.getIsReadOnly() == true) {
 			setVisibleEditAndDeleteBtn(false);
-		}
+		}*/
 		/*mcs.setInnerText(proxy.getMcs() == null ? ""
 				: medizin.client.ui.view.roo.CollectionRenderer.of(
 						medizin.client.ui.view.roo.McProxyRenderer.instance())
@@ -415,18 +385,20 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 		}
 	}
 
-	public QuestionDetailsViewImpl(EventBus eventBus, Boolean editDeleteflag, boolean isAnswerEditable) {
+	public QuestionDetailsViewImpl(EventBus eventBus, Boolean editDeleteflag, boolean isAnswerEditable, boolean addAnswerRights, boolean isforceView, boolean isAcceptView) {
 		CellTable.Resources tableResources = GWT.create(MyCellTableNoHilightResources.class);
 		keywordTable = new CellTable<KeywordProxy>(5, tableResources);
 		
 		MySimplePager.Resources pagerResources = GWT.create(MySimplePagerResources.class);
 		keywordTablePager = new MySimplePager(MySimplePager.TextLocation.RIGHT, pagerResources, true, 10, true);
 		
-		answerListViewImpl = new AnswerListViewImpl(isAnswerEditable);
-		matrixAnswerListViewImpl = new MatrixAnswerListViewImpl(isAnswerEditable);
+		answerListViewImpl = new AnswerListViewImpl(addAnswerRights, isAnswerEditable);
+		matrixAnswerListViewImpl = new MatrixAnswerListViewImpl(addAnswerRights, isAnswerEditable);
 		initWidget(uiBinder.createAndBindUi(this));
 		
-		setVisibleEditAndDeleteBtn(editDeleteflag);
+		removeEditAndDeleteBtn(editDeleteflag);
+		removeForceView(isforceView);
+		removeAcceptView(isAcceptView);
 		
 		this.eventBus = eventBus;
 		
@@ -436,6 +408,8 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 		initKeyword(isAnswerEditable);
 	}
 	
+	
+
 	@UiHandler("keywordAddButton")
 	public void keywordAddButtonClicked(ClickEvent event)
 	{
@@ -736,15 +710,24 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 		resourceViewPanel.add(imageViewer);
 	}*/
 	
-	public void setVisibleEditAndDeleteBtn(Boolean flag)
+	@Override
+	public void removeEditAndDeleteBtn(Boolean flag)
 	{
-		edit.setVisible(flag);
-		delete.setVisible(flag);
+		if(flag == false) {
+			edit.removeFromParent();
+			delete.removeFromParent();
+		}
+	}
+	
+	@Override
+	public void setVisibleEditAndDeleteBtn(Boolean isEdit) {
+		edit.setVisible(isEdit);
+		delete.setVisible(isEdit);
 	}
 	
 	public void setVisibleAcceptButton()
 	{
-		delete.setVisible(false);
+		delete.removeFromParent();
 		edit.setVisible(true);
 		accept.setVisible(true);
 	}
@@ -795,11 +778,6 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 		return accept;
 	}
 	
-	@Override
-	public IconButton getForcedActiveBtn() {
-		return forcedActive;
-	}
-
 	private <C> void addColumn(Cell<C> cell, String headerText,
 			final GetValue<C> getter, FieldUpdater<KeywordProxy, C> fieldUpdater) {
 		Column<KeywordProxy, C> column = new Column<KeywordProxy, C>(cell) {
@@ -831,8 +809,7 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 		return keywordSuggestBox;
 	}
 
-	public void setKeywordSuggestBox(
-			DefaultSuggestBox<KeywordProxy, EventHandlingValueHolderItem<KeywordProxy>> keywordSuggestBox) {
+	public void setKeywordSuggestBox(DefaultSuggestBox<KeywordProxy, EventHandlingValueHolderItem<KeywordProxy>> keywordSuggestBox) {
 		this.keywordSuggestBox = keywordSuggestBox;
 	}
 
@@ -842,6 +819,35 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 
 	public void setKeywordAddButton(IconButton keywordAddButton) {
 		this.keywordAddButton = keywordAddButton;
+	}
+
+	public void setVisibleForcedActiveBtn(boolean visible) {
+		
+		if(visible == false) {
+			forcedActive.setVisible(false);
+		}else {
+			forcedActive.setVisible(true);
+		}	
+		
+	}
+	
+	private void removeAcceptView(boolean isAcceptView) {
+		if(isAcceptView == false) {
+			accept.removeFromParent();
+			resendToReview.removeFromParent();
+		}else {
+			accept.setVisible(true);
+			resendToReview.setVisible(true);
+		}
+	}
+
+	private void removeForceView(boolean isforceView) {
+		if(isforceView == false) {
+			forcedActive.removeFromParent();
+			forcedActive.removeFromParent();
+		}else {
+			forcedActive.setVisible(true);
+		}
 	}
 
 	

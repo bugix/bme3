@@ -22,6 +22,6 @@ public class CommentProxyRenderer extends ProxyRenderer<CommentProxy> {
         if (object == null) {
             return "";
         }
-        return object.getComment() + " (" + object.getComment() + ")";
+        return object.getComment();
     }
 }

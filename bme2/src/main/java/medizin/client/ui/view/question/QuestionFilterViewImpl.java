@@ -75,7 +75,7 @@ public class QuestionFilterViewImpl extends PopupPanel{
 		labelPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		buttonPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		
-		setSize("200px", "100px");
+		/*setSize("235px", "100px");*/
 	}
 
 	public CheckBox getQuestionText() {

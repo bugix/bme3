@@ -1,8 +1,8 @@
 package medizin.client.ui.view.roo;
 
-import com.google.web.bindery.requestfactory.gwt.ui.client.ProxyRenderer;
-import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.QuestionEventProxy;
+
+import com.google.web.bindery.requestfactory.gwt.ui.client.ProxyRenderer;
 
 public class QuestionEventProxyRenderer extends ProxyRenderer<QuestionEventProxy> {
 
@@ -23,6 +23,6 @@ public class QuestionEventProxyRenderer extends ProxyRenderer<QuestionEventProxy
         if (object == null) {
             return "";
         }
-        return object.getEventName() + " (" + object.getEventName() + ")";
+        return object.getEventName();
     }
 }

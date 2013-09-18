@@ -99,6 +99,7 @@ public class Person {
         }
         
         session.setAttribute(ServerConstants.SESSION_SHIBD_ID_KEY, this.shidId);
+        fetchLoggedPersonAccessRights();
     }
 
     public void loginPerson(HttpSession session,String shibId) {
@@ -114,6 +115,7 @@ public class Person {
         	log.info("Updated shibid : " + this.shidId);
         }
         session.setAttribute(ServerConstants.SESSION_SHIBD_ID_KEY, this.shidId);
+        fetchLoggedPersonAccessRights();
     }
     
     public static medizin.server.domain.Person findPersonByShibId(String shibdId) {
@@ -138,6 +140,15 @@ public class Person {
         /*if (session.getAttribute("shibdId") == null) {
             session.setAttribute("shibdId", "LHDAHSDFHDKJFH747835");
         }*/
+        Person person = null;
+        if (session.getAttribute(ServerConstants.SESSION_SHIBD_ID_KEY) != null)
+        {
+        	person = findPersonByShibId(session.getAttribute(ServerConstants.SESSION_SHIBD_ID_KEY).toString());
+        }
+        return person;
+    }
+    
+    public static Person myGetLoggedPerson(HttpSession session) {
         Person person = null;
         if (session.getAttribute(ServerConstants.SESSION_SHIBD_ID_KEY) != null)
         {
@@ -202,6 +213,7 @@ public class Person {
     	CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
     	CriteriaQuery<Person> criteriaQuery = criteriaBuilder.createQuery(Person.class);
     	Root<Person> from = criteriaQuery.from(Person.class);
+    	criteriaQuery.orderBy(criteriaBuilder.asc(from.get("id")));
     	
     	try{
 
@@ -237,6 +249,7 @@ public class Person {
 		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
 		CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
 		Root<Person> from = criteriaQuery.from(Person.class);
+		criteriaQuery.orderBy(criteriaBuilder.asc(from.get("id")));
 		
 		try{
 			Person userLoggedIn = myGetLoggedPerson();
@@ -310,9 +323,7 @@ public class Person {
 					criteriaQuery.where(criteriaBuilder.and(pre11,pre12));
 					
 					TypedQuery<UserAccessRights> query1 = entityManager().createQuery(criteriaQuery);
-					
-					//Log.info("QUERY1 : " + query1.unwrap(org.hibernate.Query.class).getQueryString());
-					
+				
 					personAccess.setQuestionEventAccList(query1.getResultList());
 					
 					Predicate pre21 = criteriaBuilder.equal(from.get("person").get("id"), person.getId());				 
@@ -321,14 +332,46 @@ public class Person {
 					criteriaQuery.where(criteriaBuilder.and(pre21,pre22));
 					
 					TypedQuery<UserAccessRights> query2 = entityManager().createQuery(criteriaQuery);
-										
+											
 					personAccess.setQuestionAccList(query2.getResultList());
 				}
 			}
 		}
 		
+		putPersonAccessInSession(personAccess);
 		return personAccess;
     }
+
+	private static void putPersonAccessInSession(PersonAccessRight personAccess) {
+		HttpSession session = RequestFactoryServlet.getThreadLocalRequest().getSession();
+		session.setAttribute(ServerConstants.SESSION_PERSON_ACCESS_KEY, personAccess);
+	}
+	
+	public static PersonAccessRight fetchPersonAccessFromSession()
+	{
+		PersonAccessRight personAccessRights = null;
+		HttpSession session = RequestFactoryServlet.getThreadLocalRequest().getSession();
+		Object object = session.getAttribute(ServerConstants.SESSION_PERSON_ACCESS_KEY);
+		if (object != null && object instanceof PersonAccessRight){
+			personAccessRights = (PersonAccessRight) object;
+		}
+		else{
+			personAccessRights = fetchLoggedPersonAccessRights();
+		}
+		
+		return personAccessRights;
+	}
+	
+	public static PersonAccessRight fetchPersonAccessFromSession(HttpSession session)
+	{
+		PersonAccessRight personAccessRights = null;
+		Object object = session.getAttribute(ServerConstants.SESSION_PERSON_ACCESS_KEY);
+		if (object != null && object instanceof PersonAccessRight){
+			personAccessRights = (PersonAccessRight) object;
+		}
+		return personAccessRights;
+	}
+	
 
 	public static Person findPersonByEmail(String email) {
 		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();

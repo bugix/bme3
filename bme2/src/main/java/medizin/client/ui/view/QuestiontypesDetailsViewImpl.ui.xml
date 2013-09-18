@@ -69,6 +69,7 @@
 		
 		.valueHeight {
 			min-height: 25px;
+			white-space: normal;
 		}
 	</ui:style>
 	<g:HTMLPanel>

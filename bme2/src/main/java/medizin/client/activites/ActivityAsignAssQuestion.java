@@ -270,7 +270,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 			
 			//populate author list box
 			
-			if(examAutorListMap.get(assesment) ==null)		
+			/*if(examAutorListMap.get(assesment) ==null)		
 			{
 				populateAuthorListBox(questionPanel.getAuthorListBox(),assesment,true);
 				//questionPanel.getAuthorListBox().setValue(assementQuestionPanel.getAuthorListBox().getValue());
@@ -283,12 +283,12 @@ QuestionAdvancedSearchPopupView.Delegate {
 					questionPanel.getAuthorListBox().setValue(null);
 				
 				questionPanel.getAuthorListBox().setAcceptableValues(examAutorListMap.get(assesment));
-			}
-			author=questionPanel.getAuthorListBox().getValue();
+			}*/
+			author=assementQuestionPanel.getAuthorListBox().getValue();
 		}
 		else
 		{
-			questionPanel.getAuthorListBox().removeFromParent();
+			//questionPanel.getAuthorListBox().removeFromParent();
 			author=userLoggedIn;
 		}
 		
@@ -368,13 +368,13 @@ QuestionAdvancedSearchPopupView.Delegate {
 		
 		if(personRightProxy.getIsAdmin() || personRightProxy.getIsInstitutionalAdmin())
 		{
-			author=questionPanel.getAuthorListBox().getValue();
+			author=assementQuestionPanel.getAuthorListBox().getValue();
 		}
 		else
 		{
 			author=userLoggedIn;
 		}
-		requests.assesmentQuestionRequest().findAssesmentQuestionsByMc(assesment.getId(),assesment.getMc().getId(), encodedStringList, questionId,questionType,questionName,questionPanel.getAuthorListBox().getValue()).with("question.rewiewer","question.autor","question.keywords","question.questEvent","question.comment","question.questionType").fire(new BMEReceiver<List<AssesmentQuestionProxy>>() {
+		requests.assesmentQuestionRequest().findAssesmentQuestionsByMc(assesment.getId(),assesment.getMc().getId(), encodedStringList, questionId,questionType,questionName,assementQuestionPanel.getAuthorListBox().getValue()).with("question.rewiewer","question.autor","question.keywords","question.questEvent","question.comment","question.questionType").fire(new BMEReceiver<List<AssesmentQuestionProxy>>() {
 
 			@Override
 			public void onSuccess(List<AssesmentQuestionProxy> response) {
@@ -958,7 +958,8 @@ QuestionAdvancedSearchPopupView.Delegate {
 	public void authorValueChanged(PersonProxy value) {
 		
 		initAssementQuestionPanel(value);
-		questionPanel.getAuthorListBox().setValue(value);
+		initQuestionPanel(addQuestionsTabPanel.getActiveTab(), assesmentTabPanel.getActiveTab(), advancedSearchCriteriaList, "","","");
+		//questionPanel.getAuthorListBox().setValue(value);
 		
 	}
 
@@ -1163,7 +1164,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 		   
 		   if(viaAddButton)
 		   {
-			   author=questionPanel.getAuthorListBox().getValue();
+			   author=assementQuestionPanel.getAuthorListBox().getValue();
 		   }
 		   else
 		   {
@@ -1209,7 +1210,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 					 {
 						 ((QuestionViewImpl)questionViewAktiv).removeFromParent();
 					
-						 if(((personRightProxy.getIsInstitutionalAdmin() || personRightProxy.getIsAdmin()) && assementQuestionPanel.getAuthorListBox().getValue().equals(questionPanel.getAuthorListBox().getValue())))
+						 if(((personRightProxy.getIsInstitutionalAdmin() || personRightProxy.getIsAdmin()) /*&& assementQuestionPanel.getAuthorListBox().getValue().equals(questionPanel.getAuthorListBox().getValue())*/))
 								assementQuestionPanel.getAssesmentQuestionDisplayPanel().add(questionViewAktiv);
 								
 								if(!((personRightProxy.getIsInstitutionalAdmin() || personRightProxy.getIsAdmin()))) //examiner
@@ -1238,7 +1239,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 				   selectedAuthor=assementQuestionPanel.getAuthorListBox().getValue();
 			   else
 			   {
-				   selectedAuthor=questionPanel.getAuthorListBox().getValue();
+				   selectedAuthor=assementQuestionPanel.getAuthorListBox().getValue();
 			   }
 		   }
 		  
@@ -1383,6 +1384,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 		assementQuestionPanel.getAuthorListBox().setValue(value);	
 		
 		initAssementQuestionPanel(value);
+		initQuestionPanel(addQuestionsTabPanel.getActiveTab(), assesmentTabPanel.getActiveTab(), advancedSearchCriteriaList, "","","");
 		
 		
 	}
@@ -1395,25 +1397,24 @@ QuestionAdvancedSearchPopupView.Delegate {
 		{
 			Integer sumOfAnswer=questionProxy.getQuestionType().getSumAnswer();
 			Integer sumOfTrueAnsw=questionProxy.getQuestionType().getSumTrueAnswer();
-			
+			int totalAnswerSelected=0;
 			//check true question
 			if(questionProxy.getQuestionType().getSumTrueAnswer() > 0)
 			{
 				int totalAnswers=questionViewImpl.getAnswerPanel().getWidgetCount();
-				int trueAnswer=0;
-				int totalAnswerSelected=0;
+				int trueAnswer=0;				
 				for(int i=0;i<totalAnswers;i++)
 				{
 					
 					AnswerViewImpl answerViewImpl=(AnswerViewImpl)questionViewImpl.getAnswerPanel().getWidget(i);
-					if(answerViewImpl.getChecked() && answerViewImpl.getProxy().getValidity()== Validity.Wahr)
-					{
-						trueAnswer++;
-					}
-					if(answerViewImpl.getChecked())
+					if(answerViewImpl.getChecked() )
 					{
 						totalAnswerSelected++;
+						
+						if(answerViewImpl.getProxy().getValidity()== Validity.Wahr)
+							trueAnswer++;
 					}
+					
 				}
 				
 				if(sumOfTrueAnsw==trueAnswer && totalAnswerSelected==sumOfAnswer)
@@ -1421,13 +1422,9 @@ QuestionAdvancedSearchPopupView.Delegate {
 				else
 				{
 					if(sumOfTrueAnsw!=trueAnswer)
-					ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.sumOfTrueAnswer(sumOfTrueAnsw));
-					
-					if(totalAnswerSelected != sumOfAnswer)
-					{
+						ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.sumOfTrueAnswer(sumOfTrueAnsw));
+					else if(totalAnswerSelected != sumOfAnswer)
 						ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.sumOfAnswer(sumOfAnswer));
-
-					}
 					
 					return false;
 				}
@@ -1438,24 +1435,35 @@ QuestionAdvancedSearchPopupView.Delegate {
 				int totalAnswers=questionViewImpl.getAnswerPanel().getWidgetCount();
 				int sumFalseAnswers=questionViewImpl.getProxy().getQuestionType().getSumFalseAnswer();
 				int falseAnswerSelected=0;
+				boolean isAllAnswerFalse = true;
 				for(int i=0;i<totalAnswers;i++)
 				{
 					AnswerViewImpl answerViewImpl=(AnswerViewImpl)questionViewImpl.getAnswerPanel().getWidget(i);
-					
-					if(answerViewImpl.getChecked() && answerViewImpl.getProxy().getValidity()== Validity.Falsch)
+					if(answerViewImpl.getChecked())
 					{
-						falseAnswerSelected++;
+						totalAnswerSelected++;						
+						
+						if(answerViewImpl.getProxy().getValidity()== Validity.Falsch)
+							falseAnswerSelected++;
+						else
+						{
+							isAllAnswerFalse=false;
+							break;							
+						}
 					}
-					
 				}
 				
-				if(sumFalseAnswers==falseAnswerSelected)
+				//if(sumFalseAnswers==falseAnswerSelected)
+				if(isAllAnswerFalse && totalAnswerSelected==sumOfAnswer)
 				{
 					return true;					
 				}
 				else
 				{
-					ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.sumOfFalseAnswer(sumFalseAnswers));
+					if(!isAllAnswerFalse)
+						ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.sumOfFalseAnswer(sumOfAnswer));
+					else if(totalAnswerSelected != sumOfAnswer)
+						ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.sumOfAnswer(sumOfAnswer));
 					return false;
 				}
 			}
