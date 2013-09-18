@@ -18,10 +18,15 @@ import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.ui.ErrorPanel;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.richtext.RichTextToolbar;
+import medizin.client.ui.view.renderer.EnumRenderer;
 import medizin.client.ui.view.roo.McSetEditor;
 import medizin.client.ui.view.roo.QuestionTypeProxyRenderer;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.dialogbox.receiver.ReceiverDialog;
+import medizin.client.ui.widget.labeled.LabeledPanel;
+import medizin.client.ui.widget.labeled.LabeledTextArea;
+import medizin.client.ui.widget.labeled.LabeledTextBox;
+import medizin.client.ui.widget.labeled.LabeledValueListBox;
 import medizin.client.ui.widget.resource.dndview.ResourceView;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.ui.widget.resource.event.ResourceAddedEvent;
@@ -39,6 +44,7 @@ import medizin.client.util.ClientUtility;
 import medizin.shared.MultimediaType;
 import medizin.shared.QuestionTypes;
 import medizin.shared.i18n.BmeConstants;
+import medizin.shared.i18n.BmeContextHelpConstants;
 import medizin.shared.i18n.BmeMessages;
 import medizin.shared.utils.SharedConstant;
 
@@ -48,7 +54,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.editor.client.Editor.Ignore;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -70,11 +75,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RichTextArea;
-import com.google.gwt.user.client.ui.TabPanel;
-import com.google.gwt.user.client.ui.TextArea;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.ValueListBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.requestfactory.gwt.ui.client.EntityProxyKeyProvider;
 
@@ -87,111 +88,112 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	private Delegate delegate;
 	
 	public static BmeConstants constants = GWT.create(BmeConstants.class);
+	public static BmeContextHelpConstants contextHelp = GWT.create(BmeContextHelpConstants.class);
 	public static BmeMessages messages = GWT.create(BmeMessages.class);
 
 	@UiField
+	SpanElement title;
+	
+	@UiField
 	public IconButton cancel;
-
+	
+	@UiField
+	public IconButton cancel2;
+	
 	@UiField
 	public IconButton save;
+	
+	@UiField
+	public IconButton save2;
 	
 	@UiField
 	public IconButton resendToReview;
 	
 	@UiField
-	TabPanel questionTypePanel;
-
-	@UiField
-	SpanElement title;
-
-	@UiField
-	public Label lblQuestionType;
-
-	@UiField(provided = true)
-	public ValueListBox<QuestionTypeProxy> questionType = new ValueListBox<QuestionTypeProxy>(QuestionTypeProxyRenderer.instance(),new EntityProxyKeyProvider<medizin.client.proxy.QuestionTypeProxy>());
-
-	@UiField
-	public Label lblQuestionText;
-
-	@UiField(provided = true)
-	public RichTextToolbar toolbar;
-
-	@UiField
-	public Label lblQuestionShortName;
-
-	@UiField
-	public TextBox questionShortName;
-
-	@UiField
-	public Label lblQuestionSubmitToReviewComitee;
-
-	@UiField
-	public CheckBox submitToReviewComitee;
+	public IconButton resendToReview2;
 	
 	@UiField
-	public DivElement descriptionValue;
+	public Label baseGroupLbl;
+	
+	@UiField
+	public Label mediaLbl;
+	
+	@UiField
+	public Label reviewLbl;
+	
+	@UiField
+	public Label organisationalOrderLbl;
+	
+	@UiField
+	public Label commentGroupLbl;
 
 	@UiField(provided = true)
-	public RichTextArea questionTextArea;
+	public LabeledValueListBox<QuestionTypeProxy> questionType = new LabeledValueListBox<QuestionTypeProxy>(QuestionTypeProxyRenderer.instance(),new EntityProxyKeyProvider<medizin.client.proxy.QuestionTypeProxy>());
 
 	@UiField
-	public Label lblAuther;
+	public LabeledTextBox questionShortName;
+	
+	@UiField
+	public LabeledPanel richTextPanel;
+	
+	@UiField(provided = true)
+	public RichTextToolbar toolbar;
+	
+	@UiField(provided = true)
+	public RichTextArea questionTextArea;
+	
+	@UiField
+	public HTML digitCount;
+	
+	@UiField
+	public LabeledPanel uploadResourcePanel;
+	
+	@UiField
+	public HTMLPanel uploaderContainer;
+	
+	@UiField
+	public LabeledPanel viewerPanel;
+	
+	@UiField
+	public HTMLPanel viewerContainer;
 
+	@UiField
+	public LabeledPanel authorPanel;
+	
+	@UiField
+	Label lblAuthorValue;
+	
 	@UiField
 	@Ignore
 	public DefaultSuggestBox<PersonProxy, EventHandlingValueHolderItem<PersonProxy>> author;
-
+	
 	@UiField
-	public Label lblReviewer;
-
+	public LabeledPanel reviewerPanel;
+	
 	@UiField
 	@Ignore
-	public DefaultSuggestBox<PersonProxy, EventHandlingValueHolderItem<PersonProxy>> rewiewer;
+	public DefaultSuggestBox<PersonProxy, EventHandlingValueHolderItem<PersonProxy>> reviewer;
 	
 	@UiField
-	public Label lblQuestionEvent;
+	Label lblReviewerValue;
 
+	@UiField
+	public LabeledPanel reviewCommitteePanel;
+	
+	@UiField
+	public CheckBox submitToReviewComitee;
+	
 	@UiField(provided = true)
-	public ValueListBox<QuestionEventProxy> questEvent = new ValueListBox<QuestionEventProxy>(medizin.client.ui.view.roo.QuestionEventProxyRenderer.instance(),new EntityProxyKeyProvider<medizin.client.proxy.QuestionEventProxy>());
-
-	@UiField
-	public Label lblQuestionComment;
+	public LabeledValueListBox<QuestionEventProxy> questionEvent = new LabeledValueListBox<QuestionEventProxy>(medizin.client.ui.view.roo.QuestionEventProxyRenderer.instance(),new EntityProxyKeyProvider<medizin.client.proxy.QuestionEventProxy>());
 	
 	@UiField
-	public TextArea questionComment;
+	public LabeledPanel mcsPanel;
 	
-	@UiField
-	public Label lblMCS;
-
 	@UiField 
 	McSetEditor mcs;
 	
 	@UiField
-	public VerticalPanel containPanel;
-	
-	@UiField
-	Label lblUploadText;
-	
-	@UiField
-	HTMLPanel uploaderContainer;
-	
-	@UiField
-	HTMLPanel viewerContainer;
-	
-	@UiField
-	Label lblAutherEdit;
-	
-	@UiField
-	Label lblAutherValue;
-	
-	@UiField
-	Label lblReviewerEdit;
-	
-	@UiField
-	Label lblReviewerValue;
-	
-	@UiField
-	HTML lblDigitCount;
+	public LabeledTextArea comment;
 	
 	private ResourceView viewer;
 	private ImageViewer imageViewer;
@@ -204,15 +206,28 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		delegate.cancelClicked();
 	}
 	
-	@UiHandler("resendToReview")
-	void onResendToReview(ClickEvent event) {
+	@UiHandler("cancel2")
+	void onCancel2(ClickEvent event) {
+		delegate.cancelClicked();
+	}
+	
+	private void resendToReview() {
 		if(validationOfFields()) {
 			delegate.resendToReview();
 		}
 	}
-
-	@UiHandler("save")
-	void onSave(ClickEvent event) {
+	
+	@UiHandler("resendToReview")
+	void onResendToReview(ClickEvent event) {
+		resendToReview();
+	}
+	
+	@UiHandler("resendToReview2")
+	void onResendToReview2(ClickEvent event) {
+		resendToReview();
+	}
+	
+	private void save() {
 		if(validationOfFields()) {
 			delegate.saveQuestionWithDetails();
 		}else {
@@ -220,6 +235,15 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		}
 	}
 
+	@UiHandler("save")
+	void onSave(ClickEvent event) {
+		save();
+	}
+	
+	@UiHandler("save2")
+	void onSave2(ClickEvent event) {
+		save();
+	}
 	
 	public QuestionEditViewImpl(Map<String, Widget> reciverMap, EventBus eventBus, PersonProxy userLoggedIn) {
 
@@ -236,42 +260,80 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		reciverMap.put("questionText", questionTextArea);
 		reciverMap.put("questionType", questionType);
 		reciverMap.put("autor", author.getTextField().advancedTextBox);
-		reciverMap.put("rewiewer", rewiewer);
-		reciverMap.put("questEvent", questEvent);
+		reciverMap.put("rewiewer", reviewer);
+		reciverMap.put("questEvent", questionEvent);
 		reciverMap.put("submitToReviewComitee", submitToReviewComitee);
 		reciverMap.put("mcs", mcs);
-		//reciverMap.put("comment", questionComment);
+		//reciverMap.put("comment", comment);
 		
-		questionTypePanel.selectTab(0);
 		save.setText(constants.save());
+		save2.setText(constants.save());
 		cancel.setText(constants.cancel());
+		cancel2.setText(constants.cancel());
+		resendToReview.setText(constants.resendToReview());
+		resendToReview2.setText(constants.resendToReview());
+		
+		baseGroupLbl.setText(constants.questionGroupLbl());
+		mediaLbl.setText(constants.mediaAttributes());
+		reviewLbl.setText(constants.reviewAttributes());
+		organisationalOrderLbl.setText(constants.organisationalOrder());
+		commentGroupLbl.setText(constants.comment());
+		
+		questionType.setLabelText(constants.questionType());
+		questionType.setHelpText(contextHelp.qQuestionType());
+		
+		questionShortName.setLabelText(constants.shortName());
+		questionShortName.setHelpText(contextHelp.qShortName());
+		
+		richTextPanel.setLabelText(constants.questionText());
+		richTextPanel.setHelpText(contextHelp.qQuestion());
+		
+		uploadResourcePanel.setLabelText(constants.uploadResource());
+		uploadResourcePanel.setHelpText(contextHelp.qUploadResource());
+		
+		viewerPanel.setLabelText(constants.mediaViewer());
+		viewerPanel.setHelpText(contextHelp.qMediaViewer());
+		
+		authorPanel.setLabelText(constants.auther());
+		authorPanel.setHelpText(contextHelp.qAuthor());
+		
+		reviewerPanel.setLabelText(constants.reviewer());
+		reviewerPanel.setHelpText(contextHelp.qReviewer());
+		
+		reviewCommitteePanel.setLabelText(constants.submitToReviewComitee());
+		reviewCommitteePanel.setHelpText(contextHelp.qReviewCommittee());
+		
+		mcsPanel.setLabelText(constants.mcs());
+		mcsPanel.setHelpText(contextHelp.qMcs());
+		
+		comment.setLabelText(constants.comment());
+		comment.setHelpText(contextHelp.qComment());
+		
 		submitToReviewComitee.addClickHandler(new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
 				
-				if(submitToReviewComitee.getValue() == true)
-				{
-					rewiewer.setEnabled(false);
-				}
-				else
-				{
-					rewiewer.setEnabled(true);
+				if(submitToReviewComitee.getValue() == true) {
+					reviewer.setEnabled(false);
+				} else {
+					reviewer.setEnabled(true);
 				}
 			}
 		});
-		questionTypePanel.getTabBar().setTabText(0, constants.manageQuestion());
-		
+				
 		questionType.addValueChangeHandler(new ValueChangeHandler<QuestionTypeProxy>() {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<QuestionTypeProxy> event) {
 				//Note: question is null in create mode 
+				questionType.setHelpText(getQuestionTypeHelpText(event.getValue()));
 				setMediaView(event.getValue(),question);
 				setDigitCount();
 			}
 
 		});
+		
 		questionTextArea.addKeyUpHandler(new KeyUpHandler() {
 			
 			@Override
@@ -281,6 +343,12 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		});
 		
 		setDigitCount();
+	}
+	
+	private String getQuestionTypeHelpText(QuestionTypeProxy qt) {
+		return "<p>" + contextHelp.qQuestionType() 
+		+ "</p><p><strong>" + qt.getShortName()); 
+		+ "</strong><br />" + qt.getDescription() + "</p>";
 	}
 
 	private void setDigitCount() {
@@ -292,9 +360,9 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 			}else {
 				lengthText =  String.valueOf(length);
 			}
-			lblDigitCount.setHTML(messages.questionDigitCount(lengthText, String.valueOf(questionType.getValue().getQuestionLength())));	
+			digitCount.setHTML(messages.questionDigitCount(lengthText, String.valueOf(questionType.getValue().getQuestionLength())));	
 		} else {
-			lblDigitCount.setHTML(messages.questionDigitCount("0", "0"));
+			digitCount.setHTML(messages.questionDigitCount("0", "0"));
 		}
 	}
 	
@@ -313,27 +381,25 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		
 		questionShortName.setValue(question.getQuestionShortName()==null ? "": question.getQuestionShortName());
 		questionType.setValue(question.getQuestionType());
+		questionType.setHelpText(getQuestionTypeHelpText(question.getQuestionType()));
 		questionTextArea.setHTML(question.getQuestionText() == null ? "" : question.getQuestionText());
 		author.setSelected(question.getAutor());
-		rewiewer.setSelected(question.getRewiewer());
-		questEvent.setValue(question.getQuestEvent());
-		questionComment.setValue(question.getComment() == null ? "" : question.getComment().getComment());
+		reviewer.setSelected(question.getRewiewer());
+		questionEvent.setValue(question.getQuestEvent());
+		comment.setValue(question.getComment() == null ? "" : question.getComment().getComment());
 		submitToReviewComitee.setValue(question.getSubmitToReviewComitee());
 		mcs.setValue(question.getMcs());
 		
 		if (question.getAutor() != null)
-			lblAutherValue.setText(question.getAutor().getName() + " " + question.getAutor().getPrename());
+			lblAuthorValue.setText(question.getAutor().getName() + " " + question.getAutor().getPrename());
 		
 		if (question.getRewiewer() != null)
 			lblReviewerValue.setText(question.getRewiewer().getName() + " " + question.getRewiewer().getPrename());
 		
-		if(question.getSubmitToReviewComitee()==true)
-		{
-			rewiewer.setEnabled(false);
-		}
-		else
-		{
-			rewiewer.setEnabled(true);
+		if(question.getSubmitToReviewComitee()==true) {
+			reviewer.setEnabled(false);
+		} else {
+			reviewer.setEnabled(true);
 		}
 		this.question = question;
 
@@ -352,35 +418,32 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	@Override
 	public void setRewiewerPickerValues(Collection<PersonProxy> values, PersonProxy lastSelectedReviewer) {
 		//rewiewer.setAcceptableValues(values);
-		DefaultSuggestOracle<PersonProxy> suggestOracle1 = (DefaultSuggestOracle<PersonProxy>) rewiewer.getSuggestOracle();
+		DefaultSuggestOracle<PersonProxy> suggestOracle1 = (DefaultSuggestOracle<PersonProxy>) reviewer.getSuggestOracle();
 		suggestOracle1.setPossiblilities((List<PersonProxy>) values);
 		 /* Collection<MyObjectType> myCollection = ...;
 		 List<MyObjectType> list = new ArrayList<MyObjectType>(myCollection);*/
-		rewiewer.setSuggestOracle(suggestOracle1);
-		rewiewer.setRenderer(new AbstractRenderer<PersonProxy>() {
+		reviewer.setSuggestOracle(suggestOracle1);
+		reviewer.setRenderer(new AbstractRenderer<PersonProxy>() {
 
 			@Override
 			public String render(PersonProxy object) {
-				if(object!=null)
-				{
+				if(object!=null) {
 					return object.getName() + " "+ object.getPrename();
-				}
-				else
-				{
+				} else {
 					return "";
 				}
 			}
 		});
 		//change {
-		rewiewer.setWidth(150);
+		//rewiewer.setWidth(150);
 		
 		if (lastSelectedReviewer != null)
-			rewiewer.setSelected(lastSelectedReviewer);
+			reviewer.setSelected(lastSelectedReviewer);
 	}
 
 	@Override
 	public void setQuestEventPickerValues(Collection<QuestionEventProxy> values) {
-		questEvent.setAcceptableValues(values);
+		questionEvent.setAcceptableValues(values);
 	}
 
 	@Override
@@ -395,30 +458,25 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 
 			@Override
 			public String render(PersonProxy object) {
-				if(object!=null)
-				{
+				if(object!=null) {
 					return object.getName() + " "+ object.getPrename();
-				}
-				else
-				{
+				} else {
 					return "";
 				}
 			}
 		});
-		//change {
-		author.setWidth(150);
 
 		if(delegate.isAdminOrInstitutionalAdmin() == false) {
 			author.setSelected(userLoggedIn);
 			author.setEnabled(false);
 		}
-
 	}
 
 	@Override
 	public void setQuestionTypePickerValues(List<QuestionTypeProxy> values) {
 		if(values != null && values.isEmpty() == false) {
 			questionType.setValue(values.get(0));
+			questionType.setHelpText(getQuestionTypeHelpText(question.getQuestionType()));
 			setMediaView(questionType.getValue(),question);
 		}
 		questionType.setAcceptableValues(values);
@@ -433,20 +491,19 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	@Override
 	public void setEditTitle(boolean edit) {
 		if (edit) {
-			title.setInnerText(constants.edit());
+			title.setInnerText(constants.editQuestion());
 		} else {
-			title.setInnerText(constants.create());
+			title.setInnerText(constants.createQuestion());
 		}
 	}
 
 	@Override
 	public ValueListBox<QuestionEventProxy> getQuestionEvent() {
-		return questEvent;
+		return questionEvent.getValueListBox();
 	}
 	
 	// here for new question may be null
 	private void setMediaView(final QuestionTypeProxy questionTypeProxy,final QuestionProxy question) {
-	
 		Log.info("In set Media View");
 	
 		final QuestionTypes questionType = questionTypeProxy.getQuestionType();
@@ -693,15 +750,17 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	
 	private void clearMediaContainer() {
 		//remove extra part
-		lblUploadText.removeStyleName("label");
-		lblUploadText.setText("");
+//		lblUploadText.removeStyleName("label");
+//		lblUploadText.setText("");
+		uploadResourcePanel.setLabelText("");
 		uploaderContainer.clear();
 		viewerContainer.clear();		
 	}
 	
 	private void setMediaContainer(Widget upload,Set<MultimediaType> set, Widget viewer) {
-		lblUploadText.addStyleName("label");
-		lblUploadText.setText(ClientUtility.getUploadLabel(set));
+//		up.addStyleName("label");
+//		lblUploadText.setText(ClientUtility.getUploadLabel(set));
+		uploadResourcePanel.setLabelText(ClientUtility.getUploadLabel(set));
 		uploaderContainer.add(upload);
 		viewerContainer.add(viewer);
 	}
@@ -722,7 +781,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		questionTextArea.removeStyleName("higlight_onViolation");
 		if(imageViewer != null)
 			imageViewer.removeStyleName("higlight_onViolation");
-		rewiewer.getTextField().advancedTextBox.removeStyleName("higlight_onViolation");
+		reviewer.getTextField().advancedTextBox.removeStyleName("higlight_onViolation");
 		submitToReviewComitee.removeStyleName("higlight_onViolation");
 		mcs.removeStyleName("higlight_onViolation");
 		
@@ -731,9 +790,9 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		
 		if(submitToReviewComitee.getValue() == true) 
 		{
-			rewiewer.setSelected(null);	
+			reviewer.setSelected(null);	
 		} 
-		else if(rewiewer.getSelected() != null)
+		else if(reviewer.getSelected() != null)
 		{
 			submitToReviewComitee.setValue(false);
 		}
@@ -741,7 +800,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		{
 			flag = false;
 			messages.add(constants.selectReviewerOrComitee());
-			rewiewer.getTextField().advancedTextBox.addStyleName("higlight_onViolation");
+			reviewer.getTextField().advancedTextBox.addStyleName("higlight_onViolation");
 			submitToReviewComitee.addStyleName("higlight_onViolation");
 		}
 		
@@ -751,11 +810,11 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 			author.getTextField().advancedTextBox.addStyleName("higlight_onViolation");
 		}
 		
-		if(author.getSelected() != null && rewiewer.getSelected() != null && author.getSelected().getId().equals(rewiewer.getSelected().getId()) == true) {
+		if(author.getSelected() != null && reviewer.getSelected() != null && author.getSelected().getId().equals(reviewer.getSelected().getId()) == true) {
 			flag = false;
 			messages.add(constants.authorReviewerMayNotBeSame());
 			author.getTextField().advancedTextBox.addStyleName("higlight_onViolation");
-			rewiewer.getTextField().advancedTextBox.addStyleName("higlight_onViolation");
+			reviewer.getTextField().advancedTextBox.addStyleName("higlight_onViolation");
 		}
 		
 		/*if(questionComment.getText() == null || questionComment.getText().isEmpty()) {
@@ -798,6 +857,8 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 				}
 				break;
 			}
+			default:
+				break;
 			}
 		} 
 		
@@ -815,16 +876,16 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 
 	@Override
 	public void setValuesForQuestion(QuestionProxy question, CommentProxy commentProxy) {
-		Cookies.setCookie(McAppConstant.LAST_SELECTED_REVIEWER, String.valueOf(rewiewer.getSelected().getId()), ClientUtility.getDateFromOneYear());
+		Cookies.setCookie(McAppConstant.LAST_SELECTED_REVIEWER, String.valueOf(reviewer.getSelected().getId()), ClientUtility.getDateFromOneYear());
 		question.setQuestionType(questionType.getValue());
 		question.setQuestionShortName(questionShortName.getText());
 		question.setQuestionText(questionTextArea.getHTML());
 		question.setAutor(author.getSelected());
-		question.setRewiewer(rewiewer.getSelected());
+		question.setRewiewer(reviewer.getSelected());
 		question.setSubmitToReviewComitee(submitToReviewComitee.getValue());
-		question.setQuestEvent(questEvent.getValue());
+		question.setQuestEvent(questionEvent.getValue());
 		question.setMcs(mcs.getValue());
-		commentProxy.setComment(questionComment.getText().isEmpty() == true ? " " : questionComment.getText());
+		commentProxy.setComment(comment.getText().isEmpty() == true ? " " : comment.getText());
 		question.setComment(commentProxy);
 	}
 
@@ -883,9 +944,9 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 
 	public void disableEnableAuthorReviewerValue(boolean flag)
 	{
-		lblAutherEdit.setVisible(flag);
-		lblAutherValue.setVisible(flag);
-		lblReviewerEdit.setVisible(flag);
+		//lblAuthorEdit.setVisible(flag);
+		lblAuthorValue.setVisible(flag);
+		//lblReviewerEdit.setVisible(flag);
 		lblReviewerValue.setVisible(flag);
 	}
 

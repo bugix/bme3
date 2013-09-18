@@ -3,65 +3,87 @@ package medizin.shared.i18n;
 import com.google.gwt.i18n.client.ConstantsWithLookup;
 
 public interface BmeContextHelpConstants extends ConstantsWithLookup {
-	public String shortName();
+	public String qtShortName();
 
-	public String longName();
+	public String qtLongName();
 
-	public String description();
+	public String qtDescription();
 
-	public String institution();
+	public String qtInstitution();
 
-	public String questionType();
+	public String qtQuestionType();
 
-	public String sumAnswer();
+	public String qtSumAnswer();
 
-	public String sumTrueAnswer();
+	public String qtSumTrueAnswer();
 
-	public String sumFalseAnswer();
+	public String qtSumFalseAnswer();
 
-	public String questionLength();
+	public String qtQuestionLength();
 
-	public String answerLength();
+	public String qtAnswerLength();
 	
-	public String keywordCount();
+	public String qtKeywordCount();
 
-	public String minAutoCompleteLetter();
+	public String qtMinAutoCompleteLetter();
 
-	public String lengthShortAnswer();
+	public String qtLengthShortAnswer();
 
-	public String multimediaType();
+	public String qtMultimediaType();
 
-	public String selectionType();
+	public String qtSelectionType();
 
-	public String columns();
+	public String qtColumns();
 
-	public String maxBytes();
+	public String qtMaxBytes();
 
-	public String minLength();
+	public String qtMinLength();
 
-	public String maxLength();
+	public String qtMaxLength();
 
-	public String minWordCount();
+	public String qtMinWordCount();
 
-	public String maxWordCount();
+	public String qtMaxWordCount();
 	
-	public String answerDiff();
+	public String qtAnswerDiff();
 	
-	public String queHasMedia();
+	public String qtQueHasMedia();
 	
-	public String shortAnswerLength();
+	public String qtShortAnswerLength();
 	
-	public String showAutoComplete();
+	public String qtShowAutoComplete();
 	
-	public String isDictionaryKeyword();
+	public String qtIsDictionaryKeyword();
 	
-	public String allowTyping();
+	public String qtAllowTyping();
 	
-	public String acceptNonKeyword();
+	public String qtAcceptNonKeyword();
 	
-	public String keywordHighlight();
+	public String qtKeywordHighlight();
 	
-	public String oneToOneAss();
+	public String qtOneToOneAss();
 	
-	public String richText();
+	public String qtRichText();
+	
+	public String qQuestionType();
+	
+	public String qShortName();
+	
+	public String qQuestion();
+	
+	public String qUploadResource();
+	
+	public String qAuthor();
+	
+	public String qReviewer();
+	
+	public String qReviewCommittee();
+	
+	public String qQuestionEvent();
+	
+	public String qMcs();
+	
+	public String qComment();
+	
+	public String qMediaViewer();
 }

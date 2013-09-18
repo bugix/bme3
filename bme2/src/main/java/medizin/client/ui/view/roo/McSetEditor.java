@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import medizin.client.proxy.McProxy;
+import medizin.shared.i18n.BmeConstants;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
@@ -46,9 +47,6 @@ public class McSetEditor extends McSetEditor_Roo_Gwt {
     HTMLPanel editorPanel;
 
     @UiField
-    Button clickToEdit;
-
-    @UiField
     HTMLPanel viewPanel;
 
     @UiField
@@ -60,6 +58,7 @@ public class McSetEditor extends McSetEditor_Roo_Gwt {
     boolean editing = false;
 
     private Set<McProxy> values;
+    private final BmeConstants constants = GWT.create(BmeConstants.class);
 
     private final List<McProxy> displayedList;
 
@@ -70,7 +69,10 @@ public class McSetEditor extends McSetEditor_Roo_Gwt {
         driver.initialize(listEditor);
         driver.display(new ArrayList<McProxy>());
         displayedList = listEditor.getList();
-        editing = false;
+        editing = true;
+        add.setText(constants.addMc());
+        editorPanel.setStylePrimaryName(style.editorPanelVisible());
+        viewPanel.setStylePrimaryName(style.viewPanelHidden());
     }
 
     @UiHandler("add")
@@ -88,11 +90,6 @@ public class McSetEditor extends McSetEditor_Roo_Gwt {
         addToTable(picker.getValue());
     }
 
-    @UiHandler("clickToEdit")
-    public void clickToEditClicked(ClickEvent e) {
-        toggleEditorMode();
-    }
-
     @Override
     public void flush() {
     }
@@ -106,7 +103,7 @@ public class McSetEditor extends McSetEditor_Roo_Gwt {
     }
 
     public void onLoad() {
-        makeEditable(false);
+//        makeEditable(false);
     }
 
     @Override
@@ -127,7 +124,6 @@ public class McSetEditor extends McSetEditor_Roo_Gwt {
     @Override
     public void setValue(Set<medizin.client.proxy.McProxy> values) {
         this.values = values;
-        makeEditable(editing = false);
         if (displayedList != null) {
             displayedList.clear();
             table.clear();
@@ -181,25 +177,8 @@ public class McSetEditor extends McSetEditor_Roo_Gwt {
         }
     }
 
-    private void makeEditable(boolean editable) {
-        if (editable) {
-            editorPanel.setStylePrimaryName(style.editorPanelVisible());
-            viewPanel.setStylePrimaryName(style.viewPanelHidden());
-            clickToEdit.setText("Done");
-        } else {
-            editorPanel.setStylePrimaryName(style.editorPanelHidden());
-            viewPanel.setStylePrimaryName(style.viewPanelVisible());
-            clickToEdit.setText("Edit");
-        }
-    }
-
     private String makeFlatList(Collection<medizin.client.proxy.McProxy> values) {
         return CollectionRenderer.of(medizin.client.ui.view.roo.McProxyRenderer.instance()).render(values);
-    }
-
-    private void toggleEditorMode() {
-        editing = !editing;
-        makeEditable(editing);
     }
 
     interface Binder extends UiBinder<Widget, McSetEditor> {
