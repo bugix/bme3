@@ -1,6 +1,7 @@
 package medizin.client.activites;
 
 import java.util.List;
+import java.util.Set;
 
 import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
@@ -16,63 +17,94 @@ import medizin.client.ui.view.AcceptAnswerSubView;
 import medizin.client.ui.view.AcceptAnswerSubViewImpl;
 import medizin.client.ui.view.AcceptMatrixAnswerSubView;
 import medizin.client.ui.view.AcceptMatrixAnswerSubViewImpl;
+import medizin.client.ui.view.question.QuestionDetailsView;
+import medizin.client.ui.view.question.QuestionDetailsViewImpl;
+import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
+import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.simple.DefaultSuggestOracle;
 import medizin.shared.QuestionTypes;
 import medizin.shared.Status;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.base.Function;
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
+import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.user.cellview.client.AbstractHasData;
+import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.view.client.Range;
+import com.google.gwt.view.client.RangeChangeEvent;
 
-public class ActivityAcceptQuestionDetails extends ActivityQuestionDetails implements AcceptAnswerSubView.Delegate, AcceptMatrixAnswerSubView.Delegate{
+public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper implements QuestionDetailsView.Delegate, AcceptAnswerSubView.Delegate, AcceptMatrixAnswerSubView.Delegate{
+
+	private PlaceAcceptQuestionDetails place;
+	private McAppRequestFactory requests;
+	private PlaceController placeController;
+	private AcceptsOneWidget widget;
+	private EventBus eventBus;
+	private QuestionDetailsViewImpl view;
+	private QuestionProxy question;
 
 	public ActivityAcceptQuestionDetails(PlaceAcceptQuestionDetails place,McAppRequestFactory requests, PlaceController placeController) {
-		super(createNewPlace(place), requests, placeController);
+		super(place, requests, placeController);
+		this.place = place;
+        this.requests = requests;
+        this.placeController = placeController;
 	}
-
-	private static PlaceQuestionDetails createNewPlace(PlaceAcceptQuestionDetails place) {
-		PlaceQuestionDetails details;
-		
-		if(place.getOperation() != PlaceAcceptQuestionDetails.Operation.CREATE) {
-			details = new PlaceQuestionDetails(place.getProxyId(),place.getOperation());	
-		}else {
-			details = new PlaceQuestionDetails(place.getOperation());
-		}
-		
-		return details;
-	}
-
-
 
 	@Override
-	protected void startForAccessRights() {
-		// do nothing
+	public void start2(AcceptsOneWidget panel, EventBus eventBus) {
+		this.widget = panel;
+		this.eventBus = eventBus;
+		
+		getQuestionDetails();
 	}
 	
-	@Override
-	protected void startForAcceptQuestion() {
-		view.getAnswerListViewImpl().setVisible(false);
+	private void getQuestionDetails(){
+		if(userLoggedIn==null) return;
+		
+		requests.find(place.getProxyId()).with("previousVersion","keywords","questEvent","comment","questionType","mcs", "rewiewer", "autor","questionResources","answers").fire(new BMEReceiver<Object>() {
+			
+			@Override
+			public void onSuccess(final Object response) {
+				
+				if(response instanceof QuestionProxy){
+					
+					initDetailsView((QuestionProxy) response);
+							
+					init((QuestionProxy) response);
+				}				
+			}
+		});
+	}
+
+	public void initDetailsView(QuestionProxy questionProxy) {
+		QuestionDetailsViewImpl questionDetailsView = new QuestionDetailsViewImpl(eventBus, true,hasAnswerWriteRights(questionProxy, null),hasAnswerAddRights(questionProxy),false,true);
+		this.view = questionDetailsView;
+        widget.setWidget(questionDetailsView.asWidget());
+		view.setDelegate(this);
 		view.setVisibleAcceptButton();
-		view.getMatrixAnswerListViewImpl().setVisible(false);
+		view.getAnswerListViewImpl().removeFromParent();
+		view.getMatrixAnswerListViewImpl().removeFromParent();
 	}
 	
-	@Override
-	protected void initForActivity(QuestionProxy response,Function<Boolean, Void> function) {
-		//init((QuestionProxy) response);
-		this.question = response;
+	private void init(QuestionProxy question) {
+
+		this.question = question;
 		Log.debug("Details für: "+question.getQuestionText());
 		view.setValue(question);	
 		
 		if (question.getQuestionType() != null && QuestionTypes.Matrix.equals(question.getQuestionType().getQuestionType()))
 			initMatrixAnswerView();
 		else
-			initAnswerView();	
+			initAnswerView();
 		
 		initKeywordView();
+		
+		checkForResendToReview();
 	}
 	
-	/*private void initKeywordView() {
+	private void initKeywordView() {
 		requests.keywordRequest().findAllKeywords().fire(new BMEReceiver<List<KeywordProxy>>() {
 
 			@Override
@@ -114,7 +146,7 @@ public class ActivityAcceptQuestionDetails extends ActivityQuestionDetails imple
 		}
 		
 	}
-*/	
+	
 	public void onKeywordTableRangeChanged()
 	{
 		final Range range = view.getKeywordTable().getVisibleRange();
@@ -131,11 +163,6 @@ public class ActivityAcceptQuestionDetails extends ActivityQuestionDetails imple
 	@Override
 	public void editClicked() {
 		goTo(new PlaceAcceptQuestionDetails(question.stableId(), PlaceQuestionDetails.Operation.EDIT));
-	}
-	
-	@Override
-	public boolean isQuestionDetailsPlace() {
-		return false;
 	}
 	
 	@Override
@@ -286,26 +313,6 @@ public class ActivityAcceptQuestionDetails extends ActivityQuestionDetails imple
 			}
 		});
 	}
-
-	// unused method
-	@Override
-	public void matrixAcceptClicked(QuestionProxy questionProxy) {
-	}
-
-	// unused method
-	@Override
-	public void matrixRejectClicked(QuestionProxy questionProxy) {
-	}
-
-	// unused method
-	@Override
-	public void acceptClicked(AnswerProxy answerProxy, AcceptAnswerSubView acceptAnswerSubView) {
-	}
-
-	// unused method
-	@Override
-	public void rejectClicked(AnswerProxy answerProxy) {
-	}
 	
 	@Override
 	public void onResendToReviewClicked(QuestionProxy proxy) {
@@ -365,23 +372,28 @@ public class ActivityAcceptQuestionDetails extends ActivityQuestionDetails imple
 			if(Status.EDITED_BY_ADMIN.equals(question.getStatus()) == true) {
 				if((userLoggedIn.getIsAdmin() || personRightProxy.getIsInstitutionalAdmin())) {
 					view.getResendToReviewBtn().setVisible(true);
-					view.getAcceptBtn().setVisible(false);
+					view.getEdit().setVisible(true);
+					view.getAcceptBtn().removeFromParent();
 				}else {
-					view.getResendToReviewBtn().setVisible(false);
-					view.getAcceptBtn().setVisible(false);
-					view.getEdit().setVisible(false);
+					view.getResendToReviewBtn().removeFromParent();
+					view.getAcceptBtn().removeFromParent();
+					view.getEdit().removeFromParent();
 				}
-			}else if(Status.EDITED_BY_REVIEWER.equals(question.getStatus()) == true) {
+			} else if(Status.EDITED_BY_REVIEWER.equals(question.getStatus()) == true) {
 				if(question.getRewiewer() != null && userLoggedIn.getId().equals(question.getRewiewer().getId()) == true) {
 					view.getResendToReviewBtn().setVisible(true);
-					view.getAcceptBtn().setVisible(false);
+					view.getEdit().setVisible(true);
+					view.getAcceptBtn().removeFromParent();
 				}else {
-					view.getResendToReviewBtn().setVisible(false);
-					view.getAcceptBtn().setVisible(false);
-					view.getEdit().setVisible(false);
+					view.getResendToReviewBtn().removeFromParent();
+					view.getAcceptBtn().removeFromParent();
+					view.getEdit().removeFromParent();
 				}
-			}else {
-				//TODO for review committee 
+			} else if(question.getSubmitToReviewComitee() == true) {
+				//TODO for review committee
+				view.getResendToReviewBtn().removeFromParent(); // need to remove.
+			} else {
+				view.getResendToReviewBtn().removeFromParent();
 			}
 			
 		}
@@ -398,39 +410,30 @@ public class ActivityAcceptQuestionDetails extends ActivityQuestionDetails imple
 		}	
 	}
 	
-	//unused method
-	@Override
-	public void forceMatrixAcceptClicked(QuestionProxy questionProxy) {
+	
+	public void goTo(Place place) {
+		placeController.goTo(place);
+		
 	}
 
-	//unused method
 	@Override
-	public void forcedAcceptClicked(AnswerProxy answerProxy,AcceptAnswerSubView acceptAnswerSubView) {
-	}
-	
-/*	@Override
-	public void deleteKeywordClicked(KeywordProxy keyword, QuestionProxy proxy) {
-		
-		requests.keywordRequest().deleteKeywordFromQuestion(keyword, proxy).with("previousVersion","keywords","questEvent","comment","questionType","mcs", "rewiewer", "autor","questionResources","answers").fire(new BMEReceiver<QuestionProxy>() {
+	public void getQuestionDetails(QuestionProxy previousVersion, final Function<QuestionProxy, Void> function) {
+		requests.questionRequest().findQuestion(previousVersion.getId()).with("previousVersion","keywords","questEvent","comment","questionType","mcs", "rewiewer", "autor","questionResources").fire(new BMEReceiver<Object>() {
 
 			@Override
-			public void onSuccess(QuestionProxy response) {
-				view.setValue(response);
-				question = response;
-				view.getKeywordSuggestBox().getTextField().setText("");
-				initForActivity(question, new Function<Boolean, Void>() {
-					@Override
-					public Void apply(Boolean input) {
-						//do nothing 
-						return null;
-					}
-				});
+			public void onSuccess(Object response) {
+				function.apply((QuestionProxy) response);
 			}
 		});
 	}
+
+	@Override
+	public QuestionProxy getLatestQuestionDetails() {
+		return question;
+	}
 	
 	@Override
-	public void keywordAddButtonClicked(String text, final QuestionProxy proxy) {
+	public void keywordAddButtonClicked(String text, QuestionProxy proxy) {
 		Set<KeywordProxy> keywordProxySet = proxy.getKeywords();
 		boolean flag = false;
 		for (KeywordProxy keywordProxy : keywordProxySet)
@@ -451,13 +454,7 @@ public class ActivityAcceptQuestionDetails extends ActivityQuestionDetails imple
 					view.setValue(response);
 					question = response;
 					view.getKeywordSuggestBox().getTextField().setText("");
-					initForActivity(question, new Function<Boolean, Void>() {
-						@Override
-						public Void apply(Boolean input) {
-							//do nothing 
-							return null;
-						}
-					});
+					initKeywordView();
 				}
 			});
 		}
@@ -465,7 +462,58 @@ public class ActivityAcceptQuestionDetails extends ActivityQuestionDetails imple
 		{
 			view.getKeywordSuggestBox().getTextField().setText("");
 			ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.keywordExist());
-		}		
-	}*/
+		}
+	}
+
+	@Override
+	public void deleteKeywordClicked(KeywordProxy keyword, QuestionProxy proxy) {
+		
+		requests.keywordRequest().deleteKeywordFromQuestion(keyword, proxy).with("previousVersion","keywords","questEvent","comment","questionType","mcs", "rewiewer", "autor","questionResources","answers").fire(new BMEReceiver<QuestionProxy>() {
+
+			@Override
+			public void onSuccess(QuestionProxy response) {
+				view.setValue(response);
+				question = response;
+				view.getKeywordSuggestBox().getTextField().setText("");
+				initKeywordView();
+			}
+		});
+	}
+
+	@Override
+	public void placeChanged(Place place) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	//unused method
+	@Override
+	public void forceMatrixAcceptClicked(QuestionProxy questionProxy) {}
+
+	//unused method
+	@Override
+	public void forcedAcceptClicked(AnswerProxy answerProxy,AcceptAnswerSubView acceptAnswerSubView) {}
+	
+	@Override
+	public void forcedActiveClicked() {}
+	
+	@Override
+	public void deleteClicked() {}
+
+	// unused method
+	@Override
+	public void matrixAcceptClicked(QuestionProxy questionProxy) {}
+
+	// unused method
+	@Override
+	public void matrixRejectClicked(QuestionProxy questionProxy) {}
+
+	// unused method
+	@Override
+	public void acceptClicked(AnswerProxy answerProxy, AcceptAnswerSubView acceptAnswerSubView) {}
+
+	// unused method
+	@Override
+	public void rejectClicked(AnswerProxy answerProxy) {}
 
 }

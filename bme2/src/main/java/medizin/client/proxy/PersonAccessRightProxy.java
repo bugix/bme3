@@ -2,7 +2,6 @@ package medizin.client.proxy;
 
 import java.util.List;
 
-import medizin.server.domain.UserAccessRights;
 import medizin.shared.utils.PersonAccessRight;
 
 import com.google.web.bindery.requestfactory.shared.ProxyFor;

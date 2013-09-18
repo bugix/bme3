@@ -107,36 +107,27 @@
 									<!-- <g:ValueListBox ui:field="autor" /> -->
 
 									<i:DefaultSuggestBox ui:field="author"></i:DefaultSuggestBox>
-
-								</td>
-							</tr>
-							
-							<tr id="autherEdit">
-								<td>
-									<g:Label styleName="{style.label}" ui:field="lblAutherEdit" text="{constants.auther}" visible="false"></g:Label>
-								</td>
-								<td>
 									<g:Label styleName="{style.valueLabel}" ui:field="lblAutherValue" visible="false"></g:Label>
 								</td>
 							</tr>
-
+							
 							<tr id="reviewer">
 								<td>
 									<g:Label styleName="{style.label}" ui:field="lblReviewer" text="{constants.reviewer}"></g:Label>
 								</td>
 								<td>
-									<!-- <g:ValueListBox ui:field="rewiewer" /> -->
 									<i:DefaultSuggestBox ui:field="rewiewer"></i:DefaultSuggestBox>
-
+									<g:Label styleName="{style.valueLabel}" ui:field="lblReviewerValue" visible="false"></g:Label>
 								</td>
 							</tr>
 							
-							<tr id="reviewerEdit">
+							<tr id="questionSubmitToReviewComitee">
 								<td>
-									<g:Label styleName="{style.label}" ui:field="lblReviewerEdit" text="{constants.reviewer}" visible="false"></g:Label>
+									<g:Label styleName="{style.label}" ui:field="lblQuestionSubmitToReviewComitee" text="{constants.submitToReviewComitee}"></g:Label>
 								</td>
 								<td>
-									<g:Label styleName="{style.valueLabel}" ui:field="lblReviewerValue" visible="false"></g:Label>
+									<g:CheckBox ui:field="submitToReviewComitee" />
+									<g:Label styleName="{style.valueLabel}" ui:field="lblSubmitToReviewComitee" visible="false"></g:Label>
 								</td>
 							</tr>
 							
@@ -149,16 +140,7 @@
 
 								</td>
 							</tr>
-
-							<tr id="questionSubmitToReviewComitee">
-								<td>
-									<g:Label styleName="{style.label}" ui:field="lblQuestionSubmitToReviewComitee" text="{constants.submitToReviewComitee}"></g:Label>
-								</td>
-								<td>
-									<g:CheckBox ui:field="submitToReviewComitee" />
-
-								</td>
-							</tr>
+							
 							<tr>
 								<td></td>
 								<td>

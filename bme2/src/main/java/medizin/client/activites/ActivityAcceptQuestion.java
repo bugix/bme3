@@ -11,7 +11,6 @@ import medizin.client.place.PlaceQuestionDetails;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.ui.view.AcceptQuestionView;
 import medizin.client.ui.view.AcceptQuestionViewImpl;
-import medizin.client.ui.view.user.UserViewImpl;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.activity.shared.ActivityManager;

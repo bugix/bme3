@@ -30,7 +30,6 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.Header;
-import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
@@ -47,19 +46,19 @@ public class MatrixAnswerListViewImpl extends Composite implements MatrixAnswerL
 	@UiField
 	Label headerText;
 
-	public MatrixAnswerListViewImpl(boolean isEditable) {
-		CellTable.Resources tableResources = GWT
-				.create(MyCellTableResources.class);
-		tableAnswer = new CellTable<MatrixValidityProxy>(McAppConstant.TABLE_PAGE_SIZE,
-				tableResources);
+	public MatrixAnswerListViewImpl(boolean addAnswerRights, boolean isEditable) {
+		CellTable.Resources tableResources = GWT.create(MyCellTableResources.class);
+		tableAnswer = new CellTable<MatrixValidityProxy>(McAppConstant.TABLE_PAGE_SIZE, tableResources);
 
-		MySimplePager.Resources pagerResources = GWT
-				.create(MySimplePagerResources.class);
-		pager = new MySimplePager(MySimplePager.TextLocation.RIGHT, pagerResources,
-				true, McAppConstant.TABLE_JUMP_SIZE, true);
+		MySimplePager.Resources pagerResources = GWT.create(MySimplePagerResources.class);
+		pager = new MySimplePager(MySimplePager.TextLocation.RIGHT, pagerResources, true, McAppConstant.TABLE_JUMP_SIZE, true);
 		
 		initWidget(uiBinder.createAndBindUi(this));
-		newAnswer.setVisible(isEditable);
+		
+		if(addAnswerRights == false) {
+			newAnswer.removeFromParent();
+		}
+		
 		init(isEditable);
 		headerText.setText("");
 		headerText.setHeight("23px");

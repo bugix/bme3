@@ -13,7 +13,6 @@ import medizin.client.proxy.McProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
-import medizin.client.proxy.UserAccessRightsProxy;
 import medizin.client.ui.view.question.QuestionView;
 import medizin.client.ui.view.question.QuestionViewImpl;
 import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchAbstractPopupViewImpl;
@@ -30,13 +29,11 @@ import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchTextSearch
 import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchUserTypePopupViewImpl;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.util.MathJaxs;
-import medizin.shared.AccessRights;
 import medizin.shared.criteria.AdvancedSearchCriteria;
 import medizin.shared.criteria.AdvancedSearchCriteriaUtils;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.activity.shared.ActivityManager;
-import com.google.gwt.dom.client.TableRowElement;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.place.shared.Place;
@@ -89,22 +86,17 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 	private EntityProxyId<?> proxyId = null;
 
 	@Inject
-	public ActivityQuestion(PlaceQuestion place, McAppRequestFactory requests,
-			PlaceController placeController) {
+	public ActivityQuestion(PlaceQuestion place, McAppRequestFactory requests, PlaceController placeController) {
 		super(place, requests, placeController);
 		this.questionPlace = place;
 		this.requests = requests;
 		this.placeController = placeController;
-
-		this.activityQuestionMapper = new ActivityQuestionMapper(requests,
-				placeController);
-		this.activityManger = new ActivityManager(activityQuestionMapper,
-				requests.getEventBus());
+		this.activityQuestionMapper = new ActivityQuestionMapper(requests,placeController);
+		this.activityManger = new ActivityManager(activityQuestionMapper,requests.getEventBus());
 	}
 
 	@Override
 	public String mayStop() {
-
 		return null;
 	}
 
@@ -129,85 +121,21 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 
 	@Override
 	public void start2(AcceptsOneWidget widget, EventBus eventBus) {
-		// TopPanel topPanel = TopPanel.instance(requests, placeController);
-
-		// if(topPanel.getLoggedUser().getValue()==null){
-		// onStop();
-		// return;
-		// }
-		// if(!topPanel.getLoggedUser().getValue().equals("")){
-		// this.userLoggedIn = topPanel.getLoggedUser().getValue();
-		// }
-		// else{
-		// onStop();
-		// return;
-		// }
-		// if(topPanel.getInstitutionListBox().getValue()==null){
-		// onStop();
-		// return;
-		// }
-		// if(!topPanel.getInstitutionListBox().getValue().equals("")){
-		// this.institutionActive = topPanel.getInstitutionListBox().getValue();
-		// }
-		// else{
-		// onStop();
-		// return;
-		// }
 		
-		Boolean flag = false;
-	
-		if (personRightProxy.getIsAdmin())
-			flag = true;
-		else if (personRightProxy.getIsInstitutionalAdmin())
-			flag = true;
-		else
-		{
-			for (UserAccessRightsProxy proxy : personRightProxy.getQuestionEventAccList())
-			{
-				if (proxy.getAccRights().equals(AccessRights.AccAddQuestions))
-				{
-					flag = true;
-					break;
-				}
-			}
-		}
+		Log.debug("in Ativity Question");
 		
-		Log.debug("start()");
-		QuestionView questionView = new QuestionViewImpl(eventBus,flag);
-		Log.debug("start()");
-		// questionView.setName("hallo");
+		QuestionView questionView = new QuestionViewImpl(eventBus,hasQuestionAddRights());
 		questionView.setPresenter(this);
 		this.widget = widget;
-		Log.debug("start()");
 		this.view = questionView;
-		Log.debug("start()");
 		widget.setWidget(questionView.asWidget());
 
 		table = view.getTable();
-		
 		advancedSearchSubViewImpl = view.getQuestionAdvancedSearchSubViewImpl();
 		advancedSearchSubViewImpl.setDelegate(this);
 		criteriaTable = advancedSearchSubViewImpl.getTable();
 		criteriaTable.setRowCount(advancedSearchCriteriaList.size());
 		criteriaTable.setRowData(advancedSearchCriteriaList);
-
-		Log.debug("start2()");
-		/*eventBus.addHandler(PlaceChangeEvent.TYPE,
-				new PlaceChangeEvent.Handler() {
-					public void onPlaceChange(PlaceChangeEvent event) {
-
-						Place place = event.getNewPlace();
-						if (place instanceof PlaceQuestionDetails) {
-							init();
-						}
-						
-						if (place instanceof PlaceQuestion) {
-							init();
-						}
-						
-					}
-				});*/
-
 		activityManger.setDisplay(view.getDetailsPanel());
 		
 		RecordChangeEvent.register(requests.getEventBus(), (QuestionViewImpl)questionView);

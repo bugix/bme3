@@ -30,39 +30,33 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.Header;
-import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 public class AnswerListViewImpl extends Composite implements  AnswerListView {
 
-	private static AnswerViewImplUiBinder uiBinder = GWT
-			.create(AnswerViewImplUiBinder.class);
+	private static AnswerViewImplUiBinder uiBinder = GWT.create(AnswerViewImplUiBinder.class);
 
 	private BmeConstants constants = GWT.create(BmeConstants.class);
 	
-	interface AnswerViewImplUiBinder extends
-			UiBinder<Widget, AnswerListViewImpl> {
-	}
+	interface AnswerViewImplUiBinder extends UiBinder<Widget, AnswerListViewImpl> {}
 	
 	@UiField
 	Label headerText;
 
-	public AnswerListViewImpl(boolean isEditable) {
-		CellTable.Resources tableResources = GWT
-				.create(MyCellTableResources.class);
-		tableAnswer = new CellTable<AnswerProxy>(McAppConstant.TABLE_PAGE_SIZE,
-				tableResources);
-
-		MySimplePager.Resources pagerResources = GWT
-				.create(MySimplePagerResources.class);
-		pager = new MySimplePager(MySimplePager.TextLocation.RIGHT, pagerResources,
-				true, McAppConstant.TABLE_JUMP_SIZE, true);
+	public AnswerListViewImpl(boolean addAnswerRights, boolean isEditable) {
+		CellTable.Resources tableResources = GWT.create(MyCellTableResources.class);
+		tableAnswer = new CellTable<AnswerProxy>(McAppConstant.TABLE_PAGE_SIZE,tableResources);
+		MySimplePager.Resources pagerResources = GWT.create(MySimplePagerResources.class);
+		pager = new MySimplePager(MySimplePager.TextLocation.RIGHT, pagerResources,true, McAppConstant.TABLE_JUMP_SIZE, true);
 
 		initWidget(uiBinder.createAndBindUi(this));
 		
-		newAnswer.setVisible(isEditable);
+		if(addAnswerRights == false) {
+			newAnswer.removeFromParent();
+		}
+		
 		init(isEditable);
 		
 		headerText.setText("");

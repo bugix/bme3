@@ -20,6 +20,7 @@ import medizin.client.place.PlaceStaticContent;
 import medizin.client.place.PlaceSystemOverview;
 import medizin.client.place.PlaceUser;
 import medizin.client.place.PlaceUserDetails;
+import medizin.client.proxy.AnswerProxy;
 import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.PersonAccessRightProxy;
 import medizin.client.proxy.PersonProxy;
@@ -30,8 +31,6 @@ import medizin.client.request.PersonRequest;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxOkButtonEvent;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxOkButtonEventHandler;
-import medizin.client.util.AnswerAccessRightsVO;
-import medizin.client.util.QuestionAccessRightsVO;
 import medizin.shared.AccessRights;
 import medizin.shared.i18n.BmeConstants;
 import medizin.shared.i18n.BmeMessages;
@@ -104,7 +103,7 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 			});
 			
 			PersonRequest personRequest2 = institutionRequest.append(requests.personRequest());
-			personRequest2.fetchLoggedPersonAccessRights().with("question", "questionEvent", "institution").to(new Receiver<PersonAccessRightProxy>() {
+			personRequest2.fetchLoggedPersonAccessRights().with("questionAccList.question", "questionEventAccList.questionEvent", "questionEventAccList.institution").to(new Receiver<PersonAccessRightProxy>() {
 
 				@Override
 				public void onSuccess(PersonAccessRightProxy response) {
@@ -201,134 +200,17 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 		return  userLoggedIn.getIsAdmin() || personRightProxy.getIsInstitutionalAdmin();
 	}
 	
-	public final QuestionAccessRightsVO hasQuestionRights(QuestionProxy proxy)
-	{
-		final QuestionAccessRightsVO questionAccessRightsVO = new QuestionAccessRightsVO();
-		
-		if (userLoggedIn == null || institutionActive == null)
-			return questionAccessRightsVO;
-		
-		if(proxy != null  && proxy.getIsReadOnly() == true) {
-			return questionAccessRightsVO;
-		}
-		
-		if (isAdminOrInstitutionalAdmin() == true)
-		{
-			questionAccessRightsVO.setAddRight(true);
-			questionAccessRightsVO.setReadRight(true);
-			questionAccessRightsVO.setWriteRight(true);
-			
-			return questionAccessRightsVO;
-		}
-		
-		if(proxy == null || proxy.getAutor() == null) {
-			return questionAccessRightsVO;
-		}
-						
-		if (proxy.getAutor().getId().equals(userLoggedIn.getId()))
-		{
-			questionAccessRightsVO.setReadRight(true);
-			questionAccessRightsVO.setWriteRight(true);
-			
-			return questionAccessRightsVO;
-		}
-		
-		List<UserAccessRightsProxy> userAccessRightsProxyList = Lists.newArrayList();
-		userAccessRightsProxyList.addAll(personRightProxy.getQuestionEventAccList());
-		userAccessRightsProxyList.addAll(personRightProxy.getQuestionAccList());
-		
-		for (UserAccessRightsProxy userRightsProxy : userAccessRightsProxyList)
-		{
-			AccessRights accRights = userRightsProxy.getAccRights();
-			
-			if (userRightsProxy.getQuestionEvent() != null && proxy.getQuestEvent() != null && userRightsProxy.getQuestionEvent().getId().equals(proxy.getQuestEvent().getId()))
-			{
-				if (accRights.equals(AccessRights.AccRead))
-					questionAccessRightsVO.setReadRight(true);
-				else if (accRights.equals(AccessRights.AccWrite))
-					questionAccessRightsVO.setWriteRight(true);
-				else if (accRights.equals(AccessRights.AccAddQuestions))
-					questionAccessRightsVO.setAddRight(true);
-			}
-			else if (userRightsProxy.getQuestion() != null && userRightsProxy.getQuestion().getId().equals(proxy.getId()))
-			{
-				if (accRights.equals(AccessRights.AccRead))
-					questionAccessRightsVO.setReadRight(true);
-				else if (accRights.equals(AccessRights.AccWrite))
-					questionAccessRightsVO.setWriteRight(true);				
-			}
-		}
-		
-		return questionAccessRightsVO;
-	}
-	
-	public final AnswerAccessRightsVO hasAnswerRights(QuestionProxy proxy)
-	{
-		final AnswerAccessRightsVO answerAccessRightsVO = new AnswerAccessRightsVO();
-		
-		if (userLoggedIn == null || institutionActive == null)
-			return answerAccessRightsVO;
-		
-		if (isAdminOrInstitutionalAdmin() == true)
-		{
-			answerAccessRightsVO.setAddRight(true);
-			answerAccessRightsVO.setReadRight(true);
-			answerAccessRightsVO.setWriteRight(true);
-			
-			return answerAccessRightsVO;
-		}
-			
-		if(proxy == null || proxy.getAutor() == null ) {
-			return answerAccessRightsVO;
-		}
-		
-		if (proxy.getAutor().getId().equals(userLoggedIn.getId()))
-		{
-			answerAccessRightsVO.setReadRight(true);
-			answerAccessRightsVO.setWriteRight(true);
-			answerAccessRightsVO.setAddRight(true);
-			
-			return answerAccessRightsVO;
-		}
-		
-		List<UserAccessRightsProxy> userAccessRightsProxyList = Lists.newArrayList();
-		userAccessRightsProxyList.addAll(personRightProxy.getQuestionEventAccList());
-		userAccessRightsProxyList.addAll(personRightProxy.getQuestionAccList());
-		
-		for (UserAccessRightsProxy userRightsProxy : userAccessRightsProxyList)
-		{
-			AccessRights accRights = userRightsProxy.getAccRights();
-			
-			if (userRightsProxy.getQuestionEvent() != null && proxy.getQuestEvent() != null && userRightsProxy.getQuestionEvent().getId().equals(proxy.getQuestEvent().getId()))
-			{
-				if (accRights.equals(AccessRights.AccRead))
-					answerAccessRightsVO.setReadRight(true);
-				else if (accRights.equals(AccessRights.AccWrite))
-					answerAccessRightsVO.setWriteRight(true);
-				else if (accRights.equals(AccessRights.AccAddQuestions))
-					answerAccessRightsVO.setAddRight(true);
-			}
-			else if (userRightsProxy.getQuestion() != null && userRightsProxy.getQuestion().getId().equals(proxy.getId()))
-			{
-				if (accRights.equals(AccessRights.AccRead))
-					answerAccessRightsVO.setReadRight(true);
-				else if (accRights.equals(AccessRights.AccWrite))
-					answerAccessRightsVO.setWriteRight(true);	
-				else if (accRights.equals(AccessRights.AccAddAnswers))
-					answerAccessRightsVO.setAddRight(true);
-			}			
-		}
-			
-		return answerAccessRightsVO;
-	}
-	
 	public abstract void start2(AcceptsOneWidget panel, EventBus eventBus);
 	public abstract void placeChanged(Place place);
 	
 	public final boolean hasQuestionAddRights() {
 		boolean flag = false;
 		
-		if (isAdminOrInstitutionalAdmin() == true) {
+		if (userLoggedIn == null || institutionActive == null)
+			return false;
+		
+		if (isAdminOrInstitutionalAdmin() == true) 
+		{
 			flag = true;
 		}
 		else
@@ -348,6 +230,9 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 	public final boolean hasQuestionWriteRights(QuestionProxy proxy) {
 		boolean flag = false;
 		
+		if (userLoggedIn == null || institutionActive == null)
+			return false;
+		
 		if(proxy != null  && proxy.getIsReadOnly() == true)
 		{
 			flag = false;
@@ -356,7 +241,7 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 		{
 			flag = true;
 		}
-		else if (proxy.getAutor() != null && userLoggedIn != null && proxy.getAutor().getId().equals(userLoggedIn.getId()))
+		else if (isQuestionAuthor(proxy))
 		{
 			flag = true;
 		}
@@ -368,12 +253,12 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 			
 			for (UserAccessRightsProxy userRightsProxy : userAccessRightsProxyList)
 			{
-				if (userRightsProxy.getQuestionEvent() != null && proxy.getQuestEvent() != null && userRightsProxy.getQuestionEvent().getId().equals(proxy.getQuestEvent().getId()) && AccessRights.AccWrite.equals(userRightsProxy.getAccRights()))
+				if (checkRightsOnQuestionEvent(AccessRights.AccWrite, proxy, userRightsProxy))
 				{
 					flag = true;
 					break;
 				}
-				else if (userRightsProxy.getQuestion() != null && userRightsProxy.getQuestion().getId().equals(proxy.getId()) && AccessRights.AccWrite.equals(userRightsProxy.getAccRights()))
+				else if (checkRightsOnQuestion( AccessRights.AccWrite, proxy, userRightsProxy))
 				{
 					flag = true;
 					break;
@@ -384,28 +269,70 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 		return flag;
 	}
 	
-	/*public final boolean hasQuestionReadRights(QuestionProxy proxy) {
+	public final boolean hasQuestionReadRights(QuestionProxy proxy) {
 		boolean flag = false;
+		
+		if (userLoggedIn == null || institutionActive == null)
+			return false;
 		
 		if (isAdminOrInstitutionalAdmin() == true) {
 			flag = true;
 		}
-		
-		return flag;
-		
-	}*/
+		else if (isQuestionAuthor(proxy))
+		{
+			flag = true;
+		}
+		else if (isQuestionReviewer(proxy))
+		{
+			flag = true;
+		}
+		else
+		{
+			List<UserAccessRightsProxy> userAccessRightsProxyList = Lists.newArrayList();
+			userAccessRightsProxyList.addAll(personRightProxy.getQuestionEventAccList());
+			userAccessRightsProxyList.addAll(personRightProxy.getQuestionAccList());
+			
+			for (UserAccessRightsProxy userRightsProxy : userAccessRightsProxyList)
+			{
+				if (checkRightsOnQuestionEvent(AccessRights.AccRead, proxy, userRightsProxy))
+				{
+					flag = true;
+					break;
+				}
+				else if (checkRightsOnQuestion(AccessRights.AccRead, proxy, userRightsProxy))
+				{
+					flag = true;
+					break;
+				}
+				else if (checkRightsOnQuestion(AccessRights.AccAddAnswers, proxy, userRightsProxy))
+				{
+					flag = true;
+					break;
+				}
+			}			
+		}
+		//TODO may need to check answers author and reviewer
+		return flag;		
+	}
 
-	/*public final boolean hasAnswerAddRights() {
+	public final boolean hasAnswerAddRights(QuestionProxy proxy) {
 		boolean flag = false;
+		
+		if (userLoggedIn == null || institutionActive == null)
+			return false;
 		
 		if (isAdminOrInstitutionalAdmin() == true) {
 			flag = true;
 		}
+		else if (isQuestionAuthor(proxy))
+		{
+			flag = true;
+		}
 		else
 		{
-			for (UserAccessRightsProxy proxy : personRightProxy.getQuestionEventAccList())
+			for (UserAccessRightsProxy userRightsProxy : personRightProxy.getQuestionEventAccList())
 			{
-				if (AccessRights.AccAddAnswers.equals(proxy.getAccRights()) == true)
+				if (AccessRights.AccAddAnswers.equals(userRightsProxy.getAccRights()) == true)
 				{
 					flag = true;
 					break;
@@ -415,43 +342,76 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 		return flag;
 	}
 	
-	public final boolean hasAnswerWriteRights(QuestionProxy proxy) {
+	public final boolean hasAnswerWriteRights(QuestionProxy questionProxy,AnswerProxy answerProxy) {
 		boolean flag = false;
 		
-		if(proxy != null  && proxy.getIsReadOnly() == true)
-		{
-			flag = false;
-		} 
-		else if (isAdminOrInstitutionalAdmin() == true) 
-		{
-			flag = true;
-		}
-		else if (proxy.getAutor() != null && userLoggedIn != null && proxy.getAutor().getId().equals(userLoggedIn.getId()))
+		if (userLoggedIn == null || institutionActive == null)
+			return false;
+		
+		if (isAdminOrInstitutionalAdmin() == true) 
 		{
 			flag = true;
 		}
-		else
+		else if (isQuestionAuthor(questionProxy))
 		{
-			List<UserAccessRightsProxy> userAccessRightsProxyList = Lists.newArrayList();
-			userAccessRightsProxyList.addAll(personRightProxy.getQuestionEventAccList());
-			userAccessRightsProxyList.addAll(personRightProxy.getQuestionAccList());
-			
-			for (UserAccessRightsProxy userRightsProxy : userAccessRightsProxyList)
-			{
-				if (userRightsProxy.getQuestionEvent() != null && proxy.getQuestEvent() != null && userRightsProxy.getQuestionEvent().getId().equals(proxy.getQuestEvent().getId()) && AccessRights.AccWrite.equals(userRightsProxy.getAccRights()))
-				{
-					flag = true;
-					break;
-				}
-				else if (userRightsProxy.getQuestion() != null && userRightsProxy.getQuestion().getId().equals(proxy.getId()) && AccessRights.AccWrite.equals(userRightsProxy.getAccRights()))
-				{
-					flag = true;
-					break;
-				}
-			}
+			flag = true;
+		}
+		else if(isAnswerAuthor(answerProxy)) {
+			flag = true;
 		}
 		
 		return flag;
-	}*/
+	}
 	
+	public final boolean hasAnswerReadRights(QuestionProxy questionProxy,AnswerProxy answerProxy) {
+		boolean flag = false;
+		
+		if (userLoggedIn == null || institutionActive == null)
+			return false;
+		
+		if (isAdminOrInstitutionalAdmin() == true) 
+		{
+			flag = true;
+		}
+		else if (isQuestionAuthor(questionProxy))
+		{
+			flag = true;
+		}
+		else if (isQuestionReviewer(questionProxy))
+		{
+			flag = true;
+		}
+		else if(isAnswerAuthor(answerProxy)) {
+			flag = true;
+		}
+		else if(isAnswerReviewer(answerProxy)) {
+			flag = true;
+		}
+		
+		return flag;
+	}
+
+	protected final boolean isAnswerAuthor(AnswerProxy answerProxy) {
+		return answerProxy != null && answerProxy.getAutor() != null && userLoggedIn != null && answerProxy.getAutor().getId().equals(userLoggedIn.getId());
+	}
+	
+	protected final boolean isAnswerReviewer(AnswerProxy answerProxy) {
+		return answerProxy != null && answerProxy.getRewiewer() != null && userLoggedIn != null && answerProxy.getRewiewer().getId().equals(userLoggedIn.getId());
+	}
+	
+	protected final boolean isQuestionReviewer(QuestionProxy proxy) {
+		return proxy!= null && proxy.getRewiewer() != null && userLoggedIn != null && proxy.getRewiewer().getId().equals(userLoggedIn.getId());
+	}
+
+	protected final boolean isQuestionAuthor(QuestionProxy proxy) {
+		return proxy!= null && proxy.getAutor() != null && userLoggedIn != null && proxy.getAutor().getId().equals(userLoggedIn.getId());
+	}
+
+	protected final boolean checkRightsOnQuestionEvent(AccessRights accessRights, QuestionProxy proxy, UserAccessRightsProxy userRightsProxy) {
+		return proxy!= null && userRightsProxy.getQuestionEvent() != null && proxy.getQuestEvent() != null && userRightsProxy.getQuestionEvent().getId().equals(proxy.getQuestEvent().getId()) && accessRights.equals(userRightsProxy.getAccRights());
+	}
+
+	protected final boolean checkRightsOnQuestion(AccessRights accessRights,QuestionProxy proxy, UserAccessRightsProxy userRightsProxy) {
+		return proxy!= null && userRightsProxy.getQuestion() != null && userRightsProxy.getQuestion().getId().equals(proxy.getId()) && accessRights.equals(userRightsProxy.getAccRights());
+	}
 }

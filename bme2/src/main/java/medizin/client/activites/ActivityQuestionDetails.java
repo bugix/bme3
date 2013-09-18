@@ -19,13 +19,10 @@ import medizin.client.proxy.KeywordProxy;
 import medizin.client.proxy.MatrixValidityProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionProxy;
-import medizin.client.proxy.QuestionResourceProxy;
-import medizin.client.proxy.UserAccessRightsProxy;
 import medizin.client.request.AnswerRequest;
 import medizin.client.request.CommentRequest;
 import medizin.client.request.MatrixValidityRequest;
 import medizin.client.request.PersonRequest;
-import medizin.client.request.QuestionResourceRequest;
 import medizin.client.ui.view.question.AnswerDialogbox;
 import medizin.client.ui.view.question.AnswerDialogboxImpl;
 import medizin.client.ui.view.question.AnswerListView;
@@ -36,14 +33,11 @@ import medizin.client.ui.view.question.MatrixAnswerViewImpl;
 import medizin.client.ui.view.question.QuestionDetailsView;
 import medizin.client.ui.view.question.QuestionDetailsViewImpl;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
-import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
-import medizin.client.ui.widget.resource.dndview.vo.State;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.simple.DefaultSuggestOracle;
 import medizin.client.util.AnswerVO;
 import medizin.client.util.MathJaxs;
 import medizin.client.util.Matrix;
 import medizin.client.util.MatrixValidityVO;
-import medizin.shared.AccessRights;
 import medizin.shared.QuestionTypes;
 import medizin.shared.Status;
 import medizin.shared.Validity;
@@ -51,7 +45,6 @@ import medizin.shared.Validity;
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.place.shared.Place;
@@ -63,10 +56,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.RangeChangeEvent;
 
-public class ActivityQuestionDetails extends AbstractActivityWrapper implements 
-	QuestionDetailsView.Delegate, QuestionDetailsView.Presenter, AnswerDialogbox.Delegate, 
-	 AnswerListView.Delegate, MatrixAnswerView.Delegate, 
-	 MatrixAnswerListView.Delegate, MatrixAnswerListView.Presenter{
+public class ActivityQuestionDetails extends AbstractActivityWrapper implements QuestionDetailsView.Delegate, AnswerDialogbox.Delegate, AnswerListView.Delegate, MatrixAnswerView.Delegate, MatrixAnswerListView.Delegate {
 
 	private AcceptsOneWidget widget;
 	protected McAppRequestFactory requests;
@@ -78,6 +68,8 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	private AnswerListViewImpl answerListView;
 	private CellTable<AnswerProxy> answerTable;
 	
+	private EventBus eventBus;
+
 	//private BmeConstants constants = GWT.create(BmeConstants.class);
 	
 	public ActivityQuestionDetails(PlaceQuestionDetails place, McAppRequestFactory requests, PlaceController placeController) {
@@ -101,7 +93,6 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	}
 	
 	private HandlerRegistration answerRangeChangeHandler;
-	private EventBus eventBus;
 	
 	Boolean editDeleteBtnFlag = false;
 	Boolean answerFlag = false;
@@ -115,12 +106,12 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	}
 
 	public void initDetailsView(QuestionProxy questionProxy) {
-		startForAccessRights();
-		QuestionDetailsViewImpl questionDetailsView = new QuestionDetailsViewImpl(eventBus, editDeleteBtnFlag,hasAnswerRights(questionProxy).hasWriteRight());
+		editDeleteBtnFlag = hasQuestionWriteRights(questionProxy);
+				
+		QuestionDetailsViewImpl questionDetailsView = new QuestionDetailsViewImpl(eventBus, editDeleteBtnFlag,hasAnswerWriteRights(questionProxy, null),hasAnswerAddRights(questionProxy),false,false);
 		this.view = questionDetailsView;
         widget.setWidget(questionDetailsView.asWidget());
 		view.setDelegate(this);
-		startForAcceptQuestion();
 		this.answerListView = view.getAnswerListViewImpl();
 		answerListView.setDelegate(this);
 		this.answerTable = answerListView.getTable();
@@ -133,127 +124,22 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			
 			@Override
 			public void onSuccess(final Object response) {
+				
 				if(response instanceof QuestionProxy){
 					
 					initDetailsView((QuestionProxy) response);
-					
-					Log.info(((QuestionProxy) response).getQuestionText());
-					
-					if (((QuestionProxy) response).getIsReadOnly() == true) {
-						view.setVisibleEditAndDeleteBtn(false);
-					}
-						
-						
-					initForActivity((QuestionProxy) response,new Function<Boolean, Void>() {
-
-						@Override
-						public Void apply(Boolean input) {
-							init((QuestionProxy) response);
-							return null;
-						}
-					});					
+							
+					init((QuestionProxy) response);
 				}				
 			}
 		});
 	}
 	
-	protected void startForAcceptQuestion() {
-		//do nothing
-	}
-	//method is overridden by sub class accept question
-	protected void startForAccessRights() {
-
-		if (personRightProxy.getIsAdmin())
-		{
-			editDeleteBtnFlag = true;
-			answerFlag = true;
-		}
-		else if (personRightProxy.getIsInstitutionalAdmin())
-		{
-			editDeleteBtnFlag = true;
-			answerFlag = true;
-		}
-		else
-		{
-			for (UserAccessRightsProxy proxy : personRightProxy.getQuestionEventAccList())
-			{
-				if (proxy.getAccRights().equals(AccessRights.AccWrite))
-				{
-					editDeleteBtnFlag = true;
-					answerFlag = false;
-					break;
-				}
-			}
-		}
-	
-	}
-	
-	//method is overridden by sub class accept question
-	protected void initForActivity(final QuestionProxy response,final Function<Boolean,Void> callFunction) {
-		
-		if (response.getStatus().equals(Status.ACTIVE) || response.getStatus().equals(Status.NEW))
-		{
-			if (!editDeleteBtnFlag && !answerFlag)
-			{
-				if (((QuestionProxy) response).getAutor().getId().equals(userLoggedIn.getId()))
-				{
-					view.setVisibleEditAndDeleteBtn(true);
-					if(callFunction != null) callFunction.apply(true);
-					/*init((QuestionProxy) response);*/
-				}
-				else
-				{
-					requests.userAccessRightsRequest().checkAddAnswerRightsByQuestionAndPerson(userLoggedIn.getId(), ((QuestionProxy) response).getId()).fire(new BMEReceiver<List<UserAccessRightsProxy>>() {
-
-						@Override
-						public void onSuccess(List<UserAccessRightsProxy> rightsResponse) {
-							
-							if (rightsResponse.size() > 0)
-							{
-								for (UserAccessRightsProxy proxy : rightsResponse)
-								{
-									if (proxy.getAccRights().equals(AccessRights.AccWrite))
-									{
-										view.setVisibleEditAndDeleteBtn(true);
-										view.getAnswerListViewImpl().getNewAnswer().setVisible(false);
-									}
-									
-									if (proxy.getAccRights().equals(AccessRights.AccAddAnswers))
-									{
-										view.setVisibleEditAndDeleteBtn(false);
-									}	
-								}
-							}
-							else
-							{
-								view.setVisibleEditAndDeleteBtn(false);
-								view.getAnswerListViewImpl().getNewAnswer().setVisible(false);
-							}
-					
-							if(callFunction != null) callFunction.apply(true);
-							/*init((QuestionProxy) response);*/
-						}
-					});
-				}
-			}
-			else
-			{
-				if(callFunction != null) callFunction.apply(true);
-				/*init((QuestionProxy) response);*/
-			}
-		}
-		else if (response.getStatus().equals(Status.NEW))
-		{
-			view.getEdit().setVisible(false);
-			if(callFunction != null) callFunction.apply(true);
-			/*init((QuestionProxy) response);*/
-		}
-	}
 	/**
 	 * 
 	 * @param AssesmentProxy assesment
 	 */
-	protected void init(QuestionProxy question) {
+	private void init(QuestionProxy question) {
 
 		this.question = question;
 		Log.debug("Details für: "+question.getQuestionText());
@@ -378,7 +264,6 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		
 	}
 
-	@Override
 	public void goTo(Place place) {
 		placeController.goTo(place);
 		
@@ -408,11 +293,6 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		
 	}
 
-	@Override
-	public void newClicked() {
-		placeController.goTo(new PlaceQuestionDetails(PlaceQuestionDetails.Operation.CREATE));
-		
-	}
 	
 	//private AnswerDialogbox answerDialogbox;
 	/*private RequestFactoryEditorDriver<AnswerProxy, AnswerDialogboxImpl> answerDriver;*/
@@ -806,7 +686,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		
 	}
 
-	@Override
+	/*@Override
 	public void deleteSelectedQuestionResource(final Long qestionResourceId) {
 		requests.questionResourceRequest().removeSelectedQuestionResource(qestionResourceId).fire(new BMEReceiver<Void>(reciverMap) {
 
@@ -847,7 +727,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 				});
 			}
 		});
-	}
+	}*/
 
 	/*@Override
 	public void updatePicturePathInQuestion(String picturePath) {
@@ -901,7 +781,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		});
 	}
 
-	@Override
+	/*@Override
 	public void changedResourceSequence(Set<QuestionResourceClient> questionResourceClients) {
 		
 		if(question != null && questionResourceClients.size() > 0) {
@@ -928,7 +808,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 					Log.info("sequence changed successfuly");
 				}
 				
-				/*@Override
+				@Override
 				public void onConstraintViolation(
 						Set<ConstraintViolation<?>> violations) {
 					
@@ -950,11 +830,11 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 					ErrorPanel erorPanel = new ErrorPanel();
 		        	erorPanel.setErrorMessage(error.getMessage());
 		        	super.onFailure(error);
-				}*/
+				}
 			});
 
 		}
-	}
+	}*/
 
 	@Override
 	public void findAllAnswersPoints(Long questionId,Long currentAnswerId,final Function<List<String>, Void> function) {
@@ -1201,14 +1081,6 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		});
 	}*/
 	
-	
-
-	//method is overridden by sub class accept question
-	@Override
-	public boolean isQuestionDetailsPlace() {
-		return true;
-	}
-
 	@Override
 	public void getQuestionDetails(QuestionProxy previousVersion, final Function<QuestionProxy, Void> function) {
 		
@@ -1224,8 +1096,8 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	}
 
 	@Override
-	public void getLatestQuestionDetails(Function<QuestionProxy, Void> function) {
-		function.apply(question);
+	public QuestionProxy getLatestQuestionDetails() {
+		return question;
 	}
 	
 	private void initMatrixAnswerView()
@@ -1468,24 +1340,11 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 
 	@Override
 	public void enableBtnOnLatestClicked() {
-		if(isQuestionDetailsPlace() && question != null && question.getIsReadOnly() == false && this.editDeleteBtnFlag == true) {
-			view.setVisibleEditAndDeleteBtn(true);	
-		}else if(this.editDeleteBtnFlag == false) {
-			view.setVisibleEditAndDeleteBtn(false);
-		}
-		
-		initForActivity(question, new Function<Boolean, Void>() {
-			@Override
-			public Void apply(Boolean input) {
-				//do nothing 
-				return null;
-			}
-		});
-		
-		if(isQuestionDetailsPlace() && question != null && question.getIsReadOnly() == true) {
-			view.setVisibleEditAndDeleteBtn(false);
-		}
+		editDeleteBtnFlag = false;
+		editDeleteBtnFlag = hasQuestionWriteRights(question);
+		view.setVisibleEditAndDeleteBtn(editDeleteBtnFlag);
 	}
+	
 	// updated by subclass ActivityAcceptQuestionDetails
 	@Override
 	public void acceptQuestionClicked(QuestionProxy proxy) {

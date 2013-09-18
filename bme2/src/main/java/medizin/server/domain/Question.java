@@ -4,7 +4,6 @@ import java.io.File;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -278,7 +277,7 @@ public class Question {
 		CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
 		Root<Question> from = criteriaQuery.from(Question.class);
 		criteriaQuery.select(criteriaBuilder.count(from)); 			
-		Predicate mainPredicate = null;
+		Predicate mainPredicate = from.get("status").in(Status.NEW,Status.ACTIVE);
 		if (institutionId != null)
 		{
 			Predicate institutePre = criteriaBuilder.equal(from.get("questEvent").get("institution").get("id"), institutionId);
@@ -389,7 +388,7 @@ public class Question {
 		CriteriaQuery<Question> criteriaQuery = criteriaBuilder.createQuery(Question.class);
 		Root<Question> from = criteriaQuery.from(Question.class);
 		
-		Predicate mainPredicate = null;
+		Predicate mainPredicate = from.get("status").in(Status.NEW,Status.ACTIVE);
 		if (institutionId != null)
 		{
 			Predicate institutePre = criteriaBuilder.equal(from.get("questEvent").get("institution").get("id"), institutionId);
