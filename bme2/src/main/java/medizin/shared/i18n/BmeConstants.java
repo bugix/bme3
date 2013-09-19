@@ -732,4 +732,6 @@ public interface BmeConstants extends Constants {
 	public String sumOfFalseAnswerErrMsg();
 	
 	public String systemOverviewExaminerReachInMsg();
+	
+	public String deleteQuestionConfirmation();
 }

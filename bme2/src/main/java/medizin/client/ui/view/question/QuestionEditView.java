@@ -67,4 +67,6 @@ public interface QuestionEditView extends IsWidget {
 	void disableEnableAuthorReviewerValue(boolean flag);
 
 	void setResendToReviewBtn(boolean isResendToReview);
+
+	void setQuestionAuthor(PersonProxy autor);
 }
