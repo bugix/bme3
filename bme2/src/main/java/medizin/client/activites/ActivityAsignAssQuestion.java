@@ -62,6 +62,7 @@ import medizin.shared.QuestionTypes;
 import medizin.shared.Validity;
 import medizin.shared.criteria.AdvancedSearchCriteria;
 import medizin.shared.criteria.AdvancedSearchCriteriaUtils;
+import medizin.shared.utils.SharedConstant;
 
 import com.allen_sauer.gwt.dnd.client.DragEndEvent;
 import com.allen_sauer.gwt.dnd.client.DragHandler;
@@ -1417,18 +1418,34 @@ QuestionAdvancedSearchPopupView.Delegate {
 					
 				}
 				
-				if(sumOfTrueAnsw==trueAnswer && totalAnswerSelected==sumOfAnswer)
-					return true;
+				if (sumOfAnswer.equals(SharedConstant.INFINITE_VALUE) == true)
+				{
+					if (totalAnswerSelected >= 2 && sumOfTrueAnsw == trueAnswer)
+						return true;
+					else
+					{
+						if (totalAnswerSelected < 2)
+							ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.sumOfAnswer(2));
+						else if (totalAnswerSelected != sumOfAnswer)
+							ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.sumOfTrueAnswer(sumOfTrueAnsw));
+						
+						return false;
+					}
+				}
 				else
 				{
-					if(sumOfTrueAnsw!=trueAnswer)
-						ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.sumOfTrueAnswer(sumOfTrueAnsw));
-					else if(totalAnswerSelected != sumOfAnswer)
-						ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.sumOfAnswer(sumOfAnswer));
-					
-					return false;
+					if(sumOfTrueAnsw==trueAnswer && totalAnswerSelected==sumOfAnswer)
+						return true;
+					else
+					{
+						if(sumOfTrueAnsw!=trueAnswer)
+							ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.sumOfTrueAnswer(sumOfTrueAnsw));
+						else if(totalAnswerSelected != sumOfAnswer)
+							ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.sumOfAnswer(sumOfAnswer));
+						
+						return false;
+					}
 				}
-				
 			}
 			else//2. all answer should be false
 			{
@@ -1454,17 +1471,34 @@ QuestionAdvancedSearchPopupView.Delegate {
 				}
 				
 				//if(sumFalseAnswers==falseAnswerSelected)
-				if(isAllAnswerFalse && totalAnswerSelected==sumOfAnswer)
+				if (sumOfAnswer.equals(SharedConstant.INFINITE_VALUE) == true)
 				{
-					return true;					
+					if (totalAnswerSelected >= 2 && isAllAnswerFalse)
+						return true;
+					else
+					{
+						if (isAllAnswerFalse == false)
+							ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.sumOfFalseAnswerErrMsg());
+						else
+							ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.sumOfAnswer(2));
+						
+						return false;
+					}
 				}
 				else
 				{
-					if(!isAllAnswerFalse)
-						ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.sumOfFalseAnswer(sumOfAnswer));
-					else if(totalAnswerSelected != sumOfAnswer)
-						ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.sumOfAnswer(sumOfAnswer));
-					return false;
+					if(isAllAnswerFalse && totalAnswerSelected==sumOfAnswer)
+					{
+						return true;					
+					}
+					else
+					{
+						if(!isAllAnswerFalse)
+							ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.sumOfFalseAnswer(sumOfAnswer));
+						else if(totalAnswerSelected != sumOfAnswer)
+							ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.sumOfAnswer(sumOfAnswer));
+						return false;
+					}
 				}
 			}
 		}//3. Need to validate only sum of answer
@@ -1484,7 +1518,16 @@ QuestionAdvancedSearchPopupView.Delegate {
 				
 			}
 			
-			if(sumOfAnswer==totalSelectedAnswers)
+			if (SharedConstant.INFINITE_VALUE.equals(sumOfAnswer) && totalSelectedAnswers >= 2)
+			{
+				return true;
+			}		
+			else if (SharedConstant.INFINITE_VALUE.equals(sumOfAnswer) && totalSelectedAnswers < 2)
+			{
+				ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.sumOfAnswer(2));
+				return false;
+			}
+			else if(sumOfAnswer==totalSelectedAnswers)
 			{
 				return true;					
 			}

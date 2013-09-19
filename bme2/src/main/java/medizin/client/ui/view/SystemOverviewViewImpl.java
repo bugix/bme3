@@ -70,7 +70,7 @@ public class SystemOverviewViewImpl extends Composite implements  SystemOverview
 			String key = keyIterator.next();
 			String value = quesitonTypeCountMap.get(key);
 			
-			String questionTypeValue = value + " " + key + " " + constants.question() + " ";
+			String questionTypeValue = value + " " + key;
 			subView.getQuestionTypeVP().add(new Label(questionTypeValue));
 		}
 		
@@ -90,11 +90,11 @@ public class SystemOverviewViewImpl extends Composite implements  SystemOverview
 			String key = keyIterator.next();
 			String value = quesitonTypeCountMap.get(key);
 			
-			String questionTypeValue = value + " " + key + " " + constants.question() + " ";
+			String questionTypeValue = value + " " + key;
 			subView.getQuestionTypeVP().add(new Label(questionTypeValue));
 		}
 		
-		examinerSubView.getMcMsgLabel().setText(constants.systemOverviewReachInMsg());
+		examinerSubView.getMcMsgLabel().setText(constants.systemOverviewExaminerReachInMsg() + " : ");
 		examinerSubView.getExaminerVerticalPanel().add(subView);
 	}
 

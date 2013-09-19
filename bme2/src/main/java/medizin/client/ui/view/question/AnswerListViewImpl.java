@@ -413,6 +413,10 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 				      }
 			      }
 			      
+			      if (value.getQuestion() != null && Status.DEACTIVATED.equals(value.getQuestion().getStatus()))
+			      {
+			    	  beginn = "<div style=\"";
+			      }
 
 			      beginn += "\">";
 			      sb.appendHtmlConstant(beginn);

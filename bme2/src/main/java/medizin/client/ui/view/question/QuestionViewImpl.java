@@ -41,7 +41,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Composite;
@@ -800,7 +799,7 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 			String beginn = "<div style=\"white-space:normal;";
 			String end = "</div>";
 			
-			if (Status.ACTIVE.equals(value.getStatus()) == false)
+			if (Status.DEACTIVATED.equals(value.getStatus()) == false && Status.ACTIVE.equals(value.getStatus()) == false)
 			{
 				if (!value.getIsAcceptedAdmin()) {
 					beginn += "color:red; ";
@@ -945,5 +944,9 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 	public void removeAdvancedSearchFromView()
 	{
 		Document.get().getElementById("advancedSearchViewDiv").removeFromParent();
+	}
+	
+	public QuestionFilterViewImpl getFilterPanel() {
+		return filterPanel;
 	}
 }

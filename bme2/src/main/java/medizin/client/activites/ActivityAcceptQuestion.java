@@ -26,6 +26,7 @@ import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
+import com.google.web.bindery.requestfactory.shared.EntityProxyId;
 
 public class ActivityAcceptQuestion extends AbstractActivityWrapper implements AcceptQuestionView.Presenter {
 
@@ -185,6 +186,8 @@ public class ActivityAcceptQuestion extends AbstractActivityWrapper implements A
 
 	private HandlerRegistration rangeChangeHandler;
 
+	private EntityProxyId<?> proxyId;
+
 	private void init() {
 		
 		if (rangeChangeHandler!=null){
@@ -226,20 +229,44 @@ public class ActivityAcceptQuestion extends AbstractActivityWrapper implements A
 
 				table.setRowData(range.getStart(), values);
 				
+				selectRow(range);
 
-			if (widget != null) {
-		          widget.setWidget(view.asWidget());
+				if (widget != null) {
+			          widget.setWidget(view.asWidget());
+					}
 				}
-			}
 		});
 	}
 	
+	private void selectRow(final Range range) {
+		if (proxyId != null)
+		{
+			requests.find(proxyId).fire(new BMEReceiver<Object>() {
 
+				@Override
+				public void onSuccess(Object response) {
+					if (response != null && response instanceof QuestionProxy)
+					{
+						QuestionProxy selectedProxy = (QuestionProxy) response;
+						selectionModel.setSelected(selectedProxy, true);
+						int start = table.getRowCount() - range.getLength();
+						table.setPageStart((start < 0 ? 0 : start));
+					}
+					proxyId = null;
+				}
+			});					
+		}
+	}
 	
 	@Override
 	public void placeChanged(Place place) {
 		
-		if (place instanceof PlaceQuestionDetails || place instanceof PlaceAcceptQuestion) {
+		if (place instanceof PlaceAcceptQuestionDetails) {
+			if (((PlaceAcceptQuestionDetails)place).getProxyId() != null)
+				proxyId = ((PlaceAcceptQuestionDetails)place).getProxyId();
+		}
+		
+		if (place instanceof PlaceAcceptQuestion) {
 			init();
 		}
 	}

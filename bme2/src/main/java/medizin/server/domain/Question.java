@@ -2469,4 +2469,59 @@ public class Question {
 
 		return q.getSingleResult();
 	}
+	
+	public static List<Question> findDeactivatedQuestion(String searchValue, List<String> searchField, int start, int length)
+	{
+		Person loggedUser = Person.myGetLoggedPerson();
+		Institution institution = Institution.myGetInstitutionToWorkWith();
+		if (loggedUser == null || institution == null)
+			throw new IllegalArgumentException("The person and institution arguments are required");
+		
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Question> criteriaQuery = criteriaBuilder.createQuery(Question.class);
+		Root<Question> from = criteriaQuery.from(Question.class);
+		criteriaQuery.distinct(true);
+		
+		criteriaQuery.where(deactivateQuestionPredicate(searchValue, searchField, criteriaBuilder, criteriaQuery, from));
+		
+		TypedQuery<Question> query = entityManager().createQuery(criteriaQuery);
+		
+		System.out.println("DEACTIVATED QUERY : " + query.unwrap(Query.class).getQueryString());
+		return query.getResultList();
+	}
+	
+	public static Integer countDeactivatedQuestion(String searchValue, List<String> searchField)
+	{
+		Person loggedUser = Person.myGetLoggedPerson();
+		Institution institution = Institution.myGetInstitutionToWorkWith();
+		if (loggedUser == null || institution == null)
+			throw new IllegalArgumentException("The person and institution arguments are required");
+		
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Question> criteriaQuery = criteriaBuilder.createQuery(Question.class);
+		Root<Question> from = criteriaQuery.from(Question.class);
+		criteriaQuery.distinct(true);
+			
+		criteriaQuery.where(deactivateQuestionPredicate(searchValue, searchField, criteriaBuilder, criteriaQuery, from));
+		
+		TypedQuery<Question> query = entityManager().createQuery(criteriaQuery);
+		return query.getResultList().size();
+	}
+
+	public static Predicate deactivateQuestionPredicate(String searchValue, List<String> searchField, CriteriaBuilder criteriaBuilder, CriteriaQuery<Question> criteriaQuery, Root<Question> from) {
+		Predicate pre1 = criteriaBuilder.equal(from.get("status"), Status.DEACTIVATED);
+		
+		Subquery<Question> subQuery = criteriaQuery.subquery(Question.class);
+		Root queRoot = subQuery.from(Question.class);
+		subQuery.distinct(true);
+		subQuery.select(queRoot.get("previousVersion").get("id")).where(queRoot.get("previousVersion").isNotNull());
+		Predicate pre2 = criteriaBuilder.not(criteriaBuilder.in(from.get("id")).value(subQuery));
+		
+		Predicate mainPredicate = criteriaBuilder.and(pre1, pre2);
+		Predicate searchPredicate = searchFilter(searchValue, BMEUtils.convertToMap(searchField), criteriaBuilder, from);
+		if (searchPredicate != null)
+			mainPredicate = criteriaBuilder.and(mainPredicate, searchPredicate);
+		
+		return mainPredicate;
+	}
 }

@@ -38,11 +38,21 @@
 			<g:Anchor ui:field="question"></g:Anchor>
 			<g:Anchor ui:field="acceptQuestion"></g:Anchor>
 			<g:Anchor ui:field="acceptAnswer"></g:Anchor>
-			<g:Anchor ui:field="notActivatedQuestion"></g:Anchor>
-			<g:Anchor ui:field="notActivatedAnswer"></g:Anchor>
+			<!-- <g:Anchor ui:field="notActivatedQuestion"></g:Anchor>
+			<g:Anchor ui:field="notActivatedAnswer"></g:Anchor> -->
 			<g:Anchor ui:field="institution"></g:Anchor>
 		</g:VerticalPanel>
 	</g:DisclosurePanel>
+	
+	<g:DisclosurePanel ui:field="extendedQuestionPanel" width="100%" open="true" addStyleNames='{style.mainNavPanel}' visible="false">
+		<g:header></g:header>
+		<g:VerticalPanel addStyleNames='{style.mainNavPanelContent}' width="100%">		
+			<g:Anchor ui:field="deactivatedQuestion"></g:Anchor>
+			<g:Anchor ui:field="notActivatedQuestion"></g:Anchor>
+			<g:Anchor ui:field="notActivatedAnswer"></g:Anchor>			
+		</g:VerticalPanel>
+	</g:DisclosurePanel>
+	
 	<g:DisclosurePanel ui:field="assementPanel" width="100%" open="true" addStyleNames='{style.mainNavPanel}' visible="false">
 		<g:header></g:header>
 		<g:VerticalPanel addStyleNames='{style.mainNavPanelContent}' width="100%">

@@ -3,7 +3,6 @@ package medizin.client.ui.view.question;
 import java.util.List;
 import java.util.Map;
 
-import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchSubViewImpl;
@@ -55,5 +54,8 @@ public interface QuestionView extends IsWidget {
 
 	QuestionAdvancedSearchSubViewImpl getQuestionAdvancedSearchSubViewImpl();
 	
-	 void removeAdvancedSearchFromView();
+	void removeAdvancedSearchFromView();
+	 
+	public QuestionFilterViewImpl getFilterPanel();
+
 }

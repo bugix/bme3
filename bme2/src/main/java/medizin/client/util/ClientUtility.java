@@ -261,4 +261,11 @@ public final class ClientUtility {
 			}
 		};
 	}
+	
+	public static String sumAnswerValue(Integer sumOfAnswer) {
+		if (SharedConstant.INFINITE_VALUE.equals(sumOfAnswer))
+			return "\u221E";
+		
+		return sumOfAnswer.toString();
+	}
 }

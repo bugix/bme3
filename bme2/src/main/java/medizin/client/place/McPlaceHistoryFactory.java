@@ -34,7 +34,8 @@ private final PlaceAcceptQuestionDetails.Tokenizer placeAcceptQuestionDetails ;
 private final PlaceNotActivatedQuestion.Tokenizer placeNotActivatedQuestion ;
 private final PlaceNotActivatedQuestionDetails.Tokenizer placeNotActivatedQuestionDetails ;
 private final PlaceNotActivatedAnswer.Tokenizer placeNotActivatedAnswer;
-
+private final PlaceDeactivatedQuestion.Tokenizer placeDeactivatedQuestion;
+private final PlaceDeactivatedQuestionDetails.Tokenizer placeDeactivatedQuestionDetails;
 
 public PlaceUserDetailsEvent.Tokenizer getPlaceUserDetailsEventTokenizer() {
 	return placeUserDetailsEventTokenizer;
@@ -155,8 +156,16 @@ public  PlaceNotActivatedQuestionDetails.Tokenizer getPlaceNotActivatedQuestionD
 	return placeNotActivatedQuestionDetails;
 }
 
-public PlaceNotActivatedAnswer.Tokenizer getPlaceNotActivatedAnswer() {
+public PlaceNotActivatedAnswer.Tokenizer getPlaceNotActivatedAnswerTokenizer() {
 	return placeNotActivatedAnswer;
+}
+
+public PlaceDeactivatedQuestion.Tokenizer getPlaceDeactivatedQuestionTokenizer() {
+	return placeDeactivatedQuestion;
+}
+
+public PlaceDeactivatedQuestionDetails.Tokenizer getPlaceDeactivatedQuestionDetailsTokenizer() {
+	return placeDeactivatedQuestionDetails;
 }
 //	private final NationalityPlace.Tokenizer nationalityPlaceTokenizer;
 //	private final NationalityDetailsPlace.Tokenizer nationalityDetailsPlaceTokenizer;
@@ -192,6 +201,8 @@ public PlaceNotActivatedAnswer.Tokenizer getPlaceNotActivatedAnswer() {
 		this.placeNotActivatedQuestion= new PlaceNotActivatedQuestion.Tokenizer(requestFactory);
 		this.placeNotActivatedQuestionDetails = new PlaceNotActivatedQuestionDetails.Tokenizer(requestFactory);
 		this.placeNotActivatedAnswer = new PlaceNotActivatedAnswer.Tokenizer(requestFactory);
+		this.placeDeactivatedQuestion = new PlaceDeactivatedQuestion.Tokenizer(requestFactory);
+		this.placeDeactivatedQuestionDetails = new PlaceDeactivatedQuestionDetails.Tokenizer(requestFactory);
 	}
 
 //	public PlaceTokenizer<NationalityPlace> getNationalityPlaceTokenizer() {

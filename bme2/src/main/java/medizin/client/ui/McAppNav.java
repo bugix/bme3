@@ -10,6 +10,7 @@ import medizin.client.place.PlaceAcceptQuestion;
 import medizin.client.place.PlaceAsignAssQuestion;
 import medizin.client.place.PlaceAssesment;
 import medizin.client.place.PlaceBookAssesment;
+import medizin.client.place.PlaceDeactivatedQuestion;
 import medizin.client.place.PlaceInstitution;
 import medizin.client.place.PlaceNotActivatedAnswer;
 import medizin.client.place.PlaceNotActivatedQuestion;
@@ -72,6 +73,9 @@ public class McAppNav extends Composite {
 	@UiField
 	DisclosurePanel questionPanel;
 	@UiField
+	DisclosurePanel extendedQuestionPanel;	
+	
+	@UiField
 	Anchor systemOverview;
 	@UiField
 	Anchor acceptPerson;
@@ -101,7 +105,8 @@ public class McAppNav extends Composite {
 	Anchor bookAssesment;
 	@UiField
 	Anchor staticContent;
-	
+	@UiField
+	Anchor deactivatedQuestion;	
 	@UiField
 	Anchor notActivatedAnswer;
 
@@ -169,6 +174,10 @@ public class McAppNav extends Composite {
 	@UiHandler("notActivatedAnswer")
 	void notActivatedAnswerClicked(ClickEvent event){
 		placeController.goTo(new PlaceNotActivatedAnswer(PlaceNotActivatedAnswer.PLACE_NOT_ACTIVATED_ANSWER, true));
+	}
+	@UiHandler("deactivatedQuestion")
+	void deactivatedQuestionClicked(ClickEvent event){
+		placeController.goTo(new PlaceDeactivatedQuestion(PlaceDeactivatedQuestion.PLACE_DEACTIVATED_QUESTION, true));
 	}
 //	public McAppNav() {
 //		initWidget(uiBinderUser.createAndBindUi(this));
@@ -320,13 +329,15 @@ public class McAppNav extends Composite {
 		user.setText(constants.user());
 		
 		//doctor.setText(constants.;)
-		
 		questionPanel.getHeaderTextAccessor().setText(constants.questionPanel());
 		question.setText(constants.question());
-		notActivatedQuestion.setText(constants.notActivatedQuestion());
-		notActivatedAnswer.setText(constants.notActivatedAnswer());
 		questionType.setText(constants.questionTypes());
 		institution.setText(constants.institution());
+		
+		extendedQuestionPanel.getHeaderTextAccessor().setText(constants.extendedQueMgt());
+		deactivatedQuestion.setText(constants.deactivatedQue());
+		notActivatedQuestion.setText(constants.notActivatedQuestion());
+		notActivatedAnswer.setText(constants.notActivatedAnswer());		
 		
 		assementPanel.getHeaderTextAccessor().setText(constants.assementPanel());
 		assesment.setText(constants.assesment());
@@ -341,6 +352,7 @@ public class McAppNav extends Composite {
 		managementPanel.setVisible(false);
 		questionPanel.setVisible(false);
 		assementPanel.setVisible(false);
+		extendedQuestionPanel.setVisible(false);
 		
 		shell.getMasterPanel().clear();
 	}
@@ -351,7 +363,7 @@ public class McAppNav extends Composite {
 		managementPanel.setVisible(true);
 		questionPanel.setVisible(true);
 		assementPanel.setVisible(true);
-		
+		extendedQuestionPanel.setVisible(true);
 		
 		notActivatedQuestion.setVisible(true);
 		notActivatedAnswer.setVisible(true);
@@ -360,6 +372,7 @@ public class McAppNav extends Composite {
 		assesment.setVisible(true);
 		bookAssesment.setVisible(true);
 		staticContent.setVisible(true);
+		deactivatedQuestion.setVisible(true);
 	}
 	
 	private void showUserMenu()
@@ -368,6 +381,7 @@ public class McAppNav extends Composite {
 		managementPanel.setVisible(false);
 		questionPanel.setVisible(true);
 		assementPanel.setVisible(true);
+		extendedQuestionPanel.setVisible(false);
 		
 		notActivatedQuestion.setVisible(false);
 		notActivatedAnswer.setVisible(false);
@@ -376,6 +390,7 @@ public class McAppNav extends Composite {
 		assesment.setVisible(false);
 		bookAssesment.setVisible(false);
 		staticContent.setVisible(false);
+		deactivatedQuestion.setVisible(false);
 	}
 
 }

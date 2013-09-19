@@ -1,5 +1,8 @@
 package medizin.client.ui.view;
 
+import static medizin.client.util.ClientUtility.defaultString;
+import static medizin.client.util.ClientUtility.sumAnswerValue;
+
 import java.util.ArrayList;
 
 import medizin.client.proxy.QuestionTypeProxy;
@@ -23,7 +26,6 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
-import static medizin.client.util.ClientUtility.defaultString;
 
 public class QuestiontypesDetailsViewImpl extends Composite implements QuestiontypesDetailsView  {
 
@@ -293,7 +295,7 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 	    	
 	       if (proxy.getQuestionType().equals(QuestionTypes.Textual) || proxy.getQuestionType().equals(QuestionTypes.Sort))
 	       {
-	    	   sumAnswerValLbl.setText(defaultString(proxy.getSumAnswer()));
+	    	   sumAnswerValLbl.setText(sumAnswerValue(proxy.getSumAnswer()));
 	    	   sumTrueAnswerValLbl.setText(defaultString(proxy.getSumTrueAnswer()));
 	    	   sumFalseAnswerValLbl.setText(defaultString(proxy.getSumFalseAnswer()));
 	    	   questionLengthValLbl.setText(defaultString(proxy.getQuestionLength()));

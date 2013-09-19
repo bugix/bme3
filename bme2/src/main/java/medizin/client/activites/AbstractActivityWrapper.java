@@ -9,6 +9,8 @@ import medizin.client.place.PlaceAssesment;
 import medizin.client.place.PlaceAssesmentDetails;
 import medizin.client.place.PlaceBookAssesment;
 import medizin.client.place.PlaceBookAssesmentDetails;
+import medizin.client.place.PlaceDeactivatedQuestion;
+import medizin.client.place.PlaceDeactivatedQuestionDetails;
 import medizin.client.place.PlaceInstitution;
 import medizin.client.place.PlaceInstitutionEvent;
 import medizin.client.place.PlaceNotActivatedAnswer;
@@ -174,13 +176,14 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 				flag = true;
 			}else {
 				
-				if(place instanceof PlaceNotActivatedQuestion  	|| place instanceof PlaceNotActivatedQuestionDetails
-						|| place instanceof PlaceQuestiontypes 	|| place instanceof PlaceQuestiontypesDetails
-						|| place instanceof PlaceInstitution 	|| place instanceof PlaceInstitutionEvent
-						|| place instanceof PlaceAssesment 		|| place instanceof PlaceAssesmentDetails
-						|| place instanceof PlaceBookAssesment	|| place instanceof PlaceBookAssesmentDetails
-						|| place instanceof PlaceStaticContent  || place instanceof PlaceNotActivatedAnswer
-						|| place instanceof PlaceUser 			|| place instanceof PlaceUserDetails
+				if(place instanceof PlaceNotActivatedQuestion 	 	 || place instanceof PlaceNotActivatedQuestionDetails
+						|| place instanceof PlaceQuestiontypes 		 || place instanceof PlaceQuestiontypesDetails
+						|| place instanceof PlaceInstitution 		 || place instanceof PlaceInstitutionEvent
+						|| place instanceof PlaceAssesment 			 || place instanceof PlaceAssesmentDetails
+						|| place instanceof PlaceBookAssesment		 || place instanceof PlaceBookAssesmentDetails
+						|| place instanceof PlaceStaticContent  	 || place instanceof PlaceNotActivatedAnswer
+						|| place instanceof PlaceUser 				 || place instanceof PlaceUserDetails
+						|| place instanceof PlaceDeactivatedQuestion || place instanceof PlaceDeactivatedQuestionDetails
 				) {
 					flag = false;
 				}else {

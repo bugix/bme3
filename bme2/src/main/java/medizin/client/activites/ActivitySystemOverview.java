@@ -2,12 +2,15 @@ package medizin.client.activites;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.PlaceSystemOverview;
 import medizin.client.proxy.AssesmentProxy;
+import medizin.client.proxy.AssesmentQuestionProxy;
 import medizin.client.proxy.PersonProxy;
+import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionSumPerPersonProxy;
 import medizin.client.proxy.QuestionTypeCountPerExamProxy;
 import medizin.client.proxy.QuestionTypeProxy;
@@ -131,13 +134,13 @@ public class ActivitySystemOverview extends AbstractActivityWrapper implements S
 		});
 		
 		AssesmentRequest assesmentRequest = answerRequest.append(requests.assesmentRequest());
-		assesmentRequest.findAssessmentByLoggedUser(userLoggedIn.getId(), false).with("mc", "questionSumPerPerson", "questionTypeCountPerExams", "questionTypeCountPerExams.questionTypesAssigned").to(new BMEReceiver<List<AssesmentProxy>>() {
+		assesmentRequest.findAssessmentByLoggedUser(userLoggedIn.getId(), false).with("mc", "questionSumPerPerson", "questionSumPerPerson.responsiblePerson", "questionSumPerPerson.questionEvent", "questionTypeCountPerExams", "questionTypeCountPerExams.questionTypesAssigned", "assesmentQuestions.question", "assesmentQuestions.question.questEvent", "assesmentQuestions.question.questionType", "assesmentQuestions.autor").to(new BMEReceiver<List<AssesmentProxy>>() {
 
 			@Override
 			public void onSuccess(List<AssesmentProxy> response) {
 				for (AssesmentProxy assesmentProxy : response)
 				{
-					Map<String, String> quesitonTypeCountMap = countQuestionTypeCountPerAssesment(assesmentProxy);
+					Map<String, String> quesitonTypeCountMap = countQuestionTypeCountPerAssesment(assesmentProxy, userLoggedIn);
 					
 					view.setQuestionTypesCountByAssessment(assesmentProxy.getMc().getMcName(), ClientUtility.SHORT_FORMAT.format(assesmentProxy.getDateClosed()), quesitonTypeCountMap);
 				}
@@ -149,7 +152,7 @@ public class ActivitySystemOverview extends AbstractActivityWrapper implements S
 	
 	private void createExaminerSubView(List<PersonProxy> response) {
 		AssesmentRequest finalAssesmentRequest = null;
-		for (PersonProxy personProxy : response)
+		for (final PersonProxy personProxy : response)
 		{
 			if (personProxy.getId().equals(userLoggedIn.getId()) == false)
 			{
@@ -184,14 +187,14 @@ public class ActivitySystemOverview extends AbstractActivityWrapper implements S
 				});
 				
 				finalAssesmentRequest = answerRequest.append(requests.assesmentRequest());
-				finalAssesmentRequest.findAssessmentByLoggedUser(personProxy.getId(), false).with("mc", "questionSumPerPerson", "questionTypeCountPerExams", "questionTypeCountPerExams.questionTypesAssigned").to(new BMEReceiver<List<AssesmentProxy>>() {
+				finalAssesmentRequest.findAssessmentByLoggedUser(personProxy.getId(), false).with("mc", "questionSumPerPerson", "questionSumPerPerson.responsiblePerson", "questionSumPerPerson.questionEvent", "questionTypeCountPerExams", "questionTypeCountPerExams.questionTypesAssigned", "assesmentQuestions.question", "assesmentQuestions.question.questEvent", "assesmentQuestions.question.questionType", "assesmentQuestions.autor").to(new BMEReceiver<List<AssesmentProxy>>() {
 
 					@Override
 					public void onSuccess(List<AssesmentProxy> response) {
 						examinerSubView.setAssesmentProxy(response);
 						for (AssesmentProxy assesmentProxy : response)
 						{
-							Map<String, String> quesitonTypeCountMap = countQuestionTypeCountPerAssesment(assesmentProxy);
+							Map<String, String> quesitonTypeCountMap = countQuestionTypeCountPerAssesment(assesmentProxy, personProxy);
 							
 							view.setQuestionTypesCountByAssessmentExaminer(assesmentProxy.getMc().getMcName(), ClientUtility.SHORT_FORMAT.format(assesmentProxy.getDateClosed()), quesitonTypeCountMap, examinerSubView);
 							
@@ -213,21 +216,48 @@ public class ActivitySystemOverview extends AbstractActivityWrapper implements S
 			finalAssesmentRequest.fire();
 	}
 	
-	private Map<String, String> countQuestionTypeCountPerAssesment(AssesmentProxy assesmentProxy)
+	private Map<String, String> countQuestionTypeCountPerAssesment(AssesmentProxy assesmentProxy, PersonProxy personProxy)
 	{
 		Map<String, String> quesitonTypeCountMap = Maps.newHashMap();
 		for (QuestionSumPerPersonProxy questionSumPerPersonProxy : assesmentProxy.getQuestionSumPerPerson())
 		{
-			for (QuestionTypeCountPerExamProxy questionTypeCountPerExamProxy : assesmentProxy.getQuestionTypeCountPerExams())
+			if (questionSumPerPersonProxy.getResponsiblePerson().getId().equals(personProxy.getId()))
 			{
-				Long count = 0l;
-				count = (long) ((questionTypeCountPerExamProxy.getQuestionTypeCount() * questionSumPerPersonProxy.getQuestionSum()) / 100);
-				String questionType = Joiner.on(", ").join(FluentIterable.from(questionTypeCountPerExamProxy.getQuestionTypesAssigned()).transform(QUESTIONTYPE_TO_SHORTNAME));
-				quesitonTypeCountMap.put(questionType, String.valueOf(count));
+				for (QuestionTypeCountPerExamProxy questionTypeCountPerExamProxy : assesmentProxy.getQuestionTypeCountPerExams())
+				{
+					int count = 0;
+					String questionType = "";
+					count = ((questionTypeCountPerExamProxy.getQuestionTypeCount() * questionSumPerPersonProxy.getQuestionSum()) / 100);
+					
+					if (assesmentProxy.getAssesmentQuestions() != null && questionTypeCountPerExamProxy.getQuestionTypesAssigned() != null && questionSumPerPersonProxy.getQuestionEvent() != null)
+					{
+						int queTypeCount = countAssessmentQuestionByQuestionType(assesmentProxy.getAssesmentQuestions(), questionTypeCountPerExamProxy.getQuestionTypesAssigned(), questionSumPerPersonProxy.getQuestionEvent(), personProxy);
+						count = queTypeCount - count;
+						questionType = Joiner.on(", ").join(FluentIterable.from(questionTypeCountPerExamProxy.getQuestionTypesAssigned()).transform(QUESTIONTYPE_TO_SHORTNAME));
+						questionType += " " + constants.question() + " (" + questionSumPerPersonProxy.getQuestionEvent().getEventName() + ")";
+					}
+					quesitonTypeCountMap.put(questionType, String.valueOf(count));
+				}
 			}
 		}
 		
 		return quesitonTypeCountMap;
+	}
+	
+	private int countAssessmentQuestionByQuestionType(Set<AssesmentQuestionProxy> assQueProxySet, Set<QuestionTypeProxy> queTypeProxySet, QuestionEventProxy questionEventProxy, PersonProxy personProxy)
+	{
+		int count = 0;
+		for (AssesmentQuestionProxy assQuestion : assQueProxySet)
+		{
+			for (QuestionTypeProxy questionType : queTypeProxySet)
+			{
+				if (assQuestion.getAutor().getId().equals(personProxy.getId()) && questionType.getId().equals(assQuestion.getQuestion().getQuestionType().getId()) && assQuestion.getQuestion().getQuestEvent().getId().equals(questionEventProxy.getId()))
+				{
+					count += 1;
+				}
+			}
+		}
+		return count;
 	}
 
 	@Override

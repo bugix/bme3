@@ -720,4 +720,16 @@ public interface BmeConstants extends Constants {
 	public String imageViewer();
 	
 	public String digitCount();
+	
+	public String extendedQueMgt();
+			
+	public String deactivatedQue();
+	
+	public String sumOfAnsInfiniteMsg();
+	
+	public String infinite();
+	
+	public String sumOfFalseAnswerErrMsg();
+	
+	public String systemOverviewExaminerReachInMsg();
 }

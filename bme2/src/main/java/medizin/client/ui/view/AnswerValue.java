@@ -1,11 +1,10 @@
 package medizin.client.ui.view;
 
 import medizin.client.proxy.QuestionTypeProxy;
-import medizin.shared.MultimediaType;
+import medizin.client.util.ClientUtility;
 import medizin.shared.QuestionTypes;
 import medizin.shared.i18n.BmeConstants;
 
-import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
 
 public class AnswerValue {
@@ -21,7 +20,7 @@ public class AnswerValue {
 		if(object.getQuestionType()!=null)
 		{
 			if(object.getQuestionType()==QuestionTypes.Textual || object.getQuestionType()==QuestionTypes.Sort)
-				return constants.sum()+"("+object.getSumAnswer()+ ")"+"/"+constants.trueAns()+"("+object.getSumTrueAnswer()+ ")"+"/"+constants.falseAns()+"("+object.getSumFalseAnswer()+ ")";
+				return constants.sum()+"("+ClientUtility.sumAnswerValue(object.getSumAnswer())+ ")"+"/"+constants.trueAns()+"("+object.getSumTrueAnswer()+ ")"+"/"+constants.falseAns()+"("+object.getSumFalseAnswer()+ ")";
 			
 			if(object.getQuestionType()==QuestionTypes.Imgkey)
 				return constants.count()+"("+object.getKeywordCount()+ ")"+"/"+constants.keyOnly()+"("+object.getIsDictionaryKeyword()+ ")"+"/"+constants.maxLen()+"("+object.getAnswerLength()+ ")";
@@ -43,5 +42,6 @@ public class AnswerValue {
 		return "";
 
 		}
+
 
 }

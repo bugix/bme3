@@ -260,6 +260,7 @@ public class Assesment {
 		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
 		CriteriaQuery<Assesment> criteriaQuery = criteriaBuilder.createQuery(Assesment.class);
 		Root<Assesment> from = criteriaQuery.from(Assesment.class);
+		criteriaQuery.distinct(true);
 
 		Date dateClosed =new Date();
     	Date dateOpen = new Date(); 

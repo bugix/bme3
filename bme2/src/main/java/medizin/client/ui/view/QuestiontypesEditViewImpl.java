@@ -30,6 +30,7 @@ import medizin.shared.SelectionType;
 import medizin.shared.i18n.BmeConstants;
 import medizin.shared.i18n.BmeContextHelpConstants;
 import medizin.shared.i18n.BmeMessages;
+import medizin.shared.utils.SharedConstant;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -252,6 +253,9 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
     @UiField
     LabeledPanel keywordHighlight;
     
+    @UiField
+    CheckBox infiniteChkBox;
+    
     private Delegate delegate;
 
 	private QuestionTypeProxy proxy;
@@ -365,7 +369,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		
 		textualFields = Lists.newArrayList((Widget) sumAnswer, sumTrueAnswer,
 				sumFalseAnswer, questionLength, answerLength, answerDiff,
-				queHasMedia);
+				queHasMedia, infiniteChkBox);
 		textualFields.addAll(baseFields);
 		
 		imgKeyFields = Lists.newArrayList((Widget) shortName, longName, description,
@@ -404,7 +408,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				minLetterForAutoComp, acceptNonKeyword, shortAnswerLength,
 				keywordHighlight, richText, minLength, maxLength, minWordCount,
 				maxWordCount, oneToOneAss, multimediaType, selectionType,
-				column, maxBytes, showAutoComplete);
+				column, maxBytes, showAutoComplete, infiniteChkBox);
 		allBoxes.addAll(baseFields);
 	    		
 		uiStyles.uiCss().ensureInjected();
@@ -550,6 +554,8 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		maxBytes.setLabelText(constants.maxBytes());
 		maxBytes.setHelpText(contextHelp.maxBytes());
 		
+		infiniteChkBox.setText(constants.infinite());
+		
 		richText.setLabelText(constants.allowRichText());
 		richText.setHelpText(contextHelp.richText());
 		richTextChkBox.setText(constants.allowRichText());
@@ -622,7 +628,39 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 //			
 //		}
 		
-		shortName.setFocus(true);	
+		shortName.setFocus(true);
+		
+		infiniteChkBox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+
+			@Override
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
+				if (event.getValue())
+				{
+					sumAnswer.getTextBox().setValue(SharedConstant.INFINITE_VALUE.toString());
+					sumAnswer.getTextBox().setEnabled(false);
+				}
+				else
+				{
+					sumAnswer.getTextBox().setValue("");
+					sumAnswer.getTextBox().setEnabled(true);
+				}
+			}
+		});
+		
+		sumAnswer.addValueChangeHandler(new ValueChangeHandler<String>() {
+
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				if (ClientUtility.isNumber(event.getValue()))
+				{
+					if (SharedConstant.INFINITE_VALUE.equals(Integer.parseInt(event.getValue())))
+					{
+						sumAnswer.getTextBox().setEnabled(false);
+						infiniteChkBox.setValue(true);
+					}
+				}
+			}
+		});
 	}
 	
 	private void save() {
@@ -731,6 +769,8 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 	    	   queHaveImgChkBox.setValue(false);
 	    	   queHaveVideoChkBox.setValue(false);
 	    	   queHaveSoundChkBox.setValue(false);
+	    	   infiniteChkBox.setValue(false);
+	    	   sumAnswer.getTextBox().setEnabled(true);
 	       }
 	       else if (questionTypes.equals(QuestionTypes.Imgkey))
 	       {
@@ -959,6 +999,13 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 					flag = false;
 					answerFlag = true;
 					errorMessage.add(constants.sumOfAnsMsg());
+					sumAnswer.getTextBox().addStyleName("higlight_onViolation");
+				}
+				else if (infiniteChkBox.getValue() && sumAnswer.getValue().equals(SharedConstant.INFINITE_VALUE.toString()) == false)
+				{
+					flag = false;
+					answerFlag = true;
+					errorMessage.add(constants.sumOfAnsInfiniteMsg());		
 					sumAnswer.getTextBox().addStyleName("higlight_onViolation");
 				}
 				

@@ -176,6 +176,7 @@ public class ActivityAcceptQuestionEdit extends AbstractActivityWrapper implemen
 			@Override
 			public Void apply(EntityProxyId<?> stableId) {
 				goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));
+				goTo(new PlaceAcceptQuestionDetails(stableId,Operation.DETAILS));
 				return null;
 			}
 		};
@@ -183,7 +184,7 @@ public class ActivityAcceptQuestionEdit extends AbstractActivityWrapper implemen
 		final Function<EntityProxyId<?>, Void> gotoFunction = new Function<EntityProxyId<?>, Void>() {
 			
 			@Override
-			public Void apply(EntityProxyId<?> stableId) {
+			public Void apply(final EntityProxyId<?> stableId) {
 				String resendToReviewValue = Cookies.getCookie(McAppConstant.RESEND_TO_REVIEW_KEY);
 				
 				if (resendToReviewValue == null)
@@ -201,12 +202,14 @@ public class ActivityAcceptQuestionEdit extends AbstractActivityWrapper implemen
 								Cookies.setCookie(McAppConstant.RESEND_TO_REVIEW_KEY, String.valueOf(true), ClientUtility.getDateFromOneYear());
 							
 							goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));
+							goTo(new PlaceAcceptQuestionDetails(stableId,Operation.DETAILS));
 						}
 					});
 				}
 				else
 				{
 					goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));
+					goTo(new PlaceAcceptQuestionDetails(stableId,Operation.DETAILS));
 				}
 				return null;
 			}
