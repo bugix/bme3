@@ -28,6 +28,7 @@ import medizin.client.request.QuestionResourceRequest;
 import medizin.client.request.QuestionTypeRequest;
 import medizin.client.ui.view.question.QuestionEditView;
 import medizin.client.ui.view.question.QuestionEditViewImpl;
+import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.ui.widget.resource.dndview.vo.State;
 import medizin.client.util.ClientUtility;
@@ -159,43 +160,45 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 			}
 		});
 
-		mcRequest.fire();
-		widget.setWidget(questionEditView.asWidget());
-		
-		createOrEditQuestion();
-	}
-
-	
-
-	private void createOrEditQuestion() {
 		if (this.operation == PlaceQuestionDetails.Operation.EDIT) {
 			Log.info("edit");
-			requests.find(questionPlace.getProxyId()).with("previousVersion", "keywords", "questEvent", "comment", "questionType", "mcs", "rewiewer", "autor", "answers", "answers.autor", "answers.rewiewer", "questionResources").fire(new BMEReceiver<Object>() {
+			QuestionRequest questionRequest = mcRequest.append(requests.questionRequest());
+			questionRequest.find(questionPlace.getProxyId()).with("previousVersion", "keywords", "questEvent", "comment", "questionType", "mcs", "rewiewer", "autor", "answers", "answers.autor", "answers.rewiewer", "questionResources").to(new BMEReceiver<Object>() {
 
 				@Override
 				public void onSuccess(Object response) {
 					if (response instanceof QuestionProxy) {
 						Log.info(((QuestionProxy) response).getQuestionText());
 						question = (QuestionProxy) response;
-						init();
+						
+						view.setValue(question,checkIsAuthorReviewerEditable());
+						view.setEditTitle(true);
+						if(thirdPersonRightsForQuestionEdit()) {
+							view.setQuestionAuthor(question.getAutor());
+						}
 						MathJaxs.delayRenderLatexResult(RootPanel.getBodyElement());
 					}
 				}
 			});
+			questionRequest.fire();
 		} else {
 			Log.info("neues Assement");
-			init();
+			view.setEditTitle(false);
+			mcRequest.fire();
 		}
+		
+		widget.setWidget(questionEditView.asWidget());
+		
 	}
 
-	private void init() {
-
-		if (question == null) {
-			view.setEditTitle(false);
-		} else {
-			Log.info(question.getQuestionText());
-			view.setValue(question,checkIsAuthorReviewerEditable());
-			view.setEditTitle(true);
+	private boolean thirdPersonRightsForQuestionEdit() {
+		boolean hasQuestionWriteRights = hasQuestionWriteRights(question);
+		boolean questionAuthor = isQuestionAuthor(question);
+		boolean adminOrInstitutionalAdmin = isAdminOrInstitutionalAdmin();
+		if(questionAuthor == false && adminOrInstitutionalAdmin == false && hasQuestionWriteRights == true) {
+			return true;
+		}else {
+			return false;
 		}
 	}
 
@@ -763,6 +766,8 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 		question.setStatus(status);
 		view.setValuesForQuestion(question,commentProxy);
 		
+		
+		
 		question.setIsAcceptedAdmin(isAcceptedByAdmin);
 		question.setIsAcceptedAuthor(isAcceptedByAuthor);
 		question.setIsAcceptedRewiever(isAcceptedByReviewer);
@@ -771,6 +776,17 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 		question.setQuestionSubVersion(0);
 		question.setDateAdded(new Date());
 		question.setQuestionResources(questionResourceProxies);
+		
+		if(thirdPersonRightsForQuestionEdit()) {
+			if(isQuestionReviewer(question) == true) {
+				ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.authorReviewerMayNotBeSame());
+				return;
+			}
+			question.setAutor(userLoggedIn);
+			question.setIsAcceptedAdmin(false);
+			question.setIsAcceptedAuthor(true);
+			question.setIsAcceptedRewiever(false);
+		}
 		
 		if(previousQuestionProxy != null) question.setPreviousVersion(previousQuestionProxy);
 		
@@ -819,6 +835,12 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 		questionProxy.setQuestionSubVersion(question.getQuestionSubVersion() + 1);
 		questionProxy.setDateChanged(new Date());
 		questionProxy.setQuestionResources(questionResourceProxies);
+		
+		if(thirdPersonRightsForQuestionEdit()) {
+			questionProxy.setIsAcceptedAdmin(false);
+			questionProxy.setIsAcceptedAuthor(true);
+			questionProxy.setIsAcceptedRewiever(true);
+		}
 		
 		final QuestionTypes questionType = questionProxy.getQuestionType().getQuestionType();
 		

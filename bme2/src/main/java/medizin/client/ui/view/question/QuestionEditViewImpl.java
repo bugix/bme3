@@ -941,4 +941,10 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		
 	}
 
+	@Override
+	public void setQuestionAuthor(PersonProxy autor) {
+		if(autor != null)
+			author.setSelected(autor);
+	}
+
 }

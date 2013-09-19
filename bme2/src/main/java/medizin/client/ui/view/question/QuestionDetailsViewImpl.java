@@ -153,7 +153,17 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 
 	@UiHandler("delete")
 	public void onDeleteClicked(ClickEvent e) {
-		delegate.deleteClicked();
+		ConfirmationDialogBox.showYesNoDialogBox(constants.warning(), constants.deleteQuestionConfirmation(), new ConfirmDialogBoxYesNoButtonEventHandler() {
+			
+			@Override
+			public void onYesButtonClicked(ConfirmDialogBoxYesNoButtonEvent event) {
+				delegate.deleteClicked();		
+			}
+			
+			@Override
+			public void onNoButtonClicked(ConfirmDialogBoxYesNoButtonEvent event) {}
+		});
+		
 	}
 
 	@UiHandler("edit")
@@ -446,7 +456,7 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 			addColumn(new ActionCell<KeywordProxy>(
 	        		McAppConstant.DELETE_ICON, new ActionCell.Delegate<KeywordProxy>() {
 						public void execute(final KeywordProxy keyword) {
-							ConfirmationDialogBox.showYesNoDialogBox(constants.warning(), constants.deleteInstitutionConfirmation(), new ConfirmDialogBoxYesNoButtonEventHandler() {
+							ConfirmationDialogBox.showYesNoDialogBox(constants.warning(), constants.keywordDelMessage(), new ConfirmDialogBoxYesNoButtonEventHandler() {
 								
 								@Override
 								public void onYesButtonClicked(ConfirmDialogBoxYesNoButtonEvent event) {
@@ -454,9 +464,7 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 								}
 								
 								@Override
-								public void onNoButtonClicked(ConfirmDialogBoxYesNoButtonEvent event) {
-																
-								}
+								public void onNoButtonClicked(ConfirmDialogBoxYesNoButtonEvent event) {}
 							});
 							
 							
