@@ -242,7 +242,7 @@ public class TopPanel extends Composite {
 			if (userLoggedIn.getIsAdmin())
 			{
 				
-				requests.institutionRequest().findAllInstitutions().fire(new Receiver<List<InstitutionProxy>>() {
+				requests.institutionRequest().findAllInstitutions().fire(new BMEReceiver<List<InstitutionProxy>>() {
 
 					@Override
 					public void onSuccess(List<InstitutionProxy> response) {
@@ -267,7 +267,7 @@ public class TopPanel extends Composite {
 			else
 			{
 				
-				TopPanel.this.requests.userAccessRightsRequest().findInstituionFromQuestionAccessByPerson(userLoggedIn.getId()).fire(new Receiver<List<InstitutionProxy>>() {
+				TopPanel.this.requests.userAccessRightsRequest().findInstituionFromQuestionAccessByPerson(userLoggedIn.getId()).fire(new BMEReceiver<List<InstitutionProxy>>() {
 
 					@Override
 					public void onSuccess(List<InstitutionProxy> response) {

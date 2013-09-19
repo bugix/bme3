@@ -279,7 +279,7 @@ public class ActivitySystemOverview extends AbstractActivityWrapper implements S
 	
 	@Override
 	public void loadTemplate(final SystemOverviewExaminerSubViewImpl examinerSubViewImpl) {
-		requests.assesmentQuestionRequest().loadSystemOverviewTemplate().fire(new Receiver<String>() {
+		requests.assesmentQuestionRequest().loadSystemOverviewTemplate().fire(new BMEReceiver<String>() {
 
 			@Override
 			public void onSuccess(String response) {

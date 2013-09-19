@@ -17,12 +17,12 @@ import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.proxy.QuestionResourceProxy;
 import medizin.client.proxy.QuestionTypeProxy;
-import medizin.client.ui.ErrorPanel;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.richtext.RichTextToolbar;
 import medizin.client.ui.view.roo.McSetEditor;
 import medizin.client.ui.view.roo.QuestionTypeProxyRenderer;
 import medizin.client.ui.widget.IconButton;
+import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.dialogbox.receiver.ReceiverDialog;
 import medizin.client.ui.widget.resource.dndview.ResourceView;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
@@ -579,8 +579,9 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 									
 									imageViewer.setUrl(filePath, event.getWidth(), event.getHeight(), type);	
 								} else {
-									ErrorPanel errorPanel = new ErrorPanel();
-									errorPanel.setErrorMessage("Only Upload image of size" + questionTypeProxy.getImageWidth() + "*" + questionTypeProxy.getImageHeight());
+									ConfirmationDialogBox.showOkDialogBox(constants.error(), messages.imageUploadSize(questionTypeProxy.getImageWidth(),questionTypeProxy.getImageHeight()));
+									/*ErrorPanel errorPanel = new ErrorPanel();
+									errorPanel.setErrorMessage("Only Upload image of size" + questionTypeProxy.getImageWidth() + "*" + questionTypeProxy.getImageHeight());*/
 									delegate.deleteMediaFileFromDisk(filePath);
 								}
 
@@ -634,8 +635,9 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 				public void onResourceAdded(ResourceAddedEvent event) {
 					
 					if(!event.isAdded()) {
-						ErrorPanel errorPanel = new ErrorPanel();
-						errorPanel.setErrorMessage("This type of media is not allowed");
+						ConfirmationDialogBox.showOkDialogBox(constants.error(), constants.mediaTypeNotAllowed());
+						/*ErrorPanel errorPanel = new ErrorPanel();
+						errorPanel.setErrorMessage("This type of media is not allowed");*/
 						delegate.deleteMediaFileFromDisk(event.getQuestionResourceClient().getPath()); 
 					}
 				}

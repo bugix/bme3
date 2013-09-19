@@ -1112,7 +1112,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 			
 			if (value!=null&&!value.equals(""))
 			{
-				requests.questionEventRequest().findQuestionEvent(value).fire(new Receiver<Object>() {
+				requests.questionEventRequest().findQuestionEvent(value).fire(new BMEReceiver<Object>() {
 
 					@Override
 					public void onSuccess(Object response) {

@@ -734,4 +734,10 @@ public interface BmeConstants extends Constants {
 	public String systemOverviewExaminerReachInMsg();
 	
 	public String deleteQuestionConfirmation();
+
+	public String noTwoQuestionsPerExam();
+
+	public String mediaTypeNotAllowed();
+
+	public String soundManagerLoadingError();
 }

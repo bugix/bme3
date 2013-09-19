@@ -2,6 +2,7 @@ package medizin.client.ui;
 
 
 import medizin.client.McAppShell;
+import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.PlaceAcceptAnswer;
 import medizin.client.place.PlaceAcceptAssQuestion;
@@ -34,7 +35,6 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
-import com.google.web.bindery.requestfactory.shared.Receiver;
 /**
  * The applications main navigation element, shown on the left hand side of the user interface.
  * @author masterthesis
@@ -215,7 +215,7 @@ public class McAppNav extends Composite {
 				 displayMenue();
 			}});
         
-        	 requests.institutionRequest().myGetInstitutionToWorkWith().fire(new Receiver<InstitutionProxy>(){
+        	 requests.institutionRequest().myGetInstitutionToWorkWith().fire(new BMEReceiver<InstitutionProxy>(){
 
      			@Override
      			public void onSuccess(InstitutionProxy response) {
@@ -238,7 +238,7 @@ public class McAppNav extends Composite {
 			MC_APP_NAV.hideAllMenu();
 			
 			if(isValiduser)
-			requests.personRequest().checkAdminRightToLoggedPerson().fire(new Receiver<Boolean>() {
+			requests.personRequest().checkAdminRightToLoggedPerson().fire(new BMEReceiver<Boolean>() {
 		        
 				@Override
 				public void onSuccess(Boolean response) {

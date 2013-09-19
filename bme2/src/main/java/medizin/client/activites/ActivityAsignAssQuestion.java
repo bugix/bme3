@@ -481,7 +481,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 					assementQuestionPanel.addAssesmentQuestion(question);
 				}
 				
-				requests.questionSumPerPersonRequest().findPercentageOfQuestionAssignedToExaminer(assesmentProxy, author).with("questionEvent").fire(new Receiver<List<QuestionSumPerPersonProxy>>() {
+				requests.questionSumPerPersonRequest().findPercentageOfQuestionAssignedToExaminer(assesmentProxy, author).with("questionEvent").fire(new BMEReceiver<List<QuestionSumPerPersonProxy>>() {
 
 					@Override
 					public void onSuccess(List<QuestionSumPerPersonProxy> response) {
@@ -824,8 +824,9 @@ QuestionAdvancedSearchPopupView.Delegate {
 					   if (wid instanceof AssesmentQuestionView){
 						   if (((AssesmentQuestionView) wid).getProxy().getQuestion().getId() == assesmentQuestionViewAktiv.getProxy().getQuestion().getId()){
 							  // Log.error("Keine zwei gleichen Fragen!");
-							   ErrorPanel erPan = new ErrorPanel();
-							   erPan.setErrorMessage("Keine zwei gleichen Fragen pro Prüfung!");
+							   ConfirmationDialogBox.showOkDialogBox(constants.error(), constants.noTwoQuestionsPerExam());
+							   /*ErrorPanel erPan = new ErrorPanel();
+							   erPan.setErrorMessage("Keine zwei gleichen Fragen pro Prüfung!");*/
 							   throw new VetoDragException();
 						   }
 					   }
@@ -982,7 +983,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 			assesmentQuestion.setIsAssQuestionAcceptedAdmin(true);
 			assesmentQuestion.setIsAssQuestionAcceptedAutor(false);
 		}
-		request.persist().using(assesmentQuestion).fire(new Receiver<Void>() {
+		request.persist().using(assesmentQuestion).fire(new BMEReceiver<Void>() {
 
 			@Override
 			public void onSuccess(Void response) {
@@ -1022,7 +1023,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 	/*Send mail to all examiner assigned to assesment*/
 	@Override
 	public void sendMail(String messageContent) {
-		requests.assesmentQuestionRequest().sendMail(examAutorListMap.get(assesmentTabPanel.getActiveTab()),messageContent,constants.mailSubject(),assesmentTabPanel.getActiveTab()).fire(new Receiver<Boolean>() {
+		requests.assesmentQuestionRequest().sendMail(examAutorListMap.get(assesmentTabPanel.getActiveTab()),messageContent,constants.mailSubject(),assesmentTabPanel.getActiveTab()).fire(new BMEReceiver<Boolean>() {
 
 			@Override
 			public void onSuccess(Boolean response) {
@@ -1091,8 +1092,9 @@ QuestionAdvancedSearchPopupView.Delegate {
 			   if (wid instanceof AssesmentQuestionView){
 				   if (((AssesmentQuestionView) wid).getProxy().getQuestion().getId() == questionViewAktiv.getProxy().getId()){
 					   //Log.error("Keine zwei gleichen Fragen!");
-					   ErrorPanel erPan = new ErrorPanel();
-					   erPan.setErrorMessage("Keine zwei gleichen Fragen pro Prüfung!");
+					   ConfirmationDialogBox.showOkDialogBox(constants.error(), constants.noTwoQuestionsPerExam());
+					   /*ErrorPanel erPan = new ErrorPanel();
+					   erPan.setErrorMessage("Keine zwei gleichen Fragen pro Prüfung!");*/
 					   throw new VetoDragException();
 				   }
 			   }
@@ -1326,7 +1328,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 		AssesmentQuestionProxy a=assesmentQuestionViewImpl.getProxy();
 		final QuestionTypeCountProxy questionTypeCountProxy =getQuestionTypeCountProxy(a.getQuestion());
 		a=request.edit(a);
-		request.remove().using(a).fire(new Receiver<Void>() {
+		request.remove().using(a).fire(new BMEReceiver<Void>() {
 
 			@Override
 			public void onSuccess(Void response) {

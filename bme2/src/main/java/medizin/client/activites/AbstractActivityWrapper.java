@@ -105,7 +105,7 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 			});
 			
 			PersonRequest personRequest2 = institutionRequest.append(requests.personRequest());
-			personRequest2.fetchLoggedPersonAccessRights().with("questionAccList.question", "questionEventAccList.questionEvent", "questionEventAccList.institution").to(new Receiver<PersonAccessRightProxy>() {
+			personRequest2.fetchLoggedPersonAccessRights().with("questionAccList.question", "questionEventAccList.questionEvent", "questionEventAccList.institution").to(new BMEReceiver<PersonAccessRightProxy>() {
 
 				@Override
 				public void onSuccess(PersonAccessRightProxy response) {
