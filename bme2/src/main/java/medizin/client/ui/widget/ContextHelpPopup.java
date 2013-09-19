@@ -15,7 +15,7 @@ public class ContextHelpPopup extends Composite {
 	}
 
 	public ContextHelpPopup(String helpText) {
-		popup = new PopupPanel(true);
+		popup = new PopupPanel(false);
 		popup.setStyleName("unibas-ContextHelp");
 		if (helpText != null) {
 			popup.add(new Label(helpText));

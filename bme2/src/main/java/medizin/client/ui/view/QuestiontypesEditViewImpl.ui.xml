@@ -38,7 +38,6 @@
 	
 			<g:VerticalPanel width="100%">
 				<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="sumAnswer" min="0" value="0"></lbl:LabeledIntegerBox>
-				<g:CheckBox ui:field="infiniteChkBox"></g:CheckBox>
 			</g:VerticalPanel>
 			<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="sumTrueAnswer" min="0" value="0"></lbl:LabeledIntegerBox>
 			<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="sumFalseAnswer" min="0" value="0"></lbl:LabeledIntegerBox>
