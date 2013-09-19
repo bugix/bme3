@@ -30,7 +30,6 @@ import medizin.shared.SelectionType;
 import medizin.shared.i18n.BmeConstants;
 import medizin.shared.i18n.BmeContextHelpConstants;
 import medizin.shared.i18n.BmeMessages;
-import medizin.shared.utils.SharedConstant;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -253,9 +252,6 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
     @UiField
     LabeledPanel keywordHighlight;
     
-    @UiField
-    CheckBox infiniteChkBox;
-    
     private Delegate delegate;
 
 	private QuestionTypeProxy proxy;
@@ -369,7 +365,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		
 		textualFields = Lists.newArrayList((Widget) sumAnswer, sumTrueAnswer,
 				sumFalseAnswer, questionLength, answerLength, answerDiff,
-				queHasMedia, infiniteChkBox);
+				queHasMedia);
 		textualFields.addAll(baseFields);
 		
 		imgKeyFields = Lists.newArrayList((Widget) shortName, longName, description,
@@ -408,7 +404,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				minLetterForAutoComp, acceptNonKeyword, shortAnswerLength,
 				keywordHighlight, richText, minLength, maxLength, minWordCount,
 				maxWordCount, oneToOneAss, multimediaType, selectionType,
-				column, maxBytes, showAutoComplete, infiniteChkBox);
+				column, maxBytes, showAutoComplete);
 		allBoxes.addAll(baseFields);
 	    		
 		uiStyles.uiCss().ensureInjected();
@@ -461,103 +457,101 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		evaluationGroupLbl.setText(constants.evaluationGroupLbl());
 		
 		shortName.setLabelText(constants.shortName());
-		shortName.setHelpText(contextHelp.shortName());
+		shortName.setHelpText(contextHelp.qtShortName());
 		
 		longName.setLabelText(constants.longName());
-		longName.setHelpText(contextHelp.longName());
+		longName.setHelpText(contextHelp.qtLongName());
 		
 		description.setLabelText(constants.description());
-		description.setHelpText(contextHelp.description());
+		description.setHelpText(contextHelp.qtDescription());
 		
 		institute.setLabelText(constants.institutionLbl());
-		institute.setHelpText(contextHelp.institution());
+		institute.setHelpText(contextHelp.qtInstitution());
 		instituteLblPanel.setLabelText(constants.institutionLbl());
-		instituteLblPanel.setHelpText(contextHelp.institution());
+		instituteLblPanel.setHelpText(contextHelp.qtInstitution());
 		
 		questionTypeLblPanel.setLabelText(constants.questionType());
-		questionTypeLblPanel.setHelpText(contextHelp.questionType());
+		questionTypeLblPanel.setHelpText(contextHelp.qtQuestionType());
 		questionType.setLabelText(constants.questionType());
-		questionType.setHelpText(contextHelp.questionType());
+		questionType.setHelpText(contextHelp.qtQuestionType());
 		
 		sumAnswer.setLabelText(constants.sumAnswer());
-		sumAnswer.setHelpText(contextHelp.sumAnswer());
+		sumAnswer.setHelpText(contextHelp.qtSumAnswer());
 		
 		sumTrueAnswer.setLabelText(constants.sumTrueAnswer());
-		sumTrueAnswer.setHelpText(contextHelp.sumTrueAnswer());
+		sumTrueAnswer.setHelpText(contextHelp.qtSumTrueAnswer());
 
 		sumFalseAnswer.setLabelText(constants.sumFalseAnswer());
-		sumFalseAnswer.setHelpText(contextHelp.sumFalseAnswer());
+		sumFalseAnswer.setHelpText(contextHelp.qtSumFalseAnswer());
 		
 		questionLength.setLabelText(constants.questionLength());
-		questionLength.setHelpText(contextHelp.questionLength());
+		questionLength.setHelpText(contextHelp.qtQuestionLength());
 		
 		answerLength.setLabelText(constants.answerLength());
-		answerLength.setHelpText(contextHelp.answerLength());
+		answerLength.setHelpText(contextHelp.qtAnswerLength());
 		
 		answerDiff.setLabelText(constants.diffAnswer());
-		answerDiff.setHelpText(contextHelp.answerDiff());
+		answerDiff.setHelpText(contextHelp.qtAnswerDiff());
 		
 		queHasMedia.setLabelText(constants.queHaveMedia());
-		queHasMedia.setHelpText(contextHelp.queHasMedia());
+		queHasMedia.setHelpText(contextHelp.qtQueHasMedia());
 		queHaveImgChkBox.setText(constants.queHaveImg());
 		queHaveVideoChkBox.setText(constants.queHaveVideo());
 		queHaveSoundChkBox.setText(constants.queHaveSound());
 		
 		keywordCount.setLabelText(constants.countKeyword());
-		keywordCount.setHelpText(contextHelp.keywordCount());
+		keywordCount.setHelpText(contextHelp.qtKeywordCount());
 		
 		showAutoComplete.setLabelText(constants.showAutocomplete());
-		showAutoComplete.setHelpText(contextHelp.showAutoComplete());
+		showAutoComplete.setHelpText(contextHelp.qtShowAutoComplete());
 		showAutoCompleteChkBox.setText(constants.showAutocomplete());
 		
 		isDictionaryKeyword.setLabelText(constants.isDictionaryKeyword());
-		isDictionaryKeyword.setHelpText(contextHelp.isDictionaryKeyword());
+		isDictionaryKeyword.setHelpText(contextHelp.qtIsDictionaryKeyword());
 		isDictionaryKeywordChkBox.setText(constants.isDictionaryKeyword());
 		
 		allowTyping.setVisible(false);
 		allowTyping.setLabelText(constants.allowTyping());
-		allowTyping.setHelpText(contextHelp.allowTyping());
+		allowTyping.setHelpText(contextHelp.qtAllowTyping());
 		allowTypingChkBox.setText(constants.allowTyping());
 		
 		minLetterForAutoComp.setLabelText(constants.minLetterAutoComplete());
-		minLetterForAutoComp.setHelpText(contextHelp.minAutoCompleteLetter());
+		minLetterForAutoComp.setHelpText(contextHelp.qtMinAutoCompleteLetter());
 		
 		acceptNonKeyword.setLabelText(constants.acceptNonkeyword());
-		acceptNonKeyword.setHelpText(contextHelp.acceptNonKeyword());
+		acceptNonKeyword.setHelpText(contextHelp.qtAcceptNonKeyword());
 		acceptNonKeywordChkBox.setText(constants.acceptNonkeyword());
 		shortAnswerLength.setLabelText(constants.lengthShortAns());
-		shortAnswerLength.setHelpText(contextHelp.shortAnswerLength());
+		shortAnswerLength.setHelpText(contextHelp.qtShortAnswerLength());
 		
 		keywordHighlight.setLabelText(constants.keywordHighlight());
-		keywordHighlight.setHelpText(contextHelp.keywordHighlight());
+		keywordHighlight.setHelpText(contextHelp.qtKeywordHighlight());
 		keywordHighlightChkBox.setText(constants.keywordHighlight());
 		
 		minLength.setLabelText(constants.minLength());
-		minLength.setHelpText(contextHelp.minLength());
+		minLength.setHelpText(contextHelp.qtMinLength());
 		maxLength.setLabelText(constants.maxLength());
-		maxLength.setHelpText(contextHelp.maxLength());
+		maxLength.setHelpText(contextHelp.qtMaxLength());
 		minWordCount.setLabelText(constants.minWordCount());
-		minWordCount.setHelpText(contextHelp.minWordCount());
+		minWordCount.setHelpText(contextHelp.qtMinWordCount());
 		maxWordCount.setLabelText(constants.maxWordCount());
-		maxWordCount.setHelpText(contextHelp.maxWordCount());
+		maxWordCount.setHelpText(contextHelp.qtMaxWordCount());
 		
 		oneToOneAss.setLabelText(constants.oneToOneAss());
-		oneToOneAss.setHelpText(contextHelp.oneToOneAss());
+		oneToOneAss.setHelpText(contextHelp.qtOneToOneAss());
 		oneToOneAssChkBox.setText(constants.oneToOneAss());
 		
 		multimediaType.setLabelText(constants.multimediaType());
-		multimediaType.setHelpText(contextHelp.multimediaType());
+		multimediaType.setHelpText(contextHelp.qtMultimediaType());
 		selectionType.setLabelText(constants.selectionType());
-		selectionType.setHelpText(contextHelp.selectionType());
+		selectionType.setHelpText(contextHelp.qtSelectionType());
 		column.setLabelText(constants.column());
-		column.setHelpText(contextHelp.columns());
+		column.setHelpText(contextHelp.qtColumns());
 		maxBytes.setLabelText(constants.maxBytes());
-		maxBytes.setHelpText(contextHelp.maxBytes());
-		
-		infiniteChkBox.setText(constants.infinite());
+		maxBytes.setHelpText(contextHelp.qtMaxBytes());
 		
 		richText.setLabelText(constants.allowRichText());
-		richText.setHelpText(contextHelp.richText());
+		richText.setHelpText(contextHelp.qtRichText());
 		richTextChkBox.setText(constants.allowRichText());
 		
 		for (final LabeledTextBox box : allTextBoxes) {
@@ -628,39 +622,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 //			
 //		}
 		
-		shortName.setFocus(true);
-		
-		infiniteChkBox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-
-			@Override
-			public void onValueChange(ValueChangeEvent<Boolean> event) {
-				if (event.getValue())
-				{
-					sumAnswer.getTextBox().setValue(SharedConstant.INFINITE_VALUE.toString());
-					sumAnswer.getTextBox().setEnabled(false);
-				}
-				else
-				{
-					sumAnswer.getTextBox().setValue("");
-					sumAnswer.getTextBox().setEnabled(true);
-				}
-			}
-		});
-		
-		sumAnswer.addValueChangeHandler(new ValueChangeHandler<String>() {
-
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				if (ClientUtility.isNumber(event.getValue()))
-				{
-					if (SharedConstant.INFINITE_VALUE.equals(Integer.parseInt(event.getValue())))
-					{
-						sumAnswer.getTextBox().setEnabled(false);
-						infiniteChkBox.setValue(true);
-					}
-				}
-			}
-		});
+		shortName.setFocus(true);	
 	}
 	
 	private void save() {
@@ -769,8 +731,6 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 	    	   queHaveImgChkBox.setValue(false);
 	    	   queHaveVideoChkBox.setValue(false);
 	    	   queHaveSoundChkBox.setValue(false);
-	    	   infiniteChkBox.setValue(false);
-	    	   sumAnswer.getTextBox().setEnabled(true);
 	       }
 	       else if (questionTypes.equals(QuestionTypes.Imgkey))
 	       {
@@ -999,13 +959,6 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 					flag = false;
 					answerFlag = true;
 					errorMessage.add(constants.sumOfAnsMsg());
-					sumAnswer.getTextBox().addStyleName("higlight_onViolation");
-				}
-				else if (infiniteChkBox.getValue() && sumAnswer.getValue().equals(SharedConstant.INFINITE_VALUE.toString()) == false)
-				{
-					flag = false;
-					answerFlag = true;
-					errorMessage.add(constants.sumOfAnsInfiniteMsg());		
 					sumAnswer.getTextBox().addStyleName("higlight_onViolation");
 				}
 				
