@@ -245,11 +245,12 @@ public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper
 	}
 	
 	private void onMatrixAnswerTableRangeChanged() {
-		requests.MatrixValidityRequest().findAllMatrixValidityForQuestion(question.getId()).with("answerX","answerY").fire(new BMEReceiver<List<MatrixValidityProxy>>() {
+		final Range range = view.getMatrixAnswerListViewImpl().getTable().getVisibleRange();
+		requests.MatrixValidityRequest().findAllMatrixValidityForAcceptQuestion(question.getId(), range.getStart(), range.getLength()).with("answerX","answerY").fire(new BMEReceiver<List<MatrixValidityProxy>>() {
 
 			@Override
 			public void onSuccess(List<MatrixValidityProxy> response) {
-				view.getMatrixAnswerListViewImpl().getTable().setRowData(view.getMatrixAnswerListViewImpl().getTable().getVisibleRange().getStart(), response);
+				view.getMatrixAnswerListViewImpl().getTable().setRowData(range.getStart(), response);
 			}
 		});
 	}

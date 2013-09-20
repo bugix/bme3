@@ -262,14 +262,14 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 					return;
 				}
 				
-				table.setRowCount(response.intValue());
+				table.setRowCount(response.intValue(), true);
 				
 				findAnswersEntriesNonAcceptedAdminByQuestion(questionProxy.getId(), range.getStart(), range.getLength(), table);
 			}
 		});
 	}
 	
-	void findAnswersEntriesNonAcceptedAdminByQuestion(Long questionId, Integer start, Integer length, final AbstractHasData<AnswerProxy> table){
+	void findAnswersEntriesNonAcceptedAdminByQuestion(Long questionId, final Integer start, Integer length, final AbstractHasData<AnswerProxy> table){
 		
 		requests.answerRequest().findAnswerForAcceptQuestion(questionId, start, length).with("rewiewer","autor", "question", "question.questionType").fire(new BMEReceiver<List<AnswerProxy>>() {
 			@Override
@@ -277,7 +277,7 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 				if (view == null) {
 					return;
 				}
-				table.setRowData(response);
+				table.setRowData(start, response);
 			}
 		});
 	}
@@ -295,23 +295,32 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 					return;
 				}
 				
-				table.setRowCount(response.intValue());
+				table.setRowCount(response.intValue(), true);
 				
 				findMatrixAnswersEntriesNonAcceptedAdminByQuestion(questionProxy.getId(), range.getStart(), range.getLength(), table, matrixAnswerListView);
 			}
 		});
 	}
 
-	void findMatrixAnswersEntriesNonAcceptedAdminByQuestion(Long questionId, Integer start, Integer length, final AbstractHasData<MatrixValidityProxy> table, final AcceptMatrixAnswerSubView matrixAnswerListView){
+	void findMatrixAnswersEntriesNonAcceptedAdminByQuestion(final Long questionId, final Integer start, final Integer length, final AbstractHasData<MatrixValidityProxy> table, final AcceptMatrixAnswerSubView matrixAnswerListView){
 		
-		requests.MatrixValidityRequest().findAllMatrixValidityForAcceptQuestion(questionId, start, length).with("answerX", "answerY", "answerX.rewiewer","answerX.autor", "answerX.question", "answerX.question.questionType", "answerY.rewiewer","answerY.autor", "answerY.question", "answerY.question.questionType").fire(new BMEReceiver<List<MatrixValidityProxy>>() {
+		requests.MatrixValidityRequest().findAllMatrixValidityForQuestion(questionId).with("answerX", "answerY", "answerX.rewiewer","answerX.autor", "answerX.question", "answerX.question.questionType", "answerY.rewiewer","answerY.autor", "answerY.question", "answerY.question.questionType").fire(new BMEReceiver<List<MatrixValidityProxy>>() {
 
 			@Override
 			public void onSuccess(List<MatrixValidityProxy> response) {
 				matrixAnswerListView.setMatrixAnswerList(response);
-				table.setRowData(response);
+				
+				requests.MatrixValidityRequest().findAllMatrixValidityForAcceptQuestion(questionId, start, length).with("answerX", "answerY", "answerX.rewiewer","answerX.autor", "answerX.question", "answerX.question.questionType", "answerY.rewiewer","answerY.autor", "answerY.question", "answerY.question.questionType").fire(new BMEReceiver<List<MatrixValidityProxy>>() {
+
+					@Override
+					public void onSuccess(List<MatrixValidityProxy> response) {
+						table.setRowData(start, response);
+					}
+				});
 			}
 		});
+		
+		
 	}
 	
 	@Override

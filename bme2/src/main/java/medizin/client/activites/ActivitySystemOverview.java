@@ -34,7 +34,6 @@ import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
-import com.google.web.bindery.requestfactory.shared.Receiver;
 
 public class ActivitySystemOverview extends AbstractActivityWrapper implements SystemOverviewView.Delegate, SystemOverviewExaminerSubView.Delegate {
 
@@ -128,8 +127,7 @@ public class ActivitySystemOverview extends AbstractActivityWrapper implements S
 			@Override
 			public void onSuccess(Long response) {
 				acceptAnswerCount = response;
-				view.setAcceptQuestionAndAnswer(acceptQuestionCount, acceptAnswerCount);
-				view.addMainLabel();
+				view.setAcceptQuestionAndAnswer(acceptQuestionCount, acceptAnswerCount);				
 			}
 		});
 		

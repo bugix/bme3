@@ -844,14 +844,15 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 				answerTextArea.addStyleName("higlight_onViolation");
 			}
 			
-			if(question.getQuestionType().getAnswerLength() != null  && answerTextMaxDiff != null && answerTextMinDiff != null) {
-				if(answerTextArea.getText().length() < answerTextMinDiff || answerTextArea.getText().length() > answerTextMaxDiff) {
-					flag = false;
-					messages.add(bmeMessages.answerTextMinMax(answerTextMinDiff, answerTextMaxDiff));
-					answerTextArea.addStyleName("higlight_onViolation");
-				}
+			if(QuestionTypes.Textual.equals(question.getQuestionType().getQuestionType()) || QuestionTypes.Sort.equals(question.getQuestionType().getQuestionType())) {
+				if(question.getQuestionType().getAnswerLength() != null  && answerTextMaxDiff != null && answerTextMinDiff != null) {
+					if(answerTextArea.getText().length() < answerTextMinDiff || answerTextArea.getText().length() > answerTextMaxDiff) {
+						flag = false;
+						messages.add(bmeMessages.answerTextMinMax(answerTextMinDiff, answerTextMaxDiff));
+						answerTextArea.addStyleName("higlight_onViolation");
+					}
+				}	
 			}
-			
 		}
 		
 		if(question.getQuestionType() != null && QuestionTypes.ShowInImage.equals(question.getQuestionType().getQuestionType()) == true ) {

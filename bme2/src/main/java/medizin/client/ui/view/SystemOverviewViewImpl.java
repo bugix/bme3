@@ -59,22 +59,26 @@ public class SystemOverviewViewImpl extends Composite implements  SystemOverview
 	
 	public void setQuestionTypesCountByAssessment(String mcName, String closedDate, Map<String, String> quesitonTypeCountMap)
 	{
-		SystemOverviewSubView subView = new SystemOverviewSubViewImpl();
-		subView.getMcNameLbl().setText(mcName + " : ");
-		subView.getClosedDateLbl().setText(constants.closedDate() + " : " + closedDate);
-		
-		Iterator<String> keyIterator = quesitonTypeCountMap.keySet().iterator();
-		
-		while (keyIterator.hasNext())
+		if (quesitonTypeCountMap.size() > 0)
 		{
-			String key = keyIterator.next();
-			String value = quesitonTypeCountMap.get(key);
+			addMainLabel();
+			SystemOverviewSubView subView = new SystemOverviewSubViewImpl();
+			subView.getMcNameLbl().setText(mcName + " : ");
+			subView.getClosedDateLbl().setText(constants.closedDate() + " : " + closedDate);
 			
-			String questionTypeValue = value + " " + key;
-			subView.getQuestionTypeVP().add(new Label(questionTypeValue));
-		}
-		
-		mainVerticalPanel.add(subView);
+			Iterator<String> keyIterator = quesitonTypeCountMap.keySet().iterator();
+			
+			while (keyIterator.hasNext())
+			{
+				String key = keyIterator.next();
+				String value = quesitonTypeCountMap.get(key);
+				
+				String questionTypeValue = value + " " + key;
+				subView.getQuestionTypeVP().add(new Label(questionTypeValue));
+			}
+			
+			mainVerticalPanel.add(subView);
+		}		
 	}
 	
 	public void setQuestionTypesCountByAssessmentExaminer(String mcName, String closedDate, Map<String, String> quesitonTypeCountMap, SystemOverviewExaminerSubView examinerSubView)

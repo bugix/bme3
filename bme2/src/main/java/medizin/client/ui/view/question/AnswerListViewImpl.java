@@ -487,6 +487,9 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 		@Override
 		public void render(com.google.gwt.cell.client.Cell.Context context,
 				AnswerProxy value, SafeHtmlBuilder sb) {
+			if (value == null)
+				return;
+			
 			if (Status.ACTIVE.equals(value.getStatus()) || Status.NEW.equals(value.getStatus())){
 				sb.append(McAppConstant.EDIT_ICON);
 			}
@@ -503,6 +506,9 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 		@Override
 		public void render(com.google.gwt.cell.client.Cell.Context context,
 				AnswerProxy value, SafeHtmlBuilder sb) {
+			if (value == null)
+				return;
+			
 			if (Status.ACTIVE.equals(value.getStatus()) || Status.NEW.equals(value.getStatus())){
 				sb.append(McAppConstant.DELETE_ICON);
 			}

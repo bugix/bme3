@@ -518,6 +518,9 @@ public class MatrixAnswerListViewImpl extends Composite implements MatrixAnswerL
 		@Override
 		public void render(com.google.gwt.cell.client.Cell.Context context,
 				MatrixValidityProxy value, SafeHtmlBuilder sb) {
+			if (value == null)
+				return;
+			
 			if (Status.ACTIVE.equals(value.getAnswerX().getStatus()) || Status.NEW.equals(value.getAnswerX().getStatus()) || Status.ACTIVE.equals(value.getAnswerY().getStatus()) || Status.NEW.equals(value.getAnswerY().getStatus())){
 				sb.append(McAppConstant.EDIT_ICON);
 			}
@@ -534,6 +537,9 @@ public class MatrixAnswerListViewImpl extends Composite implements MatrixAnswerL
 		@Override
 		public void render(com.google.gwt.cell.client.Cell.Context context,
 				MatrixValidityProxy value, SafeHtmlBuilder sb) {
+			if (value == null)
+				return;
+			
 			if (Status.ACTIVE.equals(value.getAnswerX().getStatus()) || Status.NEW.equals(value.getAnswerX().getStatus()) || Status.ACTIVE.equals(value.getAnswerY().getStatus()) || Status.NEW.equals(value.getAnswerY().getStatus())){
 				sb.append(McAppConstant.DELETE_ICON);
 			}
