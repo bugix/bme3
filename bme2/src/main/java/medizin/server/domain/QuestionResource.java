@@ -94,6 +94,7 @@ public class QuestionResource {
 		return list.get(0);
 		
 	}
+	
 	public static void removeSelectedQuestionResource(Long questionResourceId) {
 		
 		log.info("to delete the selected resource : " + questionResourceId);
@@ -158,6 +159,13 @@ public class QuestionResource {
 		if(this instanceof QuestionResource) {
 			QuestionResource resource = (QuestionResource) this;
 			deleteFiles(Sets.newHashSet(resource.getPath()));
+		}
+	}
+	
+	public static void removeQuestionResource(Long qestionResourceId) {
+		QuestionResource questionResource = QuestionResource.findQuestionResource(qestionResourceId);
+		if(questionResource != null) {
+			questionResource.remove();	
 		}
 	}
 	

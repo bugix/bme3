@@ -1,7 +1,6 @@
 package medizin.client.activites;
 
 import java.util.List;
-import java.util.Set;
 
 import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
@@ -334,9 +333,6 @@ public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper
 
 	@Override
 	public void editClicked() {}
-
-	@Override
-	public void deleteUploadedFiles(Set<String> paths) {}
 
 	@Override
 	public void acceptQuestionClicked(QuestionProxy proxy) {}

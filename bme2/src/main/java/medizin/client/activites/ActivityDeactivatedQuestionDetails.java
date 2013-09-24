@@ -1,7 +1,6 @@
 package medizin.client.activites;
 
 import java.util.List;
-import java.util.Set;
 
 import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
@@ -38,7 +37,7 @@ public class ActivityDeactivatedQuestionDetails extends AbstractActivityWrapper 
 
 	private PlaceDeactivatedQuestionDetails placeDeactivatedQuestionDetails;
 	private McAppRequestFactory requests;
-	private PlaceController placeController;
+	//private PlaceController placeController;
 	private QuestionDetailsView view;
 	private AcceptsOneWidget widget;
 	private QuestionProxy question;
@@ -49,7 +48,7 @@ public class ActivityDeactivatedQuestionDetails extends AbstractActivityWrapper 
 		super(place, requests, placeController);
 		this.placeDeactivatedQuestionDetails = place;
 		this.requests = requests;
-		this.placeController = placeController;
+		//this.placeController = placeController;
 		thiz = this;
 	}
 
@@ -308,9 +307,6 @@ public class ActivityDeactivatedQuestionDetails extends AbstractActivityWrapper 
 
 	@Override
 	public void findAllAnswersPoints(Long id, Long currentAnswerId, Function<List<String>, Void> function) {}
-
-	@Override
-	public void deleteUploadedFiles(Set<String> paths) {}
 
 	@Override
 	public void saveAnswerProxy(AnswerProxy answerProxy, String answerText, PersonProxy author, PersonProxy rewiewer, Boolean submitToReviewComitee, String comment, Validity validity, String points, String mediaPath, String additionalKeywords,  Integer sequenceNumber, Function<AnswerProxy, Void> function) {}

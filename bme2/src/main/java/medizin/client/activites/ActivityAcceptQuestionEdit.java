@@ -37,7 +37,6 @@ import medizin.shared.Status;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.base.Function;
-import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -54,7 +53,7 @@ public class ActivityAcceptQuestionEdit extends AbstractActivityWrapper implemen
 	private final PlaceAcceptQuestionDetails questionPlace;
 	private final McAppRequestFactory requests;
 	private final PlaceController placeController;
-	private Operation operation;
+	//private Operation operation;
 	private QuestionEditView view;
 	private QuestionProxy question;
 
@@ -70,7 +69,7 @@ public class ActivityAcceptQuestionEdit extends AbstractActivityWrapper implemen
 		this.questionPlace = place;
 		this.requests = requests;
 		this.placeController = placeController;
-		this.operation = edit;
+		//this.operation = edit;
 	}
 	
 	@Override
@@ -459,20 +458,6 @@ public class ActivityAcceptQuestionEdit extends AbstractActivityWrapper implemen
 
 	@Override
 	public void cancelClicked() {
-		Set<QuestionResourceClient> clients = view.getQuestionResources();
-		Set<String> paths = Sets.newHashSet();
-
-		for (QuestionResourceClient client : clients) {
-
-			Log.info("question resources client : " + Objects.toStringHelper(client).add("path", client.getPath()).add("state", client.getState()).toString());
-
-			if (client.getState() == State.NEW) {
-				paths.add(client.getPath());
-			}
-		}
-
-		deleteUploadedFiles(paths);
-
 		if (question != null && question.getId() != null) {
 			goTo(new PlaceAcceptQuestionDetails(question.stableId(),Operation.DETAILS));
 		} else {
@@ -480,43 +465,16 @@ public class ActivityAcceptQuestionEdit extends AbstractActivityWrapper implemen
 		}
 		
 	}
-	
-	private void deleteUploadedFiles(Set<String> paths) {
-
-		requests.questionResourceRequest().deleteFiles(paths).fire(new BMEReceiver<Void>() {
-
-			@Override
-			public void onSuccess(Void response) {
-				Log.info("Files area deleted");
-
-			}
-		});
-	}
 
 	@Override
 	public void deleteSelectedQuestionResource(Long qestionResourceId) {
-		requests.questionResourceRequest().removeSelectedQuestionResource(qestionResourceId).fire(new BMEReceiver<Void>(reciverMap) {
+		requests.questionResourceRequest().removeQuestionResource(qestionResourceId).fire(new BMEReceiver<Void>(reciverMap) {
 
 			@Override
 			public void onSuccess(Void response) {
 				Log.info("selected question resource deleted successfully");
 			}
 		});
-		
-	}
-
-	@Override
-	public void deleteMediaFileFromDisk(String path) {
-		final QuestionRequest questionRequest = requests.questionRequest();
-		questionRequest.deleteMediaFileFromDisk(path).fire(new BMEReceiver<Boolean>(reciverMap) {
-
-			@Override
-			public void onSuccess(Boolean response) {
-				Log.info("Media deleted " + response);
-			}
-
-		});
-		
 	}
 
 	@Override

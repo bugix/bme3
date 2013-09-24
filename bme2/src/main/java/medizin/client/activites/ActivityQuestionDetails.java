@@ -772,19 +772,6 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements 
 		}
 	}*/
 
-	@Override
-	public void deleteUploadedFiles(Set<String> paths) {
-		
-		requests.questionResourceRequest().deleteFiles(paths).fire(new BMEReceiver<Void>(reciverMap) {
-
-			@Override
-			public void onSuccess(Void response) {
-				Log.info("Files area deleted");
-				
-			}
-		});
-	}
-
 	/*@Override
 	public void changedResourceSequence(Set<QuestionResourceClient> questionResourceClients) {
 		

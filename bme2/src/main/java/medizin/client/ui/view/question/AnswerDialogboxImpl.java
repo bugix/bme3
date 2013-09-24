@@ -41,7 +41,6 @@ import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.Document;
@@ -435,15 +434,15 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 										Log.info("image Path : " + url);
 										if(simpleImageViewer != null && simpleImageViewer.getURL() != null && simpleImageViewer.getURL().length() > 0) {
 											// delete old files
-											Log.info("Delete old uploaded file");
-											delegate.deleteUploadedFiles(Sets.newHashSet(simpleImageViewer.getURL().replace(GWT.getHostPageBaseURL(), "")));
+											//Log.info("Delete old uploaded file");
+											//delegate.deleteUploadedFiles(Sets.newHashSet(simpleImageViewer.getURL().replace(GWT.getHostPageBaseURL(), "")));
 										}
 										simpleImageViewer = new SimpleImageViewer(url);
 										viewContainer.clear();
 										viewContainer.add(simpleImageViewer);
 									} else {
 										ConfirmationDialogBox.showOkDialogBox(constants.error(), bmeMessages.imageSizeError(questionTypeProxy.getImageWidth(), questionTypeProxy.getImageHeight()));
-										delegate.deleteUploadedFiles(Sets.newHashSet(event.getFilePath()));
+										//delegate.deleteUploadedFiles(Sets.newHashSet(event.getFilePath()));
 									}
 
 									return null;
@@ -491,19 +490,19 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 							if(event.getSoundMediaSize() <= question.getQuestionType().getMaxBytes()) {
 								if(audioViewer != null && audioViewer.getURL() != null && audioViewer.getURL().length() > 0) {
 									// delete old files
-									Log.info("Delete old uploaded file");
-									delegate.deleteUploadedFiles(Sets.newHashSet(audioViewer.getURL().replace(GWT.getHostPageBaseURL(), "")));
+									//Log.info("Delete old uploaded file");
+									//delegate.deleteUploadedFiles(Sets.newHashSet(audioViewer.getURL().replace(GWT.getHostPageBaseURL(), "")));
 								}
 								audioViewer = new AudioViewer(event.getFilePath());
 								viewContainer.clear();
 								viewContainer.add(audioViewer);
 							}else {
 								ConfirmationDialogBox.showOkDialogBox(constants.error(), bmeMessages.mediaErrorMsg(question.getQuestionType().getMaxBytes() / 1024));
-								delegate.deleteUploadedFiles(Sets.newHashSet(event.getFilePath()));
+								//delegate.deleteUploadedFiles(Sets.newHashSet(event.getFilePath()));
 							}
 						}else {
 							Log.error("Error in MCQ question.");
-							delegate.deleteUploadedFiles(Sets.newHashSet(event.getFilePath()));
+							//delegate.deleteUploadedFiles(Sets.newHashSet(event.getFilePath()));
 						}
 					}
 				}
@@ -534,19 +533,19 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 							if(event.getVideoMediaSize() <= question.getQuestionType().getMaxBytes()) {
 								if(videoViewer != null && videoViewer.getURL() != null && videoViewer.getURL().length() > 0) {
 									// delete old files
-									Log.info("Delete old uploaded file");
-									delegate.deleteUploadedFiles(Sets.newHashSet(videoViewer.getURL().replace(GWT.getHostPageBaseURL(), "")));
+									//Log.info("Delete old uploaded file");
+									//delegate.deleteUploadedFiles(Sets.newHashSet(videoViewer.getURL().replace(GWT.getHostPageBaseURL(), "")));
 								}
 								videoViewer = new VideoViewer(event.getFilePath());
 								viewContainer.clear();
 								viewContainer.add(videoViewer);
 							}else {
 								ConfirmationDialogBox.showOkDialogBox(constants.error(), bmeMessages.mediaErrorMsg(question.getQuestionType().getMaxBytes()/1024));
-								delegate.deleteUploadedFiles(Sets.newHashSet(event.getFilePath()));
+								//delegate.deleteUploadedFiles(Sets.newHashSet(event.getFilePath()));
 							}
 						}else {
 							Log.error("Error in MCQ question.");
-							delegate.deleteUploadedFiles(Sets.newHashSet(event.getFilePath()));
+							//delegate.deleteUploadedFiles(Sets.newHashSet(event.getFilePath()));
 						}
 					}
 				}

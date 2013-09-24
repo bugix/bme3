@@ -574,7 +574,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 									if(imageViewer != null && imageViewer.getImageUrl() != null && imageViewer.getImageUrl().length() > 0) {
 										// delete old files
 										Log.info("Delete old uploaded file " + imageViewer.getImageUrl().toString());
-										delegate.deleteMediaFileFromDisk(imageViewer.getImageUrl().replace(GWT.getHostPageBaseURL(), ""));
+										//delegate.deleteMediaFileFromDisk(imageViewer.getImageUrl().replace(GWT.getHostPageBaseURL(), ""));
 									}
 									
 									imageViewer.setUrl(filePath, event.getWidth(), event.getHeight(), type);	
@@ -582,7 +582,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 									ConfirmationDialogBox.showOkDialogBox(constants.error(), messages.imageUploadSize(questionTypeProxy.getImageWidth(),questionTypeProxy.getImageHeight()));
 									/*ErrorPanel errorPanel = new ErrorPanel();
 									errorPanel.setErrorMessage("Only Upload image of size" + questionTypeProxy.getImageWidth() + "*" + questionTypeProxy.getImageHeight());*/
-									delegate.deleteMediaFileFromDisk(filePath);
+									//delegate.deleteMediaFileFromDisk(filePath);
 								}
 
 								return null;
@@ -638,7 +638,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 						ConfirmationDialogBox.showOkDialogBox(constants.error(), constants.mediaTypeNotAllowed());
 						/*ErrorPanel errorPanel = new ErrorPanel();
 						errorPanel.setErrorMessage("This type of media is not allowed");*/
-						delegate.deleteMediaFileFromDisk(event.getQuestionResourceClient().getPath()); 
+						//delegate.deleteMediaFileFromDisk(event.getQuestionResourceClient().getPath()); 
 					}
 				}
 			});	

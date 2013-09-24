@@ -218,37 +218,11 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 	@Override
 	public void cancelClicked() {
 
-		Set<QuestionResourceClient> clients = view.getQuestionResources();
-		Set<String> paths = Sets.newHashSet();
-
-		for (QuestionResourceClient client : clients) {
-
-			Log.info("question resources client : " + Objects.toStringHelper(client).add("path", client.getPath()).add("state", client.getState()).toString());
-
-			if (client.getState() == State.NEW) {
-				paths.add(client.getPath());
-			}
-		}
-
-		deleteUploadedFiles(paths);
-
 		if (question != null && question.getId() != null) {
 			cancelClickedGoto(question);
 		} else {
 			goTo(new PlaceQuestion(PlaceQuestion.PLACE_QUESTION));
 		}
-	}
-
-	private void deleteUploadedFiles(Set<String> paths) {
-
-		requests.questionResourceRequest().deleteFiles(paths).fire(new BMEReceiver<Void>() {
-
-			@Override
-			public void onSuccess(Void response) {
-				Log.info("Files area deleted");
-
-			}
-		});
 	}
 
 	/*
@@ -632,32 +606,13 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 
 	@Override
 	public void deleteSelectedQuestionResource(Long qestionResourceId) {
-		requests.questionResourceRequest().removeSelectedQuestionResource(qestionResourceId).fire(new BMEReceiver<Void>(reciverMap) {
+		requests.questionResourceRequest().removeQuestionResource(qestionResourceId).fire(new BMEReceiver<Void>() {
 
 			@Override
 			public void onSuccess(Void response) {
 				Log.info("selected question resource deleted successfully");
 			}
 		});
-	}
-
-	@Override
-	public void deleteMediaFileFromDisk(String path) {
-
-		/*if (question != null) {*/
-			final QuestionRequest questionRequest = requests.questionRequest();
-			questionRequest.deleteMediaFileFromDisk(path).fire(new BMEReceiver<Boolean>(reciverMap) {
-
-				@Override
-				public void onSuccess(Boolean response) {
-					Log.info("Media deleted " + response);
-				}
-
-			});
-		/*} else {
-			Log.error("Question is null");
-		}*/
-
 	}
 
 	private void showNewDisplay() {

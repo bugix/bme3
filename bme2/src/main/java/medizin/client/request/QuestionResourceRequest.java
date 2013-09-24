@@ -15,7 +15,9 @@ public interface QuestionResourceRequest extends QuestionResourceRequest_Roo_Gwt
 
 	Request<Void> persistSet(Set<QuestionResourceProxy> questionResources);
 
-	Request<Void> removeSelectedQuestionResource(Long qestionResourceId);
+	Request<Void> removeQuestionResource(Long qestionResourceId);
 
-	Request<Void> deleteFiles(Set<String> paths);
+	//Request<Void> removeSelectedQuestionResource(Long qestionResourceId);
+
+	//Request<Void> deleteFiles(Set<String> paths);
 }

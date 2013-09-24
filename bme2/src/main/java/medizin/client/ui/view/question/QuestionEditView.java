@@ -26,7 +26,7 @@ public interface QuestionEditView extends IsWidget {
 
 		void deleteSelectedQuestionResource(Long id);
 
-		void deleteMediaFileFromDisk(String path);
+		//void deleteMediaFileFromDisk(String path);
 
 		boolean isAdminOrInstitutionalAdmin();
 
