@@ -466,6 +466,12 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 				}
 			});
 			
+			if(answer != null && answer.getMediaPath() != null) {
+				String url = GWT.getHostPageBaseURL() + answer.getMediaPath();
+				simpleImageViewer = new SimpleImageViewer(url);
+				viewContainer.clear();
+				viewContainer.add(simpleImageViewer);
+			}
 			break;
 		}	
 		case Sound:
@@ -503,6 +509,11 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 				}
 			});
 
+			if(answer != null && answer.getMediaPath() != null) {
+				audioViewer = new AudioViewer(answer.getMediaPath());
+				viewContainer.clear();
+				viewContainer.add(audioViewer);
+			}
 			break;
 		}
 		case Video:
@@ -541,6 +552,11 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 				}
 			});
 			
+			if(answer != null && answer.getMediaPath() != null) {
+				videoViewer = new VideoViewer(answer.getMediaPath());
+				viewContainer.clear();
+				viewContainer.add(videoViewer);
+			}
 			
 			break;
 		}

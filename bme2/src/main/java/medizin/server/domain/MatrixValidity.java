@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.persistence.Enumerated;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -387,5 +389,22 @@ public class MatrixValidity {
 		query.setMaxResults(length);
 		log.info("Result list size :" + query.getResultList().size());
 		return query.getResultList();
+	}
+	
+	public void persistMatrix() {
+		
+
+		this.persist();
+		this.flush();
+	}
+	
+	@PrePersist
+	@PreUpdate
+	public void preMatrixValidityPersist()
+	{
+		Long count = AnswerToAssQuestion.countAnswerToAssQuestionByMatrixValidity(this.getAnswerX().getQuestion().getId());
+		if (count != null && count > 0) {
+			throw new IllegalArgumentException("Matrix answer is used in some assessment.");
+		}
 	}
 }

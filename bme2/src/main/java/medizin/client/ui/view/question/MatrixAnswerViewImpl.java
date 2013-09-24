@@ -115,7 +115,7 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 
 			@Override
 			public void onClick(ClickEvent event) {
-				addAnswerX(null);
+				addAnswerX(null,true,true);
 			}
 
 		});
@@ -127,7 +127,7 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 
 			@Override
 			public void onClick(ClickEvent event) {
-				addAnswerY(null);
+				addAnswerY(null,true,true);
 			}
 		});
 
@@ -165,7 +165,7 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 		this.delegate = delegate;
 	}
 
-	private void addAnswerX(final MatrixValidityVO vo) {
+	private void addAnswerX(final MatrixValidityVO vo, boolean isEdit, boolean isDelete) {
 		final IconButton editX = new IconButton();
 		editX.setIcon("pencil");
 		final IconButton deleteX = new IconButton();
@@ -273,9 +273,18 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 
 		editX.addClickHandler(new TextEditClickHandler(answerVO, textBox, label,editX,saveX));
 		deleteX.addClickHandler(new DeleteClickedHandler(answerVO,true));
+		
+		if(isEdit == false) {
+			editX.removeFromParent();
+			saveX.removeFromParent();
+		}
+		
+		if(isDelete == false) {
+			deleteX.removeFromParent();
+		}
 	}
 
-	private void addAnswerY(final MatrixValidityVO vo) {
+	private void addAnswerY(final MatrixValidityVO vo, boolean isEdit, boolean isDelete) {
 		final IconButton editY = new IconButton();
 		editY.setIcon("pencil");
 		final IconButton deleteY = new IconButton();
@@ -395,6 +404,15 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 		
 		editY.addClickHandler(new TextEditClickHandler(answerVO, textBox, label,editY,saveY));
 		deleteY.addClickHandler(new DeleteClickedHandler(answerVO,false));
+		
+		if(isEdit == false) {
+			editY.removeFromParent();
+			saveY.removeFromParent();
+		}
+		
+		if(isDelete == false) {
+			deleteY.removeFromParent();
+		}
 	}
 
 	@Override
@@ -836,7 +854,7 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 	}
 	
 	@Override
-	public void setValues(List<MatrixValidityProxy> response) {
+	public void setValues(List<MatrixValidityProxy> response, boolean isNew, boolean isEdit, boolean isDelete) {
 		
 		this.currentMatrixValidityProxy = response;
 		FluentIterable<MatrixValidityVO> fluentIterable = FluentIterable.from(matrixList);
@@ -875,7 +893,7 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 					
 					addValidityBtnOn(currentRow,currentColumn,matrixValidityVO);
 					//addAnswerYTextAndLabel(matrixValidityVO);
-					addAnswerY(matrixValidityVO);
+					addAnswerY(matrixValidityVO,isEdit,isDelete);
 				}
 				
 				if(optionalAnswerX.isPresent() == false && optionalAnswerY.isPresent() == true){
@@ -893,7 +911,7 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 					int currentRow = matrixList.getRowForObject(matrixValidityVO);
 					addValidityBtnOn(currentRow, currentColumn, matrixValidityVO);
 					//addAnswerXTextAndLabel(matrixValidityVO);
-					addAnswerX(matrixValidityVO);
+					addAnswerX(matrixValidityVO,isEdit,isDelete);
 				}
 				
 				// not answer is added; 
@@ -921,8 +939,8 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 					addValidityBtnOn(currentRow, currentColumn, matrixValidityVO);
 					//addAnswerXTextAndLabel(matrixValidityVO);
 					//addAnswerYTextAndLabel(matrixValidityVO);
-					addAnswerX(matrixValidityVO);
-					addAnswerY(matrixValidityVO);
+					addAnswerX(matrixValidityVO,isEdit,isDelete);
+					addAnswerY(matrixValidityVO,isEdit,isDelete);
 				}
 				
 				if(optionalAnswerX.isPresent() == true && optionalAnswerY.isPresent() == true) {
@@ -947,6 +965,11 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 			if(proxy.getComment() != null) {
 				comment.setText(proxy.getComment().getComment());
 			}
+		}
+		
+		if(isNew == false) {
+			addAnswerX.removeFromParent();
+			addAnswerY.removeFromParent();
 		}
 	}
 	

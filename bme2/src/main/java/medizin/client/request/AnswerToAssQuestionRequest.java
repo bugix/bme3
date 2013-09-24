@@ -29,4 +29,8 @@ public interface AnswerToAssQuestionRequest extends AnswerToAssQuestionRequest_R
     abstract InstanceRequest<medizin.client.proxy.AnswerToAssQuestionProxy, java.lang.Void> persist();
 
     abstract Request<List<AnswerToAssQuestionProxy>> findAnswerToAssQuestionByAssesmentQuestion(Long id);
+
+	abstract Request<Long> countAnswerToAssQuestionByAnswer(Long answerId);
+
+	abstract Request<Long> countAnswerToAssQuestionByMatrixValidity(Long questionId);
 }

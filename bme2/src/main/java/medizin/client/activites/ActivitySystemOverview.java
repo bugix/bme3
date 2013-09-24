@@ -22,6 +22,7 @@ import medizin.client.ui.view.SystemOverviewExaminerSubView;
 import medizin.client.ui.view.SystemOverviewExaminerSubViewImpl;
 import medizin.client.ui.view.SystemOverviewView;
 import medizin.client.ui.view.SystemOverviewViewImpl;
+import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.util.ClientUtility;
 
 import com.google.common.base.Function;
@@ -31,7 +32,6 @@ import com.google.common.collect.Maps;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 
@@ -267,10 +267,12 @@ public class ActivitySystemOverview extends AbstractActivityWrapper implements S
 
 			@Override
 			public void onSuccess(Boolean response) {
-				if (response)
-					Window.alert("Mail Sent Successfully");
-				else
-					Window.alert("Error in sending mail");
+				if (response) {
+					ConfirmationDialogBox.showOkDialogBox(constants.success(), constants.mailSentSuccessfully());
+				}
+				else {
+					ConfirmationDialogBox.showOkDialogBox(constants.success(), constants.errorWhileMailSend());
+				}
 			}
 		});
 	}

@@ -28,12 +28,13 @@ public class McAppConstant {
 	public static final String ANSWER_TEXT = "Antworttext";
 	public static final SafeHtml ACCEPT_ICON = new SafeHtmlBuilder().appendHtmlConstant("<span class=\"ui-icon ui-icon-check\"></span>").toSafeHtml();
 	public static final SafeHtml DECLINE_ICON = new SafeHtmlBuilder().appendHtmlConstant("<span class=\"ui-icon ui-icon-closethick\"></span>").toSafeHtml();
-	public static final SafeHtml DELETE_ICON = new SafeHtmlBuilder().appendHtmlConstant("<span class=\"ui-icon ui-icon-trash\"></span>").toSafeHtml();
-	public static final SafeHtml EDIT_ICON = new SafeHtmlBuilder().appendHtmlConstant("<span class=\"ui-icon ui-icon-pencil\"></span>").toSafeHtml();
+	public static final SafeHtml DELETE_ICON = new SafeHtmlBuilder().appendHtmlConstant("<span class=\"ui-icon ui-icon-trash\" style=\"margin:auto\"></span>").toSafeHtml();
+	public static final SafeHtml EDIT_ICON = new SafeHtmlBuilder().appendHtmlConstant("<span class=\"ui-icon ui-icon-pencil\" style=\"margin:auto\"></span>").toSafeHtml();
 	
 	public static final SafeHtml RIGHT_ICON = new SafeHtmlBuilder().appendHtmlConstant("<span class=\"ui-icon ui-icon-check\"></span>").toSafeHtml();
 	public static final SafeHtml WRONG_ICON = new SafeHtmlBuilder().appendHtmlConstant("<span class=\"ui-icon ui-icon-close\"></span>").toSafeHtml();
 
+	public static final SafeHtml HELP_ICON = new SafeHtmlBuilder().appendHtmlConstant("<span class=\"ui-icon ui-icon-help\"></span>").toSafeHtml();
 	
 	//public static final SafeHtml DELETE_ICON = new SafeHtmlBuilder().appendHtmlConstant("<span class=\"ui-icon ui-icon-closethick\"></span>").toSafeHtml();
 	public static final SafeHtml DOWN_ICON =  new SafeHtmlBuilder().appendHtmlConstant("<span class=\"ui-icon ui-icon-carat-1-n\"></span>").toSafeHtml();

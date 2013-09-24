@@ -45,12 +45,14 @@ public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper
 	private QuestionDetailsViewImpl view;
 	private QuestionProxy question;
 	private HandlerRegistration answerRangeChangeHandler;
+	private final ActivityNotActivatedQuestionDetails thiz;
 
 	public ActivityNotActivatedQuestionDetails(PlaceNotActivatedQuestionDetails place, McAppRequestFactory requests, PlaceController placeController) {
 		super(place, requests, placeController);
 		this.placeNotActivatedQuestionDetails = place;
 		this.requests = requests;
 		this.placeController = placeController;
+		thiz = this;
 	}
 
 	public void goTo(Place place) {
@@ -71,20 +73,8 @@ public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper
 	}
 	
 	@Override
-	public void start2(AcceptsOneWidget panel, EventBus eventBus) {
-		QuestionDetailsViewImpl questionDetailsView = new QuestionDetailsViewImpl(eventBus, false,false,false,true,false);
-		this.view = questionDetailsView;
+	public void start2(final AcceptsOneWidget panel, final EventBus eventBus) {
 		
-		questionDetailsView.setDelegate(this);
-		
-		this.widget = panel;
-		//this.eventBus = eventBus;
-        widget.setWidget(questionDetailsView.asWidget());
-                	
-		start2();
-	}
-
-	private void start2(){
 		if(userLoggedIn==null) return;
 		
 		requests.find(placeNotActivatedQuestionDetails.getProxyId()).with("previousVersion","keywords","questEvent","comment","questionType","mcs", "rewiewer", "autor","questionResources","answers").fire(new BMEReceiver<Object>() {
@@ -94,6 +84,15 @@ public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper
 				if(response instanceof QuestionProxy){
 					Log.info(((QuestionProxy) response).getQuestionText());
 					
+					QuestionDetailsViewImpl questionDetailsView = new QuestionDetailsViewImpl(eventBus, false,false,false,true,false,isQuestionTypeMCQ((QuestionProxy) response));
+					thiz.view = questionDetailsView;
+					
+					questionDetailsView.setDelegate(thiz);
+					
+					thiz.widget = panel;
+					//this.eventBus = eventBus;
+			        widget.setWidget(questionDetailsView.asWidget());
+			        
 					if (((QuestionProxy) response).getIsReadOnly() == true)
 						view.setVisibleEditAndDeleteBtn(false);
 					
@@ -101,7 +100,11 @@ public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper
 				}				
 			}
 			
-		    });
+		});
+	}
+	
+	private boolean isQuestionTypeMCQ(QuestionProxy questionProxy) {
+		return questionProxy != null && questionProxy.getQuestionType() != null && QuestionTypes.MCQ.equals(questionProxy.getQuestionType().getQuestionType());
 	}
 	
 	private void init(QuestionProxy question) {
@@ -213,7 +216,7 @@ public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper
 	
 	private void onAnswerTableRangeChanged() {
 		final Range range = view.getAnswerListViewImpl().getTable().getVisibleRange();
-		requests.answerRequest().findAnswersEntriesByQuestion(question.getId(), range.getStart(), range.getLength()).with("question","rewiewer","autor","comment").fire( new BMEReceiver<List<AnswerProxy>>(){
+		requests.answerRequest().findAnswersEntriesByQuestion(question.getId(), range.getStart(), range.getLength()).with("question","rewiewer","autor","comment","question.questionType").fire( new BMEReceiver<List<AnswerProxy>>(){
 			@Override
 			public void onSuccess(List<AnswerProxy> response) {
 				view.getAnswerListViewImpl().getTable().setRowData(range.getStart(), response);
@@ -301,12 +304,6 @@ public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper
 
 	@Override
 	public void deleteMatrixValidityClicked(MatrixValidityProxy matrixValidity) {}
-
-	@Override
-	public void saveMatrixAnswer(List<MatrixValidityProxy> currentMatrixValidityProxy, Matrix<MatrixValidityVO> matrixList, PersonProxy author, PersonProxy rewiewer, Boolean submitToReviewComitee, String comment) {}
-
-	@Override
-	public void saveMatrixValidityValue(MatrixValidityVO matrixValidityVO, Validity validity, Function<MatrixValidityProxy, Void> function) {}
 
 	@Override
 	public void deletedSelectedAnswer(AnswerProxy answerProxy, Boolean isAnswerX, Function<Boolean, Void> function) {}

@@ -79,7 +79,7 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 	}
 
 	public void initDetailsView(QuestionProxy questionProxy) {
-		QuestionDetailsViewImpl questionDetailsView = new QuestionDetailsViewImpl(eventBus, true,hasAnswerWriteRights(questionProxy, null),hasAnswerAddRights(questionProxy),false,true);
+		QuestionDetailsViewImpl questionDetailsView = new QuestionDetailsViewImpl(eventBus, true,hasAnswerWriteRights(questionProxy, null),hasAnswerAddRights(questionProxy),false,true,isQuestionTypeMCQ(questionProxy));
 		this.view = questionDetailsView;
         widget.setWidget(questionDetailsView.asWidget());
 		view.setDelegate(this);
@@ -88,6 +88,10 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 		view.getMatrixAnswerListViewImpl().removeFromParent();
 	}
 	
+	private boolean isQuestionTypeMCQ(QuestionProxy questionProxy) {
+		return questionProxy != null && questionProxy.getQuestionType() != null && QuestionTypes.MCQ.equals(questionProxy.getQuestionType().getQuestionType());
+	}
+
 	private void init(QuestionProxy question) {
 
 		this.question = question;

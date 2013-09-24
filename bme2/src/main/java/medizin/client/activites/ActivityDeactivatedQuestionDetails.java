@@ -43,22 +43,18 @@ public class ActivityDeactivatedQuestionDetails extends AbstractActivityWrapper 
 	private AcceptsOneWidget widget;
 	private QuestionProxy question;
 	private HandlerRegistration answerRangeChangeHandler;
+	private final ActivityDeactivatedQuestionDetails thiz;
 
 	public ActivityDeactivatedQuestionDetails(PlaceDeactivatedQuestionDetails place, McAppRequestFactory requests, PlaceController placeController) {
 		super(place, requests, placeController);
 		this.placeDeactivatedQuestionDetails = place;
 		this.requests = requests;
 		this.placeController = placeController;
+		thiz = this;
 	}
 
 	@Override
-	public void start2(AcceptsOneWidget panel, EventBus eventBus) {
-		QuestionDetailsViewImpl questionDetailsView = new QuestionDetailsViewImpl(eventBus, false,false,false,false,false);
-		this.view = questionDetailsView;		
-		questionDetailsView.setDelegate(this);		
-		this.widget = panel;
-        widget.setWidget(questionDetailsView.asWidget());
-        
+	public void start2(final AcceptsOneWidget panel, final EventBus eventBus) {
         if(userLoggedIn==null) return;
 		
 		requests.find(placeDeactivatedQuestionDetails.getProxyId()).with("previousVersion","keywords","questEvent","comment","questionType","mcs", "rewiewer", "autor","questionResources","answers").fire(new BMEReceiver<Object>() {
@@ -67,6 +63,12 @@ public class ActivityDeactivatedQuestionDetails extends AbstractActivityWrapper 
 			public void onSuccess(final Object response) {
 				if(response instanceof QuestionProxy){
 					Log.info(((QuestionProxy) response).getQuestionText());
+					
+					QuestionDetailsViewImpl questionDetailsView = new QuestionDetailsViewImpl(eventBus, false,false,false,false,false,isQuestionTypeMCQ((QuestionProxy) response));
+					thiz.view = questionDetailsView;		
+					questionDetailsView.setDelegate(thiz);		
+					thiz.widget = panel;
+			        widget.setWidget(questionDetailsView.asWidget());
 					
 					if (((QuestionProxy) response).getIsReadOnly() == true)
 						view.setVisibleEditAndDeleteBtn(false);
@@ -78,6 +80,10 @@ public class ActivityDeactivatedQuestionDetails extends AbstractActivityWrapper 
 		});
 	}
 
+	private boolean isQuestionTypeMCQ(QuestionProxy questionProxy) {
+		return questionProxy != null && questionProxy.getQuestionType() != null && QuestionTypes.MCQ.equals(questionProxy.getQuestionType().getQuestionType());
+	}
+	
 	private void init(QuestionProxy response) {
 		this.question = response;
 		Log.debug("Details für: "+question.getQuestionText());
@@ -183,7 +189,7 @@ public class ActivityDeactivatedQuestionDetails extends AbstractActivityWrapper 
 
 	private void onAnswerTableRangeChanged() {
 		final Range range = view.getAnswerListViewImpl().getTable().getVisibleRange();
-		requests.answerRequest().findAnswersEntriesByQuestion(question.getId(), range.getStart(), range.getLength()).with("question","rewiewer","autor","comment").fire( new BMEReceiver<List<AnswerProxy>>(){
+		requests.answerRequest().findAnswersEntriesByQuestion(question.getId(), range.getStart(), range.getLength()).with("question","rewiewer","autor","comment","question.questionType").fire( new BMEReceiver<List<AnswerProxy>>(){
 			@Override
 			public void onSuccess(List<AnswerProxy> response) {
 				view.getAnswerListViewImpl().getTable().setRowData(range.getStart(), response);
@@ -278,12 +284,6 @@ public class ActivityDeactivatedQuestionDetails extends AbstractActivityWrapper 
 
 	@Override
 	public void deleteMatrixValidityClicked(MatrixValidityProxy matrixValidity) {}
-
-	@Override
-	public void saveMatrixAnswer(List<MatrixValidityProxy> currentMatrixValidityProxy, Matrix<MatrixValidityVO> matrixList, PersonProxy author, PersonProxy rewiewer, Boolean submitToReviewComitee, String comment) {}
-
-	@Override
-	public void saveMatrixValidityValue(MatrixValidityVO matrixValidityVO, Validity validity, Function<MatrixValidityProxy, Void> function) {}
 
 	@Override
 	public void deletedSelectedAnswer(AnswerProxy answerProxy, Boolean isAnswerX, Function<Boolean, Void> function) {}

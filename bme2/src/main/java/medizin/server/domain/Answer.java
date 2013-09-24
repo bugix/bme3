@@ -24,6 +24,7 @@ import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import medizin.shared.QuestionTypes;
 import medizin.shared.Status;
 import medizin.shared.Validity;
 import medizin.shared.utils.PersonAccessRight;
@@ -622,6 +623,24 @@ public class Answer {
 				this.setCreatedBy(loggedPerson);
 			else if (this.createdBy != null)
 				this.setModifiedBy(loggedPerson);
+		}
+		
+		if(Status.DEACTIVATED.equals(this.status) == false) {
+			if(this.getQuestion().getQuestionType().getQuestionType().equals(QuestionTypes.Matrix)) {
+				Long count = AnswerToAssQuestion.countAnswerToAssQuestionByMatrixValidity(this.getQuestion().getId());
+				if (count != null && count > 0) {
+					throw new IllegalArgumentException("Matrix answer is used in some assessment.");
+				}
+			}else {
+				List<AnswerToAssQuestion> answerToAssQuestion = Collections.emptyList();
+				if (this.getId() != null) {
+					answerToAssQuestion = AnswerToAssQuestion.findAnswerToAssQuestionByAnswer(this.getId());
+					if (answerToAssQuestion != null && answerToAssQuestion.isEmpty() == false) {
+						throw new IllegalArgumentException("Answer is used in some assessment.");
+					}
+				}	
+			}
+				
 		}
 	}
 	

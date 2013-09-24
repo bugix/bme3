@@ -108,13 +108,17 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements 
 	public void initDetailsView(QuestionProxy questionProxy) {
 		editDeleteBtnFlag = hasQuestionWriteRights(questionProxy);
 				
-		QuestionDetailsViewImpl questionDetailsView = new QuestionDetailsViewImpl(eventBus, editDeleteBtnFlag,hasAnswerWriteRights(questionProxy, null),hasAnswerAddRights(questionProxy),false,false);
+		QuestionDetailsViewImpl questionDetailsView = new QuestionDetailsViewImpl(eventBus, editDeleteBtnFlag,hasAnswerWriteRights(questionProxy, null),hasAnswerAddRights(questionProxy),false,false,isQuestionTypeMCQ(questionProxy));
 		this.view = questionDetailsView;
         widget.setWidget(questionDetailsView.asWidget());
 		view.setDelegate(this);
 		this.answerListView = view.getAnswerListViewImpl();
 		answerListView.setDelegate(this);
 		this.answerTable = answerListView.getTable();
+	}
+	
+	private boolean isQuestionTypeMCQ(QuestionProxy questionProxy) {
+		return questionProxy != null && questionProxy.getQuestionType() != null && QuestionTypes.MCQ.equals(questionProxy.getQuestionType().getQuestionType());
 	}
 	
 	private void getQuestionDetails(){
@@ -251,7 +255,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements 
 		final Range range = answerTable.getVisibleRange();
 		
 		
-		requests.answerRequest().findAnswersEntriesByQuestion(question.getId(), range.getStart(), range.getLength()).with("question","rewiewer","autor","comment").fire( new BMEReceiver<List<AnswerProxy>>(){
+		requests.answerRequest().findAnswersEntriesByQuestion(question.getId(), range.getStart(), range.getLength()).with("question","rewiewer","autor","comment","question.questionType").fire( new BMEReceiver<List<AnswerProxy>>(){
 
 
 			@Override
@@ -303,7 +307,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements 
 	public void addNewAnswerClicked() {
 		
 		if(question.getQuestionType() != null && QuestionTypes.Matrix.equals(question.getQuestionType().getQuestionType()) == true) {
-			openMatrixAnswerView(null);
+			openMatrixAnswerView(null,true, true,true);
 			return;
 		}else {
 			openAnswerView(null);	
@@ -851,7 +855,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements 
 		
 	}
 
-	@Override
+	/*@Override
 	public void saveMatrixAnswer(List<MatrixValidityProxy> currentMatrixValidityProxy,Matrix<MatrixValidityVO> matrixList, PersonProxy author,PersonProxy rewiewer, Boolean submitToReviewComitee, String comment) {
 		
 		MatrixValidityRequest validityRequest = requests.MatrixValidityRequest();
@@ -901,7 +905,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements 
 				initMatrixAnswerView();
 			}
 		});
-	}
+	}*/
 
 	@Override
 	public void saveAnswerProxy(AnswerProxy answerProxy, String answerText, PersonProxy author, PersonProxy rewiewer, Boolean submitToReviewComitee, String comment, Validity validity, String points, String mediaPath, String additionalKeywords,Integer sequenceNumber, final Function<AnswerProxy, Void> function) {
@@ -983,7 +987,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements 
 		}
 	}
 
-	@Override
+	/*@Override
 	public void saveMatrixValidityValue(final MatrixValidityVO matrixValidityVO, Validity validity, final Function<MatrixValidityProxy, Void> function) {
 		
 		if(matrixValidityVO.getAnswerX().getAnswerProxy() != null && matrixValidityVO.getAnswerY().getAnswerProxy() != null) {
@@ -1029,7 +1033,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements 
 			Log.error("Error in saveMatrixValidityValue method");
 		}
 		
-	}
+	}*/
 
 	@Override
 	public void deletedSelectedAnswer(AnswerProxy answerProxy, Boolean isAnswerX,final Function<Boolean, Void> function) {
@@ -1141,9 +1145,9 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements 
 	public void addMatrixNewAnswerClicked() {
 		
 		if(question.getQuestionType() != null && QuestionTypes.Matrix.equals(question.getQuestionType().getQuestionType()) == true) {
+			openMatrixAnswerView(null, true, true, true);
 			
-			
-			final MatrixAnswerView matrixAnswerView = new MatrixAnswerViewImpl(question);
+			/*final MatrixAnswerView matrixAnswerView = new MatrixAnswerViewImpl(question);
 			matrixAnswerView.setDelegate(this);
 			
 //			matrixAnswerView.setRewiewerPickerValues(Collections.<PersonProxy>emptyList());
@@ -1160,7 +1164,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements 
 	        });
 	        
 	       // answerDialogbox.setAutherPickerValues(Collections.<PersonProxy>emptyList());
-	        /*requests.personRequest().findPersonEntries(0, 50).with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).fire(new BMEReceiver<List<PersonProxy>>() {
+	        requests.personRequest().findPersonEntries(0, 50).with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).fire(new BMEReceiver<List<PersonProxy>>() {
 
 	            public void onSuccess(List<PersonProxy> response) {
 	                List<PersonProxy> values = new ArrayList<PersonProxy>();
@@ -1168,7 +1172,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements 
 	                values.addAll(response);
 	                matrixAnswerView.setAutherPickerValues(values,userLoggedIn);
 	            }
-	        });*/
+	        });
 			
 	        MatrixValidityRequest matrixValidityRequest = personRequest.append(requests.MatrixValidityRequest());
 			matrixValidityRequest.findAllMatrixValidityForQuestion(question.getId()).with("answerX","answerY","answerX.autor","answerX.rewiewer","answerX.comment","answerY.autor","answerY.rewiewer","answerY.comment").to(new BMEReceiver<List<MatrixValidityProxy>>() {
@@ -1181,7 +1185,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements 
 				}
 			});			
 			
-			matrixValidityRequest.fire();
+			matrixValidityRequest.fire();*/
 		}
 	}
 
@@ -1277,11 +1281,21 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements 
 	}
 	
 	@Override
-	public void editAnswerClicked(AnswerProxy answer) {
-		openAnswerView(answer);
+	public void editAnswerClicked(final AnswerProxy answer) {
+		requests.answerToAssQuestionRequest().countAnswerToAssQuestionByAnswer(answer.getId()).fire(new BMEReceiver<Long>() {
+
+			@Override
+			public void onSuccess(Long response) {
+				if(response != null && response == 0) {
+					openAnswerView(answer);	
+				}else {
+					ConfirmationDialogBox.showOkDialogBox(constants.error(), constants.answerUsedInAssessment());
+				}		
+			}
+		});
 	}
 
-	private void openMatrixAnswerView(final MatrixValidityProxy matrixValidity) {
+	private void openMatrixAnswerView(final MatrixValidityProxy matrixValidity, final boolean isNew, final boolean isEdit, final boolean isDelete) {
 		final MatrixAnswerView matrixAnswerView = new MatrixAnswerViewImpl(question);
 		matrixAnswerView.setDelegate(this);
 				
@@ -1315,7 +1329,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements 
 			@Override
 			public void onSuccess(List<MatrixValidityProxy> response) {
 									
-		        matrixAnswerView.setValues(response);
+		        matrixAnswerView.setValues(response, isNew, isEdit, isDelete);
 		        matrixAnswerView.display();
 			}
 		});
@@ -1324,14 +1338,23 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements 
 	}
 	
 	@Override
-	public void editMatrixValidityClicked(MatrixValidityProxy matrixValidity) {
-		openMatrixAnswerView(matrixValidity);
+	public void editMatrixValidityClicked(final MatrixValidityProxy matrixValidity) {
+		requests.answerToAssQuestionRequest().countAnswerToAssQuestionByMatrixValidity(question.getId()).fire(new BMEReceiver<Long>() {
+
+			@Override
+			public void onSuccess(Long response) {
+				if(response != null && response == 0) {
+					openMatrixAnswerView(matrixValidity,false, true,false);
+				}else {
+					ConfirmationDialogBox.showOkDialogBox(constants.error(), constants.matrixAnswerUsedInAssessment());
+				}		
+			}
+		});
 	}
 
 	@Override
 	public void deleteMatrixValidityClicked(MatrixValidityProxy matrixValidity) {
-		// TODO delete need to be implemented
-		ConfirmationDialogBox.showOkDialogBox("TODO", "Delete functionality is not implemented.");
+		openMatrixAnswerView(matrixValidity, false, false, true);
 	}
 
 	@Override
@@ -1422,7 +1445,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements 
 		});
 	}
 
-        	@Override
+    @Override
 	public void saveAllTheValuesToAnswerAndMatrixAnswer(List<MatrixValidityProxy> currentMatrixValidityProxy, Matrix<MatrixValidityVO> matrixList, PersonProxy author, PersonProxy rewiewer, Boolean submitToReviewComitee, String comment) {
 		final CommentRequest commentRequest = requests.commentRequest();
 		final AnswerRequest answerRequest = commentRequest.append(requests.answerRequest());
@@ -1525,8 +1548,6 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements 
 				initMatrixAnswerView();
 			}
 		});
-		
-		
 	}
 
 	private void setMatrixAnswerValues(PersonProxy author, PersonProxy rewiewer, Boolean submitToReviewComitee, MatrixValidityVO vo, final AnswerProxy answer, AnswerVO answerVO) {

@@ -740,4 +740,12 @@ public interface BmeConstants extends Constants {
 	public String mediaTypeNotAllowed();
 
 	public String soundManagerLoadingError();
+
+	public String mailSentSuccessfully();
+
+	public String errorWhileMailSend();
+
+	public String answerUsedInAssessment();
+
+	public String matrixAnswerUsedInAssessment();
 }

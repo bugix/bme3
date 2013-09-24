@@ -8,10 +8,8 @@ import medizin.client.proxy.MatrixValidityProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.util.Matrix;
 import medizin.client.util.MatrixValidityVO;
-import medizin.shared.Validity;
 
 import com.google.common.base.Function;
-import com.google.gwt.place.shared.Place;
 
 public interface MatrixAnswerView {
 
@@ -20,11 +18,11 @@ public interface MatrixAnswerView {
 	 */
 	interface Delegate {
 
-		void saveMatrixAnswer(List<MatrixValidityProxy> currentMatrixValidityProxy, Matrix<MatrixValidityVO> matrixList,PersonProxy author, PersonProxy rewiewer, Boolean submitToReviewComitee, String comment);
+		//void saveMatrixAnswer(List<MatrixValidityProxy> currentMatrixValidityProxy, Matrix<MatrixValidityVO> matrixList,PersonProxy author, PersonProxy rewiewer, Boolean submitToReviewComitee, String comment);
 
-		void saveAnswerProxy(AnswerProxy answerProxy, String answerText, PersonProxy author, PersonProxy rewiewer, Boolean submitToReviewComitee, String comment, Validity validity, String points, String mediaPath, String additionalKeywords, Integer sequenceNumber, Function<AnswerProxy, Void> function);
+		//void saveAnswerProxy(AnswerProxy answerProxy, String answerText, PersonProxy author, PersonProxy rewiewer, Boolean submitToReviewComitee, String comment, Validity validity, String points, String mediaPath, String additionalKeywords, Integer sequenceNumber, Function<AnswerProxy, Void> function);
 		
-		void saveMatrixValidityValue(MatrixValidityVO matrixValidityVO,Validity validity, Function<MatrixValidityProxy, Void> function);
+		//void saveMatrixValidityValue(MatrixValidityVO matrixValidityVO,Validity validity, Function<MatrixValidityProxy, Void> function);
 
 		void deletedSelectedAnswer(AnswerProxy answerProxy, Boolean isAnswerX,Function<Boolean, Void> function);
 
@@ -42,6 +40,6 @@ public interface MatrixAnswerView {
 
 	void display();
 
-	void setValues(List<MatrixValidityProxy> response);
+	void setValues(List<MatrixValidityProxy> response, boolean isNew, boolean isEdit, boolean isDelete);
 	 
 }
