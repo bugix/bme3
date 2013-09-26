@@ -273,16 +273,31 @@ public class Question {
 
 		return q.getSingleResult();*/
 		
+		Person loggedPerson = Person.myGetLoggedPerson();
+		Institution loggedInstitute = Institution.myGetInstitutionToWorkWith();
+		if (loggedPerson == null || loggedInstitute == null)
+			throw new IllegalArgumentException("The institution argument is required");
+				
 		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
 		CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
 		Root<Question> from = criteriaQuery.from(Question.class);
 		criteriaQuery.select(criteriaBuilder.count(from)); 			
 		Predicate mainPredicate = from.get("status").in(Status.NEW,Status.ACTIVE);
-		if (institutionId != null)
+		
+		if (loggedPerson.getIsAdmin() == true)
 		{
-			Predicate institutePre = criteriaBuilder.equal(from.get("questEvent").get("institution").get("id"), institutionId);
-			mainPredicate = institutePre;
+			if (institutionId != null)
+			{
+				Predicate institutePre = criteriaBuilder.equal(from.get("questEvent").get("institution").get("id"), institutionId);
+				mainPredicate = criteriaBuilder.and(mainPredicate, institutePre);
+			}
 		}
+		else
+		{
+			Predicate institutePre = criteriaBuilder.equal(from.get("questEvent").get("institution").get("id"), loggedInstitute.getId());
+			mainPredicate = criteriaBuilder.and(mainPredicate, institutePre);
+		}
+		
 		
 		if (eventId != null)
 		{
@@ -384,15 +399,28 @@ public class Question {
 
 		return q.getResultList();*/
 		
+		Person loggedPerson = Person.myGetLoggedPerson();
+		Institution loggedInstitute = Institution.myGetInstitutionToWorkWith();
+		if (loggedPerson == null || loggedInstitute == null)
+			throw new IllegalArgumentException("The institution argument is required");
+		
 		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
 		CriteriaQuery<Question> criteriaQuery = criteriaBuilder.createQuery(Question.class);
 		Root<Question> from = criteriaQuery.from(Question.class);
 		
 		Predicate mainPredicate = from.get("status").in(Status.NEW,Status.ACTIVE);
-		if (institutionId != null)
+		if (loggedPerson.getIsAdmin() == true)
 		{
-			Predicate institutePre = criteriaBuilder.equal(from.get("questEvent").get("institution").get("id"), institutionId);
-			mainPredicate = institutePre;
+			if (institutionId != null)
+			{
+				Predicate institutePre = criteriaBuilder.equal(from.get("questEvent").get("institution").get("id"), institutionId);
+				mainPredicate = criteriaBuilder.and(mainPredicate, institutePre);
+			}
+		}
+		else
+		{
+			Predicate institutePre = criteriaBuilder.equal(from.get("questEvent").get("institution").get("id"), loggedInstitute.getId());
+			mainPredicate = criteriaBuilder.and(mainPredicate, institutePre);
 		}
 		
 		if (eventId != null)

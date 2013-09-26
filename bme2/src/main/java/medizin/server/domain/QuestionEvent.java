@@ -10,6 +10,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
@@ -141,7 +143,7 @@ public class QuestionEvent {
 	    }
 	    
 	    public static long countQuestionEventsByInstitutionOrEvent(java.lang.Long institutionId, String eventNameFilter){
-	    	String queryStr = "SELECT count(qevent) FROM QuestionEvent qevent";
+	    	/*String queryStr = "SELECT count(qevent) FROM QuestionEvent qevent";
 	    	Institution institution=null;
 	    	if(institutionId!=null) {
 	    		institution = Institution.findInstitution(institutionId);
@@ -162,11 +164,49 @@ public class QuestionEvent {
 	        if(institutionId!=null) {
 	        	q.setParameter("institution", institution);
 	        }
-	        return q.getSingleResult();
+	        return q.getSingleResult();*/
+	    	
+	    	Person loggedPerson = Person.myGetLoggedPerson();
+	    	Institution loggedInstitute = Institution.myGetInstitutionToWorkWith();
+	    	
+	    	if (loggedPerson == null || loggedInstitute == null)
+	    		throw new IllegalArgumentException("Logged person or institution is null");
+	    	
+	    	CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+	    	CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+	    	Root<QuestionEvent> from = criteriaQuery.from(QuestionEvent.class);
+	    	
+	    	criteriaQuery.select(criteriaBuilder.count(from.get("id")));
+	    	
+	    	Predicate pre1 = null;
+	    	
+	    	if (loggedPerson.getIsAdmin())
+	    	{
+	    		if (institutionId != null)
+	    		{
+	    			pre1 = criteriaBuilder.equal(from.get("institution").get("id"), institutionId);
+	    		}
+	    	}
+	    	else
+	    	{
+	    		pre1 = criteriaBuilder.equal(from.get("institution").get("id"), loggedInstitute.getId());	    
+	    	}
+	    	
+	    	Expression<String> eventNameExp = from.get("eventName");
+			Predicate pre2 = criteriaBuilder.like(eventNameExp, "%" + eventNameFilter + "%");
+			
+			if (pre1 == null)
+				criteriaQuery.where(pre2);
+			else	
+				criteriaQuery.where(criteriaBuilder.and(pre1, pre2));
+			
+			TypedQuery<Long> query = entityManager().createQuery(criteriaQuery);
+			
+			return query.getSingleResult();
 	    }
 		
 	    public static List<QuestionEvent> findQuestionEventsByInstitutionOrEvent(java.lang.Long institutionId, String eventNameFilter, int firstResult, int maxResults){
-	    	String queryStr = "SELECT qevent FROM QuestionEvent qevent";
+	    	/*String queryStr = "SELECT qevent FROM QuestionEvent qevent";
 	    	Institution institution=null;
 	    	if(institutionId!=null) {
 	    		institution = Institution.findInstitution(institutionId);
@@ -188,7 +228,43 @@ public class QuestionEvent {
 	        if(institution!=null) {
 	        	q.setParameter("institution", institution);
 	        }
-	        return q.getResultList();
+	        return q.getResultList();*/
+	    	
+	    	Person loggedPerson = Person.myGetLoggedPerson();
+	    	Institution loggedInstitute = Institution.myGetInstitutionToWorkWith();
+	    	
+	    	if (loggedPerson == null || loggedInstitute == null)
+	    		throw new IllegalArgumentException("Logged person or institution is null");
+	    	
+	    	CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+	    	CriteriaQuery<QuestionEvent> criteriaQuery = criteriaBuilder.createQuery(QuestionEvent.class);
+	    	Root<QuestionEvent> from = criteriaQuery.from(QuestionEvent.class);
+	    	
+	    	Predicate pre1 = null;
+	    	
+	    	if (loggedPerson.getIsAdmin())
+	    	{
+	    		if (institutionId != null)
+	    		{
+	    			pre1 = criteriaBuilder.equal(from.get("institution").get("id"), institutionId);
+	    		}
+	    	}
+	    	else
+	    	{
+	    		pre1 = criteriaBuilder.equal(from.get("institution").get("id"), loggedInstitute.getId());	    
+	    	}
+	    	
+	    	Expression<String> eventNameExp = from.get("eventName");
+			Predicate pre2 = criteriaBuilder.like(eventNameExp, "%" + eventNameFilter + "%");
+			
+			if (pre1 == null)
+				criteriaQuery.where(pre2);
+			else	
+				criteriaQuery.where(criteriaBuilder.and(pre1, pre2));
+			
+			TypedQuery<QuestionEvent> query = entityManager().createQuery(criteriaQuery);
+			
+			return query.getResultList();
 	    	
 	    }
 	    
@@ -230,6 +306,29 @@ public class QuestionEvent {
 	    	Predicate pre1 = cb.equal(from.get("institution"), institution);
 	    	cq.where(pre1);
 	    	TypedQuery<QuestionEvent> query = entityManager().createQuery(cq);	
+	    	return query.getResultList();
+	    }
+	    
+	    public static List<QuestionEvent> findAllQuestionEventByLoggedPerson()
+	    {
+	    	Person loggedPerson = Person.myGetLoggedPerson();
+	    	Institution loggedInstitute = Institution.myGetInstitutionToWorkWith();
+	    	
+	    	if (loggedPerson == null || loggedInstitute == null)
+	    		throw new IllegalArgumentException("Logged person or institution is null");
+	    	
+	    	CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+	    	CriteriaQuery<QuestionEvent> criteriaQuery = criteriaBuilder.createQuery(QuestionEvent.class);
+	    	Root<QuestionEvent> from = criteriaQuery.from(QuestionEvent.class);
+	    	
+	    	if (loggedPerson.getIsAdmin() == false)
+	    	{
+	    		Predicate pre1 = criteriaBuilder.equal(from.get("institution").get("id"), loggedInstitute.getId());
+	    		criteriaQuery.where(pre1);
+	    	}
+	    	
+	    	TypedQuery<QuestionEvent> query = entityManager().createQuery(criteriaQuery);
+	    	
 	    	return query.getResultList();
 	    }
 }
