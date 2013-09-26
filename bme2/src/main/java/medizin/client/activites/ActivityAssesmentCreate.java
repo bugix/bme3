@@ -109,7 +109,7 @@ public class ActivityAssesmentCreate  extends AbstractActivityWrapper  implement
 		view.setDelegate(this);
 		
         view.setMcPickerValues(Collections.<McProxy>emptyList());
-        requests.mcRequest().findAllMcs().with(medizin.client.ui.view.roo.McProxyRenderer.instance().getPaths()).fire(new Receiver<List<McProxy>>() {
+        requests.mcRequest().findAllMcs().with(medizin.client.ui.view.roo.McProxyRenderer.instance().getPaths()).fire(new BMEReceiver<List<McProxy>>() {
 
             public void onSuccess(List<McProxy> response) {
                 List<McProxy> values = new ArrayList<McProxy>();
@@ -119,7 +119,7 @@ public class ActivityAssesmentCreate  extends AbstractActivityWrapper  implement
             }
         });
         view.setRepeForPickerValues(Collections.<AssesmentProxy>emptyList());
-        requests.assesmentRequest().findAssesmentByInsitute(0, 50).with(medizin.client.ui.view.roo.AssesmentProxyRenderer.instance().getPaths()).fire(new Receiver<List<AssesmentProxy>>() {
+        requests.assesmentRequest().findAssesmentByInsitute(0, 50).with(medizin.client.ui.view.roo.AssesmentProxyRenderer.instance().getPaths()).fire(new BMEReceiver<List<AssesmentProxy>>() {
 
             public void onSuccess(List<AssesmentProxy> response) {
                 List<AssesmentProxy> values = new ArrayList<AssesmentProxy>();
@@ -151,11 +151,11 @@ public class ActivityAssesmentCreate  extends AbstractActivityWrapper  implement
 		view.setDelegate(this);
 		if(this.operation==PlaceAssesmentDetails.Operation.EDIT){
 			Log.info("edit");
-		requests.find(assesmentPlace.getProxyId()).with("mc","repeFor","institution").fire(new Receiver<Object>() {
+		requests.find(assesmentPlace.getProxyId()).with("mc","repeFor","institution").fire(new BMEReceiver<Object>() {
 
-			public void onFailure(ServerFailure error){
+			/*public void onFailure(ServerFailure error){
 				Log.error(error.getMessage());
-			}
+			}*/
 			@Override
 			public void onSuccess(Object response) {
 				if(response instanceof AssesmentProxy){

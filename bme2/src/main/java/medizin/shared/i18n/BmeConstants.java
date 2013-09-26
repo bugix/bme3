@@ -732,4 +732,37 @@ public interface BmeConstants extends Constants {
 	public String editQuestion();
 	
 	public String addMc();
+
+	public String extendedQueMgt();
+			
+	public String deactivatedQue();
+	
+	public String sumOfAnsInfiniteMsg();
+	
+	public String infinite();
+	
+	public String sumOfFalseAnswerErrMsg();
+	
+	public String systemOverviewExaminerReachInMsg();
+	
+	public String deleteQuestionConfirmation();
+
+	public String noTwoQuestionsPerExam();
+
+	public String mediaTypeNotAllowed();
+
+	public String soundManagerLoadingError();
+
+	public String mailSentSuccessfully();
+
+	public String errorWhileMailSend();
+
+	public String answerUsedInAssessment();
+
+	public String matrixAnswerUsedInAssessment();
+
+	public String uploadValidFile();
+
+	public String errorInUpload();
+
 }

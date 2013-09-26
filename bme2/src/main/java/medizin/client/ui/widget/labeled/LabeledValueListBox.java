@@ -146,7 +146,7 @@ public class LabeledValueListBox<T> extends Composite implements Focusable, HasF
 
 	@Override
 	public HandlerRegistration addFocusHandler(FocusHandler handler) {
-		return wrapper.addFocusHandler(handler);
+		return valueListBox.addFocusHandler(handler);
 	}
 
 	@Override

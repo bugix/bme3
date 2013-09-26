@@ -66,13 +66,9 @@ import com.google.gwt.view.client.SingleSelectionModel;
 
 public class AcceptAnswerSubViewImpl extends Composite implements AcceptAnswerSubView  {
 
-	private static AcceptAnswerViewImplUiBinder uiBinder = GWT
-			.create(AcceptAnswerViewImplUiBinder.class);
+	private static AcceptAnswerViewImplUiBinder uiBinder = GWT.create(AcceptAnswerViewImplUiBinder.class);
 
-	interface AcceptAnswerViewImplUiBinder extends
-			UiBinder<Widget, AcceptAnswerSubViewImpl> {
-	}
-	
+	interface AcceptAnswerViewImplUiBinder extends UiBinder<Widget, AcceptAnswerSubViewImpl> {}
 	
 	/*@UiField
 	CellTable<AnswerProxy> table;*/
@@ -95,7 +91,7 @@ public class AcceptAnswerSubViewImpl extends Composite implements AcceptAnswerSu
 	
 	private BmeConstants constants = GWT.create(BmeConstants.class);
 	
-	DialogBox dialogBox;
+	private DialogBox dialogBox;
 	
 	private Boolean flag = false;
 	

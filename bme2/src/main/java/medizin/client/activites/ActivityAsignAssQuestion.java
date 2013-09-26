@@ -62,6 +62,7 @@ import medizin.shared.QuestionTypes;
 import medizin.shared.Validity;
 import medizin.shared.criteria.AdvancedSearchCriteria;
 import medizin.shared.criteria.AdvancedSearchCriteriaUtils;
+import medizin.shared.utils.SharedConstant;
 
 import com.allen_sauer.gwt.dnd.client.DragEndEvent;
 import com.allen_sauer.gwt.dnd.client.DragHandler;
@@ -480,7 +481,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 					assementQuestionPanel.addAssesmentQuestion(question);
 				}
 				
-				requests.questionSumPerPersonRequest().findPercentageOfQuestionAssignedToExaminer(assesmentProxy, author).with("questionEvent").fire(new Receiver<List<QuestionSumPerPersonProxy>>() {
+				requests.questionSumPerPersonRequest().findPercentageOfQuestionAssignedToExaminer(assesmentProxy, author).with("questionEvent").fire(new BMEReceiver<List<QuestionSumPerPersonProxy>>() {
 
 					@Override
 					public void onSuccess(List<QuestionSumPerPersonProxy> response) {
@@ -554,8 +555,10 @@ QuestionAdvancedSearchPopupView.Delegate {
 				{
 					AssesmentQuestionView question =(AssesmentQuestionViewImpl)assementQuestionPanel.getAssesmentQuestionDisplayPanel().getWidget(i);
 					if(questionTypes.contains(question.getProxy().getQuestion().getQuestionType()) && question.getProxy().getQuestion().getQuestEvent().equals(questionSumPerPersonProxy.getQuestionEvent()))
-					{						
-						questionAssigned++;
+					{	
+						if (question.getProxy().getIsForcedByAdmin() == true || question.getProxy().getIsAssQuestionAcceptedAdmin() == true)
+							questionAssigned++;
+						
 						count++;
 					}
 				}
@@ -567,7 +570,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 						AssesmentQuestionView question =proposedQuestionViewList.get(i);
 						if(questionTypes.contains(question.getProxy().getQuestion().getQuestionType()) && question.getProxy().getQuestion().getQuestEvent().equals(questionSumPerPersonProxy.getQuestionEvent()))
 						{						
-							questionAssigned++;
+							//questionAssigned++;
 							count++;
 						}
 						
@@ -823,8 +826,9 @@ QuestionAdvancedSearchPopupView.Delegate {
 					   if (wid instanceof AssesmentQuestionView){
 						   if (((AssesmentQuestionView) wid).getProxy().getQuestion().getId() == assesmentQuestionViewAktiv.getProxy().getQuestion().getId()){
 							  // Log.error("Keine zwei gleichen Fragen!");
-							   ErrorPanel erPan = new ErrorPanel();
-							   erPan.setErrorMessage("Keine zwei gleichen Fragen pro Prüfung!");
+							   ConfirmationDialogBox.showOkDialogBox(constants.error(), constants.noTwoQuestionsPerExam());
+							   /*ErrorPanel erPan = new ErrorPanel();
+							   erPan.setErrorMessage("Keine zwei gleichen Fragen pro Prüfung!");*/
 							   throw new VetoDragException();
 						   }
 					   }
@@ -847,7 +851,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 				   
 				   if(checkQuestionTypeCountBlocking(questionViewAktiv.getProxy()) && validateAssesmentQuestion(questionViewAktiv.getProxy(), (QuestionViewImpl)questionViewAktiv))
 					{
-						incrementBlockingCounter(questionViewAktiv.getProxy());
+						//incrementBlockingCounter(questionViewAktiv.getProxy());
 						assignNewQuestionToAssesment(questionViewAktiv, false);
 					}
 				   else
@@ -981,16 +985,17 @@ QuestionAdvancedSearchPopupView.Delegate {
 			assesmentQuestion.setIsAssQuestionAcceptedAdmin(true);
 			assesmentQuestion.setIsAssQuestionAcceptedAutor(false);
 		}
-		request.persist().using(assesmentQuestion).fire(new Receiver<Void>() {
+		request.persist().using(assesmentQuestion).fire(new BMEReceiver<Void>() {
 
 			@Override
 			public void onSuccess(Void response) {
-				
+				assesmentQuestionViewImpl.getDeleteFromAssesment().removeFromParent();
 				assesmentQuestionViewImpl.getForceAcceptButton().removeFromParent();	
 				requests.assesmentQuestionRequest().findAssesmentQuestion(assesmentQuestionViewImpl.getProxy().getId()).with("question.rewiewer","question.autor","question.keywords","question.questEvent","question.comment","question.questionType").fire(new BMEReceiver<AssesmentQuestionProxy>() {
 
 					@Override
 					public void onSuccess(AssesmentQuestionProxy response) {
+						incrementBlockingCounter(response.getQuestion());
 						assesmentQuestionViewImpl.setProxy(response, false);
 						changeAssesmentQuestionColor(assesmentQuestionViewImpl);
 						
@@ -1021,7 +1026,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 	/*Send mail to all examiner assigned to assesment*/
 	@Override
 	public void sendMail(String messageContent) {
-		requests.assesmentQuestionRequest().sendMail(examAutorListMap.get(assesmentTabPanel.getActiveTab()),messageContent,constants.mailSubject(),assesmentTabPanel.getActiveTab()).fire(new Receiver<Boolean>() {
+		requests.assesmentQuestionRequest().sendMail(examAutorListMap.get(assesmentTabPanel.getActiveTab()),messageContent,constants.mailSubject(),assesmentTabPanel.getActiveTab()).fire(new BMEReceiver<Boolean>() {
 
 			@Override
 			public void onSuccess(Boolean response) {
@@ -1090,8 +1095,9 @@ QuestionAdvancedSearchPopupView.Delegate {
 			   if (wid instanceof AssesmentQuestionView){
 				   if (((AssesmentQuestionView) wid).getProxy().getQuestion().getId() == questionViewAktiv.getProxy().getId()){
 					   //Log.error("Keine zwei gleichen Fragen!");
-					   ErrorPanel erPan = new ErrorPanel();
-					   erPan.setErrorMessage("Keine zwei gleichen Fragen pro Prüfung!");
+					   ConfirmationDialogBox.showOkDialogBox(constants.error(), constants.noTwoQuestionsPerExam());
+					   /*ErrorPanel erPan = new ErrorPanel();
+					   erPan.setErrorMessage("Keine zwei gleichen Fragen pro Prüfung!");*/
 					   throw new VetoDragException();
 				   }
 			   }
@@ -1291,7 +1297,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 		try{
 			if(checkQuestionTypeCountBlocking(questionViewImpl.getProxy()) && validateAssesmentQuestion(questionViewImpl.getProxy(), questionViewImpl))
 			{
-				incrementBlockingCounter(questionViewImpl.getProxy());
+				//incrementBlockingCounter(questionViewImpl.getProxy());
 				assignNewQuestionToAssesment(questionViewImpl, true);
 			}
 			
@@ -1325,7 +1331,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 		AssesmentQuestionProxy a=assesmentQuestionViewImpl.getProxy();
 		final QuestionTypeCountProxy questionTypeCountProxy =getQuestionTypeCountProxy(a.getQuestion());
 		a=request.edit(a);
-		request.remove().using(a).fire(new Receiver<Void>() {
+		request.remove().using(a).fire(new BMEReceiver<Void>() {
 
 			@Override
 			public void onSuccess(Void response) {
@@ -1417,18 +1423,34 @@ QuestionAdvancedSearchPopupView.Delegate {
 					
 				}
 				
-				if(sumOfTrueAnsw==trueAnswer && totalAnswerSelected==sumOfAnswer)
-					return true;
+				if (sumOfAnswer.equals(SharedConstant.INFINITE_VALUE) == true)
+				{
+					if (totalAnswerSelected >= 2 && sumOfTrueAnsw == trueAnswer)
+						return true;
+					else
+					{
+						if (totalAnswerSelected < 2)
+							ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.sumOfAnswer(2));
+						else if (totalAnswerSelected != sumOfAnswer)
+							ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.sumOfTrueAnswer(sumOfTrueAnsw));
+						
+						return false;
+					}
+				}
 				else
 				{
-					if(sumOfTrueAnsw!=trueAnswer)
-						ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.sumOfTrueAnswer(sumOfTrueAnsw));
-					else if(totalAnswerSelected != sumOfAnswer)
-						ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.sumOfAnswer(sumOfAnswer));
-					
-					return false;
+					if(sumOfTrueAnsw==trueAnswer && totalAnswerSelected==sumOfAnswer)
+						return true;
+					else
+					{
+						if(sumOfTrueAnsw!=trueAnswer)
+							ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.sumOfTrueAnswer(sumOfTrueAnsw));
+						else if(totalAnswerSelected != sumOfAnswer)
+							ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.sumOfAnswer(sumOfAnswer));
+						
+						return false;
+					}
 				}
-				
 			}
 			else//2. all answer should be false
 			{
@@ -1454,17 +1476,34 @@ QuestionAdvancedSearchPopupView.Delegate {
 				}
 				
 				//if(sumFalseAnswers==falseAnswerSelected)
-				if(isAllAnswerFalse && totalAnswerSelected==sumOfAnswer)
+				if (sumOfAnswer.equals(SharedConstant.INFINITE_VALUE) == true)
 				{
-					return true;					
+					if (totalAnswerSelected >= 2 && isAllAnswerFalse)
+						return true;
+					else
+					{
+						if (isAllAnswerFalse == false)
+							ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.sumOfFalseAnswerErrMsg());
+						else
+							ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.sumOfAnswer(2));
+						
+						return false;
+					}
 				}
 				else
 				{
-					if(!isAllAnswerFalse)
-						ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.sumOfFalseAnswer(sumOfAnswer));
-					else if(totalAnswerSelected != sumOfAnswer)
-						ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.sumOfAnswer(sumOfAnswer));
-					return false;
+					if(isAllAnswerFalse && totalAnswerSelected==sumOfAnswer)
+					{
+						return true;					
+					}
+					else
+					{
+						if(!isAllAnswerFalse)
+							ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.sumOfFalseAnswer(sumOfAnswer));
+						else if(totalAnswerSelected != sumOfAnswer)
+							ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.sumOfAnswer(sumOfAnswer));
+						return false;
+					}
 				}
 			}
 		}//3. Need to validate only sum of answer
@@ -1484,7 +1523,16 @@ QuestionAdvancedSearchPopupView.Delegate {
 				
 			}
 			
-			if(sumOfAnswer==totalSelectedAnswers)
+			if (SharedConstant.INFINITE_VALUE.equals(sumOfAnswer) && totalSelectedAnswers >= 2)
+			{
+				return true;
+			}		
+			else if (SharedConstant.INFINITE_VALUE.equals(sumOfAnswer) && totalSelectedAnswers < 2)
+			{
+				ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.sumOfAnswer(2));
+				return false;
+			}
+			else if(sumOfAnswer==totalSelectedAnswers)
 			{
 				return true;					
 			}

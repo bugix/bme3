@@ -1,15 +1,19 @@
 package medizin.client.ui.widget.resource.audio;
 import java.util.ArrayList;
 
-import medizin.client.ui.ErrorPanel;
+import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.util.ClientUtility;
 import medizin.shared.MultimediaType;
+import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.chj.gwt.client.soundmanager2.Callback;
+import com.google.gwt.core.client.GWT;
 
 public class ClientJukebox {
 
+	public static BmeConstants constants = GWT.create(BmeConstants.class);
+	
 	/* For actually playing music and songs */
 	private SoundFactory soundFactory;
 
@@ -36,8 +40,9 @@ public class ClientJukebox {
 		soundFactory.onStartError(new Callback(){
 
 			public void execute() {
-				ErrorPanel errorPanel = new ErrorPanel();
-				errorPanel.setErrorMessage("SoundManager Encountered an error while loading");
+				ConfirmationDialogBox.showOkDialogBox(constants.error(), constants.soundManagerLoadingError());
+				/*ErrorPanel errorPanel = new ErrorPanel();
+				errorPanel.setErrorMessage("SoundManager Encountered an error while loading");*/
 			}
 		});
 

@@ -1426,4 +1426,19 @@ public class AssesmentQuestion {
 		}
 		return null;
 	}
+	
+	public static List<AssesmentQuestion> findAssessmentQuestionByAssesmentAndAuthor(Long assessmentId, Long authorId)
+	{
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<AssesmentQuestion> criteriaQuery = criteriaBuilder.createQuery(AssesmentQuestion.class);
+		Root<AssesmentQuestion> from = criteriaQuery.from(AssesmentQuestion.class);
+		
+		Predicate pre1 = criteriaBuilder.equal(from.get("assesment").get("id"), assessmentId);
+		Predicate pre2 = criteriaBuilder.equal(from.get("autor").get("id"), authorId);
+		
+		criteriaQuery.where(criteriaBuilder.and(pre1, pre2));
+		
+		TypedQuery<AssesmentQuestion> query = entityManager().createQuery(criteriaQuery);
+		return query.getResultList();
+	}
 }

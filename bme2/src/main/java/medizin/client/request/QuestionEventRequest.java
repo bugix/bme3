@@ -45,4 +45,6 @@ Request<java.lang.Long> countQuestionEventsByInstitutionNonRoo(java.lang.Long in
 	Request<List<QuestionEventProxy>> findQuestionEventByInstitution(InstitutionProxy institution);
 	
 	Request<List<QuestionEventProxy>> findQuestionEventByInstitutionAndAccRights(Boolean isAdmin, Long personId, Long instId);
+	
+	abstract Request<List<QuestionEventProxy>> findAllQuestionEventByLoggedPerson();
 }

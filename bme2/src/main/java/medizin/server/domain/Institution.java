@@ -19,7 +19,6 @@ import medizin.client.ui.widget.Sorting;
 import medizin.server.utils.ServerConstants;
 import medizin.shared.AccessRights;
 
-import org.hibernate.Query;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
@@ -94,6 +93,28 @@ public class Institution {
  		return query.getResultList();
     }
     
+    public static List<Institution> findInstitutionByLoggedPerson()
+    {
+    	Person loggedPerson = Person.myGetLoggedPerson();
+    	Institution loggedInstitution = Institution.myGetInstitutionToWorkWith();
+    	if (loggedPerson == null || loggedInstitution == null)
+    		return new ArrayList<Institution>();
+    	
+    	CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+ 		CriteriaQuery<Institution> criteriaQuery = criteriaBuilder.createQuery(Institution.class);
+ 		Root<Institution> from = criteriaQuery.from(Institution.class);
+ 		
+ 		if (loggedPerson.getIsAdmin() == false)
+ 		{
+ 			Predicate pre = criteriaBuilder.equal(from.get("id"), loggedInstitution.getId());
+ 			criteriaQuery.where(pre);
+ 		}
+ 		
+ 		TypedQuery<Institution> query = entityManager().createQuery(criteriaQuery);
+ 		
+ 		return query.getResultList();
+    }
+    
     public static Long countInstitutionByName(String text, Long personId)
     {
     	Person loggedPerson = Person.myGetLoggedPerson();
@@ -124,8 +145,6 @@ public class Institution {
  		criteriaQuery.where(predicate);
  		
  		TypedQuery<Long> query = entityManager().createQuery(criteriaQuery);
- 		
- 		System.out.println("QUERY : " + query.unwrap(Query.class).getQueryString());
  		
  		return query.getSingleResult();
     }
@@ -171,6 +190,10 @@ public class Institution {
     
     public static Long countAllInstitutionsBySearchValue(String searchText, Long personId)
     {
+    	Person loggedPerson = Person.myGetLoggedPerson();
+    	if (loggedPerson == null)
+    		throw new IllegalArgumentException("logged person argument is required");
+    	
     	CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
 		CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
 		Root<Institution> from = criteriaQuery.from(Institution.class);
@@ -181,18 +204,21 @@ public class Institution {
 		
 		if (personId != null && personId != 0)
 		{
-			Subquery<UserAccessRights> subQry = criteriaQuery.subquery(UserAccessRights.class);
-			Root queAccRoot = subQry.from(UserAccessRights.class);
-			
-			Predicate subPre1 = criteriaBuilder.equal(queAccRoot.get("accRights"), AccessRights.AccPrimaryAdmin);
-			Predicate subPre2 = criteriaBuilder.equal(queAccRoot.get("person").get("id"), personId);
-			
-			subQry.select(queAccRoot.get("institution").get("id"))
-							.where(criteriaBuilder.and(subPre1, subPre2));
-			
-			Predicate mainpre2 = criteriaBuilder.in(from.get("id")).value(subQry);
-			
-			pre1 = criteriaBuilder.and(pre1, mainpre2);
+			if (loggedPerson.getIsAdmin() == false)
+			{
+				Subquery<UserAccessRights> subQry = criteriaQuery.subquery(UserAccessRights.class);
+				Root queAccRoot = subQry.from(UserAccessRights.class);
+				
+				Predicate subPre1 = criteriaBuilder.equal(queAccRoot.get("accRights"), AccessRights.AccPrimaryAdmin);
+				Predicate subPre2 = criteriaBuilder.equal(queAccRoot.get("person").get("id"), personId);
+				
+				subQry.select(queAccRoot.get("institution").get("id"))
+								.where(criteriaBuilder.and(subPre1, subPre2));
+				
+				Predicate mainpre2 = criteriaBuilder.in(from.get("id")).value(subQry);
+				
+				pre1 = criteriaBuilder.and(pre1, mainpre2);
+			}
 		}
 		
  		criteriaQuery.where(pre1);
@@ -203,6 +229,10 @@ public class Institution {
     
     public static List<Institution> findAllInstitutionsBySearchValue(String searchText, Long personId, int start, int length)
     {
+    	Person loggedPerson = Person.myGetLoggedPerson();
+    	if (loggedPerson == null)
+    		throw new IllegalArgumentException("logged person argument is required");
+    	
     	CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
 		CriteriaQuery<Institution> criteriaQuery = criteriaBuilder.createQuery(Institution.class);
 		Root<Institution> from = criteriaQuery.from(Institution.class);
@@ -214,18 +244,21 @@ public class Institution {
 		
 		if (personId != null && personId != 0)
 		{
-			Subquery<UserAccessRights> subQry = criteriaQuery.subquery(UserAccessRights.class);
-			Root queAccRoot = subQry.from(UserAccessRights.class);
-			
-			Predicate subPre1 = criteriaBuilder.equal(queAccRoot.get("accRights"), AccessRights.AccPrimaryAdmin.ordinal());
-			Predicate subPre2 = criteriaBuilder.equal(queAccRoot.get("person").get("id"), personId);
-			
-			subQry.select(queAccRoot.get("institution").get("id"))
-							.where(criteriaBuilder.and(subPre1, subPre2));
-			
-			Predicate mainpre2 = criteriaBuilder.in(from.get("id")).value(subQry);
-			
-			pre1 = criteriaBuilder.and(pre1, mainpre2);
+			if (loggedPerson.getIsAdmin() == false)
+			{
+				Subquery<UserAccessRights> subQry = criteriaQuery.subquery(UserAccessRights.class);
+				Root queAccRoot = subQry.from(UserAccessRights.class);
+				
+				Predicate subPre1 = criteriaBuilder.equal(queAccRoot.get("accRights"), AccessRights.AccPrimaryAdmin.ordinal());
+				Predicate subPre2 = criteriaBuilder.equal(queAccRoot.get("person").get("id"), personId);
+				
+				subQry.select(queAccRoot.get("institution").get("id"))
+								.where(criteriaBuilder.and(subPre1, subPre2));
+				
+				Predicate mainpre2 = criteriaBuilder.in(from.get("id")).value(subQry);
+				
+				pre1 = criteriaBuilder.and(pre1, mainpre2);
+			}
 		}
 		
  		criteriaQuery.where(pre1);

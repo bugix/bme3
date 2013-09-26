@@ -54,5 +54,6 @@ public interface AssesmentQuestionRequest extends AssesmentQuestionRequest_Roo_G
 	abstract Request<Void> shuffleQuestionsAnswers(Long assessmentID);
 	
 	abstract Request<String> loadSystemOverviewTemplate();
-	
+
+	abstract Request<List<AssesmentQuestionProxy>> findAssessmentQuestionByAssesmentAndAuthor(Long assessmentId, Long authorId);
 }

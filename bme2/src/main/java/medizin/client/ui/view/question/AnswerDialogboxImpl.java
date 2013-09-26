@@ -41,7 +41,6 @@ import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.Document;
@@ -151,7 +150,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 	private Delegate delegate;
 	private AnswerProxy answer;
     private final QuestionProxy question;
-	private final EventBus eventBus;
+	//private final EventBus eventBus;
 	
 	public final static BmeMessages bmeMessages = GWT.create(BmeMessages.class);
 	public final static BmeConstants constants = GWT.create(BmeConstants.class);
@@ -203,7 +202,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 	public AnswerDialogboxImpl(QuestionProxy questionProxy, EventBus eventBus, Map<String, Widget> reciverMap) {
 		
 		this.question = questionProxy;
-		this.eventBus = eventBus;
+		//this.eventBus = eventBus;
 		answerTextArea = new RichTextArea();
 		answerTextArea.setSize("100%", "14em");
 		toolbar = new RichTextToolbar(answerTextArea);
@@ -416,7 +415,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 			ArrayList<String> allowedExt = Lists.newArrayList();
 			allowedExt.addAll(Arrays.asList(SharedConstant.IMAGE_EXTENSIONS));
 			paths.put(MultimediaType.Image, SharedConstant.UPLOAD_MEDIA_IMAGES_PATH);
-			upload = new ResourceUpload(allowedExt,paths, eventBus);
+			upload = new ResourceUpload(allowedExt,paths/*, eventBus*/);
 			upload.addResourceUploadedHandler(new ResourceUploadEventHandler() {
 				
 				@Override
@@ -435,15 +434,15 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 										Log.info("image Path : " + url);
 										if(simpleImageViewer != null && simpleImageViewer.getURL() != null && simpleImageViewer.getURL().length() > 0) {
 											// delete old files
-											Log.info("Delete old uploaded file");
-											delegate.deleteUploadedFiles(Sets.newHashSet(simpleImageViewer.getURL().replace(GWT.getHostPageBaseURL(), "")));
+											//Log.info("Delete old uploaded file");
+											//delegate.deleteUploadedFiles(Sets.newHashSet(simpleImageViewer.getURL().replace(GWT.getHostPageBaseURL(), "")));
 										}
 										simpleImageViewer = new SimpleImageViewer(url);
 										viewContainer.clear();
 										viewContainer.add(simpleImageViewer);
 									} else {
 										ConfirmationDialogBox.showOkDialogBox(constants.error(), bmeMessages.imageSizeError(questionTypeProxy.getImageWidth(), questionTypeProxy.getImageHeight()));
-										delegate.deleteUploadedFiles(Sets.newHashSet(event.getFilePath()));
+										//delegate.deleteUploadedFiles(Sets.newHashSet(event.getFilePath()));
 									}
 
 									return null;
@@ -466,6 +465,12 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 				}
 			});
 			
+			if(answer != null && answer.getMediaPath() != null) {
+				String url = GWT.getHostPageBaseURL() + answer.getMediaPath();
+				simpleImageViewer = new SimpleImageViewer(url);
+				viewContainer.clear();
+				viewContainer.add(simpleImageViewer);
+			}
 			break;
 		}	
 		case Sound:
@@ -474,7 +479,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 			allowedExt.addAll(Arrays.asList(SharedConstant.SOUND_EXTENSIONS));
 			paths.put(MultimediaType.Sound, SharedConstant.UPLOAD_MEDIA_SOUND_PATH);
 			
-			upload = new ResourceUpload(allowedExt,paths, this.eventBus);
+			upload = new ResourceUpload(allowedExt,paths/*, this.eventBus*/);
 			upload.addResourceUploadedHandler(new ResourceUploadEventHandler() {
 				
 				@Override
@@ -485,24 +490,29 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 							if(event.getSoundMediaSize() <= question.getQuestionType().getMaxBytes()) {
 								if(audioViewer != null && audioViewer.getURL() != null && audioViewer.getURL().length() > 0) {
 									// delete old files
-									Log.info("Delete old uploaded file");
-									delegate.deleteUploadedFiles(Sets.newHashSet(audioViewer.getURL().replace(GWT.getHostPageBaseURL(), "")));
+									//Log.info("Delete old uploaded file");
+									//delegate.deleteUploadedFiles(Sets.newHashSet(audioViewer.getURL().replace(GWT.getHostPageBaseURL(), "")));
 								}
 								audioViewer = new AudioViewer(event.getFilePath());
 								viewContainer.clear();
 								viewContainer.add(audioViewer);
 							}else {
 								ConfirmationDialogBox.showOkDialogBox(constants.error(), bmeMessages.mediaErrorMsg(question.getQuestionType().getMaxBytes() / 1024));
-								delegate.deleteUploadedFiles(Sets.newHashSet(event.getFilePath()));
+								//delegate.deleteUploadedFiles(Sets.newHashSet(event.getFilePath()));
 							}
 						}else {
 							Log.error("Error in MCQ question.");
-							delegate.deleteUploadedFiles(Sets.newHashSet(event.getFilePath()));
+							//delegate.deleteUploadedFiles(Sets.newHashSet(event.getFilePath()));
 						}
 					}
 				}
 			});
 
+			if(answer != null && answer.getMediaPath() != null) {
+				audioViewer = new AudioViewer(answer.getMediaPath());
+				viewContainer.clear();
+				viewContainer.add(audioViewer);
+			}
 			break;
 		}
 		case Video:
@@ -511,7 +521,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 			allowedExt.addAll(Arrays.asList(SharedConstant.VIDEO_EXTENSIONS));
 			paths.put(MultimediaType.Video, SharedConstant.UPLOAD_MEDIA_VIDEO_PATH);
 			
-			upload = new ResourceUpload(allowedExt,paths, this.eventBus);
+			upload = new ResourceUpload(allowedExt,paths/*, this.eventBus*/);
 			
 			upload.addResourceUploadedHandler(new ResourceUploadEventHandler() {
 				
@@ -523,24 +533,29 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 							if(event.getVideoMediaSize() <= question.getQuestionType().getMaxBytes()) {
 								if(videoViewer != null && videoViewer.getURL() != null && videoViewer.getURL().length() > 0) {
 									// delete old files
-									Log.info("Delete old uploaded file");
-									delegate.deleteUploadedFiles(Sets.newHashSet(videoViewer.getURL().replace(GWT.getHostPageBaseURL(), "")));
+									//Log.info("Delete old uploaded file");
+									//delegate.deleteUploadedFiles(Sets.newHashSet(videoViewer.getURL().replace(GWT.getHostPageBaseURL(), "")));
 								}
 								videoViewer = new VideoViewer(event.getFilePath());
 								viewContainer.clear();
 								viewContainer.add(videoViewer);
 							}else {
 								ConfirmationDialogBox.showOkDialogBox(constants.error(), bmeMessages.mediaErrorMsg(question.getQuestionType().getMaxBytes()/1024));
-								delegate.deleteUploadedFiles(Sets.newHashSet(event.getFilePath()));
+								//delegate.deleteUploadedFiles(Sets.newHashSet(event.getFilePath()));
 							}
 						}else {
 							Log.error("Error in MCQ question.");
-							delegate.deleteUploadedFiles(Sets.newHashSet(event.getFilePath()));
+							//delegate.deleteUploadedFiles(Sets.newHashSet(event.getFilePath()));
 						}
 					}
 				}
 			});
 			
+			if(answer != null && answer.getMediaPath() != null) {
+				videoViewer = new VideoViewer(answer.getMediaPath());
+				viewContainer.clear();
+				viewContainer.add(videoViewer);
+			}
 			
 			break;
 		}
@@ -844,14 +859,15 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 				answerTextArea.addStyleName("higlight_onViolation");
 			}
 			
-			if(question.getQuestionType().getAnswerLength() != null  && answerTextMaxDiff != null && answerTextMinDiff != null) {
-				if(answerTextArea.getText().length() < answerTextMinDiff || answerTextArea.getText().length() > answerTextMaxDiff) {
-					flag = false;
-					messages.add(bmeMessages.answerTextMinMax(answerTextMinDiff, answerTextMaxDiff));
-					answerTextArea.addStyleName("higlight_onViolation");
-				}
+			if(QuestionTypes.Textual.equals(question.getQuestionType().getQuestionType()) || QuestionTypes.Sort.equals(question.getQuestionType().getQuestionType())) {
+				if(question.getQuestionType().getAnswerLength() != null  && answerTextMaxDiff != null && answerTextMinDiff != null) {
+					if(answerTextArea.getText().length() < answerTextMinDiff || answerTextArea.getText().length() > answerTextMaxDiff) {
+						flag = false;
+						messages.add(bmeMessages.answerTextMinMax(answerTextMinDiff, answerTextMaxDiff));
+						answerTextArea.addStyleName("higlight_onViolation");
+					}
+				}	
 			}
-			
 		}
 		
 		if(question.getQuestionType() != null && QuestionTypes.ShowInImage.equals(question.getQuestionType().getQuestionType()) == true ) {

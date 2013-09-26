@@ -41,7 +41,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Composite;
@@ -52,14 +51,11 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class QuestionViewImpl extends Composite implements QuestionView, RecordChangeHandler {
 
-	private static QuestionViewImplUiBinder uiBinder = GWT
-			.create(QuestionViewImplUiBinder.class);
+	private static QuestionViewImplUiBinder uiBinder = GWT.create(QuestionViewImplUiBinder.class);
 
-	interface QuestionViewImplUiBinder extends
-			UiBinder<Widget, QuestionViewImpl> {
-	}
+	interface QuestionViewImplUiBinder extends UiBinder<Widget, QuestionViewImpl> {}
 
-	private Presenter presenter;
+	//private Presenter presenter;
 	protected Set<String> paths = new HashSet<String>();
 	private Delegate delegate;
 	private McAppRequestFactory requests;
@@ -734,11 +730,11 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 		return searchBox;
 	}
 
-	@Override
+	/*@Override
 	public void setPresenter(Presenter presenter) {
 		this.presenter = presenter;
 
-	}
+	}*/
 
 	/*@Inject
 	public QuestionViewImpl(McAppRequestFactory requests,
@@ -749,11 +745,11 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 
 	}*/
 
-	@Override
+	/*@Override
 	public void setName(String helloName) {
 		// TODO Auto-generated method stub
 
-	}
+	}*/
 
 	@Override
 	public CellTable<QuestionProxy> getTable() {
@@ -800,7 +796,7 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 			String beginn = "<div style=\"white-space:normal;";
 			String end = "</div>";
 			
-			if (Status.ACTIVE.equals(value.getStatus()) == false)
+			if (Status.DEACTIVATED.equals(value.getStatus()) == false && Status.ACTIVE.equals(value.getStatus()) == false)
 			{
 				if (!value.getIsAcceptedAdmin()) {
 					beginn += "color:red; ";
@@ -945,5 +941,9 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 	public void removeAdvancedSearchFromView()
 	{
 		Document.get().getElementById("advancedSearchViewDiv").removeFromParent();
+	}
+	
+	public QuestionFilterViewImpl getFilterPanel() {
+		return filterPanel;
 	}
 }

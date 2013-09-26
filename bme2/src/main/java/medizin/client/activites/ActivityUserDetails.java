@@ -41,7 +41,6 @@ import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
-import com.google.web.bindery.requestfactory.shared.Receiver;
 import com.google.web.bindery.requestfactory.shared.Request;
 /**
  * Activity for Handling UserDetailsViews.
@@ -819,7 +818,9 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
      * @return Request<List<InstitutionProxy>>
      */
     protected Request<java.util.List<medizin.client.proxy.QuestionEventProxy>> createRequestAllEvents() {
-        return requests.questionEventRequest().findAllQuestionEvents();
+        //return requests.questionEventRequest().findAllQuestionEvents();
+        
+        return requests.questionEventRequest().findAllQuestionEventByLoggedPerson();
     }
 
     
@@ -828,7 +829,8 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 	 * @param final BMEReceiver<List<InstitutionProxy>> callback
 	 */
 	private void fireRequestAllInstitution( final BMEReceiver<List<InstitutionProxy>> callback) {
-		createRequestAllInstitutions().fire(callback);
+		//createRequestAllInstitutions().fire(callback);
+		requests.institutionRequest().findInstitutionByLoggedPerson().fire(callback);
 	}
 	
 	/**
@@ -1112,7 +1114,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 			
 			if (value!=null&&!value.equals(""))
 			{
-				requests.questionEventRequest().findQuestionEvent(value).fire(new Receiver<Object>() {
+				requests.questionEventRequest().findQuestionEvent(value).fire(new BMEReceiver<Object>() {
 
 					@Override
 					public void onSuccess(Object response) {

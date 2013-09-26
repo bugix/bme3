@@ -9,6 +9,7 @@ import medizin.client.proxy.MatrixValidityProxy;
 import medizin.client.style.resources.MyCellTableResources;
 import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
+import medizin.client.ui.view.renderer.EnumRenderer;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.pager.MySimplePager;
 import medizin.shared.Status;
@@ -30,22 +31,35 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.Header;
+import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 public class MatrixAnswerListViewImpl extends Composite implements MatrixAnswerListView {
 
-	private static MatrixAnswerListViewImplUiBinder uiBinder = GWT
-			.create(MatrixAnswerListViewImplUiBinder.class);
+	private static MatrixAnswerListViewImplUiBinder uiBinder = GWT.create(MatrixAnswerListViewImplUiBinder.class);
 
-	interface MatrixAnswerListViewImplUiBinder extends
-			UiBinder<Widget, MatrixAnswerListViewImpl> {
-	}
+	interface MatrixAnswerListViewImplUiBinder extends UiBinder<Widget, MatrixAnswerListViewImpl> {}
 	
 	@UiField
 	Label headerText;
 
+	@UiField
+    IconButton newAnswer;
+
+	@UiField(provided = true)
+	CellTable<MatrixValidityProxy> tableAnswer;
+
+	@UiField(provided = true)
+	public MySimplePager pager;
+
+	public BmeConstants constant = GWT.create(BmeConstants.class);
+    private Delegate delegate;
+    //private String name;
+    protected Set<String> paths = new HashSet<String>();
+
+    
 	public MatrixAnswerListViewImpl(boolean addAnswerRights, boolean isEditable) {
 		CellTable.Resources tableResources = GWT.create(MyCellTableResources.class);
 		tableAnswer = new CellTable<MatrixValidityProxy>(McAppConstant.TABLE_PAGE_SIZE, tableResources);
@@ -63,39 +77,14 @@ public class MatrixAnswerListViewImpl extends Composite implements MatrixAnswerL
 		headerText.setText("");
 		headerText.setHeight("23px");
 	}
-
-
-	public BmeConstants constant =GWT.create(BmeConstants.class);
-			
-    private Delegate delegate;
-    
-
-	@UiField
-    IconButton newAnswer;
-
-
-	@UiField(provided = true)
-	CellTable<MatrixValidityProxy> tableAnswer;
-
-	@UiField(provided = true)
-	public MySimplePager pager;
 	
 	@UiHandler("newAnswer")
 	void addEventClicked(ClickEvent event) {
 		Log.info("event");
 		delegate.addMatrixNewAnswerClicked();
 	}
-
-
-	private String name;
-    protected Set<String> paths = new HashSet<String>();
-
+	
     public void init(boolean isEditable) {
-    	
-    	Log.debug("Im AnswerListView.init() ");
-    	
-    	editableCells = new ArrayList<AbstractEditableCell<?, ?>>();
-
     	
 //        paths.add("dateAdded");
 //        tableAnswer.addColumn(new TextColumn<AnswerProxy>() {
@@ -153,36 +142,6 @@ public class MatrixAnswerListViewImpl extends Composite implements MatrixAnswerL
 //                return renderer.render(object.getValidity());
 //            }
 //        }, "Validity");
-        
- 
-        tableAnswer.addColumn(new Column<MatrixValidityProxy, MatrixValidityProxy>(new ValidityTextCell()) {
-    	      @Override
-    	      public MatrixValidityProxy getValue(MatrixValidityProxy object) {
-    	        return object;
-    	      }
-    	    },  new Header<String>(new ValidityHeader()){
-
-    			@Override
-    			public String getValue() {
-    				
-    				return "hallo";
-    			}});
-        
-        
-        
-        tableAnswer.addColumn(new Column<MatrixValidityProxy, MatrixValidityProxy>(new AnswerXTextCell()) {
-  	      @Override
-  	      public MatrixValidityProxy getValue(MatrixValidityProxy object) {
-  	        return object;
-  	      }
-  	    }, constant.answerX());
-        
-        tableAnswer.addColumn(new Column<MatrixValidityProxy, MatrixValidityProxy>(new AnswerYTextCell()) {
-    	      @Override
-    	      public MatrixValidityProxy getValue(MatrixValidityProxy object) {
-    	        return object;
-    	      }
-    	}, constant.answerY());
         
 //        paths.add("answerText");
 //        tableAnswer.addColumn(new TextColumn<AnswerProxy>() {
@@ -304,58 +263,103 @@ public class MatrixAnswerListViewImpl extends Composite implements MatrixAnswerL
 //                return renderer.render(object.getQuestion());
 //            }
 //        }, "Question");
-        
-        if(isEditable == true) {
-        	addColumn(new EditIconCell(McAppConstant.EDIT_ICON, new ActionCell.Delegate<MatrixValidityProxy>() 
-        			{
-    		    		public void execute(MatrixValidityProxy matrixValidity) {
-    		    			delegate.editMatrixValidityClicked(matrixValidity);
-    		    	            
-    		    		}
-        	          
-        			}), constant.edit(), new GetValue<MatrixValidityProxy>() {
-        	        
-        		public MatrixValidityProxy getValue(MatrixValidityProxy contact) {
-        			return contact;
-        		}
-        	}, null);
-        	
-        	addColumn(new DeleteIconCell(McAppConstant.DELETE_ICON, new ActionCell.Delegate<MatrixValidityProxy>() 
-        			{
-    		    		public void execute(MatrixValidityProxy matrixValidity) {
-    		    			delegate.deleteMatrixValidityClicked(matrixValidity);
-    		    		}
-        			}), constant.delete(), new GetValue<MatrixValidityProxy>() {
-        		public MatrixValidityProxy getValue(MatrixValidityProxy contact) {
-        			return contact;
-        		}
-        	}, null);
-        	tableAnswer.addColumnStyleName(3, "iconColumn");
-        	tableAnswer.addColumnStyleName(4, "iconColumn");
-        }
     	
-    	tableAnswer.addColumnStyleName(0, "iconColumn");
+    	Log.debug("Im AnswerListView.init() ");
+    	
+    	editableCells = new ArrayList<AbstractEditableCell<?, ?>>();
+    	int columnIndex = 0;
+		tableAnswer.addColumn(new Column<MatrixValidityProxy, MatrixValidityProxy>(new ValidityTextCell()) {
+			@Override
+			public MatrixValidityProxy getValue(MatrixValidityProxy object) {
+				return object;
+			}
+		}, new Header<String>(new ValidityHeader()) {
+
+			@Override
+			public String getValue() {
+
+				return "hallo";
+			}
+		});
+		tableAnswer.addColumnStyleName(columnIndex, "iconColumn");
+		tableAnswer.setColumnWidth(columnIndex, "20px");
+		columnIndex++;
+		
+		tableAnswer.addColumn(new Column<MatrixValidityProxy, MatrixValidityProxy>(new AnswerXTextCell()) {
+			@Override
+			public MatrixValidityProxy getValue(MatrixValidityProxy object) {
+				return object;
+			}
+		}, constant.answerX());
+		columnIndex++;
+
+		tableAnswer.addColumn(new Column<MatrixValidityProxy, MatrixValidityProxy>(new AnswerYTextCell()) {
+			@Override
+			public MatrixValidityProxy getValue(MatrixValidityProxy object) {
+				return object;
+			}
+		}, constant.answerY());
+		columnIndex++;
+		
+		if (isEditable == true) {
+			addColumn(new EditIconCell(McAppConstant.EDIT_ICON, new ActionCell.Delegate<MatrixValidityProxy>() {
+				public void execute(MatrixValidityProxy matrixValidity) {
+					delegate.editMatrixValidityClicked(matrixValidity);
+				}
+
+			}), constant.edit(), new GetValue<MatrixValidityProxy>() {
+
+				public MatrixValidityProxy getValue(MatrixValidityProxy contact) {
+					return contact;
+				}
+			}, null);
+			tableAnswer.addColumnStyleName(columnIndex, "iconColumn");
+			tableAnswer.setColumnWidth(columnIndex, "20px");
+			columnIndex++;
+
+			addColumn(new DeleteIconCell(McAppConstant.DELETE_ICON, new ActionCell.Delegate<MatrixValidityProxy>() {
+				public void execute(MatrixValidityProxy matrixValidity) {
+					delegate.deleteMatrixValidityClicked(matrixValidity);
+				}
+			}), constant.delete(), new GetValue<MatrixValidityProxy>() {
+				public MatrixValidityProxy getValue(MatrixValidityProxy contact) {
+					return contact;
+				}
+			}, null);
+			tableAnswer.addColumnStyleName(columnIndex, "iconColumn");
+			tableAnswer.setColumnWidth(columnIndex, "20px");
+			columnIndex++;
+        }
+		
+		tableAnswer.addColumn(new TextColumn<MatrixValidityProxy>() {
+
+			EnumRenderer<Status> renderer = new EnumRenderer<Status>();
+
+			@Override
+			public String getValue(MatrixValidityProxy object) {
+				return renderer.render(object == null ? null : object.getAnswerX().getStatus());
+			}
+		},constant.status());
+		tableAnswer.setColumnWidth(columnIndex, "150px");
+		columnIndex++;
+    	
     	/*tableAnswer.addColumnStyleName(1, "questionTextColumn");
     	tableAnswer.addColumnStyleName(2, "questionTextColumn");*/
-    	
-
-
     }
+    
 	@Override
 	public CellTable<MatrixValidityProxy> getTable() {
-
 		return tableAnswer;
 	}
+	
 	@Override
 	public String[] getPaths() {
-		
-
         return paths.toArray(new String[paths.size()]);
 	}
+	
 	@Override
 	public void setDelegate(Delegate delegate) {
 		this.delegate = delegate;
-		
 	}
 
 	  /**
@@ -518,6 +522,9 @@ public class MatrixAnswerListViewImpl extends Composite implements MatrixAnswerL
 		@Override
 		public void render(com.google.gwt.cell.client.Cell.Context context,
 				MatrixValidityProxy value, SafeHtmlBuilder sb) {
+			if (value == null)
+				return;
+			
 			if (Status.ACTIVE.equals(value.getAnswerX().getStatus()) || Status.NEW.equals(value.getAnswerX().getStatus()) || Status.ACTIVE.equals(value.getAnswerY().getStatus()) || Status.NEW.equals(value.getAnswerY().getStatus())){
 				sb.append(McAppConstant.EDIT_ICON);
 			}
@@ -534,6 +541,9 @@ public class MatrixAnswerListViewImpl extends Composite implements MatrixAnswerL
 		@Override
 		public void render(com.google.gwt.cell.client.Cell.Context context,
 				MatrixValidityProxy value, SafeHtmlBuilder sb) {
+			if (value == null)
+				return;
+			
 			if (Status.ACTIVE.equals(value.getAnswerX().getStatus()) || Status.NEW.equals(value.getAnswerX().getStatus()) || Status.ACTIVE.equals(value.getAnswerY().getStatus()) || Status.NEW.equals(value.getAnswerY().getStatus())){
 				sb.append(McAppConstant.DELETE_ICON);
 			}

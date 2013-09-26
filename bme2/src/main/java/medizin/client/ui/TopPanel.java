@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
-
 import medizin.client.McAppShell;
 import medizin.client.events.RecordChangeEvent;
 import medizin.client.factory.receiver.BMEReceiver;
@@ -39,7 +37,6 @@ import com.google.gwt.user.client.ui.ValueListBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.google.web.bindery.requestfactory.gwt.ui.client.EntityProxyKeyProvider;
-import com.google.web.bindery.requestfactory.shared.Receiver;
 
 /**
  * The TopPanel contains the users login information and a list box to select the institution. 
@@ -242,7 +239,7 @@ public class TopPanel extends Composite {
 			if (userLoggedIn.getIsAdmin())
 			{
 				
-				requests.institutionRequest().findAllInstitutions().fire(new Receiver<List<InstitutionProxy>>() {
+				requests.institutionRequest().findAllInstitutions().fire(new BMEReceiver<List<InstitutionProxy>>() {
 
 					@Override
 					public void onSuccess(List<InstitutionProxy> response) {
@@ -267,7 +264,7 @@ public class TopPanel extends Composite {
 			else
 			{
 				
-				TopPanel.this.requests.userAccessRightsRequest().findInstituionFromQuestionAccessByPerson(userLoggedIn.getId()).fire(new Receiver<List<InstitutionProxy>>() {
+				TopPanel.this.requests.userAccessRightsRequest().findInstituionFromQuestionAccessByPerson(userLoggedIn.getId()).fire(new BMEReceiver<List<InstitutionProxy>>() {
 
 					@Override
 					public void onSuccess(List<InstitutionProxy> response) {

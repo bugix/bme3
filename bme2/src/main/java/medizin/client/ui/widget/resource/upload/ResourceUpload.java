@@ -3,9 +3,11 @@ package medizin.client.ui.widget.resource.upload;
 import java.util.ArrayList;
 import java.util.Map;
 
+import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.resource.upload.event.ResourceUploadEvent;
 import medizin.client.ui.widget.resource.upload.event.ResourceUploadEventHandler;
 import medizin.shared.MultimediaType;
+import medizin.shared.i18n.BmeConstants;
 import medizin.shared.utils.SharedUtility;
 
 import com.allen_sauer.gwt.log.client.Log;
@@ -13,10 +15,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.InputElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FormPanel;
@@ -27,13 +27,11 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class ResourceUpload extends Composite {
 
-	private static ResourceUploadUiBinder uiBinder = GWT
-			.create(ResourceUploadUiBinder.class);
+	private static ResourceUploadUiBinder uiBinder = GWT.create(ResourceUploadUiBinder.class);
 
-	//private final BmeConstants constants = GWT.create(BmeConstants.class);
+	private final BmeConstants constants = GWT.create(BmeConstants.class);
 
-	private final String uploadUrl = GWT.getHostPageBaseURL()
-			+ "fileUploadServlet";
+	private final String uploadUrl = GWT.getHostPageBaseURL() + "fileUploadServlet";
 	
 	@UiField
 	FormPanel uploadFormPanel;
@@ -47,19 +45,18 @@ public class ResourceUpload extends Composite {
 	@UiField
 	InputElement directory;
 	
-	private final EventBus eventBus;
-
 	private final Map<MultimediaType, String> possiblePaths;
 	
 	private final ArrayList<String> allowedExtension;
 	
+	private ResourceUploadEventHandler handler;
+	
 	interface ResourceUploadUiBinder extends UiBinder<Widget, ResourceUpload> {
 	}
 
-	public ResourceUpload(ArrayList<String> allowedExtension,Map<MultimediaType,String> possiblePaths,EventBus eventBus) {
+	public ResourceUpload(ArrayList<String> allowedExtension,Map<MultimediaType,String> possiblePaths) {
 		this.allowedExtension = allowedExtension;
 		this.possiblePaths = possiblePaths;
-		this.eventBus = eventBus;
 		initWidget(uiBinder.createAndBindUi(this));
 		init();
 	}
@@ -85,20 +82,26 @@ public class ResourceUpload extends Composite {
 				} else {
 					Log.info("UPLOADING cancel");
 					event.cancel();
-					eventBus.fireEvent(new ResourceUploadEvent("",false));
+					//eventBus.fireEvent(new ResourceUploadEvent("",false));
+					if(handler != null)  {
+						handler.onResourceUploaded(new ResourceUploadEvent("",false));
+					}
 				}
+				uploadFile(event);
 			}
 		});
 
-		uploadFormPanel
-				.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
+		uploadFormPanel.addSubmitCompleteHandler(new FormPanel.SubmitCompleteHandler() {
 
 					@Override
 					public void onSubmitComplete(SubmitCompleteEvent event) {
 						Log.info("PS Submit is Complete " + event.getResults()); 
 						
 						uploadFormPanel.reset();
-						eventBus.fireEvent(new ResourceUploadEvent(event.getResults(),true));					
+						//eventBus.fireEvent(new ResourceUploadEvent(event.getResults(),true));
+						if(handler != null)  {
+							handler.onResourceUploaded(new ResourceUploadEvent(event.getResults(),true));
+						}
 					}
 				});
 
@@ -108,30 +111,32 @@ public class ResourceUpload extends Composite {
 			public void onChange(ChangeEvent event) {
 				Log.info("in on change");
 				Log.info("file : " + fileUpload.getFilename());
-				uploadFile();
+				//uploadFile();
+				uploadFormPanel.submit();
 			}
 
 		});
 		
 	}
 
-	public void uploadFile() {
+	public void uploadFile(SubmitEvent event) {
 
-		if (fileUpload.getFilename() != null
-				&& fileUpload.getFilename().trim().compareTo("") != 0) {
+		if (fileUpload.getFilename() != null && fileUpload.getFilename().trim().compareTo("") != 0) {
 			String fileName = fileUpload.getFilename();
 			
 			if(checkFileExtension(fileName)) {
 				MultimediaType type = SharedUtility.getFileMultimediaType(SharedUtility.getFileExtension(fileName));
 				String path = possiblePaths.get(type);
 				directory.setValue(path);
-				uploadFormPanel.submit();
+				//uploadFormPanel.submit();
 			}else {
-				Window.alert("Please upload valid file");
+				event.cancel();
+				ConfirmationDialogBox.showOkDialogBox(constants.error(), constants.uploadValidFile());
 			}
 			
 		} else {
-			Window.alert("Error in upload file method");
+			event.cancel();
+			ConfirmationDialogBox.showOkDialogBox(constants.error(), constants.errorInUpload());
 		}
 	}
 
@@ -170,7 +175,8 @@ public class ResourceUpload extends Composite {
 	}*/
 	
 	public void addResourceUploadedHandler(ResourceUploadEventHandler handler) {
-		eventBus.addHandler(ResourceUploadEvent.TYPE, handler);
+		this.handler = handler;
+		//eventBus.addHandler(ResourceUploadEvent.TYPE, handler);
 	}
 
 }

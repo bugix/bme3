@@ -2,8 +2,6 @@ package medizin.client.request;
 
 import java.util.List;
 
-import medizin.client.proxy.AssesmentProxy;
-import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionProxy;
 
 import org.springframework.roo.addon.gwt.RooGwtUnmanagedRequest;
@@ -73,5 +71,8 @@ public interface QuestionRequest extends QuestionRequest_Roo_Gwt {
 	Request<Integer> countQuestionByAdvancedSearchByLoginUserAndInstitute(List<String> criteriaStringList, List<String> searchField, String searchText);
 	
 	Request<Long> countQuestionByLoggedUser(Long loggedUserId, boolean isAdminOrInstitutionalAdmin);
+
+	Request<List<QuestionProxy>> findDeactivatedQuestion(String searchValue, List<String> searchField, int start, int length);
 	
+	Request<Integer> countDeactivatedQuestion(String searchValue, List<String> searchField);
 }

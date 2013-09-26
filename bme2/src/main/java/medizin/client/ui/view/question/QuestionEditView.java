@@ -26,7 +26,7 @@ public interface QuestionEditView extends IsWidget {
 
 		void deleteSelectedQuestionResource(Long id);
 
-		void deleteMediaFileFromDisk(String path);
+		//void deleteMediaFileFromDisk(String path);
 
 		boolean isAdminOrInstitutionalAdmin();
 
@@ -67,4 +67,6 @@ public interface QuestionEditView extends IsWidget {
 	void disableEnableAuthorReviewerValue(boolean flag);
 
 	void setResendToReviewBtn(boolean isResendToReview);
+
+	void setQuestionAuthor(PersonProxy autor);
 }

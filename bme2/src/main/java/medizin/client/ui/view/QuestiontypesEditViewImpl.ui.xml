@@ -36,7 +36,10 @@
 			<!-- Exam specific attributes -->
 			<g:Label styleName="{style.attributeGroupTitle}" ui:field="examGroupLbl" text="baseGroupLbl"></g:Label>
 	
-			<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="sumAnswer" min="0" value="0"></lbl:LabeledIntegerBox>
+			<g:VerticalPanel width="100%">
+				<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="sumAnswer" min="0" value="0"></lbl:LabeledIntegerBox>
+				<g:CheckBox ui:field="infiniteChkBox"></g:CheckBox>
+			</g:VerticalPanel>
 			<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="sumTrueAnswer" min="0" value="0"></lbl:LabeledIntegerBox>
 			<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="sumFalseAnswer" min="0" value="0"></lbl:LabeledIntegerBox>
 			<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="column" min="0" value="0"></lbl:LabeledIntegerBox>

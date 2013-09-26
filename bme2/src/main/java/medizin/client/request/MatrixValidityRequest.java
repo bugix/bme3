@@ -3,7 +3,6 @@ package medizin.client.request;
 import java.util.List;
 
 import medizin.client.proxy.MatrixValidityProxy;
-import medizin.server.domain.MatrixValidity;
 
 import org.springframework.roo.addon.gwt.RooGwtUnmanagedRequest;
 

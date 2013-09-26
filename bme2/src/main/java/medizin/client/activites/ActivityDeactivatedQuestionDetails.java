@@ -4,8 +4,7 @@ import java.util.List;
 
 import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
-import medizin.client.place.PlaceNotActivatedQuestion;
-import medizin.client.place.PlaceNotActivatedQuestionDetails;
+import medizin.client.place.PlaceDeactivatedQuestionDetails;
 import medizin.client.proxy.AnswerProxy;
 import medizin.client.proxy.KeywordProxy;
 import medizin.client.proxy.MatrixValidityProxy;
@@ -34,64 +33,42 @@ import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.RangeChangeEvent;
 
-public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper implements QuestionDetailsView.Delegate, AnswerDialogbox.Delegate, AnswerListView.Delegate, MatrixAnswerView.Delegate, MatrixAnswerListView.Delegate {
+public class ActivityDeactivatedQuestionDetails extends AbstractActivityWrapper implements QuestionDetailsView.Delegate, AnswerDialogbox.Delegate, AnswerListView.Delegate, MatrixAnswerView.Delegate, MatrixAnswerListView.Delegate {
 
-	private final PlaceNotActivatedQuestionDetails placeNotActivatedQuestionDetails;
-	private final McAppRequestFactory requests;
-	private final PlaceController placeController;
+	private PlaceDeactivatedQuestionDetails placeDeactivatedQuestionDetails;
+	private McAppRequestFactory requests;
+	//private PlaceController placeController;
+	private QuestionDetailsView view;
 	private AcceptsOneWidget widget;
-	//private EventBus eventBus;
-	private QuestionDetailsViewImpl view;
 	private QuestionProxy question;
 	private HandlerRegistration answerRangeChangeHandler;
-	private final ActivityNotActivatedQuestionDetails thiz;
+	private final ActivityDeactivatedQuestionDetails thiz;
 
-	public ActivityNotActivatedQuestionDetails(PlaceNotActivatedQuestionDetails place, McAppRequestFactory requests, PlaceController placeController) {
+	public ActivityDeactivatedQuestionDetails(PlaceDeactivatedQuestionDetails place, McAppRequestFactory requests, PlaceController placeController) {
 		super(place, requests, placeController);
-		this.placeNotActivatedQuestionDetails = place;
+		this.placeDeactivatedQuestionDetails = place;
 		this.requests = requests;
-		this.placeController = placeController;
+		//this.placeController = placeController;
 		thiz = this;
 	}
 
-	public void goTo(Place place) {
-		placeController.goTo(place);
-	}
-	
-	@Override
-	public String mayStop() {
-		return null;
-	}
-
-	@Override
-	public void onCancel() {
-	}
-
-	@Override
-	public void onStop() {
-	}
-	
 	@Override
 	public void start2(final AcceptsOneWidget panel, final EventBus eventBus) {
+        if(userLoggedIn==null) return;
 		
-		if(userLoggedIn==null) return;
-		
-		requests.find(placeNotActivatedQuestionDetails.getProxyId()).with("previousVersion","keywords","questEvent","comment","questionType","mcs", "rewiewer", "autor","questionResources","answers").fire(new BMEReceiver<Object>() {
+		requests.find(placeDeactivatedQuestionDetails.getProxyId()).with("previousVersion","keywords","questEvent","comment","questionType","mcs", "rewiewer", "autor","questionResources","answers").fire(new BMEReceiver<Object>() {
 
 			@Override
 			public void onSuccess(final Object response) {
 				if(response instanceof QuestionProxy){
 					Log.info(((QuestionProxy) response).getQuestionText());
 					
-					QuestionDetailsViewImpl questionDetailsView = new QuestionDetailsViewImpl(eventBus, false,false,false,true,false,isQuestionTypeMCQ((QuestionProxy) response));
-					thiz.view = questionDetailsView;
-					
-					questionDetailsView.setDelegate(thiz);
-					
+					QuestionDetailsViewImpl questionDetailsView = new QuestionDetailsViewImpl(eventBus, false,false,false,false,false,isQuestionTypeMCQ((QuestionProxy) response));
+					thiz.view = questionDetailsView;		
+					questionDetailsView.setDelegate(thiz);		
 					thiz.widget = panel;
-					//this.eventBus = eventBus;
 			        widget.setWidget(questionDetailsView.asWidget());
-			        
+					
 					if (((QuestionProxy) response).getIsReadOnly() == true)
 						view.setVisibleEditAndDeleteBtn(false);
 					
@@ -101,13 +78,13 @@ public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper
 			
 		});
 	}
-	
+
 	private boolean isQuestionTypeMCQ(QuestionProxy questionProxy) {
 		return questionProxy != null && questionProxy.getQuestionType() != null && QuestionTypes.MCQ.equals(questionProxy.getQuestionType().getQuestionType());
 	}
 	
-	private void init(QuestionProxy question) {
-		this.question = question;
+	private void init(QuestionProxy response) {
+		this.question = response;
 		Log.debug("Details für: "+question.getQuestionText());
 		
 		view.setValue(question);	
@@ -131,9 +108,8 @@ public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper
 				
 		initKeywordView();
 	}
-	
+
 	private void initKeywordView() {
-		
 		view.getKeywordSuggestBox().setVisible(false);
 		view.getKeywordAddButton().setVisible(false);
 		
@@ -174,11 +150,9 @@ public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper
 				}
 			});
 		}
-		
 	}
-	
-	public void onKeywordTableRangeChanged()
-	{
+
+	private void onKeywordTableRangeChanged() {
 		final Range range = view.getKeywordTable().getVisibleRange();
 		
 		requests.keywordRequest().findKeywordByQuestion(question.getId(), range.getStart(), range.getLength()).fire(new BMEReceiver<List<KeywordProxy>>() {
@@ -189,9 +163,8 @@ public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper
 			}
 		});
 	}
-	
+
 	private void initAnswerView() {
-		
 		if (answerRangeChangeHandler!=null){
 			answerRangeChangeHandler.removeHandler();
 			answerRangeChangeHandler=null;
@@ -208,11 +181,11 @@ public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper
 		
 		answerRangeChangeHandler =  view.getAnswerListViewImpl().getTable().addRangeChangeHandler(new RangeChangeEvent.Handler() {
 			public void onRangeChange(RangeChangeEvent event) {
-				ActivityNotActivatedQuestionDetails.this.onAnswerTableRangeChanged();
+				ActivityDeactivatedQuestionDetails.this.onAnswerTableRangeChanged();
 			}
 		});
 	}
-	
+
 	private void onAnswerTableRangeChanged() {
 		final Range range = view.getAnswerListViewImpl().getTable().getVisibleRange();
 		requests.answerRequest().findAnswersEntriesByQuestion(question.getId(), range.getStart(), range.getLength()).with("question","rewiewer","autor","comment","question.questionType").fire( new BMEReceiver<List<AnswerProxy>>(){
@@ -240,37 +213,28 @@ public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper
 	
 		answerRangeChangeHandler =  view.getMatrixAnswerListViewImpl().getTable().addRangeChangeHandler(new RangeChangeEvent.Handler() {
 			public void onRangeChange(RangeChangeEvent event) {
-				ActivityNotActivatedQuestionDetails.this.onMatrixAnswerTableRangeChanged();
+				ActivityDeactivatedQuestionDetails.this.onMatrixAnswerTableRangeChanged();
 			}
 		});
-		
 	}
-	
+
 	private void onMatrixAnswerTableRangeChanged() {
 		final Range range = view.getMatrixAnswerListViewImpl().getTable().getVisibleRange();
 		requests.MatrixValidityRequest().findAllMatrixValidityForAcceptQuestion(question.getId(), range.getStart(), range.getLength()).with("answerX","answerY").fire(new BMEReceiver<List<MatrixValidityProxy>>() {
 
 			@Override
 			public void onSuccess(List<MatrixValidityProxy> response) {
-				view.getMatrixAnswerListViewImpl().getTable().setRowData(range.getStart(), response);
+				view.getMatrixAnswerListViewImpl().getTable().setRowData(view.getMatrixAnswerListViewImpl().getTable().getVisibleRange().getStart(), response);
 			}
 		});
 	}
-	
-	@Override
-	public void placeChanged(Place place) {		
-	}
-	
-	@Override
-	public void forcedActiveClicked() {
-		requests.questionRequest().forcedActiveQuestion(question.getId()).fire(new BMEReceiver<Void>() {
 
-			@Override
-			public void onSuccess(Void response) {
-				goTo(new PlaceNotActivatedQuestion(PlaceNotActivatedQuestion.PLACE_NOT_ACTIVATED_QUESTION));
-			}
-		});
+	@Override
+	public void placeChanged(Place place) {
+		//placeController.goTo(place);
 	}
+	
+	
 
 	@Override
 	public void getQuestionDetails(QuestionProxy previousVersion, final Function<QuestionProxy, Void> function) {
@@ -282,18 +246,34 @@ public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper
 			}
 		});
 	}
-	
+
 	@Override
 	public QuestionProxy getLatestQuestionDetails() {
 		return question;
 	}
 	
 	@Override
-	public void enableBtnOnLatestClicked() {
-		view.setVisibleEditAndDeleteBtn(false);
-		view.getAcceptBtn().setVisible(false);
-		view.setVisibleForcedActiveBtn(true);
+	public String mayStop() {
+		return null;
 	}
+
+	@Override
+	public void onResendToReviewClicked(QuestionProxy proxy) {}
+
+	@Override
+	public void checkForResendToReview() {}
+
+	@Override
+	public void forcedActiveClicked() {}
+
+	@Override
+	public void enableBtnOnLatestClicked() {}
+
+	@Override
+	public void keywordAddButtonClicked(String text, QuestionProxy proxy) {}
+
+	@Override
+	public void deleteKeywordClicked(KeywordProxy keyword, QuestionProxy proxy) {}
 	
 	@Override
 	public void addMatrixNewAnswerClicked() {}
@@ -311,6 +291,9 @@ public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper
 	public void closedMatrixValidityView() {}
 
 	@Override
+	public void saveAllTheValuesToAnswerAndMatrixAnswer(List<MatrixValidityProxy> currentMatrixValidityProxy, Matrix<MatrixValidityVO> matrixList, PersonProxy author, PersonProxy rewiewer, Boolean submitToReviewComitee, String comment) {}
+
+	@Override
 	public void deleteAnswerClicked(AnswerProxy Answer) {}
 
 	@Override
@@ -323,10 +306,10 @@ public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper
 	public void cancelAnswerClicked() {}
 
 	@Override
-	public void findAllAnswersPoints(Long id,Long currentAnswerId, Function<List<String>, Void> function) {}
+	public void findAllAnswersPoints(Long id, Long currentAnswerId, Function<List<String>, Void> function) {}
 
 	@Override
-	public void saveAnswerProxy(AnswerProxy answerProxy, String answerText, PersonProxy author, PersonProxy rewiewer, Boolean submitToReviewComitee, String comment, Validity validity, String points, String mediaPath, String additionalKeywords, Integer sequenceNumber, Function<AnswerProxy, Void> function) {}
+	public void saveAnswerProxy(AnswerProxy answerProxy, String answerText, PersonProxy author, PersonProxy rewiewer, Boolean submitToReviewComitee, String comment, Validity validity, String points, String mediaPath, String additionalKeywords,  Integer sequenceNumber, Function<AnswerProxy, Void> function) {}
 
 	@Override
 	public void deleteClicked() {}
@@ -336,25 +319,4 @@ public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper
 
 	@Override
 	public void acceptQuestionClicked(QuestionProxy proxy) {}
-
-	@Override
-	public void onResendToReviewClicked(QuestionProxy proxy) {}
-
-	@Override
-	public void checkForResendToReview() {}
-
-	@Override
-	public void keywordAddButtonClicked(String text, QuestionProxy proxy) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void deleteKeywordClicked(KeywordProxy keyword, QuestionProxy proxy) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void saveAllTheValuesToAnswerAndMatrixAnswer(List<MatrixValidityProxy> currentMatrixValidityProxy, Matrix<MatrixValidityVO> matrixList, PersonProxy author, PersonProxy rewiewer, Boolean submitToReviewComitee, String comment) {}
 }

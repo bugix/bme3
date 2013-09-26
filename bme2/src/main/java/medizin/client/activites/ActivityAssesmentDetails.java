@@ -141,11 +141,11 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 		
 		view.setDelegate(this);
 		
-		requests.find(assesmentPlace.getProxyId()).with("repeFor","mc","institution","questionSumPerPerson").fire(new Receiver<Object>() {
+		requests.find(assesmentPlace.getProxyId()).with("repeFor","mc","institution","questionSumPerPerson").fire(new BMEReceiver<Object>() {
 
-			public void onFailure(ServerFailure error){
+			/*public void onFailure(ServerFailure error){
 				Log.error(error.getMessage());
-			}
+			}*/
 			@Override
 			public void onSuccess(Object response) {
 				if(response instanceof AssesmentProxy){
@@ -244,7 +244,7 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 		questionTypeCountView.setPresenter(this);
 		questionTypeCountView.setDelegate(this);
 		Log.debug("request");
-		fireQuestionTypeCountCountRequest(new Receiver<Long>() {
+		fireQuestionTypeCountCountRequest(new BMEReceiver<Long>() {
 			@Override
 			public void onSuccess(Long response) {
 				if (view == null) {
@@ -279,7 +279,7 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 		questionSumPerPersonView.setPresenter(this);
 		questionSumPerPersonView.setDelegate(this);
 		
-		fireQuestionSumPerPersonCountRequest(new Receiver<Long>() {
+		fireQuestionSumPerPersonCountRequest(new BMEReceiver<Long>() {
 			@Override
 			public void onSuccess(Long response) {
 				if (view == null) {
@@ -303,11 +303,11 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 		});
 	}
 	
-    protected void fireQuestionTypeCountCountRequest(Receiver<java.lang.Long> callback) {
+    protected void fireQuestionTypeCountCountRequest(BMEReceiver<java.lang.Long> callback) {
     	requests.questionTypeCountPerExamRequest().countQuestionTypeCountByAssesmentNonRoo(assesment.getId()).fire(callback);
     }
     
-    protected void 	fireQuestionSumPerPersonCountRequest(Receiver<java.lang.Long> callback) {
+    protected void 	fireQuestionSumPerPersonCountRequest(BMEReceiver<java.lang.Long> callback) {
     	requests.questionSumPerPersonRequest().countQuestionSumPerPersonByAssesmentNonRoo(assesment.getId()).fire(callback);
     }
     
@@ -316,7 +316,7 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
     private void onQuestionTypeCountChanged() {
 		final Range range = questionTypeCountTable.getVisibleRange();
 
-		final Receiver<List<QuestionTypeCountPerExamProxy>> callback = new Receiver<List<QuestionTypeCountPerExamProxy>>() {
+		final BMEReceiver<List<QuestionTypeCountPerExamProxy>> callback = new BMEReceiver<List<QuestionTypeCountPerExamProxy>>() {
 			
 			@Override
 			public void onSuccess(List<QuestionTypeCountPerExamProxy> values) {
@@ -336,7 +336,7 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 				questionTypeCountTable.setRowData(range.getStart(), values);
 
 			}
-	           @Override
+	           /*@Override
 				public void onFailure(ServerFailure error) {
 						Log.warn(McAppConstant.ERROR_WHILE_DELETE + " in Institution:Event -" + error.getMessage());
 						if(error.getMessage().contains("ConstraintViolationException")){
@@ -359,7 +359,7 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 			        	  erorPanel.setWarnMessage(message);
 
 					
-				}
+				}*/
 		};
 
 		fireQuestionTypeCountRangeRequest(range, callback);
@@ -369,7 +369,7 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
     private void onQuestionSumPerPersonChanged() {
 		final Range range = questionSumPerPersonTable.getVisibleRange();
 
-		final Receiver<List<QuestionSumPerPersonProxy>> callback = new Receiver<List<QuestionSumPerPersonProxy>>() {
+		final BMEReceiver<List<QuestionSumPerPersonProxy>> callback = new BMEReceiver<List<QuestionSumPerPersonProxy>>() {
 			
 			@Override
 			public void onSuccess(List<QuestionSumPerPersonProxy> values) {
@@ -392,7 +392,7 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 				questionSumPerPersonTable.setRowData(range.getStart(), values);
 
 			}
-	           @Override
+	          /* @Override
 				public void onFailure(ServerFailure error) {
 						Log.warn(McAppConstant.ERROR_WHILE_DELETE + " in Institution:Event -" + error.getMessage());
 						if(error.getMessage().contains("ConstraintViolationException")){
@@ -415,14 +415,14 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 			        	  erorPanel.setWarnMessage(message);
 
 					
-				}
+				}*/
 		};
 
 		fireQuestionSumPerPersonRangeRequest(range, callback);
 		
 	}
 
-	private void fireQuestionTypeCountRangeRequest(Range range, Receiver<List<QuestionTypeCountPerExamProxy>> callback) {
+	private void fireQuestionTypeCountRangeRequest(Range range, BMEReceiver<List<QuestionTypeCountPerExamProxy>> callback) {
 				createQuestionTypeCountRangeRequest(range).fire(callback);
 		
 	}
@@ -432,7 +432,7 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 
 	}
 	
-	private void fireQuestionSumPerPersonRangeRequest(Range range, Receiver<List<QuestionSumPerPersonProxy>> callback) {
+	private void fireQuestionSumPerPersonRangeRequest(Range range, BMEReceiver<List<QuestionSumPerPersonProxy>> callback) {
 		createQuestionSumPerPersonRangeRequest(range).fire(callback);
 
 }
@@ -444,14 +444,14 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 
 	@Override
 	public void deleteClicked() {
-		requests.assesmentRequest().remove().using(assesment).fire(new Receiver<Void>() {
+		requests.assesmentRequest().remove().using(assesment).fire(new BMEReceiver<Void>() {
 
             public void onSuccess(Void ignore) {
             	Log.debug("Sucessfull deleted");
             	placeController.goTo(new PlaceAssesment("PlaceAssesment!DELETED"));
             	
             }
-            @Override
+            /*@Override
 			public void onFailure(ServerFailure error) {
 					Log.warn(McAppConstant.ERROR_WHILE_DELETE + " in Assesment -" + error.getMessage());
 					if(error.getMessage().contains("ConstraintViolationException")){
@@ -472,7 +472,7 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 				//TODO mcAppFactory.getErrorPanel().setErrorMessage(message);
 
 				
-			}
+			}*/
             
         });
 		
@@ -494,7 +494,7 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 	@Override
 	public void moveDown(final QuestionTypeCountPerExamProxy questionTypeCount) {
 		requests.questionTypeCountPerExamRequest().findQuestionTypeCountByAssesmentAndOrderNonRoo(assesment.getId(), questionTypeCount.getSort_order()-1)
-		.fire(new Receiver<QuestionTypeCountPerExamProxy>() {
+		.fire(new BMEReceiver<QuestionTypeCountPerExamProxy>() {
 
 			@Override
 			public void onSuccess(QuestionTypeCountPerExamProxy response) {
@@ -502,7 +502,7 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 				moveDownRequest(questionTypeCount);
 				//initQuestionTypeCount();
 			}
-            @Override
+           /* @Override
 			public void onFailure(ServerFailure error) {
 					Log.warn(McAppConstant.ERROR_WHILE_DELETE + " in Assesment -" + error.getMessage());
 					if(error.getMessage().contains("ConstraintViolationException")){
@@ -523,7 +523,7 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 				//TODO mcAppFactory.getErrorPanel().setErrorMessage(message);
 
 				
-			}
+			}*/
 		});
 		
 		
@@ -535,7 +535,7 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 		QuestionTypeCountPerExamRequest req = requests.questionTypeCountPerExamRequest();
 		QuestionTypeCountPerExamProxy questionTypeCountEditable = req.edit(questionTypeCount);
 		questionTypeCountEditable.setSort_order(questionTypeCountEditable.getSort_order()-1);
-		req.persist().using(questionTypeCount).fire(new Receiver<Void>() {
+		req.persist().using(questionTypeCount).fire(new BMEReceiver<Void>() {
 
 			@Override
 			public void onSuccess(Void response) {
@@ -547,7 +547,7 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 				
 				
 			}
-            @Override
+            /*@Override
 			public void onFailure(ServerFailure error) {
 					Log.warn(McAppConstant.ERROR_WHILE_DELETE + " in Assesment -" + error.getMessage());
 					if(error.getMessage().contains("ConstraintViolationException")){
@@ -568,14 +568,14 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 				//TODO mcAppFactory.getErrorPanel().setErrorMessage(message);
 
 				
-			}
+			}*/
 		});
 	}
 
 	@Override
 	public void moveUp(final QuestionTypeCountPerExamProxy questionTypeCount) {
 		requests.questionTypeCountPerExamRequest().findQuestionTypeCountByAssesmentAndOrderNonRoo(assesment.getId(), questionTypeCount.getSort_order()+1)
-		.fire(new Receiver<QuestionTypeCountPerExamProxy>() {
+		.fire(new BMEReceiver<QuestionTypeCountPerExamProxy>() {
 
 			@Override
 			public void onSuccess(QuestionTypeCountPerExamProxy response) {
@@ -583,7 +583,7 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 				moveDownRequest(response);
 				//initQuestionTypeCount();
 			}
-            @Override
+            /*@Override
 			public void onFailure(ServerFailure error) {
 					Log.warn("Error get Upper" + error.getMessage());
 					if(error.getMessage().contains("ConstraintViolationException")){
@@ -604,7 +604,7 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 				//TODO mcAppFactory.getErrorPanel().setErrorMessage(message);
 
 				
-			}
+			}*/
 		});
 
 		
@@ -614,7 +614,7 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 		QuestionTypeCountPerExamRequest req = requests.questionTypeCountPerExamRequest();
 		QuestionTypeCountPerExamProxy questionTypeCountEditable = req.edit(questionTypeCount);
 		questionTypeCountEditable.setSort_order(questionTypeCountEditable.getSort_order()+1);
-		req.persist().using(questionTypeCountEditable).fire(new Receiver<Void>() {
+		req.persist().using(questionTypeCountEditable).fire(new BMEReceiver<Void>() {
 
 			@Override
 			public void onSuccess(Void response) {
@@ -625,7 +625,7 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 					bothPersists=0;
 				}
 			}
-            @Override
+            /*@Override
 			public void onFailure(ServerFailure error) {
 					Log.warn("Could not persist" + error.toString());
 					if(error.getMessage().contains("ConstraintViolationException")){
@@ -646,21 +646,21 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 				//TODO mcAppFactory.getErrorPanel().setErrorMessage(message);
 
 				
-			}
+			}*/
 		});
 	}
 
 	@Override
 	public void deleteQuestionTypeCountClicked(
 			QuestionTypeCountPerExamProxy questionTypeCountPerExam) {
-		requests.questionTypeCountPerExamRequest().remove().using(questionTypeCountPerExam).fire(new Receiver<Void>() {
+		requests.questionTypeCountPerExamRequest().remove().using(questionTypeCountPerExam).fire(new BMEReceiver<Void>() {
 
 			@Override
 			public void onSuccess(Void response) {
 				
 				initQuestionTypeCount();
 			}
-            @Override
+            /*@Override
 			public void onFailure(ServerFailure error) {
 					Log.warn(McAppConstant.ERROR_WHILE_DELETE + " in Assesment -" + error.getMessage());
 					if(error.getMessage().contains("ConstraintViolationException")){
@@ -681,7 +681,7 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 				//TODO mcAppFactory.getErrorPanel().setErrorMessage(message);
 
 				
-			}
+			}*/
 		});
 		
 		
@@ -713,7 +713,7 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 	        driver.flush();
 
 		
-		requests.questionTypeRequest().findAllQuestionTypesForInstituteInSession(assesment).fire(new Receiver<List<QuestionTypeProxy>>(){
+		requests.questionTypeRequest().findAllQuestionTypesForInstituteInSession(assesment).fire(new BMEReceiver<List<QuestionTypeProxy>>(){
 
 			@Override
 			public void onSuccess(List<QuestionTypeProxy> response) {
@@ -732,7 +732,7 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 
 	@Override
 	public void addClicked() {
-		driver.flush().fire(new Receiver<Void>() {
+		driver.flush().fire(new BMEReceiver<Void>() {
 			
 	          @Override
 	          public void onSuccess(Void response) {
@@ -742,7 +742,7 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 	          //	goTo(new PlaceAssesment(person.stableId()));
 	          }
 	          
-	          public void onFailure(ServerFailure error){
+	          /*public void onFailure(ServerFailure error){
 					Log.error(error.getMessage());
 				}
 	          @Override
@@ -758,7 +758,7 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 			        	  erorPanel.setWarnMessage(message);
 
 					
-				}
+				}*/
 	      }); 
 		
 	}
@@ -772,14 +772,14 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 	@Override
 	public void deleteQuestionSumPerPersonClicked(QuestionSumPerPersonProxy questionSumPerPerson) {
 		
-			requests.questionSumPerPersonRequest().remove().using(questionSumPerPerson).fire(new Receiver<Void>() {
+			requests.questionSumPerPersonRequest().remove().using(questionSumPerPerson).fire(new BMEReceiver<Void>() {
 
 				@Override
 				public void onSuccess(Void response) {
 					
 					initQuestionSumPerPerson();
 				}
-	            @Override
+	            /*@Override
 				public void onFailure(ServerFailure error) {
 						Log.warn(McAppConstant.ERROR_WHILE_DELETE + " in Assesment -" + error.getMessage());
 						if(error.getMessage().contains("ConstraintViolationException")){
@@ -800,7 +800,7 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 					//TODO mcAppFactory.getErrorPanel().setErrorMessage(message);
 
 					
-				}
+				}*/
 			});
 		 
 	}
@@ -834,7 +834,7 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 	        driverQuestSum.flush();
 
 		
-		requests.personRequest().findAllPeople().fire(new Receiver<List<PersonProxy>>(){
+		requests.personRequest().findAllPeople().fire(new BMEReceiver<List<PersonProxy>>(){
 			
 
 			@Override
@@ -845,7 +845,7 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 			
 		});
 		
-		requests.questionEventRequest().findQuestionEventByInstitution(institutionActive).fire(new Receiver<List<QuestionEventProxy>>(){
+		requests.questionEventRequest().findQuestionEventByInstitution(institutionActive).fire(new BMEReceiver<List<QuestionEventProxy>>(){
 			
 
 			@Override
@@ -875,7 +875,7 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 			return;
 		}
 		
-		driverQuestSum.flush().fire(new Receiver<Void>() {
+		driverQuestSum.flush().fire(new BMEReceiver<Void>() {
 			
 	          @Override
 	          public void onSuccess(Void response) {
@@ -885,7 +885,7 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 	          //	goTo(new PlaceAssesment(person.stableId()));
 	          }
 	          
-	          public void onFailure(ServerFailure error){
+	          /*public void onFailure(ServerFailure error){
 					Log.error(error.getMessage());
 				}
 	          @Override
@@ -901,7 +901,7 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 			        	  erorPanel.setWarnMessage(message);
 
 					
-				}
+				}*/
 	      }); 
 		
 	}
@@ -915,7 +915,7 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 
 	@Override
 	public void moveQuestionSumPerPersonDown(QuestionSumPerPersonProxy questionSumPerPerson) {
-		requests.questionSumPerPersonRequest().moveDown().using(questionSumPerPerson).fire(new Receiver<Void>() {
+		requests.questionSumPerPersonRequest().moveDown().using(questionSumPerPerson).fire(new BMEReceiver<Void>() {
 			
 	          @Override
 	          public void onSuccess(Void response) {
@@ -925,7 +925,7 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 	          //	goTo(new PlaceAssesment(person.stableId()));
 	          }
 	          
-	          public void onFailure(ServerFailure error){
+	          /*public void onFailure(ServerFailure error){
 					Log.error(error.getMessage());
 				}
 	          @Override
@@ -941,14 +941,14 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 			        	  erorPanel.setWarnMessage(message);
 
 					
-				}
+				}*/
 	      });
 		
 	}
 
 	@Override
 	public void moveQuestionSumPerPersonUp(QuestionSumPerPersonProxy questionSumPerPerson) {
-		requests.questionSumPerPersonRequest().moveUp().using(questionSumPerPerson).fire(new Receiver<Void>() {
+		requests.questionSumPerPersonRequest().moveUp().using(questionSumPerPerson).fire(new BMEReceiver<Void>() {
 			
 	          @Override
 	          public void onSuccess(Void response) {
@@ -958,7 +958,7 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 	          //	goTo(new PlaceAssesment(person.stableId()));
 	          }
 	          
-	          public void onFailure(ServerFailure error){
+	          /*public void onFailure(ServerFailure error){
 					Log.error(error.getMessage());
 				}
 	          @Override
@@ -974,7 +974,7 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 			        	  erorPanel.setWarnMessage(message);
 
 					
-				}
+				}*/
 	      });
 		
 	}

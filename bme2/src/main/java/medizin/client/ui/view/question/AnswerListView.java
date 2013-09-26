@@ -19,7 +19,6 @@ public interface AnswerListView extends IsWidget {
 		//void editAnswerClicked();
 		void addNewAnswerClicked();
 		void editAnswerClicked(AnswerProxy answer);
-
 	}
 
     CellTable<AnswerProxy> getTable();

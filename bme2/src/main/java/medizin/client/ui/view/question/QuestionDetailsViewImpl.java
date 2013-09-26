@@ -153,7 +153,17 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 
 	@UiHandler("delete")
 	public void onDeleteClicked(ClickEvent e) {
-		delegate.deleteClicked();
+		ConfirmationDialogBox.showYesNoDialogBox(constants.warning(), constants.deleteQuestionConfirmation(), new ConfirmDialogBoxYesNoButtonEventHandler() {
+			
+			@Override
+			public void onYesButtonClicked(ConfirmDialogBoxYesNoButtonEvent event) {
+				delegate.deleteClicked();		
+			}
+			
+			@Override
+			public void onNoButtonClicked(ConfirmDialogBoxYesNoButtonEvent event) {}
+		});
+		
 	}
 
 	@UiHandler("edit")
@@ -385,14 +395,14 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 		}
 	}
 
-	public QuestionDetailsViewImpl(EventBus eventBus, Boolean editDeleteflag, boolean isAnswerEditable, boolean addAnswerRights, boolean isforceView, boolean isAcceptView) {
+	public QuestionDetailsViewImpl(EventBus eventBus, Boolean editDeleteflag, boolean isAnswerEditable, boolean addAnswerRights, boolean isforceView, boolean isAcceptView, boolean isMCQQuestionType) {
 		CellTable.Resources tableResources = GWT.create(MyCellTableNoHilightResources.class);
 		keywordTable = new CellTable<KeywordProxy>(5, tableResources);
 		
 		MySimplePager.Resources pagerResources = GWT.create(MySimplePagerResources.class);
 		keywordTablePager = new MySimplePager(MySimplePager.TextLocation.RIGHT, pagerResources, true, 10, true);
 		
-		answerListViewImpl = new AnswerListViewImpl(addAnswerRights, isAnswerEditable);
+		answerListViewImpl = new AnswerListViewImpl(addAnswerRights, isAnswerEditable,isMCQQuestionType);
 		matrixAnswerListViewImpl = new MatrixAnswerListViewImpl(addAnswerRights, isAnswerEditable);
 		initWidget(uiBinder.createAndBindUi(this));
 		
@@ -443,29 +453,27 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 		
 		if (isAnswerEditable)
 		{
-			addColumn(new ActionCell<KeywordProxy>(
-	        		McAppConstant.DELETE_ICON, new ActionCell.Delegate<KeywordProxy>() {
-						public void execute(final KeywordProxy keyword) {
-							ConfirmationDialogBox.showYesNoDialogBox(constants.warning(), constants.deleteInstitutionConfirmation(), new ConfirmDialogBoxYesNoButtonEventHandler() {
-								
-								@Override
-								public void onYesButtonClicked(ConfirmDialogBoxYesNoButtonEvent event) {
-									delegate.deleteKeywordClicked(keyword, proxy);
-								}
-								
-								@Override
-								public void onNoButtonClicked(ConfirmDialogBoxYesNoButtonEvent event) {
-																
-								}
-							});
-							
-							
-						}	
-					}), "", new GetValue<KeywordProxy>() {
+			ActionCell.Delegate<KeywordProxy> deleteKeyworddelegate = new ActionCell.Delegate<KeywordProxy>() {
+				public void execute(final KeywordProxy keyword) {
+					ConfirmationDialogBox.showYesNoDialogBox(constants.warning(), constants.keywordDelMessage(), new ConfirmDialogBoxYesNoButtonEventHandler() {
+						
+						@Override
+						public void onYesButtonClicked(ConfirmDialogBoxYesNoButtonEvent event) {
+							delegate.deleteKeywordClicked(keyword, proxy);
+						}
+						
+						@Override
+						public void onNoButtonClicked(ConfirmDialogBoxYesNoButtonEvent event) {}
+					});
+				}	
+			};
+			GetValue<KeywordProxy> getKeywordValue = new GetValue<KeywordProxy>() {
 				public KeywordProxy getValue(KeywordProxy keyword) {
 					return keyword;
 				}
-			}, null);
+			};
+			
+			addColumn(new ActionCell<KeywordProxy>(McAppConstant.DELETE_ICON, deleteKeyworddelegate), "", getKeywordValue, null);
 	    
 			keywordTable.addColumnStyleName(1, "iconColumn");			
 		}

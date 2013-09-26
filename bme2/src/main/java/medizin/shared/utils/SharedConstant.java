@@ -6,7 +6,7 @@ public final class SharedConstant {
 
 	public static String getUploadBaseDIRPath() {
 		
-		//String UPLOAD_BASE_DIR_PATH = "e:/";
+		//String UPLOAD_BASE_DIR_PATH = "d:/";
 		String UPLOAD_BASE_DIR_PATH =  "/usr/local/bme/";
 		
 		if(GWT.isClient()) {
@@ -40,15 +40,15 @@ public final class SharedConstant {
 
 	public static final String SOUND_MEDIA_SIZE = "soundMediaSize";
 	
-	public static String[] IMAGE_EXTENSIONS = {"png","jpg","jpge","jpe","jfif","gif","tif","tiff","img","bmp"};
-	
-	public static String[] SOUND_EXTENSIONS = {"mp3"};
-	
-	public static String[] VIDEO_EXTENSIONS= {"WebM","ogv","mp4"};
-	
-	public static  String MAIL_TEMPLATE="/application/gwt/unibas/mailTemplate/defaultTemplate.txt";
-	
-	public static  String SYSTEM_OVERVIEW_MAIL_TEMPLATE="/application/gwt/unibas/mailTemplate/DefaultSystemOverviewTemplate.txt";
+	public static final String[] IMAGE_EXTENSIONS = {"png","jpg","jpge","jpe","jfif","gif","tif","tiff","img","bmp"};
+	                   
+	public static final String[] SOUND_EXTENSIONS = {"mp3"};
+	                   
+	public static final String[] VIDEO_EXTENSIONS= {"WebM","ogv","mp4"};
+	                   
+	public static final String MAIL_TEMPLATE="/application/gwt/unibas/mailTemplate/defaultTemplate.txt";
+	                   
+	public static final String SYSTEM_OVERVIEW_MAIL_TEMPLATE="/application/gwt/unibas/mailTemplate/DefaultSystemOverviewTemplate.txt";
 	
 	public static final String POSSIBLE_FIELD = "possiblefield";
 	
@@ -58,4 +58,5 @@ public final class SharedConstant {
 	
 	public static final String FIELDVALUE = "fieldvalue";
 
+	public static final Integer INFINITE_VALUE = 9999;
 }

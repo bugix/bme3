@@ -15,12 +15,12 @@ import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.proxy.QuestionResourceProxy;
 import medizin.client.proxy.QuestionTypeProxy;
-import medizin.client.ui.ErrorPanel;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.richtext.RichTextToolbar;
 import medizin.client.ui.view.roo.McSetEditor;
 import medizin.client.ui.view.roo.QuestionTypeProxyRenderer;
 import medizin.client.ui.widget.IconButton;
+import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.dialogbox.receiver.ReceiverDialog;
 import medizin.client.ui.widget.labeled.LabeledPanel;
 import medizin.client.ui.widget.labeled.LabeledTextArea;
@@ -613,7 +613,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		allowedExt.addAll(Arrays.asList(SharedConstant.IMAGE_EXTENSIONS));
 		paths.put(MultimediaType.Image, SharedConstant.UPLOAD_MEDIA_IMAGES_PATH);
 		
-		ResourceUpload resourceUpload = new ResourceUpload(allowedExt,paths,this.eventBus); 
+		ResourceUpload resourceUpload = new ResourceUpload(allowedExt,paths/*,this.eventBus*/); 
 		
 		resourceUpload.addResourceUploadedHandler(new ResourceUploadEventHandler() {
 			
@@ -639,14 +639,15 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 									if(imageViewer != null && imageViewer.getImageUrl() != null && imageViewer.getImageUrl().length() > 0) {
 										// delete old files
 										Log.info("Delete old uploaded file " + imageViewer.getImageUrl().toString());
-										delegate.deleteMediaFileFromDisk(imageViewer.getImageUrl().replace(GWT.getHostPageBaseURL(), ""));
+										//delegate.deleteMediaFileFromDisk(imageViewer.getImageUrl().replace(GWT.getHostPageBaseURL(), ""));
 									}
 									
 									imageViewer.setUrl(filePath, event.getWidth(), event.getHeight(), type);	
 								} else {
-									ErrorPanel errorPanel = new ErrorPanel();
-									errorPanel.setErrorMessage("Only Upload image of size" + questionTypeProxy.getImageWidth() + "*" + questionTypeProxy.getImageHeight());
-									delegate.deleteMediaFileFromDisk(filePath);
+									ConfirmationDialogBox.showOkDialogBox(constants.error(), messages.imageUploadSize(questionTypeProxy.getImageWidth(),questionTypeProxy.getImageHeight()));
+									/*ErrorPanel errorPanel = new ErrorPanel();
+									errorPanel.setErrorMessage("Only Upload image of size" + questionTypeProxy.getImageWidth() + "*" + questionTypeProxy.getImageHeight());*/
+									//delegate.deleteMediaFileFromDisk(filePath);
 								}
 
 								return null;
@@ -699,9 +700,10 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 				public void onResourceAdded(ResourceAddedEvent event) {
 					
 					if(!event.isAdded()) {
-						ErrorPanel errorPanel = new ErrorPanel();
-						errorPanel.setErrorMessage("This type of media is not allowed");
-						delegate.deleteMediaFileFromDisk(event.getQuestionResourceClient().getPath()); 
+						ConfirmationDialogBox.showOkDialogBox(constants.error(), constants.mediaTypeNotAllowed());
+						/*ErrorPanel errorPanel = new ErrorPanel();
+						errorPanel.setErrorMessage("This type of media is not allowed");*/
+						//delegate.deleteMediaFileFromDisk(event.getQuestionResourceClient().getPath()); 
 					}
 				}
 			});	
@@ -735,7 +737,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 			}			
 			
 			// added resourceUpload
-			ResourceUpload resourceUpload = new ResourceUpload(allowedExt,paths,eventBus);
+			ResourceUpload resourceUpload = new ResourceUpload(allowedExt,paths/*,eventBus*/);
 			 
 			resourceUpload.addResourceUploadedHandler(new ResourceUploadEventHandler() {
 				
@@ -997,6 +999,12 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 			submitToReviewComitee.removeFromParent();
 		}	
 		
+	}
+
+	@Override
+	public void setQuestionAuthor(PersonProxy autor) {
+		if(autor != null)
+			author.setSelected(autor);
 	}
 
 }

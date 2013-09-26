@@ -158,13 +158,13 @@ public class ActivityAssesment extends AbstractActivityWrapper implements Assesm
 	        return requests.assesmentRequest().findAssesmentByInsitute(range.getStart(), range.getLength());
 	    }
 
-	    protected void fireCountRequest(Receiver<Long> callback) {
+	    protected void fireCountRequest(BMEReceiver<Long> callback) {
 	    	requests.assesmentRequest().countAssesmentByInsitute().fire(callback);
 	    }
 	
 	    
 		private void init() {
-			fireCountRequest(new Receiver<Long>() {
+			fireCountRequest(new BMEReceiver<Long>() {
 				@Override
 				public void onSuccess(Long response) {
 					if (view == null) {
@@ -188,7 +188,7 @@ public class ActivityAssesment extends AbstractActivityWrapper implements Assesm
 		protected void onRangeChanged() {
 			final Range range = table.getVisibleRange();
 
-			final Receiver<List<AssesmentProxy>> callback = new Receiver<List<AssesmentProxy>>() {
+			final BMEReceiver<List<AssesmentProxy>> callback = new BMEReceiver<List<AssesmentProxy>>() {
 				@Override
 				public void onSuccess(List<AssesmentProxy> values) {
 					if (view == null) {
@@ -241,7 +241,7 @@ public class ActivityAssesment extends AbstractActivityWrapper implements Assesm
 		}
 
 		private void fireRangeRequest(final Range range,
-	            final Receiver<List<AssesmentProxy>> callback) {
+	            final BMEReceiver<List<AssesmentProxy>> callback) {
 				createRangeRequest(range).with(view.getPaths()).fire(callback);
 				
 				}

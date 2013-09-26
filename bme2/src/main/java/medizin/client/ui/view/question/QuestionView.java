@@ -3,7 +3,6 @@ package medizin.client.ui.view.question;
 import java.util.List;
 import java.util.Map;
 
-import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchSubViewImpl;
@@ -15,13 +14,13 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.SimplePanel;
 
 public interface QuestionView extends IsWidget {
-    void setName(String helloName);
+	/*void setName(String helloName);
 
     void setPresenter(Presenter activityQuestion);
 
     public interface Presenter {
         void goTo(Place place);
-    }
+    }*/
     
     /**
 	 * Implemented by the owner of the view.
@@ -55,5 +54,8 @@ public interface QuestionView extends IsWidget {
 
 	QuestionAdvancedSearchSubViewImpl getQuestionAdvancedSearchSubViewImpl();
 	
-	 void removeAdvancedSearchFromView();
+	void removeAdvancedSearchFromView();
+	 
+	public QuestionFilterViewImpl getFilterPanel();
+
 }

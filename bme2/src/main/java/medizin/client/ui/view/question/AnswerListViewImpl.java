@@ -9,12 +9,19 @@ import medizin.client.proxy.AnswerProxy;
 import medizin.client.style.resources.MyCellTableResources;
 import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
+import medizin.client.ui.view.renderer.EnumRenderer;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.pager.MySimplePager;
+import medizin.client.ui.widget.resource.audio.AudioViewer;
+import medizin.client.ui.widget.resource.image.ImageViewer;
+import medizin.client.ui.widget.resource.video.VideoViewer;
+import medizin.client.util.ClientUtility;
+import medizin.shared.QuestionTypes;
 import medizin.shared.Status;
 import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.common.base.Function;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.AbstractEditableCell;
 import com.google.gwt.cell.client.ActionCell;
@@ -22,6 +29,7 @@ import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -30,8 +38,13 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.Header;
+import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DialogBox;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class AnswerListViewImpl extends Composite implements  AnswerListView {
@@ -45,7 +58,22 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 	@UiField
 	Label headerText;
 
-	public AnswerListViewImpl(boolean addAnswerRights, boolean isEditable) {
+	@UiField
+    IconButton newAnswer;
+
+	@UiField(provided = true)
+	CellTable<AnswerProxy> tableAnswer;
+
+	@UiField(provided = true)
+	public MySimplePager pager;
+	
+	public BmeConstants constant =GWT.create(BmeConstants.class);
+    private Delegate delegate;
+	//private String name;
+    protected Set<String> paths = new HashSet<String>();
+    private List<AbstractEditableCell<?, ?>> editableCells;
+
+	public AnswerListViewImpl(boolean addAnswerRights, boolean isEditable,boolean isMCQQuestionType) {
 		CellTable.Resources tableResources = GWT.create(MyCellTableResources.class);
 		tableAnswer = new CellTable<AnswerProxy>(McAppConstant.TABLE_PAGE_SIZE,tableResources);
 		MySimplePager.Resources pagerResources = GWT.create(MySimplePagerResources.class);
@@ -57,29 +85,11 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 			newAnswer.removeFromParent();
 		}
 		
-		init(isEditable);
+		init(isEditable,isMCQQuestionType);
 		
 		headerText.setText("");
 		headerText.setHeight("23px");
 	}
-
-
-	public BmeConstants constant =GWT.create(BmeConstants.class);
-			
-    private Delegate delegate;
-    
-
-	@UiField
-    IconButton newAnswer;
-
-
-	@UiField(provided = true)
-	CellTable<AnswerProxy> tableAnswer;
-
-	@UiField(provided = true)
-	public MySimplePager pager;
-
-	
 	
 	@UiHandler("newAnswer")
 	void addEventClicked(ClickEvent event) {
@@ -87,16 +97,8 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 		delegate.addNewAnswerClicked();
 	}
 
-
-	//private String name;
-    protected Set<String> paths = new HashSet<String>();
-
-    public void init(boolean isEditable) {
-    	
-    	Log.debug("Im AnswerListView.init() ");
-    	
-    	editableCells = new ArrayList<AbstractEditableCell<?, ?>>();
-
+    public void init(boolean isEditable, boolean isMCQQuestionType) {
+    
     	
 //        paths.add("dateAdded");
 //        tableAnswer.addColumn(new TextColumn<AnswerProxy>() {
@@ -154,29 +156,6 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 //                return renderer.render(object.getValidity());
 //            }
 //        }, "Validity");
-        
- 
-        tableAnswer.addColumn(new Column<AnswerProxy, AnswerProxy>(new ValidityTextCell()) {
-    	      @Override
-    	      public AnswerProxy getValue(AnswerProxy object) {
-    	        return object;
-    	      }
-    	    },  new Header<String>(new ValidityHeader()){
-
-    			@Override
-    			public String getValue() {
-    				
-    				return "hallo";
-    			}});
-        
-        
-        
-        tableAnswer.addColumn(new Column<AnswerProxy, AnswerProxy>(new AnswerTextCell()) {
-  	      @Override
-  	      public AnswerProxy getValue(AnswerProxy object) {
-  	        return object;
-  	      }
-  	    }, constant.answerText());
         
 //        paths.add("answerText");
 //        tableAnswer.addColumn(new TextColumn<AnswerProxy>() {
@@ -299,54 +278,173 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 //            }
 //        }, "Question");
         
+    	
+    	Log.debug("Im AnswerListView.init() ");
+    	
+    	editableCells = new ArrayList<AbstractEditableCell<?, ?>>();
+    	int columnIndex = 0;
+		tableAnswer.addColumn(new Column<AnswerProxy, AnswerProxy>(new ValidityTextCell()) {
+			@Override
+			public AnswerProxy getValue(AnswerProxy object) {
+				return object;
+			}
+		}, new Header<String>(new ValidityHeader()) {
+
+			@Override
+			public String getValue() {
+
+				return "hallo";
+			}
+		});
+        
+		tableAnswer.addColumnStyleName(columnIndex, "iconColumn");
+		tableAnswer.setColumnWidth(columnIndex, "20px");
+		columnIndex++;
+		
+		tableAnswer.addColumn(new Column<AnswerProxy, AnswerProxy>(new AnswerTextCell()) {
+			@Override
+			public AnswerProxy getValue(AnswerProxy object) {
+				return object;
+			}
+		}, constant.answerText());
+    	//tableAnswer.addColumnStyleName(1, "questionTextColumn");
+    	tableAnswer.getColumn(columnIndex).setCellStyleNames("answerTextColumn");
+    	columnIndex++;
+    	
+        if(isMCQQuestionType == true) {
+			ActionCell.Delegate<AnswerProxy> resourceDelegate = new ActionCell.Delegate<AnswerProxy>() {
+
+				@Override
+				public void execute(AnswerProxy answer) {
+					openResourceDialog(answer);
+				}
+			};
+			tableAnswer.addColumn(new Column<AnswerProxy, AnswerProxy>(new MCAQAnswerCell(McAppConstant.HELP_ICON, resourceDelegate)) {
+				@Override
+				public AnswerProxy getValue(AnswerProxy object) {
+					return object;
+				}
+			}, constant.media());
+			
+			tableAnswer.addColumnStyleName(columnIndex, "iconColumn");
+			tableAnswer.setColumnWidth(columnIndex, "20px");
+			columnIndex++;
+        }
+        
         if(isEditable == true) {
         
-        	addColumn(new EditIconCell(McAppConstant.EDIT_ICON, new ActionCell.Delegate<AnswerProxy>() 
-                	{
-                public void execute(AnswerProxy answer) {
-                  delegate.editAnswerClicked(answer);
-                }
-              }), constants.edit(), new GetValue<AnswerProxy>() {
-            	public AnswerProxy getValue(AnswerProxy contact) {
-            		return contact;
-            	}
-            }, null);
+			addColumn(new EditIconCell(McAppConstant.EDIT_ICON, new ActionCell.Delegate<AnswerProxy>() {
+				public void execute(AnswerProxy answer) {
+					delegate.editAnswerClicked(answer);
+				}
+			}), constants.edit(), new GetValue<AnswerProxy>() {
+				public AnswerProxy getValue(AnswerProxy contact) {
+					return contact;
+				}
+			}, null);
             
-        	addColumn(new DeleteIconCell(McAppConstant.DELETE_ICON, new ActionCell.Delegate<AnswerProxy>() 
-        	{
-        	            public void execute(AnswerProxy answer) {
-        	              delegate.deleteAnswerClicked(answer);
-        	            }
-        	          }), constants.delete(), new GetValue<AnswerProxy>() {
-        	        public AnswerProxy getValue(AnswerProxy contact) {
-        	          return contact;
-        	        }
-        	      }, null);
+			tableAnswer.addColumnStyleName(columnIndex, "iconColumn");
+			tableAnswer.setColumnWidth(columnIndex, "20px");
+			columnIndex++;
+			
+			addColumn(new DeleteIconCell(McAppConstant.DELETE_ICON, new ActionCell.Delegate<AnswerProxy>() {
+				public void execute(AnswerProxy answer) {
+					delegate.deleteAnswerClicked(answer);
+				}
+			}), constants.delete(), new GetValue<AnswerProxy>() {
+				public AnswerProxy getValue(AnswerProxy contact) {
+					return contact;
+				}
+			}, null);
         	
-        	tableAnswer.addColumnStyleName(2, "iconColumn");
-        	tableAnswer.addColumnStyleName(3, "iconColumn");
+        	tableAnswer.addColumnStyleName(columnIndex, "iconColumn");
+        	tableAnswer.setColumnWidth(columnIndex, "20px");
+        	columnIndex++;
         }
-            	
-    	tableAnswer.addColumnStyleName(0, "iconColumn");
-    	//tableAnswer.addColumnStyleName(1, "questionTextColumn");
-    	tableAnswer.getColumn(1).setCellStyleNames("answerTextColumn");
+
+    	tableAnswer.addColumn(new TextColumn<AnswerProxy>() {
+
+			EnumRenderer<Status> renderer = new EnumRenderer<Status>();
+
+			@Override
+			public String getValue(AnswerProxy object) {
+				return renderer.render(object == null ? null : object.getStatus());
+			}
+		},constants.status());
     	
+    	tableAnswer.setColumnWidth(columnIndex, "150px");
+    	columnIndex++;
     }
+    
+	private void openResourceDialog(AnswerProxy answer) {
+		if(answer != null && answer.getQuestion() != null && answer.getQuestion().getQuestionType() != null && answer.getQuestion().getQuestionType().getMultimediaType() != null) {
+			switch (answer.getQuestion().getQuestionType().getMultimediaType()) {
+			case Image: {
+				final ImageViewer viewer = new ImageViewer();
+				viewer.setUrl(answer.getMediaPath(), answer.getQuestion().getQuestionType().getQuestionType());
+				Function<Boolean,Void> closeViewer = new Function<Boolean,Void>(){
+
+					@Override
+					public Void apply(Boolean input) {
+						if(input != null && input.equals(true)) {
+							viewer.closed();	
+						}
+						return null;
+					}
+				};
+				createDialogBox(constants.mediaViewer(),viewer,closeViewer);
+				
+				break;
+			}
+			case Sound: {
+				final AudioViewer viewer = new AudioViewer(answer.getMediaPath());
+				Function<Boolean,Void> closeViewer = new Function<Boolean,Void>(){
+
+					@Override
+					public Void apply(Boolean input) {
+						if(input != null && input.equals(true)) {
+							viewer.closed();	
+						}
+						return null;
+					}
+				};
+				createDialogBox(constants.mediaViewer(),viewer,closeViewer);
+				break;
+			}
+			case Video: {
+				final VideoViewer viewer = new VideoViewer(answer.getMediaPath());
+				Function<Boolean,Void> closeViewer = new Function<Boolean,Void>(){
+
+					@Override
+					public Void apply(Boolean input) {
+						if(input != null && input.equals(true)) {
+							viewer.closed();	
+						}
+						return null;
+					}
+				};
+				createDialogBox(constants.mediaViewer(),viewer,closeViewer);
+				break;
+			}
+			default:
+				break;
+			}
+		}
+	}
+	
 	@Override
 	public CellTable<AnswerProxy> getTable() {
-
 		return tableAnswer;
 	}
+	
 	@Override
 	public String[] getPaths() {
-		
-
         return paths.toArray(new String[paths.size()]);
 	}
+	
 	@Override
 	public void setDelegate(Delegate delegate) {
 		this.delegate = delegate;
-		
 	}
 
 	  /**
@@ -357,8 +455,7 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 	   * @param headerText the header string
 	   * @param getter the value getter for the cell
 	   */
-	  private <C> void addColumn(Cell<C> cell, String headerText,
-	      final GetValue<C> getter, FieldUpdater<AnswerProxy, C> fieldUpdater) {
+	  private <C> void addColumn(Cell<C> cell, String headerText, final GetValue<C> getter, FieldUpdater<AnswerProxy, C> fieldUpdater) {
 	    Column<AnswerProxy, C> column = new Column<AnswerProxy, C>(cell) {
 	      @Override
 	      public C getValue(AnswerProxy object) {
@@ -381,9 +478,6 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 	    C getValue(AnswerProxy contact);
 	  }
 	  
-	  private List<AbstractEditableCell<?, ?>> editableCells;
-
-
 	  private static class AnswerTextCell extends AbstractCell<AnswerProxy> {
 
 
@@ -413,15 +507,30 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 				      }
 			      }
 			      
+			      if (value.getQuestion() != null && Status.DEACTIVATED.equals(value.getQuestion().getStatus()))
+			      {
+			    	  beginn = "<div style=\"";
+			      }
 
 			      beginn += "\">";
 			      sb.appendHtmlConstant(beginn);
-			      sb.appendHtmlConstant(value.getAnswerText());
+			      sb.appendHtmlConstant(getAnswerValue(value));
 			      sb.appendHtmlConstant(end);
 				
 			}
 		  }
 
+	  
+	  private static String getAnswerValue(AnswerProxy value) {
+		  
+		  if(value != null && value.getQuestion() != null && value.getQuestion().getQuestionType() != null && value.getQuestion().getQuestionType().getQuestionType() != null && value.getQuestion().getQuestionType().getQuestionType().equals(QuestionTypes.MCQ)) {
+			  return ClientUtility.getFileName(value.getMediaPath(), value.getQuestion().getQuestionType().getMultimediaType());
+		  } else if(value != null && value.getAnswerText() != null) {
+			  return value.getAnswerText();
+		  }
+			
+		  return "";
+	  }
 	  
 	  private static class ValidityTextCell extends AbstractCell<AnswerProxy> {
 
@@ -457,6 +566,54 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 			}
 		  }
 	  
+	  private class MCAQAnswerCell extends ActionCell<AnswerProxy> {
+		  public MCAQAnswerCell(SafeHtml message, com.google.gwt.cell.client.ActionCell.Delegate<AnswerProxy> delegate) {
+			  super(message, delegate);
+		  }
+
+			@Override
+			public void render(com.google.gwt.cell.client.Cell.Context context, AnswerProxy value, SafeHtmlBuilder sb) {
+			      // Always do a null check on the value. Cell widgets can pass null to cells
+			      // if the underlying data contains a null, or if the data arrives out of order.
+			      if (value == null) {
+			    	  sb.appendHtmlConstant("<span class=\"ui-icon ui-icon-help\" style=\"margin:auto\"></span>");
+			        return;
+			      }
+			      String validityIcon = "";
+			      
+			      if(value != null && value.getQuestion() != null && value.getQuestion().getQuestionType() != null && value.getQuestion().getQuestionType().getQuestionType() != null && value.getQuestion().getQuestionType().getMultimediaType() != null) {
+			    	  switch (value.getQuestion().getQuestionType().getMultimediaType()) {
+						case Image:  
+						{
+							validityIcon += "<span class=\"ui-icon ui-icon-image\" style=\"margin:auto\"></span>";
+						    break;
+						}
+								
+						case Sound :
+						{
+							validityIcon += "<span class=\"ui-icon ui-icon-signal-diag\" style=\"margin:auto\"></span>";
+							break;
+							
+						}
+								 
+						case Video : 
+						{
+							validityIcon += "<span class=\"ui-icon ui-icon-video\" style=\"margin:auto\"></span>";
+							break;
+						}
+								     
+						default:
+						{
+							validityIcon += "<span class=\"ui-icon ui-icon-help\" style=\"margin:auto\"></span>";
+						     break;
+						}
+						
+						}
+			      }
+			      sb.appendHtmlConstant(validityIcon);
+			}
+	  }
+	  
 	  private static class ValidityHeader extends AbstractCell<String> {
 
 
@@ -483,6 +640,9 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 		@Override
 		public void render(com.google.gwt.cell.client.Cell.Context context,
 				AnswerProxy value, SafeHtmlBuilder sb) {
+			if (value == null)
+				return;
+			
 			if (Status.ACTIVE.equals(value.getStatus()) || Status.NEW.equals(value.getStatus())){
 				sb.append(McAppConstant.EDIT_ICON);
 			}
@@ -499,6 +659,9 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 		@Override
 		public void render(com.google.gwt.cell.client.Cell.Context context,
 				AnswerProxy value, SafeHtmlBuilder sb) {
+			if (value == null)
+				return;
+			
 			if (Status.ACTIVE.equals(value.getStatus()) || Status.NEW.equals(value.getStatus())){
 				sb.append(McAppConstant.DELETE_ICON);
 			}
@@ -514,6 +677,40 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 	}
 
 	  
+	private void createDialogBox(String title,Widget widget, final Function<Boolean, Void> function) {
+		// Create a dialog box and set the caption text
+		final DialogBox dialogBox = new DialogBox();
+		dialogBox.ensureDebugId("cwDialogBox");
+		dialogBox.setText(title);
 
+		// Create a table to layout the content
+		VerticalPanel dialogContents = new VerticalPanel();
+		dialogContents.setWidth("100%");
+		dialogContents.setSpacing(4);
+		dialogBox.setWidget(dialogContents);
+
+		// Add an image viewer to the dialog
+		
+		dialogContents.add(widget);
+		dialogContents.setCellHorizontalAlignment(widget, HasHorizontalAlignment.ALIGN_CENTER);
+
+		// Add a close button at the bottom of the dialog
+		Button closeButton = new Button(constants.close());
+		closeButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				dialogBox.hide();
+				function.apply(true);
+			}
+		});
+		
+		dialogContents.add(closeButton);
+		dialogContents.setCellHorizontalAlignment(closeButton, HasHorizontalAlignment.ALIGN_RIGHT);
+
+		dialogBox.setGlassEnabled(true);
+		dialogBox.center();
+        dialogBox.show();
+	}
 
 }
