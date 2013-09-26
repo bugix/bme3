@@ -251,7 +251,8 @@ public class ActivitySystemOverview extends AbstractActivityWrapper implements S
 			{
 				if (assQuestion.getAutor().getId().equals(personProxy.getId()) && questionType.getId().equals(assQuestion.getQuestion().getQuestionType().getId()) && assQuestion.getQuestion().getQuestEvent().getId().equals(questionEventProxy.getId()))
 				{
-					count += 1;
+					if (assQuestion.getIsForcedByAdmin() == true || assQuestion.getIsAssQuestionAcceptedAdmin() == true)
+						count += 1;
 				}
 			}
 		}

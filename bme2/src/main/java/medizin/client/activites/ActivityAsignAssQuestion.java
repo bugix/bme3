@@ -555,8 +555,10 @@ QuestionAdvancedSearchPopupView.Delegate {
 				{
 					AssesmentQuestionView question =(AssesmentQuestionViewImpl)assementQuestionPanel.getAssesmentQuestionDisplayPanel().getWidget(i);
 					if(questionTypes.contains(question.getProxy().getQuestion().getQuestionType()) && question.getProxy().getQuestion().getQuestEvent().equals(questionSumPerPersonProxy.getQuestionEvent()))
-					{						
-						questionAssigned++;
+					{	
+						if (question.getProxy().getIsForcedByAdmin() == true || question.getProxy().getIsAssQuestionAcceptedAdmin() == true)
+							questionAssigned++;
+						
 						count++;
 					}
 				}
@@ -568,7 +570,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 						AssesmentQuestionView question =proposedQuestionViewList.get(i);
 						if(questionTypes.contains(question.getProxy().getQuestion().getQuestionType()) && question.getProxy().getQuestion().getQuestEvent().equals(questionSumPerPersonProxy.getQuestionEvent()))
 						{						
-							questionAssigned++;
+							//questionAssigned++;
 							count++;
 						}
 						
@@ -849,7 +851,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 				   
 				   if(checkQuestionTypeCountBlocking(questionViewAktiv.getProxy()) && validateAssesmentQuestion(questionViewAktiv.getProxy(), (QuestionViewImpl)questionViewAktiv))
 					{
-						incrementBlockingCounter(questionViewAktiv.getProxy());
+						//incrementBlockingCounter(questionViewAktiv.getProxy());
 						assignNewQuestionToAssesment(questionViewAktiv, false);
 					}
 				   else
@@ -987,12 +989,13 @@ QuestionAdvancedSearchPopupView.Delegate {
 
 			@Override
 			public void onSuccess(Void response) {
-				
+				assesmentQuestionViewImpl.getDeleteFromAssesment().removeFromParent();
 				assesmentQuestionViewImpl.getForceAcceptButton().removeFromParent();	
 				requests.assesmentQuestionRequest().findAssesmentQuestion(assesmentQuestionViewImpl.getProxy().getId()).with("question.rewiewer","question.autor","question.keywords","question.questEvent","question.comment","question.questionType").fire(new BMEReceiver<AssesmentQuestionProxy>() {
 
 					@Override
 					public void onSuccess(AssesmentQuestionProxy response) {
+						incrementBlockingCounter(response.getQuestion());
 						assesmentQuestionViewImpl.setProxy(response, false);
 						changeAssesmentQuestionColor(assesmentQuestionViewImpl);
 						
@@ -1294,7 +1297,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 		try{
 			if(checkQuestionTypeCountBlocking(questionViewImpl.getProxy()) && validateAssesmentQuestion(questionViewImpl.getProxy(), questionViewImpl))
 			{
-				incrementBlockingCounter(questionViewImpl.getProxy());
+				//incrementBlockingCounter(questionViewImpl.getProxy());
 				assignNewQuestionToAssesment(questionViewImpl, true);
 			}
 			

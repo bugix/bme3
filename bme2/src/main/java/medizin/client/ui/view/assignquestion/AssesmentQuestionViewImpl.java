@@ -205,12 +205,14 @@ public class AssesmentQuestionViewImpl extends Composite implements AssesmentQue
 		htmlHeader.setHTML(new HTML(ClientUtility.removeMathJax(assesmentQuestion.getQuestion().getQuestionText())).getText());
 		
 		if (delOrAdd){
-			deleteFromAssesment.setVisible(false);
+			deleteFromAssesment.removeFromParent();
+			//deleteFromAssesment.setVisible(false);
 			addToAssesment.setVisible(true); 
 		}
 		else {
 			deleteFromAssesment.setVisible(true); 
-			addToAssesment.setVisible(false);
+			//addToAssesment.setVisible(false);
+			addToAssesment.removeFromParent();
 		}
 		QuestionProxy question = assesmentQuestion.getQuestion();
 	     rewiewer.setInnerText(question.getRewiewer() == null ? "" : medizin.client.ui.view.roo.PersonProxyRenderer.instance().render(question.getRewiewer()));
