@@ -748,4 +748,8 @@ public interface BmeConstants extends Constants {
 	public String answerUsedInAssessment();
 
 	public String matrixAnswerUsedInAssessment();
+
+	public String uploadValidFile();
+
+	public String errorInUpload();
 }

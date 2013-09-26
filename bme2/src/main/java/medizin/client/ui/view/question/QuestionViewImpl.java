@@ -51,14 +51,11 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class QuestionViewImpl extends Composite implements QuestionView, RecordChangeHandler {
 
-	private static QuestionViewImplUiBinder uiBinder = GWT
-			.create(QuestionViewImplUiBinder.class);
+	private static QuestionViewImplUiBinder uiBinder = GWT.create(QuestionViewImplUiBinder.class);
 
-	interface QuestionViewImplUiBinder extends
-			UiBinder<Widget, QuestionViewImpl> {
-	}
+	interface QuestionViewImplUiBinder extends UiBinder<Widget, QuestionViewImpl> {}
 
-	private Presenter presenter;
+	//private Presenter presenter;
 	protected Set<String> paths = new HashSet<String>();
 	private Delegate delegate;
 	private McAppRequestFactory requests;
@@ -733,11 +730,11 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 		return searchBox;
 	}
 
-	@Override
+	/*@Override
 	public void setPresenter(Presenter presenter) {
 		this.presenter = presenter;
 
-	}
+	}*/
 
 	/*@Inject
 	public QuestionViewImpl(McAppRequestFactory requests,
@@ -748,11 +745,11 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 
 	}*/
 
-	@Override
+	/*@Override
 	public void setName(String helloName) {
 		// TODO Auto-generated method stub
 
-	}
+	}*/
 
 	@Override
 	public CellTable<QuestionProxy> getTable() {

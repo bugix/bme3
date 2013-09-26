@@ -14,13 +14,13 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.SimplePanel;
 
 public interface QuestionView extends IsWidget {
-    void setName(String helloName);
+	/*void setName(String helloName);
 
     void setPresenter(Presenter activityQuestion);
 
     public interface Presenter {
         void goTo(Place place);
-    }
+    }*/
     
     /**
 	 * Implemented by the owner of the view.

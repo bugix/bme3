@@ -50,10 +50,7 @@ import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
 import com.google.web.bindery.requestfactory.shared.EntityProxyId;
 
-public class ActivityQuestion extends AbstractActivityWrapper implements
-		QuestionView.Presenter, QuestionView.Delegate,
-		QuestionAdvancedSearchSubView.Presenter, QuestionAdvancedSearchSubView.Delegate,
-		QuestionAdvancedSearchPopupView.Delegate{
+public class ActivityQuestion extends AbstractActivityWrapper implements QuestionView.Delegate, QuestionAdvancedSearchSubView.Presenter, QuestionAdvancedSearchSubView.Delegate, QuestionAdvancedSearchPopupView.Delegate{
 
 	private PlaceQuestion questionPlace;
 
@@ -125,7 +122,7 @@ public class ActivityQuestion extends AbstractActivityWrapper implements
 		Log.debug("in Ativity Question");
 		
 		QuestionView questionView = new QuestionViewImpl(eventBus,hasQuestionAddRights());
-		questionView.setPresenter(this);
+		//questionView.setPresenter(this);
 		this.widget = widget;
 		this.view = questionView;
 		widget.setWidget(questionView.asWidget());

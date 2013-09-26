@@ -12,7 +12,6 @@ import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.ui.view.question.QuestionView;
 import medizin.client.ui.view.question.QuestionView.Delegate;
-import medizin.client.ui.view.question.QuestionView.Presenter;
 import medizin.client.ui.view.question.QuestionViewImpl;
 
 import com.allen_sauer.gwt.log.client.Log;
@@ -30,7 +29,7 @@ import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 
-public class ActivityNotActivatedQuestion extends AbstractActivityWrapper implements Presenter, Delegate {
+public class ActivityNotActivatedQuestion extends AbstractActivityWrapper implements Delegate {
 
 	//private final PlaceNotActivatedQuestion placeNotActivatedQuestion;
 	private final PlaceController placeController;
@@ -52,7 +51,6 @@ public class ActivityNotActivatedQuestion extends AbstractActivityWrapper implem
 		this.activityManger = new ActivityManager(activityNotActivatedQuestionMapper, requests.getEventBus());
 	}
 
-	@Override
 	public void goTo(Place place) {
 		placeController.goTo(place);
 	}
@@ -62,7 +60,7 @@ public class ActivityNotActivatedQuestion extends AbstractActivityWrapper implem
 		Log.debug("start()");
 		QuestionView questionView = new QuestionViewImpl(eventBus, false);
 		Log.debug("start()");
-		questionView.setPresenter(this);
+		//questionView.setPresenter(this);
 		questionView.setDelegate(this);
 		this.widget = widget;
 		Log.debug("start()");

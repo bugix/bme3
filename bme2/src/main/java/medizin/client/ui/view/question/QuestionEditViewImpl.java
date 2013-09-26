@@ -548,7 +548,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		allowedExt.addAll(Arrays.asList(SharedConstant.IMAGE_EXTENSIONS));
 		paths.put(MultimediaType.Image, SharedConstant.UPLOAD_MEDIA_IMAGES_PATH);
 		
-		ResourceUpload resourceUpload = new ResourceUpload(allowedExt,paths,this.eventBus); 
+		ResourceUpload resourceUpload = new ResourceUpload(allowedExt,paths/*,this.eventBus*/); 
 		
 		resourceUpload.addResourceUploadedHandler(new ResourceUploadEventHandler() {
 			
@@ -672,7 +672,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 			}			
 			
 			// added resourceUpload
-			ResourceUpload resourceUpload = new ResourceUpload(allowedExt,paths,eventBus);
+			ResourceUpload resourceUpload = new ResourceUpload(allowedExt,paths/*,eventBus*/);
 			 
 			resourceUpload.addResourceUploadedHandler(new ResourceUploadEventHandler() {
 				

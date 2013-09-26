@@ -150,7 +150,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 	private Delegate delegate;
 	private AnswerProxy answer;
     private final QuestionProxy question;
-	private final EventBus eventBus;
+	//private final EventBus eventBus;
 	
 	public final static BmeMessages bmeMessages = GWT.create(BmeMessages.class);
 	public final static BmeConstants constants = GWT.create(BmeConstants.class);
@@ -202,7 +202,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 	public AnswerDialogboxImpl(QuestionProxy questionProxy, EventBus eventBus, Map<String, Widget> reciverMap) {
 		
 		this.question = questionProxy;
-		this.eventBus = eventBus;
+		//this.eventBus = eventBus;
 		answerTextArea = new RichTextArea();
 		answerTextArea.setSize("100%", "14em");
 		toolbar = new RichTextToolbar(answerTextArea);
@@ -415,7 +415,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 			ArrayList<String> allowedExt = Lists.newArrayList();
 			allowedExt.addAll(Arrays.asList(SharedConstant.IMAGE_EXTENSIONS));
 			paths.put(MultimediaType.Image, SharedConstant.UPLOAD_MEDIA_IMAGES_PATH);
-			upload = new ResourceUpload(allowedExt,paths, eventBus);
+			upload = new ResourceUpload(allowedExt,paths/*, eventBus*/);
 			upload.addResourceUploadedHandler(new ResourceUploadEventHandler() {
 				
 				@Override
@@ -479,7 +479,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 			allowedExt.addAll(Arrays.asList(SharedConstant.SOUND_EXTENSIONS));
 			paths.put(MultimediaType.Sound, SharedConstant.UPLOAD_MEDIA_SOUND_PATH);
 			
-			upload = new ResourceUpload(allowedExt,paths, this.eventBus);
+			upload = new ResourceUpload(allowedExt,paths/*, this.eventBus*/);
 			upload.addResourceUploadedHandler(new ResourceUploadEventHandler() {
 				
 				@Override
@@ -521,7 +521,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 			allowedExt.addAll(Arrays.asList(SharedConstant.VIDEO_EXTENSIONS));
 			paths.put(MultimediaType.Video, SharedConstant.UPLOAD_MEDIA_VIDEO_PATH);
 			
-			upload = new ResourceUpload(allowedExt,paths, this.eventBus);
+			upload = new ResourceUpload(allowedExt,paths/*, this.eventBus*/);
 			
 			upload.addResourceUploadedHandler(new ResourceUploadEventHandler() {
 				
