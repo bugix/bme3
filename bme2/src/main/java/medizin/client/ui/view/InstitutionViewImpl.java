@@ -46,12 +46,10 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class InstitutionViewImpl extends Composite implements InstitutionView, RecordChangeHandler  {
 
-	private static InstitutionViewImplUiBinder uiBinder = GWT
-			.create(InstitutionViewImplUiBinder.class);
+	private static InstitutionViewImplUiBinder uiBinder = GWT.create(InstitutionViewImplUiBinder.class);
 
-	interface InstitutionViewImplUiBinder extends
-			UiBinder<Widget, InstitutionViewImpl> {
-	}
+	interface InstitutionViewImplUiBinder extends UiBinder<Widget, InstitutionViewImpl> {}
+	
     private Delegate delegate;
 
     public BmeConstants constants = GWT.create(BmeConstants.class);
@@ -62,21 +60,36 @@ public class InstitutionViewImpl extends Composite implements InstitutionView, R
 	@UiField
     IconButton addInstitution;
 	
-	
 	@UiField
 	SimplePanel slidingPanel;
+	
+	@UiField(provided=true)
+	CellTable<InstitutionProxy> table;
+	
+	@UiField(provided = true)
+	MySimplePager pager;
+	
+	@UiField (provided = true)
+	QuickSearchBox searchBox;
+	
+    /*@UiField
+    CellTable<InstitutionProxy> table;
+    */
+    protected Set<String> paths = new HashSet<String>();
+
+	private int left = 0;
+
+	private int top = 0;
 	
 	@UiHandler("addInstitution")
 	void addInstitutionClicked(ClickEvent event) {
 		delegate.newClicked(institutionName.getText());
 		institutionName.setText("");
 	}
-	
 
+	/*private Presenter presenter;
 
-	private Presenter presenter;
-
-	private String name;
+	private String name;*/
 
 	public InstitutionViewImpl(Map<String, Widget> reciverMap, Boolean flag) {
 		
@@ -102,8 +115,8 @@ public class InstitutionViewImpl extends Composite implements InstitutionView, R
 		
 		if (!flag)
 		{
-			addInstitution.setVisible(false);
-			institutionName.setVisible(false);
+			addInstitution.removeFromParent();
+			institutionName.removeFromParent();
 			
 			pager.getElement().getStyle().setFloat(Float.RIGHT);
 		}
@@ -118,40 +131,20 @@ public class InstitutionViewImpl extends Composite implements InstitutionView, R
 	}
 
 
-	@Override
+	/*@Override
 	public void setName(String helloName) {
 		this.name = name;
 		
-	}
+	}*/
 
 
 
-	@Override
+	/*@Override
 	public void setPresenter(Presenter presenter) {
 		this.presenter = presenter;
 		
-	}
+	}*/
 	
-	@UiField(provided=true)
-	CellTable<InstitutionProxy> table;
-	
-	@UiField(provided = true)
-	public MySimplePager pager;
-	
-	 @UiField (provided = true)
-	 QuickSearchBox searchBox;
-	
-	
-	
-    /*@UiField
-    CellTable<InstitutionProxy> table;
-    */
-    protected Set<String> paths = new HashSet<String>();
-
-	private int left = 0;
-
-	private int top = 0;
-
     public void init(Boolean flag) {
     	editableCells = new ArrayList<AbstractEditableCell<?, ?>>();
     	
@@ -298,14 +291,14 @@ public class InstitutionViewImpl extends Composite implements InstitutionView, R
     
 	@Override
 	public CellTable<InstitutionProxy> getTable() {
-
 		return table;
 	}
+	
 	@Override
 	public String[] getPaths() {
-
         return paths.toArray(new String[paths.size()]);
 	}
+	
 	@Override
 	public void setDelegate(Delegate delegate) {
 		this.delegate = delegate;

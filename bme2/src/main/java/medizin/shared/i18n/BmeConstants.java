@@ -752,4 +752,6 @@ public interface BmeConstants extends Constants {
 	public String uploadValidFile();
 
 	public String errorInUpload();
+	
+	public String deleteAnswerConfirmation();
 }

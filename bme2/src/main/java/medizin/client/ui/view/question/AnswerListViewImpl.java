@@ -11,6 +11,9 @@ import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.renderer.EnumRenderer;
 import medizin.client.ui.widget.IconButton;
+import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
+import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEvent;
+import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEventHandler;
 import medizin.client.ui.widget.pager.MySimplePager;
 import medizin.client.ui.widget.resource.audio.AudioViewer;
 import medizin.client.ui.widget.resource.image.ImageViewer;
@@ -348,8 +351,17 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 			columnIndex++;
 			
 			addColumn(new DeleteIconCell(McAppConstant.DELETE_ICON, new ActionCell.Delegate<AnswerProxy>() {
-				public void execute(AnswerProxy answer) {
-					delegate.deleteAnswerClicked(answer);
+				public void execute(final AnswerProxy answer) {
+					ConfirmationDialogBox.showYesNoDialogBox(constant.warning(), constant.deleteAnswerConfirmation(), new ConfirmDialogBoxYesNoButtonEventHandler() {
+						
+						@Override
+						public void onYesButtonClicked(ConfirmDialogBoxYesNoButtonEvent event) {
+							delegate.deleteAnswerClicked(answer);
+						}
+						
+						@Override
+						public void onNoButtonClicked(ConfirmDialogBoxYesNoButtonEvent event) {}
+					});
 				}
 			}), constants.delete(), new GetValue<AnswerProxy>() {
 				public AnswerProxy getValue(AnswerProxy contact) {
