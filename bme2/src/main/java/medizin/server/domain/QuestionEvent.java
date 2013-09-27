@@ -7,6 +7,9 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.EntityManager;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreRemove;
+import javax.persistence.PreUpdate;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -330,5 +333,19 @@ public class QuestionEvent {
 	    	TypedQuery<QuestionEvent> query = entityManager().createQuery(criteriaQuery);
 	    	
 	    	return query.getResultList();
+	    }
+	    
+	    @PrePersist
+	    @PreUpdate
+	    @PreRemove
+	    public void preQuestionEventPersist()
+	    {
+	    	Person loggedPerson = Person.findLoggedPersonByShibId();
+			Institution loggedInstitution = Institution.myGetInstitution();
+			
+			if (loggedPerson == null || loggedInstitution == null)
+				throw new IllegalArgumentException("Logged person or instution may not be null");
+			else if (loggedPerson != null && loggedPerson.getIsAdmin() == false && UserAccessRights.checkInstitutionalAdmin() == false)
+				throw new IllegalArgumentException("Only overall admin or institutional admin can use this functionality");
 	    }
 }

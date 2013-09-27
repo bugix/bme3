@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Enumerated;
+import javax.persistence.FlushModeType;
 import javax.persistence.ManyToOne;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -141,11 +142,11 @@ public class UserAccessRights {
 	    }*/
 	   
 	   public static Boolean checkInstitutionalAdmin()
-	    {
-		   
-		   	Person person = Person.myGetLoggedPerson();
-			Institution institution = Institution.myGetInstitutionToWorkWith();
-			if (person == null || institution == null)
+	   {
+		   	Person person = Person.findLoggedPersonByShibId();
+			Institution institution = Institution.myGetInstitution();
+			
+		   	if (person == null || institution == null)
 				throw new IllegalArgumentException("The person and institution arguments are required");
 			
 	    	if (person.getIsAdmin())
@@ -167,6 +168,8 @@ public class UserAccessRights {
 	  		criteriaQuery.where(criteriaBuilder.and(pre1,pre4,criteriaBuilder.or(pre2,pre3)));
 	  		
 	  		TypedQuery<UserAccessRights> query = entityManager().createQuery(criteriaQuery);
+	  		
+	  		query.setFlushMode(FlushModeType.COMMIT);
 	  		
 	  		List<UserAccessRights> list = query.getResultList();
 	  		
