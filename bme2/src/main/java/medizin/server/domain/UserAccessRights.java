@@ -465,4 +465,38 @@ public class UserAccessRights {
 		else
 			return null;
 	}
+
+	public static boolean checkHasAnyRightsOnQuestionOrQuestionEvent(Long personId, QuestionEvent questEvent, Question question) {
+		
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+		Root<UserAccessRights> from = criteriaQuery.from(UserAccessRights.class);
+		criteriaQuery.select(criteriaBuilder.count(from));
+		
+		Predicate pre1 = criteriaBuilder.equal(from.get("person").get("id"), personId);
+		
+		Predicate questionEventPre2 = criteriaBuilder.equal(from.get("questionEvent").get("id"), questEvent.getId());
+		Predicate questionEventPre3 = criteriaBuilder.equal(from.get("accRights"), AccessRights.AccWrite);
+		Predicate questionEventPre = criteriaBuilder.and(questionEventPre2,questionEventPre3);
+		
+		if(question.getId() != null) {
+			Predicate questionPre2 = criteriaBuilder.equal(from.get("question").get("id"), question.getId());
+			Predicate questionPre3 = criteriaBuilder.equal(from.get("accRights"), AccessRights.AccWrite);
+			Predicate questionPre = criteriaBuilder.and(questionPre2,questionPre3);
+			questionEventPre = criteriaBuilder.or(questionEventPre,questionPre);
+		}
+		
+		Predicate predicate = criteriaBuilder.and(pre1, questionEventPre);
+		
+		criteriaQuery.where(predicate);
+		
+		TypedQuery<Long> query = entityManager().createQuery(criteriaQuery);
+		query.setFlushMode(FlushModeType.COMMIT);
+		
+		if(query.getSingleResult() > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }

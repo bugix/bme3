@@ -1,6 +1,7 @@
 package medizin.server.domain;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.util.List;
 import java.util.Set;
 
@@ -9,6 +10,7 @@ import javax.persistence.PostRemove;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.validation.constraints.NotNull;
@@ -19,6 +21,7 @@ import medizin.shared.utils.SharedConstant;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
+import org.joda.time.DateTime;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
@@ -166,6 +169,89 @@ public class QuestionResource {
 		QuestionResource questionResource = QuestionResource.findQuestionResource(qestionResourceId);
 		if(questionResource != null) {
 			questionResource.remove();	
+		}
+	}
+	
+
+	private static final FileFilter FILE_FILTER = new FileFilter() {
+		
+		@Override
+		public boolean accept(File file) {
+			DateTime fileDate = new DateTime(file.lastModified());
+			DateTime dayBeforeOneWeek = new DateTime().minusWeeks(1);
+			return fileDate.isBefore(dayBeforeOneWeek);
+		}
+	};
+	
+	public static void deleteExtraResourceFilesFromProjects() {
+		File imagePath = new File(SharedConstant.UPLOAD_MEDIA_IMAGES_PATH);
+		File audioPath = new File(SharedConstant.UPLOAD_MEDIA_SOUND_PATH);
+		File videoPath = new File(SharedConstant.UPLOAD_MEDIA_VIDEO_PATH);
+		
+		File[] imageFiles = imagePath.listFiles(FILE_FILTER);
+		File[] audioFiles = audioPath.listFiles(FILE_FILTER);
+		File[] videoFiles = videoPath.listFiles(FILE_FILTER);
+		
+		if(imageFiles != null) {
+			for (File file : imageFiles) {
+				if(isImageUsedInAnyResource(file.getName()) == false && isImageUsedInAnyAnswer(file.getName()) == false) {
+					log.info("image files : " + file.getAbsolutePath());
+					file.delete();
+				}
+			}
+		}
+		
+		if(videoFiles != null) {
+			for (File file : videoFiles) {
+				if(isImageUsedInAnyResource(file.getName()) == false && isImageUsedInAnyAnswer(file.getName()) == false) {
+					log.info("videoFiles files : " + file.getAbsolutePath());
+					file.delete();
+				}
+			}	
+		}
+		
+		if(audioFiles != null) {
+			for (File file : audioFiles) {
+				if(isImageUsedInAnyResource(file.getName()) == false && isImageUsedInAnyAnswer(file.getName()) == false) {
+					log.info("audioFiles files : " + file.getAbsolutePath());
+					file.delete();
+				}
+			}	
+		}
+		
+	}
+
+	private static boolean isImageUsedInAnyResource(String resouceName) {
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+		Root<QuestionResource> from = criteriaQuery.from(QuestionResource.class);
+		criteriaQuery.select(criteriaBuilder.count(from));
+		Expression<String> pathExpression = from.get("path");
+		criteriaQuery.where(criteriaBuilder.like(pathExpression, "%" + resouceName + "%"));
+		TypedQuery<Long> query = entityManager().createQuery(criteriaQuery);
+//		log.info("Query is : " + query.unwrap(Query.class).getQueryString());
+		
+		if(query.getSingleResult() > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	private static boolean isImageUsedInAnyAnswer(String resouceName) {
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+		Root<Answer> from = criteriaQuery.from(Answer.class);
+		criteriaQuery.select(criteriaBuilder.count(from));
+		Expression<String> mediaPathExpression = from.get("mediaPath");
+		criteriaQuery.where(criteriaBuilder.like(mediaPathExpression, "%" + resouceName + "%"));
+		TypedQuery<Long> query = entityManager().createQuery(criteriaQuery);
+//		log.info("Query is : " + query.unwrap(Query.class).getQueryString());
+		
+		if(query.getSingleResult() > 0) {
+			return true;
+		} else {
+			return false;
 		}
 	}
 	

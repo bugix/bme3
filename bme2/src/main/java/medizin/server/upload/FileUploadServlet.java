@@ -83,7 +83,7 @@ public class FileUploadServlet extends HttpServlet {
 				if (item.isFormField()) {
 					// fileName=item.getString() +"_"+fileName;
 					
-					byte array[] = new byte[20];
+					byte array[] = new byte[50];
 					item.getInputStream().read(array);
 
 					directory = new String(array).trim().concat("/");
