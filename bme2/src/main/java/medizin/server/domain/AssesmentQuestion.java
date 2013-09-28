@@ -438,6 +438,22 @@ public class AssesmentQuestion {
         return q.getResultList();
     }
     
+    public static List<AssesmentQuestion> findAssesmentQuestionsByAssesmentAndPerson(Long id,Person author){
+      Assesment assesment = Assesment.findAssesment(id);
+      
+      if (assesment == null) throw new IllegalArgumentException("The assesment argument is required");
+
+      EntityManager em = Question.entityManager();
+      
+      String query="SELECT assesmentauestion FROM AssesmentQuestion AS assesmentauestion " +
+      		"WHERE assesmentauestion.assesment = :assesment and (assesmentauestion.isAssQuestionAdminProposal=false Or assesmentauestion.isForcedByAdmin=true Or assesmentauestion.isAssQuestionAcceptedAutor=true Or assesmentauestion.isAssQuestionAcceptedAdmin=true)  and assesmentauestion.autor=:author ";
+       
+      TypedQuery<AssesmentQuestion> q = em.createQuery(query, AssesmentQuestion.class);
+      q.setParameter("assesment", assesment);
+      q.setParameter("author", author); 
+      return q.getResultList();
+  }
+    
     /*
      * Proposed Question Tab only for examiner
      * 
@@ -611,12 +627,12 @@ public class AssesmentQuestion {
     public static List<AssesmentQuestion> findAssesmentQuestionsByMcProposalForSystemOverview(Long assesmentId, Long personId){
         Boolean isAssQuestionAdminProposal = true;
         Assesment assesment = Assesment.findAssesment(assesmentId);
-        Person userLoggedIn=Person.myGetLoggedPerson();
+       /* Person userLoggedIn=Person.myGetLoggedPerson();
         //get institution
 		Institution institution = Institution.myGetInstitutionToWorkWith();
 		
 		if (userLoggedIn == null || institution == null)
-			return new ArrayList<AssesmentQuestion>();
+			return new ArrayList<AssesmentQuestion>();*/
 		
 		if (assesment == null) throw new IllegalArgumentException("The mcs argument is required");
 		

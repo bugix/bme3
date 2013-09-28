@@ -25,6 +25,7 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.SetJoin;
+import javax.servlet.ServletContext;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -281,6 +282,31 @@ public class Assesment {
 		return query.getResultList();
     }
     
+    public static List<Assesment> findAssessmentForJob(Long personId)
+    {
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Assesment> criteriaQuery = criteriaBuilder.createQuery(Assesment.class);
+		Root<Assesment> from = criteriaQuery.from(Assesment.class);
+		criteriaQuery.distinct(true);
+
+		Date dateClosed =new Date();
+    	Date dateOpen = new Date(); 
+    	Boolean isClosed=false;
+		
+		SetJoin<Assesment, QuestionSumPerPerson> questionSumPerPersonSetJoin = from.joinSet("questionSumPerPerson", JoinType.LEFT);
+		Predicate pre1 = criteriaBuilder.equal(questionSumPerPersonSetJoin.get("responsiblePerson").get("id"), personId);		
+		Expression<Date> closedDateExp = from.get("dateClosed");
+		Expression<Date> openDateExp = from.get("dateOpen");
+		Predicate pre2 = criteriaBuilder.greaterThanOrEqualTo(closedDateExp, dateClosed);
+		Predicate pre3 = criteriaBuilder.lessThanOrEqualTo(openDateExp, dateOpen);
+		Predicate pre4 = criteriaBuilder.equal(from.get("isClosed"), isClosed);
+		
+		criteriaQuery.where(criteriaBuilder.and(pre1, pre2, pre3, pre4));	
+	
+		TypedQuery<Assesment> query = entityManager().createQuery(criteriaQuery);
+		return query.getResultList();
+    }
+    
     private static final Function<QuestionType, String> QUESTIONTYPE_TO_SHORTNAME = new Function<QuestionType, String>() {
 
 		@Override
@@ -308,34 +334,47 @@ public class Assesment {
 			{
 				template = "";
 			}
-			
-			template = template.substring(template.indexOf("[ASSESMENT LOOP]"), template.indexOf("[ASSESMENT END LOOP]"));
-			System.out.println("TEMPLATE : \n" + template);
-			
-			String fromAddress=userLoggedIn.getEmail();
+	
+			return sendMail(template, assesmentList, msgContent, mailSubject, examiner, (userLoggedIn.getPrename() + " " + userLoggedIn.getName()), userLoggedIn.getEmail(), RequestFactoryServlet.getThreadLocalServletContext());
+		
+		}
+		catch(Exception e)
+		{
+			log.error(e.getMessage(), e);
+			return false;
+		}
+	}
+
+    
+	public static Boolean sendMail(String template, List<Assesment> assesmentList, String msgContent, String mailSubject, Person examiner, String fromName, String fromAddress, ServletContext servletContext) {
+		try
+		{
+			template = template.substring(template.indexOf("[ASSESSMENT LOOP]"), template.indexOf("[ASSESSMENT END LOOP]"));
 			
 			SimpleDateFormat dateFormat=new SimpleDateFormat("dd-MMM-yy");
 			
 			EmailServiceImpl emailService=new EmailServiceImpl();
-			WebApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(RequestFactoryServlet.getThreadLocalServletContext());
+			WebApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(servletContext);
 			((EmailServiceImpl)emailService).setSender(applicationContext.getBean(JavaMailSenderImpl.class));
 			
 			String messageContent = msgContent;
 			
-			messageContent = messageContent.replace("[fromName]", userLoggedIn.getPrename() + " " + userLoggedIn.getName());
+			messageContent = messageContent.replace("[fromName]", fromName);
 			messageContent = messageContent.replace("[toName]", examiner.getPrename() + " " + examiner.getName());
-			String newMessage = messageContent;				
+			String newMessage = messageContent;	
+			String finalMsgContent = "";
 			
 			for (int i=0; i<assesmentList.size(); i++)
 			{
 				Assesment assesment = assesmentList.get(i);
+				
 				newMessage = newMessage.replace("[assesmentName]", assesment.getName());
 				newMessage = newMessage.replace("[assesmentStartDate]", dateFormat.format(assesment.getDateOpen()));
 				newMessage = newMessage.replace("[assesmentClosedDate]", dateFormat.format(assesment.getDateClosed()));
 				newMessage = newMessage.replace("[assesmentMC]", assesment.getMc().getMcName());
 				
 				Integer assesmentQuestionProposedCount = 0;
-				List<AssesmentQuestion> assQueList = AssesmentQuestion.findAssesmentQuestionsByMcProposalForSystemOverview(assesment.getId(), personId);
+				List<AssesmentQuestion> assQueList = AssesmentQuestion.findAssesmentQuestionsByMcProposalForSystemOverview(assesment.getId(), examiner.getId());
 				if (assQueList != null)
 					assesmentQuestionProposedCount = assQueList.size();
 					
@@ -363,10 +402,10 @@ public class Assesment {
 						int questionTypeCount = questionTypeCountPerExam.getQuestionTypeCount();
 						int percentAllocated = questionSumPerPerson.getQuestionSum();
 						
-						Integer totalQuestionAllocated = (int)(questionTypeCount*percentAllocated)/100;
-						Integer questionAssigned =-totalQuestionAllocated;
+						Integer totalQuestionAllocated = (int) Math.ceil((questionTypeCount*percentAllocated)/100.0);
+						Integer questionAssigned = 0 ;
 						
-						List<AssesmentQuestion> assesmentQuestionList = AssesmentQuestion.findAssesmentQuestionsByAssesment(assesment.getId(), examiner);
+						List<AssesmentQuestion> assesmentQuestionList = AssesmentQuestion.findAssesmentQuestionsByAssesmentAndPerson(assesment.getId(), examiner);
 						
 						int count=0;
 						for(int l=0;l<assesmentQuestionList.size();l++)
@@ -395,7 +434,7 @@ public class Assesment {
 							.append(" : ")
 							.append("</td>")
 							.append("<td stype='vertical-align:middle'>")
-							.append(-questionAssigned)
+							.append((questionAssigned - totalQuestionAllocated))
 							.append("</td>")
 							.append("</tr>");
 					}
@@ -414,8 +453,10 @@ public class Assesment {
 				newMessage = newMessage.replace("[[assesmentQuestionType]([assesmentSpecialization]) : [assesmentQuestionAllocatedCount]]", totalCountString.toString());
 				newMessage = newMessage.replace("[[assesmentQuestionType]([assesmentSpecialization]) : [assesmentQuestionRemainingCount]]", totalRemainingString.toString());
 				
-				newMessage = newMessage.replace("[ASSESMENT LOOP]", "");
-				newMessage = newMessage.replace("[ASSESMENT END LOOP]", "");
+				newMessage = newMessage.replace("[ASSESSMENT LOOP]", "");
+				newMessage = newMessage.replace("[ASSESSMENT END LOOP]", "");
+				
+				finalMsgContent = finalMsgContent + newMessage;
 			}
 			
 			emailService.sendMail(new String[]{examiner.getEmail()}, fromAddress, mailSubject, messageContent);
@@ -424,8 +465,8 @@ public class Assesment {
 		}
 		catch(Exception e)
 		{
-			log.error(e.getMessage(), e);
-			return false;
+			log.error(e);
 		}
+		return false;
 	}
 }

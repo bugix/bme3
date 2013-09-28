@@ -126,6 +126,13 @@
 		   <version>1.0.0</version>
 		</dependency>
 		
+		<!-- For Quartz Scheduling -->
+		<dependency>
+      		<groupId>org.quartz-scheduler</groupId>
+      		<artifactId>quartz</artifactId>
+      		<version>2.2.1</version>
+  		</dependency>
+		
 		<!-- Video player -->
 		<dependency>
 			<groupId>fr.hd3d.html5.video</groupId>
@@ -391,7 +398,7 @@
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
-            <version>1.6</version>
+            <version>2.2</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet.jsp</groupId>
