@@ -545,7 +545,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 				questionTypeCountViewImpl.setQuestionSumPerPersonProxy(questionSumPerPersonProxy);
 			*/	int questionTypeCount=questionTypeCountPerExamProxy.getQuestionTypeCount();
 				int percentAllocated=questionSumPerPersonProxy.getQuestionSum();
-				Integer totalQuestionAllocated=(int)(questionTypeCount*percentAllocated)/100;
+				Integer totalQuestionAllocated=(int)Math.ceil((questionTypeCount*percentAllocated)/100.0);
 				Integer questionAssigned=-totalQuestionAllocated;
 				
 				int count=0;
