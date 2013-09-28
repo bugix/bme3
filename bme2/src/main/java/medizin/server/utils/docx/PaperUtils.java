@@ -23,7 +23,6 @@ import medizin.server.domain.QuestionTypeCountPerExam;
 import medizin.shared.utils.SharedConstant;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.scilab.forge.jlatexmath.TeXConstants;
 import org.scilab.forge.jlatexmath.TeXFormula;
@@ -32,6 +31,7 @@ import sun.misc.BASE64Encoder;
 
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
+import com.google.common.base.Predicates;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -175,5 +175,18 @@ public final class PaperUtils {
 
 	public static String getVersionString(boolean isVersionA) {
 		return isVersionA == true ? "A" : "B";
+	}
+	
+	public static List<Long> getAnswerIdList(List<AnswerToAssQuestion> answerToAssQuestions) {
+		return Lists.newArrayList(FluentIterable.from(answerToAssQuestions).transform(new Function<AnswerToAssQuestion, Long>() {
+
+			@Override
+			public Long apply(AnswerToAssQuestion input) {
+				if(input != null && input.getAnswers() != null) {
+					return input.getAnswers().getId();
+				}
+				return null;
+			}
+		}).filter(Predicates.notNull()).iterator());
 	}
 }

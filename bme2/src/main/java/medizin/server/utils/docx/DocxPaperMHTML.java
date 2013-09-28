@@ -57,10 +57,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-import com.google.common.base.Function;
 import com.google.common.base.Objects;
-import com.google.common.base.Predicates;
-import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -300,7 +297,7 @@ public final class DocxPaperMHTML {
 	private void createAnswerMatrix(Element li, List<AnswerToAssQuestion> answerToAssQuestions) {
 		Element table = li.appendElement("table");
 		table.attr("border", "1");
-	    List<Long> answerList = getAnswerIdList(answerToAssQuestions);
+	    List<Long> answerList = PaperUtils.getAnswerIdList(answerToAssQuestions);
 	    
 	    List<MatrixValidity> matrixValidities = MatrixValidity.findallMatrixValidityForAnswers(answerList);
 	    Set<String> yAnswers = PaperUtils.getAllYAnswersText(matrixValidities);
@@ -323,19 +320,6 @@ public final class DocxPaperMHTML {
 	    		addTd(tr1, "");
 			}
 	    }		
-	}
-
-	private List<Long> getAnswerIdList(List<AnswerToAssQuestion> answerToAssQuestions) {
-		return Lists.newArrayList(FluentIterable.from(answerToAssQuestions).transform(new Function<AnswerToAssQuestion, Long>() {
-
-			@Override
-			public Long apply(AnswerToAssQuestion input) {
-				if(input != null && input.getAnswers() != null) {
-					return input.getAnswers().getId();
-				}
-				return null;
-			}
-		}).filter(Predicates.notNull()).iterator());
 	}
 
 	private void addTd(Element tr, String text) {
