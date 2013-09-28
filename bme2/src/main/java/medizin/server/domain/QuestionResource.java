@@ -1,7 +1,6 @@
 package medizin.server.domain;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.util.List;
 import java.util.Set;
 
@@ -10,7 +9,6 @@ import javax.persistence.PostRemove;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.validation.constraints.NotNull;
@@ -21,7 +19,6 @@ import medizin.shared.utils.SharedConstant;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
-import org.joda.time.DateTime;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
@@ -173,7 +170,7 @@ public class QuestionResource {
 	}
 	
 
-	private static final FileFilter FILE_FILTER = new FileFilter() {
+	/*private static final FileFilter FILE_FILTER = new FileFilter() {
 		
 		@Override
 		public boolean accept(File file) {
@@ -253,6 +250,6 @@ public class QuestionResource {
 		} else {
 			return false;
 		}
-	}
+	}*/
 	
 }
