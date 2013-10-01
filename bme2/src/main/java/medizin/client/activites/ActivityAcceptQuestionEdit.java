@@ -175,7 +175,7 @@ public class ActivityAcceptQuestionEdit extends AbstractActivityWrapper implemen
 			@Override
 			public Void apply(EntityProxyId<?> stableId) {
 				goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));
-				goTo(new PlaceAcceptQuestionDetails(stableId,Operation.DETAILS));
+				//goTo(new PlaceAcceptQuestionDetails(stableId,Operation.DETAILS));
 				return null;
 			}
 		};

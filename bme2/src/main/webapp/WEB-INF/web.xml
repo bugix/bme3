@@ -159,6 +159,7 @@
 		<url-pattern>/fileUploadServlet</url-pattern>
 		<url-pattern>/CsvFileUploadServlet</url-pattern>
 		<url-pattern>/downloadFile</url-pattern>
+		<url-pattern>/QuartzServlet</url-pattern>
 	</filter-mapping>
 	 -->	
 	 
@@ -166,4 +167,16 @@
 	 	<exception-type>java.lang.Throwable</exception-type>
   		<location>/error.jsp</location>
   </error-page>
+  
+ <!--   <servlet>
+    <description></description>
+    <display-name>QuartzServlet</display-name>
+    <servlet-name>QuartzServlet</servlet-name>
+    <servlet-class>medizin.server.cronjob.QuartzServlet</servlet-class>
+    <load-on-startup>0</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>QuartzServlet</servlet-name>
+    <url-pattern>/QuartzServlet</url-pattern>
+  </servlet-mapping> -->
 </web-app>

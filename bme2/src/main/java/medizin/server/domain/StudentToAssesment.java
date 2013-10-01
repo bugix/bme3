@@ -7,6 +7,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.validation.constraints.NotNull;
 
@@ -75,6 +76,25 @@ public class StudentToAssesment {
 		 TypedQuery<StudentToAssesment> query = entityManager().createQuery(criteriaQuery);
 		 query.setFirstResult(start);
 		 query.setMaxResults(length);
+		 return query.getResultList();		
+	 }
+	 
+	 public static List<Student> findStudentsByAssesment(Long assesmentId, Boolean isEnrolled)
+	 {
+		 log.info("in findStudentsByAssesment with assessmentID " + assesmentId + " and isEnrolled is " + isEnrolled);
+		 CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		 CriteriaQuery<Student> criteriaQuery = criteriaBuilder.createQuery(Student.class);
+		 
+		 Root<StudentToAssesment> from = criteriaQuery.from(StudentToAssesment.class);
+		 criteriaQuery.select(from.<Student>get("student"));
+		 
+		 criteriaQuery.orderBy(criteriaBuilder.asc(from.get("student").get("name")));
+		 Predicate predicate = criteriaBuilder.equal(from.get("assesment").get("id"), assesmentId);
+		 Predicate predicate2 = criteriaBuilder.equal(from.get("isEnrolled"), isEnrolled);
+		 criteriaQuery.where(criteriaBuilder.and(predicate,predicate2));
+
+		 TypedQuery<Student> query = entityManager().createQuery(criteriaQuery);
+		 
 		 return query.getResultList();		
 	 }
 }

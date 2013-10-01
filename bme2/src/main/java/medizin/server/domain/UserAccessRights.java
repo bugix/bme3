@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Enumerated;
+import javax.persistence.FlushModeType;
 import javax.persistence.ManyToOne;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -141,11 +142,11 @@ public class UserAccessRights {
 	    }*/
 	   
 	   public static Boolean checkInstitutionalAdmin()
-	    {
-		   
-		   	Person person = Person.myGetLoggedPerson();
-			Institution institution = Institution.myGetInstitutionToWorkWith();
-			if (person == null || institution == null)
+	   {
+		   	Person person = Person.findLoggedPersonByShibId();
+			Institution institution = Institution.myGetInstitution();
+			
+		   	if (person == null || institution == null)
 				throw new IllegalArgumentException("The person and institution arguments are required");
 			
 	    	if (person.getIsAdmin())
@@ -167,6 +168,8 @@ public class UserAccessRights {
 	  		criteriaQuery.where(criteriaBuilder.and(pre1,pre4,criteriaBuilder.or(pre2,pre3)));
 	  		
 	  		TypedQuery<UserAccessRights> query = entityManager().createQuery(criteriaQuery);
+	  		
+	  		query.setFlushMode(FlushModeType.COMMIT);
 	  		
 	  		List<UserAccessRights> list = query.getResultList();
 	  		
@@ -461,5 +464,39 @@ public class UserAccessRights {
 			return query.getResultList().get(0);
 		else
 			return null;
+	}
+
+	public static boolean checkHasAnyRightsOnQuestionOrQuestionEvent(Long personId, QuestionEvent questEvent, Question question) {
+		
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+		Root<UserAccessRights> from = criteriaQuery.from(UserAccessRights.class);
+		criteriaQuery.select(criteriaBuilder.count(from));
+		
+		Predicate pre1 = criteriaBuilder.equal(from.get("person").get("id"), personId);
+		
+		Predicate questionEventPre2 = criteriaBuilder.equal(from.get("questionEvent").get("id"), questEvent.getId());
+		Predicate questionEventPre3 = criteriaBuilder.equal(from.get("accRights"), AccessRights.AccWrite);
+		Predicate questionEventPre = criteriaBuilder.and(questionEventPre2,questionEventPre3);
+		
+		if(question.getId() != null) {
+			Predicate questionPre2 = criteriaBuilder.equal(from.get("question").get("id"), question.getId());
+			Predicate questionPre3 = criteriaBuilder.equal(from.get("accRights"), AccessRights.AccWrite);
+			Predicate questionPre = criteriaBuilder.and(questionPre2,questionPre3);
+			questionEventPre = criteriaBuilder.or(questionEventPre,questionPre);
+		}
+		
+		Predicate predicate = criteriaBuilder.and(pre1, questionEventPre);
+		
+		criteriaQuery.where(predicate);
+		
+		TypedQuery<Long> query = entityManager().createQuery(criteriaQuery);
+		query.setFlushMode(FlushModeType.COMMIT);
+		
+		if(query.getSingleResult() > 0) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }

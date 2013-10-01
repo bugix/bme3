@@ -25,7 +25,6 @@ import medizin.client.proxy.QuestionSumPerPersonProxy;
 import medizin.client.proxy.QuestionTypeCountPerExamProxy;
 import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.request.AssesmentQuestionRequest;
-import medizin.client.ui.ErrorPanel;
 import medizin.client.ui.view.assignquestion.AddQuestionsTabPanel;
 import medizin.client.ui.view.assignquestion.AddQuestionsTabPanelImpl;
 import medizin.client.ui.view.assignquestion.AnswerView;
@@ -80,7 +79,6 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ValueListBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
-import com.google.web.bindery.requestfactory.shared.Receiver;
 
 public class ActivityAsignAssQuestion extends AbstractActivityWrapper implements DragHandler, AsignAssQuestionView.Presenter,
 AddQuestionsTabPanel.Delegate, QuestionPanel.Delegate, QuestionView.Delegate, AssesmentQuestionView.Delegate, AssesmentTabPanel.Delegate,AssesmentQuestionPanel.Delegate, QuestionAdvancedSearchSubView.Presenter, QuestionAdvancedSearchSubView.Delegate,
@@ -547,7 +545,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 				questionTypeCountViewImpl.setQuestionSumPerPersonProxy(questionSumPerPersonProxy);
 			*/	int questionTypeCount=questionTypeCountPerExamProxy.getQuestionTypeCount();
 				int percentAllocated=questionSumPerPersonProxy.getQuestionSum();
-				Integer totalQuestionAllocated=(int)(questionTypeCount*percentAllocated)/100;
+				Integer totalQuestionAllocated=(int)Math.ceil((questionTypeCount*percentAllocated)/100.0);
 				Integer questionAssigned=-totalQuestionAllocated;
 				
 				int count=0;

@@ -169,4 +169,87 @@ public class QuestionResource {
 		}
 	}
 	
+
+	/*private static final FileFilter FILE_FILTER = new FileFilter() {
+		
+		@Override
+		public boolean accept(File file) {
+			DateTime fileDate = new DateTime(file.lastModified());
+			DateTime dayBeforeOneWeek = new DateTime().minusWeeks(1);
+			return fileDate.isBefore(dayBeforeOneWeek);
+		}
+	};
+	
+	public static void deleteExtraResourceFilesFromProjects() {
+		File imagePath = new File(SharedConstant.UPLOAD_MEDIA_IMAGES_PATH);
+		File audioPath = new File(SharedConstant.UPLOAD_MEDIA_SOUND_PATH);
+		File videoPath = new File(SharedConstant.UPLOAD_MEDIA_VIDEO_PATH);
+		
+		File[] imageFiles = imagePath.listFiles(FILE_FILTER);
+		File[] audioFiles = audioPath.listFiles(FILE_FILTER);
+		File[] videoFiles = videoPath.listFiles(FILE_FILTER);
+		
+		if(imageFiles != null) {
+			for (File file : imageFiles) {
+				if(isImageUsedInAnyResource(file.getName()) == false && isImageUsedInAnyAnswer(file.getName()) == false) {
+					log.info("image files : " + file.getAbsolutePath());
+					file.delete();
+				}
+			}
+		}
+		
+		if(videoFiles != null) {
+			for (File file : videoFiles) {
+				if(isImageUsedInAnyResource(file.getName()) == false && isImageUsedInAnyAnswer(file.getName()) == false) {
+					log.info("videoFiles files : " + file.getAbsolutePath());
+					file.delete();
+				}
+			}	
+		}
+		
+		if(audioFiles != null) {
+			for (File file : audioFiles) {
+				if(isImageUsedInAnyResource(file.getName()) == false && isImageUsedInAnyAnswer(file.getName()) == false) {
+					log.info("audioFiles files : " + file.getAbsolutePath());
+					file.delete();
+				}
+			}	
+		}
+		
+	}
+
+	private static boolean isImageUsedInAnyResource(String resouceName) {
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+		Root<QuestionResource> from = criteriaQuery.from(QuestionResource.class);
+		criteriaQuery.select(criteriaBuilder.count(from));
+		Expression<String> pathExpression = from.get("path");
+		criteriaQuery.where(criteriaBuilder.like(pathExpression, "%" + resouceName + "%"));
+		TypedQuery<Long> query = entityManager().createQuery(criteriaQuery);
+//		log.info("Query is : " + query.unwrap(Query.class).getQueryString());
+		
+		if(query.getSingleResult() > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	private static boolean isImageUsedInAnyAnswer(String resouceName) {
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+		Root<Answer> from = criteriaQuery.from(Answer.class);
+		criteriaQuery.select(criteriaBuilder.count(from));
+		Expression<String> mediaPathExpression = from.get("mediaPath");
+		criteriaQuery.where(criteriaBuilder.like(mediaPathExpression, "%" + resouceName + "%"));
+		TypedQuery<Long> query = entityManager().createQuery(criteriaQuery);
+//		log.info("Query is : " + query.unwrap(Query.class).getQueryString());
+		
+		if(query.getSingleResult() > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}*/
+	
 }

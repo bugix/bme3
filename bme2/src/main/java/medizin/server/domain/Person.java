@@ -115,7 +115,6 @@ public class Person {
         	log.info("Updated shibid : " + this.shidId);
         }
         session.setAttribute(ServerConstants.SESSION_SHIBD_ID_KEY, this.shidId);
-        fetchLoggedPersonAccessRights();
     }
     
     public static medizin.server.domain.Person findPersonByShibId(String shibdId) {

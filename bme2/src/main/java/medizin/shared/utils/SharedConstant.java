@@ -24,7 +24,7 @@ public final class SharedConstant {
 	
 	public static final String UPLOAD_MEDIA_PATH =  getUploadBaseDIRPath() + DOWNLOAD_DIR +  "media/";
 	
-	public static final String UPLOAD_MEDIA_IMAGES_PATH = UPLOAD_MEDIA_PATH + "images/";
+	public static final String UPLOAD_MEDIA_IMAGES_PATH = UPLOAD_MEDIA_PATH + "image/";
 
 	public static final String UPLOAD_MEDIA_SOUND_PATH = UPLOAD_MEDIA_PATH + "sound/";
 

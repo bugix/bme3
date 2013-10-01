@@ -33,8 +33,7 @@ import com.google.inject.Inject;
 import com.google.web.bindery.requestfactory.shared.EntityProxyId;
 import com.google.web.bindery.requestfactory.shared.Request;
 
-public class ActivityInstitution extends AbstractActivityWrapper implements
-		InstitutionView.Presenter, InstitutionView.Delegate {
+public class ActivityInstitution extends AbstractActivityWrapper implements /*InstitutionView.Presenter, */InstitutionView.Delegate {
 
 	private PlaceInstitution institutionPlace;
 
@@ -113,8 +112,8 @@ public class ActivityInstitution extends AbstractActivityWrapper implements
 			loggedPersonId = userLoggedIn.getId();*/
 			
 		InstitutionView institutionView = new InstitutionViewImpl(reciverMap, userLoggedIn.getIsAdmin());
-		institutionView.setName("hallo");
-		institutionView.setPresenter(this);
+		/*institutionView.setName("hallo");
+		institutionView.setPresenter(this);*/
 		this.widget = widget;
 		this.view = institutionView;
 		widget.setWidget(institutionView.asWidget());
@@ -185,7 +184,7 @@ public class ActivityInstitution extends AbstractActivityWrapper implements
 						PlaceInstitutionEvent.Operation.DETAILS));
 	}
 
-	@Override
+//	@Override
 	public void goTo(Place place) {
 		placeController.goTo(place);
 	}

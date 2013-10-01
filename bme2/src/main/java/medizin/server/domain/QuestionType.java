@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.EntityManager;
 import javax.persistence.ManyToOne;
+import javax.persistence.PreRemove;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -343,5 +344,25 @@ public class QuestionType {
 		log.info("Query is : " + query.unwrap(Query.class).getQueryString());
 
 		return query;
+    }
+    
+    @PreRemove
+    public void preRemove() {
+    	
+    	Person loggedPerson = Person.findLoggedPersonByShibId();
+    	Institution loggedInstitute = Institution.myGetInstitution();
+    	
+    	if (loggedPerson == null || loggedInstitute == null)
+    	{
+    		//throw exception
+    		throw new IllegalArgumentException("Question type is not removed");
+    	}
+    	
+    	Long questionCount = countQuestionsForQuestionType(this.getId());
+    	if (questionCount > 0)
+    	{
+    		//throw exception
+    		throw new IllegalArgumentException("Question type is not removed");
+    	}
     }
 }

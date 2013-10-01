@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.FlushModeType;
+import javax.persistence.PrePersist;
+import javax.persistence.PreRemove;
+import javax.persistence.PreUpdate;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -56,6 +60,36 @@ public class Institution {
 			return null;
 					
 		return Institution.findInstitution(instId);
+    }
+    
+    // should be used in prePersist ,preUpdate and preRemove
+    public static Institution myGetInstitution(){
+    	HttpSession session = RequestFactoryServlet.getThreadLocalRequest().getSession();
+		Long instId = null;
+		if(session.getAttribute(ServerConstants.SESSION_INSTITUTION_ID_KEY) != null)
+			instId  = (Long) session.getAttribute(ServerConstants.SESSION_INSTITUTION_ID_KEY);
+		else
+			return null;
+		
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+ 		CriteriaQuery<Institution> criteriaQuery = criteriaBuilder.createQuery(Institution.class);
+ 		Root<Institution> from = criteriaQuery.from(Institution.class);
+ 		
+ 		Predicate predicate = criteriaBuilder.equal(from.get("id"), instId);
+ 		criteriaQuery.where(predicate);
+ 		
+ 		TypedQuery<Institution> query = entityManager().createQuery(criteriaQuery);
+	    
+		query.setFlushMode(FlushModeType.COMMIT);
+		 
+		List<Institution> resultList = query.getResultList();
+	    	
+		if(resultList == null || resultList.isEmpty()) {
+			return null;
+		}
+		else {
+			return resultList.get(0);
+		}
     }
     
     public static List<Institution> findInstitutionByName(String text, Long personId, int start, int length)
@@ -269,6 +303,21 @@ public class Institution {
 		result.setMaxResults(length);
 		
     	return result.getResultList();
+    }
+    
+    @PrePersist
+    @PreUpdate
+    @PreRemove
+    public void preInstitutionPersist()
+    {
+    	Person loggedPerson = Person.findLoggedPersonByShibId();
+		Institution loggedInstitution = Institution.myGetInstitution();
+		
+		if (loggedPerson == null || loggedInstitution == null)
+			throw new IllegalArgumentException("Logged person or instution may not be null");
+		else if (loggedPerson != null && loggedPerson.getIsAdmin() == false)
+			throw new IllegalArgumentException("Only overall admin can use this functionality");
+		
     }
 }
 

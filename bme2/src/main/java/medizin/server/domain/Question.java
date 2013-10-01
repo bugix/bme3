@@ -2118,6 +2118,23 @@ public class Question {
 	public void preQuestionPersist()
 	{
 		Person loggedPerson = Person.findLoggedPersonByShibId();
+		Institution loggedInstitution = Institution.myGetInstitution();
+		
+		if (loggedPerson == null || loggedInstitution == null)
+			throw new IllegalArgumentException("Logged person or instution may not be null");
+		
+		
+		if(loggedPerson.getIsAdmin() == true || UserAccessRights.checkInstitutionalAdmin() == true) {
+			// DO nothing
+		} else if(this.getAutor() != null && this.getAutor().getId().equals(loggedPerson.getId()) == true ) {
+			// DO nothing
+		} else if(this.getRewiewer() != null && this.getRewiewer().getId().equals(loggedPerson.getId()) == true) {
+			// DO nothing
+		} else if(UserAccessRights.checkHasAnyRightsOnQuestionOrQuestionEvent(loggedPerson.getId(), this.getQuestEvent(), this)) {
+			// DO nothing
+		} else {
+			throw new IllegalArgumentException("User may not have rights one this question");
+		}
 		
 		if (loggedPerson != null)
 		{
@@ -2135,7 +2152,7 @@ public class Question {
 				else if (this.createdBy != null)
 					this.setModifiedBy(loggedPerson);
 			}
-		}		
+		}			
 	}
 	
 	public static CriteriaQuery<Question> findQusetionByAdvancedSearchCriteria(List<String> criteriaStringList, List<String> searchField, String searchText)

@@ -270,6 +270,9 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 					questionTypeProxy.setMaxLength(Integer.parseInt(view.getMaxLengthTxtbox().getValue()));
 					questionTypeProxy.setMinWordCount(Integer.parseInt(view.getMinWordCountTxtbox().getValue()));
 					questionTypeProxy.setMaxWordCount(Integer.parseInt(view.getMaxWordCountTxtbox().getValue()));
+					questionTypeProxy.setQueHaveImage(view.getQueHaveImgChkBox().getValue());
+					questionTypeProxy.setQueHaveSound(view.getQueHaveSoundChkBox().getValue());
+					questionTypeProxy.setQueHaveVideo(view.getQueHaveVideoChkBox().getValue());
 				}
 				else if (selectedQuestionType.equals(QuestionTypes.Matrix))
 				{

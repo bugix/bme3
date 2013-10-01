@@ -126,8 +126,13 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 	
 	@Override
 	public void start2(final AcceptsOneWidget widget, final EventBus eventBus) {
+		
+		if (isAdminOrInstitutionalAdmin())
+		{
+			start3(widget, eventBus);
+		}
 
-		requests.userAccessRightsRequest().checkInstitutionalAdmin().fire(new BMEReceiver<Boolean>() {
+		/*requests.userAccessRightsRequest().checkInstitutionalAdmin().fire(new BMEReceiver<Boolean>() {
 
 			@Override
 			public void onSuccess(Boolean response) {
@@ -135,7 +140,7 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 				 start3(widget, eventBus);
 				}
 			}
-		});
+		});*/
 	}
 	
 	public void start3(AcceptsOneWidget widget, EventBus eventBus) {

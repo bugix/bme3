@@ -225,7 +225,7 @@ public class ActivitySystemOverview extends AbstractActivityWrapper implements S
 				{
 					int count = 0;
 					String questionType = "";
-					count = ((questionTypeCountPerExamProxy.getQuestionTypeCount() * questionSumPerPersonProxy.getQuestionSum()) / 100);
+					count = (int) Math.ceil((questionTypeCountPerExamProxy.getQuestionTypeCount() * questionSumPerPersonProxy.getQuestionSum()) / 100.0);
 					
 					if (assesmentProxy.getAssesmentQuestions() != null && questionTypeCountPerExamProxy.getQuestionTypesAssigned() != null && questionSumPerPersonProxy.getQuestionEvent() != null)
 					{
