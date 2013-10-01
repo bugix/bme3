@@ -255,7 +255,7 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 
 		private static final ArrayList<String> showInImgList = Lists.newArrayList("questionLength"/*,"answerLength","imageWidth","imageLength","imageProportion","linearPoint","linearPercentage"*/);
 		
-		private static final ArrayList<String> longTextList = Lists.newArrayList("questionLength","keywordHighlight","richText","minLength","maxLength","minWordCount","maxWordCount");
+		private static final ArrayList<String> longTextList = Lists.newArrayList("questionLength","keywordHighlight","richText","minLength","maxLength","minWordCount","maxWordCount","queHaveImg","queHaveVideo","queHaveSound");
 		
 		private static final ArrayList<String> matrixList = Lists.newArrayList("questionLength","answerLength","oneToOneAss");
 		
@@ -339,6 +339,9 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 	    	   maxLengthValLbl.setText(defaultString(proxy.getMaxLength()));
 	    	   minWordCountValLbl.setText(defaultString(proxy.getMinWordCount()));
 	    	   maxWordCountValLbl.setText(defaultString(proxy.getMaxWordCount()));
+	    	   queHaveImgValLbl.setText(defaultString(proxy.getQueHaveImage()));
+	    	   queHaveVideoValLbl.setText(defaultString(proxy.getQueHaveVideo()));
+	    	   queHaveSoundValLbl.setText(defaultString(proxy.getQueHaveSound()));
 	       }
 	       else if (proxy.getQuestionType().equals(QuestionTypes.Matrix))
 	       {

@@ -184,6 +184,10 @@ public final class ClientUtility {
 		  return true;  
 	}
 	
+	public static Boolean defaultBoolean(Boolean object){
+		return object == null ? false : object;
+	}
+	
 	public static String defaultString(Object object){
 		return object == null ? "" : object.toString();
 	}

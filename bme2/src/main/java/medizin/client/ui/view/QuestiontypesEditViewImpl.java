@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import static medizin.client.util.ClientUtility.defaultString;
+import static medizin.client.util.ClientUtility.defaultBoolean;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -335,7 +336,10 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
     	   minLength.setValue(defaultString(proxy.getMinLength()));
     	   maxLength.setValue(defaultString(proxy.getMaxLength()));
     	   minWordCount.setValue(defaultString(proxy.getMinWordCount()));
-    	   maxWordCount.setValue(defaultString(proxy.getMaxWordCount()));
+    	   maxWordCount.setValue(defaultString(proxy.getMaxWordCount()));    	   
+    	   queHaveImgChkBox.setValue(defaultBoolean(proxy.getQueHaveImage()));
+    	   queHaveVideoChkBox.setValue(defaultBoolean(proxy.getQueHaveVideo()));
+    	   queHaveSoundChkBox.setValue(defaultBoolean(proxy.getQueHaveSound()));
        }
        else if (proxy.getQuestionType().equals(QuestionTypes.Matrix))
        {
@@ -389,7 +393,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		
 		longTextFields = Lists.newArrayList((Widget) questionLength,
 				keywordHighlight, richText, minLength, maxLength, minWordCount,
-				maxWordCount);
+				maxWordCount, queHasMedia);
 		longTextFields.addAll(baseFields);
 		
 		matrixFields = Lists.newArrayList((Widget) questionLength,
@@ -803,6 +807,9 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 	    	   maxLength.setValue("");
 	    	   minWordCount.setValue("0");
 	    	   maxWordCount.setValue("0");
+	    	   queHaveImgChkBox.setValue(false);
+	    	   queHaveVideoChkBox.setValue(false);
+	    	   queHaveSoundChkBox.setValue(false);
 	       }
 	       else if (questionTypes.equals(QuestionTypes.Matrix))
 	       {
