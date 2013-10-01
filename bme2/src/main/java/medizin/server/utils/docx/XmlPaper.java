@@ -59,7 +59,7 @@ public class XmlPaper {
 	private String xmlfileName = "Paper.xml";
 	private List<QuestionVO> questionVOs = Lists.newArrayList();
 	private final Set<String> mediaPath = Sets.newHashSet();
-	private static final SimpleDateFormat FORMAT = new SimpleDateFormat("dd.MM.YYYY hh:mm:ss");
+	private static final SimpleDateFormat FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 	
 	public XmlPaper(ByteArrayOutputStream os, Integer assessment, Person loggedPerson) {
 		this.os = os;
