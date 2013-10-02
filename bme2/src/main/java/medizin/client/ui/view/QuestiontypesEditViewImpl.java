@@ -136,6 +136,9 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
     
     @UiField
     Label questionTypeLbl;
+    
+    @UiField
+    Label multimediaGroupLbl;
     	
 	@UiField
 	LabeledIntegerBox sumAnswer;	
@@ -357,6 +360,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
     	   maxBytes.setValue(defaultString(proxy.getMaxBytes()));
        }
        
+       updateImgKeyFields();
     }
     
     private ArrayList<Widget> baseFields;
@@ -382,9 +386,8 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		textualFields.addAll(baseFields);
 		
 		imgKeyFields = Lists.newArrayList((Widget) shortName, longName, description,
-				institute, questionType, questionLength,
-				keywordCount, showAutoComplete, answerLength,
-				/* acceptNonKeyword, */shortAnswerLength);
+				institute, questionType, questionLength, keywordCount, allowTyping, 
+				answerLength);
 		imgKeyFields.addAll(baseFields);
 		
 		showInImgFields = Lists.newArrayList((Widget) shortName, longName, description,
@@ -468,6 +471,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		examGroupLbl.setText(constants.examGroupLbl());
 		questionGroupLbl.setText(constants.questionGroupLbl());
 		evaluationGroupLbl.setText(constants.evaluationGroupLbl());
+		multimediaGroupLbl.setText(constants.multimediaAttributes());
 		
 		shortName.setLabelText(constants.shortName());
 		shortName.setHelpText(contextHelp.qtShortName());
@@ -523,7 +527,6 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		isDictionaryKeyword.setHelpText(contextHelp.qtIsDictionaryKeyword());
 		isDictionaryKeywordChkBox.setText(constants.isDictionaryKeyword());
 		
-		allowTyping.setVisible(false);
 		allowTyping.setLabelText(constants.allowTyping());
 		allowTyping.setHelpText(contextHelp.qtAllowTyping());
 		allowTypingChkBox.setText(constants.allowTyping());
@@ -604,38 +607,9 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 			}
 		});
 		
-		showAutoCompleteChkBox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-
-			@Override
-			public void onValueChange(ValueChangeEvent<Boolean> event) {
-				if (event.getValue()) {
-					isDictionaryKeyword.setVisible(true);
-					minLetterForAutoComp.setVisible(true);
-				} else {
-					isDictionaryKeyword.setVisible(false);
-					minLetterForAutoComp.setVisible(false);
-				}
-			}
-		});
-		
-//		for (final Widget box : allBoxes) {
-//			((HasFocusHandlers)box).addFocusHandler(new FocusHandler() {
-//				
-//				@Override
-//				public void onFocus(FocusEvent event) {
-//					PopupPanel popup = new PopupPanel(true);
-//					popup.setStyleName("unibas-ContextHelp");
-//					popup.add(new HTML("<p>Test</p>"));
-//					Widget src = ((Widget) event.getSource()).getParent().getParent();
-//					int top = src.getAbsoluteTop();
-//					int left = src.getAbsoluteLeft() + src.getOffsetWidth();
-//					popup.setPopupPosition(left, top);
-//					popup.show();
-//				}
-//			});
-//			
-//			
-//		}
+		allowTypingChkBox.addValueChangeHandler(new ImgKeyFieldChangeHandler());
+		showAutoCompleteChkBox.addValueChangeHandler(new ImgKeyFieldChangeHandler());
+		acceptNonKeywordChkBox.addValueChangeHandler(new ImgKeyFieldChangeHandler());
 		
 		shortName.setFocus(true);
 		
@@ -670,6 +644,28 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				}
 			}
 		});
+		
+		updateImgKeyFields();
+	}
+	
+	private class ImgKeyFieldChangeHandler implements ValueChangeHandler<Boolean> {
+
+		@Override
+		public void onValueChange(ValueChangeEvent<Boolean> event) {
+			updateImgKeyFields();
+		}
+		
+	}
+		
+	private void updateImgKeyFields() {
+		if (questionType.getValue() == QuestionTypes.Imgkey) {
+			boolean visibility = allowTypingChkBox.getValue();
+			showAutoComplete.setVisible(visibility);
+			isDictionaryKeyword.setVisible(visibility);
+			acceptNonKeyword.setVisible(visibility);
+			shortAnswerLength.setVisible(visibility && acceptNonKeywordChkBox.getValue());
+			minLetterForAutoComp.setVisible(visibility && showAutoCompleteChkBox.getValue());
+		}
 	}
 	
 	private void save() {
@@ -703,7 +699,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		    	  institute.setVisible(true);
 		    	  questionType.setVisible(true);
 	        	title.setInnerText(constants.addQuestionType());
-	        }		
+	        }
 	}
 
 	public void showFieldsForQuestionType(QuestionTypes questionTypes)
@@ -719,9 +715,9 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		{
 			changeVisibility(allBoxes, false);
 			changeVisibility(imgKeyFields, true);
-			Document.get().getElementById("isDictionaryKeyword").getStyle().setDisplay(Display.NONE);
+			//Document.get().getElementById("isDictionaryKeyword").getStyle().setDisplay(Display.NONE);
 			evaluationGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.NONE);
-			examGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.NONE);
+			multimediaGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.NONE);
 		}
 		else if (questionTypes.equals(QuestionTypes.ShowInImage))
 		{
