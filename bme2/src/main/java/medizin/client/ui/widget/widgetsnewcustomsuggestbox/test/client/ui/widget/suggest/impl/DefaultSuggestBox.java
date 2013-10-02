@@ -15,15 +15,27 @@ import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.BlurEvent;
+import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
+import com.google.gwt.event.dom.client.FocusHandler;
+import com.google.gwt.event.dom.client.HasAllFocusHandlers;
+import com.google.gwt.event.dom.client.HasAllKeyHandlers;
+import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.Widget;
 
 
-public class DefaultSuggestBox<T, W extends EventHandlingValueHolderItem<T>> extends AbstractSuggestBox<T, W> {
+public class DefaultSuggestBox<T, W extends EventHandlingValueHolderItem<T>> extends AbstractSuggestBox<T, W> implements
+		HasAllKeyHandlers,
+		HasAllFocusHandlers, 
+		Focusable {
 
 	@SuppressWarnings("rawtypes")
 	interface SuggestBoxUiBinder extends UiBinder<Widget, DefaultSuggestBox> {
@@ -176,4 +188,44 @@ public class DefaultSuggestBox<T, W extends EventHandlingValueHolderItem<T>> ext
 		
 	}
 
+	@Override
+	public HandlerRegistration addKeyUpHandler(KeyUpHandler handler) {
+		return textField.addKeyUpHandler(handler);
+	}
+
+	@Override
+	public HandlerRegistration addKeyDownHandler(KeyDownHandler handler) {
+		return textField.addKeyDownHandler(handler);
+	}
+
+	@Override
+	public HandlerRegistration addKeyPressHandler(KeyPressHandler handler) {
+		return textField.addKeyPressHandler(handler);
+	}
+
+	@Override
+	public HandlerRegistration addFocusHandler(FocusHandler handler) {
+		return textField.addFocusHandler(handler);
+	}
+
+	@Override
+	public HandlerRegistration addBlurHandler(BlurHandler handler) {
+		return textField.addBlurHandler(handler);
+	}
+
+	@Override
+	public int getTabIndex() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void setAccessKey(char key) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void setTabIndex(int index) {
+		// TODO Auto-generated method stub
+	}
 }
