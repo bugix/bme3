@@ -368,7 +368,7 @@ public class ActivityAcceptQuestionEdit extends AbstractActivityWrapper implemen
 		if(previousQuestionProxy != null) question.setPreviousVersion(previousQuestionProxy);
 		
 		final QuestionTypes questionType = question.getQuestionType().getQuestionType();
-		if(QuestionTypes.Textual.equals(questionType) || QuestionTypes.Sort.equals(questionType)) {
+		if(QuestionTypes.Textual.equals(questionType) || QuestionTypes.Sort.equals(questionType) || QuestionTypes.LongText.equals(questionType)) {
 			for (QuestionResourceClient questionResource : view.getQuestionResources()) {
 				QuestionResourceProxy proxy = questionResourceRequest.create(QuestionResourceProxy.class);
 				proxy.setPath(questionResource.getPath());
@@ -415,7 +415,7 @@ public class ActivityAcceptQuestionEdit extends AbstractActivityWrapper implemen
 		
 		final QuestionTypes questionType = questionProxy.getQuestionType().getQuestionType();
 		
-		if(QuestionTypes.Textual.equals(questionType) || QuestionTypes.Sort.equals(questionType)) {
+		if(QuestionTypes.Textual.equals(questionType) || QuestionTypes.Sort.equals(questionType) || QuestionTypes.LongText.equals(questionType)) {
 			for (QuestionResourceClient questionResource : view.getQuestionResources()) {
 				if (questionResource.getState().equals(State.NEW) || questionResource.getState().equals(State.EDITED)) {
 					QuestionResourceProxy proxy = questionResourceRequest.create(QuestionResourceProxy.class);

@@ -354,6 +354,7 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 			
 			case Textual:
 			case Sort:
+			case LongText:
 			{
 				if(proxy != null && proxy.getQuestionType()!= null && proxy.getQuestionType().getQueHaveImage() != null &&  proxy.getQuestionType().getQueHaveSound() != null && proxy.getQuestionType().getQueHaveVideo() != null) {
 					//setResourceUploadAndResourceViewer(proxy.getQuestionType(),proxy);

@@ -49,7 +49,6 @@ import com.google.gwt.place.shared.PlaceChangeEvent;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.web.bindery.requestfactory.shared.Receiver;
 /**
  * This wrapper is used to provide access control in all activities.
  * @author masterthesis
@@ -68,7 +67,7 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 	
 	protected PersonProxy userLoggedIn;
 	protected InstitutionProxy institutionActive;
-	private int count = 0;
+	//private int count = 0;
 	
 	protected PersonAccessRightProxy personRightProxy;
 	
@@ -89,7 +88,7 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 				@Override
 				public void onSuccess(PersonProxy response) {
 					userLoggedIn = response;
-					newStart(panel, eventBus);
+					//newStart(panel, eventBus);
 					
 				}
 			});
@@ -109,19 +108,20 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 
 				@Override
 				public void onSuccess(PersonAccessRightProxy response) {
-					personRightProxy = response;		
-					
-					if(checkIfUserHasRightsToMenu() == true) {
-						start2(panel, eventBus);	
-					}else {
-						ConfirmationDialogBox.showOkDialogBox(constants.information(), constants.mayNotHaveRights(),new ConfirmDialogBoxOkButtonEventHandler(){
+					if(userLoggedIn != null && institutionActive != null ) {
+						personRightProxy = response;
+						if(checkIfUserHasRightsToMenu() == true) {
+							start2(panel, eventBus);	
+						} else {
+							ConfirmationDialogBox.showOkDialogBox(constants.information(), constants.mayNotHaveRights(),new ConfirmDialogBoxOkButtonEventHandler(){
 
-							@Override
-							public void onOkButtonClicked(ConfirmDialogBoxOkButtonEvent event) {
-								placeController.goTo(new PlaceSystemOverview(PlaceSystemOverview.PLACE_SYSTEM_OVERVIEW));
-							}
-						});
-					}
+								@Override
+								public void onOkButtonClicked(ConfirmDialogBoxOkButtonEvent event) {
+									placeController.goTo(new PlaceSystemOverview(PlaceSystemOverview.PLACE_SYSTEM_OVERVIEW));
+								}
+							});
+						}
+					}	
 				}
 			});
 			
@@ -141,11 +141,11 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 	 * @param eventBus
 	 */
 	private void newStart(final AcceptsOneWidget panel, final EventBus eventBus){
-		count ++;
+		/*count ++;
 		
 		if(count<2){
 			return;
-		}
+		}*/
 
 		if (userLoggedIn==null) {
 			//Window.alert("Please log in");
