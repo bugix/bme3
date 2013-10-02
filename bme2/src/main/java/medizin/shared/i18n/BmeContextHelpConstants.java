@@ -27,8 +27,6 @@ public interface BmeContextHelpConstants extends ConstantsWithLookup {
 
 	public String qtMinAutoCompleteLetter();
 
-	public String qtLengthShortAnswer();
-
 	public String qtMultimediaType();
 
 	public String qtSelectionType();

@@ -766,4 +766,6 @@ public interface BmeConstants extends Constants {
 	public String errorInUpload();
 	
 	public String deleteAnswerConfirmation();
+	
+	public String multimediaAttributes();
 }
