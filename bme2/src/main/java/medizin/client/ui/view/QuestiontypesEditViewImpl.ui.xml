@@ -31,6 +31,26 @@
 				<g:Label ui:field="questionTypeLbl"></g:Label>
 			</lbl:LabeledPanel>
 		</div>
+		
+		<div class="{style.attributeGroup}">
+			<!-- Question specific attributes -->
+			<g:Label styleName="{style.attributeGroupTitle}" ui:field="questionGroupLbl" text="baseGroupLbl"></g:Label>
+			
+			<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="questionLength" min="0" value="0"></lbl:LabeledIntegerBox>
+			<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="answerLength" min="0" value="0"></lbl:LabeledIntegerBox>
+			<lbl:LabeledDoubleBox addStyleNames="{style.labeledBox}" ui:field="answerDiff" min="0" max="100" value="0"></lbl:LabeledDoubleBox>
+
+			<lbl:LabeledPanel addStyleNames="{style.labeledBox}" ui:field="queHasMedia">
+				<g:CheckBox ui:field="queHaveImgChkBox"></g:CheckBox>
+				<g:CheckBox ui:field="queHaveVideoChkBox"></g:CheckBox>
+				<g:CheckBox ui:field="queHaveSoundChkBox"></g:CheckBox>
+			</lbl:LabeledPanel>
+
+			<!-- Matrix Type Field -->
+			<lbl:LabeledPanel addStyleNames="{style.labeledBox}" ui:field="oneToOneAss">
+				<g:CheckBox ui:field="oneToOneAssChkBox"></g:CheckBox>
+			</lbl:LabeledPanel>
+		</div>
 
 		<div class="{style.attributeGroup}">
 			<!-- Exam specific attributes -->
@@ -72,26 +92,6 @@
 			
 			<lbl:LabeledPanel addStyleNames="{style.labeledBox}" ui:field="isDictionaryKeyword">
 				<g:CheckBox ui:field="isDictionaryKeywordChkBox"></g:CheckBox>
-			</lbl:LabeledPanel>
-		</div>
-
-		<div class="{style.attributeGroup}">
-			<!-- Question specific attributes -->
-			<g:Label styleName="{style.attributeGroupTitle}" ui:field="questionGroupLbl" text="baseGroupLbl"></g:Label>
-			
-			<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="questionLength" min="0" value="0"></lbl:LabeledIntegerBox>
-			<lbl:LabeledIntegerBox addStyleNames="{style.labeledBox}" ui:field="answerLength" min="0" value="0"></lbl:LabeledIntegerBox>
-			<lbl:LabeledDoubleBox addStyleNames="{style.labeledBox}" ui:field="answerDiff" min="0" max="100" value="0"></lbl:LabeledDoubleBox>
-
-			<lbl:LabeledPanel addStyleNames="{style.labeledBox}" ui:field="queHasMedia">
-				<g:CheckBox ui:field="queHaveImgChkBox"></g:CheckBox>
-				<g:CheckBox ui:field="queHaveVideoChkBox"></g:CheckBox>
-				<g:CheckBox ui:field="queHaveSoundChkBox"></g:CheckBox>
-			</lbl:LabeledPanel>
-
-			<!-- Matrix Type Field -->
-			<lbl:LabeledPanel addStyleNames="{style.labeledBox}" ui:field="oneToOneAss">
-				<g:CheckBox ui:field="oneToOneAssChkBox"></g:CheckBox>
 			</lbl:LabeledPanel>
 		</div>
 
