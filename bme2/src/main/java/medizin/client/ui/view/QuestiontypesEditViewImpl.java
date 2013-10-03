@@ -302,10 +302,10 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
        {
     	   if (SharedConstant.INFINITE_VALUE.equals(proxy.getSumAnswer()))
     	   {
-    		   sumAnswer.setValue(defaultString(proxy.getSumAnswer()));
     		   sumAnswer.getTextBox().setEnabled(false);
     		   infiniteChkBox.setValue(true);
     	   }
+    	   sumAnswer.setValue(defaultString(proxy.getSumAnswer()));
     	   sumTrueAnswer.setValue(defaultString(proxy.getSumTrueAnswer()));
     	   sumFalseAnswer.setValue(defaultString(proxy.getSumFalseAnswer()));
     	   questionLength.setValue(defaultString(proxy.getQuestionLength()));
