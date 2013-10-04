@@ -105,7 +105,7 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 
 			public void onSuccess(List<PersonProxy> response) {
 				List<PersonProxy> values = new ArrayList<PersonProxy>();
-				PersonProxy lastSelectedReviewer = ClientUtility.getPersonProxyFromCookie(response);
+				PersonProxy lastSelectedReviewer = ClientUtility.getQuestionReviwerPersonProxyFromCookie(response);
 				values.add(null);
 				values.addAll(response);
 				view.setRewiewerPickerValues(values, lastSelectedReviewer);

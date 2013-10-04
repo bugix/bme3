@@ -845,7 +845,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	@Override
 	public void setValuesForQuestion(QuestionProxy question, CommentProxy commentProxy) {
 		if(rewiewer != null && rewiewer.getSelected() != null)
-			Cookies.setCookie(McAppConstant.LAST_SELECTED_REVIEWER, String.valueOf(rewiewer.getSelected().getId()), ClientUtility.getDateFromOneYear());
+			Cookies.setCookie(McAppConstant.LAST_SELECTED_QUESTION_REVIEWER, String.valueOf(rewiewer.getSelected().getId()), ClientUtility.getDateFromOneYear());
 		
 		question.setQuestionType(questionType.getValue());
 		question.setQuestionShortName(questionShortName.getText());

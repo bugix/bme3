@@ -20,6 +20,7 @@ import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.simple.DefaultSuggestOracle;
 import medizin.client.util.AnswerVO;
+import medizin.client.util.ClientUtility;
 import medizin.client.util.Matrix;
 import medizin.client.util.MatrixValidityVO;
 import medizin.client.util.State;
@@ -441,7 +442,7 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 	}
 
 	@Override
-	public void setRewiewerPickerValues(Collection<PersonProxy> values) {
+	public void setRewiewerPickerValues(List<PersonProxy> values) {
 		DefaultSuggestOracle<PersonProxy> suggestOracle1 = (DefaultSuggestOracle<PersonProxy>) rewiewer.getSuggestOracle();
 		suggestOracle1.setPossiblilities((List<PersonProxy>) values);
 		
@@ -459,6 +460,10 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 		});
 		
 		rewiewer.setWidth(150);
+		
+		PersonProxy lastSelectedReviwer = ClientUtility.getAnswerReviwerPersonProxyFromCookie(values);
+		if (lastSelectedReviwer != null)
+			rewiewer.setSelected(lastSelectedReviwer);
 	}
 
 	@Override

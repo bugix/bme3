@@ -20,6 +20,7 @@ import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
@@ -242,16 +243,30 @@ public final class ClientUtility {
 		return date;
 	}
 	
-	public static PersonProxy getPersonProxyFromCookie(List<PersonProxy> values) {
+	public static PersonProxy getQuestionReviwerPersonProxyFromCookie(List<PersonProxy> values) {
 		
-		String cookie = Cookies.getCookie(McAppConstant.LAST_SELECTED_REVIEWER);
+		String cookie = Cookies.getCookie(McAppConstant.LAST_SELECTED_QUESTION_REVIEWER);
 		final Long personid;
 		if (cookie != null && cookie.isEmpty() == false)
 			personid = Long.parseLong(cookie);
 		else
 			personid = null;
 		
-		Optional<PersonProxy> firstMatch = FluentIterable.from(values).firstMatch(personComparator(personid));
+		Optional<PersonProxy> firstMatch = FluentIterable.from(values).filter(Predicates.notNull()).firstMatch(personComparator(personid));
+		
+		return firstMatch.orNull();		
+	}
+	
+	public static PersonProxy getAnswerReviwerPersonProxyFromCookie(List<PersonProxy> values) {
+		
+		String cookie = Cookies.getCookie(McAppConstant.LAST_SELECTED_ANSWER_REVIEWER);
+		final Long personid;
+		if (cookie != null && cookie.isEmpty() == false)
+			personid = Long.parseLong(cookie);
+		else
+			personid = null;
+		
+		Optional<PersonProxy> firstMatch = FluentIterable.from(values).filter(Predicates.notNull()).firstMatch(personComparator(personid));
 		
 		return firstMatch.orNull();		
 	}

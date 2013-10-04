@@ -23,6 +23,7 @@ import medizin.client.request.AnswerRequest;
 import medizin.client.request.CommentRequest;
 import medizin.client.request.MatrixValidityRequest;
 import medizin.client.request.PersonRequest;
+import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.question.AnswerDialogbox;
 import medizin.client.ui.view.question.AnswerDialogboxImpl;
 import medizin.client.ui.view.question.AnswerListView;
@@ -35,6 +36,7 @@ import medizin.client.ui.view.question.QuestionDetailsViewImpl;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.simple.DefaultSuggestOracle;
 import medizin.client.util.AnswerVO;
+import medizin.client.util.ClientUtility;
 import medizin.client.util.MathJaxs;
 import medizin.client.util.Matrix;
 import medizin.client.util.MatrixValidityVO;
@@ -51,6 +53,7 @@ import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.view.client.Range;
@@ -895,7 +898,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements 
 	}*/
 
 	@Override
-	public void saveAnswerProxy(AnswerProxy answerProxy, String answerText, PersonProxy author, PersonProxy rewiewer, Boolean submitToReviewComitee, String comment, Validity validity, String points, String mediaPath, String additionalKeywords,Integer sequenceNumber, final Function<AnswerProxy, Void> function) {
+	public void saveAnswerProxy(AnswerProxy answerProxy, String answerText, PersonProxy author, final PersonProxy rewiewer, Boolean submitToReviewComitee, String comment, Validity validity, String points, String mediaPath, String additionalKeywords,Integer sequenceNumber, final Function<AnswerProxy, Void> function) {
 		
 		Log.info("in saveAnswerProxy method");
 		final CommentRequest commentRequest = requests.commentRequest();
@@ -912,6 +915,9 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements 
 
 				@Override
 				public void onSuccess(Void response) {
+					if(rewiewer != null)
+						Cookies.setCookie(McAppConstant.LAST_SELECTED_ANSWER_REVIEWER, String.valueOf(rewiewer.getId()), ClientUtility.getDateFromOneYear());
+					
 					function.apply(finalAnswerProxy);
 					initAnswerView();
 				}
@@ -937,6 +943,9 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements 
 						@Override
 						public void onSuccess(Object response) {
 							if(response instanceof AnswerProxy) {
+								if(rewiewer != null)
+									Cookies.setCookie(McAppConstant.LAST_SELECTED_ANSWER_REVIEWER, String.valueOf(rewiewer.getId()), ClientUtility.getDateFromOneYear());
+								
 								function.apply((AnswerProxy) response);	
 								initAnswerView();
 							}		
@@ -1200,7 +1209,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements 
 		
 		
 		answerDialogbox.setValidityPickerValues(Arrays.asList(Validity.values()));
-		answerDialogbox.setRewiewerPickerValues(Collections.<PersonProxy>emptyList());
+		//answerDialogbox.setRewiewerPickerValues(Collections.<PersonProxy>emptyList());
 		
 		PersonRequest personRequest = requests.personRequest();
         personRequest.findAllPeople().with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).to(new BMEReceiver<List<PersonProxy>>() {
@@ -1433,7 +1442,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements 
 	}
 
     @Override
-	public void saveAllTheValuesToAnswerAndMatrixAnswer(List<MatrixValidityProxy> currentMatrixValidityProxy, Matrix<MatrixValidityVO> matrixList, PersonProxy author, PersonProxy rewiewer, Boolean submitToReviewComitee, String comment) {
+	public void saveAllTheValuesToAnswerAndMatrixAnswer(List<MatrixValidityProxy> currentMatrixValidityProxy, Matrix<MatrixValidityVO> matrixList, PersonProxy author, final PersonProxy rewiewer, Boolean submitToReviewComitee, String comment) {
 		final CommentRequest commentRequest = requests.commentRequest();
 		final AnswerRequest answerRequest = commentRequest.append(requests.answerRequest());
 		final MatrixValidityRequest validityRequest = answerRequest.append(requests.MatrixValidityRequest());
@@ -1530,6 +1539,8 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements 
 
 			@Override
 			public void onSuccess(Void response) {
+				if(rewiewer != null)
+					Cookies.setCookie(McAppConstant.LAST_SELECTED_ANSWER_REVIEWER, String.valueOf(rewiewer.getId()), ClientUtility.getDateFromOneYear());
 				
 				Log.info("save done for matrix validity");
 				initMatrixAnswerView();
