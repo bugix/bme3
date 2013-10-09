@@ -11,6 +11,7 @@ import medizin.client.proxy.QuestionProxy;
 import medizin.client.style.resources.MyCellTableNoHilightResources;
 import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
+import medizin.client.ui.view.question.learningobjective.QuestionLearningObjectiveSubViewImpl;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.TabPanelHelper;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
@@ -142,6 +143,9 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 	
 	@UiField
 	IconButton keywordAddButton;
+	
+	@UiField(provided=true)
+	QuestionLearningObjectiveSubViewImpl questionLearningObjectiveSubViewImpl;
 
 	private List<AbstractEditableCell<?, ?>> editableCells;
 	
@@ -382,8 +386,19 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 			default:
 			{
 				Log.info("in default case");
-				if(questionTypeDetailPanel.getTabBar().getTabCount() > 2) 
-					questionTypeDetailPanel.remove(2);
+				Log.info("~~~TAB TEXT : " + questionTypeDetailPanel.getTabBar().getTabHTML(0));
+				
+				for (int i=0; i<questionTypeDetailPanel.getTabBar().getTabCount(); i++)
+				{
+					if (questionTypeDetailPanel.getTabBar().getTabHTML(i).equals(constants.media()))
+					{
+						questionTypeDetailPanel.remove(i);
+						break;
+					}
+				}
+				
+				/*if(questionTypeDetailPanel.getTabBar().getTabCount() > 2) 
+					questionTypeDetailPanel.remove(2);*/
 				isAdded = false;
 				break;	
 			}
@@ -396,7 +411,7 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 		}
 	}
 
-	public QuestionDetailsViewImpl(EventBus eventBus, Boolean editDeleteflag, boolean isAnswerEditable, boolean addAnswerRights, boolean isforceView, boolean isAcceptView, boolean isMCQQuestionType) {
+	public QuestionDetailsViewImpl(EventBus eventBus, Boolean editDeleteflag, boolean isAnswerEditable, boolean addAnswerRights, boolean isforceView, boolean isAcceptView, boolean isMCQQuestionType, boolean isDeleteLearningObjective) {
 		CellTable.Resources tableResources = GWT.create(MyCellTableNoHilightResources.class);
 		keywordTable = new CellTable<KeywordProxy>(5, tableResources);
 		
@@ -405,6 +420,7 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 		
 		answerListViewImpl = new AnswerListViewImpl(addAnswerRights, isAnswerEditable,isMCQQuestionType);
 		matrixAnswerListViewImpl = new MatrixAnswerListViewImpl(addAnswerRights, isAnswerEditable);
+		questionLearningObjectiveSubViewImpl = new QuestionLearningObjectiveSubViewImpl(isDeleteLearningObjective);
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		removeEditAndDeleteBtn(editDeleteflag);
@@ -857,6 +873,15 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 		}else {
 			forcedActive.setVisible(true);
 		}
+	}
+
+	public QuestionLearningObjectiveSubViewImpl getQuestionLearningObjectiveSubViewImpl() {
+		return questionLearningObjectiveSubViewImpl;
+	}
+
+	public void setQuestionLearningObjectiveSubViewImpl(
+			QuestionLearningObjectiveSubViewImpl questionLearningObjectiveSubViewImpl) {
+		this.questionLearningObjectiveSubViewImpl = questionLearningObjectiveSubViewImpl;
 	}
 
 	

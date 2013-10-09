@@ -1,14 +1,19 @@
 package medizin.client.factory.request;
 import medizin.client.request.AnswerRequest;
 import medizin.client.request.AnswerToAssQuestionRequest;
+import medizin.client.request.ApplianceRequest;
 import medizin.client.request.AssesmentQuestionRequest;
 import medizin.client.request.AssesmentRequest;
+import medizin.client.request.ClassificationTopicRequest;
 import medizin.client.request.CommentRequest;
 import medizin.client.request.DoctorRequest;
 import medizin.client.request.InstitutionRequest;
 import medizin.client.request.KeywordRequest;
+import medizin.client.request.MainClassificationRequest;
+import medizin.client.request.MainQuestionSkillRequest;
 import medizin.client.request.MatrixValidityRequest;
 import medizin.client.request.McRequest;
+import medizin.client.request.MinorQuestionSkillRequest;
 import medizin.client.request.PersonRequest;
 import medizin.client.request.QuestionEventRequest;
 import medizin.client.request.QuestionRequest;
@@ -16,10 +21,16 @@ import medizin.client.request.QuestionResourceRequest;
 import medizin.client.request.QuestionSumPerPersonRequest;
 import medizin.client.request.QuestionTypeCountPerExamRequest;
 import medizin.client.request.QuestionTypeRequest;
+import medizin.client.request.SkillHasApplianceRequest;
+import medizin.client.request.SkillLevelRequest;
+import medizin.client.request.SkillRequest;
 import medizin.client.request.StaticContentRequest;
 import medizin.client.request.StaticToAssesmentRequest;
 import medizin.client.request.StudentToAssesmentRequest;
+import medizin.client.request.TopicRequest;
 import medizin.client.request.UserAccessRightsRequest;
+import medizin.server.domain.MainClassification;
+import medizin.server.domain.Topic;
 import medizin.server.domain.UserAccessRights;
 
 import com.google.web.bindery.requestfactory.shared.LoggingRequest;
@@ -83,4 +94,22 @@ public interface McAppRequestFactory extends RequestFactory {
     MatrixValidityRequest MatrixValidityRequest();
     
     StudentToAssesmentRequest studentToAssesmentRequest();
+    
+    MainClassificationRequest mainClassificationRequest();
+    
+    ClassificationTopicRequest classificationTopicRequest();
+    
+    TopicRequest topicRequest();
+    
+    SkillRequest skillRequest();
+    
+    SkillHasApplianceRequest skillHasApplianceRequest();
+    
+    ApplianceRequest applianceRequest();
+    
+    SkillLevelRequest skillLevelRequest();
+    
+    MainQuestionSkillRequest mainQuestionSkillRequest();
+    
+    MinorQuestionSkillRequest minorQuestionSkillRequest();
 }

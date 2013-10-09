@@ -756,4 +756,28 @@ public interface BmeConstants extends Constants {
 	public String deleteAnswerConfirmation();
 	
 	public String multimediaAttributes();
+	
+	public String learning();
+			
+	public String majorBtnLbl();
+			
+	public String minorBtnLbl();
+			
+	public String mainClassi();
+			
+	public String classiTopic();
+			
+	public String topicLbl();
+			
+	public String skillLevel();
+			
+	public String addSkill();
+	
+	public String lrnObjAppliance();
+	
+	public String clearAll();
+	
+	public String deleteMajorQuestionConfirmation();
+	
+	public String deleteMinorQuestionConfirmation();
 }
