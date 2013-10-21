@@ -732,7 +732,7 @@ public interface BmeConstants extends Constants {
 	public String editQuestion();
 	
 	public String addMc();
-
+	
 	public String extendedQueMgt();
 			
 	public String deactivatedQue();
