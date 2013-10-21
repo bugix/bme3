@@ -189,9 +189,11 @@ public class MathJaxDialogImpl extends DialogBox implements MathJaxDialog,ClickH
 			MathJaxButton b = (MathJaxButton) source;
 			Log.info("cursor position : " + txtInputBox.getCursorPos());
 			StringBuilder text = new StringBuilder(txtInputBox.getText());
+			int position = txtInputBox.getCursorPos() + b.getValue().length();
 			text.insert(txtInputBox.getCursorPos(), b.getValue());
 			txtInputBox.setText(text.toString());
 			txtInputBox.setFocus(true);
+			txtInputBox.setCursorPos(position);
 			callMathJax(txtInputBox, lblOutput);
 		}
 		

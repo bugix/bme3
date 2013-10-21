@@ -721,18 +721,6 @@ public interface BmeConstants extends Constants {
 	
 	public String digitCount();
 	
-	public String mediaAttributes();
-	
-	public String reviewAttributes();
-	
-	public String organisationalOrder();
-	
-	public String createQuestion();
-	
-	public String editQuestion();
-	
-	public String addMc();
-
 	public String extendedQueMgt();
 			
 	public String deactivatedQue();
@@ -768,4 +756,28 @@ public interface BmeConstants extends Constants {
 	public String deleteAnswerConfirmation();
 	
 	public String multimediaAttributes();
+	
+	public String learning();
+			
+	public String majorBtnLbl();
+			
+	public String minorBtnLbl();
+			
+	public String mainClassi();
+			
+	public String classiTopic();
+			
+	public String topicLbl();
+			
+	public String skillLevel();
+			
+	public String addSkill();
+	
+	public String lrnObjAppliance();
+	
+	public String clearAll();
+	
+	public String deleteMajorQuestionConfirmation();
+	
+	public String deleteMinorQuestionConfirmation();
 }

@@ -1027,39 +1027,39 @@ a:hover, .gwt-Anchor:hover {
 
 .gwt-SuggestBoxPopup {
 	margin-left: 4px;
-	z-index: 2000 !important;
+	z-index: 5000 !important;
 }
 
 .gwt-SuggestBoxPopup strong {
 	background-color: #F1B532;
-	z-index: 2000 !important;
+	z-index: 5000 !important;
 }
 
 .gwt-SuggestBoxPopup .item {
 	padding: 2px 4px;
 	color: #424242;
 	cursor: default;
-	z-index: 2000 !important;
+	z-index: 5000 !important;
 }
 
 .gwt-SuggestBoxPopup .item-selected {
 	background: #F1B532;
-	z-index: 2000 !important;
+	z-index: 5000 !important;
 }
 
 .gwt-SuggestBoxPopup .item-selected strong {
 	background: #FCFDB5;
-	z-index: 2000 !important;
+	z-index: 5000 !important;
 }
 
 .gwt-SuggestBoxPopup .suggestPopupContent {
 	background: white;
-	z-index: 2000 !important;
+	z-index: 5000 !important;
 }
 
 .gwt-SuggestBoxPopup {
 	border: 1px solid #aaa;
-	z-index: 2000 !important;
+	z-index: 5000 !important;
 }
 
 /* .gwt-SuggestBoxPopup .suggestPopupTopCenter {
@@ -4872,4 +4872,55 @@ background: url("images/colorpicker.png");
   color: #000000;
   height: auto;
   overflow: auto;
+}
+
+/* learning obj */
+.learningObjPopupStyle {
+	width: 1210px;
+	height: 700px;
+	border-width: 2px;
+	border-color: #676767;
+	border-style: solid;
+	border-radius:10px;
+}
+
+.learningObjPopupCloseButton{	
+	border-color: #676767;
+    border-radius: 7px 7px 7px 7px;
+    border-width: 2px;
+    left: 1187px;
+    position: absolute;
+    top: -8px
+}
+.learningObjPopupCloseButton:hover {
+	outline-style: none;
+	background: url("images/ui-bg_glass_75_f1b532_1x400.png") repeat-x scroll 50% 50% #f1b532;
+    left: 1187px;
+    position: absolute;
+    top: -8px
+}
+
+.learningObjPopupLabel{
+	margin-left: 8px;
+	margin-right: 8px;
+}
+
+.learningObjPopupButton{
+	margin-right: 8px;
+}
+
+.learningObjScroll{
+	margin-left: 8px;
+	height: 565px;	
+}
+
+.learningObjTable
+{
+	height: 625px;
+}
+
+.bottomBorder{
+	border-bottom-left-radius: 16px;
+	border-bottom-right-radius: 16px;
+	
 }

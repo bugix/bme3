@@ -20,6 +20,7 @@ import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.simple.DefaultSuggestOracle;
 import medizin.client.util.AnswerVO;
+import medizin.client.util.ClientUtility;
 import medizin.client.util.Matrix;
 import medizin.client.util.MatrixValidityVO;
 import medizin.client.util.State;
@@ -111,7 +112,7 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 
 		// Add a button that will add more rows to the table
 
-		addAnswerX = new IconButton(constants.addAnswerX(), new ClickHandler() {
+		addAnswerX = new IconButton(constants.addAnswerY(), new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
@@ -123,7 +124,7 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 		addAnswerX.addStyleName("matrix-answerX-btn");
 		//addAnswerX.getElement().getStyle().setMarginLeft(10, Unit.PX);
 
-		addAnswerY = new IconButton(constants.addAnswerY(), new ClickHandler() {
+		addAnswerY = new IconButton(constants.addAnswerX(), new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
@@ -237,23 +238,25 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 					
 					for (int columnIndex = 1; columnIndex < (totalColumn - 1); columnIndex++) {
 						
-						final MatrixValidityVO matrixValidityVO;
-						if (matrixList.exists(currentRow, columnIndex)) {
-							matrixValidityVO = matrixList.get(currentRow, columnIndex);
-						} else {
-							matrixValidityVO = new MatrixValidityVO();
-							matrixList.set(currentRow, columnIndex, matrixValidityVO);
-						}
-						matrixValidityVO.setAnswerX(answerVO);
-						
-						if(matrixValidityVO.getAnswerY() == null && matrixList.get(1, columnIndex) != null) {
-								MatrixValidityVO otherVO =  matrixList.get(1, columnIndex);				
-								matrixValidityVO.setAnswerY(otherVO.getAnswerY());
-						}
+						if(matrix.isCellPresent(0, columnIndex)  == true && matrix.getHTML(0, columnIndex).trim().isEmpty() == false) {
+							final MatrixValidityVO matrixValidityVO;
+							if (matrixList.exists(currentRow, columnIndex)) {
+								matrixValidityVO = matrixList.get(currentRow, columnIndex);
+							} else {
+								matrixValidityVO = new MatrixValidityVO();
+								matrixList.set(currentRow, columnIndex, matrixValidityVO);
+							}
+							matrixValidityVO.setAnswerX(answerVO);
+							
+							if(matrixValidityVO.getAnswerY() == null && matrixList.get(1, columnIndex) != null) {
+									MatrixValidityVO otherVO =  matrixList.get(1, columnIndex);				
+									matrixValidityVO.setAnswerY(otherVO.getAnswerY());
+							}
 
-						matrixValidityVO.setValidity(Validity.Falsch);
-						
-						addValidityBtnOn(currentRow, columnIndex, matrixValidityVO);
+							matrixValidityVO.setValidity(Validity.Falsch);
+							
+							addValidityBtnOn(currentRow, columnIndex, matrixValidityVO);
+						}
 						/*delegate.saveMatrixValidityValue(matrixValidityVO,Validity.Falsch, new Function<MatrixValidityProxy, Void>() {
 
 							@Override
@@ -366,25 +369,27 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 					}
 
 					for (int rowIndex = 1; rowIndex < (totalRows - 1); rowIndex++) {
-						
-						final MatrixValidityVO matrixValidityVO;
-						if (matrixList.exists(rowIndex, currentColumn)) {
-							matrixValidityVO = matrixList.get(rowIndex, currentColumn);
-						} else {
-							matrixValidityVO = new MatrixValidityVO();
-							matrixList.set(rowIndex, currentColumn, matrixValidityVO);
+						if(matrix.isCellPresent(rowIndex, 0) && matrix.getHTML(rowIndex, 0).trim().isEmpty() == false) {
+							final MatrixValidityVO matrixValidityVO;
+							if (matrixList.exists(rowIndex, currentColumn)) {
+								matrixValidityVO = matrixList.get(rowIndex, currentColumn);
+							} else {
+								matrixValidityVO = new MatrixValidityVO();
+								matrixList.set(rowIndex, currentColumn, matrixValidityVO);
+							}
+							matrixValidityVO.setAnswerY(answerVO);
+							
+							if(matrixValidityVO.getAnswerX() == null && matrixList.get(rowIndex,1) != null) {
+								MatrixValidityVO otherVO =  matrixList.get(rowIndex, 1);
+								matrixValidityVO.setAnswerX(otherVO.getAnswerX());
+							}
+										
+							matrixValidityVO.setValidity(Validity.Falsch);
+							
+							addValidityBtnOn(rowIndex, currentColumn, matrixValidityVO);
+
 						}
-						matrixValidityVO.setAnswerY(answerVO);
-						
-						if(matrixValidityVO.getAnswerX() == null && matrixList.get(rowIndex,1) != null) {
-							MatrixValidityVO otherVO =  matrixList.get(rowIndex, 1);
-							matrixValidityVO.setAnswerX(otherVO.getAnswerX());
-						}
-									
-						matrixValidityVO.setValidity(Validity.Falsch);
-						
-						addValidityBtnOn(rowIndex, currentColumn, matrixValidityVO);
-						
+												
 						/*delegate.saveMatrixValidityValue(matrixValidityVO,Validity.Falsch, new Function<MatrixValidityProxy, Void>() {
 
 							@Override
@@ -441,7 +446,7 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 	}
 
 	@Override
-	public void setRewiewerPickerValues(Collection<PersonProxy> values) {
+	public void setRewiewerPickerValues(List<PersonProxy> values) {
 		DefaultSuggestOracle<PersonProxy> suggestOracle1 = (DefaultSuggestOracle<PersonProxy>) rewiewer.getSuggestOracle();
 		suggestOracle1.setPossiblilities((List<PersonProxy>) values);
 		
@@ -459,6 +464,10 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 		});
 		
 		rewiewer.setWidth(150);
+		
+		PersonProxy lastSelectedReviwer = ClientUtility.getAnswerReviwerPersonProxyFromCookie(values);
+		if (lastSelectedReviwer != null)
+			rewiewer.setSelected(lastSelectedReviwer);
 	}
 
 	@Override

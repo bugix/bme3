@@ -2,7 +2,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:n="urn:import:medizin.client.ui"
 	xmlns:s="urn:import:medizin.client.ui.view.user" xmlns:m="urn:import:medizin.client.ui.view.question"
-	xmlns:medizin="urn:import:medizin.client.ui.widget" xmlns:c="urn:import:com.google.gwt.user.cellview.client" xmlns:i="urn:import:medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl" xmlns:p="urn:import:medizin.client.ui.widget.pager">
+	xmlns:medizin="urn:import:medizin.client.ui.widget" xmlns:c="urn:import:com.google.gwt.user.cellview.client" xmlns:i="urn:import:medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl" xmlns:p="urn:import:medizin.client.ui.widget.pager" xmlns:l="urn:import:medizin.client.ui.view.question.learningobjective">
 	
 	<ui:with type="medizin.shared.i18n.BmeConstants" field="constants"></ui:with>
 	<ui:style src="../../styles.css" >
@@ -148,6 +148,14 @@
 						</table>
 					</g:HTMLPanel>
 				</g:Tab>
+				<g:Tab addStyleNames="{style.ovreflowStyle}" text="{constants.media}">
+					<g:VerticalPanel width="100%">
+						<g:HorizontalPanel ui:field="resourceUploadPanel">
+						</g:HorizontalPanel>
+						<g:HorizontalPanel ui:field="resourceViewPanel" width="100%">
+						</g:HorizontalPanel>
+					</g:VerticalPanel>
+				</g:Tab>
 				<g:Tab addStyleNames="{style.ovreflowStyle}" text="{constants.keywords}">
 					<g:VerticalPanel width="100%">
 						<c:CellTable ui:field="keywordTable" width="100%" addStyleNames="{style.standardTableIcon}"></c:CellTable>
@@ -158,15 +166,12 @@
 							<!-- <c:SimplePager display="{keywordTable}" ui:field="keywordTablePager" ></c:SimplePager> -->							
 						</g:HorizontalPanel>
 					</g:VerticalPanel>
-				</g:Tab>
-				<g:Tab addStyleNames="{style.ovreflowStyle}" text="{constants.media}">
+				</g:Tab>		
+				<g:Tab addStyleNames="{style.ovreflowStyle}" text="{constants.learning}">
 					<g:VerticalPanel width="100%">
-						<g:HorizontalPanel ui:field="resourceUploadPanel">
-						</g:HorizontalPanel>
-						<g:HorizontalPanel ui:field="resourceViewPanel" width="100%">
-						</g:HorizontalPanel>
+						<l:QuestionLearningObjectiveSubViewImpl ui:field="questionLearningObjectiveSubViewImpl"></l:QuestionLearningObjectiveSubViewImpl>						
 					</g:VerticalPanel>
-				</g:Tab>
+				</g:Tab>					
 			</g:TabPanel>
 			<g:VerticalPanel ui:field="answerVerticalPanel" addStyleNames="{style.answerVp}">
 				<m:AnswerListViewImpl ui:field="answerListViewImpl"></m:AnswerListViewImpl> 

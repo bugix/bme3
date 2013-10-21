@@ -208,6 +208,9 @@ public class XmlPaper {
 		addToElement(doc, questionTypeElement, QUESTION_TYPE_MAX_WORD_LENGTH,questionType.getMaxWordCount());      
 		addToElement(doc, questionTypeElement, QUESTION_TYPE_MAX_QUESTION_LENGTH,questionType.getQuestionLength());			
 		addToElement(doc, questionTypeElement, QUESTION_TYPE_KEYWORD_HIGHLIGHT,questionType.getKeywordHighlight());
+		addToElement(doc, questionTypeElement, QUESTION_TYPE_HAVE_IMAGE,questionType.getQueHaveImage());            
+		addToElement(doc, questionTypeElement, QUESTION_TYPE_HAVE_AUDIO,questionType.getQueHaveSound());            
+		addToElement(doc, questionTypeElement, QUESTION_TYPE_HAVE_VIDEO,questionType.getQueHaveVideo());
 	}
 
 	private void showInImageQuestionType(Document doc, Element questionTypeElement, QuestionType questionType) {
@@ -219,7 +222,11 @@ public class XmlPaper {
 		addToElement(doc, questionTypeElement, QUESTION_TYPE_MAX_ANSWER_LENGTH,questionType.getAnswerLength());             			
 		addToElement(doc, questionTypeElement, QUESTION_TYPE_SHORT_ANSWER_LENGTH,questionType.getLengthShortAnswer());      
 		addToElement(doc, questionTypeElement, QUESTION_TYPE_KEYWORD_COUNT,questionType.getKeywordCount());                 
-		addToElement(doc, questionTypeElement, QUESTION_TYPE_AUTOCOMPLETE,questionType.getShowAutocomplete());        
+		addToElement(doc, questionTypeElement, QUESTION_TYPE_AUTOCOMPLETE,questionType.getShowAutocomplete());
+		addToElement(doc, questionTypeElement, QUESTION_TYPE_IS_DICTIONARY_KEYWORD, questionType.getIsDictionaryKeyword());
+		addToElement(doc, questionTypeElement, QUESTION_TYPE_ALLOW_TYPING, questionType.getAllowTyping());
+		addToElement(doc, questionTypeElement, QUESTION_TYPE_MIN_AUTOCOMPLETE_LETTER, questionType.getMinAutoCompleteLetter());
+		addToElement(doc, questionTypeElement, QUESTION_TYPE_ACCEPT_NON_KEYWORD, questionType.getAcceptNonKeyword());
 	}
 
 	private void mcqQuestionType(Document doc, Element questionTypeElement, QuestionType questionType) {
@@ -538,4 +545,8 @@ public class XmlPaper {
 	private static final String ROOT = "assessment";
 	private static final String EMPTY_VALUE = "";
 	private static final String ANSWER_ID_ATTRIBUTE = "answerId";
+	private static final String QUESTION_TYPE_IS_DICTIONARY_KEYWORD = "isdictionarykeyword";
+	private static final String QUESTION_TYPE_ALLOW_TYPING = "allowtyping";
+	private static final String QUESTION_TYPE_MIN_AUTOCOMPLETE_LETTER = "minautocompleteletters";
+	private static final String QUESTION_TYPE_ACCEPT_NON_KEYWORD = "acceptnonkeyword";
 }

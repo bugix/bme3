@@ -36,7 +36,7 @@ public interface MatrixAnswerView {
 
 	void setAutherPickerValues(Collection<PersonProxy> values,PersonProxy logedUser, boolean isAdminOrInstitutionalAdmin);
 
-	void setRewiewerPickerValues(Collection<PersonProxy> values);
+	void setRewiewerPickerValues(List<PersonProxy> values);
 
 	void display();
 

@@ -31,7 +31,7 @@ public interface AnswerDialogbox extends IsWidget {
     void setDelegate(Delegate delegate);
 
 	/*RequestFactoryEditorDriver<AnswerProxy, AnswerDialogboxImpl> createEditorDriver();*/
-	void setRewiewerPickerValues(Collection<PersonProxy> values);
+	void setRewiewerPickerValues(List<PersonProxy> values);
 
 	void setValidityPickerValues(Collection<Validity> values);
 
