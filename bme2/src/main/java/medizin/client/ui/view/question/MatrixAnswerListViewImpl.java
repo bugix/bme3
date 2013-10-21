@@ -285,22 +285,22 @@ public class MatrixAnswerListViewImpl extends Composite implements MatrixAnswerL
 		tableAnswer.setColumnWidth(columnIndex, "20px");
 		columnIndex++;
 		
-		tableAnswer.addColumn(new Column<MatrixValidityProxy, MatrixValidityProxy>(new AnswerXTextCell()) {
+		tableAnswer.addColumn(new Column<MatrixValidityProxy, MatrixValidityProxy>(new AnswerYTextCell()) {
 			@Override
 			public MatrixValidityProxy getValue(MatrixValidityProxy object) {
 				return object;
 			}
 		}, constant.answerX());
 		columnIndex++;
-
-		tableAnswer.addColumn(new Column<MatrixValidityProxy, MatrixValidityProxy>(new AnswerYTextCell()) {
+		
+		tableAnswer.addColumn(new Column<MatrixValidityProxy, MatrixValidityProxy>(new AnswerXTextCell()) {
 			@Override
 			public MatrixValidityProxy getValue(MatrixValidityProxy object) {
 				return object;
 			}
 		}, constant.answerY());
 		columnIndex++;
-		
+
 		if (isEditable == true) {
 			addColumn(new EditIconCell(McAppConstant.EDIT_ICON, new ActionCell.Delegate<MatrixValidityProxy>() {
 				public void execute(MatrixValidityProxy matrixValidity) {

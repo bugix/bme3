@@ -131,7 +131,7 @@
 		</table>
 
 		<!-- <div class="{style.barPopup}"> -->
-		<div>
+		<div style="float: right;margin-right: 5px;">
 			<m:IconButton ui:field="save" icon="disk" text="{cc.save}"></m:IconButton>
 			<m:IconButton ui:field="closeButton" icon="closethick" text="{cc.cancel}"></m:IconButton>
 

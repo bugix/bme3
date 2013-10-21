@@ -714,9 +714,9 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 	}
 	
 	@Override
-	public void setRewiewerPickerValues(Collection<PersonProxy> values) {
+	public void setRewiewerPickerValues(List<PersonProxy> values) {
 		DefaultSuggestOracle<PersonProxy> suggestOracle1 = (DefaultSuggestOracle<PersonProxy>) rewiewer.getSuggestOracle();
-		suggestOracle1.setPossiblilities((List<PersonProxy>) values);
+		suggestOracle1.setPossiblilities(values);
 		 /* Collection<MyObjectType> myCollection = ...;
 		 List<MyObjectType> list = new ArrayList<MyObjectType>(myCollection);*/
 		rewiewer.setSuggestOracle(suggestOracle1);
@@ -734,6 +734,10 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 				}
 			}
 		});
+		
+		PersonProxy lastSelectedReviwer = ClientUtility.getAnswerReviwerPersonProxyFromCookie(values);
+		if (lastSelectedReviwer != null)
+			rewiewer.setSelected(lastSelectedReviwer);
 	}
 
 	@Override

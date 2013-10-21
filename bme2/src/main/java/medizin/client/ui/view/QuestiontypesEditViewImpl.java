@@ -302,10 +302,10 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
        {
     	   if (SharedConstant.INFINITE_VALUE.equals(proxy.getSumAnswer()))
     	   {
-    		   sumAnswer.setValue(defaultString(proxy.getSumAnswer()));
     		   sumAnswer.getTextBox().setEnabled(false);
     		   infiniteChkBox.setValue(true);
     	   }
+    	   sumAnswer.setValue(defaultString(proxy.getSumAnswer()));
     	   sumTrueAnswer.setValue(defaultString(proxy.getSumTrueAnswer()));
     	   sumFalseAnswer.setValue(defaultString(proxy.getSumFalseAnswer()));
     	   questionLength.setValue(defaultString(proxy.getQuestionLength()));
@@ -710,6 +710,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 			changeVisibility(textualFields, true);
 			evaluationGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.NONE);
 			examGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.BLOCK);
+			multimediaGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.NONE);
 		}
 		else if (questionTypes.equals(QuestionTypes.Imgkey))
 		{
@@ -717,6 +718,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 			changeVisibility(imgKeyFields, true);
 			//Document.get().getElementById("isDictionaryKeyword").getStyle().setDisplay(Display.NONE);
 			evaluationGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.NONE);
+			examGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.BLOCK);
 			multimediaGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.NONE);
 		}
 		else if (questionTypes.equals(QuestionTypes.ShowInImage))
@@ -725,6 +727,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 			changeVisibility(showInImgFields, true);
 			evaluationGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.NONE);
 			examGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.NONE);
+			multimediaGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.NONE);
 		}
 		else if (questionTypes.equals(QuestionTypes.LongText))
 		{
@@ -732,6 +735,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 			changeVisibility(longTextFields, true);
 			evaluationGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.BLOCK);
 			examGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.BLOCK);
+			multimediaGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.NONE);
 		}
 		else if (questionTypes.equals(QuestionTypes.Matrix))
 		{
@@ -739,6 +743,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 			changeVisibility(matrixFields, true);
 			evaluationGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.NONE);
 			examGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.NONE);
+			multimediaGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.NONE);
 		} 
 		else if (questionTypes.equals(QuestionTypes.MCQ))
 		{
@@ -746,6 +751,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 			changeVisibility(mcqFields, true);
 			evaluationGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.NONE);
 			examGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.BLOCK);
+			multimediaGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.BLOCK);
 		} 
 		else
 		{
@@ -753,6 +759,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 			// when is "else" displayed??
 			evaluationGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.BLOCK);
 			examGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.BLOCK);
+			multimediaGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.NONE);
 		}
 	}
 	
