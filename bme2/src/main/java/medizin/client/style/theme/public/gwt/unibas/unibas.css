@@ -840,11 +840,19 @@ a:hover, .gwt-Anchor:hover {
 }
 
 .gwt-RichTextArea {
-	
+	min-height: 26px;
+	padding: 0 6px;
+	border: 1px solid #AAAAAA;
+	border-radius: 2px;
+	font-family: Verdana, Arial, sans-serif;
+	font-size: 12px;
+	box-shadow: 2px 1px 3px #CCCCCC inset;
 }
 
 .hasRichTextToolbar {
-    border: 0;
+	border-top-right-radius: 0;
+	border-top-left-radius: 0;
+    border-top: 0;
     background-color: #FFFFFF;
     cursor: text;
 }
@@ -854,12 +862,13 @@ a:hover, .gwt-Anchor:hover {
 }
 
 .gwt-RichTextToolbar {
-	border-top-right-radius: 8px;
-	border-top-left-radius: 8px; 
+	border-top-right-radius: 2px;
+	border-top-left-radius: 2px; 
 	border: 1px solid #AAAAAA;
-	border-bottom: 1px solid #dddddd;
-	padding: 10px;
+	border-bottom: 0;
+	padding: 8px 3px 8px 6px;
 	margin: 0px;
+	box-shadow: 3px 2px 3px #CCCCCC inset;
 }
 
 .gwt-RichTextToolbar .gwt-PushButton-up {
@@ -1409,18 +1418,33 @@ a:hover, .gwt-Anchor:hover {
 
 .unibas-LabelledTextBox {
 	background: linear-gradient(to right top, #FFFFF6 0px, #FFFFFF 100%) repeat scroll 0 0 transparent;
+	/*background: linear-gradient(to right top, #FFFFF6 0px, #FFFFFF 100%) repeat scroll 0 0 transparent;*/
     border-radius: 2px 2px 2px 2px;
     box-shadow: 2px 2px 2px #DDDDDD;
     margin: 4px 0 8px;
     padding: 8px;
 }
 
-.unibas-LabelledTextBox .gwt-TextBox {
+.unibas-LabelledTextBox-with-help {
+	background: url("images/help.png") no-repeat scroll right 8px top 8px, linear-gradient(to right top, #FFFFF6 0px, #FFFFFF 100%) repeat scroll 0 0 transparent;
+	/*background: linear-gradient(to right top, #FFFFF6 0px, #FFFFFF 100%) repeat scroll 0 0 transparent;*/
+    border-radius: 2px 2px 2px 2px;
+    box-shadow: 2px 2px 2px #DDDDDD;
+    margin: 4px 0 8px;
+    padding: 8px;
+    cursor: pointer;
+}
+
+.unibas-LabelledTextBox .gwt-TextBox,
+.unibas-LabelledTextBox-with-help .gwt-TextBox,
+.unibas-LabelledTextBox .gwt-TextArea,
+.unibas-LabelledTextBox-with-help .gwt-TextArea {
 	width: 94%;
 }
 
-.unibas-LabelledTextBox .gwt-TextArea {
-	width: 94%;
+.unibas-LabelledTextBox .gwt-RichTextArea,
+.unibas-LabelledTextBox-with-help .gwt-RichTextArea {
+	width: 97.25%;
 }
 
 .unibas-LabelledTextBox-focused {

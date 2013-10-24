@@ -22,7 +22,7 @@
         </g:HTMLPanel>
         <g:HTMLPanel ui:field="editorPanel">
         	<g:ValueListBox ui:field="picker"/>
-            <my:IconButton ui:field="add"></my:IconButton> <br/>
+            <my:IconButton ui:field="add" icon="plusthick"></my:IconButton> <br/>
             <g:FlexTable ui:field="table"/>
         </g:HTMLPanel>
     </g:HTMLPanel>

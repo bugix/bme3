@@ -18,6 +18,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Focusable;
+import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -29,6 +30,7 @@ public class LabeledPanel extends Composite implements HasWidgets, Focusable, Ha
 	
 	private final String styleName = "unibas-LabelledTextBox";
 	private final String focusStyleName = "unibas-LabelledTextBox-focused";
+	private final String helpStyleName = "unibas-LabelledTextBox-with-help";
 	
 	private FocusPanel wrapperPanel;
 	private VerticalPanel parentPanel;
@@ -122,7 +124,9 @@ public class LabeledPanel extends Composite implements HasWidgets, Focusable, Ha
 	public void setTabIndex(int index) {
 		wrapperPanel.setTabIndex(index);
 	}
-
+	
+	// TODO / FIXME : add() should have no side FX; styles should not be added 
+	
 	@Override
 	public void add(Widget w) {
 		mainPanel.add(w);
@@ -132,7 +136,6 @@ public class LabeledPanel extends Composite implements HasWidgets, Focusable, Ha
 				FocusDelegatingHandler handler = new FocusDelegatingHandler((Focusable) w);		
 				wrapperPanel.addClickHandler(handler);
 				wrapperPanel.addFocusHandler(handler);
-				wrapperPanel.addMouseOverHandler(handler);
 			}
 			
 			if (w instanceof HasFocusHandlers) {
@@ -199,6 +202,8 @@ public class LabeledPanel extends Composite implements HasWidgets, Focusable, Ha
 			});
 			hasContextHelpHandlers = true;
 		}
+		removeStyleName(styleName);
+		addStyleName(helpStyleName);
 	}
 
 	@Override

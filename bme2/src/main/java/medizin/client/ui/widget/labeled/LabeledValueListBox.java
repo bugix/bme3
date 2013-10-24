@@ -31,6 +31,7 @@ import com.google.gwt.view.client.ProvidesKey;
 public class LabeledValueListBox<T> extends Composite implements Focusable, HasFocusHandlers, HasBlurHandlers, HasValue<T>, IsEditor<TakesValueEditor<T>>, HasContextHelp  {
 	protected final String styleName = "unibas-LabelledTextBox";
 	protected final String focusStyleName = "unibas-LabelledTextBox-focused";
+	protected final String helpStyleName = "unibas-LabelledTextBox-with-help";
 	private FocusableValueListBox<T> valueListBox;
 	protected Label label;
 	protected FocusPanel wrapper;
@@ -60,7 +61,7 @@ public class LabeledValueListBox<T> extends Composite implements Focusable, HasF
 		FocusDelegatingHandler handler = new FocusDelegatingHandler(valueListBox);		
 		wrapper.addClickHandler(handler);
 		wrapper.addFocusHandler(handler);
-		wrapper.addMouseOverHandler(handler);
+//		wrapper.addMouseOverHandler(handler);
 		
 		valueListBox.addFocusHandler(new FocusHandler() {
 			@Override
@@ -191,5 +192,7 @@ public class LabeledValueListBox<T> extends Composite implements Focusable, HasF
 			});
 			hasContextHelpHandlers = true;
 		}
+		removeStyleName(styleName);
+		addStyleName(helpStyleName);
 	}
 }

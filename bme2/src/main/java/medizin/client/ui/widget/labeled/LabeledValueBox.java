@@ -26,6 +26,7 @@ public abstract class LabeledValueBox<T> extends Composite implements Focusable,
 	
 	protected final String styleName = "unibas-LabelledTextBox";
 	protected final String focusStyleName = "unibas-LabelledTextBox-focused";
+	protected final String helpStyleName = "unibas-LabelledTextBox-with-help";
 	protected ValueBoxBase<T> valueBox;
 	protected Label label;
 	protected FocusPanel wrapper;
@@ -54,7 +55,7 @@ public abstract class LabeledValueBox<T> extends Composite implements Focusable,
 		FocusDelegatingHandler handler = new FocusDelegatingHandler(valueBox);
 		wrapper.addClickHandler(handler);
 		wrapper.addFocusHandler(handler);
-		wrapper.addMouseOverHandler(handler);
+//		wrapper.addMouseOverHandler(handler);
 		
 		valueBox.addFocusHandler(new FocusHandler() {
 			@Override
@@ -190,5 +191,7 @@ public abstract class LabeledValueBox<T> extends Composite implements Focusable,
 			});
 			hasContextHelpHandlers = true;
 		}
+		removeStyleName(styleName);
+		addStyleName(helpStyleName);
 	}
 }

@@ -129,6 +129,12 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 
 	@UiField(provided = true)
 	public LabeledValueListBox<QuestionTypeProxy> questionType = new LabeledValueListBox<QuestionTypeProxy>(QuestionTypeProxyRenderer.instance(),new EntityProxyKeyProvider<medizin.client.proxy.QuestionTypeProxy>());
+	
+	@UiField
+	public LabeledPanel questionTypeDescription;
+	
+	@UiField
+	public Label questionTypeDescriptionText;
 
 	@UiField
 	public LabeledTextBox questionShortName;
@@ -254,9 +260,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		this.eventBus = eventBus;
 		this.userLoggedIn = userLoggedIn;
 		questionTextArea = new RichTextArea();
-		questionTextArea.setSize("100%", "14em");
 		toolbar = new RichTextToolbar(questionTextArea);
-		toolbar.setWidth("100%");
 		
 		initWidget(uiBinder.createAndBindUi(this));
 		
@@ -331,7 +335,14 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 			@Override
 			public void onValueChange(ValueChangeEvent<QuestionTypeProxy> event) {
 				//Note: question is null in create mode 
-				questionType.setHelpText(getQuestionTypeHelpText(event.getValue()));
+				QuestionTypeProxy qt = questionType.getValue();
+				if (qt != null) {
+					questionTypeDescription.setVisible(true);
+					questionTypeDescription.setLabelText(qt.getLongName());
+					questionTypeDescriptionText.setText(qt.getDescription());
+				} else {
+					questionTypeDescription.setVisible(false);
+				}
 				setMediaView(event.getValue(),question);
 				setDigitCount();
 			}
@@ -360,14 +371,6 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		}
 	}
 	
-	private String getQuestionTypeHelpText(QuestionTypeProxy qt) {
-		if (qt == null)
-			return contextHelp.qQuestionType(); 
-		return "<p>" + contextHelp.qQuestionType() 
-		+ "</p><p><strong>" + qt.getShortName() 
-		+ "</strong><br />" + qt.getDescription() + "</p>";
-	}
-
 	private void setDigitCount() {
 		if(questionType.getValue() != null) {
 			final int length = questionTextArea.getText().length();
@@ -399,7 +402,6 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		
 		questionShortName.setValue(ClientUtility.defaultString(question.getQuestionShortName()));
 		questionType.setValue(question.getQuestionType());
-		questionType.setHelpText(getQuestionTypeHelpText(question.getQuestionType()));
 		questionTextArea.setHTML(ClientUtility.defaultString(question.getQuestionText()));
 		
 		if(isAuthorReviewerEditable == true) {
@@ -504,8 +506,10 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	public void setQuestionTypePickerValues(List<QuestionTypeProxy> values) {
 		if(values != null && values.isEmpty() == false) {
 			questionType.setValue(values.get(0));
-			questionType.setHelpText(getQuestionTypeHelpText(values.get(0)));
 			setMediaView(questionType.getValue(),question);
+			questionTypeDescription.setVisible(true);
+			questionTypeDescription.setLabelText(values.get(0).getLongName());
+			questionTypeDescriptionText.setText(values.get(0).getDescription());
 		}
 		questionType.setAcceptableValues(values);
 		setDigitCount();

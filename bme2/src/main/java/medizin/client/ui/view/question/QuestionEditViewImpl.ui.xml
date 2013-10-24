@@ -32,15 +32,18 @@
 			<g:Label styleName="{style.attributeGroupTitle}" ui:field="baseGroupLbl" text="baseGroupLbl"></g:Label>
 			
 			<lbl:LabeledValueListBox addStyleNames="{style.labeledBox}" ui:field="questionType"></lbl:LabeledValueListBox>
+			
+			<lbl:LabeledPanel visible="false" ui:field="questionTypeDescription">
+				<g:Label ui:field="questionTypeDescriptionText"></g:Label>
+			</lbl:LabeledPanel>
+			
 			<lbl:LabeledTextBox addStyleNames="{style.labeledBox}" ui:field="questionShortName"></lbl:LabeledTextBox>
 			<lbl:LabeledPanel addStyleNames="{style.labeledBox}" ui:field="richTextPanel">
-				<t:RichTextToolbar ui:field="toolbar" />
-				<g:RichTextArea ui:field='questionTextArea' enabled="false" />
-				<g:HTML ui:field="digitCount" styleName="{style.digitCount}"></g:HTML>
-<!--  				<div
-										style="border-bottom-left-radius: 2px; border-bottom-right-radius: 2px; border: 1px solid #AAA; border-top: 0; padding: 4px">
-										<div ui:field="descriptionValue">
-										</div>-->
+				<g:VerticalPanel>
+					<t:RichTextToolbar ui:field="toolbar" />
+					<g:RichTextArea ui:field='questionTextArea' enabled="false" />
+					<g:HTML ui:field="digitCount" styleName="{style.digitCount}"></g:HTML>
+				</g:VerticalPanel>
 			</lbl:LabeledPanel>
 		</div>
 		
@@ -58,10 +61,7 @@
 		<div class="{style.attributeGroup}">
 			<!-- Autor / Reviewer / area of experties attributes -->
 			<g:Label styleName="{style.attributeGroupTitle}" ui:field="reviewLbl" text="reviewLbl"></g:Label>
-			
-			<!-- <lbl:LabeledSuggestBox addStyleNames="{style.labeledBox}" ui:field="author"></lbl:LabeledSuggestBox>
-			<lbl:LabeledSuggestBox addStyleNames="{style.labeledBox}" ui:field="reviewer"></lbl:LabeledSuggestBox>-->
-			
+					
 			<lbl:LabeledPanel addStyleNames="{style.labeledBox}" ui:field="authorPanel">
 				<i:DefaultSuggestBox ui:field="author"></i:DefaultSuggestBox>
 				<g:Label ui:field="lblAuthorValue" visible="false"></g:Label>
