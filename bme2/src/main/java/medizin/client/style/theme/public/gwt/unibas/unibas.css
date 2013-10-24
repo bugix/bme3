@@ -1390,7 +1390,7 @@ a:hover, .gwt-Anchor:hover {
 
 .gwt-TextArea {
 	min-height: 26px;
-	padding: 0 6px;
+	padding: 4px 6px;
 	border: 1px solid #AAAAAA;
 	border-radius: 2px;
 	font-family: Verdana, Arial, sans-serif;
@@ -1416,7 +1416,7 @@ a:hover, .gwt-Anchor:hover {
 	color: #888;
 }
 
-.unibas-LabelledTextBox {
+.unibas-LabeledTextBox {
 	background: linear-gradient(to right top, #FFFFF6 0px, #FFFFFF 100%) repeat scroll 0 0 transparent;
 	/*background: linear-gradient(to right top, #FFFFF6 0px, #FFFFFF 100%) repeat scroll 0 0 transparent;*/
     border-radius: 2px 2px 2px 2px;
@@ -1425,7 +1425,7 @@ a:hover, .gwt-Anchor:hover {
     padding: 8px;
 }
 
-.unibas-LabelledTextBox-with-help {
+.unibas-LabeledTextBox-with-help {
 	background: url("images/help.png") no-repeat scroll right 8px top 8px, linear-gradient(to right top, #FFFFF6 0px, #FFFFFF 100%) repeat scroll 0 0 transparent;
 	/*background: linear-gradient(to right top, #FFFFF6 0px, #FFFFFF 100%) repeat scroll 0 0 transparent;*/
     border-radius: 2px 2px 2px 2px;
@@ -1435,23 +1435,23 @@ a:hover, .gwt-Anchor:hover {
     cursor: pointer;
 }
 
-.unibas-LabelledTextBox .gwt-TextBox,
-.unibas-LabelledTextBox-with-help .gwt-TextBox,
-.unibas-LabelledTextBox .gwt-TextArea,
-.unibas-LabelledTextBox-with-help .gwt-TextArea {
+.unibas-LabeledTextBox .gwt-TextBox,
+.unibas-LabeledTextBox-with-help .gwt-TextBox,
+.unibas-LabeledTextBox .gwt-TextArea,
+.unibas-LabeledTextBox-with-help .gwt-TextArea {
 	width: 94%;
 }
 
-.unibas-LabelledTextBox .gwt-RichTextArea,
-.unibas-LabelledTextBox-with-help .gwt-RichTextArea {
+.unibas-LabeledTextBox .gwt-RichTextArea,
+.unibas-LabeledTextBox-with-help .gwt-RichTextArea {
 	width: 97.25%;
 }
 
-.unibas-LabelledTextBox-focused {
+.unibas-LabeledTextBox-focused {
 	background: linear-gradient(to right top, #FFF2BE 0px, #FFFFFF 100%) !important;
 }
 
-.unibas-LabelledTextBox-Label {
+.unibas-LabeledTextBox-Label {
 	font-weight: bold;
     margin: 0 0 8px;
 }

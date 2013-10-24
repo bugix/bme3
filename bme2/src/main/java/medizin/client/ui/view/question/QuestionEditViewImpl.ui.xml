@@ -38,13 +38,15 @@
 			</lbl:LabeledPanel>
 			
 			<lbl:LabeledTextBox addStyleNames="{style.labeledBox}" ui:field="questionShortName"></lbl:LabeledTextBox>
-			<lbl:LabeledPanel addStyleNames="{style.labeledBox}" ui:field="richTextPanel">
+			<!-- <lbl:LabeledPanel addStyleNames="{style.labeledBox}" ui:field="richTextPanel">
 				<g:VerticalPanel>
 					<t:RichTextToolbar ui:field="toolbar" />
 					<g:RichTextArea ui:field='questionTextArea' enabled="false" />
 					<g:HTML ui:field="digitCount" styleName="{style.digitCount}"></g:HTML>
 				</g:VerticalPanel>
-			</lbl:LabeledPanel>
+			</lbl:LabeledPanel> -->
+			
+			<lbl:LabeledRichTextArea addStyleNames="{style.labeledBox}" ui:field="questionTextArea"></lbl:LabeledRichTextArea>
 		</div>
 		
 		<div class="{style.attributeGroup}" id="mediaGroup">
@@ -74,7 +76,6 @@
 			 
 			<lbl:LabeledPanel addStyleNames="{style.labeledBox}" ui:field="reviewCommitteePanel">
 				<g:CheckBox ui:field="submitToReviewComitee" />
-				<g:Label styleName="{style.valueLabel}" ui:field="lblSubmitToReviewComitee" visible="false"></g:Label>
 			</lbl:LabeledPanel>
 		</div>
 

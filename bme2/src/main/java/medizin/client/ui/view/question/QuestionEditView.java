@@ -64,7 +64,7 @@ public interface QuestionEditView extends IsWidget {
 	
 	void addPictureToQuestionResources(QuestionResourceProxy questionResourceProxyForPicture);
 	
-	void disableEnableAuthorReviewerValue(boolean flag);
+//	void disableEnableAuthorReviewerValue(boolean flag);
 
 	void setResendToReviewBtn(boolean isResendToReview);
 

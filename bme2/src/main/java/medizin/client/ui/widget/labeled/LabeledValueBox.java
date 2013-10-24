@@ -24,9 +24,9 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public abstract class LabeledValueBox<T> extends Composite implements Focusable, HasFocusHandlers, HasBlurHandlers, HasValue<T>, IsEditor<ValueBoxEditor<T>>, HasContextHelp {
 	
-	protected final String styleName = "unibas-LabelledTextBox";
-	protected final String focusStyleName = "unibas-LabelledTextBox-focused";
-	protected final String helpStyleName = "unibas-LabelledTextBox-with-help";
+	protected final String styleName = "unibas-LabeledTextBox";
+	protected final String focusStyleName = "unibas-LabeledTextBox-focused";
+	protected final String helpStyleName = "unibas-LabeledTextBox-with-help";
 	protected ValueBoxBase<T> valueBox;
 	protected Label label;
 	protected FocusPanel wrapper;
@@ -80,7 +80,7 @@ public abstract class LabeledValueBox<T> extends Composite implements Focusable,
 		initWidget(wrapper);
 		wrapper.setStyleName(styleName);
 		panel.setWidth("100%");
-		label.setStyleName("unibas-LabelledTextBox-Label");
+		label.setStyleName("unibas-LabeledTextBox-Label");
 	}	
 	
 	public void setLabelText(String label) {

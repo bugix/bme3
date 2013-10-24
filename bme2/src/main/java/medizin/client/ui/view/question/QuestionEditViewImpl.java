@@ -23,6 +23,7 @@ import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.dialogbox.receiver.ReceiverDialog;
 import medizin.client.ui.widget.labeled.LabeledPanel;
+import medizin.client.ui.widget.labeled.LabeledRichTextArea;
 import medizin.client.ui.widget.labeled.LabeledTextArea;
 import medizin.client.ui.widget.labeled.LabeledTextBox;
 import medizin.client.ui.widget.labeled.LabeledValueListBox;
@@ -140,16 +141,19 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	public LabeledTextBox questionShortName;
 	
 	@UiField
-	public LabeledPanel richTextPanel;
-	
-	@UiField(provided = true)
-	public RichTextToolbar toolbar;
-	
-	@UiField(provided = true)
-	public RichTextArea questionTextArea;
-	
-	@UiField
-	public HTML digitCount;
+	public LabeledRichTextArea questionTextArea;
+//	
+//	@UiField
+//	public LabeledPanel richTextPanel;
+//	
+//	@UiField(provided = true)
+//	public RichTextToolbar toolbar;
+//	
+//	@UiField(provided = true)
+//	public RichTextArea questionTextArea;
+//	
+//	@UiField
+//	public HTML digitCount;
 	
 	@UiField
 	public LabeledPanel uploadResourcePanel;
@@ -185,9 +189,6 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 
 	@UiField
 	public LabeledPanel reviewCommitteePanel;
-	
-	@UiField 
-	Label lblSubmitToReviewComitee;
 	
 	@UiField
 	public CheckBox submitToReviewComitee;
@@ -259,9 +260,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 
 		this.eventBus = eventBus;
 		this.userLoggedIn = userLoggedIn;
-		questionTextArea = new RichTextArea();
-		toolbar = new RichTextToolbar(questionTextArea);
-		
+				
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		reciverMap.put("questionShortName", questionShortName);
@@ -293,8 +292,8 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		questionShortName.setLabelText(constants.shortName());
 		questionShortName.setHelpText(contextHelp.qShortName());
 		
-		richTextPanel.setLabelText(constants.questionText());
-		richTextPanel.setHelpText(contextHelp.qQuestion());
+		questionTextArea.setLabelText(constants.questionText());
+		questionTextArea.setHelpText(contextHelp.qQuestion());
 		
 		uploadResourcePanel.setLabelText(constants.uploadResource());
 		uploadResourcePanel.setHelpText(contextHelp.qUploadResource());
@@ -348,15 +347,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 			}
 
 		});
-		
-		questionTextArea.addKeyUpHandler(new KeyUpHandler() {
-			
-			@Override
-			public void onKeyUp(KeyUpEvent event) {
-				setDigitCount();
-			}
-		});
-		
+				
 		setDigitCount();
 		
 		setResendToReviewBtn(isResendToReview);
@@ -372,18 +363,11 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	}
 	
 	private void setDigitCount() {
-		if(questionType.getValue() != null) {
-			final int length = questionTextArea.getText().length();
-			final String lengthText;
-			if(length > questionType.getValue().getQuestionLength()) {
-				lengthText =  "<span style='color:red'>" + length + "</span>";
-			}else {
-				lengthText =  String.valueOf(length);
-			}
-			digitCount.setHTML(messages.questionDigitCount(lengthText, String.valueOf(questionType.getValue().getQuestionLength())));	
-		} else {
-			digitCount.setHTML(messages.questionDigitCount("0", "0"));
+		int length = 0;
+		if (questionType.getValue() != null) {
+			length = questionType.getValue().getQuestionLength();
 		}
+		questionTextArea.setMaxLength(length);
 	}
 	
 	@Override
@@ -394,7 +378,6 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	
 	@Override
 	public void setValue(QuestionProxy question,boolean isAuthorReviewerEditable) {
-		
 		this.isAuthorReviewerEditable = isAuthorReviewerEditable;
 		DOM.setElementPropertyBoolean(questionType.getElement(), "disabled", true);
 		
@@ -404,26 +387,26 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		questionType.setValue(question.getQuestionType());
 		questionTextArea.setHTML(ClientUtility.defaultString(question.getQuestionText()));
 		
-		if(isAuthorReviewerEditable == true) {
+		if(isAuthorReviewerEditable) {
 			author.setSelected(question.getAutor());
 			reviewer.setSelected(question.getRewiewer());	
-			if(question.getSubmitToReviewComitee()==true)
-			{
+			if(question.getSubmitToReviewComitee()) {
 				reviewer.setEnabled(false);
-			}
-			else
-			{
+			} else {
 				reviewer.setEnabled(true);
 			}
 		} else {
-	
-			if (question.getAutor() != null)
+			if (question.getAutor() != null) {
 				lblAuthorValue.setText(question.getAutor().getName() + " " + question.getAutor().getPrename());
+			}
 			
-			if (question.getRewiewer() != null)
+			if (question.getRewiewer() != null) {
 				lblReviewerValue.setText(question.getRewiewer().getName() + " " + question.getRewiewer().getPrename());
-			
-			submitToReviewComitee.setText(String.valueOf(question.getSubmitToReviewComitee()));
+				reviewCommitteePanel.setVisible(false);
+			} else {
+				reviewerPanel.setVisible(false);
+				submitToReviewComitee.setEnabled(false);
+			}
 		}
 		
 		questionEvent.setValue(question.getQuestEvent());
@@ -826,40 +809,31 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		ArrayList<String> messages = Lists.newArrayList();
 		boolean flag = true;
 		
-		if(submitToReviewComitee.getValue() == true) 
-		{
-			reviewer.setSelected(null);	
-		} 
-		else if(reviewer.getSelected() != null)
-		{
-			submitToReviewComitee.setValue(false);
-		}
-		else 
-		{
-			flag = false;
-			messages.add(constants.selectReviewerOrComitee());
-			reviewer.getTextField().advancedTextBox.addStyleName("higlight_onViolation");
-			submitToReviewComitee.addStyleName("higlight_onViolation");
-		}
+		if (isAuthorReviewerEditable) {
+			if(submitToReviewComitee.getValue()) {
+				reviewer.setSelected(null);	
+			} else if(reviewer.getSelected() != null) {
+				submitToReviewComitee.setValue(false);
+			} else {
+				flag = false;
+				messages.add(constants.selectReviewerOrComitee());
+				reviewer.getTextField().advancedTextBox.addStyleName("higlight_onViolation");
+				submitToReviewComitee.addStyleName("higlight_onViolation");
+			}
+			
+			if(author.getSelected() == null) {
+				flag = false;
+				messages.add(constants.authorMayNotBeNull());
+				author.getTextField().advancedTextBox.addStyleName("higlight_onViolation");
+			}
 		
-		if(author.getSelected() == null) {
-			flag = false;
-			messages.add(constants.authorMayNotBeNull());
-			author.getTextField().advancedTextBox.addStyleName("higlight_onViolation");
+			if(author.getSelected() != null && reviewer.getSelected() != null && author.getSelected().getId().equals(reviewer.getSelected().getId()) == true) {
+				flag = false;
+				messages.add(constants.authorReviewerMayNotBeSame());
+				author.getTextField().advancedTextBox.addStyleName("higlight_onViolation");
+				reviewer.getTextField().advancedTextBox.addStyleName("higlight_onViolation");
+			}	
 		}
-		
-		if(author.getSelected() != null && reviewer.getSelected() != null && author.getSelected().getId().equals(reviewer.getSelected().getId()) == true) {
-			flag = false;
-			messages.add(constants.authorReviewerMayNotBeSame());
-			author.getTextField().advancedTextBox.addStyleName("higlight_onViolation");
-			reviewer.getTextField().advancedTextBox.addStyleName("higlight_onViolation");
-		}
-		
-		/*if(questionComment.getText() == null || questionComment.getText().isEmpty()) {
-			flag = false;
-			messages.add(constants.commentMayNotBeNull());
-			questionComment.addStyleName("higlight_onViolation");
-		}*/
 		
 		if(questionType.getValue() == null) {
 			flag = false;
@@ -984,29 +958,13 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		
 		return author.getSelected().getId();
 	}
-
-	public void disableEnableAuthorReviewerValue(boolean flag) {
-		lblAuthorValue.setVisible(flag);
-		lblSubmitToReviewComitee.setVisible(flag);
-	}
 	
 	private void disableEnableAuthorReviewerSuggestBox(boolean isAuthorReviewerEditable) {
-		
-		if (isAuthorReviewerEditable == true)
-		{
-			disableEnableAuthorReviewerValue(false);
-			lblReviewerValue.removeFromParent();
-			lblAuthorValue.removeFromParent();
-			lblSubmitToReviewComitee.removeFromParent();
-		}
-		else
-		{
-			disableEnableAuthorReviewerValue(true);
-			author.removeFromParent();
-			reviewer.removeFromParent();
-			submitToReviewComitee.removeFromParent();
-		}	
-		
+		lblReviewerValue.setVisible(!isAuthorReviewerEditable);
+		lblAuthorValue.setVisible(!isAuthorReviewerEditable);
+		author.setVisible(isAuthorReviewerEditable);
+		reviewer.setVisible(isAuthorReviewerEditable);
+		submitToReviewComitee.setVisible(isAuthorReviewerEditable);
 	}
 
 	@Override

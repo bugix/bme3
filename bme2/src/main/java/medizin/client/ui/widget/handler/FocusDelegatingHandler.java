@@ -1,5 +1,6 @@
 package medizin.client.ui.widget.handler;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.FocusEvent;
@@ -23,6 +24,7 @@ public class FocusDelegatingHandler implements FocusHandler, ClickHandler, Mouse
 	
 	private void focusTextBox() {
 		this.box.setFocus(true);
+		Log.info("FOCUS!!!!");
 	}
 	
 	@Override

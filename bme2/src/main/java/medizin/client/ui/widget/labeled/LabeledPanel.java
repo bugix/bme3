@@ -18,7 +18,6 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Focusable;
-import com.google.gwt.user.client.ui.HasOneWidget;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -28,9 +27,9 @@ import com.google.gwt.user.client.ui.Widget;
 public class LabeledPanel extends Composite implements HasWidgets, Focusable, HasFocusHandlers, HasBlurHandlers, HasContextHelp {
 	private List<Widget> children = new ArrayList<Widget>();
 	
-	private final String styleName = "unibas-LabelledTextBox";
-	private final String focusStyleName = "unibas-LabelledTextBox-focused";
-	private final String helpStyleName = "unibas-LabelledTextBox-with-help";
+	private final String styleName = "unibas-LabeledTextBox";
+	private final String focusStyleName = "unibas-LabeledTextBox-focused";
+	private final String helpStyleName = "unibas-LabeledTextBox-with-help";
 	
 	private FocusPanel wrapperPanel;
 	private VerticalPanel parentPanel;
@@ -69,7 +68,7 @@ public class LabeledPanel extends Composite implements HasWidgets, Focusable, Ha
 		wrapperPanel.setStyleName(styleName);
 		parentPanel.setWidth("100%");
 //		mainPanel.setWidth("100%");
-		label.setStyleName("unibas-LabelledTextBox-Label");
+		label.setStyleName("unibas-LabeledTextBox-Label");
 	}
 	
 	public void setLabelText(String label) {
