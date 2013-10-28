@@ -2569,4 +2569,69 @@ public class Question {
 		
 		return mainPredicate;
 	}
+	
+	public static Boolean acceptQuestionAndAllAnswers(Long questionId,final Boolean isAdminOrInstitutionalAdmin) {
+		
+		Question question = Question.findQuestion(questionId);
+	
+		final Person loggedUser = Person.myGetLoggedPerson();
+		
+		if (loggedUser == null)
+			throw new IllegalArgumentException("The person argument is required");
+		
+		//for admin
+		if(isAdminOrInstitutionalAdmin != null && isAdminOrInstitutionalAdmin == true) {
+			acceptQueAllAnswers(isAdminOrInstitutionalAdmin, question);
+			return true;
+		} else if(question.getAutor().getId().equals(loggedUser.getId())){
+			boolean notAllAnswerHaveSameAuthor = FluentIterable.from(question.getAnswers()).anyMatch(checkAnyAnswerHaveDiffAuthor(loggedUser));
+			
+			if(notAllAnswerHaveSameAuthor == false) {
+				acceptQueAllAnswers(isAdminOrInstitutionalAdmin, question);
+				return true;
+			} else {
+				return false;
+			}
+		} else if(question.getRewiewer().getId().equals(loggedUser.getId())){
+			boolean notAllAnswerHaveSameReviewer = FluentIterable.from(question.getAnswers()).anyMatch(checkAnyAnswerHaveDiffReviewer(loggedUser));
+			
+			if(notAllAnswerHaveSameReviewer == false) {
+				acceptQueAllAnswers(isAdminOrInstitutionalAdmin, question);
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}
+
+	private static void acceptQueAllAnswers(final Boolean isAdminOrInstitutionalAdmin, Question question) {
+		questionAccepted(question, isAdminOrInstitutionalAdmin);
+		for (Answer answer : question.getAnswers()) {
+			Answer.acceptAnswer(answer, isAdminOrInstitutionalAdmin);
+		}
+	}
+
+	private static com.google.common.base.Predicate<Answer> checkAnyAnswerHaveDiffReviewer(
+			final Person loggedUser) {
+		return new com.google.common.base.Predicate<Answer>() {
+
+			@Override
+			public boolean apply(Answer answer) {
+				return answer.getRewiewer().getId().equals(loggedUser.getId()) == false;	
+			}
+		};
+	}
+
+	private static com.google.common.base.Predicate<Answer> checkAnyAnswerHaveDiffAuthor(
+			final Person loggedUser) {
+		return new com.google.common.base.Predicate<Answer>() {
+
+			@Override
+			public boolean apply(Answer answer) {
+				return answer.getAutor().getId().equals(loggedUser.getId()) == false;	
+			}
+		};
+	}
 }

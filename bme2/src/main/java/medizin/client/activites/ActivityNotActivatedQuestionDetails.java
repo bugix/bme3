@@ -806,4 +806,7 @@ public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper
 	public void clearAllButtonClicked() {
 		loadLearningObjectiveData();
 	}
+
+	@Override
+	public void acceptQueAnswersClicked() {}
 }

@@ -99,7 +99,7 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 				@Override
 				public void onSuccess(InstitutionProxy response) {
 					institutionActive = response;
-					newStart(panel, eventBus);
+					//newStart(panel, eventBus);
 				}
 			});
 			

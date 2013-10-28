@@ -3,7 +3,7 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:n="urn:import:medizin.client.ui"
 	xmlns:d="urn:import:com.google.gwt.user.datepicker.client" xmlns:t="urn:import:medizin.client.ui.richtext"
 	xmlns:r="urn:import:medizin.client.ui.view.roo" xmlns:m="urn:import:medizin.client.ui.widget"
-	xmlns:i="urn:import:medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl">
+	xmlns:i="urn:import:medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl" xmlns:mcs="urn:import:medizin.client.ui.widget.mcs">
 	<ui:style src="../../styles.css" >
 		.valueLabel{
 			padding-bottom: 7px;
@@ -160,8 +160,8 @@
 									<g:Label styleName="{style.label}" ui:field="lblMCS" text="{constants.mcs}"></g:Label>
 								</td>
 								<td>
-									<r:McSetEditor ui:field="mcs"></r:McSetEditor>
-
+									<!-- <r:McSetEditor ui:field="mcs"></r:McSetEditor> -->
+									<mcs:McCheckboxEditor ui:field="mcs"></mcs:McCheckboxEditor>
 								</td>
 							</tr>
 

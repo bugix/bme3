@@ -75,4 +75,6 @@ public interface QuestionRequest extends QuestionRequest_Roo_Gwt {
 	Request<List<QuestionProxy>> findDeactivatedQuestion(String searchValue, List<String> searchField, int start, int length);
 	
 	Request<Integer> countDeactivatedQuestion(String searchValue, List<String> searchField);
+
+	Request<Boolean> acceptQuestionAndAllAnswers(Long questionId, Boolean isAdminOrInstitutionalAdmin);
 }

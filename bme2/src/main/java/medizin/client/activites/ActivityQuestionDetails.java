@@ -31,9 +31,7 @@ import medizin.client.proxy.SkillLevelProxy;
 import medizin.client.proxy.SkillProxy;
 import medizin.client.proxy.TopicProxy;
 import medizin.client.request.AnswerRequest;
-import medizin.client.request.ClassificationTopicRequest;
 import medizin.client.request.CommentRequest;
-import medizin.client.request.MainClassificationRequest;
 import medizin.client.request.MainQuestionSkillRequest;
 import medizin.client.request.MatrixValidityRequest;
 import medizin.client.request.MinorQuestionSkillRequest;
@@ -42,6 +40,8 @@ import medizin.client.request.SkillRequest;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.question.AnswerDialogbox;
 import medizin.client.ui.view.question.AnswerDialogboxImpl;
+import medizin.client.ui.view.question.AnswerDialogboxTabView;
+import medizin.client.ui.view.question.AnswerDialogboxTabViewImpl;
 import medizin.client.ui.view.question.AnswerListView;
 import medizin.client.ui.view.question.AnswerListViewImpl;
 import medizin.client.ui.view.question.MatrixAnswerListView;
@@ -49,11 +49,9 @@ import medizin.client.ui.view.question.MatrixAnswerView;
 import medizin.client.ui.view.question.MatrixAnswerViewImpl;
 import medizin.client.ui.view.question.QuestionDetailsView;
 import medizin.client.ui.view.question.QuestionDetailsViewImpl;
-import medizin.client.ui.view.question.QuestionViewImpl;
 import medizin.client.ui.view.question.learningobjective.LearningObjectiveView;
 import medizin.client.ui.view.question.learningobjective.QuestionLearningObjectivePopupView;
 import medizin.client.ui.view.question.learningobjective.QuestionLearningObjectiveSubView;
-import medizin.client.ui.view.question.learningobjective.QuestionLearningObjectiveSubViewImpl;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.simple.DefaultSuggestOracle;
 import medizin.client.util.AnswerVO;
@@ -71,16 +69,13 @@ import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.media.client.Video;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.Cookies;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.RangeChangeEvent;
 
@@ -90,7 +85,8 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 							MatrixAnswerView.Delegate, MatrixAnswerListView.Delegate, 
 							QuestionLearningObjectiveSubView.Delegate,
 							QuestionLearningObjectivePopupView.Delegate,
-							LearningObjectiveView.Delegate
+							LearningObjectiveView.Delegate,
+							AnswerDialogboxTabView.Delegate
 							{
 
 	private AcceptsOneWidget widget;
@@ -419,10 +415,17 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	@Override
 	public void addNewAnswerClicked() {
 		
-		if(question.getQuestionType() != null && QuestionTypes.Matrix.equals(question.getQuestionType().getQuestionType()) == true) {
+		if(question.getQuestionType() != null && QuestionTypes.Matrix.equals(question.getQuestionType().getQuestionType()) == true) 
+		{
 			openMatrixAnswerView(null,true, true,true);
 			return;
-		}else {
+		} 
+		else if (question.getQuestionType() != null && QuestionTypes.Imgkey.equals(question.getQuestionType().getQuestionType()) == true)
+		{
+			openImageKeyAnswerView(null);
+		}
+		else 
+		{
 			openAnswerView(null);	
 		}
 		
@@ -514,6 +517,33 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	        answerDialogbox.display(question.getQuestionType().getQuestionType());*/
 
 		
+	}
+
+	private AnswerDialogboxTabView openImageKeyAnswerView(final AnswerProxy answer) {
+		
+		final AnswerDialogboxTabView answerDialogboxTabView = new AnswerDialogboxTabViewImpl(question, eventBus, reciverMap);
+		answerDialogboxTabView.setDelegate(this);
+		answerDialogboxTabView.setValidityPickerValues(Arrays.asList(Validity.values()));
+		
+		PersonRequest personRequest = requests.personRequest();
+        personRequest.findAllPeople().with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).to(new BMEReceiver<List<PersonProxy>>() {
+
+            public void onSuccess(List<PersonProxy> response) {
+                List<PersonProxy> values = new ArrayList<PersonProxy>();
+                values.add(null);
+                values.addAll(response);
+                answerDialogboxTabView.setRewiewerPickerValues(values);                
+                answerDialogboxTabView.setAutherPickerValues(values,userLoggedIn,isAdminOrInstitutionalAdmin());
+                
+                if(answer != null) {
+                	answerDialogboxTabView.setValues(answer);
+		        }
+                answerDialogboxTabView.display(question.getQuestionType().getQuestionType());
+            }
+        });
+        
+        personRequest.fire();
+        return answerDialogboxTabView;
 	}
 
 	/*@Override
@@ -1393,7 +1423,12 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			@Override
 			public void onSuccess(Long response) {
 				if(response != null && response == 0) {
-					openAnswerView(answer);	
+					if (question.getQuestionType() != null && QuestionTypes.Imgkey.equals(question.getQuestionType().getQuestionType()) == true)
+					{
+						openImageKeyAnswerView(answer);
+					} else {
+						openAnswerView(answer);
+					}
 				}else {
 					ConfirmationDialogBox.showOkDialogBox(constants.error(), constants.answerUsedInAssessment());
 				}		
@@ -2065,5 +2100,8 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			}
 		});
 	}
+
+	@Override
+	public void acceptQueAnswersClicked() {}
 
 }

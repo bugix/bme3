@@ -24,6 +24,10 @@ import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import medizin.client.factory.receiver.BMEReceiver;
+import medizin.client.proxy.AnswerProxy;
+import medizin.client.request.AnswerRequest;
+import medizin.client.ui.view.AcceptAnswerSubView;
 import medizin.shared.QuestionTypes;
 import medizin.shared.Status;
 import medizin.shared.Validity;
@@ -360,6 +364,35 @@ public class Answer {
 		}
 		return true;
 	}*/
+
+	public static Boolean acceptAnswer(final Answer answer,final Boolean isAdminOrInstitutionalAdmin) {
+		Person userLoggedIn = Person.myGetLoggedPerson();
+		
+		if(userLoggedIn == null) {
+			return false;
+		}
+		
+		if(isAdminOrInstitutionalAdmin == true){
+			answer.setIsAnswerAcceptedAdmin(true);
+			answer.setStatus(Status.ACCEPTED_ADMIN);
+		}
+		
+		if(answer.getRewiewer().getId() == userLoggedIn.getId()) {
+			answer.setIsAnswerAcceptedReviewWahrer(true);
+			answer.setStatus(Status.ACCEPTED_REVIEWER);
+		}
+		
+		if(answer.getAutor().getId() == userLoggedIn.getId())	{
+			answer.setIsAnswerAcceptedAutor(true);
+		}
+		
+		if(answer.getIsAnswerAcceptedAdmin() == true && answer.getIsAnswerAcceptedAutor() == true && answer.getIsAnswerAcceptedReviewWahrer() == true) {
+			answer.setStatus(Status.ACTIVE);
+		}
+		
+		answer.persist();
+		return true;
+	}
 	
 	public static Boolean acceptMatrixAnswer(Question question, Boolean isAdmin, Boolean isInstitutionalAdmin)
 	{

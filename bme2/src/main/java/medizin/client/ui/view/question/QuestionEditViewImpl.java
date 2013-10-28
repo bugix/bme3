@@ -24,6 +24,7 @@ import medizin.client.ui.view.roo.QuestionTypeProxyRenderer;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.dialogbox.receiver.ReceiverDialog;
+import medizin.client.ui.widget.mcs.McCheckboxEditor;
 import medizin.client.ui.widget.resource.dndview.ResourceView;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.ui.widget.resource.event.ResourceAddedEvent;
@@ -167,7 +168,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	public Label lblMCS;
 
 	@UiField 
-	McSetEditor mcs;
+	McCheckboxEditor mcs;
 	
 	@UiField
 	public VerticalPanel containPanel;
