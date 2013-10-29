@@ -271,12 +271,12 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 			final Style style = digitCurrent.getStyle();
 			String color = style.getColor();
 			if(currentCount < answerTextMinDiff || currentCount > answerTextMaxDiff ) {
-				if("red".equalsIgnoreCase(color) == false) {
+				if(!"red".equalsIgnoreCase(color)) {
 					style.clearColor();
 					style.setColor("red");
 				}
 			}else{
-				if("green".equalsIgnoreCase(color) == false) {
+				if(!"green".equalsIgnoreCase(color)) {
 					style.clearColor();
 					style.setColor("green");
 				}
@@ -289,7 +289,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 		}else {
 			Style style = digitCount.getStyle();
 			String display = style.getDisplay();
-			if("none".equalsIgnoreCase(display) == false) {
+			if(!"none".equalsIgnoreCase(display)) {
 				style.setDisplay(Display.NONE);
 			}
 		}
@@ -314,7 +314,8 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 					viewContainer.add(imagePolygonViewer);
 				}*/
 				
-				if(question != null && question.getQuestionType() != null && QuestionTypes.ShowInImage.equals(question.getQuestionType().getQuestionType()) && question.getQuestionResources() != null && question.getQuestionResources().isEmpty() == false /*&& question.getPicturePath() != null && question.getPicturePath().length() > 0 && question.getQuestionType().getImageWidth() != null && question.getQuestionType().getImageHeight() != null*/) {
+				if(question != null && question.getQuestionType() != null && QuestionTypes.ShowInImage.equals(question.getQuestionType().getQuestionType()) 
+						&& question.getQuestionResources() != null && !question.getQuestionResources().isEmpty()) {
 					final QuestionResourceProxy questionResourceProxy = Lists.newArrayList(question.getQuestionResources()).get(0);
 					final Integer imageWidth = questionResourceProxy.getImageWidth();
 					final Integer imageHeight = questionResourceProxy.getImageHeight();
@@ -344,7 +345,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 				
 				final List<Point> rectanglePoints = Point.getPoints(points);
 				
-				if(question != null && question.getQuestionType() != null && QuestionTypes.Imgkey.equals(question.getQuestionType().getQuestionType()) && question.getQuestionResources() != null && question.getQuestionResources().isEmpty() == false  /*&& question.getPicturePath() != null && question.getPicturePath().length() > 0 && question.getQuestionType().getImageWidth() != null && question.getQuestionType().getImageHeight() != null*/) {
+				if(question != null && question.getQuestionType() != null && QuestionTypes.Imgkey.equals(question.getQuestionType().getQuestionType()) && question.getQuestionResources() != null && !question.getQuestionResources().isEmpty()  /*&& question.getPicturePath() != null && question.getPicturePath().length() > 0 && question.getQuestionType().getImageWidth() != null && question.getQuestionType().getImageHeight() != null*/) {
 					
 					final QuestionResourceProxy questionResourceProxy = Lists.newArrayList(question.getQuestionResources()).get(0);
 					final Integer imageWidth = questionResourceProxy.getImageWidth();
@@ -384,7 +385,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 					public void onValueChange(ValueChangeEvent<Validity> event) {
 						Validity value = event.getValue();
 						
-						if(Validity.Wahr.equals(value) == true) {
+						if(Validity.Wahr.equals(value)) {
 							viewContainer.setVisible(true);	
 						}else {
 							viewContainer.setVisible(false);
@@ -393,7 +394,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 					}
 				});
 				
-				if(Validity.Wahr.equals(validity.getValue()) == true) {
+				if(Validity.Wahr.equals(validity.getValue())) {
 					viewContainer.setVisible(true);
 				}else {
 					viewContainer.setVisible(false);
@@ -430,7 +431,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 								@Override
 								public Void apply(Boolean flag) {
 							
-									if(flag != null && flag == true) {
+									if(flag != null && flag) {
 										Log.info("image Path : " + url);
 										if(simpleImageViewer != null && simpleImageViewer.getURL() != null && simpleImageViewer.getURL().length() > 0) {
 											// delete old files
@@ -603,7 +604,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 				txtAdditionalKeyword.setVisible(true);
 			}
 			
-			if(QuestionTypes.Sort.equals(question.getQuestionType().getQuestionType()) == true) {
+			if(QuestionTypes.Sort.equals(question.getQuestionType().getQuestionType())) {
 				lblSequenceNumber.setVisible(true);
 				lblSequenceNumber.setStyleName("label");
 				txtSequenceNumber.setVisible(true);
@@ -705,7 +706,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 			}
 		});
 		
-		if(isAdminOrInstitutionalAdmin == false) {
+		if(!isAdminOrInstitutionalAdmin) {
 			author.setSelected(logedUser);
 			author.setEnabled(false);
 		}else {
@@ -765,7 +766,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 			case Imgkey: 
 			{
 				additionalKeywords = txtAdditionalKeyword.getText();
-				if(Validity.Wahr.equals(validity.getValue()) == true) {
+				if(Validity.Wahr.equals(validity.getValue())) {
 					points = imageRectangleViewer.getPoint();	
 				}
 				break;
@@ -847,14 +848,14 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 			submitToReviewComitee.addStyleName("higlight_onViolation");
 		}
 		
-		if(author.getSelected() != null && rewiewer.getSelected() != null && author.getSelected().getId().equals(rewiewer.getSelected().getId()) == true) {
+		if(author.getSelected() != null && rewiewer.getSelected() != null && author.getSelected().getId().equals(rewiewer.getSelected().getId())) {
 			flag = false;
 			messages.add(constants.authorReviewerMayNotBeSame());
 			author.getTextField().advancedTextBox.addStyleName("higlight_onViolation");
 			rewiewer.getTextField().advancedTextBox.addStyleName("higlight_onViolation");
 		}
 		
-		if(question.getQuestionType() != null && (QuestionTypes.MCQ.equals(question.getQuestionType().getQuestionType()) == false && QuestionTypes.LongText.equals(question.getQuestionType().getQuestionType()) == false)) {
+		if(question.getQuestionType() != null && (!QuestionTypes.MCQ.equals(question.getQuestionType().getQuestionType()) && !QuestionTypes.LongText.equals(question.getQuestionType().getQuestionType()))) {
 			if(answerTextArea.getText() == null || answerTextArea.getText().length() <= 0) {
 				flag = false;
 				messages.add(constants.answerTextErrorMessage());
@@ -876,15 +877,15 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 			}
 		}
 		
-		if(question.getQuestionType() != null && QuestionTypes.ShowInImage.equals(question.getQuestionType().getQuestionType()) == true ) {
+		if(question.getQuestionType() != null && QuestionTypes.ShowInImage.equals(question.getQuestionType().getQuestionType()) ) {
 			Log.info("IN ShowInImage Question type");
-			if(imagePolygonViewer == null || imagePolygonViewer.isValidPolygon() == false) {
+			if(imagePolygonViewer == null || !imagePolygonViewer.isValidPolygon()) {
 				flag = false;
 				Log.error("Polygon is not property added. Try again");
 				messages.add(constants.polygonErrorMessage());
 				imagePolygonViewer.addStyleName("higlight_onViolation");
 			}			
-		}else if(question.getQuestionType() != null && QuestionTypes.Imgkey.equals(question.getQuestionType().getQuestionType()) == true && validity.getValue() != null && Validity.Wahr.equals(validity.getValue())) {
+		}else if(question.getQuestionType() != null && QuestionTypes.Imgkey.equals(question.getQuestionType().getQuestionType()) && validity.getValue() != null && Validity.Wahr.equals(validity.getValue())) {
 			Log.info("IN Imgkey Question type");
 			if(imageRectangleViewer == null || imageRectangleViewer.getPoint() == null) {
 				flag = false;
@@ -892,7 +893,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 				imageRectangleViewer.removeStyleName("higlight_onViolation");
 				Log.error("Rectangle is not property added. Try again");
 			}
-		}else if(question.getQuestionType() != null && QuestionTypes.MCQ.equals(question.getQuestionType().getQuestionType()) == true) {
+		}else if(question.getQuestionType() != null && QuestionTypes.MCQ.equals(question.getQuestionType().getQuestionType())) {
 			Log.info("IN MCQ Question type");
 			if(question != null && question.getQuestionType() != null && question.getQuestionType().getMultimediaType() != null) {
 			
@@ -932,9 +933,9 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 				}
 				}
 			}	
-		}else if(question.getQuestionType() != null && QuestionTypes.Sort.equals(question.getQuestionType().getQuestionType()) == true) {
+		}else if(question.getQuestionType() != null && QuestionTypes.Sort.equals(question.getQuestionType().getQuestionType())) {
 			txtSequenceNumber.removeStyleName("higlight_onViolation");
-			if(ClientUtility.isNumber(txtSequenceNumber.getValue()) == false) {
+			if(!ClientUtility.isNumber(txtSequenceNumber.getValue())) {
 				messages.add(constants.sequenceNumberError());
 				flag = false;
 				txtSequenceNumber.addStyleName("higlight_onViolation");
@@ -959,7 +960,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 			messages.add(constants.validityMayNotBeNull());
 			validity.addStyleName("higlight_onViolation");
 		}
-		if(flag == false) {
+		if(!flag) {
 			ReceiverDialog.showMessageDialog(constants.pleaseEnterWarning(),messages);
 		}
 		return flag;

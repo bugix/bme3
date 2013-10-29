@@ -1016,7 +1016,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 					errorMessage.add(constants.sumOfAnsMsg());
 					sumAnswer.getTextBox().addStyleName("higlight_onViolation");
 				}
-				else if (infiniteChkBox.getValue() && sumAnswer.getValue().equals(SharedConstant.INFINITE_VALUE.toString()) == false)
+				else if (infiniteChkBox.getValue() && !sumAnswer.getValue().equals(SharedConstant.INFINITE_VALUE.toString()))
 				{
 					flag = false;
 					answerFlag = true;
@@ -1056,9 +1056,9 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 					sumFalseAnswer.getTextBox().addStyleName("higlight_onViolation");
 				}
 				
-				if (answerFlag == false)
+				if (!answerFlag)
 				{
-					if (checkTextualAnswerCondition(Integer.parseInt(sumAnswer.getValue()), Integer.parseInt(sumTrueAnswer.getValue()), Integer.parseInt(sumFalseAnswer.getValue())) == false)
+					if (!checkTextualAnswerCondition(Integer.parseInt(sumAnswer.getValue()), Integer.parseInt(sumTrueAnswer.getValue()), Integer.parseInt(sumFalseAnswer.getValue())))
 					{
 						flag = false;
 						errorMessage.add(constants.sumOfAnsValidateMsg());
@@ -1266,7 +1266,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				break;
 		}
 		
-		if(flag == false) {
+		if(!flag) {
 			ReceiverDialog.showMessageDialog(constants.pleaseEnterWarning(),errorMessage);
 		}
 		
@@ -1307,7 +1307,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		else if (!ClientUtility.isDouble(textBox.getText()))
 		{
 			message = constants.questionTypeNumErrorMsg();
-		}else if (ClientUtility.isDouble(textBox.getText()) == true) {
+		}else if (ClientUtility.isDouble(textBox.getText())) {
 			double value = Double.parseDouble(textBox.getText());
 			if(value < 0 || value > 100) {
 				message = constants.questionTypeNumRanageErrorMsg();

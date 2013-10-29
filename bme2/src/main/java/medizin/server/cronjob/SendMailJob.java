@@ -45,12 +45,12 @@ public class SendMailJob implements Job {
 			mailFromAddress = properties.getProperty("mailFromAddress");
 			System.out.println("EXPRESSION VALUE : " + expressionValue);
 			
-			if (oldExpressionValue.isEmpty() == true)
+			if (oldExpressionValue.isEmpty())
 			{
 				oldExpressionValue = expressionValue;
 				sendMail();
 			}
-			else if (oldExpressionValue.equals(expressionValue) == false)
+			else if (!oldExpressionValue.equals(expressionValue))
 			{
 				oldExpressionValue = expressionValue;
 				jobExeContext.getScheduler().clear();

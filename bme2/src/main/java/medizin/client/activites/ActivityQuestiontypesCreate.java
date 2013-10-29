@@ -259,7 +259,7 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 					questionTypeProxy.setImageHeight(Integer.parseInt(view.getImageLengthTxtbox().getValue()));
 					questionTypeProxy.setImageProportion(view.getImageProportionTxtbox().getValue());
 					questionTypeProxy.setLinearPoint(view.getLinearPointChkBox().getValue());
-					questionTypeProxy.setLinearPercentage(Double.parseDouble(view.getLinearPercentageTxtbox().getValue().isEmpty() == true ? "0" : view.getLinearPercentageTxtbox().getValue()));*/
+					questionTypeProxy.setLinearPercentage(Double.parseDouble(view.getLinearPercentageTxtbox().getValue().isEmpty() ? "0" : view.getLinearPercentageTxtbox().getValue()));*/
 				}
 				else if (selectedQuestionType.equals(QuestionTypes.LongText))
 				{

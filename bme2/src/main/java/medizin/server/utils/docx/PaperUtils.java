@@ -174,7 +174,7 @@ public final class PaperUtils {
 	}
 
 	public static String getVersionString(boolean isVersionA) {
-		return isVersionA == true ? "A" : "B";
+		return isVersionA ? "A" : "B";
 	}
 	
 	public static List<Long> getAnswerIdList(List<AnswerToAssQuestion> answerToAssQuestions) {

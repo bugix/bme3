@@ -129,7 +129,7 @@ public class SystemOverviewExaminerSubViewImpl extends Composite implements Syst
 		if (sendMailPopupViewImpl != null)
 		{
 			sendMailPopupViewImpl.setMessageContent(response);
-			if (sendMailPopupViewImpl.isShowing() == false)
+			if (!sendMailPopupViewImpl.isShowing())
 				sendMailPopupViewImpl.center();
 		}
 		else

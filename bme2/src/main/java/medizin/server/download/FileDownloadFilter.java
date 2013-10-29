@@ -45,8 +45,8 @@ public class FileDownloadFilter implements Filter {
 		log.info("Copy from :" + copyFrom.getAbsolutePath());
 
 		// check at download location
-		if (copyTo.exists() == false) {
-			if(copyFrom.exists() == true) {
+		if (!copyTo.exists()) {
+			if(copyFrom.exists()) {
 			
 				// get from external path
 				FileUtils.copyFile(copyFrom,copyTo);
@@ -66,7 +66,7 @@ public class FileDownloadFilter implements Filter {
 			log.info("Resource exists");
 		}
 
-		if (flag == true) {
+		if (flag) {
 			chain.doFilter(servletRequest, servletResponse);
 		} else {
 			response.sendError(HttpServletResponse.SC_NOT_FOUND,

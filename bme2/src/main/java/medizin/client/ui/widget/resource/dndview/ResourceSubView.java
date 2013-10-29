@@ -77,7 +77,7 @@ public class ResourceSubView extends Composite {
 		this.eventBus = eventBus;
 		this.isEditable = isEditable;
 		
-		if(isEditable == true) {
+		if(isEditable) {
 			deleteButton.setVisible(true);
 		}
 	}
@@ -114,16 +114,7 @@ public class ResourceSubView extends Composite {
 		});
 	}
 
-	public void init() {
-
-//		htmlText.setHTML(getName(questionResource.getPath(),
-//				questionResource.getType()));
-//		htmlText.setHeight(imageDim);
-//		htmlText.setWidth(textDim);
-//		htmlText.setWordWrap(true);
-//
-//		htmlText.setVisible(true);
-		
+	public void init() {		
 		htmlText.setText(ClientUtility.getFileName(questionResource.getPath(), questionResource.getType()));
 		htmlText.setHeight(imageDim);
 		htmlText.setWidth(textDim);
@@ -136,7 +127,7 @@ public class ResourceSubView extends Composite {
 				@Override
 				public void onClick(ClickEvent event) {
 					final ImageViewer viewer = new ImageViewer();
-					viewer.setUrl(questionResource.getPath(), questionType);
+					viewer.setUrl(questionResource.getPath());
 					DialogBox dialogBox = createDialogBox(constants.mediaViewer(),viewer,new Function<Boolean,Void>(){
 
 						@Override

@@ -96,7 +96,7 @@ public class BookAssesmentViewImpl extends Composite implements BookAssesmentVie
 			}
 		});
 		
-		if(idMap.isEmpty() == false)
+		if(!idMap.isEmpty())
 		{
 			Log.info("TabLayout selection : " + tabLayout.selectTab(0));	
 		}

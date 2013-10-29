@@ -218,7 +218,7 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 				answerProxy.setIsAnswerAcceptedAutor(true);
 			}
 			
-			if(answerProxy.getIsAnswerAcceptedAdmin() == true && answerProxy.getIsAnswerAcceptedAutor() == true && answerProxy.getIsAnswerAcceptedReviewWahrer() == true) {
+			if(answerProxy.getIsAnswerAcceptedAdmin() && answerProxy.getIsAnswerAcceptedAutor() && answerProxy.getIsAnswerAcceptedReviewWahrer()) {
 				answerProxy.setStatus(Status.ACTIVE);
 			}
 			

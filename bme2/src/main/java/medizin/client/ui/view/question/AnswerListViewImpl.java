@@ -84,7 +84,7 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 
 		initWidget(uiBinder.createAndBindUi(this));
 		
-		if(addAnswerRights == false) {
+		if(!addAnswerRights) {
 			newAnswer.removeFromParent();
 		}
 		
@@ -314,7 +314,7 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
     	tableAnswer.getColumn(columnIndex).setCellStyleNames("answerTextColumn");
     	columnIndex++;
     	
-        if(isMCQQuestionType == true) {
+        if(isMCQQuestionType) {
 			ActionCell.Delegate<AnswerProxy> resourceDelegate = new ActionCell.Delegate<AnswerProxy>() {
 
 				@Override
@@ -334,7 +334,7 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 			columnIndex++;
         }
         
-        if(isEditable == true) {
+        if(isEditable) {
         
 			addColumn(new EditIconCell(McAppConstant.EDIT_ICON, new ActionCell.Delegate<AnswerProxy>() {
 				public void execute(AnswerProxy answer) {
@@ -393,7 +393,7 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 			switch (answer.getQuestion().getQuestionType().getMultimediaType()) {
 			case Image: {
 				final ImageViewer viewer = new ImageViewer();
-				viewer.setUrl(answer.getMediaPath(), answer.getQuestion().getQuestionType().getQuestionType());
+				viewer.setUrl(answer.getMediaPath());
 				Function<Boolean,Void> closeViewer = new Function<Boolean,Void>(){
 
 					@Override
@@ -504,7 +504,7 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 			      String beginn = "<div style=\"";
 			      String end = "</div>";
 			      
-			      if (Status.ACTIVE.equals(value.getStatus()) == false)
+			      if (!Status.ACTIVE.equals(value.getStatus()))
 			      {
 			    	  if(!value.getIsAnswerAcceptedAdmin())
 				      {

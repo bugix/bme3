@@ -276,7 +276,7 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 		
 		//delegate.checkForResendToReview();
 		/*
-		if(proxy.getIsReadOnly() == true) {
+		if(proxy.getIsReadOnly()) {
 			setVisibleEditAndDeleteBtn(false);
 		}*/
 		/*mcs.setInnerText(proxy.getMcs() == null ? ""
@@ -327,12 +327,12 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 				.setInnerText(String.valueOf(proxy.getQuestionVersion()));
 
 		isAcceptedRewiever
-				.setClassName(proxy.getIsAcceptedRewiever() == true ? "ui-icon ui-icon-check"
+				.setClassName(proxy.getIsAcceptedRewiever() ? "ui-icon ui-icon-check"
 						: "ui-icon ui-icon-closethick");
 		isAcceptedAdmin
-				.setClassName(proxy.getIsAcceptedAdmin() == true ? "ui-icon ui-icon-check"
+				.setClassName(proxy.getIsAcceptedAdmin() ? "ui-icon ui-icon-check"
 						: "ui-icon ui-icon-closethick");
-		isActive.setInnerText(proxy.getIsActive() == true ? "ja" : "nein");
+		isActive.setInnerText(proxy.getIsActive() ? "ja" : "nein");
 
 		keywords.setInnerText(proxy.getKeywords() == null ? ""
 				: medizin.client.ui.view.roo.CollectionRenderer.of(
@@ -421,7 +421,7 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 			}
 			}
 			
-			if(isAdded == true && (haveImage != false || haveSound != false || haveVideo != false) ) {
+			if(isAdded && (haveImage != false || haveSound != false || haveVideo != false) ) {
 				final ResourceView resourceView = new ResourceView(eventBus,questionResourceClients, proxy.getQuestionType().getQuestionType(),haveImage,haveSound,haveVideo,false);
 				resourceViewPanel.add(resourceView);
 			}
@@ -568,17 +568,17 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 		Map<MultimediaType,String> paths = Maps.newHashMap();
 	
 	
-		if(questionTypeProxy.getQueHaveImage() != null && questionTypeProxy.getQueHaveImage() == true) {
+		if(questionTypeProxy.getQueHaveImage() != null && questionTypeProxy.getQueHaveImage()) {
 			allowedExt.addAll(Arrays.asList(SharedConstant.IMAGE_EXTENSIONS));
 			paths.put(MultimediaType.Image, SharedConstant.UPLOAD_MEDIA_IMAGES_PATH);
 		}
 		
-		if(questionTypeProxy.getQueHaveSound()  != null && questionTypeProxy.getQueHaveSound() == true) {
+		if(questionTypeProxy.getQueHaveSound()  != null && questionTypeProxy.getQueHaveSound()) {
 			allowedExt.addAll(Arrays.asList(SharedConstant.SOUND_EXTENSIONS));
 			paths.put(MultimediaType.Sound, SharedConstant.UPLOAD_MEDIA_SOUND_PATH);
 		}
 		
-		if(questionTypeProxy.getQueHaveVideo()  != null && questionTypeProxy.getQueHaveVideo() == true) {
+		if(questionTypeProxy.getQueHaveVideo()  != null && questionTypeProxy.getQueHaveVideo()) {
 			allowedExt.addAll(Arrays.asList(SharedConstant.VIDEO_EXTENSIONS));	
 			paths.put(MultimediaType.Video, SharedConstant.UPLOAD_MEDIA_VIDEO_PATH);
 		}
@@ -594,7 +594,7 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 
 				String filePath = event.getFilePath();
 				
-				if(event.isResourceUploaded() == true) {
+				if(event.isResourceUploaded()) {
 					Log.info("filePath is " + filePath);
 					
 					MultimediaType mtype = SharedUtility.getFileMultimediaType(SharedUtility.getFileExtension(filePath));
@@ -686,7 +686,7 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 
 				final String filePath = event.getFilePath();
 				
-				if(event.isResourceUploaded() == true) {
+				if(event.isResourceUploaded()) {
 					Log.info("filepath is " + filePath);
 					// for image
 					final String url = new String(GWT.getHostPageBaseURL() + filePath);
@@ -697,7 +697,7 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 							@Override
 							public Void apply(Boolean flag) {
 						
-								if(flag != null && flag == true) {
+								if(flag != null && flag) {
 									
 									if(imageViewer != null && imageViewer.getImageUrl() != null && imageViewer.getImageUrl().length() > 0) {
 										// delete old files
@@ -755,7 +755,7 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 	@Override
 	public void removeEditAndDeleteBtn(Boolean flag)
 	{
-		if(flag == false) {
+		if(!flag) {
 			edit.removeFromParent();
 			delete.removeFromParent();
 		}
@@ -871,7 +871,7 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 
 	public void setVisibleForcedActiveBtn(boolean visible) {
 		
-		if(visible == false) {
+		if(!visible) {
 			forcedActive.setVisible(false);
 		}else {
 			forcedActive.setVisible(true);
@@ -880,7 +880,7 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 	}
 	
 	private void removeAcceptView(boolean isAcceptView) {
-		if(isAcceptView == false) {
+		if(!isAcceptView) {
 			accept.removeFromParent();
 			resendToReview.removeFromParent();
 			acceptQueAnswer.removeFromParent();
@@ -892,7 +892,7 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 	}
 
 	private void removeForceView(boolean isforceView) {
-		if(isforceView == false) {
+		if(!isforceView) {
 			forcedActive.removeFromParent();
 			forcedActive.removeFromParent();
 		}else {

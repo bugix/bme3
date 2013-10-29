@@ -43,7 +43,7 @@ public class AnswerVO {
 			return false;
 		}
 		
-		if((obj instanceof AnswerVO) == false) {
+		if(!(obj instanceof AnswerVO)) {
 			return false;
 		}
 		

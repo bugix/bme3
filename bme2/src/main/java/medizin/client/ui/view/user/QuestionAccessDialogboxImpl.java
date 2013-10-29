@@ -415,17 +415,17 @@ public class QuestionAccessDialogboxImpl extends DialogBox implements QuestionAc
 					public void render(com.google.gwt.cell.client.Cell.Context context, QuestionProxy value, SafeHtmlBuilder sb) {
 						boolean readButtonFlag = checkAccessRights(value, AccessRights.AccRead);
 						
-						if (readButtonFlag == false)
-						{
+						if (!readButtonFlag) {
 							boolean writeButtonFlag = checkAccessRights(value, AccessRights.AccWrite);
         					
-        					if (writeButtonFlag)
+        					if (writeButtonFlag) {
         						sb.append(READ_DISABLED_BUTTON);
-        					else
+        					} else {
         						super.render(context, value, sb);
-						}
-						else if (readButtonFlag == true)
+        					}
+						} else {
 							sb.append(READ_DISABLED_BUTTON);
+						}
 					}					
     	          };
     	          
@@ -448,10 +448,11 @@ public class QuestionAccessDialogboxImpl extends DialogBox implements QuestionAc
 					public void render(com.google.gwt.cell.client.Cell.Context context, QuestionProxy value, SafeHtmlBuilder sb) {
 						boolean writeButtonFlag = checkAccessRights(value, AccessRights.AccWrite);
 						
-						if (writeButtonFlag == false)
+						if (!writeButtonFlag) {
 							super.render(context, value, sb);
-						else if (writeButtonFlag == true)
+						} else {
 							sb.append(WRITE_DISABLED_BUTTON);
+						}
 					}
     	          };
     	 
@@ -474,10 +475,11 @@ public class QuestionAccessDialogboxImpl extends DialogBox implements QuestionAc
 					public void render(com.google.gwt.cell.client.Cell.Context context, QuestionProxy value, SafeHtmlBuilder sb) {
 						boolean addAnswerFlag = checkAccessRights(value, AccessRights.AccAddAnswers);
 						
-						if (addAnswerFlag == false)
+						if (!addAnswerFlag) {
 							super.render(context, value, sb);
-						else if (addAnswerFlag == true)
+						} else {
 							sb.append(ADDANSWER_DISABLED_BUTTON);
+						}
 					}
     	          };
     	          

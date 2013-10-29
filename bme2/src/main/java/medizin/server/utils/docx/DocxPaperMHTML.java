@@ -337,7 +337,7 @@ public final class DocxPaperMHTML {
 		
 		if(type != null)  {
 			if(QuestionTypes.Textual.equals(type.getQuestionType()) || QuestionTypes.Sort.equals(type.getQuestionType()) || QuestionTypes.LongText.equals(type.getQuestionType())) {
-				if((type.getQueHaveImage() != null && type.getQueHaveImage() == true)) {
+				if((type.getQueHaveImage() != null && type.getQueHaveImage())) {
 					for (QuestionResource resource : question.getQuestionResources()) {
 						if(MultimediaType.Image.equals(resource.getType())) {
 							li.append(addImage(SharedConstant.getUploadBaseDIRPath() + "/" + resource.getPath()));	

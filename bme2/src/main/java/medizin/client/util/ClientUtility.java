@@ -247,7 +247,7 @@ public final class ClientUtility {
 		
 		String cookie = Cookies.getCookie(McAppConstant.LAST_SELECTED_QUESTION_REVIEWER);
 		final Long personid;
-		if (cookie != null && cookie.isEmpty() == false)
+		if (cookie != null && !cookie.isEmpty())
 			personid = Long.parseLong(cookie);
 		else
 			personid = null;
@@ -261,7 +261,7 @@ public final class ClientUtility {
 		
 		String cookie = Cookies.getCookie(McAppConstant.LAST_SELECTED_ANSWER_REVIEWER);
 		final Long personid;
-		if (cookie != null && cookie.isEmpty() == false)
+		if (cookie != null && !cookie.isEmpty())
 			personid = Long.parseLong(cookie);
 		else
 			personid = null;

@@ -78,7 +78,7 @@ public class MatrixValidityVO {
 			return false;
 		}  
 	
-		if((obj instanceof MatrixValidityVO) == false) {
+		if(!(obj instanceof MatrixValidityVO)) {
 			return false;
 		}
 		final MatrixValidityVO vo = (MatrixValidityVO) obj;

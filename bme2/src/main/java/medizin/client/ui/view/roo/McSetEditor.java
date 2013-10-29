@@ -111,7 +111,7 @@ public class McSetEditor extends McSetEditor_Roo_Gwt {
     }
 
     public void setAcceptableValues(Collection<medizin.client.proxy.McProxy> proxies) {
-    	if (proxies != null && proxies.isEmpty() == false)
+    	if (proxies != null && !proxies.isEmpty())
     		picker.setValue(Lists.newArrayList(proxies).get(0));    		
     		
         picker.setAcceptableValues(proxies);

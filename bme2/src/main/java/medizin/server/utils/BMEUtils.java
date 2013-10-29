@@ -115,7 +115,7 @@ public final class BMEUtils {
 				}
 			});
 
-			if(optional.isPresent() == false) {
+			if(!optional.isPresent()) {
 				log.error("Method is null");
 				log.error("Name is : " + name);
 			}else {
@@ -147,7 +147,7 @@ public final class BMEUtils {
 		
 		int minSize = Math.min(firstList.size(), secondList.size());
 		for(int i=0;i<minSize;i++) {
-			if(firstList.get(i).equals(secondList.get(i)) == false) {
+			if(!firstList.get(i).equals(secondList.get(i))) {
 				return false;
 			}
 		}

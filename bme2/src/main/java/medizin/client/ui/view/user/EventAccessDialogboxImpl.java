@@ -350,7 +350,7 @@ public class EventAccessDialogboxImpl extends DialogBox implements EventAccessDi
 	        			public void render(com.google.gwt.cell.client.Cell.Context context,QuestionEventProxy value, SafeHtmlBuilder sb) {
 	        				boolean readButtonFlag = checkAccessRights(value, AccessRights.AccRead);
 	        				
-	        				if (readButtonFlag == false)
+	        				if (!readButtonFlag)
 	        				{
 	        					boolean writeButtonFlag = checkAccessRights(value, AccessRights.AccWrite);
 	        					
@@ -358,9 +358,7 @@ public class EventAccessDialogboxImpl extends DialogBox implements EventAccessDi
 	        						sb.append(READ_DISABLED_BUTTON);
 	        					else
 	        						super.render(context, value, sb);
-	        				}
-	        				else if (readButtonFlag == true)
-	        				{
+	        				} else {
 	        					sb.append(READ_DISABLED_BUTTON);	        					
 	        				}	        				
 	        			}						
@@ -384,10 +382,11 @@ public class EventAccessDialogboxImpl extends DialogBox implements EventAccessDi
 					@Override
 					public void render(com.google.gwt.cell.client.Cell.Context context, QuestionEventProxy value, SafeHtmlBuilder sb) {
 						boolean writeButtonFlag = checkAccessRights(value, AccessRights.AccWrite);
-						if (writeButtonFlag == false)
+						if (!writeButtonFlag) {
 							super.render(context, value, sb);
-						else if (writeButtonFlag == true)
+						} else {
 							sb.append(WRITE_DISABLED_BUTTON);
+						}
 					}
     	          };
 		
@@ -409,10 +408,11 @@ public class EventAccessDialogboxImpl extends DialogBox implements EventAccessDi
 					@Override
 					public void render(com.google.gwt.cell.client.Cell.Context context, QuestionEventProxy value, SafeHtmlBuilder sb) {
 						boolean addQuestionFlag = checkAccessRights(value, AccessRights.AccAddQuestions);						
-						if (addQuestionFlag == false)
+						if (!addQuestionFlag) {
 							super.render(context, value, sb);
-						else if (addQuestionFlag == true)
+						} else {
 							sb.append(ADDQUESTION_DISABLED_BUTTON);
+						}
 					}
     	          };
     	         

@@ -337,7 +337,7 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 		
 		newQuestion.setText(constants.newQuestion());
 		
-		if (questionAddRightsFlag == false){
+		if (!questionAddRightsFlag){
 			newQuestion.removeFromParent();
 			//Document.get().getElementById("queAddBtnDiv").removeFromParent();
 		}	
@@ -796,7 +796,7 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 			String beginn = "<div style=\"white-space:normal;";
 			String end = "</div>";
 			
-			if (Status.DEACTIVATED.equals(value.getStatus()) == false && Status.ACTIVE.equals(value.getStatus()) == false)
+			if (!Status.DEACTIVATED.equals(value.getStatus()) && !Status.ACTIVE.equals(value.getStatus()))
 			{
 				if (!value.getIsAcceptedAdmin()) {
 					beginn += "color:red; ";

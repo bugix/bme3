@@ -112,7 +112,7 @@ public class Institution {
  		
  		Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(exp, "%" + text +"%"), criteriaBuilder.not(criteriaBuilder.in(from.get("id")).value(subQuery)));
  		
- 		if (loggedPerson.getIsAdmin() == false)
+ 		if (!loggedPerson.getIsAdmin())
  		{
  			Predicate pre = criteriaBuilder.equal(from.get("id"), loggedInstitution.getId());
  			predicate = criteriaBuilder.and(pre, predicate);
@@ -138,7 +138,7 @@ public class Institution {
  		CriteriaQuery<Institution> criteriaQuery = criteriaBuilder.createQuery(Institution.class);
  		Root<Institution> from = criteriaQuery.from(Institution.class);
  		
- 		if (loggedPerson.getIsAdmin() == false)
+ 		if (!loggedPerson.getIsAdmin())
  		{
  			Predicate pre = criteriaBuilder.equal(from.get("id"), loggedInstitution.getId());
  			criteriaQuery.where(pre);
@@ -170,7 +170,7 @@ public class Institution {
  		
  		Predicate predicate = criteriaBuilder.and(criteriaBuilder.like(exp, "%" + text +"%"), criteriaBuilder.not(criteriaBuilder.in(from.get("id")).value(subQuery)));
  		
- 		if (loggedPerson.getIsAdmin() == false)
+ 		if (!loggedPerson.getIsAdmin())
  		{
  			Predicate pre = criteriaBuilder.equal(from.get("id"), loggedInstitution.getId());
  			predicate = criteriaBuilder.and(pre, predicate);
@@ -238,7 +238,7 @@ public class Institution {
 		
 		if (personId != null && personId != 0)
 		{
-			if (loggedPerson.getIsAdmin() == false)
+			if (!loggedPerson.getIsAdmin())
 			{
 				Subquery<UserAccessRights> subQry = criteriaQuery.subquery(UserAccessRights.class);
 				Root queAccRoot = subQry.from(UserAccessRights.class);
@@ -278,7 +278,7 @@ public class Institution {
 		
 		if (personId != null && personId != 0)
 		{
-			if (loggedPerson.getIsAdmin() == false)
+			if (!loggedPerson.getIsAdmin())
 			{
 				Subquery<UserAccessRights> subQry = criteriaQuery.subquery(UserAccessRights.class);
 				Root queAccRoot = subQry.from(UserAccessRights.class);
@@ -315,7 +315,7 @@ public class Institution {
 		
 		if (loggedPerson == null || loggedInstitution == null)
 			throw new IllegalArgumentException("Logged person or instution may not be null");
-		else if (loggedPerson != null && loggedPerson.getIsAdmin() == false)
+		else if (loggedPerson != null && !loggedPerson.getIsAdmin())
 			throw new IllegalArgumentException("Only overall admin can use this functionality");
 		
     }

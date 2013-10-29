@@ -438,7 +438,7 @@ public class UserAccessRights {
 		
 		TypedQuery<UserAccessRights> query = entityManager().createQuery(criteriaQuery);
 		
-		if (query.getResultList() != null && query.getResultList().isEmpty() == false)
+		if (query.getResultList() != null && !query.getResultList().isEmpty())
 			return query.getResultList().get(0);
 		else
 			return null;		
@@ -460,7 +460,7 @@ public class UserAccessRights {
 		
 		TypedQuery<UserAccessRights> query = entityManager().createQuery(criteriaQuery);
 		
-		if (query.getResultList() != null && query.getResultList().isEmpty() == false)
+		if (query.getResultList() != null && !query.getResultList().isEmpty())
 			return query.getResultList().get(0);
 		else
 			return null;

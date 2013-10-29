@@ -554,7 +554,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 					AssesmentQuestionView question =(AssesmentQuestionViewImpl)assementQuestionPanel.getAssesmentQuestionDisplayPanel().getWidget(i);
 					if(questionTypes.contains(question.getProxy().getQuestion().getQuestionType()) && question.getProxy().getQuestion().getQuestEvent().equals(questionSumPerPersonProxy.getQuestionEvent()))
 					{	
-						if (question.getProxy().getIsForcedByAdmin() == true || question.getProxy().getIsAssQuestionAcceptedAdmin() == true)
+						if (question.getProxy().getIsForcedByAdmin() || question.getProxy().getIsAssQuestionAcceptedAdmin())
 							questionAssigned++;
 						
 						count++;
@@ -1421,7 +1421,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 					
 				}
 				
-				if (sumOfAnswer.equals(SharedConstant.INFINITE_VALUE) == true)
+				if (sumOfAnswer.equals(SharedConstant.INFINITE_VALUE))
 				{
 					if (totalAnswerSelected >= 2 && sumOfTrueAnsw == trueAnswer)
 						return true;
@@ -1474,13 +1474,13 @@ QuestionAdvancedSearchPopupView.Delegate {
 				}
 				
 				//if(sumFalseAnswers==falseAnswerSelected)
-				if (sumOfAnswer.equals(SharedConstant.INFINITE_VALUE) == true)
+				if (sumOfAnswer.equals(SharedConstant.INFINITE_VALUE))
 				{
 					if (totalAnswerSelected >= 2 && isAllAnswerFalse)
 						return true;
 					else
 					{
-						if (isAllAnswerFalse == false)
+						if (!isAllAnswerFalse)
 							ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.sumOfFalseAnswerErrMsg());
 						else
 							ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.sumOfAnswer(2));

@@ -79,7 +79,7 @@ public class ReceiverDialog extends DialogBox {
 	}
 	
 	public static void showMessageDialog(final String header,final ArrayList<String> messages) {
-		if(messages != null && messages.isEmpty() == false) {
+		if(messages != null && !messages.isEmpty()) {
 			final StringBuilder errorBuffor = new StringBuilder();
 			errorBuffor.append("<b>" + header + "</b>" + "<br/><br/>");
 			errorBuffor.append("<ul style=\"padding:0px; margin:0px; list-style-type:none;\">");

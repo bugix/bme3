@@ -112,7 +112,7 @@ public class ResourceView extends Composite implements DragHandler {
 		impl = this;
 		frontRowNumber = questionResources.size();
 		
-		if(isEditable == false) {
+		if(!isEditable) {
 			hPanel.getElement().getStyle().setBorderColor("#FFFFFF");
 		}
 		
@@ -139,7 +139,7 @@ public class ResourceView extends Composite implements DragHandler {
 
 		// absolutePanel.add(customContentSubViewImpl);
 
-		if(isEditable == true) {
+		if(isEditable) {
 			PickupDragController dragController = new PickupDragController(resourceSubView.getAbsPanel(), false);
 			dragController.setBehaviorDragProxy(true);
 			dragController.addDragHandler(this);
@@ -172,7 +172,7 @@ public class ResourceView extends Composite implements DragHandler {
 		
 		QuestionResourceClient proxy =  new QuestionResourceClient();
 		
-		if(added == true) {
+		if(added) {
 			proxy.setPath(url);
 			proxy.setSequenceNumber(frontRowNumber);
 			proxy.setType(type);
@@ -253,7 +253,7 @@ public class ResourceView extends Composite implements DragHandler {
 			QuestionResourceClient client = resourceSubView.getQuestionResourceClient();
 			client.setSequenceNumber(i);
 			client.setState(State.EDITED);
-			if(questionResources.contains(client) == false) {
+			if(!questionResources.contains(client)) {
 				questionResources.add(client);
 			}
 			Log.info("resource view : " + client);

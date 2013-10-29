@@ -60,7 +60,7 @@ public class FileDownloader extends HttpServlet{
 				throw new IllegalArgumentException("User Need to login before downloading this Document.");
 			}
 			
-			if(loggedPerson.getIsAdmin() == true || accessRights.getIsInstitutionalAdmin() == true) {
+			if(loggedPerson.getIsAdmin() || accessRights.getIsInstitutionalAdmin()) {
 				switch (method) {
 				case DOCX_PAPER: 
 				{

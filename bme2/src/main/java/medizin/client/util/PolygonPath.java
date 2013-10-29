@@ -19,7 +19,7 @@ public class PolygonPath {
 	
 	
 	public void addPoint(Point p) {
-		if(isClosed() == false) {
+		if(!isClosed()) {
 			points.add(p);	
 		}
 	}
@@ -50,7 +50,7 @@ public class PolygonPath {
 			Point secondLastPoint = points.get(points.size() - 2);
 
 			for (int i = 0; i < points.size() - 2; i++) {
-				if(doLineSegmentsIntersect(points.get(i), points.get(i+1), lastPoint, secondLastPoint) == true) {
+				if(doLineSegmentsIntersect(points.get(i), points.get(i+1), lastPoint, secondLastPoint)) {
 					Log.info("line intersect.");
 					flag = false;
 					break;

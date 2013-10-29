@@ -63,12 +63,12 @@ public class MatrixAnswerViewer extends Composite {
 			
 			Optional<MatrixValidityProxy> optional1 = fluentIterable.firstMatch(new MatrixValidityPredicate(matrixValidityProxy));
 				
-			if(optional1.isPresent() == false)  {
+			if(!optional1.isPresent())  {
 				
 				Optional<MatrixValidityProxy> optionalAnswerX = fluentIterable.firstMatch(new AnswerXPredicate(matrixValidityProxy.getAnswerX()));
 				Optional<MatrixValidityProxy> optionalAnswerY = fluentIterable.firstMatch(new AnswerYPredicate(matrixValidityProxy.getAnswerY()));
 				
-				if(optionalAnswerX.isPresent() == true && optionalAnswerY.isPresent() == false) {
+				if(optionalAnswerX.isPresent() && !optionalAnswerY.isPresent()) {
 					// add new column
 					int currentRow = matrixList.getRowForObject(optionalAnswerX.get());
 					
@@ -78,7 +78,7 @@ public class MatrixAnswerViewer extends Composite {
 					addAnswerYTextAndLabel(matrixValidityProxy);
 				}
 				
-				if(optionalAnswerX.isPresent() == false && optionalAnswerY.isPresent() == true){
+				if(!optionalAnswerX.isPresent() && optionalAnswerY.isPresent()){
 					// add new row
 					int currentColumn = matrixList.getColumnForObject(optionalAnswerY.get());
 					
@@ -89,7 +89,7 @@ public class MatrixAnswerViewer extends Composite {
 				}
 				
 				// not answer is added; 
-				if(optionalAnswerX.isPresent() == false && optionalAnswerY.isPresent() == false) {
+				if(!optionalAnswerX.isPresent() && !optionalAnswerY.isPresent()) {
 										
 					matrixList.add(1,1,matrixValidityProxy);	
 					int currentRow = matrixList.getRowForObject(matrixValidityProxy);
@@ -100,7 +100,7 @@ public class MatrixAnswerViewer extends Composite {
 					addAnswerYTextAndLabel(matrixValidityProxy);
 				}
 				
-				if(optionalAnswerX.isPresent() == true && optionalAnswerY.isPresent() == true) {
+				if(optionalAnswerX.isPresent() && optionalAnswerY.isPresent()) {
 					int currentRow = matrixList.getRowForObject(optionalAnswerX.get());
 					int currentColumn = matrixList.getColumnForObject(optionalAnswerY.get());
 					

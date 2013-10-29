@@ -149,7 +149,7 @@ public class XmlPaper {
 
 	private Element addQuestionResources(Document doc, QuestionVO question) {
 		Set<QuestionResource> questionResources = question.getAssesmentQuestion().getQuestion().getQuestionResources();
-		if(questionResources != null && questionResources.isEmpty() == false) {
+		if(questionResources != null && !questionResources.isEmpty()) {
 			Element questionResource = doc.createElement(QUESTION_RESOURCES);
 			for (QuestionResource resource : questionResources) {
 				questionResource.appendChild(addResourceElement(doc, resource));
@@ -443,9 +443,9 @@ public class XmlPaper {
 	}
 	
 	private Element addToElement(Document doc, Element parentElement, String key, Validity value) {
-		if(value != null && Validity.Wahr.equals(value)== true) {
+		if(value != null && Validity.Wahr.equals(value)) {
 			return addToElement(doc, parentElement, key, true);
-		} else if (value != null && Validity.Falsch.equals(value)== true){
+		} else if (value != null && Validity.Falsch.equals(value)){
 			return addToElement(doc, parentElement, key, false);
 		} else {
 			return addToElement(doc, parentElement, key, EMPTY_VALUE);	

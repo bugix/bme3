@@ -129,7 +129,7 @@ public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper
 					//this.eventBus = eventBus;
 			        widget.setWidget(questionDetailsView.asWidget());
 			        
-					if (((QuestionProxy) response).getIsReadOnly() == true)
+					if (((QuestionProxy) response).getIsReadOnly())
 						view.setVisibleEditAndDeleteBtn(false);
 					
 					init((QuestionProxy) response);

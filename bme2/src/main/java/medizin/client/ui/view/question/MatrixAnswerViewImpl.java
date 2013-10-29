@@ -238,7 +238,7 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 					
 					for (int columnIndex = 1; columnIndex < (totalColumn - 1); columnIndex++) {
 						
-						if(matrix.isCellPresent(0, columnIndex)  == true && matrix.getHTML(0, columnIndex).trim().isEmpty() == false) {
+						if(matrix.isCellPresent(0, columnIndex) && !matrix.getHTML(0, columnIndex).trim().isEmpty()) {
 							final MatrixValidityVO matrixValidityVO;
 							if (matrixList.exists(currentRow, columnIndex)) {
 								matrixValidityVO = matrixList.get(currentRow, columnIndex);
@@ -277,12 +277,12 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 		editX.addClickHandler(new TextEditClickHandler(answerVO, textBox, label,editX,saveX));
 		deleteX.addClickHandler(new DeleteClickedHandler(answerVO,true));
 		
-		if(isEdit == false) {
+		if(!isEdit) {
 			editX.removeFromParent();
 			saveX.removeFromParent();
 		}
 		
-		if(isDelete == false) {
+		if(!isDelete) {
 			deleteX.removeFromParent();
 		}
 	}
@@ -369,7 +369,7 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 					}
 
 					for (int rowIndex = 1; rowIndex < (totalRows - 1); rowIndex++) {
-						if(matrix.isCellPresent(rowIndex, 0) && matrix.getHTML(rowIndex, 0).trim().isEmpty() == false) {
+						if(matrix.isCellPresent(rowIndex, 0) && !matrix.getHTML(rowIndex, 0).trim().isEmpty()) {
 							final MatrixValidityVO matrixValidityVO;
 							if (matrixList.exists(rowIndex, currentColumn)) {
 								matrixValidityVO = matrixList.get(rowIndex, currentColumn);
@@ -410,12 +410,12 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 		editY.addClickHandler(new TextEditClickHandler(answerVO, textBox, label,editY,saveY));
 		deleteY.addClickHandler(new DeleteClickedHandler(answerVO,false));
 		
-		if(isEdit == false) {
+		if(!isEdit) {
 			editY.removeFromParent();
 			saveY.removeFromParent();
 		}
 		
-		if(isDelete == false) {
+		if(!isDelete) {
 			deleteY.removeFromParent();
 		}
 	}
@@ -438,7 +438,7 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 			}
 		});
 		// change {
-		if (isAdminOrInstitutionalAdmin == false) {
+		if (!isAdminOrInstitutionalAdmin) {
 			author.setSelected(logedUser);
 			author.setEnabled(false);
 		}else {
@@ -492,7 +492,7 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 //			StringBuilder errorString = new StringBuilder();
 			
 			
-			if(validationOfFields(true,null) == true) {
+			if(validationOfFields(true,null)) {
                 //delegate.saveMatrixAnswer(currentMatrixValidityProxy,matrixList, author.getSelected(), rewiewer.getSelected(), submitToReviewComitee.getValue(), comment.getText());
 				delegate.saveAllTheValuesToAnswerAndMatrixAnswer(currentMatrixValidityProxy,matrixList, author.getSelected(), rewiewer.getSelected(), submitToReviewComitee.getValue(), comment.getText());
 				hide();
@@ -548,7 +548,7 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 			messages.add(constants.answerTextMaxLength());
 		}
 		
-		if(addMatrixValidation == true) {
+		if(addMatrixValidation) {
 			int size = FluentIterable.from(matrixList).filter(new Predicate<MatrixValidityVO>() {
 
 				@Override
@@ -601,7 +601,7 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 
 		}
 				
-		if(flag == false) {
+		if(!flag) {
 			ReceiverDialog.showMessageDialog(constants.pleaseEnterWarning(),messages);
 		}
 		return flag;
@@ -628,11 +628,11 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 		@Override
 		public void onClick(ClickEvent event) {
 			final String text = textBox.getText();
-			if (text != null && text.isEmpty() == false) {
+			if (text != null && !text.isEmpty()) {
 	
 				boolean flag = true;//validationOfFields(false,text);
 				
-				if(flag == true) {
+				if(flag) {
 
 					/*String points = null; 
 					String mediaPath = null;
@@ -757,20 +757,20 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 					
 					FluentIterable<MatrixValidityVO> fluentIterable = FluentIterable.from(matrixList);
 					final FluentIterable<MatrixValidityVO> foundAnswers;
-					if(isAnswerX == true) {
+					if(isAnswerX) {
 						foundAnswers = fluentIterable.filter(new AnswerXPredicate(answer.getAnswerProxy()));
 					}else {
 						foundAnswers = fluentIterable.filter(new AnswerYPredicate(answer.getAnswerProxy()));
 					}
 					
-					if(foundAnswers.isEmpty() == false) {
+					if(!foundAnswers.isEmpty()) {
                                          
 						delegate.deletedSelectedAnswer(answer.getAnswerProxy(),isAnswerX,new Function<Boolean, Void>() {
 
 							@Override
 							public Void apply(Boolean input) {
 								
-								if(input == true) {
+								if(input) {
 									//delete the full answer
 									clearFullMatrix();
 								}else {
@@ -785,13 +785,13 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 						});
 					} else {
 						final FluentIterable<MatrixValidityVO> foundAnswersWithoutIds;
-						if(isAnswerX == true) {
+						if(isAnswerX) {
 							foundAnswersWithoutIds = fluentIterable.filter(new AnswerXWithoutIdsPredicate(answer));
 						}else {
 							foundAnswersWithoutIds = fluentIterable.filter(new AnswerYWithoutIdsPredicate(answer));
 						}
 						
-						if(foundAnswersWithoutIds.isEmpty() == false) {
+						if(!foundAnswersWithoutIds.isEmpty()) {
 							if(isAnswerX ==  true) {
 								removeTableRow(foundAnswersWithoutIds);
 							}else {
@@ -880,12 +880,12 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 			matrixValidityVO.setValidity(matrixValidityProxy.getValidity());
 			matrixValidityVO.setMatrixValidityProxy(matrixValidityProxy);
 				
-			if(optional1.isPresent() == false)  {
+			if(!optional1.isPresent())  {
 				
 				Optional<MatrixValidityVO> optionalAnswerX = fluentIterable.firstMatch(new AnswerXPredicate(matrixValidityProxy.getAnswerX()));
 				Optional<MatrixValidityVO> optionalAnswerY = fluentIterable.firstMatch(new AnswerYPredicate(matrixValidityProxy.getAnswerY()));
 				
-				if(optionalAnswerX.isPresent() == true && optionalAnswerY.isPresent() == false) {
+				if(optionalAnswerX.isPresent() && !optionalAnswerY.isPresent()) {
 					// add new column
 									
 					int currentRow = matrixList.getRowForObject(optionalAnswerX.get());
@@ -907,7 +907,7 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 					addAnswerY(matrixValidityVO,isEdit,isDelete);
 				}
 				
-				if(optionalAnswerX.isPresent() == false && optionalAnswerY.isPresent() == true){
+				if(!optionalAnswerX.isPresent() && optionalAnswerY.isPresent()){
 					// add new row
 					int currentColumn = matrixList.getColumnForObject(optionalAnswerY.get());
 					AnswerVO answerX = new AnswerVO();
@@ -926,7 +926,7 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 				}
 				
 				// not answer is added; 
-				if(optionalAnswerX.isPresent() == false && optionalAnswerY.isPresent() == false) {
+				if(!optionalAnswerX.isPresent() && !optionalAnswerY.isPresent() ) {
 					AnswerVO answerX = new AnswerVO();
 					AnswerVO answerY = new AnswerVO();
 
@@ -954,7 +954,7 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 					addAnswerY(matrixValidityVO,isEdit,isDelete);
 				}
 				
-				if(optionalAnswerX.isPresent() == true && optionalAnswerY.isPresent() == true) {
+				if(optionalAnswerX.isPresent() && optionalAnswerY.isPresent()) {
 					int currentRow = matrixList.getRowForObject(optionalAnswerX.get());
 					int currentColumn = matrixList.getColumnForObject(optionalAnswerY.get());
 					matrixValidityVO.setAnswerX(optionalAnswerX.get().getAnswerX());
@@ -978,121 +978,11 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 			}
 		}
 		
-		if(isNew == false) {
+		if(!isNew) {
 			addAnswerX.removeFromParent();
 			addAnswerY.removeFromParent();
 		}
 	}
-	
-	
-	/*private void addAnswerXTextAndLabel(MatrixValidityVO vo) {
-		
-		final IconButton editX = new IconButton();
-		editX.setIcon("pencil");
-		final IconButton deleteX = new IconButton();
-		deleteX.setIcon("trash");
-		final IconButton saveX = new IconButton();
-		saveX.setIcon("disk");
-		final TextBox textBoxX = new TextBox();
-		final Label labelX = new Label();
-		textBoxX.addStyleName("matrix-textbox-x");
-		labelX.addStyleName("matrix-label-x");
-		HorizontalPanel hpX = new HorizontalPanel();
-		hpX.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-		hpX.addStyleName("matrix-hp-text-x");
-		hpX.setSpacing(2);
-		
-		hpX.add(saveX);
-		hpX.add(editX);
-		hpX.add(deleteX);
-		hpX.add(textBoxX);
-		hpX.add(labelX);
-		
-		labelX.setVisible(true);
-		textBoxX.setVisible(false);
-		saveX.setVisible(false);
-		labelX.setText(vo.getAnswerX().getAnswer());
-		labelX.setTitle(vo.getAnswerX().getAnswer());
-		textBoxX.setText(vo.getAnswerX().getAnswer());
-		
-		labelX.setWidth("100px");
-		labelX.getElement().getStyle().setTextOverflow(TextOverflow.ELLIPSIS);
-		labelX.getElement().getStyle().setOverflow(Overflow.HIDDEN);
-		labelX.getElement().getStyle().setWhiteSpace(WhiteSpace.NOWRAP);
-		
-		final int currentRowX = matrix.getRowCount() - 1;
-				
-		matrix.setWidget(currentRowX, 0, hpX);
-		matrix.setWidget(currentRowX + 1, 0, addAnswerX);
-		
-		saveX.addClickHandler(new TextSaveClickedHandler(vo.getAnswerX(), textBoxX, labelX,editX,saveX, new Function<Boolean, Void>() {
-
-			@Override
-			public Void apply(Boolean input) {
-				Log.info("persist done for answerX");
-				return null;
-			}
-		}));
-		editX.addClickHandler(new TextEditClickHandler(vo.getAnswerX(), textBoxX, labelX,editX,saveX));
-		deleteX.addClickHandler(new DeleteClickedHandler(vo.getAnswerX(),true));
-		
-	}
-
-	private void addAnswerYTextAndLabel(MatrixValidityVO vo) {
-		final IconButton editY = new IconButton();
-		editY.setIcon("pencil");
-		final IconButton deleteY = new IconButton();
-		deleteY.setIcon("trash");
-		final IconButton saveY = new IconButton();
-		saveY.setIcon("disk");
-		final TextBox textBoxY = new TextBox();
-		final Label labelY = new Label();
-		//labelY.addStyleName("rowRotate90");
-		//textBoxY.addStyleName("rowRotate90");
-		textBoxY.addStyleName("textbox-y");
-		VerticalPanel vp = new VerticalPanel();
-		HorizontalPanel hp = new HorizontalPanel();
-		HorizontalPanel buttonHP = new HorizontalPanel();
-		
-		vp.addStyleName("matrix-hp-text-y");
-		vp.setSpacing(2);
-		
-		buttonHP.add(editY);
-		buttonHP.add(saveY);
-		buttonHP.add(deleteY);
-		
-		vp.add(buttonHP);
-		vp.add(hp);
-		
-		hp.add(textBoxY);
-		hp.add(labelY);
-		labelY.setVisible(true);
-		textBoxY.setVisible(false);
-		saveY.setVisible(false);
-		labelY.setText(vo.getAnswerY().getAnswer());
-		labelY.setTitle(vo.getAnswerY().getAnswer());
-		textBoxY.setText(vo.getAnswerY().getAnswer());
-		
-		editY.getElement().getParentElement().addClassName("matrix-icon-y");
-		deleteY.getElement().getParentElement().addClassName("matrix-icon-y");
-		saveY.getElement().getParentElement().addClassName("matrix-icon-y");
-		
-		int widgetAddColumnY = matrix.getCellCount(0) - 1;
-		matrix.setWidget(0, widgetAddColumnY, vp);
-		matrix.setWidget(0, widgetAddColumnY + 1, addAnswerY);
-		
-		saveY.addClickHandler(new TextSaveClickedHandler(vo.getAnswerY(), textBoxY, labelY,editY,saveY, new Function<Boolean, Void>() {
-			
-			@Override
-			public Void apply(Boolean input) {
-				Log.info("Persist done for answer Y");
-				return null;
-			}
-		}));
-		editY.addClickHandler(new TextEditClickHandler(vo.getAnswerY(), textBoxY, labelY, editY, saveY));
-		deleteY.addClickHandler(new DeleteClickedHandler(vo.getAnswerY(),false));
-		
-	}*/
 
 	private void addValidityBtnOn(int currentRow, int currentColumn,final MatrixValidityVO vo) {
 		if(currentColumn > -1 && currentRow > -1) {

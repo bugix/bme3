@@ -85,7 +85,7 @@ public class ImageRectangleViewer extends Composite{
 				@Override
 				public void onMouseDown(MouseDownEvent event) {
 
-					if (btnAddClicked == true) {
+					if (btnAddClicked) {
 						int x = event.getRelativeX(event.getRelativeElement());
 						int y = event.getRelativeY(event.getRelativeElement());
 						

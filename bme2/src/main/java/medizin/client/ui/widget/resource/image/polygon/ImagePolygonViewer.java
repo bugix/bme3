@@ -136,7 +136,7 @@ public class ImagePolygonViewer extends Composite implements ImageWidthHeight {
 				currentPolygonPath.addPoint(point);
 				currentPolygonPath.closed();
 				return;
-			}else if(currentPolygonPath.isClosed() == false){
+			}else if(!currentPolygonPath.isClosed()){
 				currentPath.lineTo(point.getX(), point.getY());
 			}else {
 				Log.info("Do nothing");
@@ -145,7 +145,7 @@ public class ImagePolygonViewer extends Composite implements ImageWidthHeight {
 		}
 		currentPolygonPath.addPoint(point);
 		
-		if(currentPolygonPath.isClosed() == false && currentPolygonPath.checkForPolygon() == false) {
+		if(!currentPolygonPath.isClosed() && !currentPolygonPath.checkForPolygon()) {
 		 	currentPath.close();
 			drawingArea.remove(currentPath);
 			btnPolyLine.setEnabled(true);
@@ -192,7 +192,7 @@ public class ImagePolygonViewer extends Composite implements ImageWidthHeight {
 			@Override
 			public void onMouseDown(MouseDownEvent event) {
 
-				if (btnPolyLine.isEnabled() == false) {
+				if (!btnPolyLine.isEnabled()) {
 					int x = event.getRelativeX(event.getRelativeElement());
 					int y = event.getRelativeY(event.getRelativeElement());
 					

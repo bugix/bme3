@@ -284,7 +284,7 @@ public class Question {
 		criteriaQuery.select(criteriaBuilder.count(from)); 			
 		Predicate mainPredicate = from.get("status").in(Status.NEW,Status.ACTIVE);
 		
-		if (loggedPerson.getIsAdmin() == true)
+		if (loggedPerson.getIsAdmin())
 		{
 			if (institutionId != null)
 			{
@@ -409,7 +409,7 @@ public class Question {
 		Root<Question> from = criteriaQuery.from(Question.class);
 		
 		Predicate mainPredicate = from.get("status").in(Status.NEW,Status.ACTIVE);
-		if (loggedPerson.getIsAdmin() == true)
+		if (loggedPerson.getIsAdmin())
 		{
 			if (institutionId != null)
 			{
@@ -1578,162 +1578,6 @@ public class Question {
 		return orPredicate;
 	}
 	
-	/*@Transactional
-	public static Question persistNewQuestion(Long questionTypeId, String questionShortName, String questionText, Long autherId,Long reviewerId,
-			Boolean submitToReviewComitee,Long questionEventId, List<Long> mcIds, String questionComment, int questionVersion, int questionSubVersion, 
-			String picturePath, Status status, Set<QuestionResource> questionResources, Long oldQuestionId) {
-		
-		boolean flag = Question.findQuestionHasNewQuestion(oldQuestionId);
-		
-		if(flag == true) {
-			throw new IllegalStateException("This Question alreay has new status. Try refreshing the page");
-		}
-		
-		Comment newComment = new Comment();
-		newComment.setComment(questionComment);
-		newComment.persist();
-		
-		Question question = new Question();
-		question.setQuestionType(QuestionType.findQuestionType(questionTypeId));
-		question.setQuestionText(questionText);	
-		question.setAutor(Person.findPerson(autherId));
-		question.setQuestionShortName(questionShortName);
-		question.setRewiewer(Person.findPerson(reviewerId));
-		question.setSubmitToReviewComitee(submitToReviewComitee);
-		question.setQuestEvent(QuestionEvent.findQuestionEvent(questionEventId));
-		question.setDateAdded(new Date());
-		
-		Iterator<Mc> iterator = FluentIterable.from(mcIds).filter(Predicates.notNull()).transform(new Function<Long, Mc>() {
-
-			@Override
-			public Mc apply(Long input) {
-				
-				return Mc.findMc(input);
-			}
-		}).iterator();
-		
-		question.setMcs(Sets.newHashSet(iterator));
-		question.setQuestionVersion(questionVersion);
-		question.setQuestionSubVersion(questionSubVersion);
-		question.setComment(newComment);
-		question.setPicturePath(picturePath);
-		
-		if(Status.NEW.equals(status)) {
-			question.setIsAcceptedAdmin(false);
-			question.setIsAcceptedRewiever(false);
-			question.setIsAcceptedAuthor(true);
-			//question.setIsActive(false);
-			question.setStatus(Status.NEW);
-		}else if(Status.CORRECTION_FROM_ADMIN.equals(status)) {
-			question.setIsAcceptedAdmin(true);
-			question.setIsAcceptedRewiever(false);
-			question.setIsAcceptedAuthor(false);
-			//question.setIsActive(false);
-			question.setStatus(Status.CORRECTION_FROM_ADMIN);
-		}else if(Status.CORRECTION_FROM_REVIEWER.equals(status)) {
-			question.setIsAcceptedAdmin(false);
-			question.setIsAcceptedRewiever(true);
-			question.setIsAcceptedAuthor(false);
-			//question.setIsActive(false);
-			question.setStatus(Status.CORRECTION_FROM_REVIEWER);
-		}else if(Status.ACCEPTED_ADMIN.equals(status)) {
-			question.setIsAcceptedAdmin(true);
-			question.setStatus(Status.ACCEPTED_ADMIN);
-			if(question.getIsAcceptedRewiever() && question.getIsAcceptedAuthor()) {
-				//question.setIsActive(true);
-				question.setStatus(Status.ACTIVE);
-			}			
-		}else if(Status.ACCEPTED_REVIEWER.equals(status)) {
-			question.setIsAcceptedRewiever(true);
-			question.setStatus(Status.ACCEPTED_REVIEWER);
-			if(question.getIsAcceptedAdmin() && question.getIsAcceptedAuthor()) {
-				//question.setIsActive(true);
-				question.setStatus(Status.ACTIVE);
-			}			
-		}else {
-			log.info("Do nothing");
-		}
-		question.setIsAcceptedAdmin(false);
-		question.setIsAcceptedRewiever(false);
-		question.setIsActive(false);
-		question.setStatus(Status.NEW);
-		question.setPreviousVersion(Question.findQuestion(oldQuestionId));
-		question.persist();
-		
-		for (QuestionResource questionResource : questionResources) {
-			questionResource.setQuestion(question);
-			questionResource.persist();
-		}
-		
-		Question oldQuestion = Question.findQuestion(oldQuestionId);
-		Map<Answer,Answer> answerMap = Maps.newHashMap();
-		if(oldQuestion != null) {
-			
-			for(Answer answer : oldQuestion.getAnswers()) {
-				Answer newAnswer = new Answer();
-				// copy answer comment
-				Comment newCommentAnswer = answer.getComment();
-				if(answer.getComment() != null) {
-					newCommentAnswer = new Comment();
-					newCommentAnswer.setComment(answer.getComment().getComment());
-					newCommentAnswer.persist();
-				}	
-				
-				BMEUtils.copyValues(answer, newAnswer, Answer.class);
-				newAnswer.setQuestion(question);
-				newAnswer.setComment(newCommentAnswer);
-				newAnswer.persist();
-				
-				if(QuestionTypes.Matrix.equals(oldQuestion.getQuestionType().getQuestionType()) == true) {
-					answerMap.put(answer, newAnswer);	
-				}
-			}
-			
-			// for user matrix validity
-			if(QuestionTypes.Matrix.equals(oldQuestion.getQuestionType().getQuestionType()) == true && answerMap.isEmpty() == false) {
-				
-				List<MatrixValidity> matrixValiditys = MatrixValidity.findAllMatrixValidityForQuestionWithAnyStatus(oldQuestionId);
-
-				for (MatrixValidity oldMatrixValidity : matrixValiditys) {
-					
-					if(answerMap.containsKey(oldMatrixValidity.getAnswerX()) && answerMap.containsKey(oldMatrixValidity.getAnswerY())) {
-						MatrixValidity newMatrixValidity = new MatrixValidity();
-						newMatrixValidity.setValidity(oldMatrixValidity.getValidity());
-						newMatrixValidity.setAnswerX(answerMap.get(oldMatrixValidity.getAnswerX()));
-						newMatrixValidity.setAnswerY(answerMap.get(oldMatrixValidity.getAnswerY()));
-						newMatrixValidity.persist();
-					}
-				}
-			}
-			
-			List<UserAccessRights> userAccessRights = UserAccessRights.findUserAccessRightsByQuestion(oldQuestion.getId());
-			for (UserAccessRights userAccessRight : userAccessRights) {
-				UserAccessRights newUserAccessRights = new UserAccessRights();
-				BMEUtils.copyValues(userAccessRight, newUserAccessRights, UserAccessRights.class);
-				newUserAccessRights.setQuestion(question);
-				newUserAccessRights.persist();
-			}
-			
-			List<AssesmentQuestion> assesmentQuestions = AssesmentQuestion.findAssesmentQuestionsByQuestion(oldQuestion.getId());
-			for (AssesmentQuestion assesmentQuestion : assesmentQuestions) {
-				AssesmentQuestion newAssesmentQuestion = new AssesmentQuestion();
-				BMEUtils.copyValues(assesmentQuestion, newAssesmentQuestion, AssesmentQuestion.class);
-				newAssesmentQuestion.setQuestion(question);
-				newAssesmentQuestion.persist();
-			}
-			
-			if(Status.ACTIVE.equals(oldQuestion.status) == false) {
-				oldQuestion.setStatus(Status.DEACTIVATED);
-			}else {
-				oldQuestion.setIsReadOnly(true);
-			}
-				
-			oldQuestion.persist();
-		}
-		
-		return question;
-	}*/
-	
 	private static boolean findQuestionHasNewQuestion(Long id) {
 		
 		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
@@ -1846,7 +1690,7 @@ public class Question {
 	void onPostRemove() {
 		log.info("in post remove method of question");
 		if(this instanceof Question) {
-			if(this.questionResources != null && this.questionResources.isEmpty() == false) {
+			if(this.questionResources != null && !this.questionResources.isEmpty()) {
 				QuestionResource.deleteFiles(FluentIterable.from(this.questionResources).transform(RESOURCES_TO_PATH).toImmutableSet());
 			}
 		}
@@ -1865,11 +1709,11 @@ public class Question {
 			return null;
 		}
 		
-		if(isAdmin == true) {
+		if(isAdmin) {
 			this.status = Status.CORRECTION_FROM_ADMIN;
-		}else if(userLoggedIn.getId().equals(this.rewiewer.getId()) == true){
+		}else if(userLoggedIn.getId().equals(this.rewiewer.getId())){
 			this.status = Status.CORRECTION_FROM_REVIEWER;
-		}else if(userLoggedIn.getId().equals(this.autor.getId()) == true) {
+		}else if(userLoggedIn.getId().equals(this.autor.getId())) {
 			log.error("Author cannnot see this button.");
 		}else {
 			log.error("Error in logic");
@@ -1915,11 +1759,11 @@ public class Question {
 				questionEventId, Lists.newArrayList(mcIds), questionComment, questionNextVersion, 0, picPath, newStatus, 
 				Sets.newHashSet(newQuestionResources), this.getId());
 		
-		if(question != null && isAdmin == true) {
-			if(userLoggedIn.getId().equals(this.rewiewer.getId()) == true){
+		if(question != null && isAdmin) {
+			if(userLoggedIn.getId().equals(this.rewiewer.getId())){
 				question.isAcceptedRewiever = true;
 			}
-			if(userLoggedIn.getId().equals(this.autor.getId()) == true) {
+			if(userLoggedIn.getId().equals(this.autor.getId())) {
 				question.isAcceptedAuthor = true;
 			}
 			if(question.isAcceptedAdmin && question.isAcceptedAuthor && question.isAcceptedRewiever) {
@@ -2009,7 +1853,7 @@ public class Question {
 		if(previousVersion != null){
 			boolean flag = Question.findQuestionHasNewQuestion(this.previousVersion.getId());
 			
-			if(flag == true) {
+			if(flag) {
 				throw new IllegalStateException("This Question alreay has new status. Try refreshing the page");
 			}	
 		}
@@ -2036,13 +1880,13 @@ public class Question {
 				newAnswer.setComment(newCommentAnswer);
 				newAnswer.persist();
 				
-				if(QuestionTypes.Matrix.equals(oldQuestion.getQuestionType().getQuestionType()) == true) {
+				if(QuestionTypes.Matrix.equals(oldQuestion.getQuestionType().getQuestionType())) {
 					answerMap.put(answer, newAnswer);	
 				}
 			}
 			
 			// for user matrix validity
-			if(QuestionTypes.Matrix.equals(oldQuestion.getQuestionType().getQuestionType()) == true && answerMap.isEmpty() == false) {
+			if(QuestionTypes.Matrix.equals(oldQuestion.getQuestionType().getQuestionType()) && !answerMap.isEmpty()) {
 				
 				List<MatrixValidity> matrixValiditys = MatrixValidity.findAllMatrixValidityForQuestionWithAnyStatus(oldQuestion.getId());
 
@@ -2069,7 +1913,7 @@ public class Question {
 			HashSet<Keyword> keywordSet = new HashSet<Keyword>(oldQuestion.getKeywords());
 			this.setKeywords(keywordSet);
 			
-			if(Status.ACTIVE.equals(oldQuestion.status) == false) {
+			if(!Status.ACTIVE.equals(oldQuestion.status)) {
 				oldQuestion.setStatus(Status.DEACTIVATED);
 			}else {
 				oldQuestion.setIsReadOnly(true);
@@ -2124,11 +1968,11 @@ public class Question {
 			throw new IllegalArgumentException("Logged person or instution may not be null");
 		
 		
-		if(loggedPerson.getIsAdmin() == true || UserAccessRights.checkInstitutionalAdmin() == true) {
+		if(loggedPerson.getIsAdmin() || UserAccessRights.checkInstitutionalAdmin()) {
 			// DO nothing
-		} else if(this.getAutor() != null && this.getAutor().getId().equals(loggedPerson.getId()) == true ) {
+		} else if(this.getAutor() != null && this.getAutor().getId().equals(loggedPerson.getId()) ) {
 			// DO nothing
-		} else if(this.getRewiewer() != null && this.getRewiewer().getId().equals(loggedPerson.getId()) == true) {
+		} else if(this.getRewiewer() != null && this.getRewiewer().getId().equals(loggedPerson.getId())) {
 			// DO nothing
 		} else if(UserAccessRights.checkHasAnyRightsOnQuestionOrQuestionEvent(loggedPerson.getId(), this.getQuestEvent(), this)) {
 			// DO nothing
@@ -2580,13 +2424,13 @@ public class Question {
 			throw new IllegalArgumentException("The person argument is required");
 		
 		//for admin
-		if(isAdminOrInstitutionalAdmin != null && isAdminOrInstitutionalAdmin == true) {
+		if(isAdminOrInstitutionalAdmin != null && isAdminOrInstitutionalAdmin) {
 			acceptQueAllAnswers(isAdminOrInstitutionalAdmin, question);
 			return true;
 		} else if(question.getAutor().getId().equals(loggedUser.getId())){
 			boolean notAllAnswerHaveSameAuthor = FluentIterable.from(question.getAnswers()).anyMatch(checkAnyAnswerHaveDiffAuthor(loggedUser));
 			
-			if(notAllAnswerHaveSameAuthor == false) {
+			if(!notAllAnswerHaveSameAuthor) {
 				acceptQueAllAnswers(isAdminOrInstitutionalAdmin, question);
 				return true;
 			} else {
@@ -2595,7 +2439,7 @@ public class Question {
 		} else if(question.getRewiewer().getId().equals(loggedUser.getId())){
 			boolean notAllAnswerHaveSameReviewer = FluentIterable.from(question.getAnswers()).anyMatch(checkAnyAnswerHaveDiffReviewer(loggedUser));
 			
-			if(notAllAnswerHaveSameReviewer == false) {
+			if(!notAllAnswerHaveSameReviewer) {
 				acceptQueAllAnswers(isAdminOrInstitutionalAdmin, question);
 				return true;
 			} else {
@@ -2619,7 +2463,7 @@ public class Question {
 
 			@Override
 			public boolean apply(Answer answer) {
-				return answer.getRewiewer().getId().equals(loggedUser.getId()) == false;	
+				return !answer.getRewiewer().getId().equals(loggedUser.getId());	
 			}
 		};
 	}
@@ -2630,7 +2474,7 @@ public class Question {
 
 			@Override
 			public boolean apply(Answer answer) {
-				return answer.getAutor().getId().equals(loggedUser.getId()) == false;	
+				return !answer.getAutor().getId().equals(loggedUser.getId());	
 			}
 		};
 	}

@@ -109,7 +109,7 @@ public class Person {
         	throw new IllegalArgumentException("Shibboleth ID cannot be empty");
         }
         
-        if(shibId.equals(this.shidId) == false) {
+        if(!shibId.equals(this.shidId)) {
         	this.shidId = shibId;
         	this.persist();	
         	log.info("Updated shibid : " + this.shidId);

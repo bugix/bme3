@@ -249,7 +249,7 @@ public class ActivityAcceptQuestionEdit extends AbstractActivityWrapper implemen
 			}
 		};
 		
-		if(isAdminOrInstitutionalAdmin() == true) {
+		if(isAdminOrInstitutionalAdmin()) {
 			if(Status.EDITED_BY_ADMIN.equals(question.getStatus())) {
 				status = Status.EDITED_BY_ADMIN;
 				updateQuestion(status,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor,gotoDetailsFunction);
@@ -260,7 +260,7 @@ public class ActivityAcceptQuestionEdit extends AbstractActivityWrapper implemen
 				Log.info("Admin : temparory save (with major version)");
 			}
 
-		}else if(isQuestionReviewer(question) == true) {
+		}else if(isQuestionReviewer(question)) {
 			if(Status.EDITED_BY_REVIEWER.equals(question.getStatus())) {
 				status = Status.EDITED_BY_REVIEWER;
 				updateQuestion(status,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor,gotoDetailsFunction);
@@ -271,7 +271,7 @@ public class ActivityAcceptQuestionEdit extends AbstractActivityWrapper implemen
 				Log.info("Reviewer : temparory save (with major version)");
 			}
 			
-		}else if(isQuestionAuthor(question) == true) {
+		}else if(isQuestionAuthor(question)) {
 			status = Status.NEW;
 			isAcceptedByAdmin = false;
 			isAcceptedByReviewer = false;
@@ -299,11 +299,11 @@ public class ActivityAcceptQuestionEdit extends AbstractActivityWrapper implemen
 		boolean isAcceptedByAuthor = false;
 		
 		
-		if(isQuestionReviewer(this.question) == true){
+		if(isQuestionReviewer(this.question)){
 			isAcceptedByReviewer = true;
 			
 			Status correctionFromReviewer = Status.CORRECTION_FROM_REVIEWER;
-			if(Status.EDITED_BY_REVIEWER.equals(status) == true) {
+			if(Status.EDITED_BY_REVIEWER.equals(status)) {
 				// if current state is edited by reviewer then just update the state to correction_from_reviewer
 				updateQuestion(correctionFromReviewer, isAcceptedByAdmin, isAcceptedByReviewer, isAcceptedByAuthor, gotoFunction);
 			}else {
@@ -312,10 +312,10 @@ public class ActivityAcceptQuestionEdit extends AbstractActivityWrapper implemen
 			
 		}
 		
-		if(isAdminOrInstitutionalAdmin() == true) {
+		if(isAdminOrInstitutionalAdmin()) {
 			isAcceptedByAdmin = true;
 			Status correctionFromAdmin = Status.CORRECTION_FROM_ADMIN;
-			if(Status.EDITED_BY_ADMIN.equals(status) == true) {
+			if(Status.EDITED_BY_ADMIN.equals(status)) {
 				// if current state is edited by admin then just update the state to correction_from_admin
 				updateQuestion(correctionFromAdmin, isAcceptedByAdmin, isAcceptedByReviewer, isAcceptedByAuthor, gotoFunction);
 			}else {
@@ -443,7 +443,7 @@ public class ActivityAcceptQuestionEdit extends AbstractActivityWrapper implemen
 		if(QuestionTypes.Imgkey.equals(questionType) || QuestionTypes.ShowInImage.equals(questionType)) {
 		
 			final QuestionResourceProxy questionResourceProxyForPicture; 
-			if(questionResourceProxies.isEmpty() == true) {
+			if(questionResourceProxies.isEmpty()) {
 				questionResourceProxyForPicture = questionResourceRequest.create(QuestionResourceProxy.class);
 				questionResourceProxies.add(questionResourceProxyForPicture);
 			}else {

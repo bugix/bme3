@@ -77,7 +77,7 @@ public class AuthenticationFilter implements Filter {
 				flag = true;
 			} else {
 				flag = authenticationUsingDB(request, email, shibdId);
-				if(flag == true) {
+				if(flag) {
 					//session.setAttribute(ServerConstants.SESSION_SHIBD_ID_KEY, shibdId);
 					log.info("----> Authenticated using DB");
 				}
@@ -85,7 +85,7 @@ public class AuthenticationFilter implements Filter {
 		} else {
 			log.info("---->Doing Authentication using New Session");
 			flag = authenticationUsingDB(request, email, shibdId);
-			if(flag == true){
+			if(flag){
 //				session = request.getSession();
 //				session.setAttribute(ServerConstants.SESSION_SHIBD_ID_KEY, shibdId);
 				log.info("----> Authenticated using New session");

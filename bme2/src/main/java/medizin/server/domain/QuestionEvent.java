@@ -324,7 +324,7 @@ public class QuestionEvent {
 	    	CriteriaQuery<QuestionEvent> criteriaQuery = criteriaBuilder.createQuery(QuestionEvent.class);
 	    	Root<QuestionEvent> from = criteriaQuery.from(QuestionEvent.class);
 	    	
-	    	if (loggedPerson.getIsAdmin() == false)
+	    	if (!loggedPerson.getIsAdmin())
 	    	{
 	    		Predicate pre1 = criteriaBuilder.equal(from.get("institution").get("id"), loggedInstitute.getId());
 	    		criteriaQuery.where(pre1);
@@ -345,7 +345,7 @@ public class QuestionEvent {
 			
 			if (loggedPerson == null || loggedInstitution == null)
 				throw new IllegalArgumentException("Logged person or instution may not be null");
-			else if (loggedPerson != null && loggedPerson.getIsAdmin() == false && UserAccessRights.checkInstitutionalAdmin() == false)
+			else if (loggedPerson != null && !loggedPerson.getIsAdmin() && !UserAccessRights.checkInstitutionalAdmin())
 				throw new IllegalArgumentException("Only overall admin or institutional admin can use this functionality");
 	    }
 }

@@ -105,7 +105,7 @@ public class ActivityDeactivatedQuestionDetails extends AbstractActivityWrapper 
 					thiz.widget = panel;
 			        widget.setWidget(questionDetailsView.asWidget());
 			        
-					if (((QuestionProxy) response).getIsReadOnly() == true)
+					if (((QuestionProxy) response).getIsReadOnly())
 						view.setVisibleEditAndDeleteBtn(false);
 					
 					init((QuestionProxy) response);

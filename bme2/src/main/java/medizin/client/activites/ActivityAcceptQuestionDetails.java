@@ -283,58 +283,6 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 	
 	@Override
 	public void acceptQuestionClicked(QuestionProxy proxy) {
-		/*QuestionRequest questionRequest = requests.questionRequest();
-		proxy = questionRequest.edit(proxy);
-
-		if (userLoggedIn.getIsAdmin() || personRightProxy.getIsInstitutionalAdmin()) {
-			proxy.setIsAcceptedAdmin(true);
-
-			if (proxy.getIsAcceptedRewiever()) {
-				proxy.setStatus(Status.ACTIVE);
-				proxy.setIsActive(true);
-			} else
-				proxy.setStatus(Status.ACCEPTED_ADMIN);
-		} else if (proxy.getRewiewer().getId().equals(userLoggedIn.getId())) {
-			proxy.setIsAcceptedRewiever(true);
-
-			if (proxy.getIsAcceptedAdmin()) {
-				proxy.setStatus(Status.ACTIVE);
-				proxy.setIsActive(true);
-			} else
-				proxy.setStatus(Status.ACCEPTED_REVIEWER);
-		}else if (proxy.getAutor().getId().equals(userLoggedIn.getId())) {
-			
-			if(proxy.getStatus().equals(Status.CORRECTION_FROM_ADMIN)) {
-				proxy.setIsAcceptedAdmin(true);
-				proxy.setStatus(Status.ACCEPTED_ADMIN);	
-			}else if (proxy.getStatus().equals(Status.CORRECTION_FROM_REVIEWER)) {
-				proxy.setIsAcceptedRewiever(true);
-				proxy.setStatus(Status.ACCEPTED_REVIEWER);	
-			}else if (proxy.getStatus().equals(Status.ACCEPTED_ADMIN)) {
-				proxy.setStatus(Status.ACTIVE);
-				proxy.setIsActive(true);
-			}else if (proxy.getStatus().equals(Status.ACCEPTED_REVIEWER)) {
-				proxy.setStatus(Status.ACTIVE);
-				proxy.setIsActive(true);
-			}
-		}
-		else if (proxy.getAutor().getId().equals(userLoggedIn.getId())
-				&& (proxy.getStatus().equals(Status.CORRECTION_FROM_ADMIN) || proxy
-						.getStatus().equals(Status.CORRECTION_FROM_REVIEWER))) {
-			proxy.setIsAcceptedAdmin(true);
-			proxy.setIsAcceptedRewiever(true);
-			proxy.setIsActive(true);
-			proxy.setStatus(Status.ACTIVE);
-		}
-
-		questionRequest.persist().using(proxy).fire(new BMEReceiver<Void>() {
-
-			@Override
-			public void onSuccess(Void response) {
-				goTo(new PlaceAcceptQuestion(""));
-			}
-		});*/
-		
 		requests.questionRequest().questionAccepted(question, (userLoggedIn.getIsAdmin() || personRightProxy.getIsInstitutionalAdmin())).fire(new BMEReceiver<Void>() {
 
 			@Override
@@ -455,15 +403,15 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 		boolean isAcceptedReviewer = false;
 		boolean isAcceptedAuthor = false;
 		
-		if(isAdminOrInstitutionalAdmin() == true) {
+		if(isAdminOrInstitutionalAdmin()) {
 			status = Status.CORRECTION_FROM_ADMIN;
 			isAcceptedAdmin = true;
 			updateQuestionStatusAndFlags(status, isAcceptedAdmin, isAcceptedReviewer, isAcceptedAuthor);
-		}else if(userLoggedIn.getId().equals(question.getRewiewer().getId()) == true){
+		}else if(userLoggedIn.getId().equals(question.getRewiewer().getId())){
 			status = Status.CORRECTION_FROM_REVIEWER;
 			isAcceptedReviewer = true;
 			updateQuestionStatusAndFlags(status, isAcceptedAdmin, isAcceptedReviewer, isAcceptedAuthor);
-		}else if(userLoggedIn.getId().equals(question.getAutor().getId()) == true) {
+		}else if(userLoggedIn.getId().equals(question.getAutor().getId())) {
 			Log.error("Author cannnot see this button.");
 		}else {
 			Log.error("Error in logic");
@@ -494,7 +442,7 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 		
 		if(question != null && userLoggedIn != null) {
 			
-			if(Status.EDITED_BY_ADMIN.equals(question.getStatus()) == true) {
+			if(Status.EDITED_BY_ADMIN.equals(question.getStatus())) {
 				if((userLoggedIn.getIsAdmin() || personRightProxy.getIsInstitutionalAdmin())) {
 					view.getResendToReviewBtn().setVisible(true);
 					view.getEdit().setVisible(true);
@@ -504,8 +452,8 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 					view.getAcceptBtn().removeFromParent();
 					view.getEdit().removeFromParent();
 				}
-			} else if(Status.EDITED_BY_REVIEWER.equals(question.getStatus()) == true) {
-				if(question.getRewiewer() != null && userLoggedIn.getId().equals(question.getRewiewer().getId()) == true) {
+			} else if(Status.EDITED_BY_REVIEWER.equals(question.getStatus())) {
+				if(question.getRewiewer() != null && userLoggedIn.getId().equals(question.getRewiewer().getId())) {
 					view.getResendToReviewBtn().setVisible(true);
 					view.getEdit().setVisible(true);
 					view.getAcceptBtn().removeFromParent();
@@ -514,7 +462,7 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 					view.getAcceptBtn().removeFromParent();
 					view.getEdit().removeFromParent();
 				}
-			} else if(question.getSubmitToReviewComitee() == true) {
+			} else if(question.getSubmitToReviewComitee()) {
 				//TODO for review committee
 				view.getResendToReviewBtn().removeFromParent(); // need to remove.
 			} else {
@@ -570,7 +518,7 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 			}
 		}
 		
-		if (flag == false)
+		if (!flag)
 		{
 			requests.keywordRequest().findKeywordByStringOrAddKeyword(text, proxy).with("previousVersion","keywords","questEvent","comment","questionType","mcs", "rewiewer", "autor","questionResources","answers").fire(new BMEReceiver<QuestionProxy>() {
 
@@ -1028,7 +976,7 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 
 			@Override
 			public void onSuccess(Boolean response) {
-				if(response == null ||  response == false) {
+				if(response == null || !response) {
 					ConfirmationDialogBox.showOkDialogBox(constants.error(), constants.notResponsiblePerson());
 				} else {
 					goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));

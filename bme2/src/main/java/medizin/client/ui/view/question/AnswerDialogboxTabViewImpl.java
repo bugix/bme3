@@ -185,7 +185,7 @@ public class AnswerDialogboxTabViewImpl extends DialogBox implements AnswerDialo
 				
 				final List<Point> rectanglePoints = Point.getPoints(points);
 				
-				if(question != null && question.getQuestionType() != null && QuestionTypes.Imgkey.equals(question.getQuestionType().getQuestionType()) && question.getQuestionResources() != null && question.getQuestionResources().isEmpty() == false  /*&& question.getPicturePath() != null && question.getPicturePath().length() > 0 && question.getQuestionType().getImageWidth() != null && question.getQuestionType().getImageHeight() != null*/) {
+				if(question != null && question.getQuestionType() != null && QuestionTypes.Imgkey.equals(question.getQuestionType().getQuestionType()) && question.getQuestionResources() != null && !question.getQuestionResources().isEmpty()  /*&& question.getPicturePath() != null && question.getPicturePath().length() > 0 && question.getQuestionType().getImageWidth() != null && question.getQuestionType().getImageHeight() != null*/) {
 					
 					final QuestionResourceProxy questionResourceProxy = Lists.newArrayList(question.getQuestionResources()).get(0);
 					final Integer imageWidth = questionResourceProxy.getImageWidth();
@@ -294,7 +294,7 @@ public class AnswerDialogboxTabViewImpl extends DialogBox implements AnswerDialo
 			}
 		});
 		
-		if(isAdminOrInstitutionalAdmin == false) {
+		if(!isAdminOrInstitutionalAdmin) {
 			author.setSelected(logedUser);
 			author.setEnabled(false);
 		} else {
@@ -344,7 +344,7 @@ public class AnswerDialogboxTabViewImpl extends DialogBox implements AnswerDialo
 			Integer sequenceNumber = null;
 			
 			additionalKeywords = txtAdditionalKeyword.getText();
-			if(Validity.Wahr.equals(validity.getValue()) == true) {
+			if(Validity.Wahr.equals(validity.getValue())) {
 				points = imageRectangleViewer.getPoint();	
 			}
 			
@@ -387,14 +387,14 @@ public class AnswerDialogboxTabViewImpl extends DialogBox implements AnswerDialo
 			submitToReviewComitee.addStyleName("higlight_onViolation");
 		}
 		
-		if(author.getSelected() != null && rewiewer.getSelected() != null && author.getSelected().getId().equals(rewiewer.getSelected().getId()) == true) {
+		if(author.getSelected() != null && rewiewer.getSelected() != null && author.getSelected().getId().equals(rewiewer.getSelected().getId())) {
 			flag = false;
 			messages.add(constants.authorReviewerMayNotBeSame());
 			author.getTextField().advancedTextBox.addStyleName("higlight_onViolation");
 			rewiewer.getTextField().advancedTextBox.addStyleName("higlight_onViolation");
 		}
 		
-		if(question.getQuestionType() != null && QuestionTypes.Imgkey.equals(question.getQuestionType().getQuestionType()) == true && validity.getValue() != null && Validity.Wahr.equals(validity.getValue())) {
+		if(question.getQuestionType() != null && QuestionTypes.Imgkey.equals(question.getQuestionType().getQuestionType()) && validity.getValue() != null && Validity.Wahr.equals(validity.getValue())) {
 			Log.info("IN Imgkey Question type");
 			if(imageRectangleViewer == null || imageRectangleViewer.getPoint() == null) {
 				flag = false;
@@ -415,7 +415,7 @@ public class AnswerDialogboxTabViewImpl extends DialogBox implements AnswerDialo
 			messages.add(constants.validityMayNotBeNull());
 			validity.addStyleName("higlight_onViolation");
 		}
-		if(flag == false) {
+		if(!flag) {
 			ReceiverDialog.showMessageDialog(constants.pleaseEnterWarning(),messages);
 		}
 		return flag;

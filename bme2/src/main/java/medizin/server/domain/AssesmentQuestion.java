@@ -878,7 +878,7 @@ public class AssesmentQuestion {
   		//force accepted
   		Predicate predicateForcedAccepted=criteriaBuilder.equal(from.get("isForcedByAdmin"), new Boolean(true));
   		Predicate predicateAcceptedOr;
-  		if(printAllQuestions == true) {
+  		if(printAllQuestions) {
   	        //non accepted
   	        Predicate predicateNonAccepted=criteriaBuilder.equal(from.get("isAssQuestionAcceptedAdmin"), Boolean.FALSE);
   	        
@@ -891,7 +891,7 @@ public class AssesmentQuestion {
   	  		predicateAcceptedOr = criteriaBuilder.or(predicateAccepted,predicateForcedAccepted);	
   		}
         
-        if(isVersionA == true) {
+        if(isVersionA) {
         	criteriaQuery.orderBy(criteriaBuilder.asc(from.get("orderAversion")));	
         }else {
         	criteriaQuery.orderBy(criteriaBuilder.asc(from.get("orderBversion")));
@@ -1229,7 +1229,7 @@ public class AssesmentQuestion {
 					
 					boolean flag = BMEUtils.compareTwoList(preTrueAnswerSequence,newtrueAnswerSequence);
 					
-					if(flag == true) {
+					if(flag) {
 						newtrueAnswerSequence = shuffleAnswer(assesmentQuestion);
 					}
 					

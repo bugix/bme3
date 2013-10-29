@@ -152,7 +152,7 @@ public class ActivitySystemOverview extends AbstractActivityWrapper implements S
 		AssesmentRequest finalAssesmentRequest = null;
 		for (final PersonProxy personProxy : response)
 		{
-			if (personProxy.getId().equals(userLoggedIn.getId()) == false)
+			if (!personProxy.getId().equals(userLoggedIn.getId()))
 			{
 				final PersonProxy tempPersonProxy = personProxy;
 				final SystemOverviewExaminerSubView examinerSubView = new SystemOverviewExaminerSubViewImpl();
@@ -256,7 +256,7 @@ public class ActivitySystemOverview extends AbstractActivityWrapper implements S
 			{
 				if (assQuestion.getAutor().getId().equals(personProxy.getId()) && questionType.getId().equals(assQuestion.getQuestion().getQuestionType().getId()) && assQuestion.getQuestion().getQuestEvent().getId().equals(questionEventProxy.getId()))
 				{
-					if (assQuestion.getIsForcedByAdmin() == true || assQuestion.getIsAssQuestionAcceptedAdmin() == true)
+					if (assQuestion.getIsForcedByAdmin() || assQuestion.getIsAssQuestionAcceptedAdmin())
 						count += 1;
 				}
 			}

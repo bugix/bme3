@@ -69,7 +69,7 @@ public class MatrixAnswerListViewImpl extends Composite implements MatrixAnswerL
 		
 		initWidget(uiBinder.createAndBindUi(this));
 		
-		if(addAnswerRights == false) {
+		if(!addAnswerRights) {
 			newAnswer.removeFromParent();
 		}
 		
@@ -301,7 +301,7 @@ public class MatrixAnswerListViewImpl extends Composite implements MatrixAnswerL
 		}, constant.answerY());
 		columnIndex++;
 
-		if (isEditable == true) {
+		if (isEditable) {
 			addColumn(new EditIconCell(McAppConstant.EDIT_ICON, new ActionCell.Delegate<MatrixValidityProxy>() {
 				public void execute(MatrixValidityProxy matrixValidity) {
 					delegate.editMatrixValidityClicked(matrixValidity);

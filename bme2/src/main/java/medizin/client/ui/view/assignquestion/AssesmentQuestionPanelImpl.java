@@ -302,7 +302,7 @@ public class AssesmentQuestionPanelImpl extends Composite implements AssesmentQu
 		if (sendMailPopupViewImpl != null)
 		{
 			sendMailPopupViewImpl.setMessageContent(response);
-			if (sendMailPopupViewImpl.isShowing() == false)
+			if (!sendMailPopupViewImpl.isShowing())
 				sendMailPopupViewImpl.center();
 		}
 		else

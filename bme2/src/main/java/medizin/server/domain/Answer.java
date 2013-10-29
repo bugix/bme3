@@ -372,7 +372,7 @@ public class Answer {
 			return false;
 		}
 		
-		if(isAdminOrInstitutionalAdmin == true){
+		if(isAdminOrInstitutionalAdmin){
 			answer.setIsAnswerAcceptedAdmin(true);
 			answer.setStatus(Status.ACCEPTED_ADMIN);
 		}
@@ -386,7 +386,7 @@ public class Answer {
 			answer.setIsAnswerAcceptedAutor(true);
 		}
 		
-		if(answer.getIsAnswerAcceptedAdmin() == true && answer.getIsAnswerAcceptedAutor() == true && answer.getIsAnswerAcceptedReviewWahrer() == true) {
+		if(answer.getIsAnswerAcceptedAdmin() && answer.getIsAnswerAcceptedAutor() && answer.getIsAnswerAcceptedReviewWahrer()) {
 			answer.setStatus(Status.ACTIVE);
 		}
 		
@@ -417,7 +417,7 @@ public class Answer {
 				answer.setIsAnswerAcceptedAutor(true);
 			}
 			
-			if(answer.getIsAnswerAcceptedAdmin() == true && answer.getIsAnswerAcceptedAutor() == true && answer.getIsAnswerAcceptedReviewWahrer() == true) {
+			if(answer.getIsAnswerAcceptedAdmin() && answer.getIsAnswerAcceptedAutor() && answer.getIsAnswerAcceptedReviewWahrer()) {
 				answer.setStatus(Status.ACTIVE);
 			}
 			answer.persist();
@@ -548,7 +548,7 @@ public class Answer {
 			}			
 		}).toImmutableList();
         
-        if(allAnswerText.isEmpty() == false) {
+        if(!allAnswerText.isEmpty()) {
         	int total = 0;
             for (String answerText : allAnswerText) {
             	log.info("Answer Text length : " + Jsoup.parse(answerText).text().length());
@@ -658,7 +658,7 @@ public class Answer {
 				this.setModifiedBy(loggedPerson);
 		}
 		
-		if(Status.DEACTIVATED.equals(this.status) == false) {
+		if(!Status.DEACTIVATED.equals(this.status)) {
 			if(this.getQuestion().getQuestionType().getQuestionType().equals(QuestionTypes.Matrix)) {
 				Long count = AnswerToAssQuestion.countAnswerToAssQuestionByMatrixValidity(this.getQuestion().getId());
 				if (count != null && count > 0) {
@@ -668,7 +668,7 @@ public class Answer {
 				List<AnswerToAssQuestion> answerToAssQuestion = Collections.emptyList();
 				if (this.getId() != null) {
 					answerToAssQuestion = AnswerToAssQuestion.findAnswerToAssQuestionByAnswer(this.getId());
-					if (answerToAssQuestion != null && answerToAssQuestion.isEmpty() == false) {
+					if (answerToAssQuestion != null && !answerToAssQuestion.isEmpty()) {
 						throw new IllegalArgumentException("Answer is used in some assessment.");
 					}
 				}	

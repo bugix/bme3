@@ -110,7 +110,7 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 				public void onSuccess(PersonAccessRightProxy response) {
 					if(userLoggedIn != null && institutionActive != null ) {
 						personRightProxy = response;
-						if(checkIfUserHasRightsToMenu() == true) {
+						if(checkIfUserHasRightsToMenu()) {
 							start2(panel, eventBus);	
 						} else {
 							ConfirmationDialogBox.showOkDialogBox(constants.information(), constants.mayNotHaveRights(),new ConfirmDialogBoxOkButtonEventHandler(){
@@ -172,7 +172,7 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 		
 		if(userLoggedIn != null && personRightProxy != null) {
 			
-			if(isAdminOrInstitutionalAdmin() == true) {
+			if(isAdminOrInstitutionalAdmin()) {
 				flag = true;
 			}else {
 				
@@ -212,7 +212,7 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 		if (userLoggedIn == null || institutionActive == null)
 			return false;
 		
-		if (isAdminOrInstitutionalAdmin() == true) 
+		if (isAdminOrInstitutionalAdmin()) 
 		{
 			flag = true;
 		}
@@ -220,7 +220,7 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 		{
 			for (UserAccessRightsProxy proxy : personRightProxy.getQuestionEventAccList())
 			{
-				if (AccessRights.AccAddQuestions.equals(proxy.getAccRights()) == true)
+				if (AccessRights.AccAddQuestions.equals(proxy.getAccRights()))
 				{
 					flag = true;
 					break;
@@ -236,11 +236,11 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 		if (userLoggedIn == null || institutionActive == null)
 			return false;
 		
-		if(proxy != null  && proxy.getIsReadOnly() == true)
+		if(proxy != null  && proxy.getIsReadOnly())
 		{
 			flag = false;
 		} 
-		else if (isAdminOrInstitutionalAdmin() == true) 
+		else if (isAdminOrInstitutionalAdmin()) 
 		{
 			flag = true;
 		}
@@ -273,49 +273,31 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 	}
 	
 	public final boolean hasQuestionReadRights(QuestionProxy proxy) {
-		boolean flag = false;
-		
 		if (userLoggedIn == null || institutionActive == null)
 			return false;
 		
-		if (isAdminOrInstitutionalAdmin() == true) {
-			flag = true;
-		}
-		else if (isQuestionAuthor(proxy))
-		{
-			flag = true;
-		}
-		else if (isQuestionReviewer(proxy))
-		{
-			flag = true;
-		}
-		else
-		{
+		if (isAdminOrInstitutionalAdmin()) {
+			return true;
+		} else if (isQuestionAuthor(proxy)) {
+			return true;
+		} else if (isQuestionReviewer(proxy)) {
+			return true;
+		} else {
 			List<UserAccessRightsProxy> userAccessRightsProxyList = Lists.newArrayList();
 			userAccessRightsProxyList.addAll(personRightProxy.getQuestionEventAccList());
 			userAccessRightsProxyList.addAll(personRightProxy.getQuestionAccList());
 			
 			for (UserAccessRightsProxy userRightsProxy : userAccessRightsProxyList)
 			{
-				if (checkRightsOnQuestionEvent(AccessRights.AccRead, proxy, userRightsProxy))
-				{
-					flag = true;
-					break;
-				}
-				else if (checkRightsOnQuestion(AccessRights.AccRead, proxy, userRightsProxy))
-				{
-					flag = true;
-					break;
-				}
-				else if (checkRightsOnQuestion(AccessRights.AccAddAnswers, proxy, userRightsProxy))
-				{
-					flag = true;
-					break;
+				if (checkRightsOnQuestionEvent(AccessRights.AccRead, proxy, userRightsProxy)
+						|| checkRightsOnQuestion(AccessRights.AccRead, proxy, userRightsProxy)
+						|| checkRightsOnQuestion(AccessRights.AccAddAnswers, proxy, userRightsProxy)) {
+					return true;
 				}
 			}			
 		}
 		//TODO may need to check answers author and reviewer
-		return flag;		
+		return false;
 	}
 
 	public final boolean hasAnswerAddRights(QuestionProxy proxy) {
@@ -324,7 +306,7 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 		if (userLoggedIn == null || institutionActive == null)
 			return false;
 		
-		if (isAdminOrInstitutionalAdmin() == true) {
+		if (isAdminOrInstitutionalAdmin()) {
 			flag = true;
 		}
 		else if (isQuestionAuthor(proxy))
@@ -335,7 +317,7 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 		{
 			for (UserAccessRightsProxy userRightsProxy : personRightProxy.getQuestionEventAccList())
 			{
-				if (AccessRights.AccAddAnswers.equals(userRightsProxy.getAccRights()) == true)
+				if (AccessRights.AccAddAnswers.equals(userRightsProxy.getAccRights()))
 				{
 					flag = true;
 					break;
@@ -351,7 +333,7 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 		if (userLoggedIn == null || institutionActive == null)
 			return false;
 		
-		if (isAdminOrInstitutionalAdmin() == true) 
+		if (isAdminOrInstitutionalAdmin()) 
 		{
 			flag = true;
 		}
@@ -372,7 +354,7 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 		if (userLoggedIn == null || institutionActive == null)
 			return false;
 		
-		if (isAdminOrInstitutionalAdmin() == true) 
+		if (isAdminOrInstitutionalAdmin()) 
 		{
 			flag = true;
 		}

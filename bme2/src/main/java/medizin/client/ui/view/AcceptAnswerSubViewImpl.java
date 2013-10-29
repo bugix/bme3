@@ -152,7 +152,7 @@ public class AcceptAnswerSubViewImpl extends Composite implements AcceptAnswerSu
 									final List<Point> points = Point.getPoints(Lists.newArrayList(selectedObject.getPoints()));
 									
 									
-									if(questionProxy.getQuestionResources() != null && questionProxy.getQuestionResources().isEmpty() == false) {
+									if(questionProxy.getQuestionResources() != null && !questionProxy.getQuestionResources().isEmpty()) {
 										QuestionResourceProxy questionResourceProxy = Lists.newArrayList(questionProxy.getQuestionResources()).get(0);
 									
 										final Integer imageHeight = questionResourceProxy.getImageHeight();
@@ -183,7 +183,7 @@ public class AcceptAnswerSubViewImpl extends Composite implements AcceptAnswerSu
 								}
 								else if (questionProxy.getQuestionType().getQuestionType().equals(QuestionTypes.ShowInImage))
 								{
-									if(questionProxy.getQuestionResources() != null && questionProxy.getQuestionResources().isEmpty() == false) {
+									if(questionProxy.getQuestionResources() != null && !questionProxy.getQuestionResources().isEmpty()) {
 										QuestionResourceProxy questionResourceProxy = Lists.newArrayList(questionProxy.getQuestionResources()).get(0);
 										final Integer imageHeight = questionResourceProxy.getImageHeight();
 										final Integer imageWidth = questionResourceProxy.getImageWidth();

@@ -266,7 +266,7 @@ public class ActivityUserCreate  extends AbstractActivityWrapper  implements Use
 		personProxy.setName(view.getName().getText());
 		personProxy.setPrename(view.getPrename().getText());
 		personProxy.setEmail(view.getEmail().getText());
-		personProxy.setAlternativEmail(view.getAlternativEmail().getText().isEmpty() == true ? "" : view.getAlternativEmail().getText());
+		personProxy.setAlternativEmail(view.getAlternativEmail().getText().isEmpty() ? "" : view.getAlternativEmail().getText());
 		personProxy.setPhoneNumber(view.getPhoneNumber().getText());
 		personProxy.setIsAccepted(view.getIsAccepted().getValue());
 		personProxy.setIsAdmin(view.getIsAdmin().getValue());

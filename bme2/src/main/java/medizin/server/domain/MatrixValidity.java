@@ -101,7 +101,7 @@ public class MatrixValidity {
 		
 		List<Status> statusList = Lists.newArrayList(Status.NEW);
 		if(userLoggedIn != null) {
-			if(userLoggedIn.getIsAdmin() || isInstitutionalAdmin == true) {
+			if(userLoggedIn.getIsAdmin() || isInstitutionalAdmin) {
 				// it is admin
 				statusList.add(Status.ACCEPTED_REVIEWER);
 			}else {
@@ -113,7 +113,7 @@ public class MatrixValidity {
 		Predicate p4 = exp2.in(statusList);*/
 		Predicate p3;
 		Predicate p4;
-		if (userLoggedIn.getIsAdmin() || isInstitutionalAdmin == true)
+		if (userLoggedIn.getIsAdmin() || isInstitutionalAdmin)
 		{
 			p3 = criteriaBuilder.equal(from.get("answerX").get("isAnswerAcceptedAdmin"), false);
 			p4 = criteriaBuilder.equal(from.get("answerY").get("isAnswerAcceptedAdmin"), false);
@@ -155,7 +155,7 @@ public class MatrixValidity {
 		final Predicate pre0 = cb.equal(from.get("question").get("questEvent").get("institution"), institution);
 		Predicate pre1 = cb.equal(from.get("question").get("id"), questionId);
 		
-		if (loggedUser.getIsAdmin() || isInstitutionalAdmin == true)
+		if (loggedUser.getIsAdmin() || isInstitutionalAdmin)
 		{
 			pre1 = cb.and(cb.equal(from.get("isAnswerAcceptedAdmin"), false),pre1);
 		}
@@ -182,7 +182,7 @@ public class MatrixValidity {
 			for (MatrixValidity matrixValidity : matrixValidities) {
 				
 				Answer otherAnswer;
-				if(isAnswerX == true) {
+				if(isAnswerX) {
 					otherAnswer = matrixValidity.answerY;
 				}else {
 					otherAnswer = matrixValidity.answerX;
@@ -214,7 +214,7 @@ public class MatrixValidity {
 		CriteriaQuery<MatrixValidity> criteriaQuery = criteriaBuilder.createQuery(MatrixValidity.class);
 		Root<MatrixValidity> from = criteriaQuery.from(MatrixValidity.class);
 		Predicate p1;
-		if(isAnswerX == true) {
+		if(isAnswerX) {
 			p1 = criteriaBuilder.equal(from.get("answerX").get("id"), answerId);	
 		}else {
 			p1 = criteriaBuilder.equal(from.get("answerY").get("id"), answerId);	
