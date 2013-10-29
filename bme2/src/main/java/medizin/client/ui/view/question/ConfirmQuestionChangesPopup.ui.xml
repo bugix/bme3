@@ -24,22 +24,18 @@
 		<div class="ui-state-highlight ui-corner-all {style.panel}">
 		<span class="ui-icon ui-icon-info" style="float: left; margin-right: 0.3em;"></span>
 		<g:Label text="{cc.minor}"></g:Label>
-		<m:IconButton icon="disk" ui:field="saveChange" text="{cc.minorVersion}">Frage als neue unterversion Speichern</m:IconButton>
-		<!-- <g:Button addStyleNames="{style.button}" ui:field="saveChange">
-								<span class="ui-icon ui-icon-disk" style="float: left; margin-right: 0.3em;"></span>
-								
-								Frage als neue unterversion Speichern</g:Button> -->
+			<m:IconButton icon="disk" ui:field="saveChange" text="{cc.minorVersion}"></m:IconButton>
 		</div>
 		<div style="height:2em;"  />
 		<div class="ui-state-error ui-corner-all  {style.panel}"><span class="ui-icon ui-icon-alert" style="float: left; margin-right: 0.3em;"></span>
 		<g:Label text="{cc.major}"></g:Label>
-		<m:IconButton icon="disk" ui:field="saveNew" text="{cc.majorVersion}">Frage als neue Version Kopieren</m:IconButton>
-		<!-- <g:Button addStyleNames="{style.button}" ui:field="saveNew">
-								<span class="ui-icon ui-icon-disk" style="float: left; margin-right: 0.3em;"></span>
-								Frage als neue Version Kopieren</g:Button> -->
+			<m:IconButton icon="disk" ui:field="saveNew" text="{cc.majorVersion}"></m:IconButton>
 		</div>
-		<div class="{style.controlsright}">
-		<g:Button ui:field="cancel" ></g:Button>
+		<div style="margin:2px 2px 2px 15px">
+			<g:CheckBox text="{cc.dontTriggerReviewerProcess}" ui:field="forceActiveChkBox"></g:CheckBox>
+			<span class="{style.controlsright}">
+			<m:IconButton ui:field="cancel" icon="closethick" text="{cc.cancel}"></m:IconButton>
+			</span>
 		</div>
 	</g:HTMLPanel>
 </ui:UiBinder> 

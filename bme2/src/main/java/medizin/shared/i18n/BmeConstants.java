@@ -790,5 +790,9 @@ public interface BmeConstants extends Constants {
 	public String keywordNotOnImg();
 
 	public String notResponsiblePerson();
+	
+	public String dontTriggerReviewerProcess();
+	
+	public String closeArea();
 }
 

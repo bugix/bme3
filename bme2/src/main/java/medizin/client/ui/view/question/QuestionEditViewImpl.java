@@ -19,7 +19,7 @@ import medizin.client.proxy.QuestionResourceProxy;
 import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.richtext.RichTextToolbar;
-import medizin.client.ui.view.roo.McSetEditor;
+import medizin.client.ui.view.question.ConfirmQuestionChangesPopup.ConfirmQuestionHandler;
 import medizin.client.ui.view.roo.QuestionTypeProxyRenderer;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
@@ -909,8 +909,8 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	}
 	
 	@Override
-	public void comfirmQuestionChanges(Function<Boolean, Void> isMajorOrMinor) {
-		new ConfirmQuestionChangesPopup(isMajorOrMinor);
+	public void comfirmQuestionChanges(ConfirmQuestionHandler handler,boolean isAdminOrInstitutionalAdmin) {
+		new ConfirmQuestionChangesPopup(handler,isAdminOrInstitutionalAdmin);
 	}
 
 	@Override

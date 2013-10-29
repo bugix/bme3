@@ -11,9 +11,9 @@ import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.proxy.QuestionResourceProxy;
 import medizin.client.proxy.QuestionTypeProxy;
+import medizin.client.ui.view.question.ConfirmQuestionChangesPopup.ConfirmQuestionHandler;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 
-import com.google.common.base.Function;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.ValueListBox;
 
@@ -58,7 +58,7 @@ public interface QuestionEditView extends IsWidget {
 	
 	void setValuesForQuestion(QuestionProxy question, CommentProxy commentProxy);
 	
-	void comfirmQuestionChanges(Function<Boolean, Void> isMajorOrMinor);
+	void comfirmQuestionChanges(ConfirmQuestionHandler handler, boolean isAdminOrInstitutionAdmin);
 	
 	Long getAuthorId();
 	
