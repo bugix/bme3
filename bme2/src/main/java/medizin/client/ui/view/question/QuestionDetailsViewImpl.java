@@ -1,11 +1,15 @@
 package medizin.client.ui.view.question;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static medizin.client.util.ClientUtility.defaultString;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import medizin.client.proxy.KeywordProxy;
+import medizin.client.proxy.McProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.style.resources.MyCellTableNoHilightResources;
@@ -149,6 +153,9 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 
 	private List<AbstractEditableCell<?, ?>> editableCells;
 	
+	@UiField
+	IconButton acceptQueAnswer;
+	
 	@Override
 	public AnswerListViewImpl getAnswerListViewImpl() {
 		return answerListViewImpl;
@@ -246,7 +253,17 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 		lblReviewerValue.setText(getPersonName(proxy.getRewiewer()));
 		lblQuestionEventValue.setText(proxy.getQuestEvent()==null?"":proxy.getQuestEvent().getEventName());
 		lblCommentValue.setText(proxy.getComment()==null?"":proxy.getComment().getComment());
-		lblMcsValue.setText(proxy.getMcs() == null ? "": medizin.client.ui.view.roo.CollectionRenderer.of(medizin.client.ui.view.roo.McProxyRenderer.instance()).render(proxy.getMcs()));
+		
+		Comparator<McProxy> MC_COMPARATOR = new Comparator<McProxy>() {
+
+			@Override
+			public int compare(McProxy o1, McProxy o2) {	
+				return o1.getId().compareTo(o2.getId());
+			}
+		};
+		ArrayList<McProxy> mcList = newArrayList(proxy.getMcs());
+		Collections.sort(mcList, MC_COMPARATOR);
+		lblMcsValue.setText(proxy.getMcs() == null ? "": medizin.client.ui.view.roo.CollectionRenderer.of(medizin.client.ui.view.roo.McProxyRenderer.instance()).render(mcList));
 		if(proxy.getSubmitToReviewComitee()==true)
 		{
 			lblReviewerValue.setText(constants.submitToReviewComitee());
@@ -769,6 +786,12 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 			delegate.onResendToReviewClicked(proxy);
 	}
 	
+	@UiHandler("acceptQueAnswer")
+	public void onAcceptQueAnswerClicked(ClickEvent e)
+	{
+		delegate.acceptQueAnswersClicked();
+	}
+	
 	@UiField(provided=true)
 	MatrixAnswerListViewImpl matrixAnswerListViewImpl;
 
@@ -860,9 +883,11 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 		if(isAcceptView == false) {
 			accept.removeFromParent();
 			resendToReview.removeFromParent();
+			acceptQueAnswer.removeFromParent();
 		}else {
 			accept.setVisible(true);
 			resendToReview.setVisible(true);
+			acceptQueAnswer.setVisible(true);
 		}
 	}
 

@@ -43,6 +43,8 @@ public interface QuestionDetailsView extends IsWidget {
 		void keywordAddButtonClicked(String text, QuestionProxy proxy);
 
 		void deleteKeywordClicked(KeywordProxy keyword, QuestionProxy proxy);
+
+		void acceptQueAnswersClicked();
 	}
 
 	AnswerListViewImpl getAnswerListViewImpl();

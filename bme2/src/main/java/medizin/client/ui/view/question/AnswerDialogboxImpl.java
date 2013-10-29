@@ -708,6 +708,8 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 		if(isAdminOrInstitutionalAdmin == false) {
 			author.setSelected(logedUser);
 			author.setEnabled(false);
+		}else {
+			author.setSelected(question.getAutor());
 		}
 		author.setWidth(150);
 		rewiewer.setWidth(150);

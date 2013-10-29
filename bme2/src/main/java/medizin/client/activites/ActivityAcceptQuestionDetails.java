@@ -1022,4 +1022,20 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 		loadLearningObjectiveData();
 	}
 
+	@Override
+	public void acceptQueAnswersClicked() {
+		requests.questionRequest().acceptQuestionAndAllAnswers(question.getId(),isAdminOrInstitutionalAdmin()).fire(new BMEReceiver<Boolean>() {
+
+			@Override
+			public void onSuccess(Boolean response) {
+				if(response == null ||  response == false) {
+					ConfirmationDialogBox.showOkDialogBox(constants.error(), constants.notResponsiblePerson());
+				} else {
+					goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));
+				}
+			}
+		});
+		
+	}
+
 }

@@ -792,4 +792,15 @@ public interface BmeConstants extends Constants {
 	public String deleteMajorQuestionConfirmation();
 	
 	public String deleteMinorQuestionConfirmation();
+	
+	public String acceptQueAnswer();
+	
+	public String image();
+			
+	public String detail();
+	
+	public String keywordNotOnImg();
+
+	public String notResponsiblePerson();
 }
+

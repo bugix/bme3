@@ -13,8 +13,8 @@
 	
 	<g:HTMLPanel>
 		<g:VerticalPanel>
-			<g:HorizontalPanel horizontalAlignment="left" spacing="5">
-				<m:IconButton ui:field="btnAdd" text="{cc.add}" icon="plus"></m:IconButton>
+			<g:HorizontalPanel horizontalAlignment="left" spacing="5" ui:field="btnHPPanel">
+				<!-- <m:IconButton ui:field="btnAdd" text="{cc.add}" icon="plus"></m:IconButton> -->
 				<m:IconButton ui:field="btnClear" text="{cc.clear}" icon="cancel"></m:IconButton>				
 			</g:HorizontalPanel>
 			<g:HTMLPanel styleName="{style.imageBox}">

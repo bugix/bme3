@@ -198,5 +198,9 @@ public class SystemOverviewExaminerSubViewImpl extends Composite implements Syst
 
 	public void setExaminerDisclosurePanel(DisclosurePanel examinerDisclosurePanel) {
 		this.examinerDisclosurePanel = examinerDisclosurePanel;
-	}	
+	}
+	
+	public IconButton getSendMailBtn() {
+		return sendMailBtn;
+	}
 }

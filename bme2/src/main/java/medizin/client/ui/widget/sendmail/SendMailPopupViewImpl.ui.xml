@@ -86,13 +86,33 @@
 			margin-bottom: 5px;
 		}
 		.closeButton{
-	
-		position:absolute;
-		top:-10px;
-		right: -10px;
-		border-radius:7px;
-		border-color: #676767;
-		border-width: 2px; 
+			border-color: #676767;
+		    border-radius: 7px 7px 7px 7px;
+		    border-width: 2px;
+		    left: 960px;
+		    position: absolute;
+		    top: -8px
+		/*	position:absolute;
+			top:-10px;
+			right: -10px;
+			border-radius:7px;
+			border-color: #676767;
+			border-width: 2px;  */
+		}
+		.closeButton:hover{	
+			outline-style: none;
+			border-radius:7px;
+			border-color: #676767;
+			border-width: 2px;
+		    left: 960px;
+		    position: absolute;
+		    top: -8px
+		/*	position:absolute;
+			top:-10px;
+			right: -10px;
+			border-radius:7px;
+			border-color: #676767;
+			border-width: 2px;*/ 
 		}
 		.right{
 			float:right;

@@ -10,6 +10,7 @@ import org.vaadin.gwtgraphics.client.DrawingArea;
 import org.vaadin.gwtgraphics.client.shape.Rectangle;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.common.base.Function;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.MouseDownEvent;
@@ -20,6 +21,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ImageRectangleViewer extends Composite{
@@ -32,12 +34,15 @@ public class ImageRectangleViewer extends Composite{
 	
 	@UiField(provided = true)
 	DrawingArea drawingArea;
-
-	@UiField
-	IconButton btnAdd;
+	
+//	@UiField
+//	IconButton btnAdd;
 	
 	@UiField
 	IconButton btnClear;
+	
+	@UiField
+	HorizontalPanel btnHPPanel;
 	
 	private boolean validRectangle = false;
 	private boolean btnAddClicked = false;
@@ -45,6 +50,7 @@ public class ImageRectangleViewer extends Composite{
 	private Target target = new Target(5, 5);
 	private Rectangle currentRectangle = null;
 	private Point currentPoint = null;
+	private Function<Void, Void> pointClickedHandler;
 	
 	public ImageRectangleViewer(final String imageUrl,final int width,final int height,final List<Point> otherAnswer, final boolean displayBtnFlag) {
 		
@@ -90,6 +96,9 @@ public class ImageRectangleViewer extends Composite{
 						validRectangle = true;
 						target.setVisible(false);
 						btnAddClicked = false;
+						if(pointClickedHandler != null) {
+							pointClickedHandler.apply(null);	
+						}
 					}
 				}
 
@@ -106,8 +115,9 @@ public class ImageRectangleViewer extends Composite{
 			});
 		}		
 		
-		btnAdd.setVisible(displayBtnFlag);
+		//btnAdd.setVisible(displayBtnFlag);
 		btnClear.setVisible(displayBtnFlag);
+		addBtnClicked();
 	}
 	
 	
@@ -131,16 +141,16 @@ public class ImageRectangleViewer extends Composite{
 		validRectangle = false;
 	}
 	
-	@UiHandler("btnAdd")
-	void addBtnClicked(ClickEvent event) {
-		btnAdd.setEnabled(false);
+//	@UiHandler("btnAdd")
+	void addBtnClicked(/*ClickEvent event*/) {
+		//btnAdd.setEnabled(false);
 		btnAddClicked = true;
 		validRectangle = false;
 	}
 	
 	@UiHandler("btnClear")
 	void clearBtnclicked(ClickEvent event) {
-		btnAdd.setEnabled(true);
+		//btnAdd.setEnabled(true);
 		currentPoint = null;
 		target.setVisible(true);
 		
@@ -149,6 +159,7 @@ public class ImageRectangleViewer extends Composite{
 		}
 		currentRectangle = null;
 		validRectangle = true;
+		addBtnClicked();
 	}
 	
 	public String getPoint() {
@@ -169,10 +180,17 @@ public class ImageRectangleViewer extends Composite{
 			return;
 		}
 		currentRectangle = addNewRectangle(point,"#fa7575"); //red color
-		btnAdd.setEnabled(false);
+		//btnAdd.setEnabled(false);
 		validRectangle = true;
 		target.setVisible(false);
 		btnAddClicked = false;
 	}
 	
+	public void addPointClicked(Function<Void,Void> pointClickedHandler) {
+		this.pointClickedHandler = pointClickedHandler;
+	}
+	
+	public HorizontalPanel getBtnHPPanel() {
+		return btnHPPanel;
+	}
 }

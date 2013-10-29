@@ -4,7 +4,7 @@
 	xmlns:d="urn:import:com.google.gwt.user.datepicker.client" xmlns:t="urn:import:medizin.client.ui.richtext"
 	xmlns:r="urn:import:medizin.client.ui.view.roo" xmlns:m="urn:import:medizin.client.ui.widget"
 	xmlns:i="urn:import:medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl"
-	xmlns:lbl="urn:import:medizin.client.ui.widget.labeled">
+	xmlns:lbl="urn:import:medizin.client.ui.widget.labeled" xmlns:mcs="urn:import:medizin.client.ui.widget.mcs">
 	<ui:style src="../../styles.css" >
 		.valueLabel{
 			padding-bottom: 7px;
@@ -21,7 +21,7 @@
 			<h3 class="{style.header}" style="display:inline">
 				<span ui:field="title"></span>
 			</h3>
-				
+			
 			<m:IconButton ui:field="save" icon="disk"></m:IconButton>
 			<m:IconButton ui:field="cancel" icon="closethick"></m:IconButton>
 			<m:IconButton ui:field="resendToReview" icon="check" text="{constants.resendToReview}" visible="false"></m:IconButton>
@@ -85,7 +85,8 @@
 			
 			<lbl:LabeledValueListBox addStyleNames="{style.labeledBox}" ui:field="questionEvent"></lbl:LabeledValueListBox>
 			<lbl:LabeledPanel addStyleNames="{style.labeledBox}" ui:field="mcsPanel">
-				<r:McSetEditor ui:field="mcs"></r:McSetEditor>
+				<!--<r:McSetEditor ui:field="mcs"></r:McSetEditor> -->
+				<mcs:McCheckboxEditor ui:field="mcs"></mcs:McCheckboxEditor>
 			</lbl:LabeledPanel>
 			<!-- <g:VerticalPanel ui:field="containPanel"></g:VerticalPanel> -->
 		</div>

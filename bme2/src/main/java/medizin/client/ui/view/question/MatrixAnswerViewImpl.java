@@ -441,6 +441,8 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 		if (isAdminOrInstitutionalAdmin == false) {
 			author.setSelected(logedUser);
 			author.setEnabled(false);
+		}else {
+			author.setSelected(questionProxy.getAutor());
 		}
 		author.setWidth(150);
 	}

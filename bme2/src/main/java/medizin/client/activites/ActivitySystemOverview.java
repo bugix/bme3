@@ -181,6 +181,13 @@ public class ActivitySystemOverview extends AbstractActivityWrapper implements S
 					public void onSuccess(Long response) {
 						acceptAnswerCount = response;		
 						examinerSubView.setAcceptAnswerAndQuestion((tempPersonProxy.getPrename() + " " + tempPersonProxy.getName()), acceptQuestionCount, acceptAnswerCount);
+						
+						view.getMainVerticalPanel().setSpacing(5);
+						
+						if (view.getMainVerticalPanel().getWidgetCount() == 1)
+							examinerSubView.getExaminerDisclosurePanel().setOpen(true); 
+							
+						view.getMainVerticalPanel().add(examinerSubView);
 					}
 				});
 				
@@ -189,19 +196,17 @@ public class ActivitySystemOverview extends AbstractActivityWrapper implements S
 
 					@Override
 					public void onSuccess(List<AssesmentProxy> response) {
+						if (response != null && response.size() == 0)
+						{
+							examinerSubView.getSendMailBtn().removeFromParent();
+						}
+						
 						examinerSubView.setAssesmentProxy(response);
 						for (AssesmentProxy assesmentProxy : response)
 						{
 							Map<String, String> quesitonTypeCountMap = countQuestionTypeCountPerAssesment(assesmentProxy, personProxy);
 							
 							view.setQuestionTypesCountByAssessmentExaminer(assesmentProxy.getMc().getMcName(), ClientUtility.SHORT_FORMAT.format(assesmentProxy.getDateClosed()), quesitonTypeCountMap, examinerSubView);
-							
-							view.getMainVerticalPanel().setSpacing(5);
-							
-							if (view.getMainVerticalPanel().getWidgetCount() == 1)
-								examinerSubView.getExaminerDisclosurePanel().setOpen(true); 
-								
-							view.getMainVerticalPanel().add(examinerSubView);
 						}
 					}
 				});

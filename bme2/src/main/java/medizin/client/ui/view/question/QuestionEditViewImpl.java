@@ -16,8 +16,6 @@ import medizin.client.proxy.QuestionProxy;
 import medizin.client.proxy.QuestionResourceProxy;
 import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.ui.McAppConstant;
-import medizin.client.ui.richtext.RichTextToolbar;
-import medizin.client.ui.view.roo.McSetEditor;
 import medizin.client.ui.view.roo.QuestionTypeProxyRenderer;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
@@ -27,6 +25,7 @@ import medizin.client.ui.widget.labeled.LabeledRichTextArea;
 import medizin.client.ui.widget.labeled.LabeledTextArea;
 import medizin.client.ui.widget.labeled.LabeledTextBox;
 import medizin.client.ui.widget.labeled.LabeledValueListBox;
+import medizin.client.ui.widget.mcs.McCheckboxEditor;
 import medizin.client.ui.widget.resource.dndview.ResourceView;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.ui.widget.resource.event.ResourceAddedEvent;
@@ -58,8 +57,6 @@ import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.editor.client.Editor.Ignore;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
@@ -71,10 +68,8 @@ import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.RichTextArea;
 import com.google.gwt.user.client.ui.ValueListBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.requestfactory.gwt.ui.client.EntityProxyKeyProvider;
@@ -167,6 +162,9 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	@UiField
 	public HTMLPanel viewerContainer;
 
+	@UiField 
+	McCheckboxEditor mcs;
+	
 	@UiField
 	public LabeledPanel authorPanel;
 	
@@ -199,8 +197,8 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	@UiField
 	public LabeledPanel mcsPanel;
 	
-	@UiField 
-	McSetEditor mcs;
+	// @UiField 
+	// McSetEditor mcs;
 	
 	@UiField
 	public LabeledTextArea comment;
