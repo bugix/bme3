@@ -137,18 +137,6 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	
 	@UiField
 	public LabeledRichTextArea questionTextArea;
-//	
-//	@UiField
-//	public LabeledPanel richTextPanel;
-//	
-//	@UiField(provided = true)
-//	public RichTextToolbar toolbar;
-//	
-//	@UiField(provided = true)
-//	public RichTextArea questionTextArea;
-//	
-//	@UiField
-//	public HTML digitCount;
 	
 	@UiField
 	public LabeledPanel uploadResourcePanel;
@@ -196,9 +184,6 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	
 	@UiField
 	public LabeledPanel mcsPanel;
-	
-	// @UiField 
-	// McSetEditor mcs;
 	
 	@UiField
 	public LabeledTextArea comment;
@@ -319,7 +304,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 			@Override
 			public void onClick(ClickEvent event) {
 				
-				if(submitToReviewComitee.getValue() == true) {
+				if(submitToReviewComitee.getValue()) {
 					reviewer.setEnabled(false);
 				} else {
 					reviewer.setEnabled(true);
@@ -353,7 +338,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 
 	@Override
 	public void setResendToReviewBtn(boolean isResendToReview) {
-		if(isResendToReview == false) {
+		if(!isResendToReview) {
 			resendToReview.removeFromParent();
 		} else {
 			resendToReview.setVisible(true);
@@ -477,7 +462,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 			}
 		});
 
-		if(delegate.isAdminOrInstitutionalAdmin() == false) {
+		if(!delegate.isAdminOrInstitutionalAdmin()) {
 			author.setSelected(userLoggedIn);
 			author.setEnabled(false);
 		}
@@ -485,7 +470,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 
 	@Override
 	public void setQuestionTypePickerValues(List<QuestionTypeProxy> values) {
-		if(values != null && values.isEmpty() == false) {
+		if(values != null && !values.isEmpty()) {
 			questionType.setValue(values.get(0));
 			setMediaView(questionType.getValue(),question);
 			questionTypeDescription.setVisible(true);
@@ -562,7 +547,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	}
 	
 	private void setImageViewer(final QuestionTypeProxy questionTypeProxy, final QuestionProxy questionProxy,final QuestionTypes type) {
-		
+		Log.info("setImageViewer()");
 		//remove extra part
 		clearMediaContainer();
 		
@@ -578,21 +563,14 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		if(questionProxy != null ) {
 			List<QuestionResourceProxy> questionResources = Lists.newArrayList(questionProxy.getQuestionResources());
 			
-			if(questionResources != null && questionResources.isEmpty() == false) {
+			if(questionResources != null && !questionResources.isEmpty()) {
 			
 				final QuestionResourceProxy questionResourceProxy = questionResources.get(0);
 				final Integer width = questionResourceProxy.getImageWidth();
 				final Integer height = questionResourceProxy.getImageHeight();
 				final String imagePath = questionResourceProxy.getPath();
-						
-				if (width != null && height != null)
-				{
-					imageViewer.setUrl(imagePath, width, height, type);
-				}
-				else
-				{
-					imageViewer.setUrl(imagePath, null, null, type);
-				}
+
+				imageViewer.setUrl(imagePath, width, height, type);
 			}
 		}
 			
@@ -602,7 +580,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		allowedExt.addAll(Arrays.asList(SharedConstant.IMAGE_EXTENSIONS));
 		paths.put(MultimediaType.Image, SharedConstant.UPLOAD_MEDIA_IMAGES_PATH);
 		
-		ResourceUpload resourceUpload = new ResourceUpload(allowedExt,paths/*,this.eventBus*/); 
+		ResourceUpload resourceUpload = new ResourceUpload(allowedExt,paths); 
 		
 		resourceUpload.addResourceUploadedHandler(new ResourceUploadEventHandler() {
 			
@@ -611,32 +589,25 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 
 				final String filePath = event.getFilePath();
 				
-				if(event.isResourceUploaded() == true) {
+				if(event.isResourceUploaded()) {
 					Log.info("filePath is " + filePath);
 					
-					// for image
-					//final String url = new String(GWT.getHostPageBaseURL() + filePath);
-					if(questionTypeProxy != null/* && questionTypeProxy.getImageWidth() != null && questionTypeProxy.getImageHeight() != null*/) {
+					if(questionTypeProxy != null) {
 						
 						Function<Boolean, Void> function = new Function<Boolean, Void>() {
 							
 							@Override
 							public Void apply(Boolean flag) {
 						
-								if(flag != null && flag == true) {
+								if(flag != null && flag) {
 									Log.info("picturePath : " + filePath);
 									if(imageViewer != null && imageViewer.getImageUrl() != null && imageViewer.getImageUrl().length() > 0) {
-										// delete old files
 										Log.info("Delete old uploaded file " + imageViewer.getImageUrl().toString());
-										//delegate.deleteMediaFileFromDisk(imageViewer.getImageUrl().replace(GWT.getHostPageBaseURL(), ""));
 									}
 									
 									imageViewer.setUrl(filePath, event.getWidth(), event.getHeight(), type);	
 								} else {
 									ConfirmationDialogBox.showOkDialogBox(constants.error(), messages.imageUploadSize(questionTypeProxy.getImageWidth(),questionTypeProxy.getImageHeight()));
-									/*ErrorPanel errorPanel = new ErrorPanel();
-									errorPanel.setErrorMessage("Only Upload image of size" + questionTypeProxy.getImageWidth() + "*" + questionTypeProxy.getImageHeight());*/
-									//delegate.deleteMediaFileFromDisk(filePath);
 								}
 
 								return null;
@@ -644,14 +615,8 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 						};
 						
 						if(event.getWidth() != null && event.getHeight() != null) {
-							/*if(event.getWidth().equals(questionTypeProxy.getImageWidth()) && event.getHeight().equals(questionTypeProxy.getImageHeight())) {
-								function.apply(true);
-							}else {
-								function.apply(false);
-							}*/
 							function.apply(true);
 						}else {
-							//ClientUtility.checkImageSize(url,questionTypeProxy.getImageWidth(),questionTypeProxy.getImageHeight(),function);
 							Log.error("Error in event width or height");
 						}
 							
@@ -673,16 +638,13 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		clearMediaContainer();
 		
 		if(questionType != null &&  questionType.getQuestionType() != null ) {
-				
 			// added viewer
 			List<QuestionResourceProxy> questionResources = new ArrayList<QuestionResourceProxy>();
 			if(question != null && question.getQuestionResources() != null) {
-				
 				questionResources.addAll(question.getQuestionResources());
 				Collections.sort(questionResources, ClientUtility.QUESTION_RESOURCE_SEQUENCE_COMARATOR);
 			}
 			viewer = new ResourceView(eventBus,ClientUtility.getQuestionResourceClient(questionResources),questionType.getQuestionType(),questionType.getQueHaveImage(),questionType.getQueHaveSound(),questionType.getQueHaveVideo(),true);
-			
 			viewer.addResourceAddedHandler(new ResourceAddedEventHandler(){
 
 				@Override
@@ -690,9 +652,6 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 					
 					if(!event.isAdded()) {
 						ConfirmationDialogBox.showOkDialogBox(constants.error(), constants.mediaTypeNotAllowed());
-						/*ErrorPanel errorPanel = new ErrorPanel();
-						errorPanel.setErrorMessage("This type of media is not allowed");*/
-						//delegate.deleteMediaFileFromDisk(event.getQuestionResourceClient().getPath()); 
 					}
 				}
 			});	
@@ -710,17 +669,17 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 			// allowed extension
 			ArrayList<String> allowedExt = new ArrayList<String>();
 			Map<MultimediaType, String> paths = Maps.newHashMap();
-			if(questionType.getQueHaveImage() != null && questionType.getQueHaveImage() == true) {
+			if(questionType.getQueHaveImage() != null && questionType.getQueHaveImage()) {
 				allowedExt.addAll(Arrays.asList(SharedConstant.IMAGE_EXTENSIONS));
 				paths.put(MultimediaType.Image,SharedConstant.UPLOAD_MEDIA_IMAGES_PATH);
 			}
 			
-			if(questionType.getQueHaveSound()  != null && questionType.getQueHaveSound() == true) {
+			if(questionType.getQueHaveSound()  != null && questionType.getQueHaveSound()) {
 				allowedExt.addAll(Arrays.asList(SharedConstant.SOUND_EXTENSIONS));
 				paths.put(MultimediaType.Sound,SharedConstant.UPLOAD_MEDIA_SOUND_PATH);
 			}
 			
-			if(questionType.getQueHaveVideo()  != null && questionType.getQueHaveVideo() == true) {
+			if(questionType.getQueHaveVideo()  != null && questionType.getQueHaveVideo()) {
 				allowedExt.addAll(Arrays.asList(SharedConstant.VIDEO_EXTENSIONS));
 				paths.put(MultimediaType.Video,SharedConstant.UPLOAD_MEDIA_VIDEO_PATH);
 			}			
@@ -734,7 +693,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 				public void onResourceUploaded(ResourceUploadEvent event) {
 					String filePath = event.getFilePath();
 					
-					if(event.isResourceUploaded() == true) {
+					if(event.isResourceUploaded()) {
 						Log.info("filePath is " + filePath);
 						
 						MultimediaType type = event.getType();
@@ -756,7 +715,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 								|| Boolean.TRUE.equals(questionType.getQueHaveSound())
 								|| Boolean.TRUE.equals(questionType.getQueHaveVideo());
 						
-				if(flag == true) {
+				if(flag) {
 					// added to container
 					setMediaContainer(resourceUpload,paths.keySet(), viewer);	
 				}else {
@@ -768,17 +727,12 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	}
 	
 	private void clearMediaContainer() {
-		//remove extra part
-//		lblUploadText.removeStyleName("label");
-//		lblUploadText.setText("");
 		uploadResourcePanel.setLabelText("");
 		uploaderContainer.clear();
 		viewerContainer.clear();		
 	}
 	
 	private void setMediaContainer(Widget upload,Set<MultimediaType> set, Widget viewer) {
-//		up.addStyleName("label");
-//		lblUploadText.setText(ClientUtility.getUploadLabel(set));
 		uploadResourcePanel.setLabelText(ClientUtility.getUploadLabel(set));
 		uploaderContainer.add(upload);
 		viewerContainer.add(viewer);
@@ -793,9 +747,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	}
 	
 	private boolean validationOfFields() {
-		
 		author.getTextField().advancedTextBox.removeStyleName("higlight_onViolation");
-		//questionComment.removeStyleName("higlight_onViolation");
 		questionType.removeStyleName("higlight_onViolation");
 		questionTextArea.removeStyleName("higlight_onViolation");
 		if(imageViewer != null)
@@ -825,7 +777,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 				author.getTextField().advancedTextBox.addStyleName("higlight_onViolation");
 			}
 		
-			if(author.getSelected() != null && reviewer.getSelected() != null && author.getSelected().getId().equals(reviewer.getSelected().getId()) == true) {
+			if(author.getSelected() != null && reviewer.getSelected() != null && author.getSelected().getId().equals(reviewer.getSelected().getId())) {
 				flag = false;
 				messages.add(constants.authorReviewerMayNotBeSame());
 				author.getTextField().advancedTextBox.addStyleName("higlight_onViolation");
@@ -877,7 +829,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 			messages.add(constants.mcsMayNotBeNull());
 			mcs.addStyleName("higlight_onViolation");
 		}
-		if(flag == false) {
+		if(!flag) {
 			ReceiverDialog.showMessageDialog(constants.pleaseEnterWarning(),messages);
 		}
 		
@@ -893,7 +845,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		question.setQuestionShortName(questionShortName.getText());
 		question.setQuestionText(questionTextArea.getHTML());
 		
-		if(isAuthorReviewerEditable == true) {
+		if(isAuthorReviewerEditable) {
 			question.setAutor(author.getSelected());
 			question.setRewiewer(reviewer.getSelected());
 			question.setSubmitToReviewComitee(submitToReviewComitee.getValue());
@@ -906,7 +858,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		
 		question.setQuestEvent(questionEvent.getValue());
 		question.setMcs(mcs.getValue());
-		commentProxy.setComment(comment.getText().isEmpty() == true ? " " : comment.getText());
+		commentProxy.setComment(comment.getText().isEmpty() ? " " : comment.getText());
 		question.setComment(commentProxy);
 	}
 

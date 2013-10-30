@@ -11,7 +11,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ImageViewer extends Composite{
+public class ImageViewer extends Composite {
 
 	public static final int TEXTUAL_IMAGE_HEIGHT = 480;
 	public static final int TEXTUAL_IMAGE_WIDTH = 480;
@@ -25,165 +25,27 @@ public class ImageViewer extends Composite{
 	interface ImageViewerUiBinder extends UiBinder<Widget, ImageViewer> {
 	}
 
-	private Integer originalWidth;
-	private Integer originalHeight;
-	/*private int currentWidth;
-	private int currentHeight;
-	private int predefinedWidth;
-	private int predefinedHeight;*/
-	
-	
-	/*@UiField(provided = true)
-	DrawingArea drawingArea;*/
-	
-	/*@UiField
-	CheckBox chkChangeSize;
-	
-	@UiField
-	Label lblCurrentSize;*/
-	
-	/*@UiField
-	Label lblHeight;
-	
-	@UiField
-	Label lblWidth;
-	
-	@UiField
-	TextBox txtHeight;
-	
-	@UiField
-	TextBox txtWidth;*/
-
 	@UiField
 	Image image;
-	//private org.vaadin.gwtgraphics.client.Image image;
 	
 	public ImageViewer() {
-		
-		/*drawingArea = new DrawingArea(100, 100);*/
 		initWidget(uiBinder.createAndBindUi(this));
-		
-		/*lblHeight.setText(constants.height());
-		lblWidth.setText(constants.width());*/
-		
-		/*predefinedWidth = 600;
-		predefinedHeight = 500;*/
-		
-		/*chkChangeSize.setText(setWidthHeight(constants.changeToSize(),predefinedWidth,predefinedHeight));
-		
-		chkChangeSize.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Boolean> event) {
-				
-				chkChangeSizeOnValueChangeHandler(event);	
-				
-			}
-		});*/
-		
-		/*txtHeight.addValueChangeHandler(new ValueChangeHandler<String>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				changeHeightandWidthUsingTextBox(event);
-			}
-
-		});
-		
-		txtWidth.addValueChangeHandler(new ValueChangeHandler<String>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				changeHeightandWidthUsingTextBox(event);
-			}
-		});*/
-		
 	}
-
-	
-	/*private void changeHeightandWidthUsingTextBox(
-			ValueChangeEvent<String> event) {
-		
-		try {
-			currentHeight = Integer.parseInt(txtHeight.getValue(), 10);
-			currentWidth = Integer.parseInt(txtWidth.getValue(), 10);
-			lblCurrentSize.setText(setWidthHeight(constants.currentSize(),currentWidth,currentHeight));
-			setImageAndCanvasSize(currentWidth, currentHeight);
-		}catch (Exception e) {
-			Window.alert("Set height and width as number.");
-		}
-	}*/
-	
-	/*private void chkChangeSizeOnValueChangeHandler(
-			ValueChangeEvent<Boolean> event) {
-		
-		txtHeight.setText("");
-		txtWidth.setText("");
-		
-		if(event.getValue() == true) {
-			// change to predefined width and height
-			chkChangeSize.setText(setWidthHeight(constants.changeToSize(),originalWidth,originalHeight));
-			lblCurrentSize.setText(setWidthHeight(constants.currentSize(),predefinedWidth,predefinedHeight));
-			currentWidth = predefinedWidth;
-			currentHeight = predefinedHeight;
-			setImageAndCanvasSize(predefinedWidth,predefinedHeight);
-			
-		}else {
-			// change to original width and height
-			chkChangeSize.setText(setWidthHeight(constants.changeToSize(),predefinedWidth,predefinedHeight));
-			lblCurrentSize.setText(setWidthHeight(constants.currentSize(),originalWidth,originalHeight));
-			currentWidth = originalWidth;
-			currentHeight = originalHeight;
-			setImageAndCanvasSize(originalWidth,originalHeight);
-		}
-				
-	}*/
-
-	/*private void setImageAndCanvasSize(int width,int height) {
-		image.setHeight(height);
-		image.setWidth(width);
-		drawingArea.setHeight(height);
-		drawingArea.setWidth(width);
-	}*/
 		
 	private void init(Integer width,Integer height) {
-		
 		Log.info("Init method called ");
 		Log.info("Image path : " + url);
-		/*Image tempImage = new Image(url);
-		
-		originalWidth = tempImage.getWidth();
-		originalHeight = tempImage.getHeight();*/
-		
-//		lblCurrentSize.setText(setWidthHeight(constants.currentSize(),originalWidth,originalHeight));
-		
-		originalWidth = width;
-		originalHeight = height;
-		
-		/*drawingArea.setHeight(originalHeight);
-		drawingArea.setWidth(originalWidth);
-		
-		image = new org.vaadin.gwtgraphics.client.Image(
-				0, 0, originalWidth ,originalHeight, url);
-		
-		drawingArea.add(image);*/
 		
 		image.setUrl(url);
-		if(height != null) {
-			image.setHeight(height + "px");	
-		}
-		
-		if(width != null) {
-			image.setWidth(width + "px");	
-		}
-		
-		
+//		if(height != null) {
+//			image.setHeight(height + "px");	
+//		}
+//		
+//		if(width != null) {
+//			image.setWidth(width + "px");	
+//		}
 	}
 
-	/*private final String setWidthHeight(String size, int width, int height) {	
-		return size.replace("(0)", width +"").replace("(1)", height + "");
-	}*/
-	
 	public String getImageUrl() {
 		return url;
 	}
@@ -193,48 +55,11 @@ public class ImageViewer extends Composite{
 		init(width,height);
 	}
 	
-	/*public Request<String> saveImage(McAppRequestFactory  request) {
-		
-		String size = String.valueOf(currentWidth).concat(",").concat(String.valueOf(currentHeight));
-		
-		String tempUrl = url.replace(GWT.getHostPageBaseURL(), "");
-		Log.info("URL is "+ tempUrl);
-		return request.questionRequest().saveQuestionImage(tempUrl,size);
-	}*/
-
-
-//	@Override
 	public void setUrl(String url,Integer width, Integer height, QuestionTypes questionType) {
 		Log.info("Set url : " + url);
 		this.url = url;
-		/*if(questionType != null && QuestionTypes.Textual.equals(questionType)) {
-			renderTextualImage(480,480);
-		}else {*/
-			renderImage(width,height);	
-		/*}*/
+		renderImage(width,height);
 	}
-
-
-	/*private void renderTextualImage(int width,int height) {
-		
-		Log.info("Init method called ");
-		Log.info("Image path : " + url);
-		
-		originalWidth = width;
-		originalHeight = height;
-		
-//		lblCurrentSize.setText(setWidthHeight(constants.currentSize(),originalWidth,originalHeight));
-		
-		drawingArea.setHeight(originalHeight);
-		drawingArea.setWidth(originalWidth);
-		
-		image = new org.vaadin.gwtgraphics.client.Image(
-				0, 0, originalWidth ,originalHeight, url);
-		
-		drawingArea.add(image);
-		
-	}*/
-
 
 	public String getImageRelativeUrl() {
 		
@@ -245,15 +70,12 @@ public class ImageViewer extends Composite{
 		return getImageUrl().replace(GWT.getHostPageBaseURL(), "");
 	}
 
-
 	public void closed() {
 		Log.info("Image viewer is closed");
-		
 	}
 
 	public void clear() {
 		image.setUrl("");
-		//drawingArea.clear();
 	}
 
 	public Integer getHeight() {
@@ -270,11 +92,22 @@ public class ImageViewer extends Composite{
 		return image.getWidth();
 	}
 
-
-	public void setUrl(String url, QuestionTypes questionType) {
+	public void setUrl(String url) {
 		image.setUrl(url);
-		image.setHeight("100%");
-		image.setWidth("100%");
+				
+		//TODO: set a more sensible alt text and display the message if there really is no image available
 		image.setAltText(constants.sorryImageNotAvailable());
+	}
+	
+	public void setPixelSize(int width, int height) {
+		image.setPixelSize(width, height);
+	}
+	
+	public void setSizeByWidth(int width) {
+		setPixelSize(width, image.getHeight() * width / image.getWidth());
+	}
+	
+	public void setSizeByHeight(int height) {
+		setPixelSize(image.getWidth() * height / image.getHeight(), height);
 	}
 }

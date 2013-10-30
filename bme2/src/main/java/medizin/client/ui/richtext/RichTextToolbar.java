@@ -260,7 +260,7 @@ public class RichTextToolbar extends Composite {
 			
 			@Override
 			public void onClose(CloseEvent<PopupPanel> event) {
-				if(dialogImpl.getEquation() != null && dialogImpl.getEquation().isEmpty() == false) {
+				if(dialogImpl.getEquation() != null && !dialogImpl.getEquation().isEmpty()) {
 					richText.getFormatter().insertHTML(dialogImpl.getEquation());	
 				}
 			}
@@ -468,5 +468,21 @@ public class RichTextToolbar extends Composite {
     if (extended != null) {
       strikethrough.setDown(extended.isStrikethrough());
     }
+  }
+
+  public ListBox getBackColors() {
+	  return backColors;
+  }
+  
+  public ListBox getForeColors() {
+	  return foreColors;
+  }
+  
+  public ListBox getFonts() {
+	  return fonts;
+  }
+  
+  public ListBox getFontSizes() {
+	  return fontSizes;
   }
 }

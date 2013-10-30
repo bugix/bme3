@@ -61,6 +61,10 @@ public class LabeledRichTextArea extends Composite implements Focusable, HasFocu
 		wrapper.add(panel);
 		
 		FocusDelegatingHandler handler = new FocusDelegatingHandler(rtArea);
+		handler.addException(rtToolbar.getBackColors());
+		handler.addException(rtToolbar.getForeColors());
+		handler.addException(rtToolbar.getFonts());
+		handler.addException(rtToolbar.getFontSizes());
 		wrapper.addClickHandler(handler);
 		wrapper.addFocusHandler(handler);
 		
