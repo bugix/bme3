@@ -1,13 +1,12 @@
 package medizin.client.ui.view;
 
-import java.util.Collection;
-import java.util.HashSet;
-
-import static medizin.client.util.ClientUtility.defaultString;
 import static medizin.client.util.ClientUtility.defaultBoolean;
+import static medizin.client.util.ClientUtility.defaultString;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 
 import medizin.client.proxy.InstitutionProxy;
@@ -36,7 +35,6 @@ import medizin.shared.utils.SharedConstant;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -359,6 +357,13 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
     	   richTextChkBox.setValue(proxy.getRichText());
     	   maxBytes.setValue(defaultString(proxy.getMaxBytes()));
        }
+       else if (proxy.getQuestionType().equals(QuestionTypes.Drawing))
+       {
+    	   questionLength.setValue(defaultString(proxy.getQuestionLength()));
+    	   queHaveImgChkBox.setValue(defaultBoolean(proxy.getQueHaveImage()));
+    	   queHaveVideoChkBox.setValue(defaultBoolean(proxy.getQueHaveVideo()));
+    	   queHaveSoundChkBox.setValue(defaultBoolean(proxy.getQueHaveSound()));
+       }
        
        updateImgKeyFields();
     }
@@ -370,6 +375,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
     private ArrayList<Widget> longTextFields;
     private ArrayList<Widget> matrixFields;
     private ArrayList<Widget> mcqFields;
+    private ArrayList<Widget> drawingFields;
     
     private ArrayList<LabeledTextBox> allTextBoxes;
     private HashSet<Widget> allBoxes;
@@ -406,6 +412,9 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		mcqFields = Lists.newArrayList((Widget) questionLength, multimediaType,
 				selectionType, column, richText, maxBytes);
 		mcqFields.addAll(baseFields);
+		
+		drawingFields = Lists.newArrayList((Widget) questionLength, queHasMedia);
+		drawingFields.addAll(baseFields);
 
 		allTextBoxes = Lists.newArrayList((LabeledTextBox) shortName, longName,
 				sumAnswer, sumTrueAnswer, sumFalseAnswer, questionLength,
@@ -753,6 +762,14 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 			examGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.BLOCK);
 			multimediaGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.BLOCK);
 		} 
+		else if (questionTypes.equals(QuestionTypes.Drawing))
+		{
+			changeVisibility(allBoxes, false);
+			changeVisibility(drawingFields, true);
+			evaluationGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.NONE);
+			examGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.NONE);
+			multimediaGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.NONE);
+		}
 		else
 		{
 			changeVisibility(allBoxes, false);
@@ -828,6 +845,13 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 	    	   column.setValue("");
 	    	   richTextChkBox.setValue(false);
 	    	   maxBytes.setValue("");
+	       }
+	       else if (questionTypes.equals(QuestionTypes.Drawing))
+	       {
+	    	   questionLength.setValue("");
+	    	   queHaveImgChkBox.setValue(false);
+	    	   queHaveVideoChkBox.setValue(false);
+	    	   queHaveSoundChkBox.setValue(false);
 	       }
 	}
 
@@ -1259,6 +1283,20 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 					errorMessage.add(constants.maxBytes() + " " + msg);
 					maxBytes.getTextBox().addStyleName("higlight_onViolation");
 				}
+				break;
+			}
+			
+			case Drawing:
+			{
+				String msg = "";
+						
+				if ((msg = checkTextWidgetForNumber(questionLength.getIntegerBox())) != "")
+				{
+					flag = false;
+					errorMessage.add(constants.questionLength() + " " + msg);
+					questionLength.getTextBox().addStyleName("higlight_onViolation");
+				}
+				
 				break;
 			}
 			

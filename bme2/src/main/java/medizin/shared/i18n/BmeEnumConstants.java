@@ -36,6 +36,8 @@ public interface BmeEnumConstants extends ConstantsWithLookup {
 	public String LongText();
 	
 	public String Sort();
+	
+	public String Drawing();
 
 	//SelectionType
 	public String SEL_PICK();

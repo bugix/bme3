@@ -35,7 +35,10 @@ public class AnswerValue {
 				return "";
 			
 			if(object.getQuestionType()==QuestionTypes.MCQ)
-				return constants.media() + "(" + object.getMultimediaType() + ")" + "/" + constants.selectionType() + "(" + object.getSelectionType() + ")";		
+				return constants.media() + "(" + object.getMultimediaType() + ")" + "/" + constants.selectionType() + "(" + object.getSelectionType() + ")";
+			
+			if (object.getQuestionType() == QuestionTypes.Drawing)
+				return "";
 			
 			
 		}

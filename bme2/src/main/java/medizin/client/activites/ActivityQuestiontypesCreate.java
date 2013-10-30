@@ -297,6 +297,13 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 					questionTypeProxy.setMaxBytes(Integer.parseInt(view.getMaxBytesTxtbox().getValue()));
 					questionTypeProxy.setRichText(view.getRichTextChkBox().getValue());
 				}
+				else if (selectedQuestionType.equals(QuestionTypes.Drawing))
+				{
+					questionTypeProxy.setQuestionLength(Integer.parseInt(view.getQuestionLengthTxtbox().getValue()));
+					questionTypeProxy.setQueHaveImage(view.getQueHaveImgChkBox().getValue());
+					questionTypeProxy.setQueHaveSound(view.getQueHaveSoundChkBox().getValue());
+					questionTypeProxy.setQueHaveVideo(view.getQueHaveVideoChkBox().getValue());
+				}
 
 				final QuestionTypeProxy finalQuestionTypeProxy = questionTypeProxy;
 
