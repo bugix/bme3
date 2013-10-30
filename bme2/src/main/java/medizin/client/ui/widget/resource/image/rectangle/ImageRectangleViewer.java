@@ -26,11 +26,9 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class ImageRectangleViewer extends Composite{
 
-	private static ImageViewerUiBinder uiBinder = GWT
-			.create(ImageViewerUiBinder.class);
+	private static ImageViewerUiBinder uiBinder = GWT.create(ImageViewerUiBinder.class);
 	
-	interface ImageViewerUiBinder extends UiBinder<Widget, ImageRectangleViewer> {
-	}
+	interface ImageViewerUiBinder extends UiBinder<Widget, ImageRectangleViewer> {}
 	
 	@UiField(provided = true)
 	DrawingArea drawingArea;

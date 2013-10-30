@@ -182,12 +182,15 @@ public class ActivitySystemOverview extends AbstractActivityWrapper implements S
 						acceptAnswerCount = response;		
 						examinerSubView.setAcceptAnswerAndQuestion((tempPersonProxy.getPrename() + " " + tempPersonProxy.getName()), acceptQuestionCount, acceptAnswerCount);
 						
-						view.getMainVerticalPanel().setSpacing(5);
-						
-						if (view.getMainVerticalPanel().getWidgetCount() == 1)
-							examinerSubView.getExaminerDisclosurePanel().setOpen(true); 
+						if (acceptQuestionCount > 0 || acceptAnswerCount > 0)
+						{
+							view.getMainVerticalPanel().setSpacing(5);
 							
-						view.getMainVerticalPanel().add(examinerSubView);
+							if (view.getMainVerticalPanel().getWidgetCount() == 1)
+								examinerSubView.getExaminerDisclosurePanel().setOpen(true); 
+								
+							view.getMainVerticalPanel().add(examinerSubView);
+						}
 					}
 				});
 				

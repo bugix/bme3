@@ -26,6 +26,7 @@ import medizin.client.request.QuestionEventRequest;
 import medizin.client.request.QuestionRequest;
 import medizin.client.request.QuestionResourceRequest;
 import medizin.client.request.QuestionTypeRequest;
+import medizin.client.ui.view.question.ConfirmQuestionChangesPopup.ConfirmQuestionHandler;
 import medizin.client.ui.view.question.QuestionEditView;
 import medizin.client.ui.view.question.QuestionEditViewImpl;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
@@ -269,12 +270,12 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 			createNewQuestion(null,Status.NEW,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor,gotoShowNewFunction);
 		}else {
 			// edit accepted question with major or minor version
-			final Function<Boolean, Void> isMajorOrMinor = new Function<Boolean, Void>() {
+			final ConfirmQuestionHandler isMajorOrMinor = new ConfirmQuestionHandler() {
 
 				@Override
-				public Void apply(Boolean withNewMajorVersion) {
+				public void confirmQuestionClicked(boolean isWithNewMajorVersion,boolean isForceActive) {
 					
-					if(withNewMajorVersion) {
+					if(isWithNewMajorVersion) {
 						boolean isAcceptedByAdmin = isAdminOrInstitutionalAdmin();
 						boolean isAcceptedByReviewer = false;
 						boolean isAcceptedByAuthor = userLoggedIn.getId().equals(view.getAuthorId());
@@ -300,27 +301,37 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 							}
 						};
 						
-						if(Status.NEW.equals(question.getStatus())) {
+						if(isForceActive) {
 							boolean isAcceptedByAdmin = isAdminOrInstitutionalAdmin();
 							boolean isAcceptedByReviewer = false;
 							boolean isAcceptedByAuthor = userLoggedIn.getId().equals(view.getAuthorId());
+							boolean isForcedActive = true;
+							// if current state of the question is new so status will remain as it is.
+							status = Status.ACTIVE;
+							updateQuestion(status,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor,isForcedActive,gotoShowNewFunction);
+						} else if(Status.NEW.equals(question.getStatus())) {
+							boolean isAcceptedByAdmin = isAdminOrInstitutionalAdmin();
+							boolean isAcceptedByReviewer = false;
+							boolean isAcceptedByAuthor = userLoggedIn.getId().equals(view.getAuthorId());
+							boolean isForcedActive = false;
 							// if current state of the question is new so status will remain as it is.
 							status = Status.NEW;
-							updateQuestion(status,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor,gotoShowNewFunction);
+							updateQuestion(status,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor,isForcedActive,gotoShowNewFunction);
 						}else if(Status.ACTIVE.equals(question.getStatus())) {
 							// the current state of the question is active so new status with minor changes will be accepted reviewer
 							boolean isAcceptedByAdmin = isAdminOrInstitutionalAdmin();
 							boolean isAcceptedByReviewer = true;
 							boolean isAcceptedByAuthor = userLoggedIn.getId().equals(view.getAuthorId());
+							boolean isForcedActive = false;
 							
 							status = Status.ACCEPTED_REVIEWER;
-							updateQuestion(status,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor,gotoFunction);
+							updateQuestion(status,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor,isForcedActive,gotoFunction);
 						}
 					}
-					return null;
+					return;
 				}
 			};
-			view.comfirmQuestionChanges(isMajorOrMinor);
+			view.comfirmQuestionChanges(isMajorOrMinor,isAdminOrInstitutionalAdmin());
 		}
 	}
 	
@@ -386,7 +397,7 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 		});
 	}
 	
-	protected final void updateQuestion(final Status status, final boolean isAcceptedByAdmin, final boolean isAcceptedByReviewer, final boolean isAcceptedByAuthor, final Function<EntityProxyId<?>, Void> gotoFunction) {
+	protected final void updateQuestion(final Status status, final boolean isAcceptedByAdmin, final boolean isAcceptedByReviewer, final boolean isAcceptedByAuthor, final boolean isForcedActive, final Function<EntityProxyId<?>, Void> gotoFunction) {
 		
 		final CommentRequest commentRequest = requests.commentRequest();
 		final QuestionResourceRequest questionResourceRequest = requests.questionResourceRequest();
@@ -402,7 +413,7 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 		questionProxy.setIsAcceptedAdmin(isAcceptedByAdmin);
 		questionProxy.setIsAcceptedAuthor(isAcceptedByAuthor);
 		questionProxy.setIsAcceptedRewiever(isAcceptedByReviewer);
-		questionProxy.setIsForcedActive(false);
+		questionProxy.setIsForcedActive(isForcedActive);
 		questionProxy.setQuestionVersion(question.getQuestionVersion());
 		questionProxy.setQuestionSubVersion(question.getQuestionSubVersion() + 1);
 		questionProxy.setDateChanged(new Date());
