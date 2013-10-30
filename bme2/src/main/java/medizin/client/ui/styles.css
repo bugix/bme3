@@ -28,6 +28,7 @@
 	padding: 0 20px 8px;
 	box-shadow: 2px 1px 3px #CCCCCC;
 	width: 50%;
+	min-width: 540px;
 }
 
 .attributeGroupTitle {
