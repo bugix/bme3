@@ -2,16 +2,19 @@ package medizin.client.ui.widget.resource.image.polygon;
 
 import java.util.List;
 
+import medizin.client.ui.view.QuestionTextViewDialogBoxImpl;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.util.ClientUtility;
 import medizin.client.util.ImageWidthHeight;
 import medizin.client.util.Point;
 import medizin.client.util.PolygonPath;
+import medizin.shared.i18n.BmeConstants;
 
 import org.vaadin.gwtgraphics.client.DrawingArea;
 import org.vaadin.gwtgraphics.client.shape.Path;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.common.base.Function;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.MouseDownEvent;
@@ -22,24 +25,36 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ImagePolygonViewer extends Composite implements ImageWidthHeight {
 
-	private static ImagePolygonViewerUiBinder uiBinder = GWT
-			.create(ImagePolygonViewerUiBinder.class);
+	private static ImagePolygonViewerUiBinder uiBinder = GWT.create(ImagePolygonViewerUiBinder.class);
 
-	interface ImagePolygonViewerUiBinder extends UiBinder<Widget, ImagePolygonViewer> {
-	}
+	interface ImagePolygonViewerUiBinder extends UiBinder<Widget, ImagePolygonViewer> {}
+	
+	private final BmeConstants constants = GWT.create(BmeConstants.class);
 
 	@UiField(provided = true)
 	DrawingArea drawingArea;
 	
-	@UiField
-	IconButton btnPolyLine;
+/*	@UiField
+	IconButton btnPolyLine;*/
 	
 	@UiField
 	IconButton btnClear;
+	
+	@UiField
+	IconButton btnCloseArea;
+
+	@UiField
+	HorizontalPanel btnHPPanel;
+	
+	@UiField 
+	IconButton info;
+	
+	private Function<Void, Void> pathClosedHandler;
 	
 	private PolygonPath currentPolygonPath = null;
 	private Path currentPath = null;
@@ -81,7 +96,7 @@ public class ImagePolygonViewer extends Composite implements ImageWidthHeight {
 			path.setFillOpacity(0.3);
 			drawingArea.add(path);
 			drawingArea.bringToFront(path);			
-		}else if(startPoint.withinDeltaRange(point)){
+		} else if(startPoint.withinDeltaRange(point)){
 			path.close();
 		} else {
 			path.lineTo(point.getX(), point.getY());
@@ -100,24 +115,39 @@ public class ImagePolygonViewer extends Composite implements ImageWidthHeight {
 			for (int i = 1; i < points.size(); i++) {
 				addNewPointToPath(points.get(i), p, startPoint);
 			}
+			p.close();
 		}
 	}
 
-	@UiHandler("btnPolyLine")
-	void clickedPolyLine(ClickEvent event) {
-		btnPolyLine.setEnabled(false);
+	/*@UiHandler("btnPolyLine")*/
+	void clickedPolyLine(/*ClickEvent event*/) {
+		/*btnPolyLine.setEnabled(false);*/
 		currentPolygonPath = new PolygonPath();
 	}
 	
 	@UiHandler("btnClear")
 	void clearBtnclicked(ClickEvent event) {
-		btnPolyLine.setEnabled(true);
+		//btnPolyLine.setEnabled(true);
 		currentPolygonPath = null;
 		if(currentPath != null) {
 			currentPath.close();
 			drawingArea.remove(currentPath);
 		}
 		currentPath = null;
+		clickedPolyLine();
+		enabledCloseAreaBtn();
+	}
+	
+	@UiHandler("btnCloseArea") 
+	void clickedBtnCloseArea(ClickEvent event) {
+		if(currentPath != null && currentPolygonPath != null && currentPolygonPath.isClosed() == false) {
+			currentPath.close();
+			currentPolygonPath.closed();
+		}
+		enabledCloseAreaBtn();
+		if(pathClosedHandler != null) {
+			pathClosedHandler.apply(null);
+		}
 	}
 	
 	private void addNewPath(Point point) {
@@ -132,9 +162,10 @@ public class ImagePolygonViewer extends Composite implements ImageWidthHeight {
 		} else {
 			
 			if(currentPolygonPath.getPoint(0).withinDeltaRange(point)) {
-				currentPath.close();
-				currentPolygonPath.addPoint(point);
-				currentPolygonPath.closed();
+//				currentPath.close();
+//				currentPolygonPath.addPoint(point);
+//				currentPolygonPath.closed();
+				clickedBtnCloseArea(null);
 				return;
 			}else if(currentPolygonPath.isClosed() == false){
 				currentPath.lineTo(point.getX(), point.getY());
@@ -148,9 +179,26 @@ public class ImagePolygonViewer extends Composite implements ImageWidthHeight {
 		if(currentPolygonPath.isClosed() == false && currentPolygonPath.checkForPolygon() == false) {
 		 	currentPath.close();
 			drawingArea.remove(currentPath);
-			btnPolyLine.setEnabled(true);
+			//btnPolyLine.setEnabled(true);
 			currentPolygonPath = null;
 			currentPath = null;
+		}
+		
+		enabledCloseAreaBtn();
+		
+	}
+
+	private void enabledCloseAreaBtn() {
+		if(currentPolygonPath != null) {
+			if(currentPolygonPath.isClosed() == true) {
+				btnCloseArea.setEnabled(false);
+			} else if(currentPolygonPath.size() >= 3) {
+				btnCloseArea.setEnabled(true);
+			}  else {
+				btnCloseArea.setEnabled(false);
+			}
+		} else {
+			btnCloseArea.setEnabled(false);
 		}
 	}
 
@@ -185,6 +233,7 @@ public class ImagePolygonViewer extends Composite implements ImageWidthHeight {
 		
 		addOtherPolygons(otherAnswer);
 		
+		clickedPolyLine();
 		//initWidget(uiBinder.createAndBindUi(this));
 		
 		drawingArea.addMouseDownHandler(new MouseDownHandler() {
@@ -192,13 +241,20 @@ public class ImagePolygonViewer extends Composite implements ImageWidthHeight {
 			@Override
 			public void onMouseDown(MouseDownEvent event) {
 
-				if (btnPolyLine.isEnabled() == false) {
+				/*if (btnPolyLine.isEnabled() == false) {*/
 					int x = event.getRelativeX(event.getRelativeElement());
 					int y = event.getRelativeY(event.getRelativeElement());
 					
 					Log.info("Relative [x,y] : [" + x +","+ y+ "]");
+					Log.info("--Client [x,y] : " + event.getClientX() +" , " + event.getClientY());
+					Log.info("--Client [x,y] : " + event.getScreenX() +" , " + event.getScreenY());
+					
+					if(currentPath == null) {
+						infoDialogBox(event.getClientX(),event.getClientY());
+					}
 					addNewPath(new Point(x, y));
-				}
+					
+				/*}*/
 			}
 		});
 
@@ -211,7 +267,7 @@ public class ImagePolygonViewer extends Composite implements ImageWidthHeight {
 		});
 		
 		btnClear.setVisible(diplayBtnFlag);
-		btnPolyLine.setVisible(diplayBtnFlag);		
+		//btnPolyLine.setVisible(diplayBtnFlag);		
 	}
 
 	public void setCurrentPolygon(PolygonPath polygonPath) {
@@ -225,6 +281,33 @@ public class ImagePolygonViewer extends Composite implements ImageWidthHeight {
 			addNewPath(point);
 		}
 		
-		btnPolyLine.setEnabled(false);
+		//btnPolyLine.setEnabled(false);
+	}
+
+	public void addPathClosedHandler(Function<Void, Void> pathClosedHandler) {
+		this.pathClosedHandler = pathClosedHandler;
+	}
+	
+	public HorizontalPanel getBtnHPPanel() {
+		return btnHPPanel;
+	}
+	
+	@UiHandler("info")
+	public void fileInfoClicked(ClickEvent event)
+	{
+		QuestionTextViewDialogBoxImpl dialogBox = new QuestionTextViewDialogBoxImpl();
+		dialogBox.setHtmlText(constants.showInImageInfo());
+		dialogBox.setWidth("350px");
+		dialogBox.show();
+		dialogBox.setLeftTopPosition((info.getElement().getAbsoluteLeft()-dialogBox.getOffsetWidth()+30), (info.getAbsoluteTop()+20));
+		
+	}
+	
+	private void infoDialogBox(int leftValue, int topValue) {
+		QuestionTextViewDialogBoxImpl dialogBox = new QuestionTextViewDialogBoxImpl();
+		dialogBox.setHtmlText(constants.showInImageInfo());
+		dialogBox.setWidth("350px");
+		dialogBox.show();
+		dialogBox.setLeftTopPosition(leftValue-dialogBox.getOffsetWidth()+16,topValue+6);
 	}
 }

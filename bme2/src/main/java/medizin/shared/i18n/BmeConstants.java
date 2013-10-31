@@ -794,5 +794,7 @@ public interface BmeConstants extends Constants {
 	public String dontTriggerReviewerProcess();
 	
 	public String closeArea();
+	
+	public String showInImageInfo();
 }
 

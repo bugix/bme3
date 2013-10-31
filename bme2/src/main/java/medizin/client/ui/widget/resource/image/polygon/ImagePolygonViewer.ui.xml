@@ -1,26 +1,36 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:gwtgraphics="urn:import:org.vaadin.gwtgraphics.client" xmlns:m="urn:import:medizin.client.ui.widget">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:gwtgraphics="urn:import:org.vaadin.gwtgraphics.client" xmlns:m="urn:import:medizin.client.ui.widget" xmlns:d="urn:import:com.google.gwt.dom.client">
 	<ui:style>
 		.imageBox {
 			overflow: auto;
 			height: 500px;
-			width: 500px;
+			width: 1000px;
+		}
+		.mouseStyle {
+			cursor:crosshair;
 		}
 	</ui:style>
 	
 	<ui:with type="medizin.shared.i18n.BmeConstants" field="cc"></ui:with>
 	<g:HTMLPanel>
 		<g:VerticalPanel>
-			<g:HorizontalPanel horizontalAlignment="left" spacing="5">
-				<m:IconButton ui:field="btnPolyLine" text="{cc.add}" icon="plus"></m:IconButton>
-				<m:IconButton ui:field="btnClear" text="{cc.clear}" icon="cancel"></m:IconButton>				
+			<g:HorizontalPanel horizontalAlignment="left" width="100%">
+				<g:HorizontalPanel horizontalAlignment="left" spacing="5" ui:field="btnHPPanel">
+					<!-- <m:IconButton ui:field="btnPolyLine" text="{cc.add}" icon="plus"></m:IconButton> -->
+					<m:IconButton ui:field="btnClear" text="{cc.clear}" icon="cancel"></m:IconButton>
+					<m:IconButton ui:field="btnCloseArea" text="{cc.closeArea}" icon="refresh" enabled="false"></m:IconButton>
+				</g:HorizontalPanel>
+				<g:HorizontalPanel horizontalAlignment="right" spacing="5" width="100%">
+					<m:IconButton ui:field="info" icon="info"></m:IconButton>
+				</g:HorizontalPanel>
 			</g:HorizontalPanel>
-			
+			<g:HTMLPanel>
+				<hr />				
+			</g:HTMLPanel>
+				
 			<g:HTMLPanel styleName="{style.imageBox}">
-				<g:VerticalPanel>
-					<gwtgraphics:DrawingArea ui:field="drawingArea"></gwtgraphics:DrawingArea>
-				</g:VerticalPanel>
+				<gwtgraphics:DrawingArea ui:field="drawingArea" styleName="{style.mouseStyle}"></gwtgraphics:DrawingArea>
 			</g:HTMLPanel>
 		</g:VerticalPanel>
 	</g:HTMLPanel>

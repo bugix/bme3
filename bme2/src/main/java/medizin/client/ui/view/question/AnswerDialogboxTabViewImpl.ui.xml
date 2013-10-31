@@ -12,7 +12,7 @@
 	<g:HTMLPanel width="100%">
 		<g:TabPanel ui:field="mainTabPanel" width="100%">
 			<g:Tab text="{cc.image}" width="100%">
-				<g:VerticalPanel ui:field="viewContainer" visible="true">
+				<g:VerticalPanel ui:field="viewContainer" visible="true" height="540px" width="1000px">
 				</g:VerticalPanel>				
 			</g:Tab>
 
@@ -20,6 +20,16 @@
 				<g:VerticalPanel>
 					<g:HTMLPanel>
 						<table id="boundElementHolder">
+							<tr id="answerDialogText">
+								<td colspan="2">
+									<r:RichTextToolbar ui:field="toolbar" />
+									<div style="-moz-border-radius-bottomleft: 8px; -moz-border-radius-bottomright: 8px; border: 1px solid #AAA; border-top: 0; padding: 4px">
+										<div ui:field="descriptionValue">
+										</div>
+										<g:RichTextArea ui:field='answerTextArea' enabled="false" />
+									</div>
+								</td>
+							</tr>
 							<tr id="keyword">
 								<td>
 									<g:Label ui:field="lblAdditionalKeyword" text="{cc.additionalKeyword}" visible="false"></g:Label>

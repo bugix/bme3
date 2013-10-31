@@ -198,7 +198,7 @@ public class CsvFileUploadServlet extends HttpServlet {
 						s.setCity(student.get(cityCol));
 					
 					if (!genderCol.isEmpty())
-						s.setGender(Gender.valueOf(student.get(genderCol)));
+						s.setGender(Gender.valueOf(student.get(genderCol).toUpperCase()));
 				
 					s.persist();
 					

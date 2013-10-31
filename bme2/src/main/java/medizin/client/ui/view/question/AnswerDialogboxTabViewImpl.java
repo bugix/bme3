@@ -9,8 +9,10 @@ import medizin.client.proxy.AnswerProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.proxy.QuestionResourceProxy;
+import medizin.client.ui.richtext.RichTextToolbar;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.dialogbox.receiver.ReceiverDialog;
+import medizin.client.ui.widget.resource.image.polygon.ImagePolygonViewer;
 import medizin.client.ui.widget.resource.image.rectangle.ImageRectangleViewer;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.EventHandlingValueHolderItem;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
@@ -18,6 +20,7 @@ import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget
 import medizin.client.util.ClientUtility;
 import medizin.client.util.ImageWidthHeight;
 import medizin.client.util.Point;
+import medizin.client.util.PolygonPath;
 import medizin.shared.QuestionTypes;
 import medizin.shared.Validity;
 import medizin.shared.i18n.BmeConstants;
@@ -27,6 +30,9 @@ import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.editor.client.Editor.Ignore;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -39,6 +45,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.RichTextArea;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.ValueListBox;
@@ -47,14 +54,16 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class AnswerDialogboxTabViewImpl extends DialogBox implements AnswerDialogboxTabView {
 
-	private static AnswerDialogboxTabViewImplUiBinder uiBinder = GWT
-			.create(AnswerDialogboxTabViewImplUiBinder.class);
+	private static AnswerDialogboxTabViewImplUiBinder uiBinder = GWT.create(AnswerDialogboxTabViewImplUiBinder.class);
 
-	interface AnswerDialogboxTabViewImplUiBinder extends
-			UiBinder<Widget, AnswerDialogboxTabViewImpl> {
-	}
+	interface AnswerDialogboxTabViewImplUiBinder extends UiBinder<Widget, AnswerDialogboxTabViewImpl> {}
 	
-
+	@UiField(provided = true)
+	RichTextToolbar toolbar;
+	
+	@UiField(provided = true)
+	RichTextArea answerTextArea;
+	
 	@UiField
 	IconButton save;
 
@@ -93,7 +102,15 @@ public class AnswerDialogboxTabViewImpl extends DialogBox implements AnswerDialo
 	
 	@UiField
 	TabPanel mainTabPanel;
+	
+	@UiField(provided = true)
+	ValueListBox<Validity> validity = new ValueListBox<Validity>(new AbstractRenderer<medizin.shared.Validity>() {
 
+		public String render(medizin.shared.Validity obj) {
+			return obj == null ? "" : String.valueOf(obj);
+		}
+	});
+	
 	private Delegate delegate;
 
 	private AnswerProxy answer;
@@ -105,6 +122,8 @@ public class AnswerDialogboxTabViewImpl extends DialogBox implements AnswerDialo
 	public final static BmeConstants constants = GWT.create(BmeConstants.class);
 
 	private ImageRectangleViewer imageRectangleViewer;
+	
+	private ImagePolygonViewer imagePolygonViewer;
 	
 	@UiHandler("closeButton")
 	public void onCloseButtonClick(ClickEvent event) {
@@ -118,7 +137,12 @@ public class AnswerDialogboxTabViewImpl extends DialogBox implements AnswerDialo
 
 	public AnswerDialogboxTabViewImpl(QuestionProxy questionProxy, EventBus eventBus, Map<String, Widget> reciverMap) {
 		this.question = questionProxy;
-			
+		
+		answerTextArea = new RichTextArea();
+		answerTextArea.setSize("100%", "14em");
+		toolbar = new RichTextToolbar(answerTextArea);
+		toolbar.setWidth("100%");
+		
 		setWidget(uiBinder.createAndBindUi(this));
 		
 		btnKeywordNotOnImg.setText(constants.keywordNotOnImg());
@@ -143,6 +167,7 @@ public class AnswerDialogboxTabViewImpl extends DialogBox implements AnswerDialo
 			}
 		});
 		
+		reciverMap.put("answerText",answerTextArea);
 		reciverMap.put("autor", author.getTextField().advancedTextBox);
 		reciverMap.put("rewiewer", rewiewer.getTextField().advancedTextBox);
 		reciverMap.put("validity", validity);
@@ -174,6 +199,47 @@ public class AnswerDialogboxTabViewImpl extends DialogBox implements AnswerDialo
 		this.addStyleName("mainAnswerDialogPanel");
 	}
 	
+	private void addForShowInImage() {
+
+		Log.info("Question id :" + question.getId());
+		
+		Long currentAnswerId = answer != null ? answer.getId() : null;
+		delegate.findAllAnswersPoints(question.getId(),currentAnswerId,new Function<List<String>, Void>(){
+
+			@Override
+			public Void apply(List<String> polygons) {
+				
+				List<PolygonPath> polygonPaths = PolygonPath.getPolygonPaths(polygons);
+						
+				if(question != null && question.getQuestionType() != null && QuestionTypes.ShowInImage.equals(question.getQuestionType().getQuestionType()) && question.getQuestionResources() != null && question.getQuestionResources().isEmpty() == false /*&& question.getPicturePath() != null && question.getPicturePath().length() > 0 && question.getQuestionType().getImageWidth() != null && question.getQuestionType().getImageHeight() != null*/) {
+					final QuestionResourceProxy questionResourceProxy = Lists.newArrayList(question.getQuestionResources()).get(0);
+					final Integer imageWidth = questionResourceProxy.getImageWidth();
+					final Integer imageHeight = questionResourceProxy.getImageHeight();
+					final String path = questionResourceProxy.getPath();
+					imagePolygonViewer = new ImagePolygonViewer(path, imageWidth, imageHeight,polygonPaths, true);
+					
+					imagePolygonViewer.addPathClosedHandler(new Function<Void, Void>() {
+						
+						@Override
+						public Void apply(Void input) {
+							onKeywordNotOnImgClicked();
+							return null;
+						}
+					});
+					
+					if(answer != null && answer.getPoints() != null) {
+						imagePolygonViewer.setCurrentPolygon(PolygonPath.getPolygonPath(answer.getPoints()));
+					}
+					imagePolygonViewer.getBtnHPPanel().add(btnClose);
+					viewContainer.add(imagePolygonViewer);
+				}
+				
+				return null;
+			}
+			
+		});
+	}
+
 	private void addForImageKey() {
 
 		Log.info("Question id :" + question.getId());
@@ -246,7 +312,7 @@ public class AnswerDialogboxTabViewImpl extends DialogBox implements AnswerDialo
 		mainTabPanel.selectTab(0);
 		if(question != null && question.getQuestionType() != null && question.getQuestionType().getQuestionType() != null) {
 			
-			if(QuestionTypes.Imgkey.equals(question.getQuestionType().getQuestionType()) || QuestionTypes.Sort.equals(question.getQuestionType().getQuestionType())) {
+			if(QuestionTypes.Imgkey.equals(question.getQuestionType().getQuestionType())) {
 				lblAdditionalKeyword.setVisible(true);
 				lblAdditionalKeyword.setStyleName("label");
 				btnAdditionalKeyword.setVisible(true);
@@ -257,21 +323,34 @@ public class AnswerDialogboxTabViewImpl extends DialogBox implements AnswerDialo
 		//image viewer
 		if(question != null && question.getQuestionType() != null && question.getQuestionType().getQuestionType() != null) {
 			viewContainer.clear();
-			addForImageKey();
+			switch (question.getQuestionType().getQuestionType()) {
+			case ShowInImage:
+			{
+				addForShowInImage();
+				break;
+			}
+			case Imgkey:
+			{
+				addForImageKey();
+				break;
+			}
+			}
 		}
 		center();
 		show();
-	}
-
-	
-	@UiField(provided = true)
-	ValueListBox<Validity> validity = new ValueListBox<Validity>(new AbstractRenderer<medizin.shared.Validity>() {
-
-		public String render(medizin.shared.Validity obj) {
-			return obj == null ? "" : String.valueOf(obj);
+		
+		if (QuestionTypes.ShowInImage.equals(types)){
+			validity.setValue(Validity.Wahr);
+			Document.get().getElementById("validity").getStyle().setDisplay(Display.NONE);
 		}
-	});
-
+		
+		if(QuestionTypes.Imgkey.equals(types)) {
+			Element answerDialogElement = Document.get().getElementById("answerDialogText");
+			if(answerDialogElement != null) {
+				answerDialogElement.removeFromParent();
+			}
+		}
+	}
 
 	@Override
 	public void setAutherPickerValues(Collection<PersonProxy> values, PersonProxy logedUser,  boolean isAdminOrInstitutionalAdmin) {	
@@ -325,8 +404,10 @@ public class AnswerDialogboxTabViewImpl extends DialogBox implements AnswerDialo
 		});
 		
 		PersonProxy lastSelectedReviwer = ClientUtility.getAnswerReviwerPersonProxyFromCookie(values);
-		if (lastSelectedReviwer != null)
+		if (lastSelectedReviwer != null) {
 			rewiewer.setSelected(lastSelectedReviwer);
+		}
+			
 	}
 
 	@Override
@@ -342,13 +423,25 @@ public class AnswerDialogboxTabViewImpl extends DialogBox implements AnswerDialo
 			String mediaPath = null;
 			String additionalKeywords = null; 
 			Integer sequenceNumber = null;
-			
-			additionalKeywords = txtAdditionalKeyword.getText();
-			if(Validity.Wahr.equals(validity.getValue()) == true) {
-				points = imageRectangleViewer.getPoint();	
+			String answerText = "";
+			switch (question.getQuestionType().getQuestionType()) {
+			case ShowInImage:
+			{
+				points = imagePolygonViewer.getPoints();
+				answerText = answerTextArea.getHTML();
+				break;
+			}
+			case Imgkey: 
+			{
+				additionalKeywords = txtAdditionalKeyword.getText();
+				if(Validity.Wahr.equals(validity.getValue()) == true) {
+					points = imageRectangleViewer.getPoint();	
+				}
+				break;
+			}
 			}
 			
-			delegate.saveAnswerProxy(answer, "", author.getSelected(), rewiewer.getSelected(), submitToReviewComitee.getValue(), (comment.getText().isEmpty() ? " " : comment.getText()),validity.getValue(),points,mediaPath,additionalKeywords,sequenceNumber, new Function<AnswerProxy,Void>() {
+			delegate.saveAnswerProxy(answer, answerText, author.getSelected(), rewiewer.getSelected(), submitToReviewComitee.getValue(), (comment.getText().isEmpty() ? " " : comment.getText()),validity.getValue(),points,mediaPath,additionalKeywords,sequenceNumber, new Function<AnswerProxy,Void>() {
 
 				@Override
 				public Void apply(AnswerProxy input) {
@@ -369,11 +462,12 @@ public class AnswerDialogboxTabViewImpl extends DialogBox implements AnswerDialo
 		ArrayList<String> messages = Lists.newArrayList();
 		boolean flag = true;
 		
+		answerTextArea.removeStyleName("higlight_onViolation");
 		rewiewer.getTextField().advancedTextBox.removeStyleName("higlight_onViolation");
 		author.getTextField().advancedTextBox.removeStyleName("higlight_onViolation");
 		submitToReviewComitee.removeStyleName("higlight_onViolation");
-	
 		validity.removeStyleName("higlight_onViolation");
+		if(imagePolygonViewer != null) imagePolygonViewer.removeStyleName("higlight_onViolation");
 		if(imageRectangleViewer != null) imageRectangleViewer.removeStyleName("higlight_onViolation");
 	
 		if(submitToReviewComitee.getValue()){
@@ -394,7 +488,21 @@ public class AnswerDialogboxTabViewImpl extends DialogBox implements AnswerDialo
 			rewiewer.getTextField().advancedTextBox.addStyleName("higlight_onViolation");
 		}
 		
-		if(question.getQuestionType() != null && QuestionTypes.Imgkey.equals(question.getQuestionType().getQuestionType()) == true && validity.getValue() != null && Validity.Wahr.equals(validity.getValue())) {
+		if(question.getQuestionType() != null && QuestionTypes.ShowInImage.equals(question.getQuestionType().getQuestionType()) == true ) {
+			Log.info("IN ShowInImage Question type");
+			if(imagePolygonViewer == null || imagePolygonViewer.isValidPolygon() == false) {
+				flag = false;
+				Log.error("Polygon is not property added. Try again");
+				messages.add(constants.polygonErrorMessage());
+				imagePolygonViewer.addStyleName("higlight_onViolation");
+			}
+			
+			if(answerTextArea.getText() == null || answerTextArea.getText().length() <= 0) {
+				flag = false;
+				messages.add(constants.answerTextErrorMessage());
+				answerTextArea.addStyleName("higlight_onViolation");
+			}
+		}else if(question.getQuestionType() != null && QuestionTypes.Imgkey.equals(question.getQuestionType().getQuestionType()) == true && validity.getValue() != null && Validity.Wahr.equals(validity.getValue())) {
 			Log.info("IN Imgkey Question type");
 			if(imageRectangleViewer == null || imageRectangleViewer.getPoint() == null) {
 				flag = false;
@@ -429,6 +537,7 @@ public class AnswerDialogboxTabViewImpl extends DialogBox implements AnswerDialo
 	@Override
 	public void setValues(AnswerProxy answer) {
 		this.answer = answer;
+		answerTextArea.setHTML(answer.getAnswerText());
 		txtAdditionalKeyword.setText(answer.getAdditionalKeywords());
 		author.setSelected(answer.getAutor());
 		rewiewer.setSelected(answer.getRewiewer());

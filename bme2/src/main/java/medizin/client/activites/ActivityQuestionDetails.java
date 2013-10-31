@@ -420,9 +420,9 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			openMatrixAnswerView(null,true, true,true);
 			return;
 		} 
-		else if (question.getQuestionType() != null && QuestionTypes.Imgkey.equals(question.getQuestionType().getQuestionType()) == true)
+		else if (question.getQuestionType() != null && (QuestionTypes.Imgkey.equals(question.getQuestionType().getQuestionType()) == true || QuestionTypes.ShowInImage.equals(question.getQuestionType().getQuestionType()) == true))
 		{
-			openImageKeyAnswerView(null);
+			openImageKeyOrShowInInImageAnswerView(null);
 		}
 		else 
 		{
@@ -519,7 +519,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		
 	}
 
-	private AnswerDialogboxTabView openImageKeyAnswerView(final AnswerProxy answer) {
+	private AnswerDialogboxTabView openImageKeyOrShowInInImageAnswerView(final AnswerProxy answer) {
 		
 		final AnswerDialogboxTabView answerDialogboxTabView = new AnswerDialogboxTabViewImpl(question, eventBus, reciverMap);
 		answerDialogboxTabView.setDelegate(this);
@@ -1423,9 +1423,9 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			@Override
 			public void onSuccess(Long response) {
 				if(response != null && response == 0) {
-					if (question.getQuestionType() != null && QuestionTypes.Imgkey.equals(question.getQuestionType().getQuestionType()) == true)
+					if (question.getQuestionType() != null && (QuestionTypes.Imgkey.equals(question.getQuestionType().getQuestionType()) == true || QuestionTypes.ShowInImage.equals(question.getQuestionType().getQuestionType()) == true))
 					{
-						openImageKeyAnswerView(answer);
+						openImageKeyOrShowInInImageAnswerView(answer);
 					} else {
 						openAnswerView(answer);
 					}
