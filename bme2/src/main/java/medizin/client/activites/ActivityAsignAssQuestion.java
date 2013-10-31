@@ -338,6 +338,10 @@ QuestionAdvancedSearchPopupView.Delegate {
 				findPastAssesmentQuestion(assesment,questionName,questionId,questionType, encodedStringList);
 		}//new Question
 		else if (action == 2){
+			if(author == null) { 
+				return;
+			}
+			
 			requests.questionRequest().findQuestionsByMc(assesment.getId(), author.getId(), encodedStringList, questionId, questionType, questionName).with("rewiewer", "questEvent", "autor", "questionType", "keywords").fire(new BMEReceiver<List<QuestionProxy>>() {
 
 				@Override

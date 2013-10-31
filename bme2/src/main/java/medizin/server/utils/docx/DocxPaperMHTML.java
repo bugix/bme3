@@ -336,7 +336,7 @@ public final class DocxPaperMHTML {
 	private void addImageToQuestion(Element li, QuestionType type, Question question) {
 		
 		if(type != null)  {
-			if(QuestionTypes.Textual.equals(type.getQuestionType()) || QuestionTypes.Sort.equals(type.getQuestionType()) || QuestionTypes.LongText.equals(type.getQuestionType())) {
+			if(QuestionTypes.Textual.equals(type.getQuestionType()) || QuestionTypes.Sort.equals(type.getQuestionType()) || QuestionTypes.LongText.equals(type.getQuestionType()) || QuestionTypes.Drawing.equals(type.getQuestionType())) {
 				if((type.getQueHaveImage() != null && type.getQueHaveImage() == true)) {
 					for (QuestionResource resource : question.getQuestionResources()) {
 						if(MultimediaType.Image.equals(resource.getType())) {

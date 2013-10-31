@@ -195,9 +195,19 @@ public class XmlPaper {
 			showInImageQuestionType(doc, questionTypeElement,questionType);
 		} else if(QuestionTypes.LongText.equals(questionType.getQuestionType())) {
 			longTextQuestionType(doc, questionTypeElement,questionType);
-		} 
+		} else if(QuestionTypes.Drawing.equals(questionType.getQuestionType())) {
+			drawingQuestionType(doc, questionTypeElement,questionType);
+		}
 		
 		return questionTypeElement;
+	}
+
+	private void drawingQuestionType(Document doc, Element questionTypeElement, QuestionType questionType) {
+		addToElement(doc, questionTypeElement, QUESTION_TYPE_MAX_QUESTION_LENGTH,questionType.getQuestionLength());			
+		addToElement(doc, questionTypeElement, QUESTION_TYPE_HAVE_IMAGE,questionType.getQueHaveImage());            
+		addToElement(doc, questionTypeElement, QUESTION_TYPE_HAVE_AUDIO,questionType.getQueHaveSound());            
+		addToElement(doc, questionTypeElement, QUESTION_TYPE_HAVE_VIDEO,questionType.getQueHaveVideo());
+		
 	}
 
 	private void longTextQuestionType(Document doc, Element questionTypeElement, QuestionType questionType) {

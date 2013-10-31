@@ -501,6 +501,11 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 			setResourceUploadAndResourceViewer(questionTypeProxy, question);
 			break;			
 		}
+		case Drawing:
+		{
+			setResourceUploadAndResourceViewer(questionTypeProxy, question);
+			break;
+		}
 		default:
 		{
 			clearMediaContainer();

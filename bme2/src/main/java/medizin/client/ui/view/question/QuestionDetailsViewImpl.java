@@ -274,6 +274,11 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 			previous.setEnabled(false);
 		}
 		
+		if(proxy.getQuestionType()!= null && proxy.getQuestionType().getQuestionType().equals(QuestionTypes.Drawing)) {
+			answerVerticalPanel.removeFromParent();
+			acceptQueAnswer.removeFromParent();
+		}
+		
 		//delegate.checkForResendToReview();
 		/*
 		if(proxy.getIsReadOnly() == true) {
@@ -376,6 +381,7 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 			case Textual:
 			case Sort:
 			case LongText:
+			case Drawing:
 			{
 				if(proxy != null && proxy.getQuestionType()!= null && proxy.getQuestionType().getQueHaveImage() != null &&  proxy.getQuestionType().getQueHaveSound() != null && proxy.getQuestionType().getQueHaveVideo() != null) {
 					//setResourceUploadAndResourceViewer(proxy.getQuestionType(),proxy);
