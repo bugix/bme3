@@ -18,7 +18,12 @@ public class RecordChangeEvent extends GwtEvent<RecordChangeHandler> {
 		this.recordValue = val;
 		Cookies.setCookie("user", val);
 		
-		if (recordValue.matches("\\d+"))
+		if(recordValue.trim().isEmpty()) 
+		{
+			recordValue = "15";
+			McAppConstant.TABLE_PAGE_SIZE = 15;
+		}
+		else if (recordValue.matches("\\d+"))
 		{
 			McAppConstant.TABLE_PAGE_SIZE = Integer.parseInt(this.recordValue);
 		}

@@ -190,6 +190,7 @@ public class TopPanel extends Composite {
 			}
 		});
 		
+		recordViewListBox.setValue(" ");
 		recordViewListBox.setAcceptableValues(Arrays.asList("5","10","20","30","50","100","ALL"));
 		checkCookies();
 		recordViewLbl.setText(constants.tableSize());

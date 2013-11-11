@@ -813,6 +813,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		}else {
 			// question text is not null
 			
+			questionTextRemoveCommentsFromHTML();
 			if(questionType.getValue() != null && questionType.getValue().getQuestionLength()  != null && questionType.getValue().getQuestionLength() < questionTextArea.getText().length()) {
 				flag = false;
 				messages.add(constants.questionTextMaxLength());
@@ -856,6 +857,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		question.setQuestionType(questionType.getValue());
 		question.setQuestionShortName(questionShortName.getText());
 		question.setQuestionText(questionTextArea.getHTML());
+		Log.info("Question Text length " + questionTextArea.getHTML().length());
 		
 		if(isAuthorReviewerEditable == true) {
 			question.setAutor(author.getSelected());
@@ -957,6 +959,28 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	public void setQuestionAuthor(PersonProxy autor) {
 		if(autor != null)
 			author.setSelected(autor);
+	}
+	
+	private void questionTextRemoveCommentsFromHTML() {
+		if(questionTextArea.getHTML().length() >= 9000) {
+			String html = questionTextArea.getHTML();
+			for (int i = 0; i < 100; i++) {
+				if(html.contains("<!--") && html.contains("-->")) {
+					int startIndex = html.indexOf("<!--");
+					int endIndex = html.indexOf("-->");
+					int htmlLength = html.length();
+					Log.info("Start Index" + startIndex);
+					Log.info("End index " + endIndex);
+					Log.info("Length : " + htmlLength);
+					if(startIndex >= 0 && startIndex < htmlLength && endIndex > 0 && endIndex <= htmlLength) {
+						html = html.substring(0, startIndex) + html.substring(endIndex+3, htmlLength);	
+					}
+				} else {
+					break;
+				}
+			}
+			questionTextArea.setHTML(html);
+		}
 	}
 
 }
