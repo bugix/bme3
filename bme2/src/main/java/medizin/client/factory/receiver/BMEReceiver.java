@@ -17,6 +17,9 @@ import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.Window.Location;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.requestfactory.shared.Receiver;
 import com.google.web.bindery.requestfactory.shared.ServerFailure;
@@ -72,8 +75,22 @@ public abstract class BMEReceiver<T> extends Receiver<T> {
 
 		//final String errorMsg = error;
 		//Log.info("Error Message" + errorMsg);
-
-		ReceiverDialog.showMessageDialog(error);
+		if (error.startsWith("Server Error"))
+		{
+			error = new HTML(error + "<br/>" + bmeConstants.sessionTimeoutError()).getHTML();
+			ReceiverDialog.showMessageDialog(error, new ReceiverDialog.Handler() {
+				
+				@Override
+				public void onClick() {
+					reloadWindow();
+				}
+			});
+		}
+		else
+		{
+			ReceiverDialog.showMessageDialog(error);
+		}
+		
 
 		/*
 		 * Timer t = new Timer() {
@@ -85,6 +102,16 @@ public abstract class BMEReceiver<T> extends Receiver<T> {
 		 */
 
 	}
+	
+	public void reloadWindow()
+	{
+		int indexOfHash;
+		String url = Location.getHref();
+		if ((indexOfHash = url.indexOf("#")) > -1) {
+			url = url.substring(0, indexOfHash);
+		} 
+		Window.open(url, "_self", "");
+	}
 
 	public void showMessage(ArrayList<String> messages){
 		
@@ -92,7 +119,7 @@ public abstract class BMEReceiver<T> extends Receiver<T> {
 	}
 	
 	@Override
-	public abstract void onSuccess(T response);
+	public abstract void onSuccess(T response);	
 
 	@Override
 	public final void onConstraintViolation(Set<ConstraintViolation<?>> violations) {

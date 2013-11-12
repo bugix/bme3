@@ -23,6 +23,7 @@ public class ReceiverDialog extends DialogBox {
 	private final IconButton btnClose = new IconButton();
 	private final DialogBox dialogBox;
 	private final HTML html = new HTML();
+	private Handler handler;
 	private static ReceiverDialog receiverDialog = new ReceiverDialog();
 
 	private ReceiverDialog() {
@@ -51,6 +52,9 @@ public class ReceiverDialog extends DialogBox {
 
 			@Override
 			public void onClick(ClickEvent event) {
+				if(handler != null) {
+					handler.onClick();
+				}
 				dialogBox.hide();
 			}
 		});
@@ -94,5 +98,14 @@ public class ReceiverDialog extends DialogBox {
 			showMessageDialog(errorBuffor.toString());
 		}
 		
+	}
+	
+	public static void showMessageDialog(final String message,Handler handler) {
+		receiverDialog.handler = handler;
+		receiverDialog.showMessage(message);
+	}
+	
+	public interface Handler {
+		void onClick();
 	}
 }

@@ -796,5 +796,9 @@ public interface BmeConstants extends Constants {
 	public String closeArea();
 	
 	public String showInImageInfo();
+	
+	public String mainExam();
+	
+	public String sessionTimeoutError();
 }
 
