@@ -44,6 +44,7 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
@@ -793,7 +794,9 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 			if (value == null) {
 				return;
 			}
-			String beginn = "<div style=\"white-space:normal;";
+			String text = new HTML(value.getQuestionText()).getText();
+			
+			String beginn = "<div title=' "+ text +"' style=\"white-space:normal;";
 			String end = "</div>";
 			
 			if (Status.DEACTIVATED.equals(value.getStatus()) == false && Status.ACTIVE.equals(value.getStatus()) == false)
@@ -812,9 +815,17 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 
 			beginn += "\">";
 			sb.appendHtmlConstant(beginn);
-			sb.appendHtmlConstant(value.getQuestionText());
+			//sb.appendHtmlConstant(value.getQuestionText());
+			sb.appendHtmlConstant(getFirstSomeChar(text));
 			sb.appendHtmlConstant(end);
 
+		}
+		
+		private String getFirstSomeChar(String text) {
+			if(text.length() > 100) {
+				return text.substring(0,100) + "...";
+			}
+			return text;
 		}
 	}
 
