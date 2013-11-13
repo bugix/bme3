@@ -27,6 +27,7 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -276,7 +277,7 @@ public class AcceptQuestionViewImpl extends Composite implements AcceptQuestionV
 			      sb.appendHtmlConstant("<table>");
 			      
 			      if(value.getQuestionText() != null){
-			    	  sb.appendHtmlConstant(getTableRow(constants.questionText(), value.getQuestionText()));
+			    	  sb.appendHtmlConstant(getQueTextTableRow(constants.questionText(), value.getQuestionText()));
 			    	 // sb.appendHtmlConstant("<tr><td><strong>Reviewer: </strong></td><td>" + value.getRewiewer().getPrename() + " " + value.getRewiewer().getName() + " " + "</td></tr>");
 			    	  
 			      }
@@ -300,6 +301,18 @@ public class AcceptQuestionViewImpl extends Composite implements AcceptQuestionV
 			private String getTableRow(String title, String value) {
 				
 				return "<tr style=\"vertical-align: top;\"><td><strong>"+ title +"&nbsp;</strong></td></tr><tr><td>" + value + "</td></tr>";
+			}
+			
+			private String getQueTextTableRow(String title, String value) {
+				String text = new HTML(value).getText();
+				return "<tr style=\"vertical-align: top;\"><td><strong>"+ title +"&nbsp;</strong></td></tr><tr><td><div title='"+ text +"'>" + getFirstSomeChar(text) + "</div></td></tr>";
+			}
+			
+			private String getFirstSomeChar(String text) {
+				if(text.length() > 100) {
+					return text.substring(0,100) + "...";
+				}
+				return text;
 			}
 		  }
 

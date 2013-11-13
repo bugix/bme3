@@ -96,11 +96,11 @@ public class Answer {
     //RedactionalBase code
     @NotNull
     @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(style = "M-")
+    @DateTimeFormat(pattern="dd.MM.YYYY hh:mm:ss")
     private Date dateAdded;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(style = "M-")
+    @DateTimeFormat(pattern="dd.MM.YYYY hh:mm:ss")
     private Date dateChanged;
 
     
