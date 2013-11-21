@@ -1,18 +1,13 @@
 package medizin.client.ui.view.assesment;
 
-import java.util.Collection;
+import java.util.List;
 
 import medizin.client.proxy.PersonProxy;
-
 import medizin.client.proxy.QuestionEventProxy;
-import medizin.client.proxy.QuestionSumPerPersonProxy;
 import medizin.client.proxy.QuestionSumPerPersonProxy;
 
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.web.bindery.requestfactory.gwt.client.RequestFactoryEditorDriver;
 
 public interface QuestionSumPerPersonDialogbox extends IsWidget {
  
@@ -29,17 +24,19 @@ public interface QuestionSumPerPersonDialogbox extends IsWidget {
 	interface Delegate {
 		//void addQuestionSumPerPersonClicked();
 		void cancelQuestionSumPerPersonClicked();
-		void addQuestionSumPerPersonClicked(
-				QuestionSumPerPersonDialogboxImpl questionSumPerPersonDialogboxImpl);
+		void addQuestionSumPerPersonClicked(QuestionSumPerPersonDialogboxImpl questionSumPerPersonDialogboxImpl);
 	}
 
  
     
     void setDelegate(Delegate delegate);
+	void setResponsiblePersonValues(List<PersonProxy> values);
+	void setQuestionEventValues(List<QuestionEventProxy> values);
+	void setValueInProxy(QuestionSumPerPersonProxy questionSumPerPersonProxy);
 
-	RequestFactoryEditorDriver<QuestionSumPerPersonProxy, QuestionSumPerPersonDialogboxImpl> createEditorDriver();
+	/*RequestFactoryEditorDriver<QuestionSumPerPersonProxy, QuestionSumPerPersonDialogboxImpl> createEditorDriver();
 	void setQuestionEventPickerValues(Collection<QuestionEventProxy> values);
-	void setResponsiblePersonPickerValues(Collection<PersonProxy> values);
+	void setResponsiblePersonPickerValues(Collection<PersonProxy> values);*/
 
     
 

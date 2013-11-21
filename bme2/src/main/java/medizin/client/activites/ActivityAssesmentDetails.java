@@ -703,14 +703,13 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 		questionTypeCountAddDialogbox.setPresenter(this);
 		questionTypeCountAddDialogbox.setDelegate(this);
 		
-			this.questionTypeCountPerExamProxy = request.create(QuestionTypeCountPerExamProxy.class);
+		this.questionTypeCountPerExamProxy = request.create(QuestionTypeCountPerExamProxy.class);
 
-
-	        request.persist().using(questionTypeCountPerExamProxy);
-	        driver.edit(questionTypeCountPerExamProxy, request);
-	        questionTypeCountPerExamProxy.setAssesment(assesment);
-	        questionTypeCountPerExamProxy.setSort_order(sort_order);
-	        driver.flush();
+	    request.persist().using(questionTypeCountPerExamProxy);
+	    driver.edit(questionTypeCountPerExamProxy, request);
+	    questionTypeCountPerExamProxy.setAssesment(assesment);
+	    questionTypeCountPerExamProxy.setSort_order(sort_order);
+	    driver.flush();
 
 		
 		requests.questionTypeRequest().findAllQuestionTypesForInstituteInSession(assesment).fire(new BMEReceiver<List<QuestionTypeProxy>>(){
@@ -807,7 +806,7 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 
 	private QuestionSumPerPersonDialogbox questionSumPerPersonDialogbox;
 
-	private RequestFactoryEditorDriver<QuestionSumPerPersonProxy, QuestionSumPerPersonDialogboxImpl> driverQuestSum;
+	//private RequestFactoryEditorDriver<QuestionSumPerPersonProxy, QuestionSumPerPersonDialogboxImpl> driverQuestSum;
 
 	private QuestionSumPerPersonProxy questionSumPerPersonProxy;
 
@@ -818,20 +817,20 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 	public void addNewQuestionSumPerPersonClicked() {
 		questionSumPerPersonDialogbox = new QuestionSumPerPersonDialogboxImpl();
 		questionSumPerPersonDialogbox.display();
-		driverQuestSum = questionSumPerPersonDialogbox.createEditorDriver();
-		QuestionSumPerPersonRequest request = requests.questionSumPerPersonRequest();
+		//driverQuestSum = questionSumPerPersonDialogbox.createEditorDriver();
+		//QuestionSumPerPersonRequest request = requests.questionSumPerPersonRequest();
 		
 		questionSumPerPersonDialogbox.setPresenter(this);
 		questionSumPerPersonDialogbox.setDelegate(this);
 		
-			this.questionSumPerPersonProxy = request.create(QuestionSumPerPersonProxy.class);
+		//this.questionSumPerPersonProxy = request.create(QuestionSumPerPersonProxy.class);
 
 
-	        request.persist().using(questionSumPerPersonProxy);
-	        driverQuestSum.edit(questionSumPerPersonProxy, request);
-	        questionSumPerPersonProxy.setAssesment(assesment);
-	        questionSumPerPersonProxy.setSort_order(sort_orderQuestSum);
-	        driverQuestSum.flush();
+       // request.persist().using(questionSumPerPersonProxy);
+        //driverQuestSum.edit(questionSumPerPersonProxy, request);
+        //questionSumPerPersonProxy.setAssesment(assesment);
+        //questionSumPerPersonProxy.setSort_order(sort_orderQuestSum);
+        //driverQuestSum.flush();
 
 		
 		requests.personRequest().findAllPeople().fire(new BMEReceiver<List<PersonProxy>>(){
@@ -839,10 +838,8 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 
 			@Override
 			public void onSuccess(List<PersonProxy> response) {
-				questionSumPerPersonDialogbox.setResponsiblePersonPickerValues(response);
-				
+				questionSumPerPersonDialogbox.setResponsiblePersonValues(response);
 			}
-			
 		});
 		
 		requests.questionEventRequest().findQuestionEventByInstitution(institutionActive).fire(new BMEReceiver<List<QuestionEventProxy>>(){
@@ -850,10 +847,9 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 
 			@Override
 			public void onSuccess(List<QuestionEventProxy> response) {
-				questionSumPerPersonDialogbox.setQuestionEventPickerValues(response);
+				questionSumPerPersonDialogbox.setQuestionEventValues(response);
 				
 			}
-			
 		});
 		
 	}
@@ -874,8 +870,14 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 			
 			return;
 		}
+		QuestionSumPerPersonRequest request = requests.questionSumPerPersonRequest();
+		this.questionSumPerPersonProxy = request.create(QuestionSumPerPersonProxy.class);
+		questionSumPerPersonProxy.setAssesment(assesment);
+		questionSumPerPersonProxy.setSort_order(sort_orderQuestSum);
+		questionSumPerPersonDialogbox.setValueInProxy(questionSumPerPersonProxy);
 		
-		driverQuestSum.flush().fire(new BMEReceiver<Void>() {
+		//driverQuestSum.flush().fire(new BMEReceiver<Void>() {
+		request.persist().using(questionSumPerPersonProxy).fire(new BMEReceiver<Void>() {	
 			
 	          @Override
 	          public void onSuccess(Void response) {

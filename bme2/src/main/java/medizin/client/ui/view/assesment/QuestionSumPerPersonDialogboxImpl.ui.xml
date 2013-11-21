@@ -1,7 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
-		xmlns:b="urn:import:com.google.gwt.user.cellview.client">
+		xmlns:b="urn:import:com.google.gwt.user.cellview.client" xmlns:i="urn:import:medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl">
 	
 	<ui:style>
     .panelHTML {
@@ -52,7 +52,8 @@
                     <div class="{style.label}" ui:field="responsiblePersonlbl">Responsible Person:</div>
                 </td>
                 <td>
-                    <g:ValueListBox ui:field="responsiblePerson"/>
+                	<i:DefaultSuggestBox ui:field="responsiblePerson"></i:DefaultSuggestBox>
+                    <!-- <g:ValueListBox ui:field="responsiblePerson"/> -->
                 </td>
             </tr>
             <tr id="questionEvent">
@@ -60,7 +61,8 @@
                     <div class="{style.label}" ui:field="questionEventlbl">Question Event:</div>
                 </td>
                 <td>
-                    <g:ValueListBox ui:field="questionEvent"/>
+                	<i:DefaultSuggestBox ui:field="questionEvent"></i:DefaultSuggestBox>
+                    <!-- <g:ValueListBox ui:field="questionEvent"/> -->
                 </td>
             </tr>
 

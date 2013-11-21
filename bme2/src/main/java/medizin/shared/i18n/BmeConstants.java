@@ -800,5 +800,15 @@ public interface BmeConstants extends Constants {
 	public String mainExam();
 	
 	public String sessionTimeoutError();
+
+	public String responsiblePersonNotEmpty();
+
+	public String questionEventNotEmpty();
+
+	public String questionSumNotEmpty();
+
+	public String questionSumPersonTitle();
+
+	public String questionSumPersonText();
 }
 
