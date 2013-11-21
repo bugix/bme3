@@ -39,15 +39,71 @@ public class AdvancedSearchCriteriaUtils {
 	public static AdvancedSearchCriteria decode(String encodedString)
 	{
 		encodedString = encodedString.replace("{", "").replace("}", "");
-		FluentIterable<String> fluentIterable = FluentIterable.from(Splitter.on(",").omitEmptyStrings().trimResults().split(encodedString));
+		//FluentIterable<String> fluentIterable = FluentIterable.from(Splitter.on(",").omitEmptyStrings().trimResults().split(encodedString));
 		AdvancedSearchCriteria advancedSearchCriteria = new AdvancedSearchCriteria();
-		advancedSearchCriteria.setBindType(parseBindType(fluentIterable));
-		advancedSearchCriteria.setComparison(parseComparison(fluentIterable));
-		advancedSearchCriteria.setPossibleFields(parsePossibleFields(fluentIterable));
-		advancedSearchCriteria.setValue(parseValue(fluentIterable));
+		advancedSearchCriteria.setBindType(parseBindType(encodedString));
+		advancedSearchCriteria.setComparison(parseComparison(encodedString));
+		advancedSearchCriteria.setPossibleFields(parsePossibleFields(encodedString));
+		advancedSearchCriteria.setValue(parseValue(encodedString));
 		return advancedSearchCriteria;
 	}
 	
+	private static String parseValue(String encodedString) {
+		int start = encodedString.indexOf(SharedConstant.FIELDVALUE);
+		int end = encodedString.length();
+		String value = encodedString.substring(start,end);
+		
+		if(value != null && value.isEmpty() == false) {
+			start = value.indexOf("=");
+			if(start>0 && start +1 < value.length()) {
+				return value.substring(start+1).trim();
+			}
+		}
+		return "";
+	}
+
+	private static PossibleFields parsePossibleFields(String encodedString) {
+		int start = encodedString.indexOf(SharedConstant.POSSIBLE_FIELD);
+		int end = encodedString.indexOf(",",start);
+		String value = encodedString.substring(start,end);
+		
+		if(value != null && value.isEmpty() == false) {
+			start = value.indexOf("=");
+			if(start>0 && start +1 < value.length()) {
+				return PossibleFields.valueOf(value.substring(start+1).trim());
+			}
+		}
+		return null;
+	}
+
+	private static Comparison parseComparison(String encodedString) {
+		int start = encodedString.indexOf(SharedConstant.COMPARISON);
+		int end = encodedString.indexOf(",",start);
+		String value = encodedString.substring(start,end);
+		
+		if(value != null && value.isEmpty() == false) {
+			start = value.indexOf("=");
+			if(start>0 && start +1 < value.length()) {
+				return Comparison.valueOf(value.substring(start+1).trim());
+			}
+		}
+		return null;
+	}
+
+	private static BindType parseBindType(String encodedString) {
+		int start = encodedString.indexOf(SharedConstant.BINDTYPE);
+		int end = encodedString.indexOf(",",start);
+		String value = encodedString.substring(start,end);
+		
+		if(value != null && value.isEmpty() == false) {
+			start = value.indexOf("=");
+			if(start>0 && start +1 < value.length()) {
+				return BindType.valueOf(value.substring(start+1).trim());
+			}
+		}
+		return null;
+	}
+
 	public static List<AdvancedSearchCriteria> decodeList(List<String> decodedStringList)
 	{
 		List<AdvancedSearchCriteria> criteriaList = new ArrayList<AdvancedSearchCriteria>();
