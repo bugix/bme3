@@ -5,7 +5,6 @@ package medizin.server.domain;
 
 import java.util.Date;
 import medizin.server.domain.Answer;
-import medizin.server.domain.Comment;
 import medizin.server.domain.Person;
 import medizin.server.domain.Question;
 import medizin.shared.Status;
@@ -109,11 +108,11 @@ privileged aspect Answer_Roo_JavaBean {
         this.autor = autor;
     }
     
-    public Comment Answer.getComment() {
+    public String Answer.getComment() {
         return this.comment;
     }
     
-    public void Answer.setComment(Comment comment) {
+    public void Answer.setComment(String comment) {
         this.comment = comment;
     }
     

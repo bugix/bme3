@@ -92,7 +92,7 @@ public class ActivityDeactivatedQuestionDetails extends AbstractActivityWrapper 
 	public void start2(final AcceptsOneWidget panel, final EventBus eventBus) {
         if(userLoggedIn==null) return;
 		
-		requests.find(placeDeactivatedQuestionDetails.getProxyId()).with("previousVersion","keywords","questEvent","comment","questionType","mcs", "rewiewer", "autor","questionResources","answers").fire(new BMEReceiver<Object>() {
+		requests.find(placeDeactivatedQuestionDetails.getProxyId()).with("previousVersion","keywords","questEvent","questionType","mcs", "rewiewer", "autor","questionResources","answers").fire(new BMEReceiver<Object>() {
 
 			@Override
 			public void onSuccess(final Object response) {
@@ -122,7 +122,7 @@ public class ActivityDeactivatedQuestionDetails extends AbstractActivityWrapper 
 	private void init(QuestionProxy response) {
 		this.question = response;
 		Log.debug("Details für: "+question.getQuestionText());
-		
+		view.removeQuestionUsedInMCTab();
 		view.setValue(question);	
 		
 		//view.getQuestionLearningObjectiveSubViewImpl().setDelegate(this);
@@ -304,7 +304,7 @@ public class ActivityDeactivatedQuestionDetails extends AbstractActivityWrapper 
 
 	private void onAnswerTableRangeChanged() {
 		final Range range = view.getAnswerListViewImpl().getTable().getVisibleRange();
-		requests.answerRequest().findAnswersEntriesByQuestion(question.getId(), range.getStart(), range.getLength()).with("question","rewiewer","autor","comment","question.questionType").fire( new BMEReceiver<List<AnswerProxy>>(){
+		requests.answerRequest().findAnswersEntriesByQuestion(question.getId(), range.getStart(), range.getLength()).with("question","rewiewer","autor","question.questionType").fire( new BMEReceiver<List<AnswerProxy>>(){
 			@Override
 			public void onSuccess(List<AnswerProxy> response) {
 				view.getAnswerListViewImpl().getTable().setRowData(range.getStart(), response);
@@ -354,7 +354,7 @@ public class ActivityDeactivatedQuestionDetails extends AbstractActivityWrapper 
 
 	@Override
 	public void getQuestionDetails(QuestionProxy previousVersion, final Function<QuestionProxy, Void> function) {
-		requests.questionRequest().findQuestion(previousVersion.getId()).with("previousVersion","keywords","questEvent","comment","questionType","mcs", "rewiewer", "autor","questionResources").fire(new BMEReceiver<Object>() {
+		requests.questionRequest().findQuestion(previousVersion.getId()).with("previousVersion","keywords","questEvent","questionType","mcs", "rewiewer", "autor","questionResources").fire(new BMEReceiver<Object>() {
 
 			@Override
 			public void onSuccess(Object response) {
@@ -819,4 +819,7 @@ public class ActivityDeactivatedQuestionDetails extends AbstractActivityWrapper 
 
 	@Override
 	public void acceptQueAnswersClicked() {}
+
+	@Override
+	public void showAllClicked() {}
 }

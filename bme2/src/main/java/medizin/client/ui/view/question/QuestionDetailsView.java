@@ -3,6 +3,7 @@ package medizin.client.ui.view.question;
 import medizin.client.proxy.KeywordProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.ui.view.question.learningobjective.QuestionLearningObjectiveSubViewImpl;
+import medizin.client.ui.view.question.usedinmc.QuestionUsedInMC;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.EventHandlingValueHolderItem;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
@@ -72,5 +73,9 @@ public interface QuestionDetailsView extends IsWidget {
 	public DefaultSuggestBox<KeywordProxy, EventHandlingValueHolderItem<KeywordProxy>> getKeywordSuggestBox();
 	
 	public QuestionLearningObjectiveSubViewImpl getQuestionLearningObjectiveSubViewImpl();
+	
+	public QuestionUsedInMC getQuestionUsedInMC();
+	void removeQuestionUsedInMCTab();
+	IconButton getAcceptQueAnswer();
 	
 }

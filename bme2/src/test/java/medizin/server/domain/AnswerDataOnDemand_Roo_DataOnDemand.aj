@@ -15,7 +15,6 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import medizin.server.domain.Answer;
 import medizin.server.domain.AnswerDataOnDemand;
-import medizin.server.domain.CommentDataOnDemand;
 import medizin.server.domain.Person;
 import medizin.server.domain.PersonDataOnDemand;
 import medizin.server.domain.QuestionDataOnDemand;
@@ -36,9 +35,6 @@ privileged aspect AnswerDataOnDemand_Roo_DataOnDemand {
     PersonDataOnDemand AnswerDataOnDemand.personDataOnDemand;
     
     @Autowired
-    CommentDataOnDemand AnswerDataOnDemand.commentDataOnDemand;
-    
-    @Autowired
     QuestionDataOnDemand AnswerDataOnDemand.questionDataOnDemand;
     
     public Answer AnswerDataOnDemand.getNewTransientAnswer(int index) {
@@ -46,6 +42,7 @@ privileged aspect AnswerDataOnDemand_Roo_DataOnDemand {
         setAdditionalKeywords(obj, index);
         setAnswerText(obj, index);
         setAutor(obj, index);
+        setComment(obj, index);
         setDateAdded(obj, index);
         setDateChanged(obj, index);
         setIsAnswerAcceptedAdmin(obj, index);
@@ -78,6 +75,11 @@ privileged aspect AnswerDataOnDemand_Roo_DataOnDemand {
     public void AnswerDataOnDemand.setAutor(Answer obj, int index) {
         Person autor = personDataOnDemand.getRandomPerson();
         obj.setAutor(autor);
+    }
+    
+    public void AnswerDataOnDemand.setComment(Answer obj, int index) {
+        String comment = "_" + index;
+        obj.setComment(comment);
     }
     
     public void AnswerDataOnDemand.setDateAdded(Answer obj, int index) {

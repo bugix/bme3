@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.Set;
 import medizin.server.domain.Answer;
 import medizin.server.domain.AssesmentQuestion;
-import medizin.server.domain.Comment;
 import medizin.server.domain.Keyword;
 import medizin.server.domain.Mc;
 import medizin.server.domain.Person;
@@ -116,11 +115,11 @@ privileged aspect Question_Roo_JavaBean {
         this.questEvent = questEvent;
     }
     
-    public Comment Question.getComment() {
+    public String Question.getComment() {
         return this.comment;
     }
     
-    public void Question.setComment(Comment comment) {
+    public void Question.setComment(String comment) {
         this.comment = comment;
     }
     

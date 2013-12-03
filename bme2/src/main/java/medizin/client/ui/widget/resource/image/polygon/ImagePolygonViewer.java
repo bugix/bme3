@@ -235,37 +235,38 @@ public class ImagePolygonViewer extends Composite implements ImageWidthHeight {
 		
 		clickedPolyLine();
 		//initWidget(uiBinder.createAndBindUi(this));
-		
-		drawingArea.addMouseDownHandler(new MouseDownHandler() {
+		if(diplayBtnFlag) {
+			drawingArea.addMouseDownHandler(new MouseDownHandler() {
 
-			@Override
-			public void onMouseDown(MouseDownEvent event) {
+				@Override
+				public void onMouseDown(MouseDownEvent event) {
 
-				/*if (btnPolyLine.isEnabled() == false) {*/
-					int x = event.getRelativeX(event.getRelativeElement());
-					int y = event.getRelativeY(event.getRelativeElement());
-					
-					Log.info("Relative [x,y] : [" + x +","+ y+ "]");
-					Log.info("--Client [x,y] : " + event.getClientX() +" , " + event.getClientY());
-					Log.info("--Client [x,y] : " + event.getScreenX() +" , " + event.getScreenY());
-					
-					if(currentPath == null) {
-						infoDialogBox(event.getClientX(),event.getClientY());
-					}
-					addNewPath(new Point(x, y));
-					
-				/*}*/
-			}
-		});
+					/*if (btnPolyLine.isEnabled() == false) {*/
+						int x = event.getRelativeX(event.getRelativeElement());
+						int y = event.getRelativeY(event.getRelativeElement());
+						
+						Log.info("Relative [x,y] : [" + x +","+ y+ "]");
+						Log.info("--Client [x,y] : " + event.getClientX() +" , " + event.getClientY());
+						Log.info("--Client [x,y] : " + event.getScreenX() +" , " + event.getScreenY());
+						
+						if(currentPath == null) {
+							infoDialogBox(event.getClientX(),event.getClientY());
+						}
+						addNewPath(new Point(x, y));
+						
+					/*}*/
+				}
+			});
 
-		drawingArea.addMouseMoveHandler(new MouseMoveHandler() {
+			drawingArea.addMouseMoveHandler(new MouseMoveHandler() {
 
-			@Override
-			public void onMouseMove(MouseMoveEvent event) {
+				@Override
+				public void onMouseMove(MouseMoveEvent event) {
 
-			}
-		});
-		
+				}
+			});
+		}
+ 				
 		btnClear.setVisible(diplayBtnFlag);
 		//btnPolyLine.setVisible(diplayBtnFlag);		
 	}

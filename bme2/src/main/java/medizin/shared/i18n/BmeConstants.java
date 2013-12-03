@@ -810,5 +810,19 @@ public interface BmeConstants extends Constants {
 	public String questionSumPersonTitle();
 
 	public String questionSumPersonText();
+	
+	public String usedInMC();
+
+	public String tableHeaderMC();
+
+	public String assessmentName();
+
+	public String dateOfAssessment();
+
+	public String schwierigkeit();
+
+	public String trenschaerfe();
+	
+	public String showAll();
 }
 

@@ -56,4 +56,8 @@ public interface AssesmentQuestionRequest extends AssesmentQuestionRequest_Roo_G
 	abstract Request<String> loadSystemOverviewTemplate();
 
 	abstract Request<List<AssesmentQuestionProxy>> findAssessmentQuestionByAssesmentAndAuthor(Long assessmentId, Long authorId);
+
+	abstract Request<Integer> countAllAssesmentQuestionByQuestion(Long questionId);
+
+	abstract Request<List<AssesmentQuestionProxy>> findAllAssesmentQuestionByQuestion(Long questionId, int start, int length);
 }

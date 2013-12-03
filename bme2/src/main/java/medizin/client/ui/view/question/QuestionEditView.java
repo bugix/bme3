@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import medizin.client.proxy.CommentProxy;
 import medizin.client.proxy.McProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionEventProxy;
@@ -56,7 +55,7 @@ public interface QuestionEditView extends IsWidget {
 
 	Set<QuestionResourceClient> getQuestionResources();
 	
-	void setValuesForQuestion(QuestionProxy question, CommentProxy commentProxy);
+	void setValuesForQuestion(QuestionProxy question);
 	
 	void comfirmQuestionChanges(ConfirmQuestionHandler handler, boolean isAdminOrInstitutionAdmin);
 	

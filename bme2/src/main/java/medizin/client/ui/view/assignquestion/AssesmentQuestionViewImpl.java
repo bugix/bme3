@@ -219,7 +219,7 @@ public class AssesmentQuestionViewImpl extends Composite implements AssesmentQue
 	     autor.setInnerText(question.getAutor() == null ? "" : medizin.client.ui.view.roo.PersonProxyRenderer.instance().render(question.getAutor()));
 	     keywords.setInnerText(question.getKeywords() == null ? "" : CollectionRenderer.of(medizin.client.ui.view.roo.KeywordProxyRenderer.instance()).render(question.getKeywords()));
 	     questEvent.setInnerText(question.getQuestEvent() == null ? "" : medizin.client.ui.view.roo.QuestionEventProxyRenderer.instance().render(question.getQuestEvent()));
-	     comment.setInnerText(question.getComment() == null ? "" : medizin.client.ui.view.roo.CommentProxyRenderer.instance().render(question.getComment()));
+	     comment.setInnerText(question.getComment() == null ? "" : question.getComment());
 	     questionType.setInnerText(question.getQuestionType() == null ? "" : medizin.client.ui.view.roo.QuestionTypeProxyRenderer.instance().render(question.getQuestionType()));
 	      
 		

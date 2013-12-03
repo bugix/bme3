@@ -1,6 +1,5 @@
 package medizin.server.domain;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -61,6 +60,21 @@ public class Keyword {
     	}
     	
     	return question;
+    }
+    
+    public static Keyword findKeywordByString(String keywordStr)
+    {
+    	CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+    	CriteriaQuery<Keyword> criteriaQuery = criteriaBuilder.createQuery(Keyword.class);
+    	Root<Keyword> from = criteriaQuery.from(Keyword.class);
+    	Predicate pre1 = criteriaBuilder.equal(from.get("name"), keywordStr);
+    	criteriaQuery.where(pre1);
+		TypedQuery<Keyword> query = entityManager().createQuery(criteriaQuery);
+		List<Keyword> resultList = query.getResultList();
+		if(resultList != null && resultList.size() > 0) {
+			return resultList.get(0);
+		}
+		return null;
     }
     
     public static Question deleteKeywordFromQuestion(Keyword keyword, Question question)

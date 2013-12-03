@@ -286,7 +286,7 @@ public class AcceptQuestionViewImpl extends Composite implements AcceptQuestionV
 			    	 // sb.appendHtmlConstant("<tr><td><strong>Autor: </strong></td><td>" + value.getAutor().getPrename() + " " + value.getAutor().getName() + " " + "</td></tr>");
 			      }
 			      if(value.getComment() != null){
-			    	  sb.appendHtmlConstant(getTableRow(constants.comment(), value.getComment().getComment()));
+			    	  sb.appendHtmlConstant(getTableRow(constants.comment(), value.getComment()));
 			    	 // sb.appendHtmlConstant("<tr><td><strong>Autor: </strong></td><td>" + value.getAutor().getPrename() + " " + value.getAutor().getName() + " " + "</td></tr>");
 			      }
 			      if(value.getKeywords() != null){

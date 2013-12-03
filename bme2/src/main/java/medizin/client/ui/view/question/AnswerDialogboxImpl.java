@@ -980,7 +980,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 		rewiewer.setSelected(answer.getRewiewer());
 		validity.setValue(answer.getValidity());
 		submitToReviewComitee.setValue(answer.getSubmitToReviewComitee());
-		comment.setText(answer.getComment() != null?answer.getComment().getComment() : null);
+		comment.setText(answer.getComment() != null?answer.getComment() : null);
 		
 	}
 

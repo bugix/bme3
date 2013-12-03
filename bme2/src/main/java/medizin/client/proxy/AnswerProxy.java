@@ -63,9 +63,9 @@ public interface AnswerProxy extends EntityProxy {
 
     abstract void setAutor(PersonProxy autor);
 
-    abstract CommentProxy getComment();
+    abstract String getComment();
 
-    abstract void setComment(CommentProxy comment);
+    abstract void setComment(String comment);
 
     abstract Boolean getSubmitToReviewComitee();
 

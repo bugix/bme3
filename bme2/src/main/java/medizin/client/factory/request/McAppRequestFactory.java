@@ -5,7 +5,6 @@ import medizin.client.request.ApplianceRequest;
 import medizin.client.request.AssesmentQuestionRequest;
 import medizin.client.request.AssesmentRequest;
 import medizin.client.request.ClassificationTopicRequest;
-import medizin.client.request.CommentRequest;
 import medizin.client.request.DoctorRequest;
 import medizin.client.request.InstitutionRequest;
 import medizin.client.request.KeywordRequest;
@@ -60,8 +59,6 @@ public interface McAppRequestFactory extends RequestFactory {
     AssesmentRequest assesmentRequest();
 
     AssesmentQuestionRequest assesmentQuestionRequest();
-
-    CommentRequest commentRequest();
 
     InstitutionRequest institutionRequest();
 

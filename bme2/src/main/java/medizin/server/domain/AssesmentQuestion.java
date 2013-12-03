@@ -15,6 +15,7 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EntityManager;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
@@ -108,7 +109,7 @@ public class AssesmentQuestion {
     @ManyToOne
     private Assesment assesment;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "assesmentQuestion")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "assesmentQuestion",fetch=FetchType.LAZY)
     private Set<AnswerToAssQuestion> answersToAssQuestion = new HashSet<AnswerToAssQuestion>();
     
     //RedactionalBase code
@@ -1290,7 +1291,7 @@ public class AssesmentQuestion {
 				}
 				else if (PossibleFields.COMMENT.equals(criteria.getPossibleFields()))
 				{
-					Expression<String> commentExp = from.get("question").get("comment").get("comment");
+					Expression<String> commentExp = from.get("question").get("comment");
 					predicate = likeComparison(criteriaBuilder, criteria, commentExp);
 				}
 				else if (PossibleFields.ANSWER_TEXT.equals(criteria.getPossibleFields()))
@@ -1456,5 +1457,88 @@ public class AssesmentQuestion {
 		
 		TypedQuery<AssesmentQuestion> query = entityManager().createQuery(criteriaQuery);
 		return query.getResultList();
+	}
+
+	public static AssesmentQuestion findAssesmentQuestionByQuestion(Question question, Assesment assesment, Person author, Person reviewer) {
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<AssesmentQuestion> criteriaQuery = criteriaBuilder.createQuery(AssesmentQuestion.class);
+		Root<AssesmentQuestion> from = criteriaQuery.from(AssesmentQuestion.class);
+		
+		//Predicate pre1 = criteriaBuilder.equal(from.get("assesment").get("id"), assesment.getId());
+		Predicate pre2 = criteriaBuilder.equal(from.get("autor").get("id"), author.getId());
+		Predicate pre3 = criteriaBuilder.equal(from.get("rewiewer").get("id"), reviewer.getId());
+		Predicate pre4 = criteriaBuilder.equal(from.get("question").get("id"), question.getId());
+		
+		criteriaQuery.where(criteriaBuilder.and(pre2, pre3, pre4));
+		
+		TypedQuery<AssesmentQuestion> query = entityManager().createQuery(criteriaQuery);
+		List<AssesmentQuestion> resultList = query.getResultList();
+		if(resultList != null && resultList.size() > 0) {
+			return resultList.get(0);
+		}
+		return null;
+	}
+	
+	public static List<AssesmentQuestion> findAllAssesmentForInstitution2() {
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<AssesmentQuestion> criteriaQuery = criteriaBuilder.createQuery(AssesmentQuestion.class);
+		Root<AssesmentQuestion> from = criteriaQuery.from(AssesmentQuestion.class);
+		
+		Predicate pre1 = criteriaBuilder.equal(from.get("assesment").get("institution").get("id"), 2);
+		
+		
+		criteriaQuery.where(pre1);
+		
+		TypedQuery<AssesmentQuestion> query = entityManager().createQuery(criteriaQuery);
+		return query.getResultList();
+		
+	}
+	
+	public static Integer countAllAssesmentQuestionByQuestion(Long questionId) {
+		Person loggedUser = Person.myGetLoggedPerson();
+		Institution institution = Institution.myGetInstitutionToWorkWith();
+		
+		if (loggedUser == null || institution == null)
+			throw new IllegalArgumentException("The person and institution arguments are required");
+		
+		CriteriaBuilder cb = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+		Root<AssesmentQuestion> from = cq.from(AssesmentQuestion.class);
+		
+		cq.select(cb.count(from));
+		
+		Predicate predicate = allAssessmnetQuestionByQuestionPredicate(questionId,cb, from);
+		cq.where(predicate);
+		
+        TypedQuery<Long> q = entityManager().createQuery(cq);
+        
+        //System.out.println("Q1 : " + q.unwrap(Query.class).getQueryString());
+        
+        return q.getSingleResult().intValue();
+	}
+
+	private static Predicate allAssessmnetQuestionByQuestionPredicate(Long questionId, CriteriaBuilder cb, Root<AssesmentQuestion> from) {
+		return cb.equal(from.get("question").get("id"), questionId);
+	}
+
+
+	public static List<AssesmentQuestion> findAllAssesmentQuestionByQuestion(Long questionId, int start, int length) {
+		Person loggedUser = Person.myGetLoggedPerson();
+		Institution institution = Institution.myGetInstitutionToWorkWith();
+		
+		if (loggedUser == null || institution == null)
+			throw new IllegalArgumentException("The person and institution arguments are required");
+		
+		
+		CriteriaBuilder cb = entityManager().getCriteriaBuilder();
+		CriteriaQuery<AssesmentQuestion> cq = cb.createQuery(AssesmentQuestion.class);
+		Root<AssesmentQuestion> from = cq.from(AssesmentQuestion.class);
+		cq.orderBy(cb.asc(from.get("assesment").get("dateOfAssesment")));
+		Predicate predicate = allAssessmnetQuestionByQuestionPredicate(questionId,cb, from);
+		cq.where(predicate);
+        TypedQuery<AssesmentQuestion> q = entityManager().createQuery(cq);
+        q.setFirstResult(start);
+        q.setMaxResults(length);
+        return q.getResultList();
 	}
 }

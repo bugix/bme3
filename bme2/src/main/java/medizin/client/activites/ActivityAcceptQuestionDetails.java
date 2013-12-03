@@ -97,7 +97,7 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 	private void getQuestionDetails(){
 		if(userLoggedIn==null) return;
 		
-		requests.find(place.getProxyId()).with("previousVersion","keywords","questEvent","comment","questionType","mcs", "rewiewer", "autor","questionResources","answers").fire(new BMEReceiver<Object>() {
+		requests.find(place.getProxyId()).with("previousVersion","keywords","questEvent","questionType","mcs", "rewiewer", "autor","questionResources","answers").fire(new BMEReceiver<Object>() {
 			
 			@Override
 			public void onSuccess(final Object response) {
@@ -121,6 +121,7 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 		view.setVisibleAcceptButton();
 		view.getAnswerListViewImpl().removeFromParent();
 		view.getMatrixAnswerListViewImpl().removeFromParent();
+		view.removeQuestionUsedInMCTab();
 	}
 	
 	private boolean isQuestionTypeMCQ(QuestionProxy questionProxy) {
@@ -499,8 +500,10 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 					view.getResendToReviewBtn().setVisible(true);
 					view.getEdit().setVisible(true);
 					view.getAcceptBtn().removeFromParent();
+					view.getAcceptQueAnswer().removeFromParent();
 				}else {
 					view.getResendToReviewBtn().removeFromParent();
+					view.getAcceptQueAnswer().removeFromParent();
 					view.getAcceptBtn().removeFromParent();
 					view.getEdit().removeFromParent();
 				}
@@ -509,10 +512,12 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 					view.getResendToReviewBtn().setVisible(true);
 					view.getEdit().setVisible(true);
 					view.getAcceptBtn().removeFromParent();
+					view.getAcceptQueAnswer().removeFromParent();
 				}else {
 					view.getResendToReviewBtn().removeFromParent();
 					view.getAcceptBtn().removeFromParent();
 					view.getEdit().removeFromParent();
+					view.getAcceptQueAnswer().removeFromParent();
 				}
 			} else if(question.getSubmitToReviewComitee() == true) {
 				//TODO for review committee
@@ -543,7 +548,7 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 
 	@Override
 	public void getQuestionDetails(QuestionProxy previousVersion, final Function<QuestionProxy, Void> function) {
-		requests.questionRequest().findQuestion(previousVersion.getId()).with("previousVersion","keywords","questEvent","comment","questionType","mcs", "rewiewer", "autor","questionResources").fire(new BMEReceiver<Object>() {
+		requests.questionRequest().findQuestion(previousVersion.getId()).with("previousVersion","keywords","questEvent","questionType","mcs", "rewiewer", "autor","questionResources").fire(new BMEReceiver<Object>() {
 
 			@Override
 			public void onSuccess(Object response) {
@@ -572,7 +577,7 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 		
 		if (flag == false)
 		{
-			requests.keywordRequest().findKeywordByStringOrAddKeyword(text, proxy).with("previousVersion","keywords","questEvent","comment","questionType","mcs", "rewiewer", "autor","questionResources","answers").fire(new BMEReceiver<QuestionProxy>() {
+			requests.keywordRequest().findKeywordByStringOrAddKeyword(text, proxy).with("previousVersion","keywords","questEvent","questionType","mcs", "rewiewer", "autor","questionResources","answers").fire(new BMEReceiver<QuestionProxy>() {
 
 				@Override
 				public void onSuccess(QuestionProxy response) {
@@ -593,7 +598,7 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 	@Override
 	public void deleteKeywordClicked(KeywordProxy keyword, QuestionProxy proxy) {
 		
-		requests.keywordRequest().deleteKeywordFromQuestion(keyword, proxy).with("previousVersion","keywords","questEvent","comment","questionType","mcs", "rewiewer", "autor","questionResources","answers").fire(new BMEReceiver<QuestionProxy>() {
+		requests.keywordRequest().deleteKeywordFromQuestion(keyword, proxy).with("previousVersion","keywords","questEvent","questionType","mcs", "rewiewer", "autor","questionResources","answers").fire(new BMEReceiver<QuestionProxy>() {
 
 			@Override
 			public void onSuccess(QuestionProxy response) {

@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Random;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import medizin.server.domain.CommentDataOnDemand;
 import medizin.server.domain.Person;
 import medizin.server.domain.PersonDataOnDemand;
 import medizin.server.domain.Question;
@@ -38,9 +37,6 @@ privileged aspect QuestionDataOnDemand_Roo_DataOnDemand {
     PersonDataOnDemand QuestionDataOnDemand.personDataOnDemand;
     
     @Autowired
-    CommentDataOnDemand QuestionDataOnDemand.commentDataOnDemand;
-    
-    @Autowired
     QuestionEventDataOnDemand QuestionDataOnDemand.questionEventDataOnDemand;
     
     @Autowired
@@ -49,6 +45,7 @@ privileged aspect QuestionDataOnDemand_Roo_DataOnDemand {
     public Question QuestionDataOnDemand.getNewTransientQuestion(int index) {
         Question obj = new Question();
         setAutor(obj, index);
+        setComment(obj, index);
         setDateAdded(obj, index);
         setDateChanged(obj, index);
         setIsAcceptedAdmin(obj, index);
@@ -71,6 +68,11 @@ privileged aspect QuestionDataOnDemand_Roo_DataOnDemand {
     public void QuestionDataOnDemand.setAutor(Question obj, int index) {
         Person autor = personDataOnDemand.getRandomPerson();
         obj.setAutor(autor);
+    }
+    
+    public void QuestionDataOnDemand.setComment(Question obj, int index) {
+        String comment = "_" + index;
+        obj.setComment(comment);
     }
     
     public void QuestionDataOnDemand.setDateAdded(Question obj, int index) {

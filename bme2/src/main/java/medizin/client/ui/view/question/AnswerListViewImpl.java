@@ -46,6 +46,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -63,12 +64,18 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 
 	@UiField
     IconButton newAnswer;
+	
+	@UiField
+	IconButton showAll;
 
 	@UiField(provided = true)
 	CellTable<AnswerProxy> tableAnswer;
 
 	@UiField(provided = true)
 	public MySimplePager pager;
+
+	@UiField
+	HorizontalPanel headerHP;
 	
 	public BmeConstants constant =GWT.create(BmeConstants.class);
     private Delegate delegate;
@@ -92,6 +99,8 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 		
 		headerText.setText("");
 		headerText.setHeight("23px");
+		showAll.setVisible(false);
+		headerHP.setCellHorizontalAlignment(showAll, HasHorizontalAlignment.ALIGN_RIGHT);
 	}
 	
 	@UiHandler("newAnswer")
@@ -100,7 +109,19 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 		delegate.addNewAnswerClicked();
 	}
 
-    public void init(boolean isEditable, boolean isMCQQuestionType) {
+	@UiHandler("showAll")
+	void showAllClicked(ClickEvent event) {
+		
+		event.preventDefault();
+		event.stopPropagation();
+		Log.info("event");
+		newAnswer.setVisible(true);
+		showAll.setVisible(false);
+		delegate.showAllClicked();
+	}
+
+	
+	public void init(boolean isEditable, boolean isMCQQuestionType) {
     
     	
 //        paths.add("dateAdded");
@@ -725,4 +746,11 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
         dialogBox.show();
 	}
 
+	public void showAllBtn() {
+		showAll.setVisible(true);
+	}
+
+	public void hideAddAnswer() {
+		newAnswer.setVisible(false);
+	}
 }

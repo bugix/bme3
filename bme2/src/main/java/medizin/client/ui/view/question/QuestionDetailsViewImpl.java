@@ -16,6 +16,7 @@ import medizin.client.style.resources.MyCellTableNoHilightResources;
 import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.question.learningobjective.QuestionLearningObjectiveSubViewImpl;
+import medizin.client.ui.view.question.usedinmc.QuestionUsedInMC;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.TabPanelHelper;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
@@ -156,6 +157,9 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 	@UiField
 	IconButton acceptQueAnswer;
 	
+	@UiField
+	QuestionUsedInMC questionUsedInMC;
+	
 	@Override
 	public AnswerListViewImpl getAnswerListViewImpl() {
 		return answerListViewImpl;
@@ -252,7 +256,7 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 		lblAutherValue.setText(getPersonName(proxy.getAutor()));
 		lblReviewerValue.setText(getPersonName(proxy.getRewiewer()));
 		lblQuestionEventValue.setText(proxy.getQuestEvent()==null?"":proxy.getQuestEvent().getEventName());
-		lblCommentValue.setText(proxy.getComment()==null?"":proxy.getComment().getComment());
+		lblCommentValue.setText(proxy.getComment()==null?"":proxy.getComment());
 		
 		Comparator<McProxy> MC_COMPARATOR = new Comparator<McProxy>() {
 
@@ -832,6 +836,11 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 		return accept;
 	}
 	
+	@Override
+	public IconButton getAcceptQueAnswer() {
+		return acceptQueAnswer;
+	}
+	
 	private <C> void addColumn(Cell<C> cell, String headerText,
 			final GetValue<C> getter, FieldUpdater<KeywordProxy, C> fieldUpdater) {
 		Column<KeywordProxy, C> column = new Column<KeywordProxy, C>(cell) {
@@ -915,5 +924,24 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 		this.questionLearningObjectiveSubViewImpl = questionLearningObjectiveSubViewImpl;
 	}
 
+	@Override
+	public QuestionUsedInMC getQuestionUsedInMC() {
+		return questionUsedInMC;
+	}
+	
+	@Override
+	public void removeQuestionUsedInMCTab() {
+		Log.info("in default case");
+		Log.info("~~~TAB TEXT : " + questionTypeDetailPanel.getTabBar().getTabHTML(0));
+		
+		for (int i=0; i<questionTypeDetailPanel.getTabBar().getTabCount(); i++)
+		{
+			if (questionTypeDetailPanel.getTabBar().getTabHTML(i).equals(constants.usedInMC()))
+			{
+				questionTypeDetailPanel.remove(i);
+				break;
+			}
+		}
+	}
 	
 }

@@ -974,7 +974,7 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 			rewiewer.setSelected(proxy.getRewiewer());
 			submitToReviewComitee.setValue(proxy.getSubmitToReviewComitee());
 			if(proxy.getComment() != null) {
-				comment.setText(proxy.getComment().getComment());
+				comment.setText(proxy.getComment());
 			}
 		}
 		

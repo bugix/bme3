@@ -319,5 +319,19 @@ public class Institution {
 			throw new IllegalArgumentException("Only overall admin can use this functionality");
 		
     }
+
+	public static Institution findInstitutionByName(String name) {
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+    	CriteriaQuery<Institution> criteriaQuery = criteriaBuilder.createQuery(Institution.class);
+    	Root<Institution> from = criteriaQuery.from(Institution.class);
+    	Predicate pre1 = criteriaBuilder.equal(from.get("institutionName"), name);
+    	criteriaQuery.where(pre1);
+		TypedQuery<Institution> query = entityManager().createQuery(criteriaQuery);
+		List<Institution> resultList = query.getResultList();
+		if(resultList != null && resultList.size() > 0) {
+			return resultList.get(0);
+		}
+		return null;
+	}
 }
 

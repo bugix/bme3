@@ -64,7 +64,7 @@ public class MatrixValidity {
 
 		log.info("Query is : " + query.unwrap(Query.class).getQueryString());
 
-		log.info("Result list size :" + query.getResultList().size());
+		//log.info("Result list size :" + query.getResultList().size());
 		return query.getResultList();
 
 	}
@@ -87,7 +87,7 @@ public class MatrixValidity {
 		
 		log.info("Query is : " + query.unwrap(Query.class).getQueryString());
 
-		log.info("Result list size :" + query.getResultList().size());
+		//log.info("Result list size :" + query.getResultList().size());
 		return query.getResultList();
 	}
 
@@ -147,7 +147,7 @@ public class MatrixValidity {
 
 		//log.info("Query is : " + query.unwrap(Query.class).getQueryString());
 
-		log.info("Result list size :" + query.getResultList().size());
+		//log.info("Result list size :" + query.getResultList().size());
 		return query.getSingleResult();
 	}
 	
@@ -225,7 +225,7 @@ public class MatrixValidity {
 
 		log.info("Query is : " + query.unwrap(Query.class).getQueryString());
 
-		log.info("Result list size :" + query.getResultList().size());
+		//log.info("Result list size :" + query.getResultList().size());
 		return query.getResultList();
 		
 	}
@@ -325,7 +325,7 @@ public class MatrixValidity {
 
 		log.info("Query is : " + query.unwrap(Query.class).getQueryString());
 
-		log.info("Result list size :" + query.getResultList().size());
+		//log.info("Result list size :" + query.getResultList().size());
 		return query.getResultList();
 	}
 
@@ -363,7 +363,7 @@ public class MatrixValidity {
 		Predicate p4 = exp2.in(statusList);
 		criteriaQuery.where(criteriaBuilder.and(p1, p2, p3, p4));
 		TypedQuery<Long> query = entityManager().createQuery(criteriaQuery);
-		log.info("Result list size :" + query.getResultList().size());
+		//log.info("Result list size :" + query.getResultList().size());
 		return query.getSingleResult();
 	}
 	
@@ -387,7 +387,7 @@ public class MatrixValidity {
 
 		query.setFirstResult(start);
 		query.setMaxResults(length);
-		log.info("Result list size :" + query.getResultList().size());
+		//log.info("Result list size :" + query.getResultList().size());
 		return query.getResultList();
 	}
 	

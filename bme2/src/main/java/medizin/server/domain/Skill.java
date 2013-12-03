@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.TypedQuery;
@@ -15,7 +16,6 @@ import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 import javax.validation.constraints.Size;
 
-import org.hibernate.Query;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
@@ -36,7 +36,7 @@ public class Skill {
 	@ManyToOne
 	private SkillLevel skillLevel;
 	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "skill")
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "skill",fetch=FetchType.LAZY)
 	private Set<SkillHasAppliance> skillHasAppliances = new HashSet<SkillHasAppliance>();
 	
 	public static Integer countSkillBySearchCriteria(Long mainClassificationId, Long classificationTopicId, Long topicId, Long skillLevlId, Long applianceId)

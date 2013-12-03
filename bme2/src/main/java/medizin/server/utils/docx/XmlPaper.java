@@ -139,12 +139,27 @@ public class XmlPaper {
         questionElement.setAttribute(QUESTION_ID_ATTRIBUTE, question.getAssesmentQuestion().getQuestion().getId().toString());
         questionElement.appendChild(getQuestionType(doc, question.getAssesmentQuestion().getQuestion().getQuestionType()));
         addToElement(doc, questionElement, TEXT_ELEMENT, question.getAssesmentQuestion().getQuestion().getQuestionText());
+        addQuestionEvent(doc,question,questionElement);
         Element questionResources = addQuestionResources(doc,question);
         if(questionResources != null) {
         	questionElement.appendChild(questionResources);
         }
-        questionElement.appendChild(getAnswers(doc, question.getAnswerToAssQuestions(),question.getAssesmentQuestion().getQuestion()));
+        if(QuestionTypes.Drawing.equals(question.getAssesmentQuestion().getQuestion().getQuestionType().getQuestionType()) ==  false) {
+        	questionElement.appendChild(getAnswers(doc, question.getAnswerToAssQuestions(),question.getAssesmentQuestion().getQuestion()));	
+        }
+        
         return questionElement;
+	}
+
+	private void addQuestionEvent(Document doc, QuestionVO question, Element questionElement) {
+		
+		Element questionEventElement = doc.createElement(QUESTION_EVENT_NAME);
+		questionEventElement.appendChild(doc.createCDATASection(StringUtils.defaultString(question.getAssesmentQuestion().getQuestion().getQuestEvent().getEventName(), EMPTY_VALUE)));
+		questionEventElement.setAttribute(ID_ATTRIBUTE, question.getAssesmentQuestion().getQuestion().getQuestEvent().getId().toString());
+		questionElement.appendChild(questionEventElement);
+		
+		
+		
 	}
 
 	private Element addQuestionResources(Document doc, QuestionVO question) {
@@ -559,4 +574,5 @@ public class XmlPaper {
 	private static final String QUESTION_TYPE_ALLOW_TYPING = "allowtyping";
 	private static final String QUESTION_TYPE_MIN_AUTOCOMPLETE_LETTER = "minautocompleteletters";
 	private static final String QUESTION_TYPE_ACCEPT_NON_KEYWORD = "acceptnonkeyword";
+	private static final String QUESTION_EVENT_NAME = "specialization";
 }

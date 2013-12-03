@@ -63,9 +63,9 @@ public interface QuestionProxy extends EntityProxy {
 
     abstract void setQuestEvent(QuestionEventProxy questEvent);
 
-    abstract CommentProxy getComment();
+    abstract String getComment();
 
-    abstract void setComment(CommentProxy comment);
+    abstract void setComment(String comment);
 
     abstract QuestionTypeProxy getQuestionType();
 

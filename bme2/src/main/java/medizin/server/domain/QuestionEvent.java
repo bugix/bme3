@@ -14,7 +14,6 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
@@ -348,4 +347,19 @@ public class QuestionEvent {
 			else if (loggedPerson != null && loggedPerson.getIsAdmin() == false && UserAccessRights.checkInstitutionalAdmin() == false)
 				throw new IllegalArgumentException("Only overall admin or institutional admin can use this functionality");
 	    }
+
+		public static QuestionEvent findQuestionEventByName(String questionEvent) {
+			
+			CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+	    	CriteriaQuery<QuestionEvent> criteriaQuery = criteriaBuilder.createQuery(QuestionEvent.class);
+	    	Root<QuestionEvent> from = criteriaQuery.from(QuestionEvent.class);
+	    	Predicate pre1 = criteriaBuilder.equal(from.get("eventName"), questionEvent);
+	    	criteriaQuery.where(pre1);
+			TypedQuery<QuestionEvent> query = entityManager().createQuery(criteriaQuery);
+			List<QuestionEvent> resultList = query.getResultList();
+			if(resultList != null && resultList.size() > 0) {
+				return resultList.get(0);
+			}
+			return null;
+		}
 }

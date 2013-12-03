@@ -2,6 +2,7 @@ package medizin.client.request;
 
 import java.util.List;
 
+import medizin.client.proxy.AnswerProxy;
 import medizin.client.proxy.AnswerToAssQuestionProxy;
 
 import org.springframework.roo.addon.gwt.RooGwtUnmanagedRequest;
@@ -33,4 +34,8 @@ public interface AnswerToAssQuestionRequest extends AnswerToAssQuestionRequest_R
 	abstract Request<Long> countAnswerToAssQuestionByAnswer(Long answerId);
 
 	abstract Request<Long> countAnswerToAssQuestionByMatrixValidity(Long questionId);
+
+	abstract Request<List<AnswerProxy>> findAllAnswerToAssQuestion(Long assessmentQuestionId, int Start, int length);
+	
+	abstract Request<Long> countAllAnswerToAssQuestion(Long assessmentQuestionId);
 }

@@ -26,4 +26,6 @@ public interface PersonRequest extends PersonRequest_Roo_Gwt {
 	Request<Long> findAllPersonCount();
 	
 	Request<PersonAccessRightProxy> fetchLoggedPersonAccessRights();
+
+	Request<List<PersonProxy>> findAllPeopleNotAcceptedQuestionAnswerAssesment();
 }

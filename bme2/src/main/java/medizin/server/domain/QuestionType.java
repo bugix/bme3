@@ -365,4 +365,19 @@ public class QuestionType {
     		throw new IllegalArgumentException("Question type is not removed");
     	}
     }
+
+	public static QuestionType findQuestionTypeByShortName(String questionTypeName, Institution institution) {
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+    	CriteriaQuery<QuestionType> criteriaQuery = criteriaBuilder.createQuery(QuestionType.class);
+    	Root<QuestionType> from = criteriaQuery.from(QuestionType.class);
+    	Predicate pre1 = criteriaBuilder.equal(from.get("shortName"), questionTypeName);
+    	Predicate pre2 = criteriaBuilder.equal(from.get("institution").get("id"), institution.getId());
+    	criteriaQuery.where(criteriaBuilder.and(pre1,pre2));
+		TypedQuery<QuestionType> query = entityManager().createQuery(criteriaQuery);
+		List<QuestionType> resultList = query.getResultList();
+		if(resultList != null && resultList.size() > 0) {
+			return resultList.get(0);
+		}
+		return null;
+	}
 }

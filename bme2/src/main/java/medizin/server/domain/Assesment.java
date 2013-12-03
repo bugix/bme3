@@ -12,6 +12,7 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EntityManager;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -105,17 +106,17 @@ public class Assesment {
 
     private Integer percentSameQuestion;
     
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "assesment")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "assesment",fetch=FetchType.LAZY)
     private Set<QuestionSumPerPerson> questionSumPerPerson = new HashSet<QuestionSumPerPerson>();
     
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "assesment")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "assesment",fetch=FetchType.LAZY)
     private Set<AssesmentQuestion> assesmentQuestions = new HashSet<AssesmentQuestion>();
     
     @NotNull
     @ManyToOne
     Institution institution;
     
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "assesment")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "assesment",fetch=FetchType.LAZY)
     private List<QuestionTypeCountPerExam> questionTypeCountPerExams=new ArrayList<QuestionTypeCountPerExam>();
     
     /* Business Login
@@ -468,5 +469,21 @@ public class Assesment {
 			log.error(e);
 		}
 		return false;
+	}
+
+	public static Assesment findAssessmentByDateAndMC(Date assessmentdDate, Mc mc) {
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+    	CriteriaQuery<Assesment> criteriaQuery = criteriaBuilder.createQuery(Assesment.class);
+    	Root<Assesment> from = criteriaQuery.from(Assesment.class);
+    	Predicate pre1 = criteriaBuilder.equal(from.get("dateOfAssesment"), assessmentdDate);
+    	Predicate pre2 = criteriaBuilder.equal(from.get("mc").get("id"), mc.getId());
+    	criteriaQuery.where(criteriaBuilder.and(pre1,pre2));
+		TypedQuery<Assesment> query = entityManager().createQuery(criteriaQuery);
+		List<Assesment> resultList = query.getResultList();
+		if(resultList != null && resultList.size() > 0) {
+			return resultList.get(0);
+		}
+		return null;
+
 	}
 }

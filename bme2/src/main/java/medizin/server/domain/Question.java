@@ -13,6 +13,7 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EntityManager;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -114,15 +115,16 @@ public class Question {
 	@OneToOne
 	private medizin.server.domain.Question previousVersion;
 
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany(cascade = CascadeType.ALL,fetch=FetchType.LAZY)
 	protected Set<Keyword> keywords = new HashSet<Keyword>();
 
 	@NotNull
 	@ManyToOne
 	private QuestionEvent questEvent;
 
-	@OneToOne(cascade = CascadeType.ALL)
-	private Comment comment;
+	/*@OneToOne(cascade = CascadeType.ALL,fetch=FetchType.LAZY)
+	private Comment comment;*/
+	private String comment = "";
 
 	@NotNull
 	@ManyToOne
@@ -135,13 +137,13 @@ public class Question {
 	@ManyToMany(cascade = CascadeType.ALL)
 	protected Set<Mc> mcs = new HashSet<Mc>();
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "question")
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "question",fetch=FetchType.LAZY)
 	private Set<Answer> answers = new HashSet<Answer>();
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "question")
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "question",fetch=FetchType.LAZY)
 	private Set<QuestionResource> questionResources = new HashSet<QuestionResource>();
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "question")
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "question",fetch=FetchType.LAZY)
 	private Set<UserAccessRights> questionAccess = new HashSet<UserAccessRights>();
 
 	// RedactionalBase code
@@ -171,7 +173,7 @@ public class Question {
 	
 	private Integer imageWidth;*/
 	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "question")
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "question",fetch=FetchType.LAZY)
 	private Set<AssesmentQuestion> assesmentQuestionSet = new HashSet<AssesmentQuestion>();
 	
 	@ManyToOne
@@ -1357,7 +1359,7 @@ public class Question {
 			}
 
 			if (searchField.containsKey("instruction") && !searchText.equals("")) {
-				Expression<String> exp3 = from.get("comment").get("comment");
+				Expression<String> exp3 = from.get("comment");
 				Predicate pre5 = criteriaBuilder.like(exp3, "%" + searchText + "%");
 				orPredicate = criteriaBuilder.or(orPredicate, pre5);
 			}
@@ -2024,16 +2026,16 @@ public class Question {
 			for(Answer answer : oldQuestion.getAnswers()) {
 				Answer newAnswer = new Answer();
 				// copy answer comment
-				Comment newCommentAnswer = answer.getComment();
+				/*Comment newCommentAnswer = answer.getComment();
 				if(answer.getComment() != null) {
 					newCommentAnswer = new Comment();
 					newCommentAnswer.setComment(answer.getComment().getComment());
 					newCommentAnswer.persist();
-				}	
+				}*/	
 				
 				BMEUtils.copyValues(answer, newAnswer, Answer.class);
 				newAnswer.setQuestion(this);
-				newAnswer.setComment(newCommentAnswer);
+				//newAnswer.setComment(newCommentAnswer);
 				newAnswer.persist();
 				
 				if(QuestionTypes.Matrix.equals(oldQuestion.getQuestionType().getQuestionType()) == true) {
@@ -2155,21 +2157,10 @@ public class Question {
 		}			
 	}
 	
-	public static CriteriaQuery<Question> findQusetionByAdvancedSearchCriteria(List<String> criteriaStringList, List<String> searchField, String searchText)
+	public static <T>  Predicate findQusetionByAdvancedSearchCriteria(Person loggedUser, Institution institution, CriteriaBuilder criteriaBuilder, CriteriaQuery<T> criteriaQuery,  Root<Question> from, List<String> criteriaStringList, List<String> searchField, String searchText)
 	{
 		try
 		{
-			Person loggedUser = Person.myGetLoggedPerson();
-			Institution institution = Institution.myGetInstitutionToWorkWith();
-			if (loggedUser == null || institution == null)
-				throw new IllegalArgumentException("The person and institution arguments are required");
-			
-			CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
-			CriteriaQuery<Question> criteriaQuery = criteriaBuilder.createQuery(Question.class);
-			Root<Question> from = criteriaQuery.from(Question.class);
-			criteriaQuery.distinct(true);
-			criteriaQuery.orderBy(criteriaBuilder.asc(from.get("id")));
-			
 			Predicate mainPredicate = basicPredicateForQuestion(loggedUser, institution, criteriaBuilder, criteriaQuery, from);
 		
 			Predicate statusNewPredicate = criteriaBuilder.equal(from.get("status"),Status.ACTIVE);
@@ -2190,9 +2181,7 @@ public class Question {
 			if (advPredicate != null)
 				mainPredicate = criteriaBuilder.and(mainPredicate, advPredicate);
 			
-			criteriaQuery.where(mainPredicate);
-			
-			return criteriaQuery;
+			return mainPredicate;
 			
 		}
 		catch(Exception e)
@@ -2203,9 +2192,7 @@ public class Question {
 		return null;
 	}
 
-	public static Predicate advancedSearchCriteriaForQuestion(
-			List<String> criteriaStringList, CriteriaBuilder criteriaBuilder,
-			CriteriaQuery<Question> criteriaQuery, Root<Question> from) {
+	public static <T> Predicate advancedSearchCriteriaForQuestion(List<String> criteriaStringList, CriteriaBuilder criteriaBuilder, CriteriaQuery<T> criteriaQuery, Root<Question> from) {
 		List<AdvancedSearchCriteria> criteriaList = AdvancedSearchCriteriaUtils.decodeList(criteriaStringList);
 		Predicate predicate = null;
 		Predicate advPredicate = null;
@@ -2225,7 +2212,7 @@ public class Question {
 			}
 			else if (PossibleFields.COMMENT.equals(criteria.getPossibleFields()))
 			{
-				Expression<String> commentExp = from.get("comment").get("comment");
+				Expression<String> commentExp = from.get("comment");
 				predicate = likeComparison(criteriaBuilder, criteria, commentExp);
 			}
 			else if (PossibleFields.ANSWER_TEXT.equals(criteria.getPossibleFields()))
@@ -2340,7 +2327,7 @@ public class Question {
 		}
 
 		if (searchFilterMap.containsKey("instruction") && !searchText.equals("")) {
-			Expression<String> commentExp = from.get("comment").get("comment");
+			Expression<String> commentExp = from.get("comment");
 			Predicate instructionPre = criteriaBuilder.like(commentExp, "%" + searchText + "%");
 			basicSearchPredicate = criteriaBuilder.or(basicSearchPredicate, instructionPre);
 		}
@@ -2355,7 +2342,7 @@ public class Question {
 		return basicSearchPredicate;
 	}
 
-	private static Predicate multimediaPredicate(CriteriaBuilder criteriaBuilder, CriteriaQuery<Question> criteriaQuery, Root<Question> from, AdvancedSearchCriteria criteria) {
+	private static <T> Predicate multimediaPredicate(CriteriaBuilder criteriaBuilder, CriteriaQuery<T> criteriaQuery, Root<Question> from, AdvancedSearchCriteria criteria) {
 		Predicate predicate;
 		Subquery<QuestionResource> subQuery = criteriaQuery.subquery(QuestionResource.class);
 		Root queResourceRoot = subQuery.from(QuestionResource.class);
@@ -2389,7 +2376,7 @@ public class Question {
 		return predicate;
 	}
 
-	private static Predicate basicPredicateForQuestion(Person loggedUser, Institution institution, CriteriaBuilder criteriaBuilder, CriteriaQuery<Question> criteriaQuery, Root<Question> from) {
+	private static <T> Predicate basicPredicateForQuestion(Person loggedUser, Institution institution, CriteriaBuilder criteriaBuilder, CriteriaQuery<T> criteriaQuery, Root<Question> from) {
 		
 		Predicate andAdminPredicate = null;
 		
@@ -2467,9 +2454,21 @@ public class Question {
 	
 	public static List<Question> findQuestionByAdvancedSearchByLoginUserAndInstitute(List<String> criteriaStringList, List<String> searchField, String searchText, int start, int length)
 	{
-		TypedQuery<Question> query = entityManager().createQuery(findQusetionByAdvancedSearchCriteria(criteriaStringList, searchField, searchText));
+		Person loggedUser = Person.myGetLoggedPerson();
+		Institution institution = Institution.myGetInstitutionToWorkWith();
+		if (loggedUser == null || institution == null)
+			throw new IllegalArgumentException("The person and institution arguments are required");
+		
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Question> criteriaQuery = criteriaBuilder.createQuery(Question.class);
+		Root<Question> from = criteriaQuery.from(Question.class);
+		criteriaQuery.distinct(true);
+		criteriaQuery.orderBy(criteriaBuilder.asc(from.get("id")));
+				
+		Predicate mainPredicate = findQusetionByAdvancedSearchCriteria(loggedUser,institution, criteriaBuilder, criteriaQuery, from, criteriaStringList, searchField, searchText);
+		criteriaQuery.where(mainPredicate);
+		TypedQuery<Question> query = entityManager().createQuery(criteriaQuery);
 		log.info("ADVANCED QUERY : " + query.unwrap(Query.class).getQueryString());
-		log.info("RESULT SIZE : " + query.getResultList().size());
 		query.setFirstResult(start);
 		query.setMaxResults(length);
 		return query.getResultList();
@@ -2477,8 +2476,23 @@ public class Question {
 	
 	public static Integer countQuestionByAdvancedSearchByLoginUserAndInstitute(List<String> criteriaStringList, List<String> searchField, String searchText)
 	{
-		TypedQuery<Question> query = entityManager().createQuery(findQusetionByAdvancedSearchCriteria(criteriaStringList, searchField, searchText));
-		return query.getResultList().size();
+		Person loggedUser = Person.myGetLoggedPerson();
+		Institution institution = Institution.myGetInstitutionToWorkWith();
+		if (loggedUser == null || institution == null)
+			throw new IllegalArgumentException("The person and institution arguments are required");
+		
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+		Root<Question> from = criteriaQuery.from(Question.class);
+		criteriaQuery.select(criteriaBuilder.count(from));
+		criteriaQuery.distinct(true);
+		criteriaQuery.orderBy(criteriaBuilder.asc(from.get("id")));
+		
+		Predicate mainPredicate = findQusetionByAdvancedSearchCriteria(loggedUser,institution, criteriaBuilder, criteriaQuery, from,criteriaStringList, searchField, searchText);
+		criteriaQuery.where(mainPredicate);
+		TypedQuery<Long> query = entityManager().createQuery(criteriaQuery);
+		log.info("Result count : " + query.getResultList().get(0));
+		return query.getResultList().get(0).intValue();
 	}
 	
 	public static Long countQuestionByLoggedUser(Long loggedUserId, boolean isAdminOrInstitutionalAdmin)
@@ -2633,5 +2647,25 @@ public class Question {
 				return answer.getAutor().getId().equals(loggedUser.getId()) == false;	
 			}
 		};
+	}
+
+	public static Question findQuestionByQuestionTextQuestionEventQuestionTypeRewiewerAndAutor(String questionText, QuestionEvent questionEvent,QuestionType questionType,Person rewiewer,Person autor) {
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+    	CriteriaQuery<Question> criteriaQuery = criteriaBuilder.createQuery(Question.class);
+    	Root<Question> from = criteriaQuery.from(Question.class);
+    	Predicate pre1 = criteriaBuilder.equal(from.get("questionText"), questionText);
+    	Predicate pre2 = criteriaBuilder.equal(from.get("questEvent").get("id"), questionEvent.getId());
+    	Predicate pre3 = criteriaBuilder.equal(from.get("questionType").get("id"), questionType.getId());
+    	Predicate pre4 = criteriaBuilder.equal(from.get("rewiewer").get("id"), rewiewer.getId());
+    	Predicate pre5 = criteriaBuilder.equal(from.get("autor").get("id"), autor.getId());
+    	
+    	criteriaQuery.where(criteriaBuilder.and(pre1,pre2,pre3,pre4,pre5));
+		TypedQuery<Question> query = entityManager().createQuery(criteriaQuery);
+		List<Question> resultList = query.getResultList();
+		if(resultList != null && resultList.size() > 0) {
+			return resultList.get(0);
+		}
+		return null;
+		
 	}
 }

@@ -17,8 +17,8 @@ import medizin.client.place.PlaceQuestion;
 import medizin.client.place.PlaceQuestionDetails;
 import medizin.client.proxy.AnswerProxy;
 import medizin.client.proxy.ApplianceProxy;
+import medizin.client.proxy.AssesmentQuestionProxy;
 import medizin.client.proxy.ClassificationTopicProxy;
-import medizin.client.proxy.CommentProxy;
 import medizin.client.proxy.KeywordProxy;
 import medizin.client.proxy.MainClassificationProxy;
 import medizin.client.proxy.MainQuestionSkillProxy;
@@ -31,7 +31,6 @@ import medizin.client.proxy.SkillLevelProxy;
 import medizin.client.proxy.SkillProxy;
 import medizin.client.proxy.TopicProxy;
 import medizin.client.request.AnswerRequest;
-import medizin.client.request.CommentRequest;
 import medizin.client.request.MainQuestionSkillRequest;
 import medizin.client.request.MatrixValidityRequest;
 import medizin.client.request.MinorQuestionSkillRequest;
@@ -72,12 +71,16 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.text.shared.AbstractRenderer;
+import com.google.gwt.user.cellview.client.AbstractHasData;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.RangeChangeEvent;
+import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SingleSelectionModel;
 
 public class ActivityQuestionDetails extends AbstractActivityWrapper implements 
 							QuestionDetailsView.Delegate, 
@@ -156,7 +159,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	private void getQuestionDetails(){
 		if(userLoggedIn==null) return;
 		
-		requests.find(questionPlace.getProxyId()).with("previousVersion","keywords","questEvent","comment","questionType","mcs", "rewiewer", "autor","questionResources","answers").fire(new BMEReceiver<Object>() {
+		requests.find(questionPlace.getProxyId()).with("previousVersion","keywords","questEvent","questionType","mcs", "rewiewer", "autor","questionResources","answers").fire(new BMEReceiver<Object>() {
 			
 			@Override
 			public void onSuccess(final Object response) {
@@ -196,7 +199,9 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		
 		initKeywordView();
 		
-		initLearningObjectiveView();		
+		initLearningObjectiveView();	
+		
+		initUsedInMCView();
 	}
 
 	private void initLearningObjectiveView() {
@@ -364,7 +369,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		final Range range = answerTable.getVisibleRange();
 		
 		
-		requests.answerRequest().findAnswersEntriesByQuestion(question.getId(), range.getStart(), range.getLength()).with("question","rewiewer","autor","comment","question.questionType").fire( new BMEReceiver<List<AnswerProxy>>(){
+		requests.answerRequest().findAnswersEntriesByQuestion(question.getId(), range.getStart(), range.getLength()).with("question","rewiewer","autor","question.questionType").fire( new BMEReceiver<List<AnswerProxy>>(){
 
 
 			@Override
@@ -1041,8 +1046,8 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	public void saveAnswerProxy(AnswerProxy answerProxy, String answerText, PersonProxy author, final PersonProxy rewiewer, Boolean submitToReviewComitee, String comment, Validity validity, String points, String mediaPath, String additionalKeywords,Integer sequenceNumber, final Function<AnswerProxy, Void> function) {
 		
 		Log.info("in saveAnswerProxy method");
-		final CommentRequest commentRequest = requests.commentRequest();
-		final AnswerRequest answerRequest = commentRequest.append(requests.answerRequest());
+		
+		final AnswerRequest answerRequest = requests.answerRequest();
 		
 		if(answerProxy != null) {
 			AnswerProxy newAnswerProxy  = answerRequest.edit(answerProxy);
@@ -1063,11 +1068,8 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 				}
 			});
 		}else {
-			AnswerProxy newAnswerProxy = answerRequest.create(AnswerProxy.class);
-			CommentProxy commentProxy = commentRequest.create(CommentProxy.class);
-			
+			AnswerProxy newAnswerProxy = answerRequest.create(AnswerProxy.class);			
 			newAnswerProxy.setDateAdded(new Date());
-			newAnswerProxy.setComment(commentProxy);
 			
 			fillAnswerData(answerText, author, rewiewer, submitToReviewComitee, comment, validity, points, mediaPath, additionalKeywords, sequenceNumber, newAnswerProxy);
 			
@@ -1078,7 +1080,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 				@Override
 				public void onSuccess(Void response) {
 					
-					requests.answerRequest().find(finalAnswerProxy.stableId()).with("autor","rewiewer","comment").fire(new BMEReceiver<Object>() {
+					requests.answerRequest().find(finalAnswerProxy.stableId()).with("autor","rewiewer").fire(new BMEReceiver<Object>() {
 	
 						@Override
 						public void onSuccess(Object response) {
@@ -1107,7 +1109,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		newAnswerProxy.setIsAnswerAcceptedAutor(userLoggedIn.getId().equals(author.getId()));
 		newAnswerProxy.setIsAnswerAcceptedAdmin(isAdminOrInstitutionalAdmin());
 		newAnswerProxy.setIsAnswerAcceptedReviewWahrer(false);
-		newAnswerProxy.getComment().setComment(comment);
+		newAnswerProxy.setComment(comment);
 		newAnswerProxy.setQuestion(question);
 		newAnswerProxy.setValidity(validity);
 		newAnswerProxy.setPoints(points);
@@ -1225,7 +1227,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	public void getQuestionDetails(QuestionProxy previousVersion, final Function<QuestionProxy, Void> function) {
 		
 		
-		requests.questionRequest().findQuestion(previousVersion.getId()).with("previousVersion","keywords","questEvent","comment","questionType","mcs", "rewiewer", "autor","questionResources").fire(new BMEReceiver<Object>() {
+		requests.questionRequest().findQuestion(previousVersion.getId()).with("previousVersion","keywords","questEvent","questionType","mcs", "rewiewer", "autor","questionResources").fire(new BMEReceiver<Object>() {
 
 			@Override
 			public void onSuccess(Object response) {
@@ -1465,7 +1467,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
         });
 		
         MatrixValidityRequest matrixValidityRequest = newPersonRequest.append(requests.MatrixValidityRequest());
-        matrixValidityRequest.findAllMatrixValidityForQuestion(question.getId()).with("answerX","answerY","answerX.autor","answerX.rewiewer","answerX.comment","answerY.autor","answerY.rewiewer","answerY.comment").to(new BMEReceiver<List<MatrixValidityProxy>>() {
+        matrixValidityRequest.findAllMatrixValidityForQuestion(question.getId()).with("answerX","answerY","answerX.autor","answerX.rewiewer","answerY.autor","answerY.rewiewer").to(new BMEReceiver<List<MatrixValidityProxy>>() {
 
 			@Override
 			public void onSuccess(List<MatrixValidityProxy> response) {
@@ -1546,6 +1548,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	private LearningObjectiveData learningObjective;
 	private String temp;
 	private List<LearningObjectiveData> learningObjectiveData = new ArrayList<LearningObjectiveData>();
+	private AssesmentQuestionProxy assesmentQuestionProxy;
 	
 	@Override
 	public void keywordAddButtonClicked(String text, final QuestionProxy proxy) {
@@ -1562,7 +1565,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		
 		if (flag == false)
 		{
-			requests.keywordRequest().findKeywordByStringOrAddKeyword(text, proxy).with("previousVersion","keywords","questEvent","comment","questionType","mcs", "rewiewer", "autor","questionResources","answers").fire(new BMEReceiver<QuestionProxy>() {
+			requests.keywordRequest().findKeywordByStringOrAddKeyword(text, proxy).with("previousVersion","keywords","questEvent","questionType","mcs", "rewiewer", "autor","questionResources","answers").fire(new BMEReceiver<QuestionProxy>() {
 
 				@Override
 				public void onSuccess(QuestionProxy response) {
@@ -1583,7 +1586,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	@Override
 	public void deleteKeywordClicked(KeywordProxy keyword, QuestionProxy proxy) {
 		
-		requests.keywordRequest().deleteKeywordFromQuestion(keyword, proxy).with("previousVersion","keywords","questEvent","comment","questionType","mcs", "rewiewer", "autor","questionResources","answers").fire(new BMEReceiver<QuestionProxy>() {
+		requests.keywordRequest().deleteKeywordFromQuestion(keyword, proxy).with("previousVersion","keywords","questEvent","questionType","mcs", "rewiewer", "autor","questionResources","answers").fire(new BMEReceiver<QuestionProxy>() {
 
 			@Override
 			public void onSuccess(QuestionProxy response) {
@@ -1597,8 +1600,8 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 
     @Override
 	public void saveAllTheValuesToAnswerAndMatrixAnswer(List<MatrixValidityProxy> currentMatrixValidityProxy, Matrix<MatrixValidityVO> matrixList, PersonProxy author, final PersonProxy rewiewer, Boolean submitToReviewComitee, String comment) {
-		final CommentRequest commentRequest = requests.commentRequest();
-		final AnswerRequest answerRequest = commentRequest.append(requests.answerRequest());
+		
+		final AnswerRequest answerRequest = requests.answerRequest();
 		final MatrixValidityRequest validityRequest = answerRequest.append(requests.MatrixValidityRequest());
 		
 		Map<Integer,AnswerProxy> answerXIndex = Maps.newHashMap();
@@ -1626,7 +1629,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 				if(proxy.getAnswerX() != null) {
 					final AnswerProxy answerX = proxy.getAnswerX();
 					answerX.setDateChanged(new Date());
-					answerX.getComment().setComment(comment);
+					answerX.setComment(comment);
 					
 					setMatrixAnswerValues(author, rewiewer, submitToReviewComitee, vo, answerX, vo.getAnswerX());
 					answerXIndex.put(xIndex,answerX);
@@ -1635,9 +1638,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 					if(answerXIndex.containsKey(xIndex) == false) {
 					
 						AnswerProxy newAnswerProxy = answerRequest.create(AnswerProxy.class);
-						CommentProxy newCommentProxy = commentRequest.create(CommentProxy.class);
-						newCommentProxy.setComment(comment);
-						newAnswerProxy.setComment(newCommentProxy);
+						newAnswerProxy.setComment(comment);
 						
 						newAnswerProxy.setDateAdded(new Date());
 						setMatrixAnswerValues(author, rewiewer, submitToReviewComitee, vo, newAnswerProxy, vo.getAnswerX());
@@ -1646,7 +1647,6 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 						answerXIndex.put(xIndex,newAnswerProxy);
 						
 						answerRequest.persist().using(newAnswerProxy);
-						commentRequest.persist().using(newCommentProxy);
 					} else {
 						proxy.setAnswerX(answerXIndex.get(xIndex));
 					}
@@ -1657,7 +1657,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 				
 					AnswerProxy answerY = proxy.getAnswerY();
 					answerY.setDateChanged(new Date());
-					answerY.getComment().setComment(comment);
+					answerY.setComment(comment);
 					setMatrixAnswerValues(author, rewiewer, submitToReviewComitee, vo, answerY, vo.getAnswerY());
 					answerYIndex.put(yIndex,proxy.getAnswerY());
 				}else {
@@ -1665,9 +1665,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 					if(answerYIndex.containsKey(yIndex) == false) {
 					
 						AnswerProxy newAnswerProxy = answerRequest.create(AnswerProxy.class);
-						CommentProxy newCommentProxy = commentRequest.create(CommentProxy.class);
-						newCommentProxy.setComment(comment);
-						newAnswerProxy.setComment(newCommentProxy);
+						newAnswerProxy.setComment(comment);
 						
 						proxy.setAnswerY(newAnswerProxy);
 						
@@ -1676,7 +1674,6 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 						answerYIndex.put(yIndex,newAnswerProxy);
 						
 						answerRequest.persist().using(newAnswerProxy);
-						commentRequest.persist().using(newCommentProxy);
 
 					} else {
 						proxy.setAnswerY(answerYIndex.get(yIndex));
@@ -2101,7 +2098,116 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		});
 	}
 
+	private void initUsedInMCView() {
+		RecordChangeEvent.register(requests.getEventBus(), view.getQuestionUsedInMC());
+		if (question != null)
+		{
+			requests.assesmentQuestionRequest().countAllAssesmentQuestionByQuestion(question.getId()).fire(new BMEReceiver<Integer>() {
+
+				@Override
+				public void onSuccess(Integer response) {
+					view.getQuestionUsedInMC().setTableRowCount(response);
+					onUsedInMcTableRangeChanged();
+				}
+			});
+					
+			view.getQuestionUsedInMC().addTableRangeChangeHandler(new RangeChangeEvent.Handler() {
+				
+				@Override
+				public void onRangeChange(RangeChangeEvent event) {
+					onUsedInMcTableRangeChanged();
+				}
+
+				
+			});
+			
+			ProvidesKey<AssesmentQuestionProxy> keyProvider = ((AbstractHasData<AssesmentQuestionProxy>) view.getQuestionUsedInMC().getTable()).getKeyProvider();
+			final SingleSelectionModel<AssesmentQuestionProxy> selectionModel = new SingleSelectionModel<AssesmentQuestionProxy>(keyProvider);
+			
+			view.getQuestionUsedInMC().getTable().setSelectionModel(selectionModel);		
+
+			selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+						public void onSelectionChange(SelectionChangeEvent event) {
+							AssesmentQuestionProxy selectedObject = selectionModel.getSelectedObject();
+							if (selectedObject != null) {
+								Log.debug(selectedObject.getId() + " selected!");
+								showUsedInMcAnswerDetails(selectedObject);
+							}
+						}
+					});
+
+			
+		}
+	}
+	
+	protected void showUsedInMcAnswerDetails(AssesmentQuestionProxy assesmentQuestionProxy) {
+		
+		if(assesmentQuestionProxy != null) {
+			this.assesmentQuestionProxy = assesmentQuestionProxy;
+			
+			if (answerRangeChangeHandler!=null){
+				answerRangeChangeHandler.removeHandler();
+				answerRangeChangeHandler=null;
+			}
+			
+			requests.answerToAssQuestionRequest().countAllAnswerToAssQuestion(assesmentQuestionProxy.getId()).fire(new BMEReceiver<Long>() {
+
+				@Override
+				public void onSuccess(Long response) {
+					answerTable.setRowCount(response.intValue(), true);
+
+					onUsedInMcAnswerTableRangeChanged();
+				}
+			});
+			
+			
+			answerRangeChangeHandler =  answerTable.addRangeChangeHandler(new RangeChangeEvent.Handler() {
+				public void onRangeChange(RangeChangeEvent event) {
+					ActivityQuestionDetails.this.onUsedInMcAnswerTableRangeChanged();
+				}
+			});
+			answerListView.hideAddAnswer();
+			answerListView.showAllBtn();
+			
+		}
+		
+	}
+
+	private void onUsedInMcAnswerTableRangeChanged() {
+		
+		final Range range = answerTable.getVisibleRange();
+		
+		requests.answerToAssQuestionRequest().findAllAnswerToAssQuestion(this.assesmentQuestionProxy.getId(), range.getStart(), range.getLength()).with("question","rewiewer","autor","question.questionType").fire( new BMEReceiver<List<AnswerProxy>>(){
+
+
+			@Override
+			public void onSuccess(List<AnswerProxy> response) {
+				answerTable.setRowData(range.getStart(), response);
+			}
+		});
+		
+	}
+	
+	private void onUsedInMcTableRangeChanged() {
+		if (question != null)
+		{
+			final Range range = view.getQuestionUsedInMC().getTableVisibleRange();
+			requests.assesmentQuestionRequest().findAllAssesmentQuestionByQuestion(question.getId(), range.getStart(), range.getLength()).with(view.getQuestionUsedInMC().getPaths()).fire(new BMEReceiver<List<AssesmentQuestionProxy>>() {
+
+				@Override
+				public void onSuccess(List<AssesmentQuestionProxy> response) {
+					view.getQuestionUsedInMC().setTableRowData(range.getStart(), response);
+				}
+			});
+		}
+		
+	}
 	@Override
 	public void acceptQueAnswersClicked() {}
+
+	@Override
+	public void showAllClicked() {
+		initAnswerView();
+	}
 
 }

@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import medizin.client.proxy.CommentProxy;
 import medizin.client.proxy.McProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionEventProxy;
@@ -352,7 +351,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		}
 		
 		questEvent.setValue(question.getQuestEvent());
-		questionComment.setValue(question.getComment() == null ? "" : question.getComment().getComment());
+		questionComment.setValue(question.getComment() == null ? "" : question.getComment());
 		submitToReviewComitee.setValue(question.getSubmitToReviewComitee());
 		mcs.setValue(question.getMcs());
 		
@@ -850,7 +849,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	}
 
 	@Override
-	public void setValuesForQuestion(QuestionProxy question, CommentProxy commentProxy) {
+	public void setValuesForQuestion(QuestionProxy question) {
 		if(rewiewer != null && rewiewer.getSelected() != null)
 			Cookies.setCookie(McAppConstant.LAST_SELECTED_QUESTION_REVIEWER, String.valueOf(rewiewer.getSelected().getId()), ClientUtility.getDateFromOneYear());
 		
@@ -872,8 +871,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		
 		question.setQuestEvent(questEvent.getValue());
 		question.setMcs(mcs.getValue());
-		commentProxy.setComment(questionComment.getText().isEmpty() == true ? " " : questionComment.getText());
-		question.setComment(commentProxy);
+		question.setComment(questionComment.getText().isEmpty() == true ? " " : questionComment.getText());
 	}
 
 	

@@ -11,7 +11,10 @@
 			<g:customHeader>
 				<g:HorizontalPanel width="100%" ui:field="headerHorizontalPanel">
 					<g:cell verticalAlignment="ALIGN_MIDDLE">
-						<g:Label ui:field="headerText"></g:Label>
+						<g:HorizontalPanel width="100%" ui:field="headerHP">
+							<g:Label ui:field="headerText"></g:Label>
+							<m:IconButton ui:field="showAll" icon="refresh" text="{cc.showAll}" ></m:IconButton>
+						</g:HorizontalPanel>
 					</g:cell>					
 				</g:HorizontalPanel>
 			</g:customHeader>

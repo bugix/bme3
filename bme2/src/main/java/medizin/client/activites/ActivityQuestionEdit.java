@@ -12,14 +12,12 @@ import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.AbstractDetailsPlace.Operation;
 import medizin.client.place.PlaceQuestion;
 import medizin.client.place.PlaceQuestionDetails;
-import medizin.client.proxy.CommentProxy;
 import medizin.client.proxy.McProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.proxy.QuestionResourceProxy;
 import medizin.client.proxy.QuestionTypeProxy;
-import medizin.client.request.CommentRequest;
 import medizin.client.request.McRequest;
 import medizin.client.request.PersonRequest;
 import medizin.client.request.QuestionEventRequest;
@@ -164,7 +162,7 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 		if (this.operation == PlaceQuestionDetails.Operation.EDIT) {
 			Log.info("edit");
 			QuestionRequest questionRequest = mcRequest.append(requests.questionRequest());
-			questionRequest.find(questionPlace.getProxyId()).with("previousVersion", "keywords", "questEvent", "comment", "questionType", "mcs", "rewiewer", "autor", "answers", "answers.autor", "answers.rewiewer", "questionResources").to(new BMEReceiver<Object>() {
+			questionRequest.find(questionPlace.getProxyId()).with("previousVersion", "keywords", "questEvent", "questionType", "mcs", "rewiewer", "autor", "answers", "answers.autor", "answers.rewiewer", "questionResources").to(new BMEReceiver<Object>() {
 
 				@Override
 				public void onSuccess(Object response) {
@@ -720,17 +718,15 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 	
 	protected final void createNewQuestion(QuestionProxy previousQuestionProxy, final Status status, final boolean isAcceptedByAdmin, final boolean isAcceptedByReviewer, final boolean isAcceptedByAuthor, final Function<EntityProxyId<?>, Void> gotoFunction) {
 		
-		final CommentRequest commentRequest = requests.commentRequest();
 		final QuestionResourceRequest questionResourceRequest = requests.questionResourceRequest();
 		final QuestionRequest oldQuestionRequest = requests.questionRequest();
-		final QuestionRequest questionRequest = commentRequest.append(questionResourceRequest).append(oldQuestionRequest).append(requests.questionRequest());
+		final QuestionRequest questionRequest = questionResourceRequest.append(oldQuestionRequest).append(requests.questionRequest());
 		
 		QuestionProxy question = questionRequest.create(QuestionProxy.class);
-		CommentProxy commentProxy = commentRequest.create(CommentProxy.class);
 		Set<QuestionResourceProxy> questionResourceProxies = Sets.newHashSet();
 		
 		question.setStatus(status);
-		view.setValuesForQuestion(question,commentProxy);
+		view.setValuesForQuestion(question);
 		
 		
 		
@@ -782,16 +778,14 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 	
 	protected final void updateQuestion(final Status status, final boolean isAcceptedByAdmin, final boolean isAcceptedByReviewer, final boolean isAcceptedByAuthor, final boolean isForcedActive, final Function<EntityProxyId<?>, Void> gotoFunction) {
 		
-		final CommentRequest commentRequest = requests.commentRequest();
 		final QuestionResourceRequest questionResourceRequest = requests.questionResourceRequest();
-		final QuestionRequest questionRequest = commentRequest.append(questionResourceRequest).append(requests.questionRequest());
+		final QuestionRequest questionRequest = questionResourceRequest.append(requests.questionRequest());
 		
 		final QuestionProxy questionProxy = questionRequest.edit(this.question);
-		final CommentProxy commentProxy = commentRequest.edit(this.question.getComment());
 		final Set<QuestionResourceProxy> questionResourceProxies = Sets.newHashSet();
 		
 		questionProxy.setStatus(status);
-		view.setValuesForQuestion(questionProxy,commentProxy);
+		view.setValuesForQuestion(questionProxy);
 		
 		questionProxy.setIsAcceptedAdmin(isAcceptedByAdmin);
 		questionProxy.setIsAcceptedAuthor(isAcceptedByAuthor);

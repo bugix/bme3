@@ -4,12 +4,10 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EntityManager;
 import javax.persistence.Enumerated;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.PostRemove;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
@@ -24,10 +22,6 @@ import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import medizin.client.factory.receiver.BMEReceiver;
-import medizin.client.proxy.AnswerProxy;
-import medizin.client.request.AnswerRequest;
-import medizin.client.ui.view.AcceptAnswerSubView;
 import medizin.shared.QuestionTypes;
 import medizin.shared.Status;
 import medizin.shared.Validity;
@@ -111,8 +105,10 @@ public class Answer {
     @ManyToOne
     private Person autor;
     
-    @OneToOne(cascade = CascadeType.ALL)
-    private Comment comment;
+    /*@OneToOne(cascade = CascadeType.ALL,fetch=FetchType.LAZY)
+    private Comment comment;*/
+    
+    private String comment = "";
     
     @NotNull
     @Value("false")
@@ -705,5 +701,24 @@ public class Answer {
         TypedQuery<Long> q = entityManager().createQuery(cq);
         
         return q.getSingleResult();
+	}
+
+	public static Answer findAnswersByAnswerTextQuestionValidityAuthorAndReviewer(String answerText, Question question, Validity validity, Person autor, Person rewiewer) {
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+    	CriteriaQuery<Answer> criteriaQuery = criteriaBuilder.createQuery(Answer.class);
+    	Root<Answer> from = criteriaQuery.from(Answer.class);
+    	Predicate pre1 = criteriaBuilder.equal(from.get("answerText"), answerText);
+    	Predicate pre2 = criteriaBuilder.equal(from.get("question").get("id"), question.getId());
+    	Predicate pre3 = criteriaBuilder.equal(from.get("rewiewer").get("id"), rewiewer.getId());
+    	Predicate pre4 = criteriaBuilder.equal(from.get("autor").get("id"), autor.getId());
+    	Predicate pre5 = criteriaBuilder.equal(from.get("validity"), validity);
+    	
+    	criteriaQuery.where(criteriaBuilder.and(pre1,pre2,pre3,pre4,pre5));
+		TypedQuery<Answer> query = entityManager().createQuery(criteriaQuery);
+		List<Answer> resultList = query.getResultList();
+		if(resultList != null && resultList.size() > 0) {
+			return resultList.get(0);
+		}
+		return null;
 	}
 }

@@ -11,10 +11,12 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Selection;
 import javax.validation.constraints.NotNull;
 
 import medizin.shared.Status;
 
+import org.apache.log4j.Logger;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
@@ -24,6 +26,8 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooJpaActiveRecord
 public class AnswerToAssQuestion {
 
+	private static Logger log = Logger.getLogger(Question.class);
+	
     @NotNull
     private Integer sortOrder;
 
@@ -99,6 +103,55 @@ public class AnswerToAssQuestion {
         
         return q.getSingleResult();
     }
+
+	public static List<Answer> findAllAnswerToAssQuestion(Long assessmentQuestionId, int start, int length) {
+		Person loggedUser = Person.myGetLoggedPerson();
+		Institution institution = Institution.myGetInstitutionToWorkWith();
+		
+		if (loggedUser == null || institution == null)
+			throw new IllegalArgumentException("The person and institution arguments are required");
+		
+		CriteriaBuilder cb = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Answer> cq = cb.createQuery(Answer.class);
+		Root<AnswerToAssQuestion> from = cq.from(AnswerToAssQuestion.class);
+		cq.orderBy(cb.asc(from.get("sortOrder")));
+		Selection<Answer> select = from.get("answers");
+		cq.select(select);
+		Predicate predicate = allAnswerToAssQuestionByAssessmnetQuestionPredicate(assessmentQuestionId,cb, from);
+		cq.where(predicate);
+        TypedQuery<Answer> q = entityManager().createQuery(cq);
+        q.setFirstResult(start);
+        q.setMaxResults(length);
+        return q.getResultList();
+	}
+	
+	public static Long countAllAnswerToAssQuestion(Long assessmentQuestionId) {
+		Person loggedUser = Person.myGetLoggedPerson();
+		Institution institution = Institution.myGetInstitutionToWorkWith();
+		
+		if (loggedUser == null || institution == null)
+			throw new IllegalArgumentException("The person and institution arguments are required");
+		
+		CriteriaBuilder cb = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+		Root<AnswerToAssQuestion> from = cq.from(AnswerToAssQuestion.class);
+		
+		cq.select(cb.count(from));
+		
+		Predicate predicate = allAnswerToAssQuestionByAssessmnetQuestionPredicate(assessmentQuestionId,cb, from);
+		cq.where(predicate);
+		
+        TypedQuery<Long> q = entityManager().createQuery(cq);
+        
+        Long size = q.getSingleResult();
+        log.info("Assessment Question : " + assessmentQuestionId);
+        log.info("Size : " + size);
+        return size;
+	}
+
+	private static Predicate allAnswerToAssQuestionByAssessmnetQuestionPredicate(Long assessmentQuestionId, CriteriaBuilder cb, Root<AnswerToAssQuestion> from) {
+		return cb.equal(from.get("assesmentQuestion").get("id"), assessmentQuestionId);
+	}
 	
 	
 //	public static List<AnswerToAssQuestion> findAnswerToAssQuestionByAnswer(java.lang.Long answerId) {

@@ -7,30 +7,38 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.FetchType;
 import javax.persistence.FlushModeType;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Selection;
+import javax.persistence.criteria.SetJoin;
 import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import medizin.server.utils.ServerConstants;
+import medizin.shared.Status;
 import medizin.shared.utils.PersonAccessRight;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.web.bindery.requestfactory.server.RequestFactoryServlet;
 
 @RooJavaBean
@@ -81,7 +89,7 @@ public class Person {
     @Column(columnDefinition="BIT", length = 1)
     private Boolean isDoctor;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "person")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "person",fetch=FetchType.LAZY)
     private Set<UserAccessRights> questionAccesses = new HashSet<UserAccessRights>();
 
     @OneToOne
@@ -413,4 +421,167 @@ public class Person {
 			 return resultList.get(0);
 		 }
 	 }
+
+	public static Person findPersonByNameAndPrename(String name ,String prename) {
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+    	CriteriaQuery<Person> criteriaQuery = criteriaBuilder.createQuery(Person.class);
+    	Root<Person> from = criteriaQuery.from(Person.class);
+    	Predicate pre1 = criteriaBuilder.equal(from.get("name"), name);
+    	Predicate pre2 = criteriaBuilder.equal(from.get("prename"), prename);
+    	criteriaQuery.where(criteriaBuilder.and(pre1,pre2));
+		TypedQuery<Person> query = entityManager().createQuery(criteriaQuery);
+		List<Person> resultList = query.getResultList();
+		if(resultList != null && resultList.size() > 0) {
+			return resultList.get(0);
+		}
+		return null;
+	}
+	
+	 
+	 public static List<Person> findAllPeopleNotAcceptedQuestionAnswerAssesment() {
+		 Set<Person> persons = Sets.newHashSet();
+		 persons.addAll(findPersonAutorCountForNotAccptedQuestion());
+		 persons.addAll(findPersonReviewerCountForNotAccptedQuestion());
+		 persons.addAll(findPersonForNotAddedAssessmentQuestion());
+		 persons.addAll(findPersonAuthorCountForNotAccptedAnswer());
+		 persons.addAll(findPersonReviewerCountForNotAccptedAnswer());
+		 return Lists.newArrayList(persons);
+	 }
+	 
+	 
+	private static List<Person> findPersonAutorCountForNotAccptedQuestion() {
+
+		Person loggedUser = Person.myGetLoggedPerson();
+		Institution institution = Institution.myGetInstitutionToWorkWith();
+		if (loggedUser == null || institution == null)
+			throw new IllegalArgumentException("The person and institution arguments are required");
+
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Person> criteriaQuery = criteriaBuilder.createQuery(Person.class);
+		Root<Question> from = criteriaQuery.from(Question.class);
+		Selection<Person> path = from.get("autor");
+		criteriaQuery.select(path);
+		criteriaQuery.distinct(true);
+
+		Predicate pre1 = criteriaBuilder.and(criteriaBuilder.equal(from.get("questEvent").get("institution").get("id"),institution.getId()), criteriaBuilder.notEqual(from.get("status"), Status.DEACTIVATED), criteriaBuilder.notEqual(from.get("isForcedActive"), true));
+		Predicate pre3 = criteriaBuilder.equal(from.get("isAcceptedAuthor"), false);
+
+		pre1 = criteriaBuilder.and(pre1, pre3);
+		
+		criteriaQuery.where(pre1);
+
+		TypedQuery<Person> q = entityManager().createQuery(criteriaQuery);
+		log.info("All persons : " + q.unwrap(Query.class).getQueryString());
+		return q.getResultList();
+	}
+	
+	private static List<Person> findPersonReviewerCountForNotAccptedQuestion() {
+
+		Person loggedUser = Person.myGetLoggedPerson();
+		Institution institution = Institution.myGetInstitutionToWorkWith();
+		if (loggedUser == null || institution == null)
+			throw new IllegalArgumentException("The person and institution arguments are required");
+
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Person> criteriaQuery = criteriaBuilder.createQuery(Person.class);
+		Root<Question> from = criteriaQuery.from(Question.class);
+		Selection<Person> path = from.get("rewiewer");
+		criteriaQuery.select(path);
+		criteriaQuery.distinct(true);
+
+		Predicate pre1 = criteriaBuilder.and(criteriaBuilder.equal(from.get("questEvent").get("institution").get("id"),institution.getId()), criteriaBuilder.notEqual(from.get("status"), Status.DEACTIVATED), criteriaBuilder.notEqual(from.get("isForcedActive"), true));
+		Predicate pre3 = criteriaBuilder.equal(from.get("isAcceptedRewiever"), false);
+
+		pre1 = criteriaBuilder.and(pre1, pre3);
+		
+		criteriaQuery.where(pre1);
+
+		TypedQuery<Person> q = entityManager().createQuery(criteriaQuery);
+		log.info("All persons : " + q.unwrap(Query.class).getQueryString());
+		return q.getResultList();
+	}
+	public static List<Person> findPersonAuthorCountForNotAccptedAnswer()
+	{
+		Person loggedUser = Person.myGetLoggedPerson();
+		Institution institution = Institution.myGetInstitutionToWorkWith();
+		if (loggedUser == null || institution == null)
+			throw new IllegalArgumentException("The person and institution arguments are required");
+		
+		CriteriaBuilder cb = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Person> cq = cb.createQuery(Person.class);
+		Root<Answer> from = cq.from(Answer.class);
+		
+		Selection<Person> path = from.get("autor");
+		cq.select(path);
+		cq.distinct(true);
+		
+		Predicate pre1 = cb.and(cb.equal(from.get("question").get("questEvent").get("institution").get("id"),institution.getId()), cb.notEqual(from.get("status"), Status.DEACTIVATED), cb.notEqual(from.get("isForcedActive"), true));
+		Predicate pre2 = cb.equal(from.get("isAnswerAcceptedAutor"), false);
+		pre1 = cb.and(pre1, pre2);
+		
+		cq.where(pre1);
+		
+       TypedQuery<Person> q = entityManager().createQuery(cq);
+       
+       return q.getResultList();
+	}
+	public static List<Person> findPersonReviewerCountForNotAccptedAnswer()
+	{
+		Person loggedUser = Person.myGetLoggedPerson();
+		Institution institution = Institution.myGetInstitutionToWorkWith();
+		if (loggedUser == null || institution == null)
+			throw new IllegalArgumentException("The person and institution arguments are required");
+		
+		CriteriaBuilder cb = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Person> cq = cb.createQuery(Person.class);
+		Root<Answer> from = cq.from(Answer.class);
+		
+		Selection<Person> path = from.get("rewiewer");
+		cq.select(path);
+		cq.distinct(true);
+		
+		Predicate pre1 = cb.and(cb.equal(from.get("question").get("questEvent").get("institution").get("id"),institution.getId()), cb.notEqual(from.get("status"), Status.DEACTIVATED), cb.notEqual(from.get("isForcedActive"), true));
+		Predicate pre2 = cb.equal(from.get("isAnswerAcceptedReviewWahrer"), false);
+		pre1 = cb.and(pre1, pre2);
+		
+		cq.where(pre1);
+		
+       TypedQuery<Person> q = entityManager().createQuery(cq);
+       
+       return q.getResultList();
+	}
+	
+	private static List<Person> findPersonForNotAddedAssessmentQuestion() {
+		Person loggedUser = Person.myGetLoggedPerson();
+		Institution institution = Institution.myGetInstitutionToWorkWith();
+		if (loggedUser == null || institution == null)
+			throw new IllegalArgumentException("The person and institution arguments are required");
+
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Person> criteriaQuery = criteriaBuilder.createQuery(Person.class);
+		Root<Assesment> from = criteriaQuery.from(Assesment.class);
+		criteriaQuery.distinct(true);
+
+		Date dateClosed = new Date();
+		Date dateOpen = new Date();
+		Boolean isClosed = false;
+
+		SetJoin<Assesment, QuestionSumPerPerson> questionSumPerPersonSetJoin = from.joinSet("questionSumPerPerson", JoinType.LEFT);
+		Expression<Date> closedDateExp = from.get("dateClosed");
+		Expression<Date> openDateExp = from.get("dateOpen");
+		Predicate pre2 = criteriaBuilder.greaterThanOrEqualTo(closedDateExp,dateClosed);
+		Predicate pre3 = criteriaBuilder.lessThanOrEqualTo(openDateExp,dateOpen);
+		Predicate pre4 = criteriaBuilder.equal(from.get("isClosed"), isClosed);
+		Predicate pre5 = criteriaBuilder.equal(from.get("institution").get("id"), institution.getId());
+
+		criteriaQuery.where(criteriaBuilder.and(pre2, pre3, pre4, pre5));
+		
+		Selection<Person> path =questionSumPerPersonSetJoin.get("responsiblePerson");
+				
+		criteriaQuery.select(path);
+		
+		TypedQuery<Person> query = entityManager().createQuery(criteriaQuery);
+		
+		return query.getResultList();
+	}
 }

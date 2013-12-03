@@ -95,7 +95,7 @@ public class ActivitySystemOverview extends AbstractActivityWrapper implements S
 			});
 			
 			PersonRequest personRequest = answerRequest.append(requests.personRequest());
-			personRequest.findAllPeople().to(new BMEReceiver<List<PersonProxy>>() {
+			personRequest.findAllPeopleNotAcceptedQuestionAnswerAssesment().to(new BMEReceiver<List<PersonProxy>>() {
 
 				@Override
 				public void onSuccess(List<PersonProxy> response) {
