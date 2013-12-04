@@ -55,4 +55,14 @@ public class MinorQuestionSkill {
 		
 		return query.getResultList();
 	}
+
+	public static List<MinorQuestionSkill> findMinorQuestionSkillByQuestion(Long questionId) {
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<MinorQuestionSkill> criteriaQuery = criteriaBuilder.createQuery(MinorQuestionSkill.class);
+		Root<MinorQuestionSkill> from = criteriaQuery.from(MinorQuestionSkill.class);
+		criteriaQuery.distinct(true);
+		criteriaQuery.where(criteriaBuilder.equal(from.get("question").get("id"), questionId));
+		TypedQuery<MinorQuestionSkill> query = entityManager().createQuery(criteriaQuery);
+		return query.getResultList();
+	}
 }

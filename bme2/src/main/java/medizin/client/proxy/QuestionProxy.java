@@ -123,5 +123,13 @@ public interface QuestionProxy extends EntityProxy {
 
     abstract void setModifiedBy(PersonProxy modifiedBy);
 
+    abstract Set<medizin.client.proxy.MainQuestionSkillProxy> getMainQuestionSkills();
+
+    abstract void setMainQuestionSkills(Set<medizin.client.proxy.MainQuestionSkillProxy> mainQuestionSkills);
+
+    abstract Set<medizin.client.proxy.MinorQuestionSkillProxy> getMinorQuestionSkills();
+
+    abstract void setMinorQuestionSkills(Set<medizin.client.proxy.MinorQuestionSkillProxy> minorQuestionSkills);
+
     abstract Integer getVersion();
 }

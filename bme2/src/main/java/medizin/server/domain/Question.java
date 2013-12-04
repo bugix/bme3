@@ -112,10 +112,10 @@ public class Question {
 	@Column(columnDefinition="BIT", length = 1)
 	private Boolean isActive;*/
 
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	private medizin.server.domain.Question previousVersion;
 
-	@ManyToMany(cascade = CascadeType.ALL,fetch=FetchType.LAZY)
+	@ManyToMany(fetch=FetchType.LAZY)
 	protected Set<Keyword> keywords = new HashSet<Keyword>();
 
 	@NotNull
@@ -134,7 +134,7 @@ public class Question {
 	private Status status;
 
 	@NotNull
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany
 	protected Set<Mc> mcs = new HashSet<Mc>();
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "question",fetch=FetchType.LAZY)
@@ -181,6 +181,12 @@ public class Question {
 	
 	@ManyToOne
 	private Person modifiedBy;
+	
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "question",fetch=FetchType.LAZY)
+	private Set<MainQuestionSkill> mainQuestionSkills =  new HashSet<MainQuestionSkill>();
+	
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "question",fetch=FetchType.LAZY)
+	private Set<MinorQuestionSkill> minorQuestionSkills = new HashSet<MinorQuestionSkill>();
 	
 	private static final DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 		
@@ -1855,9 +1861,47 @@ public class Question {
 	}
 	
 	public void deactivatedQuestion() {
-		this.status = Status.DEACTIVATED;
-		this.persist();
+		if(hasQuestionUsedInAssessment()) {
+			this.status = Status.DEACTIVATED;
+			this.persist();	
+		}else {
+			if(this.getQuestionType().getQuestionType().equals(QuestionTypes.Matrix)) {
+				Question temp = this;
+				while(temp != null) {
+					List<MatrixValidity> matrixValidities = MatrixValidity.findAllMatrixValidityForQuestion(temp.getId());
+					if(matrixValidities != null && matrixValidities.size() > 0) {
+						for (MatrixValidity matrixValidity : matrixValidities) {
+							matrixValidity.remove();
+						}	
+					}
+					temp = temp.getPreviousVersion();
+				}
+				this.remove();
+			} else {
+				this.remove();	
+			}
+		}
+		
 	}
+	
+	public boolean hasQuestionUsedInAssessment() {
+		
+		Question temp = this;
+		boolean hasAssessmentQuestion = false;
+		
+		while(temp != null) {
+			Set<AssesmentQuestion> assesmentQuestionSet2 = temp.getAssesmentQuestionSet();
+			if(assesmentQuestionSet2 == null || assesmentQuestionSet2.size() <= 0) {
+				temp = temp.getPreviousVersion();
+			}else {
+				hasAssessmentQuestion = true;
+				break;
+			}
+		}
+		
+		return hasAssessmentQuestion;
+	}
+	
 	
 	/*public Question questionResendToReviewWithMajorVersion(boolean isAdmin) {
 		log.info("save with major version here");
@@ -2070,6 +2114,22 @@ public class Question {
 				
 			HashSet<Keyword> keywordSet = new HashSet<Keyword>(oldQuestion.getKeywords());
 			this.setKeywords(keywordSet);
+			
+			List<MainQuestionSkill> mainQuestionSkills = MainQuestionSkill.findMainQuestionSkillByQuestion(oldQuestion.getId());
+			for (MainQuestionSkill mainQuestionSkill : mainQuestionSkills) {
+				MainQuestionSkill newMainQuestionSkill = new MainQuestionSkill();
+				BMEUtils.copyValues(mainQuestionSkill,newMainQuestionSkill,MainQuestionSkill.class);
+				newMainQuestionSkill.setQuestion(this);
+				newMainQuestionSkill.persist();
+			}
+			
+			List<MinorQuestionSkill> minorQuestionSkills = MinorQuestionSkill.findMinorQuestionSkillByQuestion(oldQuestion.getId());
+			for (MinorQuestionSkill minorQuestionSkill : minorQuestionSkills) {
+				MinorQuestionSkill newMinorQuestionSkill = new MinorQuestionSkill();
+				BMEUtils.copyValues(minorQuestionSkill, newMinorQuestionSkill, MinorQuestionSkill.class);
+				newMinorQuestionSkill.setQuestion(this);
+				newMinorQuestionSkill.persist();
+			}
 			
 			if(Status.ACTIVE.equals(oldQuestion.status) == false) {
 				oldQuestion.setStatus(Status.DEACTIVATED);
@@ -2541,11 +2601,12 @@ public class Question {
 		Root<Question> from = criteriaQuery.from(Question.class);
 		criteriaQuery.distinct(true);
 		
-		criteriaQuery.where(deactivateQuestionPredicate(searchValue, searchField, criteriaBuilder, criteriaQuery, from));
+		criteriaQuery.where(deactivateQuestionPredicate(searchValue, searchField, criteriaBuilder, criteriaQuery, from,institution.getId()));
 		
 		TypedQuery<Question> query = entityManager().createQuery(criteriaQuery);
-		
-		System.out.println("DEACTIVATED QUERY : " + query.unwrap(Query.class).getQueryString());
+		query.setFirstResult(start);
+		query.setMaxResults(length);
+		log.info("DEACTIVATED QUERY : " + query.unwrap(Query.class).getQueryString());
 		return query.getResultList();
 	}
 	
@@ -2557,17 +2618,19 @@ public class Question {
 			throw new IllegalArgumentException("The person and institution arguments are required");
 		
 		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
-		CriteriaQuery<Question> criteriaQuery = criteriaBuilder.createQuery(Question.class);
+		CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
 		Root<Question> from = criteriaQuery.from(Question.class);
 		criteriaQuery.distinct(true);
-			
-		criteriaQuery.where(deactivateQuestionPredicate(searchValue, searchField, criteriaBuilder, criteriaQuery, from));
+		criteriaQuery.select(criteriaBuilder.count(from));	
 		
-		TypedQuery<Question> query = entityManager().createQuery(criteriaQuery);
-		return query.getResultList().size();
+		criteriaQuery.where(deactivateQuestionPredicate(searchValue, searchField, criteriaBuilder, criteriaQuery, from,institution.getId()));
+		
+		TypedQuery<Long> query = entityManager().createQuery(criteriaQuery);
+		log.info("count DEACTIVATED QUERY : " + query.unwrap(Query.class).getQueryString());
+		return query.getSingleResult().intValue();
 	}
 
-	public static Predicate deactivateQuestionPredicate(String searchValue, List<String> searchField, CriteriaBuilder criteriaBuilder, CriteriaQuery<Question> criteriaQuery, Root<Question> from) {
+	public static <T> Predicate deactivateQuestionPredicate(String searchValue, List<String> searchField, CriteriaBuilder criteriaBuilder, CriteriaQuery<T> criteriaQuery, Root<Question> from,Long institutionID) {
 		Predicate pre1 = criteriaBuilder.equal(from.get("status"), Status.DEACTIVATED);
 		
 		Subquery<Question> subQuery = criteriaQuery.subquery(Question.class);
@@ -2581,6 +2644,8 @@ public class Question {
 		if (searchPredicate != null)
 			mainPredicate = criteriaBuilder.and(mainPredicate, searchPredicate);
 		
+		Predicate institutionPredicate =criteriaBuilder.equal(from.get("questEvent").get("institution").get("id"),institutionID);
+		mainPredicate = criteriaBuilder.and(mainPredicate, institutionPredicate);
 		return mainPredicate;
 	}
 	

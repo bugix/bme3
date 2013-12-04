@@ -54,4 +54,14 @@ public class MainQuestionSkill {
 		query.setMaxResults(length);
 		return query.getResultList();
 	}
+
+	public static List<MainQuestionSkill> findMainQuestionSkillByQuestion(Long questionId) {
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<MainQuestionSkill> criteriaQuery = criteriaBuilder.createQuery(MainQuestionSkill.class);
+		Root<MainQuestionSkill> from = criteriaQuery.from(MainQuestionSkill.class);
+		criteriaQuery.distinct(true);
+		criteriaQuery.where(criteriaBuilder.equal(from.get("question").get("id"), questionId));
+		TypedQuery<MainQuestionSkill> query = entityManager().createQuery(criteriaQuery);
+		return query.getResultList();
+	}
 }

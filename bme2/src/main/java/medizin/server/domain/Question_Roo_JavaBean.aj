@@ -8,7 +8,9 @@ import java.util.Set;
 import medizin.server.domain.Answer;
 import medizin.server.domain.AssesmentQuestion;
 import medizin.server.domain.Keyword;
+import medizin.server.domain.MainQuestionSkill;
 import medizin.server.domain.Mc;
+import medizin.server.domain.MinorQuestionSkill;
 import medizin.server.domain.Person;
 import medizin.server.domain.Question;
 import medizin.server.domain.QuestionEvent;
@@ -233,6 +235,22 @@ privileged aspect Question_Roo_JavaBean {
     
     public void Question.setModifiedBy(Person modifiedBy) {
         this.modifiedBy = modifiedBy;
+    }
+    
+    public Set<MainQuestionSkill> Question.getMainQuestionSkills() {
+        return this.mainQuestionSkills;
+    }
+    
+    public void Question.setMainQuestionSkills(Set<MainQuestionSkill> mainQuestionSkills) {
+        this.mainQuestionSkills = mainQuestionSkills;
+    }
+    
+    public Set<MinorQuestionSkill> Question.getMinorQuestionSkills() {
+        return this.minorQuestionSkills;
+    }
+    
+    public void Question.setMinorQuestionSkills(Set<MinorQuestionSkill> minorQuestionSkills) {
+        this.minorQuestionSkills = minorQuestionSkills;
     }
     
 }
