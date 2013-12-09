@@ -4919,3 +4919,24 @@ background: url("images/colorpicker.png");
 	border-bottom-right-radius: 16px;
 	
 }
+.bookingAssesmentDetailViewHP{
+	margin-left: 5px;
+    padding-top: 23px !important;
+}
+.bookAssesmentListBox{
+	margin-right: 13px;
+    margin-top: 3px;
+    padding-left: 9px;
+    padding-right: 6px;
+	
+}
+.assesmentSuggestionBox{
+	margin-left: 20px;
+	margin-right: 10px;
+	padding-left: 20px;
+	padding-right: 10px;
+}
+.bookAssesmentShowButton{
+	margin-left: 10px;
+    padding-left: 20px;
+}

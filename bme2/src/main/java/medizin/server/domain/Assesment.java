@@ -36,6 +36,7 @@ import medizin.shared.utils.SharedConstant;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -485,5 +486,12 @@ public class Assesment {
 		}
 		return null;
 
+	}
+	public static List<Assesment> findAssesmentOfGivenYear(String selectedYear){
+		 EntityManager em = Assesment.entityManager();
+	    TypedQuery<Assesment> q = em.createQuery("SELECT Assesment FROM Assesment AS assesment WHERE assesment.dateOfAssesment >='" +selectedYear + "-01-01 00:00:00'  AND assesment.dateOfAssesment <='"+selectedYear + "-12-31 00:00:00'", Assesment.class);
+	    log.info("Query is : " + q.toString());
+	    return q.getResultList();
+		
 	}
 }

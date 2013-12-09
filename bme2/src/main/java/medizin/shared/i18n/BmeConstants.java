@@ -824,5 +824,7 @@ public interface BmeConstants extends Constants {
 	public String trenschaerfe();
 	
 	public String showAll();
+	
+	public String show();
 }
 

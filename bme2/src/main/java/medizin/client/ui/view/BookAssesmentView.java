@@ -8,7 +8,14 @@ import com.google.gwt.user.client.ui.IsWidget;
 public interface BookAssesmentView extends IsWidget {
     void setName(String helloName);
     void setPresenter(Presenter activityBookAssesment);
+    void setDelegate(Delegate delegate);
+    
+    public interface Delegate {
 
+		void yearSelected(String selectedYear);
+
+    }
+    
     public interface Presenter {
         void goTo(Place place);
     }

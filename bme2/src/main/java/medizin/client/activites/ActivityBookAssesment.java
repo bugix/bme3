@@ -19,7 +19,7 @@ import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 import com.google.web.bindery.requestfactory.shared.EntityProxyId;
 
-public class ActivityBookAssesment extends AbstractActivityWrapper implements BookAssesmentView.Presenter {
+public class ActivityBookAssesment extends AbstractActivityWrapper implements BookAssesmentView.Presenter ,BookAssesmentView.Delegate{
 
 	//private PlaceBookAssesment bookAssesmentPlace;
 	private AcceptsOneWidget widget;
@@ -78,7 +78,7 @@ public class ActivityBookAssesment extends AbstractActivityWrapper implements Bo
 		this.widget = widget;
 		this.view = bookAssesmentView;
         widget.setWidget(bookAssesmentView.asWidget());
-        
+        view.setDelegate(this);
         
         /*eventBus.addHandler(PlaceChangeEvent.TYPE, new PlaceChangeEvent.Handler() {
 			public void onPlaceChange(PlaceChangeEvent event) {
@@ -206,5 +206,20 @@ public class ActivityBookAssesment extends AbstractActivityWrapper implements Bo
 		public void placeChanged(Place place) {
 			//updateSelection(event.getNewPlace());
 			// TODO implement
+		}
+
+		@Override
+		public void yearSelected(String selectedYear) {
+			Log.info("getting all assesment of year : " + selectedYear);
+			
+			requests.assesmentRequest().findAssesmentOfGivenYear(selectedYear).fire(new BMEReceiver<List<AssesmentProxy>>() {
+
+				@Override
+				public void onSuccess(List<AssesmentProxy> response) {
+					Log.info("Total Assesment of this year is : " + response.size());
+					((BookAssesmentViewImpl)view).setAssesmentSuggsetBoxValue(response);
+				}
+			});
+			
 		}
 }

@@ -61,6 +61,8 @@
 		border-left: 1px solid #AAAAAA;
     	border-right: 1px solid #AAAAAA;
 		border-bottom: 1px solid #AAAAAA;
+		top: 83px !important;
+		margin-left:17px;
 	}
 
 	</ui:style>

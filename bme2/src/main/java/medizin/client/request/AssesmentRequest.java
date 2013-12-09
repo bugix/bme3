@@ -21,4 +21,6 @@ public interface AssesmentRequest extends AssesmentRequest_Roo_Gwt {
 	abstract Request<List<AssesmentProxy>> findAssessmentByLoggedUser(Long loggedUserId, boolean isAdminOrInstitutionalAdmin);
 	
 	abstract Request<Boolean> systemOverviewSendMail(Long personId, List<AssesmentProxy> assesmentList, String messageContent, String mailSubject);
+	
+	abstract Request<List<AssesmentProxy>> findAssesmentOfGivenYear(String selectedYear);
 }

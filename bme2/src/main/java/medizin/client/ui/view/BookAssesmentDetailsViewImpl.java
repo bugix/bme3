@@ -197,6 +197,7 @@ public class BookAssesmentDetailsViewImpl extends Composite implements BookAsses
 		});
 		
 		HorizontalPanel horizontalPanel = new HorizontalPanel();
+		horizontalPanel.setStyleName("bookingAssesmentDetailViewHP");
 		horizontalPanel.add(shuffle);
 		horizontalPanel.add(printAVersion);
 		horizontalPanel.add(printBVersion);
