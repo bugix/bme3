@@ -28,4 +28,10 @@ public interface PersonRequest extends PersonRequest_Roo_Gwt {
 	Request<PersonAccessRightProxy> fetchLoggedPersonAccessRights();
 
 	Request<List<PersonProxy>> findAllPeopleNotAcceptedQuestionAnswerAssesment();
+	
+	Request<List<PersonProxy>> findAllPeopleByNameASC();
+
+	Request<List<PersonProxy>> findAllUsersOfGivenSearch(Integer start, Integer length,String value);
+
+	Request<Long> countAllUsersOfGivenSearch(String value);
 }

@@ -100,7 +100,9 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 		
 		view.setRewiewerPickerValues(Collections.<PersonProxy> emptyList(), null);
 		PersonRequest personRequestForReviewer = requests.personRequest();
-		personRequestForReviewer.findAllPeople().with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).to(new BMEReceiver<List<PersonProxy>>() {
+		//Added this to show people in ASC order Manish
+		personRequestForReviewer.findAllPeopleByNameASC().with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).to(new BMEReceiver<List<PersonProxy>>() {
+		//personRequestForReviewer.findAllPeople().with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).to(new BMEReceiver<List<PersonProxy>>() {
 
 			public void onSuccess(List<PersonProxy> response) {
 				List<PersonProxy> values = new ArrayList<PersonProxy>();
@@ -113,7 +115,9 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 		
 		view.setAutorPickerValues(Collections.<PersonProxy> emptyList());
 		PersonRequest personRequestForAuthor = personRequestForReviewer.append(requests.personRequest());
-		personRequestForAuthor.findAllPeople().with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).to(new BMEReceiver<List<PersonProxy>>() {
+		//Added this to show people in ASC order Manish
+		personRequestForAuthor.findAllPeopleByNameASC().with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).to(new BMEReceiver<List<PersonProxy>>() {
+		//personRequestForAuthor.findAllPeople().with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).to(new BMEReceiver<List<PersonProxy>>() {
 
 			public void onSuccess(List<PersonProxy> response) {
 				List<PersonProxy> values = new ArrayList<PersonProxy>();

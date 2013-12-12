@@ -36,7 +36,6 @@ import com.google.web.bindery.requestfactory.shared.EntityProxyId;
 public class ActivityUser extends AbstractActivityWrapper implements UserView.Presenter, UserView.Delegate {
 
 	private PlaceUser userPlace;
-
 	private AcceptsOneWidget widget;
 	private UserView view;
 	private CellTable<PersonProxy> table;
@@ -45,17 +44,14 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 	private SingleSelectionModel<PersonProxy> selectionModel;
 	private HandlerRegistration rangeChangeHandler;
 	private ActivityUser activityUser;
-
-
 	private McAppRequestFactory requests;
 	private PlaceController placeController;
-
 	private EntityProxyId<?> proxyId = null;
+	private String searchValue ="";
 
 
 	@Inject
-	public ActivityUser(PlaceUser place, McAppRequestFactory requests,
-			PlaceController placeController) {
+	public ActivityUser(PlaceUser place, McAppRequestFactory requests,PlaceController placeController) {
 		super(place, requests, placeController);
 		this.userPlace = place;
         this.requests = requests;
@@ -69,20 +65,17 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 //		activityManger = new ActivityManager(masterActivityMap, requests.getEventBus());
         
 		this.activityUserMapper = new ActivityUserMapper(requests, placeController);
-		this.activityManger = new ActivityManager(activityUserMapper,
-				requests.getEventBus());
+		this.activityManger = new ActivityManager(activityUserMapper,requests.getEventBus());
 	}
 
 	@Override
 	public String mayStop() {
-		
 		return null;
 	}
 
 	@Override
 	public void onCancel() {
 		onStop();
-
 	}
 
 	@Override
@@ -146,8 +139,6 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 	public void start3(AcceptsOneWidget widget, EventBus eventBus) {
 		Log.info("Activity Person start");
 		
-		
-		
 		UserView userView = new UserViewImpl();
 		
 		userView.setPresenter(this);
@@ -175,19 +166,15 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 		activityManger.setDisplay(view.getDetailsPanel());
 
 		// Inherit the view's key provider
-		ProvidesKey<PersonProxy> keyProvider = ((AbstractHasData<PersonProxy>) table)
-				.getKeyProvider();
+		ProvidesKey<PersonProxy> keyProvider = ((AbstractHasData<PersonProxy>) table).getKeyProvider();
 		selectionModel = new SingleSelectionModel<PersonProxy>(keyProvider);
 		table.setSelectionModel(selectionModel);
 
-		selectionModel
-				.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+		selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 					public void onSelectionChange(SelectionChangeEvent event) {
-						PersonProxy selectedObject = selectionModel
-								.getSelectedObject();
+						PersonProxy selectedObject = selectionModel.getSelectedObject();
 						if (selectedObject != null) {
-							Log.debug(selectedObject.getEmail()
-									+ " selected!");
+							Log.debug(selectedObject.getEmail() + " selected!");
 							showDetails(selectedObject);
 						}
 					}
@@ -195,10 +182,6 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 
 		
 		view.setDelegate(this);
-		
-
-	
-
 	}
 	
 	private void init() {
@@ -208,7 +191,7 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 		}
 
 
-		fireCountRequest(new BMEReceiver<Long>() {
+		requests.personRequest().countAllUsersOfGivenSearch(searchValue).fire(new BMEReceiver<Long>() {
 			@Override
 			public void onSuccess(Long response) {
 				if (view == null) {
@@ -222,11 +205,8 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 			}
 
 		});
-		
-		
 
-		rangeChangeHandler = table
-				.addRangeChangeHandler(new RangeChangeEvent.Handler() {
+		rangeChangeHandler = table.addRangeChangeHandler(new RangeChangeEvent.Handler() {
 					public void onRangeChange(RangeChangeEvent event) {
 						ActivityUser.this.onRangeChanged();
 					}
@@ -236,40 +216,8 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 	protected void onRangeChanged() {
 		final Range range = table.getVisibleRange();
 
-		
-//		final Receiver<List<PersonProxy>> callback = new Receiver<List<PersonProxy>>() {
-//			@Override
-//			public void onSuccess(List<PersonProxy> values) {
-//				if (view == null) {
-//					// This activity is dead
-//					return;
-//				}
-////				idToRow.clear();
-////				idToProxy.clear();
-//				for (int i = 0, row = range.getStart(); i < values.size(); i++, row++) {
-////					InstitutionProxy institution = values.get(i);
-////					@SuppressWarnings("unchecked")
-////					// Why is this cast needed?
-////					EntityProxyId<InstitutionProxy> proxyId = (EntityProxyId<InstitutionProxy>) institution
-////							.stableId();
-////					idToRow.put(proxyId, row);
-////					idToProxy.put(proxyId, institution);
-//				Log.info(values.get(i).getEmail());
-//				}
-//				table.setRowData(range.getStart(), values);
-//
-//				// finishPendingSelection();
-//				if (widget != null) {
-//					widget.setWidget(view.asWidget());
-//				}
-//			}
-//		};
-//
-//		fireRangeRequest(range, callback);
-		
-		/*requests.personRequest()
-		.findPersonEntries(range.getStart(), range.getLength()).with(view.getPaths()).fire(new Receiver<List<PersonProxy>>() {*/
-		requests.personRequest().getAllPersons(range.getStart(),range.getLength()).with(view.getPaths()).fire(new BMEReceiver<List<PersonProxy>>() {
+		requests.personRequest().findAllUsersOfGivenSearch(range.getStart(),range.getLength(),searchValue).with(view.getPaths()).fire(new BMEReceiver<List<PersonProxy>>() {
+			
 			@Override
 			public void onSuccess(List<PersonProxy> values) {
 				if (values==null ||view == null) {
@@ -285,10 +233,7 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 					widget.setWidget(view.asWidget());
 				}
 			}
-		}
-				
-		
-		);
+		});
 
 	}
 
@@ -312,8 +257,8 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 		}
 	}
 
-	private void getLastPage() {
-		fireCountRequest(new BMEReceiver<Long>() {
+	/*private void getLastPage() {
+		requests.personRequest().findAllPersonCount().fire(new BMEReceiver<Long>() {
 			@Override
 			public void onSuccess(Long response) {
 				if (view == null) {
@@ -334,38 +279,17 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 				onRangeChanged();
 			}
 		});
-	}
+	}*/
 
-//	private void fireRangeRequest(final Range range,
-//			final Receiver<List<PersonProxy>> callback) {
-//		createRangeRequest(range).with(view.getPaths()).fire(callback);
-//
-//	}
-	
-	protected void showDetails(PersonProxy person) {
-		Log.debug("Person Stable id: " + person.stableId() + " "
-				+ PlaceUserDetails.Operation.DETAILS);
-		placeController.goTo(
-				new PlaceUserDetails(person.stableId()));
-	}
-//	protected Request<java.util.List<medizin.client.managed.request.PersonProxy>> createRangeRequest(
-//			Range range) {
-//		return requests.personRequest()
-//				.findPersonEntries(range.getStart(), range.getLength());
-//	}
-
-	protected void fireCountRequest(BMEReceiver<Long> callback) {
-		/*requests.personRequest().countPeople()
-				.fire(callback);*/
-		requests.personRequest().findAllPersonCount().fire(callback);
+	private void showDetails(PersonProxy person) {
+		Log.debug("Person Stable id: " + person.stableId() + " " + PlaceUserDetails.Operation.DETAILS);
+		placeController.goTo(new PlaceUserDetails(person.stableId()));
 	}
 
 	@Override
 	public void goTo(Place place) {
 		  placeController.goTo(place);
 	}
-
-
 
 	@Override
 	public void newClicked() {
@@ -385,4 +309,11 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 		}
 	}
 
+	@Override
+	public void performSearch(String value) {
+		Log.info("search text is" + value);
+		
+		this.searchValue = value;
+		init();
+	}
 }

@@ -22,6 +22,8 @@ import javax.validation.constraints.Size;
 
 import medizin.shared.AccessRights;
 
+import org.apache.log4j.Logger;
+import org.hibernate.Query;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
@@ -30,7 +32,9 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooToString
 @RooJpaActiveRecord(finders = { "findQuestionEventsByInstitution" })
 public class QuestionEvent {
-
+	
+	private static Logger log = Logger.getLogger(Question.class);
+	
     @NotNull
     @Column(unique = true)
     @Size(min = 3, max = 60)
@@ -307,7 +311,9 @@ public class QuestionEvent {
 	    	Root<QuestionEvent> from = cq.from(QuestionEvent.class);
 	    	Predicate pre1 = cb.equal(from.get("institution"), institution);
 	    	cq.where(pre1);
-	    	TypedQuery<QuestionEvent> query = entityManager().createQuery(cq);	
+	    	cq.orderBy(cb.asc(from.get("eventName")));
+	    	TypedQuery<QuestionEvent> query = entityManager().createQuery(cq);
+	    	log.info("ADVANCED QUERY : " + query.unwrap(Query.class).getQueryString());
 	    	return query.getResultList();
 	    }
 	    

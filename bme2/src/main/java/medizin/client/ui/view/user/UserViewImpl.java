@@ -10,6 +10,7 @@ import medizin.client.style.resources.MyCellTableResources;
 import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.widget.IconButton;
+import medizin.client.ui.widget.QuickSearchBox;
 import medizin.client.ui.widget.pager.MySimplePager;
 import medizin.shared.i18n.BmeConstants;
 
@@ -40,6 +41,9 @@ public class UserViewImpl extends Composite implements UserView, RecordChangeHan
 	@UiField
 	SplitLayoutPanel splitLayoutPanel;
 
+	@UiField (provided = true)
+	QuickSearchBox searchBox;
+	
 	private Presenter presenter;
 
 	public UserViewImpl() {
@@ -49,6 +53,13 @@ public class UserViewImpl extends Composite implements UserView, RecordChangeHan
 		MySimplePager.Resources pagerResources = GWT.create(MySimplePagerResources.class);
 		pager = new MySimplePager(MySimplePager.TextLocation.RIGHT, pagerResources,true, McAppConstant.TABLE_JUMP_SIZE, true);
 
+		searchBox = new QuickSearchBox(new QuickSearchBox.Delegate() {
+			@Override
+			public void performAction() {
+				delegate.performSearch(searchBox.getValue());
+			}
+		});
+		
 		initWidget(uiBinder.createAndBindUi(this));
 		DOM.setElementAttribute(splitLayoutPanel.getElement(), "style", "position: absolute; left: 0px; top: 0px; right: 5px; bottom: 0px;");
 		

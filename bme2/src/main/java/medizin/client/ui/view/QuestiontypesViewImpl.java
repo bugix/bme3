@@ -14,6 +14,7 @@ import medizin.client.ui.widget.QuickSearchBox;
 import medizin.client.ui.widget.pager.MySimplePager;
 import medizin.shared.i18n.BmeConstants;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.text.shared.AbstractRenderer;
@@ -55,6 +56,7 @@ public class QuestiontypesViewImpl extends Composite implements QuestiontypesVie
 		searchBox = new QuickSearchBox(new QuickSearchBox.Delegate() {
 			@Override
 			public void performAction() {
+				Log.info("Searchbox is visited");
 				delegate.performSearch(searchBox.getValue());
 			}
 		});

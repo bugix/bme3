@@ -33,6 +33,8 @@ public class Topic {
 		if (classificationTopicId != null)
 			criteriaQuery.where(criteriaBuilder.equal(from.get("classificationTopic").get("id"), classificationTopicId));
 		
+		// Added this to show topic order by description as ASC - Manish.
+		criteriaQuery.orderBy(criteriaBuilder.asc(from.get("topicDesc")));
 		TypedQuery<Topic> query = entityManager().createQuery(criteriaQuery);
 		return query.getResultList();
 	}

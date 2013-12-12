@@ -22,6 +22,8 @@ public interface UserView extends IsWidget {
 	interface Delegate {
 		
 		void newClicked();
+
+		void performSearch(String value);
 	}
 
     CellTable<PersonProxy> getTable();

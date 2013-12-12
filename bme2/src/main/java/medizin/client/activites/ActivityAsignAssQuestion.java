@@ -1597,7 +1597,9 @@ QuestionAdvancedSearchPopupView.Delegate {
 
 	@Override
 	public void keywordAddClicked(final IconButton addKeyword) {		
-		requests.keywordRequest().findAllKeywords().fire(new BMEReceiver<List<KeywordProxy>>() {
+		// Added this to show key word by name as ASC. 
+		requests.keywordRequest().findAllKeywordsByNameASC().fire(new BMEReceiver<List<KeywordProxy>>() {
+		//requests.keywordRequest().findAllKeywords().fire(new BMEReceiver<List<KeywordProxy>>() {
 
 			@Override
 			public void onSuccess(List<KeywordProxy> response) {
@@ -1690,7 +1692,8 @@ QuestionAdvancedSearchPopupView.Delegate {
 	@Override
 	public void userTypeAddClicked(final IconButton addUserType)
 	{
-		requests.personRequest().findAllPeople().fire(new BMEReceiver<List<PersonProxy>>() {
+		requests.personRequest().findAllPeopleByNameASC().fire(new BMEReceiver<List<PersonProxy>>() {
+		//requests.personRequest().findAllPeople().fire(new BMEReceiver<List<PersonProxy>>() {
 
 			@Override
 			public void onSuccess(List<PersonProxy> response) {

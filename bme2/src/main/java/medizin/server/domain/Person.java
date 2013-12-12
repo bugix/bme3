@@ -584,4 +584,60 @@ public class Person {
 		
 		return query.getResultList();
 	}
+	
+	public static List<Person> findAllPeopleByNameASC(){
+		
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Person> criteriaQuery = criteriaBuilder.createQuery(Person.class);
+		Root<Person> from = criteriaQuery.from(Person.class);
+		criteriaQuery.orderBy(criteriaBuilder.asc(from.get("name")));
+		 
+		 TypedQuery<Person> query = entityManager().createQuery(criteriaQuery);
+	     log.info("ADVANCED QUERY : " + query.unwrap(Query.class).getQueryString());
+	     return query.getResultList();
+    	
+    }
+	
+	public static Long countAllUsersOfGivenSearch(String searchValue){
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+		Root<Person> from = criteriaQuery.from(Person.class);
+		criteriaQuery.select(criteriaBuilder.count(from));
+		
+		final Predicate predicate = predicateUsersOfGivenSearch(searchValue,criteriaBuilder, from);
+		criteriaQuery.where(predicate);
+		
+		TypedQuery<Long> q = entityManager().createQuery(criteriaQuery);
+		log.info("Query String: " + q.unwrap(Query.class).getQueryString());
+		return q.getSingleResult();
+		
+	}
+
+	private static Predicate predicateUsersOfGivenSearch(String searchValue,CriteriaBuilder criteriaBuilder, Root<Person> from) {
+		
+		final Expression<String> nameExp = from.get("name");
+		final Expression<String> preNameExp = from.get("prename");
+		final Expression<String> emailExp = from.get("email");
+		
+		final Predicate predicate = criteriaBuilder.or(criteriaBuilder.like(nameExp, "%" + searchValue + "%"), criteriaBuilder.like(preNameExp, "%" + searchValue + "%"),criteriaBuilder.like(emailExp, "%" + searchValue + "%"));
+		return predicate;
+	}
+	
+	public static List<Person> findAllUsersOfGivenSearch(Integer start, Integer length,String searchValue){
+		
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Person> criteriaQuery = criteriaBuilder.createQuery(Person.class);
+		Root<Person> from = criteriaQuery.from(Person.class);
+		
+		final Predicate predicate = predicateUsersOfGivenSearch(searchValue,criteriaBuilder, from);
+		criteriaQuery.where(predicate);
+		criteriaQuery.orderBy(criteriaBuilder.asc(from.get("name")));
+		
+		TypedQuery<Person> q = entityManager().createQuery(criteriaQuery);
+		q.setFirstResult(start);
+		q.setMaxResults(length);
+		log.info("Query String: " + q.unwrap(Query.class).getQueryString());
+		return q.getResultList();
+
+	}
 }

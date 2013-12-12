@@ -21,4 +21,6 @@ public interface KeywordRequest extends KeywordRequest_Roo_Gwt {
 	abstract Request<Integer> countKeywordByQuestion(Long questionId);
 	
 	abstract Request<List<KeywordProxy>> findKeywordByQuestion(Long questionId, int start, int length);
+	
+	abstract Request<List<KeywordProxy>> findAllKeywordsByNameASC();
 }

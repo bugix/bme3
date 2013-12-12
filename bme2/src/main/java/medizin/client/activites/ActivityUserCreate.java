@@ -125,8 +125,9 @@ public class ActivityUserCreate  extends AbstractActivityWrapper  implements Use
 					view.disableAdminField(false);
 			}
 		});
-		
-		requests.doctorRequest().findAllDoctors().fire(new BMEReceiver<List<DoctorProxy>>() {
+		// Added this to get doctor by name ASC - Manish.
+		requests.doctorRequest().findAllDoctorByNameASC().fire(new BMEReceiver<List<DoctorProxy>>() {
+		//requests.doctorRequest().findAllDoctors().fire(new BMEReceiver<List<DoctorProxy>>() {
 
 			@Override
 			public void onSuccess(List<DoctorProxy> response) {

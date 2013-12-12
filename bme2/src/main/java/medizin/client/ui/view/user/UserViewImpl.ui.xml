@@ -12,7 +12,9 @@
 				<g:ScrollPanel>
 				
 				<g:HTMLPanel styleName="{style.listView}">
-					
+					<div class="{style.controls} {style.controlsleft}">
+							<m:QuickSearchBox ui:field="searchBox"></m:QuickSearchBox>
+						</div>
 					<b:CellTable ui:field="table" addStyleNames="{style.standardTable}"
 						width="500" />
 					<div class="{style.controls} {style.controlsleft}">

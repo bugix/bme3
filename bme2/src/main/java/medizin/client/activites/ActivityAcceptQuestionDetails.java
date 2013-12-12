@@ -222,7 +222,9 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 	}
 	
 	private void initKeywordView() {
-		requests.keywordRequest().findAllKeywords().fire(new BMEReceiver<List<KeywordProxy>>() {
+		// Added this to show all keywords by name ASC - Manish
+		requests.keywordRequest().findAllKeywordsByNameASC().fire(new BMEReceiver<List<KeywordProxy>>() {
+		//requests.keywordRequest().findAllKeywords().fire(new BMEReceiver<List<KeywordProxy>>() {
 
 			@Override
 			public void onSuccess(List<KeywordProxy> response) {
@@ -829,7 +831,10 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 	
 	public void fillMainClassificationSuggestBox()
 	{
-		requests.mainClassificationRequest().findAllMainClassifications().fire(new BMEReceiver<List<MainClassificationProxy>>() {
+		// Added to show main classification in ASC order -Manish.
+		
+		requests.mainClassificationRequest().findAllMainClassificationByDescASC().fire(new BMEReceiver<List<MainClassificationProxy>>() {
+		//requests.mainClassificationRequest().findAllMainClassifications().fire(new BMEReceiver<List<MainClassificationProxy>>() {
 
 			@Override
 			public void onSuccess(List<MainClassificationProxy> response) {
@@ -901,7 +906,9 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 	
 	public void fillSkillLevelSuggestBox()
 	{
-		requests.skillLevelRequest().findAllSkillLevels().fire(new BMEReceiver<List<SkillLevelProxy>>() {
+		// Added this to show skill level by its level as ASC.
+		requests.skillLevelRequest().findAllSkillLevelsByLevelASC().fire(new BMEReceiver<List<SkillLevelProxy>>() {
+		//requests.skillLevelRequest().findAllSkillLevels().fire(new BMEReceiver<List<SkillLevelProxy>>() {
 
 			@Override
 			public void onSuccess(List<SkillLevelProxy> response) {
@@ -925,7 +932,9 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 	
 	public void fillApplianceSuggestBox()
 	{
-		requests.applianceRequest().findAllAppliances().fire(new BMEReceiver<List<ApplianceProxy>>() {
+		// Added this to show appliances by its shortcut as ASC
+		requests.applianceRequest().findAllAppliancesByShortcutASC().fire(new BMEReceiver<List<ApplianceProxy>>() {
+		//requests.applianceRequest().findAllAppliances().fire(new BMEReceiver<List<ApplianceProxy>>() {
 
 			@Override
 			public void onSuccess(List<ApplianceProxy> response) {

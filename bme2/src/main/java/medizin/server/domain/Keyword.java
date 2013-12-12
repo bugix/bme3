@@ -15,6 +15,8 @@ import javax.persistence.criteria.SetJoin;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.apache.log4j.Logger;
+import org.hibernate.Query;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
@@ -24,6 +26,8 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooJpaActiveRecord
 public class Keyword {
 
+	private static Logger log = Logger.getLogger(Keyword.class);
+	
     @NotNull
     @Column(unique = true)
     @Size(min = 2, max = 45)
@@ -128,5 +132,17 @@ public class Keyword {
     	query.setFirstResult(start);
     	query.setMaxResults(length);
     	return query.getResultList();
+    }
+    public static List<Keyword> findAllKeywordsByNameASC(){
+    	
+    	CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Keyword> criteriaQuery = criteriaBuilder.createQuery(Keyword.class);
+		Root<Keyword> from = criteriaQuery.from(Keyword.class);
+		criteriaQuery.orderBy(criteriaBuilder.asc(from.get("name")));
+		 
+		TypedQuery<Keyword> query = entityManager().createQuery(criteriaQuery);
+	    log.info("ADVANCED QUERY : " + query.unwrap(Query.class).getQueryString());
+	    return query.getResultList();
+    	
     }
 }
