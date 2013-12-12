@@ -8,13 +8,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import medizin.client.proxy.KeywordProxy;
 import medizin.client.proxy.McProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionProxy;
-import medizin.client.style.resources.MyCellTableNoHilightResources;
-import medizin.client.style.resources.MySimplePagerResources;
-import medizin.client.ui.McAppConstant;
+import medizin.client.ui.view.question.keyword.QuestionKeywordView;
 import medizin.client.ui.view.question.learningobjective.QuestionLearningObjectiveSubViewImpl;
 import medizin.client.ui.view.question.usedinmc.QuestionUsedInMC;
 import medizin.client.ui.widget.IconButton;
@@ -22,11 +19,8 @@ import medizin.client.ui.widget.TabPanelHelper;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEvent;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEventHandler;
-import medizin.client.ui.widget.pager.MySimplePager;
 import medizin.client.ui.widget.resource.dndview.ResourceView;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
-import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.EventHandlingValueHolderItem;
-import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
 import medizin.client.util.ClientUtility;
 import medizin.shared.QuestionTypes;
 import medizin.shared.i18n.BmeConstants;
@@ -35,22 +29,15 @@ import medizin.shared.i18n.BmeMessages;
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
-import com.google.gwt.cell.client.AbstractEditableCell;
-import com.google.gwt.cell.client.ActionCell;
-import com.google.gwt.cell.client.Cell;
-import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.text.shared.AbstractRenderer;
-import com.google.gwt.text.shared.Renderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -137,28 +124,17 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 	@UiField
 	VerticalPanel answerVerticalPanel;
 	
-	@UiField(provided = true)
-	CellTable<KeywordProxy> keywordTable;
-	
-	@UiField(provided = true)
-	MySimplePager keywordTablePager;
-	
-	@UiField
-	public DefaultSuggestBox<KeywordProxy, EventHandlingValueHolderItem<KeywordProxy>> keywordSuggestBox;
-	
-	@UiField
-	IconButton keywordAddButton;
-	
 	@UiField(provided=true)
 	QuestionLearningObjectiveSubViewImpl questionLearningObjectiveSubViewImpl;
 
-	private List<AbstractEditableCell<?, ?>> editableCells;
-	
 	@UiField
 	IconButton acceptQueAnswer;
 	
 	@UiField
 	QuestionUsedInMC questionUsedInMC;
+	
+	@UiField
+	QuestionKeywordView questionKeyword;
 	
 	@Override
 	public AnswerListViewImpl getAnswerListViewImpl() {
@@ -439,12 +415,6 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 	}
 
 	public QuestionDetailsViewImpl(EventBus eventBus, Boolean editDeleteflag, boolean isAnswerEditable, boolean addAnswerRights, boolean isforceView, boolean isAcceptView, boolean isMCQQuestionType, boolean isDeleteLearningObjective) {
-		CellTable.Resources tableResources = GWT.create(MyCellTableNoHilightResources.class);
-		keywordTable = new CellTable<KeywordProxy>(5, tableResources);
-		
-		MySimplePager.Resources pagerResources = GWT.create(MySimplePagerResources.class);
-		keywordTablePager = new MySimplePager(MySimplePager.TextLocation.RIGHT, pagerResources, true, 10, true);
-		
 		answerListViewImpl = new AnswerListViewImpl(addAnswerRights, isAnswerEditable,isMCQQuestionType);
 		matrixAnswerListViewImpl = new MatrixAnswerListViewImpl(addAnswerRights, isAnswerEditable);
 		questionLearningObjectiveSubViewImpl = new QuestionLearningObjectiveSubViewImpl(isDeleteLearningObjective);
@@ -459,71 +429,30 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 		questionTypeDetailPanel.selectTab(0);
 		TabPanelHelper.moveTabBarToBottom(questionTypeDetailPanel);
 			
-		initKeyword(isAnswerEditable);
-	}
-	
-	
-
-	@UiHandler("keywordAddButton")
-	public void keywordAddButtonClicked(ClickEvent event)
-	{
-		if (keywordSuggestBox.getText().isEmpty())
-		{
-			ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.keywordNullMessage());
-		}
-		else
-		{
-			delegate.keywordAddButtonClicked(keywordSuggestBox.getText(), proxy);
-		}
-	}
-
-	private void initKeyword(boolean isAnswerEditable) {
-		editableCells = new ArrayList<AbstractEditableCell<?, ?>>();
+		questionKeyword.initKeyword(isAnswerEditable);
 		
-		keywordTable.addColumn(new TextColumn<KeywordProxy>() {
+		questionTypeDetailPanel.addSelectionHandler(new SelectionHandler<Integer>() {
 			
-			Renderer<java.lang.String> renderer = new AbstractRenderer<java.lang.String>() {
-
-                public String render(java.lang.String obj) {
-                    return obj == null ? "" : String.valueOf(obj);
-                }
-            };
-
 			@Override
-			public String getValue(KeywordProxy object) {
-				return renderer.render(object == null ? null : object.getName());
-			}
-		}, constants.keywords());
-		
-		if (isAnswerEditable)
-		{
-			ActionCell.Delegate<KeywordProxy> deleteKeyworddelegate = new ActionCell.Delegate<KeywordProxy>() {
-				public void execute(final KeywordProxy keyword) {
-					ConfirmationDialogBox.showYesNoDialogBox(constants.warning(), constants.keywordDelMessage(), new ConfirmDialogBoxYesNoButtonEventHandler() {
-						
-						@Override
-						public void onYesButtonClicked(ConfirmDialogBoxYesNoButtonEvent event) {
-							delegate.deleteKeywordClicked(keyword, proxy);
-						}
-						
-						@Override
-						public void onNoButtonClicked(ConfirmDialogBoxYesNoButtonEvent event) {}
-					});
-				}	
-			};
-			GetValue<KeywordProxy> getKeywordValue = new GetValue<KeywordProxy>() {
-				public KeywordProxy getValue(KeywordProxy keyword) {
-					return keyword;
+			public void onSelection(SelectionEvent<Integer> event) {
+				int tabId = event.getSelectedItem();
+				String tagName = questionTypeDetailPanel.getTabBar().getTabHTML(tabId);
+				if (tagName.equals(constants.manageQuestion())) {
+					// not to do
+				} else if (tagName.equals(constants.media())) {
+					// not to do
+				} else if (tagName.equals(constants.keywords())) {
+					questionKeyword.initKeywordView();
+				} else if (tagName.equals(constants.learning())) {
+					questionLearningObjectiveSubViewImpl.initLearningObjectiveView();
+				} else if (tagName.equals(constants.usedInMC())) {
+					questionUsedInMC.initUsedInMCView();
 				}
-			};
-			
-			addColumn(new ActionCell<KeywordProxy>(McAppConstant.DELETE_ICON, deleteKeyworddelegate), "", getKeywordValue, null);
-	    
-			keywordTable.addColumnStyleName(1, "iconColumn");			
-		}
-		
-		keywordTable.addColumnStyleName(0, "questionTextColumn");
+			}
+		});
 	}
+	
+	
 
 	@Override
 	public void setDelegate(Delegate delegate) {
@@ -841,48 +770,6 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 		return acceptQueAnswer;
 	}
 	
-	private <C> void addColumn(Cell<C> cell, String headerText,
-			final GetValue<C> getter, FieldUpdater<KeywordProxy, C> fieldUpdater) {
-		Column<KeywordProxy, C> column = new Column<KeywordProxy, C>(cell) {
-			@Override
-			public C getValue(KeywordProxy object) {
-				return getter.getValue(object);
-			}
-		};
-		column.setFieldUpdater(fieldUpdater);
-		if (cell instanceof AbstractEditableCell<?, ?>) {
-			editableCells.add((AbstractEditableCell<?, ?>) cell);
-		}
-		keywordTable.addColumn(column);
-	}
-	
-	  private static interface GetValue<C> {
-	    C getValue(KeywordProxy keyword);
-	  }
-
-	public CellTable<KeywordProxy> getKeywordTable() {
-		return keywordTable;
-	}
-
-	public void setKeywordTable(CellTable<KeywordProxy> keywordTable) {
-		this.keywordTable = keywordTable;
-	}
-
-	public DefaultSuggestBox<KeywordProxy, EventHandlingValueHolderItem<KeywordProxy>> getKeywordSuggestBox() {
-		return keywordSuggestBox;
-	}
-
-	public void setKeywordSuggestBox(DefaultSuggestBox<KeywordProxy, EventHandlingValueHolderItem<KeywordProxy>> keywordSuggestBox) {
-		this.keywordSuggestBox = keywordSuggestBox;
-	}
-
-	public IconButton getKeywordAddButton() {
-		return keywordAddButton;
-	}
-
-	public void setKeywordAddButton(IconButton keywordAddButton) {
-		this.keywordAddButton = keywordAddButton;
-	}
 
 	public void setVisibleForcedActiveBtn(boolean visible) {
 		
@@ -943,5 +830,10 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 			}
 		}
 	}
+
 	
+	@Override
+	public QuestionKeywordView getQuestionKeywordView() {
+		return questionKeyword;
+	}
 }

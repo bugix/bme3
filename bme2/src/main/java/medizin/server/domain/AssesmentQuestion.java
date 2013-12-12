@@ -1541,4 +1541,16 @@ public class AssesmentQuestion {
         q.setMaxResults(length);
         return q.getResultList();
 	}
+
+
+	public static List<AssesmentQuestion> findAllAssesmentQuestionsForAssesment(Long assessmentId) {
+		CriteriaBuilder cb = entityManager().getCriteriaBuilder();
+		CriteriaQuery<AssesmentQuestion> cq = cb.createQuery(AssesmentQuestion.class);
+		Root<AssesmentQuestion> from = cq.from(AssesmentQuestion.class);
+		cq.orderBy(cb.asc(from.get("orderAversion")));
+		Predicate predicate = cb.equal(from.get("assesment").get("id"), assessmentId);
+		cq.where(predicate);
+        TypedQuery<AssesmentQuestion> q = entityManager().createQuery(cq);
+        return q.getResultList();
+	}
 }

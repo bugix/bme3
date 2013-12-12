@@ -139,9 +139,8 @@ public class Keyword {
 		CriteriaQuery<Keyword> criteriaQuery = criteriaBuilder.createQuery(Keyword.class);
 		Root<Keyword> from = criteriaQuery.from(Keyword.class);
 		criteriaQuery.orderBy(criteriaBuilder.asc(from.get("name")));
-		 
 		TypedQuery<Keyword> query = entityManager().createQuery(criteriaQuery);
-	    log.info("ADVANCED QUERY : " + query.unwrap(Query.class).getQueryString());
+	    
 	    return query.getResultList();
     	
     }

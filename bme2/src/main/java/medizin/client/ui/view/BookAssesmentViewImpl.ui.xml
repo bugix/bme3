@@ -3,6 +3,7 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:n="urn:import:medizin.client.ui"
 	xmlns:b="urn:import:com.google.gwt.user.cellview.client" xmlns:i="urn:import:medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl" xmlns:m="urn:import:medizin.client.ui.widget">
+	<ui:with type="medizin.shared.i18n.BmeConstants" field="constants"></ui:with>
 	<ui:image field="createButton" src="../../style/images/createButton.png"/>
 	<ui:style>
     .panelHTML {
@@ -63,8 +64,8 @@
 	<g:VerticalPanel styleName="{style.panelHTML}" >
 	 <g:HorizontalPanel ui:field="serchCriteriaContainerPanel">
 		<g:ListBox ui:field="yearListBox"></g:ListBox>
-		<i:DefaultSuggestBox ui:field="assesmentSuggestionBox"></i:DefaultSuggestBox>
-		<m:IconButton ui:field="showButton">Show</m:IconButton>
+		<i:DefaultSuggestBox ui:field="assesmentSuggestionBox" width="250px"></i:DefaultSuggestBox>
+		<m:IconButton ui:field="showButton" icon="newwin" text="{constants.show}"></m:IconButton>
 	</g:HorizontalPanel> 
 	 	<g:TabBar ui:field="tabLayout" width="1002px"></g:TabBar>
 		<!-- <g:HorizontalPanel ui:field="tabs"></g:HorizontalPanel> -->

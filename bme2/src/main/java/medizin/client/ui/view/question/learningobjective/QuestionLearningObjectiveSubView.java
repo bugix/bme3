@@ -21,10 +21,14 @@ public interface QuestionLearningObjectiveSubView {
 		public void closeButtonClicked();
 		
 		public void clearAllButtonClicked();
+		
+		void initLearningObjectiveView();
 	}
 	public void setDelegate(Delegate delegate);
 	Map getMainSkillMap();
 	
 	//learning
 	public LearningObjectiveViewImpl getLearningObjectiveViewImpl();
+	
+	void initLearningObjectiveView();
 }

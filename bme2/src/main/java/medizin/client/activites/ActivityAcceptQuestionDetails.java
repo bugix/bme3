@@ -1,45 +1,23 @@
 package medizin.client.activites;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
-import medizin.client.events.RecordChangeEvent;
 import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.PlaceAcceptQuestion;
 import medizin.client.place.PlaceAcceptQuestionDetails;
 import medizin.client.place.PlaceQuestionDetails;
 import medizin.client.proxy.AnswerProxy;
-import medizin.client.proxy.ApplianceProxy;
-import medizin.client.proxy.ClassificationTopicProxy;
-import medizin.client.proxy.KeywordProxy;
-import medizin.client.proxy.MainClassificationProxy;
-import medizin.client.proxy.MainQuestionSkillProxy;
 import medizin.client.proxy.MatrixValidityProxy;
-import medizin.client.proxy.MinorQuestionSkillProxy;
 import medizin.client.proxy.QuestionProxy;
-import medizin.client.proxy.SkillHasApplianceProxy;
-import medizin.client.proxy.SkillLevelProxy;
-import medizin.client.proxy.SkillProxy;
-import medizin.client.proxy.TopicProxy;
-import medizin.client.request.MainQuestionSkillRequest;
-import medizin.client.request.MinorQuestionSkillRequest;
 import medizin.client.request.QuestionRequest;
-import medizin.client.request.SkillRequest;
 import medizin.client.ui.view.AcceptAnswerSubView;
 import medizin.client.ui.view.AcceptAnswerSubViewImpl;
 import medizin.client.ui.view.AcceptMatrixAnswerSubView;
 import medizin.client.ui.view.AcceptMatrixAnswerSubViewImpl;
 import medizin.client.ui.view.question.QuestionDetailsView;
 import medizin.client.ui.view.question.QuestionDetailsViewImpl;
-import medizin.client.ui.view.question.learningobjective.LearningObjectiveView;
-import medizin.client.ui.view.question.learningobjective.QuestionLearningObjectivePopupView;
-import medizin.client.ui.view.question.learningobjective.QuestionLearningObjectiveSubView;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
-import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.simple.DefaultSuggestOracle;
-import medizin.shared.LearningObjectiveData;
 import medizin.shared.QuestionTypes;
 import medizin.shared.Status;
 
@@ -48,19 +26,14 @@ import com.google.common.base.Function;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
-import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.user.cellview.client.AbstractHasData;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.view.client.Range;
-import com.google.gwt.view.client.RangeChangeEvent;
 
 public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper implements
 						QuestionDetailsView.Delegate, 
 						AcceptAnswerSubView.Delegate, 
-						AcceptMatrixAnswerSubView.Delegate,
-						QuestionLearningObjectiveSubView.Delegate,
-						QuestionLearningObjectivePopupView.Delegate,
-						LearningObjectiveView.Delegate{
+						AcceptMatrixAnswerSubView.Delegate{
 
 	private PlaceAcceptQuestionDetails place;
 	private McAppRequestFactory requests;
@@ -69,16 +42,9 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 	private EventBus eventBus;
 	private QuestionDetailsViewImpl view;
 	private QuestionProxy question;
-	private Long mainClassificationId = null;
-	private Long classificationTopicId = null;
-	private Long topicId = null;
-	private Long skillLevelId = null;
-	private Long applianceId = null;
-	private LearningObjectiveView learningObjectiveView;
-	private LearningObjectiveData learningObjective;
-	private String temp;
-	private List<LearningObjectiveData> learningObjectiveData = new ArrayList<LearningObjectiveData>();
-
+	private PartActivityQuestionLearningObjective partActivityQuestionLearningObjective;
+	private PartActivityQuestionKeyword activityQuestionKeyword;
+	
 	public ActivityAcceptQuestionDetails(PlaceAcceptQuestionDetails place,McAppRequestFactory requests, PlaceController placeController) {
 		super(place, requests, placeController);
 		this.place = place;
@@ -117,11 +83,17 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 		this.view = questionDetailsView;
         widget.setWidget(questionDetailsView.asWidget());
 		view.setDelegate(this);
-		view.getQuestionLearningObjectiveSubViewImpl().setDelegate(this);
 		view.setVisibleAcceptButton();
 		view.getAnswerListViewImpl().removeFromParent();
 		view.getMatrixAnswerListViewImpl().removeFromParent();
 		view.removeQuestionUsedInMCTab();
+		
+		activityQuestionKeyword = new PartActivityQuestionKeyword(requests, view.getQuestionKeywordView(),false);
+		activityQuestionKeyword.setQuestionProxy(question);
+		view.getQuestionKeywordView().setDelegate(activityQuestionKeyword);
+		partActivityQuestionLearningObjective = new PartActivityQuestionLearningObjective(requests, view.getQuestionLearningObjectiveSubViewImpl(),false);
+		view.getQuestionLearningObjectiveSubViewImpl().setDelegate(partActivityQuestionLearningObjective);
+		partActivityQuestionLearningObjective.setQuestionProxy(question);
 	}
 	
 	private boolean isQuestionTypeMCQ(QuestionProxy questionProxy) {
@@ -139,144 +111,7 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 		else
 			initAnswerView();
 		
-		initKeywordView();
-		
 		checkForResendToReview();
-		
-		initLearningObjectiveView();
-	}
-	
-	private void initLearningObjectiveView() {
-		RecordChangeEvent.register(requests.getEventBus(), view.getQuestionLearningObjectiveSubViewImpl());
-		if (question != null)
-		{
-			MainQuestionSkillRequest mainQuestionSkillRequest = requests.mainQuestionSkillRequest();
-			mainQuestionSkillRequest.countMainQuestionSkillByQuestionId(question.getId()).to(new BMEReceiver<Integer>() {
-
-				@Override
-				public void onSuccess(Integer response) {
-					view.getQuestionLearningObjectiveSubViewImpl().majorTable.setRowCount(response);
-					onMainQuestionSkillTableRangeChanged();
-				}
-			});
-			
-			MinorQuestionSkillRequest minorQuestionSkillRequest = mainQuestionSkillRequest.append(requests.minorQuestionSkillRequest());
-			minorQuestionSkillRequest.countMinorQuestionSkillByQuestionId(question.getId()).to(new BMEReceiver<Integer>() {
-
-				@Override
-				public void onSuccess(Integer response) {
-					view.getQuestionLearningObjectiveSubViewImpl().minorTable.setRowCount(response);
-					onMinorQuestionSkillTableRangeChanged();
-				}
-			});
-			
-			minorQuestionSkillRequest.fire();
-			
-			view.getQuestionLearningObjectiveSubViewImpl().majorTable.addRangeChangeHandler(new RangeChangeEvent.Handler() {
-				
-				@Override
-				public void onRangeChange(RangeChangeEvent event) {
-					onMainQuestionSkillTableRangeChanged();
-				}
-			});
-			
-			view.getQuestionLearningObjectiveSubViewImpl().minorTable.addRangeChangeHandler(new RangeChangeEvent.Handler() {
-				
-				@Override
-				public void onRangeChange(RangeChangeEvent event) {
-					onMinorQuestionSkillTableRangeChanged();
-				}
-			});
-		}
-	}
-	
-	public void onMinorQuestionSkillTableRangeChanged()
-	{
-		if (question != null)
-		{
-			final Range range = view.getQuestionLearningObjectiveSubViewImpl().minorTable.getVisibleRange();
-			
-			requests.minorQuestionSkillRequest().findMinorQuestionSkillByQuestionId(question.getId(), range.getStart(), range.getLength()).with("skill","skill.topic","skill.skillLevel","skill.topic.classificationTopic", "skill.topic.classificationTopic.mainClassification").fire(new BMEReceiver<List<MinorQuestionSkillProxy>>() {
-
-				@Override
-				public void onSuccess(List<MinorQuestionSkillProxy> response) {
-					view.getQuestionLearningObjectiveSubViewImpl().minorTable.setRowData(range.getStart(), response);
-				}
-			});
-		}
-	}
-	
-	public void onMainQuestionSkillTableRangeChanged()
-	{
-		if (question != null)
-		{
-			final Range range = view.getQuestionLearningObjectiveSubViewImpl().majorTable.getVisibleRange();
-			requests.mainQuestionSkillRequest().findMainQuestionSkillByQuestionId(question.getId(), range.getStart(), range.getLength()).with("skill","skill.topic","skill.skillLevel","skill.topic.classificationTopic", "skill.topic.classificationTopic.mainClassification").fire(new BMEReceiver<List<MainQuestionSkillProxy>>() {
-
-				@Override
-				public void onSuccess(List<MainQuestionSkillProxy> response) {
-					view.getQuestionLearningObjectiveSubViewImpl().majorTable.setRowData(range.getStart(), response);
-				}
-			});
-		}
-	}
-	
-	private void initKeywordView() {
-		// Added this to show all keywords by name ASC - Manish
-		requests.keywordRequest().findAllKeywordsByNameASC().fire(new BMEReceiver<List<KeywordProxy>>() {
-		//requests.keywordRequest().findAllKeywords().fire(new BMEReceiver<List<KeywordProxy>>() {
-
-			@Override
-			public void onSuccess(List<KeywordProxy> response) {
-				DefaultSuggestOracle<KeywordProxy> suggestOracle1 = (DefaultSuggestOracle<KeywordProxy>) view.getKeywordSuggestBox().getSuggestOracle();
-				suggestOracle1.setPossiblilities(response);
-				view.getKeywordSuggestBox().setSuggestOracle(suggestOracle1);
-				
-				view.getKeywordSuggestBox().setRenderer(new AbstractRenderer<KeywordProxy>() {
-
-					@Override
-					public String render(KeywordProxy object) {
-						return object == null ? "" : object.getName();					
-					}
-				});
-			}
-		});
-		
-		if (question != null && question.getKeywords() != null)
-		{
-			
-			
-			requests.keywordRequest().countKeywordByQuestion(question.getId()).fire(new BMEReceiver<Integer>() {
-
-				@Override
-				public void onSuccess(Integer response) {
-					view.getKeywordTable().setRowCount(response);
-					ActivityAcceptQuestionDetails.this.onKeywordTableRangeChanged();
-				}
-			});
-			
-			view.getKeywordTable().addRangeChangeHandler(new RangeChangeEvent.Handler() {
-				
-				@Override
-				public void onRangeChange(RangeChangeEvent event) {
-					ActivityAcceptQuestionDetails.this.onKeywordTableRangeChanged();
-				}
-			});
-		}
-		
-	}
-	
-	public void onKeywordTableRangeChanged()
-	{
-		final Range range = view.getKeywordTable().getVisibleRange();
-		
-		requests.keywordRequest().findKeywordByQuestion(question.getId(), range.getStart(), range.getLength()).fire(new BMEReceiver<List<KeywordProxy>>() {
-
-			@Override
-			public void onSuccess(List<KeywordProxy> response) {
-				view.getKeywordTable().setRowData(range.getStart(), response);
-			}
-		});
 	}
 	
 	@Override
@@ -565,54 +400,6 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 	}
 	
 	@Override
-	public void keywordAddButtonClicked(String text, QuestionProxy proxy) {
-		Set<KeywordProxy> keywordProxySet = proxy.getKeywords();
-		boolean flag = false;
-		for (KeywordProxy keywordProxy : keywordProxySet)
-		{
-			if (keywordProxy.getName().equals(text))
-			{
-				flag = true;
-				break;
-			}
-		}
-		
-		if (flag == false)
-		{
-			requests.keywordRequest().findKeywordByStringOrAddKeyword(text, proxy).with("previousVersion","keywords","questEvent","questionType","mcs", "rewiewer", "autor","questionResources","answers").fire(new BMEReceiver<QuestionProxy>() {
-
-				@Override
-				public void onSuccess(QuestionProxy response) {
-					view.setValue(response);
-					question = response;
-					view.getKeywordSuggestBox().getTextField().setText("");
-					initKeywordView();
-				}
-			});
-		}
-		else
-		{
-			view.getKeywordSuggestBox().getTextField().setText("");
-			ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.keywordExist());
-		}
-	}
-
-	@Override
-	public void deleteKeywordClicked(KeywordProxy keyword, QuestionProxy proxy) {
-		
-		requests.keywordRequest().deleteKeywordFromQuestion(keyword, proxy).with("previousVersion","keywords","questEvent","questionType","mcs", "rewiewer", "autor","questionResources","answers").fire(new BMEReceiver<QuestionProxy>() {
-
-			@Override
-			public void onSuccess(QuestionProxy response) {
-				view.setValue(response);
-				question = response;
-				view.getKeywordSuggestBox().getTextField().setText("");
-				initKeywordView();
-			}
-		});
-	}
-
-	@Override
 	public void placeChanged(Place place) {
 		// TODO Auto-generated method stub
 		
@@ -647,394 +434,6 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 	// unused method
 	@Override
 	public void rejectClicked(AnswerProxy answerProxy) {}
-
-	@Override
-	public void mainClassificationSuggestboxChanged(Long value) {
-		this.mainClassificationId = value;
-		learningObjectiveView.getClassificationTopicSuggestBox().setSelected(null);
-		classificationTopicId = null;
-		
-		fillClassificationTopicSuggestBox(mainClassificationId);
-		onLearningObjectiveViewTableRangeChanged();
-	}
-
-	@Override
-	public void classificationTopicSuggestboxChanged(Long value) {
-		this.classificationTopicId = value;
-		
-		learningObjectiveView.getTopicSuggestBox().setSelected(null);
-		topicId = null;
-		
-		fillTopicSuggestBox(classificationTopicId);
-		onLearningObjectiveViewTableRangeChanged();
-	}
-
-	@Override
-	public void topicSuggestboxChanged(Long value) {
-		this.topicId = value;		
-		onLearningObjectiveViewTableRangeChanged();
-	}
-
-	@Override
-	public void skillLevelSuggestboxChanged(Long value) {
-		this.skillLevelId = value;
-		onLearningObjectiveViewTableRangeChanged();
-	}
-
-	@Override
-	public void applianceSuggestboxChanged(Long value) {
-		this.applianceId = value;
-		onLearningObjectiveViewTableRangeChanged();
-	}
-
-	@Override
-	public void mainClassiListBoxClicked(MainClassificationProxy proxy, final QuestionLearningObjectivePopupView popupView) {
-		requests.classificationTopicRequest().findClassificationTopicByMainClassification(proxy.getId()).fire(new BMEReceiver<List<ClassificationTopicProxy>>() {
-
-			@Override
-			public void onSuccess(List<ClassificationTopicProxy> response) {
-				popupView.getClassiTopicListBox().setAcceptableValues(response);
-				
-				if (response.size() > 0)
-					classiTopicListBoxClicked(response.get(0), popupView);
-			}
-		});
-	}
-
-	@Override
-	public void classiTopicListBoxClicked(ClassificationTopicProxy proxy, final QuestionLearningObjectivePopupView popupView) {
-		requests.topicRequest().findTopicByClassificationTopicId(proxy.getId()).fire(new BMEReceiver<List<TopicProxy>>() {
-
-			@Override
-			public void onSuccess(List<TopicProxy> response) {
-				popupView.getTopicListBox().setAcceptableValues(response);
-			}
-		});
-	}
-
-	@Override
-	public void minorDeleteClicked(MinorQuestionSkillProxy minorSkill) {
-		requests.minorQuestionSkillRequest().remove().using(minorSkill).fire(new BMEReceiver<Void>() {
-
-			@Override
-			public void onSuccess(Void response) {
-				initLearningObjectiveView();
-			}
-		});
-	}
-
-	@Override
-	public void majorDeleteClicked(MainQuestionSkillProxy mainSkill) {
-		requests.mainQuestionSkillRequest().remove().using(mainSkill).fire(new BMEReceiver<Void>() {
-
-			@Override
-			public void onSuccess(Void response) {
-				initLearningObjectiveView();
-			}
-		});
-	}
-
-	@Override
-	public void addMainClicked() {
-		Iterator<LearningObjectiveData> itr = learningObjectiveView.getMultiselectionModel().getSelectedSet().iterator();
-		
-		while (itr.hasNext())
-		{
-			LearningObjectiveData learningObjectiveData = itr.next();
-			MainQuestionSkillRequest mainQuestionSkillRequest = requests.mainQuestionSkillRequest();
-			MainQuestionSkillProxy mainQuestionSkillProxy = mainQuestionSkillRequest.create(MainQuestionSkillProxy.class);
-			mainQuestionSkillProxy.setQuestion(question);
-			mainQuestionSkillProxy.setSkill(learningObjectiveData.getSkill());
-			mainQuestionSkillRequest.persist().using(mainQuestionSkillProxy).fire(new BMEReceiver<Void>() {
-
-				@Override
-				public void onSuccess(Void response) {
-				
-				}
-			});
-		}
-	
-	}
-
-	@Override
-	public void addMinorClicked() {
-		Iterator<LearningObjectiveData> itr = learningObjectiveView.getMultiselectionModel().getSelectedSet().iterator();
-		
-		while (itr.hasNext())
-		{
-			LearningObjectiveData learningObjectiveData = itr.next();
-			MinorQuestionSkillRequest minorQuestionSkillRequest = requests.minorQuestionSkillRequest();
-			MinorQuestionSkillProxy minorQuestionSkillProxy = minorQuestionSkillRequest.create(MinorQuestionSkillProxy.class);
-			minorQuestionSkillProxy.setQuestion(question);
-			minorQuestionSkillProxy.setSkill(learningObjectiveData.getSkill());
-			minorQuestionSkillRequest.persist().using(minorQuestionSkillProxy).fire(new BMEReceiver<Void>() {
-
-				@Override
-				public void onSuccess(Void response) {
-				}
-			});
-		}
-	}
-
-	@Override
-	public void setMainClassiPopUpListBox(final QuestionLearningObjectivePopupView popupView) {
-		popupView.setDelegate(this);
-		requests.mainClassificationRequest().findAllMainClassifications().fire(new BMEReceiver<List<MainClassificationProxy>>() {
-
-			@Override
-			public void onSuccess(List<MainClassificationProxy> response) {
-				popupView.getMainClassiListBox().setAcceptableValues(response);
-			}
-		});
-		
-	}
-	@Override
-	public void setSkillLevelPopupListBox(final QuestionLearningObjectivePopupView popupView) {
-		requests.skillLevelRequest().findAllSkillLevels().fire(new BMEReceiver<List<SkillLevelProxy>>() {
-
-			@Override
-			public void onSuccess(List<SkillLevelProxy> response) {
-				popupView.getLevelListBox().setAcceptableValues(response);
-			}
-		});
-	}
-
-	@Override
-	public void loadLearningObjectiveData() {
-		learningObjectiveView = view.getQuestionLearningObjectiveSubViewImpl().getLearningObjectiveViewImpl();
-		learningObjectiveView.setDelegate(this);
-		
-		
-		
-		requests.skillRequest().countSkillBySearchCriteria(mainClassificationId, classificationTopicId, topicId, skillLevelId, applianceId).fire(new BMEReceiver<Integer>() {
-
-			@Override
-			public void onSuccess(Integer response) {
-				learningObjectiveView.getTable().setRowCount(response);
-				onLearningObjectiveViewTableRangeChanged();
-				fillMainClassificationSuggestBox();
-				fillClassificationTopicSuggestBox(mainClassificationId);
-				fillTopicSuggestBox(classificationTopicId);
-				fillSkillLevelSuggestBox();
-				fillApplianceSuggestBox();			
-			}
-		});
-		
-		learningObjectiveView.getTable().addRangeChangeHandler(new RangeChangeEvent.Handler() {
-			
-			@Override
-			public void onRangeChange(RangeChangeEvent event) {
-				onLearningObjectiveViewTableRangeChanged();
-			}
-		});
-	}
-	
-	public void fillMainClassificationSuggestBox()
-	{
-		// Added to show main classification in ASC order -Manish.
-		
-		requests.mainClassificationRequest().findAllMainClassificationByDescASC().fire(new BMEReceiver<List<MainClassificationProxy>>() {
-		//requests.mainClassificationRequest().findAllMainClassifications().fire(new BMEReceiver<List<MainClassificationProxy>>() {
-
-			@Override
-			public void onSuccess(List<MainClassificationProxy> response) {
-				DefaultSuggestOracle<MainClassificationProxy> suggestOracle1 = (DefaultSuggestOracle<MainClassificationProxy>) learningObjectiveView.getMainClassificationSuggestBox().getSuggestOracle();
-				suggestOracle1.setPossiblilities(response);
-				learningObjectiveView.getMainClassificationSuggestBox().setSuggestOracle(suggestOracle1);
-				
-				learningObjectiveView.getMainClassificationSuggestBox().setRenderer(new AbstractRenderer<MainClassificationProxy>() {
-
-					@Override
-					public String render(MainClassificationProxy object) {
-						if (object != null)
-							return (object.getDescription() +  "[" + object.getShortcut() + "]");
-						else
-							return "";
-					}
-				});
-			}
-		});
-	}
-	
-	public void fillClassificationTopicSuggestBox(Long mainClassificationId)
-	{
-		requests.classificationTopicRequest().findClassificationTopicByMainClassification(mainClassificationId).fire(new BMEReceiver<List<ClassificationTopicProxy>>() {
-
-			@Override
-			public void onSuccess(List<ClassificationTopicProxy> response) {
-				DefaultSuggestOracle<ClassificationTopicProxy> suggestOracle = (DefaultSuggestOracle<ClassificationTopicProxy>) learningObjectiveView.getClassificationTopicSuggestBox().getSuggestOracle();
-				suggestOracle.setPossiblilities(response);
-				learningObjectiveView.getClassificationTopicSuggestBox().setSuggestOracle(suggestOracle);
-				
-				learningObjectiveView.getClassificationTopicSuggestBox().setRenderer(new AbstractRenderer<ClassificationTopicProxy>() {
-
-					@Override
-					public String render(ClassificationTopicProxy object) {
-						if (object != null)
-							return (object.getDescription() + "[" + object.getShortcut() + "]");
-						else
-							return "";
-					}
-				});
-			}
-		});
-	}
-	
-	public void fillTopicSuggestBox(Long classificationTopicId)
-	{
-		requests.topicRequest().findTopicByClassificationTopicId(classificationTopicId).fire(new BMEReceiver<List<TopicProxy>>() {
-
-			@Override
-			public void onSuccess(List<TopicProxy> response) {
-				DefaultSuggestOracle<TopicProxy> suggestOracle = (DefaultSuggestOracle<TopicProxy>) learningObjectiveView.getTopicSuggestBox().getSuggestOracle();
-				suggestOracle.setPossiblilities(response);
-				learningObjectiveView.getTopicSuggestBox().setSuggestOracle(suggestOracle);
-				
-				learningObjectiveView.getTopicSuggestBox().setRenderer(new AbstractRenderer<TopicProxy>() {
-
-					@Override
-					public String render(TopicProxy object) {
-						if (object != null)
-							return object.getTopicDesc();
-						else
-							return "";
-					}
-				});
-			}
-		});
-	}
-	
-	public void fillSkillLevelSuggestBox()
-	{
-		// Added this to show skill level by its level as ASC.
-		requests.skillLevelRequest().findAllSkillLevelsByLevelASC().fire(new BMEReceiver<List<SkillLevelProxy>>() {
-		//requests.skillLevelRequest().findAllSkillLevels().fire(new BMEReceiver<List<SkillLevelProxy>>() {
-
-			@Override
-			public void onSuccess(List<SkillLevelProxy> response) {
-				DefaultSuggestOracle<SkillLevelProxy> suggestOracle = (DefaultSuggestOracle<SkillLevelProxy>) learningObjectiveView.getSkillLevelSuggestBox().getSuggestOracle();
-				suggestOracle.setPossiblilities(response);
-				learningObjectiveView.getSkillLevelSuggestBox().setSuggestOracle(suggestOracle);
-				
-				learningObjectiveView.getSkillLevelSuggestBox().setRenderer(new AbstractRenderer<SkillLevelProxy>() {
-
-					@Override
-					public String render(SkillLevelProxy object) {
-						if (object != null)
-							return String.valueOf(object.getLevelNumber());
-						else
-							return "";
-					}
-				});
-			}
-		});
-	}
-	
-	public void fillApplianceSuggestBox()
-	{
-		// Added this to show appliances by its shortcut as ASC
-		requests.applianceRequest().findAllAppliancesByShortcutASC().fire(new BMEReceiver<List<ApplianceProxy>>() {
-		//requests.applianceRequest().findAllAppliances().fire(new BMEReceiver<List<ApplianceProxy>>() {
-
-			@Override
-			public void onSuccess(List<ApplianceProxy> response) {
-				DefaultSuggestOracle<ApplianceProxy> suggestOracle = (DefaultSuggestOracle<ApplianceProxy>) learningObjectiveView.getApplianceSuggestBox().getSuggestOracle();
-				suggestOracle.setPossiblilities(response);
-				learningObjectiveView.getApplianceSuggestBox().setSuggestOracle(suggestOracle);
-				
-				learningObjectiveView.getApplianceSuggestBox().setRenderer(new AbstractRenderer<ApplianceProxy>() {
-
-					@Override
-					public String render(ApplianceProxy object) {
-						if (object != null)
-							return object.getShortcut();
-						else
-							return "";
-					}
-				});		
-			}
-		});
-	}
-	
-	public void onLearningObjectiveViewTableRangeChanged()
-	{
-		learningObjectiveData.clear();
-		final Range range = learningObjectiveView.getTable().getVisibleRange();
-		
-		SkillRequest skillRequest = requests.skillRequest();
-		skillRequest.countSkillBySearchCriteria(mainClassificationId, classificationTopicId, topicId, skillLevelId, applianceId).to(new BMEReceiver<Integer>() {
-
-			@Override
-			public void onSuccess(Integer response) {
-				learningObjectiveView.getTable().setRowCount(response);
-			}
-		});
-		
-		SkillRequest skillRequest2 = skillRequest.append(requests.skillRequest());
-		skillRequest2.findSkillBySearchCriteria(range.getStart(), range.getLength(), mainClassificationId, classificationTopicId, topicId, skillLevelId, applianceId).with("topic", "skillLevel", "skillHasAppliances", "skillHasAppliances.appliance", "topic.classificationTopic", "topic.classificationTopic.mainClassification").to(new BMEReceiver<List<SkillProxy>>() {
-
-			@Override
-			public void onSuccess(List<SkillProxy> response) {
-				for (int i=0; i<response.size(); i++)
-				{
-					learningObjective = new LearningObjectiveData();
-					SkillProxy skill = response.get(i);
-					
-					temp = skill.getTopic().getClassificationTopic().getMainClassification().getShortcut() + " " + skill.getTopic().getClassificationTopic().getShortcut() + " " + skill.getShortcut();
-					learningObjective.setCode(temp);
-					learningObjective.setSkill(skill);
-					learningObjective.setText(skill.getDescription());
-					learningObjective.setTopic(skill.getTopic().getTopicDesc());	
-					
-					if (skill.getSkillLevel() != null)
-						learningObjective.setSkillLevel(String.valueOf(skill.getSkillLevel().getLevelNumber()));
-					else
-						learningObjective.setSkillLevel("");
-					
-					Iterator<SkillHasApplianceProxy> iter = skill.getSkillHasAppliances().iterator();
-					
-					while (iter.hasNext())
-					{
-						SkillHasApplianceProxy skillHasApplianceProxy = iter.next();
-						
-						if (skillHasApplianceProxy.getAppliance().getShortcut().equals("D"))
-							learningObjective.setD("D");
-						else if (skillHasApplianceProxy.getAppliance().getShortcut().equals("T"))
-							learningObjective.setT("T");
-						else if (skillHasApplianceProxy.getAppliance().getShortcut().equals("E"))
-							learningObjective.setE("E");
-						else if (skillHasApplianceProxy.getAppliance().getShortcut().equals("P"))
-							learningObjective.setP("P");
-						else if (skillHasApplianceProxy.getAppliance().getShortcut().equals("G"))
-							learningObjective.setG("G");
-					}
-					
-					learningObjectiveData.add(learningObjective);
-					learningObjective = null;
-				}
-				
-				learningObjectiveView.getTable().setRowData(range.getStart(), learningObjectiveData);
-			}
-		});
-		
-		skillRequest2.fire();
-	}
-
-	@Override
-	public void closeButtonClicked() {
-		mainClassificationId = null;
-		classificationTopicId = null;
-		topicId = null;
-		skillLevelId = null;
-		applianceId = null;
-		learningObjectiveView = null;
-		initLearningObjectiveView();
-	}
-
-	@Override
-	public void clearAllButtonClicked() {
-		loadLearningObjectiveData();
-	}
 
 	@Override
 	public void acceptQueAnswersClicked() {

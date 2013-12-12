@@ -1,15 +1,12 @@
 package medizin.client.ui.view.question;
 
-import medizin.client.proxy.KeywordProxy;
 import medizin.client.proxy.QuestionProxy;
+import medizin.client.ui.view.question.keyword.QuestionKeywordView;
 import medizin.client.ui.view.question.learningobjective.QuestionLearningObjectiveSubViewImpl;
 import medizin.client.ui.view.question.usedinmc.QuestionUsedInMC;
 import medizin.client.ui.widget.IconButton;
-import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.EventHandlingValueHolderItem;
-import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
 
 import com.google.common.base.Function;
-import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -41,11 +38,12 @@ public interface QuestionDetailsView extends IsWidget {
 
 		void enableBtnOnLatestClicked();
 
-		void keywordAddButtonClicked(String text, QuestionProxy proxy);
+		/*void keywordAddButtonClicked(String text, QuestionProxy proxy);
 
-		void deleteKeywordClicked(KeywordProxy keyword, QuestionProxy proxy);
+		void deleteKeywordClicked(KeywordProxy keyword, QuestionProxy proxy);*/
 
 		void acceptQueAnswersClicked();
+
 	}
 
 	AnswerListViewImpl getAnswerListViewImpl();
@@ -66,16 +64,17 @@ public interface QuestionDetailsView extends IsWidget {
 	
 	public IconButton getAcceptBtn();
 	
-	public IconButton getKeywordAddButton();
+	/*public IconButton getKeywordAddButton();
 	
 	public CellTable<KeywordProxy> getKeywordTable();
 	
-	public DefaultSuggestBox<KeywordProxy, EventHandlingValueHolderItem<KeywordProxy>> getKeywordSuggestBox();
+	public DefaultSuggestBox<KeywordProxy, EventHandlingValueHolderItem<KeywordProxy>> getKeywordSuggestBox();*/
 	
 	public QuestionLearningObjectiveSubViewImpl getQuestionLearningObjectiveSubViewImpl();
 	
 	public QuestionUsedInMC getQuestionUsedInMC();
 	void removeQuestionUsedInMCTab();
 	IconButton getAcceptQueAnswer();
+	QuestionKeywordView getQuestionKeywordView();
 	
 }

@@ -1,0 +1,19 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:c="urn:import:com.google.gwt.user.cellview.client" xmlns:p="urn:import:medizin.client.ui.widget.pager" xmlns:i="urn:import:medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl" xmlns:m="urn:import:medizin.client.ui.widget">
+	<ui:with type="medizin.shared.i18n.BmeConstants" field="constants"></ui:with>
+	<ui:style src="../../../styles.css">
+		
+	</ui:style>
+	<g:HTMLPanel>
+		<g:VerticalPanel width="100%">
+			<c:CellTable ui:field="keywordTable" width="100%" addStyleNames="{style.standardTableIcon}"></c:CellTable>
+			<g:HorizontalPanel spacing="3">
+				<i:DefaultSuggestBox ui:field="keywordSuggestBox"></i:DefaultSuggestBox>
+				<m:IconButton ui:field="keywordAddButton" icon="plusthick" text="{constants.addKeyword}"></m:IconButton>
+				<p:MySimplePager display="{keywordTable}" ui:field="keywordTablePager" ></p:MySimplePager>
+				<!-- <c:SimplePager display="{keywordTable}" ui:field="keywordTablePager" ></c:SimplePager> -->							
+			</g:HorizontalPanel>
+		</g:VerticalPanel>
+	</g:HTMLPanel>
+</ui:UiBinder> 

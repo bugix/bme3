@@ -6,7 +6,6 @@ import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
 
 public interface BookAssesmentView extends IsWidget {
-    void setName(String helloName);
     void setPresenter(Presenter activityBookAssesment);
     void setDelegate(Delegate delegate);
     

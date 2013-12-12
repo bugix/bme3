@@ -1189,7 +1189,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 		   }
 		   
 		   Set<AnswerToAssQuestionProxy> answerToAssQuestionProxySet =  new HashSet<AnswerToAssQuestionProxy>();
-		   
+		   int i = 1;
 		   while (answerPanelIterator.hasNext()) {
 			Widget widget = (Widget) answerPanelIterator.next();
 			if (widget instanceof AnswerView){
@@ -1198,10 +1198,11 @@ QuestionAdvancedSearchPopupView.Delegate {
 					AnswerToAssQuestionProxy answerToAssQuestionProxy = assesmentQuestionRequest.create(AnswerToAssQuestionProxy.class);
 					answerToAssQuestionProxy.setAnswers(answerView.getProxy());
 					answerToAssQuestionProxy.setAssesmentQuestion(assQuestion);
-					answerToAssQuestionProxy.setSortOrder(1);
+					answerToAssQuestionProxy.setSortOrder(i);
 					Log.debug(answerToAssQuestionProxy.toString());
 					//answerToAssQuestionRequest.persist().using(answerToAssQuestionProxy);
 					answerToAssQuestionProxySet.add(answerToAssQuestionProxy);
+					i++;
 				}
 			  }
 		   }

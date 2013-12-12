@@ -573,4 +573,9 @@ public class QuestionLearningObjectiveSubViewImpl extends Composite implements Q
 		minorTable.setPageSize(pagesize);
 	}
 
+	@Override
+	public void initLearningObjectiveView() {
+		delegate.initLearningObjectiveView();
+	}
+
 }

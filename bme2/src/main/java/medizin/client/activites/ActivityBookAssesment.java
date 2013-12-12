@@ -212,7 +212,7 @@ public class ActivityBookAssesment extends AbstractActivityWrapper implements Bo
 		public void yearSelected(String selectedYear) {
 			Log.info("getting all assesment of year : " + selectedYear);
 			
-			requests.assesmentRequest().findAssesmentOfGivenYear(selectedYear).fire(new BMEReceiver<List<AssesmentProxy>>() {
+			requests.assesmentRequest().findAssesmentOfGivenYear(selectedYear).with("mc").fire(new BMEReceiver<List<AssesmentProxy>>() {
 
 				@Override
 				public void onSuccess(List<AssesmentProxy> response) {

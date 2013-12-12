@@ -118,7 +118,8 @@ public class UserAccessRights {
 			   criteriaQuery.where(criteriaBuilder.and(pre1,pre2));
 			   
 			   TypedQuery<UserAccessRights> query = em.createQuery(criteriaQuery);
-			   
+			   query.setFirstResult(start);
+			   query.setMaxResults(length);
 			   return query.getResultList();
 		   }
 		   
