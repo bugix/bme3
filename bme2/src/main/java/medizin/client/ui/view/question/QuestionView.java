@@ -29,6 +29,8 @@ public interface QuestionView extends IsWidget {
 		void newClicked();
 		
 		void performSearch(String searchText);
+
+		void splitLayoutPanelResized();
 	}
     
     //Table for Assesments (Pr�fungshefter)

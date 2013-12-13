@@ -10,6 +10,7 @@ import medizin.client.place.PlaceNotActivatedQuestionDetails;
 import medizin.client.place.PlaceQuestionDetails;
 import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
+import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.question.QuestionView;
 import medizin.client.ui.view.question.QuestionView.Delegate;
 import medizin.client.ui.view.question.QuestionViewImpl;
@@ -22,6 +23,7 @@ import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.cellview.client.AbstractHasData;
 import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.Range;
@@ -71,6 +73,9 @@ public class ActivityNotActivatedQuestion extends AbstractActivityWrapper implem
 
 		table = view.getTable();
 
+		//Setting splitlayout panel width from Cookie
+		setWidthOfWidget();
+		
 		Log.debug("start2()");
 		activityManger.setDisplay(view.getDetailsPanel());
 
@@ -94,6 +99,13 @@ public class ActivityNotActivatedQuestion extends AbstractActivityWrapper implem
 
 	}
 
+	private void setWidthOfWidget() {
+		String widgetWidthFromCookie = Cookies.getCookie(McAppConstant.NONACTIVEQUESTION_VIEW_WIDTH);
+        if(widgetWidthFromCookie !=null){
+        	((QuestionViewImpl)view).getSplitLayoutPanel().setWidgetSize(((QuestionViewImpl)view).getScrollpanel(),Double.valueOf(widgetWidthFromCookie));	
+        }
+		
+	}
 	private void showDetails(QuestionProxy question) {
 		Log.debug("Question Stable id: " + question.stableId() + " " + PlaceQuestionDetails.Operation.DETAILS);
 		placeController.goTo(new PlaceNotActivatedQuestionDetails(question.stableId()));
@@ -193,4 +205,11 @@ public class ActivityNotActivatedQuestion extends AbstractActivityWrapper implem
 
 	@Override
 	public void newClicked() {}
+
+	@Override
+	public void splitLayoutPanelResized() {
+		Double newWidth =(((QuestionViewImpl)view).getSplitLayoutPanel()).getWidgetSize(((QuestionViewImpl)view).getScrollpanel());
+       	Cookies.setCookie(McAppConstant.NONACTIVEQUESTION_VIEW_WIDTH, String.valueOf(newWidth));
+		
+	}
 }

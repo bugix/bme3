@@ -21,18 +21,28 @@ import medizin.client.place.PlaceQuestiontypes;
 import medizin.client.place.PlaceStaticContent;
 import medizin.client.place.PlaceSystemOverview;
 import medizin.client.place.PlaceUser;
+import medizin.client.util.ClientUtility;
 import medizin.shared.i18n.BmeConstants;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
+import com.google.gwt.event.logical.shared.OpenEvent;
+import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Cookies;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DisclosurePanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 /**
@@ -47,6 +57,7 @@ public class McAppNav extends Composite {
 	interface McAppNavUiBinder extends UiBinder<Widget, McAppNav> {
 	}
 	
+	private BmeConstants constant = GWT.create(BmeConstants.class);
 	
 	/*private static McAppNavAdminUiBinder uiBinderAdmin = GWT
 			.create(McAppNavAdminUiBinder.class);
@@ -198,6 +209,10 @@ public class McAppNav extends Composite {
         initWidget(uiBinder.createAndBindUi(this));
         
 		shell.setNavigation(this);
+		//Checking user cookie and based on showing Discloser panel open or closed.
+		addOpenCloseHandlerToAllDiscloserPanel();
+		checkAndShowDisclosurePanelBasenOnCookie();
+		
         /*systemOweviewPanel.setOpen(true);
         managementPanel.setOpen(true);
         assementPanel.setOpen(true);
@@ -231,6 +246,135 @@ public class McAppNav extends Composite {
         
     }
 
+	private void addOpenCloseHandlerToAllDiscloserPanel() {
+		systemOweviewPanel.addOpenHandler(new OpenHandler<DisclosurePanel>() {
+			@Override
+			public void onOpen(OpenEvent<DisclosurePanel> event) {
+				Cookies.setCookie(McAppConstant.SYSTEMOVERVIEWPANEL,String.valueOf(true),ClientUtility.getDateFromOneYear());
+			}
+		});
+		systemOweviewPanel.addCloseHandler(new CloseHandler<DisclosurePanel>() {
+			@Override
+			public void onClose(CloseEvent<DisclosurePanel> event) {
+				Cookies.setCookie(McAppConstant.SYSTEMOVERVIEWPANEL,String.valueOf(false),ClientUtility.getDateFromOneYear());
+			}
+		});
+		
+		managementPanel.addOpenHandler(new OpenHandler<DisclosurePanel>() {
+			@Override
+			public void onOpen(OpenEvent<DisclosurePanel> event) {
+			
+				Cookies.setCookie(McAppConstant.MANAGMENTPANEL,String.valueOf(true),ClientUtility.getDateFromOneYear());
+			}
+		});
+		managementPanel.addCloseHandler(new CloseHandler<DisclosurePanel>() {
+			@Override
+			public void onClose(CloseEvent<DisclosurePanel> event) {
+				Cookies.setCookie(McAppConstant.MANAGMENTPANEL,String.valueOf(false),ClientUtility.getDateFromOneYear());
+			}
+		});
+		assementPanel.addOpenHandler(new OpenHandler<DisclosurePanel>() {
+			@Override
+			public void onOpen(OpenEvent<DisclosurePanel> event) {
+				Cookies.setCookie(McAppConstant.ASSESMENTPANEL,String.valueOf(true),ClientUtility.getDateFromOneYear());
+			}
+		});
+		assementPanel.addCloseHandler(new CloseHandler<DisclosurePanel>() {
+			@Override
+			public void onClose(CloseEvent<DisclosurePanel> event) {
+				Cookies.setCookie(McAppConstant.ASSESMENTPANEL,String.valueOf(false),ClientUtility.getDateFromOneYear());
+			}
+		});
+		questionPanel.addOpenHandler(new OpenHandler<DisclosurePanel>() {
+			@Override
+			public void onOpen(OpenEvent<DisclosurePanel> event) {
+				Cookies.setCookie(McAppConstant.QUESTIONPANEL,String.valueOf(true),ClientUtility.getDateFromOneYear());
+			}
+		});
+		questionPanel.addCloseHandler(new CloseHandler<DisclosurePanel>() {
+			@Override
+			public void onClose(CloseEvent<DisclosurePanel> event) {
+				Cookies.setCookie(McAppConstant.QUESTIONPANEL,String.valueOf(false),ClientUtility.getDateFromOneYear());
+			}
+		});
+		extendedQuestionPanel.addOpenHandler(new OpenHandler<DisclosurePanel>() {
+			@Override
+			public void onOpen(OpenEvent<DisclosurePanel> event) {
+				Cookies.setCookie(McAppConstant.EXTENDEDQUESTIONPANEL,String.valueOf(true),ClientUtility.getDateFromOneYear());
+			}
+		});
+		extendedQuestionPanel.addCloseHandler(new CloseHandler<DisclosurePanel>() {
+			@Override
+			public void onClose(CloseEvent<DisclosurePanel> event) {
+				Cookies.setCookie(McAppConstant.EXTENDEDQUESTIONPANEL,String.valueOf(false),ClientUtility.getDateFromOneYear());
+			}
+		});
+	}
+
+	private void checkAndShowDisclosurePanelBasenOnCookie() {
+		
+		String systemOverViewPanlCookie = Cookies.getCookie(McAppConstant.SYSTEMOVERVIEWPANEL);
+		String managementPanelCookie = Cookies.getCookie(McAppConstant.MANAGMENTPANEL);
+		String assementPanelCookie = Cookies.getCookie(McAppConstant.ASSESMENTPANEL);
+		String questionPanelCookie = Cookies.getCookie(McAppConstant.QUESTIONPANEL);
+		String extendedQuestionPanelCookie = Cookies.getCookie(McAppConstant.EXTENDEDQUESTIONPANEL);
+		
+		if(systemOverViewPanlCookie ==null){
+			Cookies.setCookie(McAppConstant.SYSTEMOVERVIEWPANEL,String.valueOf(true),ClientUtility.getDateFromOneYear());
+		}else{
+			
+			if(systemOverViewPanlCookie.equals(String.valueOf(true))){
+				systemOweviewPanel.setOpen(true);
+			}else{
+				systemOweviewPanel.setOpen(false);
+			}
+		}
+		
+		if(managementPanelCookie ==null){
+			Cookies.setCookie(McAppConstant.MANAGMENTPANEL,String.valueOf(true),ClientUtility.getDateFromOneYear());
+		}else{
+			
+			if(managementPanelCookie.equals(String.valueOf(true))){
+				managementPanel.setOpen(true);
+			}else{
+				managementPanel.setOpen(false);
+			}
+		}
+		
+		if(assementPanelCookie ==null){
+			Cookies.setCookie(McAppConstant.ASSESMENTPANEL,String.valueOf(true),ClientUtility.getDateFromOneYear());
+		}else{
+			
+			if(assementPanelCookie.equals(String.valueOf(true))){
+				assementPanel.setOpen(true);
+			}else{
+				assementPanel.setOpen(false);
+			}
+		}
+		
+		if(questionPanelCookie ==null){
+			Cookies.setCookie(McAppConstant.QUESTIONPANEL,String.valueOf(true),ClientUtility.getDateFromOneYear());
+		}else{
+			
+			if(questionPanelCookie.equals(String.valueOf(true))){
+				questionPanel.setOpen(true);
+			}else{
+				questionPanel.setOpen(false);
+			}
+		}
+		
+		if(extendedQuestionPanelCookie ==null){
+			Cookies.setCookie(McAppConstant.EXTENDEDQUESTIONPANEL,String.valueOf(true),ClientUtility.getDateFromOneYear());
+		}else{
+			
+			if(extendedQuestionPanelCookie.equals(String.valueOf(true))){
+				extendedQuestionPanel.setOpen(true);
+			}else{
+				extendedQuestionPanel.setOpen(false);
+			}
+		}
+		
+	}
 	public static void checkAdminRights(McAppRequestFactory requests,boolean isValiduser)
 	{
 		if(MC_APP_NAV != null) 

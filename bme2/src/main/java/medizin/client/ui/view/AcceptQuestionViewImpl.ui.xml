@@ -9,7 +9,7 @@
 <g:SplitLayoutPanel styleName="{style.panelHTML}"
 		ui:field="splitLayoutPanel">
 		<g:west size="600">
-			<g:ScrollPanel>
+			<g:ScrollPanel ui:field="scrollPanel">
 				<g:HTMLPanel styleName="{style.listView}">
 					<!-- <div style="height:3em;" /> -->
 							

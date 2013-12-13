@@ -42,10 +42,12 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -146,9 +148,12 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 	 * 
 	 */
 	
-	@UiField
+	@UiField(provided=true)
 	SplitLayoutPanel splitLayoutPanel;
 
+	@UiField
+	ScrollPanel scrollpanel;
+	
 	@UiField(provided = true)
 	QuickSearchBox searchBox;
 
@@ -207,6 +212,16 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 		CellTable.Resources tableResources = GWT.create(MyCellTableResources.class);
 		table = new CellTable<QuestionProxy>(McAppConstant.TABLE_PAGE_SIZE, tableResources);
 
+		splitLayoutPanel =new SplitLayoutPanel(){
+            @Override
+            public void onResize() {
+               super.onResize();
+               	/*Double newWidth =splitLayoutPanel.getWidgetSize(scrollpanel);
+               	Cookies.setCookie(McAppConstant.QUESTION_VIEW_WIDTH, String.valueOf(newWidth));*/
+               	delegate.splitLayoutPanelResized();
+            }
+        };  
+        
 		MySimplePager.Resources pagerResources = GWT.create(MySimplePagerResources.class);
 		pager = new MySimplePager(MySimplePager.TextLocation.RIGHT, pagerResources,true, McAppConstant.TABLE_JUMP_SIZE, true);
 
@@ -345,8 +360,16 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 		
 		init();
 
+		//setting widget width from cookie.
+        //setWidgetWidth();
+		
 	}
-
+	private void setWidgetWidth() {
+		String widgetWidthFromCookie = Cookies.getCookie(McAppConstant.QUESTION_VIEW_WIDTH);
+        if(widgetWidthFromCookie !=null){
+        	splitLayoutPanel.setWidgetSize(scrollpanel,Double.valueOf(widgetWidthFromCookie));	
+        }
+	}
 	
 	@UiHandler("filterButton")
 	public void filterButtonHover(MouseOverEvent event) {
@@ -957,4 +980,13 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 	public QuestionFilterViewImpl getFilterPanel() {
 		return filterPanel;
 	}
+
+	public SplitLayoutPanel getSplitLayoutPanel() {
+		return splitLayoutPanel;
+	}
+
+	public ScrollPanel getScrollpanel() {
+		return scrollpanel;
+	}
+	
 }

@@ -9,6 +9,7 @@ import medizin.client.place.PlaceDeactivatedQuestion;
 import medizin.client.place.PlaceDeactivatedQuestionDetails;
 import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
+import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.question.QuestionView;
 import medizin.client.ui.view.question.QuestionViewImpl;
 
@@ -20,6 +21,7 @@ import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.cellview.client.AbstractHasData;
 import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.Range;
@@ -69,6 +71,9 @@ public class ActivityDeactivatedQuestion extends AbstractActivityWrapper impleme
 		table = view.getTable();
 		activityManger.setDisplay(view.getDetailsPanel());
 
+		//Setting splitlayout panel width from Cookie
+		setWidthOfWidget();
+		
 		RecordChangeEvent.register(requests.getEventBus(), (QuestionViewImpl)view);
 		init();
 
@@ -87,6 +92,13 @@ public class ActivityDeactivatedQuestion extends AbstractActivityWrapper impleme
 		});
 	}
 	
+	private void setWidthOfWidget() {
+		String widgetWidthFromCookie = Cookies.getCookie(McAppConstant.DEACTIVATED_QUE_VIEW_WIDTH);
+        if(widgetWidthFromCookie !=null){
+        	((QuestionViewImpl)view).getSplitLayoutPanel().setWidgetSize(((QuestionViewImpl)view).getScrollpanel(),Double.valueOf(widgetWidthFromCookie));	
+        }
+		
+	}
 	private void showDetails(QuestionProxy selectedObject) {
 		placeController.goTo(new PlaceDeactivatedQuestionDetails(selectedObject.stableId()));
 	}
@@ -167,6 +179,13 @@ public class ActivityDeactivatedQuestion extends AbstractActivityWrapper impleme
 				onRangeChanged();
 			}
 		});
+	}
+
+	@Override
+	public void splitLayoutPanelResized() {
+		Double newWidth =(((QuestionViewImpl)view).getSplitLayoutPanel()).getWidgetSize(((QuestionViewImpl)view).getScrollpanel());
+       	Cookies.setCookie(McAppConstant.DEACTIVATED_QUE_VIEW_WIDTH, String.valueOf(newWidth));
+		
 	}
 
 

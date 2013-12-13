@@ -24,7 +24,7 @@
 	<g:SplitLayoutPanel ui:field="splitLayoutPanel"
 		styleName="{style.panelHTML}">
 		<g:west size="580">
-			<g:ScrollPanel>
+			<g:ScrollPanel ui:field="scrollPanel">
 				<g:VerticalPanel styleName="{style.panelLeft}">
 					<m:AssesmentTabPanelImpl ui:field="assementTabPanel"></m:AssesmentTabPanelImpl>
 					<m:AssesmentQuestionPanelImpl

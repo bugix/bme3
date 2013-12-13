@@ -12,8 +12,10 @@ import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.pager.MySimplePager;
+import medizin.client.util.ClientUtility;
 import medizin.shared.i18n.BmeConstants;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -28,8 +30,10 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -49,9 +53,12 @@ public class AssesmentViewImpl extends Composite implements AssesmentView, Recor
 
 	private String name;
 	
-	@UiField
+	@UiField(provided=true)
 	SplitLayoutPanel splitLayoutPanel;
 
+	@UiField
+	ScrollPanel scrollPanel;
+	
 	public AssesmentViewImpl() {
 		
 		CellTable.Resources tableResources = GWT
@@ -64,14 +71,31 @@ public class AssesmentViewImpl extends Composite implements AssesmentView, Recor
 		pager = new MySimplePager(MySimplePager.TextLocation.RIGHT, pagerResources,
 				true, McAppConstant.TABLE_JUMP_SIZE, true);
 
+		splitLayoutPanel =new SplitLayoutPanel(){
+            @Override
+            public void onResize() {
+               super.onResize();
+               	Double newWidth =splitLayoutPanel.getWidgetSize(scrollPanel);
+               	Cookies.setCookie(McAppConstant.ASSESMENT_VIEW_WIDTH, String.valueOf(newWidth));
+            }
+        };  
+        
 		initWidget(uiBinder.createAndBindUi(this));
 		DOM.setElementAttribute(splitLayoutPanel.getElement(), "style", "position: absolute; left: 0px; top: 0px; right: 5px; bottom: 0px;");
 		
 		newButton.setText(constants.createNewTest());
 		init();
 
+		//setting widget width from cookie.
+        setWidgetWidth();
 	}
 
+	private void setWidgetWidth() {
+		String widgetWidthFromCookie = Cookies.getCookie(McAppConstant.ASSESMENT_VIEW_WIDTH);
+        if(widgetWidthFromCookie !=null){
+        	splitLayoutPanel.setWidgetSize(scrollPanel,Double.valueOf(widgetWidthFromCookie));	
+        }
+	}
 
 	@Override
 	public void setName(String helloName) {

@@ -46,4 +46,28 @@ public class McAppConstant {
 	public static final String RESEND_TO_REVIEW_KEY = "resendToReview";
 	public static final String LAST_SELECTED_QUESTION_REVIEWER = "lastSelectedQuestionReviewer";
 	public static final String LAST_SELECTED_ANSWER_REVIEWER = "lastSelectedAnswerReviewer";
+	
+	public static final String SYSTEMOVERVIEWPANEL="systemOweviewPanel";
+	public static final String MANAGMENTPANEL="managementPanel";
+	public static final String ASSESMENTPANEL="assementPanel";
+	public static final String QUESTIONPANEL="questionPanel";
+	public static final String EXTENDEDQUESTIONPANEL="extendedQuestionPanel";
+	
+	public static final String USER_VIEW_WIDTH="USER_VIEW_WIDTH";
+	
+	public static final String ASSESMENT_VIEW_WIDTH="ASSESMENT_VIEW_WIDTH";
+	
+	public static final String ASIGNASSQUESTION_VIEW_WIDTH="ASIGNASSQUESTION_VIEW_WIDTH";
+	
+	public static final String QUESTION_VIEW_WIDTH="QUESTION_VIEW_WIDTH";
+	
+	public static final String ACCEPT_QUESTION_VIEW_WIDTH="ACCEPT_QUESTION_VIEW_WIDTH";
+	
+	public static final String INSTITUTION_VIEW_WIDTH="INSTITUTION_VIEW_WIDTH";
+	
+	public static final String QUESTIONTYPES_VIEW_WIDTH="QUESTIONTYPES_VIEW_WIDTH";
+	
+	public static final String NONACTIVEQUESTION_VIEW_WIDTH="NONACTIVEQUESTION_VIEW_WIDTH";
+	
+	public static final String DEACTIVATED_QUE_VIEW_WIDTH="DEACTIVATED_QUE_VIEW_WIDTH";
 }

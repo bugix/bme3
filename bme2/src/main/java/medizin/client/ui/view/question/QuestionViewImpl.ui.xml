@@ -8,7 +8,7 @@
 	<g:SplitLayoutPanel styleName="{style.panelHTML}"
 		ui:field="splitLayoutPanel">
 		<g:west size="600">
-			<g:ScrollPanel>
+			<g:ScrollPanel ui:field="scrollpanel">
 				<g:HTMLPanel styleName="{style.listView}">
 					<div class="{style.controls} {style.controlsleft}">
 

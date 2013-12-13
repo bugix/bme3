@@ -12,8 +12,10 @@ import medizin.client.ui.McAppConstant;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.QuickSearchBox;
 import medizin.client.ui.widget.pager.MySimplePager;
+import medizin.client.util.ClientUtility;
 import medizin.shared.i18n.BmeConstants;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.text.shared.AbstractRenderer;
@@ -23,8 +25,12 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -38,11 +44,17 @@ public class UserViewImpl extends Composite implements UserView, RecordChangeHan
 			UiBinder<Widget, UserViewImpl> {
 	}
 	
-	@UiField
+	@UiField(provided=true)
 	SplitLayoutPanel splitLayoutPanel;
 
 	@UiField (provided = true)
 	QuickSearchBox searchBox;
+	
+	@UiField
+	HTMLPanel mainPanel;
+	
+	@UiField
+	ScrollPanel scrollPanel;
 	
 	private Presenter presenter;
 
@@ -60,11 +72,29 @@ public class UserViewImpl extends Composite implements UserView, RecordChangeHan
 			}
 		});
 		
+		splitLayoutPanel =new SplitLayoutPanel(){
+            @Override
+            public void onResize() {
+               super.onResize();
+               	Double newWidth =splitLayoutPanel.getWidgetSize(scrollPanel);
+               	Cookies.setCookie(McAppConstant.USER_VIEW_WIDTH, String.valueOf(newWidth));
+            }
+        };  
+        
 		initWidget(uiBinder.createAndBindUi(this));
 		DOM.setElementAttribute(splitLayoutPanel.getElement(), "style", "position: absolute; left: 0px; top: 0px; right: 5px; bottom: 0px;");
 		
 		init();
+		//setting widget width from cookie.
+        setWidgetWidth();
+		
+	}
 
+	private void setWidgetWidth() {
+		String widgetWidthFromCookie = Cookies.getCookie(McAppConstant.USER_VIEW_WIDTH);
+        if(widgetWidthFromCookie !=null){
+        	splitLayoutPanel.setWidgetSize(scrollPanel,Double.valueOf(widgetWidthFromCookie));	
+        }
 	}
 
 	@Override

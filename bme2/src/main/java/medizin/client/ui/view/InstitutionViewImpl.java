@@ -38,9 +38,12 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -53,6 +56,12 @@ public class InstitutionViewImpl extends Composite implements InstitutionView, R
     private Delegate delegate;
 
     public BmeConstants constants = GWT.create(BmeConstants.class);
+    
+    @UiField(provided=true)
+    SplitLayoutPanel splitLayoutPanel;
+    
+    @UiField
+    ScrollPanel scrollPanel;
     
     @UiField
     TextBox institutionName;
@@ -95,7 +104,16 @@ public class InstitutionViewImpl extends Composite implements InstitutionView, R
 		
 		CellTable.Resources tableResources = GWT.create(MyCellTableResources.class);
 		table = new CellTable<InstitutionProxy>(McAppConstant.TABLE_PAGE_SIZE, tableResources);
-				
+			
+		splitLayoutPanel =new SplitLayoutPanel(){
+            @Override
+            public void onResize() {
+               super.onResize();
+               	Double newWidth =splitLayoutPanel.getWidgetSize(scrollPanel);
+               	Cookies.setCookie(McAppConstant.INSTITUTION_VIEW_WIDTH, String.valueOf(newWidth));
+            }
+        };  
+        
 		MySimplePager.Resources pagerResources = GWT.create(MySimplePagerResources.class);
 		pager = new MySimplePager(MySimplePager.TextLocation.RIGHT, pagerResources, true, McAppConstant.TABLE_JUMP_SIZE, true);
 		
@@ -126,10 +144,17 @@ public class InstitutionViewImpl extends Composite implements InstitutionView, R
 		}
 		
 		init(flag);
-
+		//setting widget width from cookie.
+        setWidgetWidth();
 
 	}
 
+	private void setWidgetWidth() {
+		String widgetWidthFromCookie = Cookies.getCookie(McAppConstant.INSTITUTION_VIEW_WIDTH);
+        if(widgetWidthFromCookie !=null){
+        	splitLayoutPanel.setWidgetSize(scrollPanel,Double.valueOf(widgetWidthFromCookie));	
+        }
+	}
 
 	/*@Override
 	public void setName(String helloName) {

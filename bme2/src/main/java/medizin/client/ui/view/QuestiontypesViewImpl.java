@@ -24,8 +24,10 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -50,6 +52,15 @@ public class QuestiontypesViewImpl extends Composite implements QuestiontypesVie
 		CellTable.Resources tableResources = GWT.create(MyCellTableResources.class);
 		table = new CellTable<QuestionTypeProxy>(McAppConstant.TABLE_PAGE_SIZE, tableResources);
 		
+		splitLayoutPanel =new SplitLayoutPanel(){
+            @Override
+            public void onResize() {
+               super.onResize();
+               	Double newWidth =splitLayoutPanel.getWidgetSize(scrollPanel);
+               	Cookies.setCookie(McAppConstant.QUESTIONTYPES_VIEW_WIDTH, String.valueOf(newWidth));
+            }
+        };  
+        
 		MySimplePager.Resources pagerResources = GWT.create(MySimplePagerResources.class);
 		pager = new MySimplePager(MySimplePager.TextLocation.RIGHT, pagerResources, true, McAppConstant.TABLE_JUMP_SIZE, true);
 		
@@ -65,8 +76,16 @@ public class QuestiontypesViewImpl extends Composite implements QuestiontypesVie
 		init();
 		//splitLayoutPanel.setWidgetMinSize(splitLayoutPanel.getWidget(0), McAppConstant.SPLIT_PANEL_MINWIDTH);
 		//splitLayoutPanel.setWidgetMinSize(splitLayoutPanel.getWidget(0), McAppConstant.SPLIT_PANEL_MINWIDTH);
+		//setting widget width from cookie.
+        setWidgetWidth();
 	}
 
+	private void setWidgetWidth() {
+		String widgetWidthFromCookie = Cookies.getCookie(McAppConstant.QUESTIONTYPES_VIEW_WIDTH);
+        if(widgetWidthFromCookie !=null){
+        	splitLayoutPanel.setWidgetSize(scrollPanel,Double.valueOf(widgetWidthFromCookie));	
+        }
+	}
 	
 //    @Override
 //    public RequestFactoryEditorDriver<medizin.client.managed.request.QuestionTypeProxy, QuestiontypesViewImpl> createEditorDriver() {
@@ -118,8 +137,11 @@ public class QuestiontypesViewImpl extends Composite implements QuestiontypesVie
 		// TODO Auto-generated method stub
 		return paths.toArray(new String[paths.size()]);
 	}
-	@UiField
+	@UiField(provided=true)
 	SplitLayoutPanel splitLayoutPanel;
+	
+	@UiField
+	ScrollPanel scrollPanel;
 	
 	public void init() {
 		

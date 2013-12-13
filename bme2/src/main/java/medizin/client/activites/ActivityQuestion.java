@@ -13,6 +13,7 @@ import medizin.client.proxy.McProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
+import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.question.QuestionView;
 import medizin.client.ui.view.question.QuestionViewImpl;
 import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchAbstractPopupViewImpl;
@@ -40,6 +41,7 @@ import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.cellview.client.AbstractHasData;
 import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.view.client.ProvidesKey;
@@ -127,6 +129,9 @@ public class ActivityQuestion extends AbstractActivityWrapper implements Questio
 		this.view = questionView;
 		widget.setWidget(questionView.asWidget());
 
+		//Setting splitlayout panel width from Cookie
+		setWidthOfWidget();
+		
 		table = view.getTable();
 		advancedSearchSubViewImpl = view.getQuestionAdvancedSearchSubViewImpl();
 		advancedSearchSubViewImpl.setDelegate(this);
@@ -246,6 +251,14 @@ public class ActivityQuestion extends AbstractActivityWrapper implements Questio
 
 		view.setDelegate(this);
 
+	}
+
+	private void setWidthOfWidget() {
+		String widgetWidthFromCookie = Cookies.getCookie(McAppConstant.QUESTION_VIEW_WIDTH);
+        if(widgetWidthFromCookie !=null){
+        	((QuestionViewImpl)view).getSplitLayoutPanel().setWidgetSize(((QuestionViewImpl)view).getScrollpanel(),Double.valueOf(widgetWidthFromCookie));	
+        }
+		
 	}
 
 	protected void showDetails(QuestionProxy question) {
@@ -573,5 +586,11 @@ public class ActivityQuestion extends AbstractActivityWrapper implements Questio
 		questionTypeView.setDelegate(this);
 		questionTypeView.display(addQuestionType);
 		questionTypeView.disableSearchTextBox();
+	}
+
+	@Override
+	public void splitLayoutPanelResized() {
+		Double newWidth =(((QuestionViewImpl)view).getSplitLayoutPanel()).getWidgetSize(((QuestionViewImpl)view).getScrollpanel());
+       	Cookies.setCookie(McAppConstant.QUESTION_VIEW_WIDTH, String.valueOf(newWidth));
 	}
 }
