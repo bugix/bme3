@@ -89,11 +89,11 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 		view.removeQuestionUsedInMCTab();
 		
 		activityQuestionKeyword = new PartActivityQuestionKeyword(requests, view.getQuestionKeywordView(),false);
-		activityQuestionKeyword.setQuestionProxy(question);
+		activityQuestionKeyword.setQuestionProxy(questionProxy);
 		view.getQuestionKeywordView().setDelegate(activityQuestionKeyword);
 		partActivityQuestionLearningObjective = new PartActivityQuestionLearningObjective(requests, view.getQuestionLearningObjectiveSubViewImpl(),false);
 		view.getQuestionLearningObjectiveSubViewImpl().setDelegate(partActivityQuestionLearningObjective);
-		partActivityQuestionLearningObjective.setQuestionProxy(question);
+		partActivityQuestionLearningObjective.setQuestionProxy(questionProxy);
 	}
 	
 	private boolean isQuestionTypeMCQ(QuestionProxy questionProxy) {
