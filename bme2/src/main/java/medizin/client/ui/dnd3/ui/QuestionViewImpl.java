@@ -7,9 +7,13 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.requestfactory.shared.EntityProxyId;
@@ -76,6 +80,9 @@ public class QuestionViewImpl extends VerticalPanel implements QuestionView {
 		
 	}
 	private Delegate delegate;
+	private TextBox percentTxt;
+	private TextBox pointsTxt;
+	private CheckBox eleminateQuestion;
 	
 	
 	@Override
@@ -111,7 +118,8 @@ public class QuestionViewImpl extends VerticalPanel implements QuestionView {
 		//set up labels
 		questionTextLbl.add(new HTML(questionProxy.getQuestion().getQuestionText()));
 		questionTextLbl.setHeight("auto");
-		questionTextLbl.setWidth("860px");
+		//questionTextLbl.setWidth("860px");
+		questionTextLbl.setWidth("520px");
 	    
 	   	final Label twistieOpenQuestion = new Label();
 		twistieOpenQuestion.addStyleName("ui-icon ui-icon-triangle-1-e");
@@ -124,6 +132,7 @@ public class QuestionViewImpl extends VerticalPanel implements QuestionView {
 		headerPanel.add(twistieCloseQuestion);
 		twistieCloseQuestion.setVisible(false);
 		headerPanel.add(questionTextLbl);
+		headerPanel.add(getInputPanel());
 		headerPanel.setStyleName("questionHeader");
 		headerPanel.setHeight("auto");
 		
@@ -164,6 +173,50 @@ public class QuestionViewImpl extends VerticalPanel implements QuestionView {
 		
 	}//End init
 
+	private HorizontalPanel getInputPanel() {
+		HorizontalPanel panel = new HorizontalPanel();
+		
+		if(questionProxy.getQuestion().getQuestionType().getSumTrueAnswer() != 1) {
+			Label percentLbl = new Label("percent");
+			panel.add(percentLbl);
+			panel.setCellVerticalAlignment(percentLbl, HasVerticalAlignment.ALIGN_MIDDLE);
+			panel.setCellHorizontalAlignment(percentLbl, HasHorizontalAlignment.ALIGN_RIGHT);
+			percentTxt = new TextBox();
+			percentTxt.setWidth("40px");
+			percentTxt.setHeight("20px");
+			if(questionProxy.getPoints() != null) {
+				percentTxt.setText(questionProxy.getPercent());	
+			}
+			panel.add(percentTxt);
+			panel.setCellVerticalAlignment(percentTxt, HasVerticalAlignment.ALIGN_MIDDLE);
+			panel.setCellHorizontalAlignment(percentTxt, HasHorizontalAlignment.ALIGN_RIGHT);
+		} else {
+			questionTextLbl.setWidth("625px");
+		}
+		Label pointsLbl = new Label("points");
+		panel.add(pointsLbl);
+		pointsTxt = new TextBox();
+		pointsTxt.setWidth("40px");
+		pointsTxt.setHeight("20px");
+		if(questionProxy.getPoints() != null) {
+			pointsTxt.setText(questionProxy.getPoints());	
+		}
+		panel.add(pointsTxt);
+		eleminateQuestion = new CheckBox("eleminate question");
+		if(questionProxy.getEliminateQuestion() != null) {
+			eleminateQuestion.setValue(questionProxy.getEliminateQuestion());
+		}
+		panel.add(eleminateQuestion);
+		panel.setSpacing(4);
+		panel.setCellVerticalAlignment(pointsLbl, HasVerticalAlignment.ALIGN_MIDDLE);
+		panel.setCellVerticalAlignment(pointsTxt, HasVerticalAlignment.ALIGN_MIDDLE);
+		panel.setCellVerticalAlignment(eleminateQuestion, HasVerticalAlignment.ALIGN_MIDDLE);
+		panel.setCellHorizontalAlignment(pointsLbl, HasHorizontalAlignment.ALIGN_RIGHT);
+		panel.setCellHorizontalAlignment(pointsTxt, HasHorizontalAlignment.ALIGN_RIGHT);
+		panel.setCellHorizontalAlignment(eleminateQuestion, HasHorizontalAlignment.ALIGN_RIGHT);
+		return panel;
+	}
+
 	public void showQuestions(){
 		Integer widgetCount = this.getWidgetCount();
 			for (int i = 1; i < widgetCount; i++){
@@ -177,4 +230,17 @@ public class QuestionViewImpl extends VerticalPanel implements QuestionView {
 			this.getWidget(i).setVisible(false);
 		}
 	}//End hideQuestions
+	
+	
+	public String getPercentValue() {
+		return percentTxt == null? null :percentTxt.getText();
+	}
+	
+	public String getPointsValue() {
+		return pointsTxt.getText();
+	}
+	
+	public Boolean getEleminateQuestionValue() {
+		return eleminateQuestion.getValue();
+	}
 }

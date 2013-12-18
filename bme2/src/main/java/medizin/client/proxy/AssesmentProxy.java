@@ -79,5 +79,9 @@ public interface AssesmentProxy extends EntityProxy {
 
     abstract void setQuestionTypeCountPerExams(List<medizin.client.proxy.QuestionTypeCountPerExamProxy> questionTypeCountPerExams);
 
+    abstract Boolean getDisallowSorting();
+
+    abstract void setDisallowSorting(Boolean disallowSorting);
+
     abstract Integer getVersion();
 }

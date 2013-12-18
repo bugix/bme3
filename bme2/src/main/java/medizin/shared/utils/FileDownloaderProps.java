@@ -7,8 +7,9 @@ public interface FileDownloaderProps {
 	String VERSION = "3";
 	String A_VERSION = "4";
 	String B_VERSION = "5";
+	String DISALLOW_SORTING = "6";
 	
 	public enum Method {
-		DOCX_PAPER, XML_PAPER, DOCX_PAPER_ALL
+		DOCX_PAPER, XML_PAPER, DOCX_PAPER_ALL, SOLUTION_KEY
 	}
 }

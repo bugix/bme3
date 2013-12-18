@@ -51,7 +51,7 @@ public interface AssesmentQuestionRequest extends AssesmentQuestionRequest_Roo_G
 	abstract Request<Boolean> sendMail(List<PersonProxy> list, String messageContent,
 			String mailSubject, AssesmentProxy activeTab);
 
-	abstract Request<Void> shuffleQuestionsAnswers(Long assessmentID);
+	abstract Request<Void> shuffleQuestionsAnswers(Long assessmentID, Boolean disallowSorting);
 	
 	abstract Request<String> loadSystemOverviewTemplate();
 

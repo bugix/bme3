@@ -21,6 +21,7 @@ import medizin.client.proxy.QuestionTypeCountPerExamProxy;
 import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.request.AnswerToAssQuestionRequest;
 import medizin.client.request.AssesmentQuestionRequest;
+import medizin.client.request.AssesmentRequest;
 import medizin.client.request.QuestionEventRequest;
 import medizin.client.request.QuestionSumPerPersonRequest;
 import medizin.client.ui.AssesmenBookDialogbox;
@@ -65,6 +66,7 @@ public class ActivityBookAssementDetails extends AbstractActivityWrapper impleme
 	private BookAssesmentDetailsView view;
 	private McAppRequestFactory requests;
 	private PlaceController placeController;
+	private List<QuestionViewImpl> questionsViewContainer = new ArrayList<QuestionViewImpl>();
 
 	@Inject
 	public ActivityBookAssementDetails(PlaceBookAssesmentDetails place,
@@ -159,7 +161,7 @@ public class ActivityBookAssementDetails extends AbstractActivityWrapper impleme
 	 */
 	protected void init() {
 		bookAssesmentViewDetails.getWorkingArea().clear();
-		bookAssesmentViewDetails.addButtons();
+		bookAssesmentViewDetails.addButtons(assesment.getDisallowSorting());
 		
 		
 		requests.questionTypeCountPerExamRequest().findQuestionTypesCountSortedByAssesmentNonRoo(assesment.getId()).with("questionTypesAssigned").fire(new BMEReceiver<List<QuestionTypeCountPerExamProxy>>() {
@@ -379,7 +381,7 @@ public void moveQuestionTypeCountPerExamRequestUp(QuestionTypeCountPerExamProxy 
 		 * request all Assesmentquestions by QuestinEvent, Assesment and QuestionType
 		 */
 		
-		assesmentQuestionRequest.findAssesmentQuestionsByQuestionEventAssIdQuestType(questionEvent.getId(), assesment.getId(), questionTypesId,true,false).with("question").to(new BMEReceiver <java.util.List<medizin.client.proxy.AssesmentQuestionProxy>>(){
+		assesmentQuestionRequest.findAssesmentQuestionsByQuestionEventAssIdQuestType(questionEvent.getId(), assesment.getId(), questionTypesId,true,false).with("question","question.questionType").to(new BMEReceiver <java.util.List<medizin.client.proxy.AssesmentQuestionProxy>>(){
 			
 			@Override
 			public void onSuccess(List<AssesmentQuestionProxy> response) {
@@ -404,6 +406,7 @@ public void moveQuestionTypeCountPerExamRequestUp(QuestionTypeCountPerExamProxy 
 					questionVert.setQuestionProxy(assQuestionProxy);
 				    //questionDragController.makeDraggable(questionVert, questionVert.getQuestionTextLbl());
 				    questionsContainer.add(questionVert);
+				    questionsViewContainer.add(questionVert);
 				    
 
 		
@@ -968,14 +971,14 @@ public void moveQuestionTypeCountPerExamRequestUp(QuestionTypeCountPerExamProxy 
 	}
 
 	@Override
-	public void shuffleAssementQuestionsAnswers() {
+	public void shuffleAssementQuestionsAnswers(Boolean disallowSorting) {
 		
 		if(assesment == null) {
 			Log.error("Assesment is null");
 			return;
 		}
 		
-		requests.assesmentQuestionRequest().shuffleQuestionsAnswers(assesment.getId()).fire(new BMEReceiver<Void>() {
+		requests.assesmentQuestionRequest().shuffleQuestionsAnswers(assesment.getId(),disallowSorting).fire(new BMEReceiver<Void>() {
 
 			@Override
 			public void onSuccess(Void response) {
@@ -985,11 +988,42 @@ public void moveQuestionTypeCountPerExamRequestUp(QuestionTypeCountPerExamProxy 
 		});
 	}
 
+	@Override
+	public void saveAllAssesmentQuestionChanges() {
+		AssesmentRequest assesmentRequest = requests.assesmentRequest();
+		if(assesment.getDisallowSorting() == null || assesment.getDisallowSorting() == false) {
+			Boolean disallowSorting = view.getDisallowSorting(assesment.getDisallowSorting());
+			AssesmentProxy edit = assesmentRequest.edit(assesment);
+			edit.setDisallowSorting(disallowSorting);
+			assesmentRequest.persist().using(assesment).to(new BMEReceiver<Void>() {
 
+				@Override
+				public void onSuccess(Void response) {
+					
+				}
+			});
+		}
+		
+		AssesmentQuestionRequest assesmentQuestionRequest = assesmentRequest.append(requests.assesmentQuestionRequest());
+		for (final QuestionViewImpl questionViewImpl : questionsViewContainer) {
+			AssesmentQuestionProxy assesmentQuestionProxy = questionViewImpl.getQuestionProxy();
+			if(assesmentQuestionProxy  != null) {
+				assesmentQuestionProxy = assesmentQuestionRequest.edit(assesmentQuestionProxy );
+				assesmentQuestionProxy.setPercent(questionViewImpl.getPercentValue());
+				assesmentQuestionProxy.setPoints(questionViewImpl.getPointsValue());
+				assesmentQuestionProxy.setEliminateQuestion(questionViewImpl.getEleminateQuestionValue());
+				assesmentQuestionRequest = assesmentQuestionRequest.append(requests.assesmentQuestionRequest());
+				assesmentQuestionRequest.persist().using(assesmentQuestionProxy).to(new BMEReceiver<Void>() {
 
-	
-
-
-
+					@Override
+					public void onSuccess(Void response) {
+					}
+				});
+			}else {
+				Log.error("Proxy is null");
+			}
+		}
+		assesmentQuestionRequest.fire();
+	}
 
 }

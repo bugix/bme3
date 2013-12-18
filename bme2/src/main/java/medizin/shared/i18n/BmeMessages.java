@@ -25,4 +25,6 @@ public interface BmeMessages extends Messages {
 	public String questionDigitCount(String actual,String total);
 
 	public String imageUploadSize(int width, int height);
+
+	public String answerTextMinMaxContinueAnyWay(long min, long max);
 }

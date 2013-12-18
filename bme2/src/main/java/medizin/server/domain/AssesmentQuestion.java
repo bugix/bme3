@@ -60,6 +60,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.web.bindery.requestfactory.server.RequestFactoryServlet;
 
 @RooJavaBean
@@ -130,6 +131,11 @@ public class AssesmentQuestion {
     @ManyToOne
     private Person autor;
     
+    private String percent;
+    
+    private String points;
+    
+    private Boolean eliminateQuestion;
     
     private static final DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
     /*
@@ -1186,20 +1192,25 @@ public class AssesmentQuestion {
 		return aqs;
 	}
 	
-	public static void shuffleQuestionsAnswers(Long assessmentID){
+	public static void shuffleQuestionsAnswers(Long assessmentID,Boolean disallowSorting) {
+		
+		if(assessmentID == null) {
+			log.error("Error in assessment id");
+			return;
+		}
+		
+		Assesment assesment = Assesment.findAssesment(assessmentID);
+		if(assesment.getDisallowSorting() != null && assesment.getDisallowSorting() == true) {
+			log.error("Shuffle is not allowed");
+			return;
+		}
 		
 		List<QuestionTypeCountPerExam> countPerExams = QuestionTypeCountPerExam.findQuestionTypesCountSortedByAssesmentNonRoo(assessmentID);
-		
+		int index = 1;
 		for (QuestionTypeCountPerExam questionTypeCountPerExam : countPerExams) {
 			Set<QuestionType> questionTypes = questionTypeCountPerExam.getQuestionTypesAssigned();
 			
-			List<Long> questionTypeIds = Lists.newArrayList(FluentIterable.from(questionTypes).transform(new Function<QuestionType, Long>() {
-
-				@Override
-				public Long apply(QuestionType input) {
-					return input.getId();
-				}	
-			}).iterator());
+			List<Long> questionTypeIds = Lists.newArrayList(FluentIterable.from(questionTypes).transform(getQuestionTypeToIdFunction()).iterator());
 			
 			List<QuestionEvent> questionEvents =  QuestionEvent.findAllQuestionEventsByQuestionTypeAndAssesmentID(assessmentID, questionTypeIds);
 			
@@ -1211,13 +1222,15 @@ public class AssesmentQuestion {
 				}
 				log.info("--------------------------------------------------------");
 				Collections.shuffle(assesmentQuestions);
-				int size = assesmentQuestions.size();
-				for (int i = 0; i < size; i++) {
-					assesmentQuestions.get(i).setOrderAversion(i);
-					assesmentQuestions.get(i).setOrderBversion((size-1) - i);
-					assesmentQuestions.get(i).persist();
+				int size = (index-1) + assesmentQuestions.size();
+				int last = size;
+				for (AssesmentQuestion assesmentQuestion : assesmentQuestions) {
+					assesmentQuestion.setOrderAversion(index);
+					assesmentQuestion.setOrderBversion(last);
+					assesmentQuestion.persist();
+					index++;
+					last--;
 				}
-				
 				for (AssesmentQuestion assesmentQuestion : assesmentQuestions) {
 					log.info("Assessment question id " + assesmentQuestion.getId());
 				}
@@ -1238,8 +1251,22 @@ public class AssesmentQuestion {
 				}
 			}
 		}
+		
+		assesment.setDisallowSorting(disallowSorting);
+		assesment.persist();
 	}
-	
+
+
+	private static Function<QuestionType, Long> getQuestionTypeToIdFunction() {
+		return new Function<QuestionType, Long>() {
+
+			@Override
+			public Long apply(QuestionType input) {
+				return input.getId();
+			}	
+		};
+	}
+
 	private static List<Integer> shuffleAnswer(AssesmentQuestion assesmentQuestion ) {
 		
 		List<Integer> newtrueAnswerSequence = Lists.newArrayList();
@@ -1552,5 +1579,79 @@ public class AssesmentQuestion {
 		cq.where(predicate);
         TypedQuery<AssesmentQuestion> q = entityManager().createQuery(cq);
         return q.getResultList();
+	}
+
+
+	public static void checkIfShuffleQuestionsAnswersNeeded(Integer assessmentId,Boolean disallowSorting) {
+		if(assessmentId == null) {
+			return;
+		}
+
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+        CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+        Root<AssesmentQuestion> from = criteriaQuery.from(AssesmentQuestion.class);
+        criteriaQuery.select(criteriaBuilder.count(from));
+       
+        Predicate predicate = findPredicateForAssementQuestionForAssementBookByQuestionTypeAndQuestionEvent(assessmentId.longValue(),criteriaBuilder,criteriaQuery,from);
+        Predicate orderAVersionPredicate = criteriaBuilder.equal(from.get("orderAversion"), 0); 
+        criteriaQuery.where(criteriaBuilder.and(predicate,orderAVersionPredicate));
+        TypedQuery<Long> q = entityManager().createQuery(criteriaQuery);      
+        
+        
+        if(q.getSingleResult() > 1) {
+        	shuffleQuestionsAnswers(assessmentId.longValue(),disallowSorting);
+        }
+	}
+
+	public static List<AssesmentQuestion> findAssementQuestionForAssementBookByQuestionTypeAndQuestionEvent(Long assessmentId) {
+		
+		if(assessmentId == null) {
+			return Lists.newArrayList();
+		}
+
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+        CriteriaQuery<AssesmentQuestion> criteriaQuery = criteriaBuilder.createQuery(AssesmentQuestion.class);
+        Root<AssesmentQuestion> from = criteriaQuery.from(AssesmentQuestion.class);
+        
+        Predicate predicate = findPredicateForAssementQuestionForAssementBookByQuestionTypeAndQuestionEvent(assessmentId.longValue(),criteriaBuilder,criteriaQuery,from);
+        criteriaQuery.where(predicate);
+        TypedQuery<AssesmentQuestion> q = entityManager().createQuery(criteriaQuery);   
+        return q.getResultList();
+	}
+	
+	private static <T> Predicate findPredicateForAssementQuestionForAssementBookByQuestionTypeAndQuestionEvent(Long assessmentId, CriteriaBuilder criteriaBuilder, CriteriaQuery<T> criteriaQuery, Root<AssesmentQuestion> from){
+		List<QuestionTypeCountPerExam> countPerExams = QuestionTypeCountPerExam.findQuestionTypesCountSortedByAssesmentNonRoo(assessmentId.longValue());
+		Set<Long> questionTypeIds = Sets.newHashSet();
+		Set<Long> questionEventIds = Sets.newHashSet();
+		for (QuestionTypeCountPerExam questionTypeCountPerExam : countPerExams) {
+			Set<QuestionType> questionTypes = questionTypeCountPerExam.getQuestionTypesAssigned();
+			List<Long> currentQuestionTypeIds = FluentIterable.from(questionTypes).transform(getQuestionTypeToIdFunction()).toImmutableList();
+			List<QuestionEvent> questionEvents = QuestionEvent.findAllQuestionEventsByQuestionTypeAndAssesmentID(assessmentId, currentQuestionTypeIds);
+			questionTypeIds.addAll(currentQuestionTypeIds);
+			questionEventIds.addAll(FluentIterable.from(questionEvents).transform(getQuestionEventToIdFunction()).toImmutableList());  
+		}
+		
+		Predicate predicateQuestionEvent = from.get("question").get("questEvent").get("id").in(questionEventIds);		
+        Predicate predicateAssessment = criteriaBuilder.equal(from.get("assesment").get("id"), assessmentId.longValue());
+        Predicate predicateQuestionTypeIn = from.get("question").get("questionType").get("id").in(questionTypeIds);
+        //accepted
+        Predicate predicateAccepted=criteriaBuilder.equal(from.get("isAssQuestionAcceptedAdmin"), new Boolean(true));
+  		//force accepted
+  		Predicate predicateForcedAccepted=criteriaBuilder.equal(from.get("isForcedByAdmin"), new Boolean(true));
+  		Predicate predicateAcceptedOr;
+  		//accepted / force accepted
+  	  	predicateAcceptedOr = criteriaBuilder.or(predicateAccepted,predicateForcedAccepted);	
+        criteriaQuery.orderBy(criteriaBuilder.asc(from.get("orderAversion")));	
+        return criteriaBuilder.and(predicateQuestionEvent,predicateAssessment,predicateQuestionTypeIn,predicateAcceptedOr);
+	}
+	
+	private static Function<QuestionEvent, Long> getQuestionEventToIdFunction() {
+		return new Function<QuestionEvent, Long>() {
+
+			@Override
+			public Long apply(QuestionEvent input) {
+				return input.getId();
+			}
+		};
 	}
 }

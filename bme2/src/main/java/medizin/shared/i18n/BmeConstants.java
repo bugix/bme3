@@ -826,5 +826,9 @@ public interface BmeConstants extends Constants {
 	public String showAll();
 	
 	public String show();
+
+	public String disallowSorting();
+
+	public String solutionKey();
 }
 

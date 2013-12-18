@@ -8,9 +8,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import medizin.server.domain.AssesmentQuestion;
 import medizin.server.domain.Person;
 import medizin.server.utils.docx.DocxPaperMHTML;
 import medizin.server.utils.docx.XmlPaper;
+import medizin.server.utils.solutionkey.SolutionKeyZip;
 import medizin.shared.utils.FileDownloaderProps;
 import medizin.shared.utils.FileDownloaderProps.Method;
 import medizin.shared.utils.PersonAccessRight;
@@ -75,7 +77,12 @@ public class FileDownloader extends HttpServlet{
 				case DOCX_PAPER_ALL:
 				{
 					fileName = createDocxPaperForExamWithAllQuestions(request,response,os,loggedPerson);
-					
+					break;
+				}
+				case SOLUTION_KEY:
+				{
+					fileName = createSolutionKey(request,response,os,loggedPerson);
+					break;
 				}
 				default:
 					log.error("Error in method ordinal");
@@ -113,6 +120,7 @@ public class FileDownloader extends HttpServlet{
 		Integer assignment = null; 
 		boolean isVersionA = true;
 		final boolean printAllQuestions = false;
+		Boolean disallowSorting = null;
 		
 		if(StringUtils.isNotBlank(request.getParameter(FileDownloaderProps.ASSIGNMENT))) {
 			assignment = Ints.tryParse(request.getParameter(FileDownloaderProps.ASSIGNMENT));	
@@ -142,9 +150,15 @@ public class FileDownloader extends HttpServlet{
 			log.error("Error in assignment null");
 			return "error.docx";
 		}
+		
+		if(StringUtils.isNotBlank(request.getParameter(FileDownloaderProps.DISALLOW_SORTING))) {
+			disallowSorting = Boolean.parseBoolean(request.getParameter(FileDownloaderProps.DISALLOW_SORTING));	
+		}else {
+			log.error("Error in disallow sorting");
+			return "error.docx";
+		}
 			
-		/*DocxPaper paper = new DocxPaper(os,assignment,isVersionA);*/
-		/*DocxPaperHTML paper = new DocxPaperHTML(os,assignment,isVersionA);*/
+		AssesmentQuestion.checkIfShuffleQuestionsAnswersNeeded(assignment,disallowSorting);
 		DocxPaperMHTML paper = new DocxPaperMHTML(os,assignment,isVersionA,printAllQuestions,loggedPerson);
 		paper.createWordFile();
 		
@@ -156,6 +170,7 @@ public class FileDownloader extends HttpServlet{
 		final Integer assignment; 
 		final boolean isVersionA = true;
 		final boolean printAllQuestions = true;
+		Boolean disallowSorting = null;
 		
 		if(StringUtils.isNotBlank(request.getParameter(FileDownloaderProps.ASSIGNMENT))) {
 			assignment = Ints.tryParse(request.getParameter(FileDownloaderProps.ASSIGNMENT));	
@@ -164,6 +179,14 @@ public class FileDownloader extends HttpServlet{
 			return "error.docx";
 		}
 		
+		if(StringUtils.isNotBlank(request.getParameter(FileDownloaderProps.DISALLOW_SORTING))) {
+			disallowSorting = Boolean.parseBoolean(request.getParameter(FileDownloaderProps.DISALLOW_SORTING));	
+		}else {
+			log.error("Error in disallow sorting");
+			return "error.docx";
+		}
+		
+		AssesmentQuestion.checkIfShuffleQuestionsAnswersNeeded(assignment,disallowSorting);
 		DocxPaperMHTML paper = new DocxPaperMHTML(os,assignment,isVersionA,printAllQuestions,loggedPerson);
 		paper.createWordFile();
 		
@@ -173,23 +196,62 @@ public class FileDownloader extends HttpServlet{
 	
 	private String createXmlPaperForExam(HttpServletRequest request, HttpServletResponse response, ByteArrayOutputStream os, Person loggedPerson) {
 		Integer assignment = null; 
+		Boolean disallowSorting = null;
 		
 		if(StringUtils.isNotBlank(request.getParameter(FileDownloaderProps.ASSIGNMENT))) {
 			assignment = Ints.tryParse(request.getParameter(FileDownloaderProps.ASSIGNMENT));	
 		}else {
 			log.error("Error in assignment id");
-			return "error.docx";
+			return "error.zip";
 		}
 		
 		
 		if(assignment == null) {
 			log.error("Error in assignment null");
-			return "error.docx";
+			return "error.zip";
 		}
-			
+		
+		if(StringUtils.isNotBlank(request.getParameter(FileDownloaderProps.DISALLOW_SORTING))) {
+			disallowSorting = Boolean.parseBoolean(request.getParameter(FileDownloaderProps.DISALLOW_SORTING));	
+		}else {
+			log.error("Error in disallow sorting");
+			return "error.zip";
+		}
+		
+		AssesmentQuestion.checkIfShuffleQuestionsAnswersNeeded(assignment,disallowSorting);
 		XmlPaper paper = new XmlPaper(os, assignment,loggedPerson);
 		paper.createXMLFile();
 		
 		return paper.getFileName();
+	}
+	
+	private String createSolutionKey(HttpServletRequest request, HttpServletResponse response, ByteArrayOutputStream os, Person loggedPerson) {
+		Integer assignment = null; 
+		Boolean disallowSorting = null;
+		
+		if(StringUtils.isNotBlank(request.getParameter(FileDownloaderProps.ASSIGNMENT))) {
+			assignment = Ints.tryParse(request.getParameter(FileDownloaderProps.ASSIGNMENT));	
+		}else {
+			log.error("Error in assignment id");
+			return "error.zip";
+		}
+		
+		if(assignment == null) {
+			log.error("Error in assignment null");
+			return "error.zip";
+		}
+
+		if(StringUtils.isNotBlank(request.getParameter(FileDownloaderProps.DISALLOW_SORTING))) {
+			disallowSorting = Boolean.parseBoolean(request.getParameter(FileDownloaderProps.DISALLOW_SORTING));	
+		}else {
+			log.error("Error in disallow sorting");
+			return "error.zip";
+		}
+		
+		AssesmentQuestion.checkIfShuffleQuestionsAnswersNeeded(assignment,disallowSorting);
+		SolutionKeyZip solutionKeyZip = new SolutionKeyZip(os, assignment,loggedPerson);
+		solutionKeyZip.generate();
+		
+		return solutionKeyZip.getFileName();
 	}
 }

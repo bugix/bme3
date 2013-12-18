@@ -17,6 +17,9 @@ import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.NodeList;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -82,7 +85,6 @@ public class BookAssesmentViewImpl extends Composite implements BookAssesmentVie
 	private HashMap<Integer, EntityProxyId<?>> idMap = new HashMap<Integer, EntityProxyId<?>>();
 	private DateTimeFormat dateTimeFormat = DateTimeFormat.getFormat("dd.MM.yyyy");
 	private DateTimeFormat currentYearFormat = DateTimeFormat.getFormat("yyyy");
-	
 	private Presenter presenter;
 	private Delegate delegate;
 	
@@ -106,19 +108,14 @@ public class BookAssesmentViewImpl extends Composite implements BookAssesmentVie
 		delegate.yearSelected(selectedYear);
 	}
 	
-	/*@Inject
-	public BookAssesmentViewImpl(McAppRequestFactory requests, PlaceController placeController) {
-		initWidget(uiBinder.createAndBindUi(this));
-        this.requests = requests;
-        this.placeController = placeController;
-        showButton.setText(constant.show());
-        fillDataInYearListBox();
-	}*/
-
 	private void setStyles(){
 		yearListBox.addStyleName("bookAssesmentListBox");
 		assesmentSuggestionBox.addStyleDependentName("assesmentSuggestionBox");
 		showButton.addStyleName("bookAssesmentShowButton");
+		NodeList<Element> elementsByTagName = assesmentSuggestionBox.getElement().getElementsByTagName("input");
+		if(elementsByTagName != null && elementsByTagName.getLength() > 0) {
+			elementsByTagName.getItem(0).getStyle().setWidth(225, Unit.PX);
+		}
 	}
 	
 	public void fillDataInYearListBox() {
@@ -145,21 +142,24 @@ public class BookAssesmentViewImpl extends Composite implements BookAssesmentVie
 		}
 		
 	}
+	
 	public void setAssesmentSuggsetBoxValue(List<AssesmentProxy> assesmentProxyList)
 	{
 		assesmentSuggestionBox.setText("");
-		
 		DefaultSuggestOracle<AssesmentProxy> suggestOracle1 = (DefaultSuggestOracle<AssesmentProxy>) assesmentSuggestionBox.getSuggestOracle();
 		suggestOracle1.setPossiblilities(assesmentProxyList);
 		assesmentSuggestionBox.setSuggestOracle(suggestOracle1);
-		
-		assesmentSuggestionBox.setRenderer(new AbstractRenderer<AssesmentProxy>() {
+		assesmentSuggestionBox.setRenderer(getAssessmentProxyRenderer());
+	}
+
+	private AbstractRenderer<AssesmentProxy> getAssessmentProxyRenderer() {
+		return new AbstractRenderer<AssesmentProxy>() {
 
 			@Override
-			public String render(AssesmentProxy object) {
+			public String render(final AssesmentProxy object) {
 				return object == null ? "" : object.getName() + " - " + McProxyRenderer.instance().render(object.getMc()) + " - " + dateTimeFormat.format(object.getDateOfAssesment());					
 			}
-		});
+		};
 	}
 
 	@Override
@@ -250,9 +250,9 @@ public class BookAssesmentViewImpl extends Composite implements BookAssesmentVie
 		
 		
 	}
+	
 	@Override
 	public AcceptsOneWidget getDetailsPanel() {
-		
 		return content;
 	}
 

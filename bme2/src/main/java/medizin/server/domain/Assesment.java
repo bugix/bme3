@@ -118,6 +118,8 @@ public class Assesment {
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "assesment",fetch=FetchType.LAZY)
     private List<QuestionTypeCountPerExam> questionTypeCountPerExams=new ArrayList<QuestionTypeCountPerExam>();
+
+    private Boolean disallowSorting;
     
     /* Business Login
      * 

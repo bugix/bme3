@@ -78,5 +78,17 @@ public interface AssesmentQuestionProxy extends EntityProxy {
 
     abstract void setAutor(PersonProxy autor);
 
+    abstract String getPercent();
+
+    abstract void setPercent(String percent);
+
+    abstract String getPoints();
+
+    abstract void setPoints(String points);
+
+    abstract Boolean getEliminateQuestion();
+
+    abstract void setEliminateQuestion(Boolean eliminateQuestion);
+
     abstract Integer getVersion();
 }

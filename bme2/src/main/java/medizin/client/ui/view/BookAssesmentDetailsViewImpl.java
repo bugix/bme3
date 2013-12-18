@@ -21,6 +21,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -97,6 +98,8 @@ public class BookAssesmentDetailsViewImpl extends Composite implements BookAsses
 	Button printAButton;*/
 
 	private Delegate delegate;
+
+	private CheckBox disallowSortingChk;
 	
 	@Override
 	public
@@ -118,16 +121,26 @@ public class BookAssesmentDetailsViewImpl extends Composite implements BookAsses
 */
 
 	@Override
-	public void addButtons() {
-		IconButton shuffle = new IconButton(constants.shuffle());
-		shuffle.setIcon("shuffle");
-		shuffle.addClickHandler(new ClickHandler() {
+	public void addButtons(final Boolean disallowSorting) {
+		
+		HorizontalPanel horizontalPanel = new HorizontalPanel();
+		if(disallowSorting == null || disallowSorting == false) {
+			disallowSortingChk = new CheckBox(constants.disallowSorting());
+			horizontalPanel.add(disallowSortingChk);
 			
-			@Override
-			public void onClick(ClickEvent event) {
-				delegate.shuffleAssementQuestionsAnswers();
-			}
-		});
+			IconButton shuffle = new IconButton(constants.shuffle());
+			shuffle.setIcon("shuffle");
+			shuffle.addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					delegate.shuffleAssementQuestionsAnswers(getDisallowSorting(disallowSorting,disallowSortingChk));
+				}
+			});
+			horizontalPanel.add(shuffle);
+		}else {
+			disallowSortingChk = null;
+		}
 		
 		IconButton printAVersion = new IconButton(constants.printAVersion());
 		printAVersion.setIcon("print");
@@ -139,9 +152,10 @@ public class BookAssesmentDetailsViewImpl extends Composite implements BookAsses
 				String ordinal = URL.encodeQueryString(String.valueOf(FileDownloaderProps.Method.DOCX_PAPER.ordinal()));          
 				String url = GWT.getHostPageBaseURL() + "downloadFile?".concat(FileDownloaderProps.METHOD_KEY).concat("=").concat(ordinal)
 						.concat("&").concat(FileDownloaderProps.ASSIGNMENT).concat("=").concat(URL.encodeQueryString(delegate.getAssignemtId() + ""))
-						.concat("&").concat(FileDownloaderProps.VERSION).concat("=").concat(FileDownloaderProps.A_VERSION);
-				Log.info("--> url is : " +url);
+						.concat("&").concat(FileDownloaderProps.VERSION).concat("=").concat(FileDownloaderProps.A_VERSION)
+						.concat("&").concat(FileDownloaderProps.DISALLOW_SORTING).concat("=").concat(URL.encodeQueryString(getDisallowSorting(disallowSorting,disallowSortingChk) + ""));
 				
+				Log.info("--> url is : " +url);
 				Window.open(url, "", "");
 				
 			}
@@ -156,9 +170,10 @@ public class BookAssesmentDetailsViewImpl extends Composite implements BookAsses
 				String ordinal = URL.encodeQueryString(String.valueOf(FileDownloaderProps.Method.DOCX_PAPER.ordinal()));          
 				String url = GWT.getHostPageBaseURL() + "downloadFile?".concat(FileDownloaderProps.METHOD_KEY).concat("=").concat(ordinal)
 						.concat("&").concat(FileDownloaderProps.ASSIGNMENT).concat("=").concat(URL.encodeQueryString(delegate.getAssignemtId() + ""))
-						.concat("&").concat(FileDownloaderProps.VERSION).concat("=").concat(FileDownloaderProps.B_VERSION);
-				Log.info("--> url is : " +url);
+						.concat("&").concat(FileDownloaderProps.VERSION).concat("=").concat(FileDownloaderProps.B_VERSION)
+						.concat("&").concat(FileDownloaderProps.DISALLOW_SORTING).concat("=").concat(URL.encodeQueryString(getDisallowSorting(disallowSorting,disallowSortingChk) + ""));
 				
+				Log.info("--> url is : " +url);
 				Window.open(url, "", "");
 				
 			}
@@ -170,7 +185,7 @@ public class BookAssesmentDetailsViewImpl extends Composite implements BookAsses
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				String ordinal = URL.encodeQueryString(String.valueOf(FileDownloaderProps.Method.XML_PAPER.ordinal()));          
+				String ordinal = URL.encodeQueryString(String.valueOf(FileDownloaderProps.Method.SOLUTION_KEY.ordinal()));          
 				String url = GWT.getHostPageBaseURL() + "downloadFile?".concat(FileDownloaderProps.METHOD_KEY).concat("=").concat(ordinal)
 						.concat("&").concat(FileDownloaderProps.ASSIGNMENT).concat("=").concat(URL.encodeQueryString(delegate.getAssignemtId() + ""));
 				Log.info("--> url is : " +url);
@@ -188,7 +203,8 @@ public class BookAssesmentDetailsViewImpl extends Composite implements BookAsses
 			public void onClick(ClickEvent event) {
 				String ordinal = URL.encodeQueryString(String.valueOf(FileDownloaderProps.Method.DOCX_PAPER_ALL.ordinal()));          
 				String url = GWT.getHostPageBaseURL() + "downloadFile?".concat(FileDownloaderProps.METHOD_KEY).concat("=").concat(ordinal)
-						.concat("&").concat(FileDownloaderProps.ASSIGNMENT).concat("=").concat(URL.encodeQueryString(delegate.getAssignemtId() + ""));
+						.concat("&").concat(FileDownloaderProps.ASSIGNMENT).concat("=").concat(URL.encodeQueryString(delegate.getAssignemtId() + ""))
+						.concat("&").concat(FileDownloaderProps.DISALLOW_SORTING).concat("=").concat(URL.encodeQueryString(getDisallowSorting(disallowSorting,disallowSortingChk) + ""));
 				Log.info("--> url is : " +url);
 				
 				Window.open(url, "", "");
@@ -196,17 +212,60 @@ public class BookAssesmentDetailsViewImpl extends Composite implements BookAsses
 			}
 		});
 		
-		HorizontalPanel horizontalPanel = new HorizontalPanel();
+		IconButton solutionKey = new IconButton(constants.solutionKey());
+		solutionKey.setIcon("disk");
+		solutionKey.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				String ordinal = URL.encodeQueryString(String.valueOf(FileDownloaderProps.Method.SOLUTION_KEY.ordinal()));          
+				String url = GWT.getHostPageBaseURL() + "downloadFile?".concat(FileDownloaderProps.METHOD_KEY).concat("=").concat(ordinal)
+						.concat("&").concat(FileDownloaderProps.ASSIGNMENT).concat("=").concat(URL.encodeQueryString(delegate.getAssignemtId() + ""))
+						.concat("&").concat(FileDownloaderProps.DISALLOW_SORTING).concat("=").concat(URL.encodeQueryString(getDisallowSorting(disallowSorting,disallowSortingChk) + ""));
+				Log.info("--> url is : " +url);
+				
+				Window.open(url, "", "");
+			}
+		});
+		
+		IconButton save = new IconButton(constants.save());
+		save.setIcon("disk");
+		save.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				delegate.saveAllAssesmentQuestionChanges();
+			}
+		});
 		horizontalPanel.setStyleName("bookingAssesmentDetailViewHP");
-		horizontalPanel.add(shuffle);
 		horizontalPanel.add(printAVersion);
 		horizontalPanel.add(printBVersion);
 		horizontalPanel.add(exportXML);
 		horizontalPanel.add(printWithNonAcceptedQuestions);
+		horizontalPanel.add(solutionKey);
+		horizontalPanel.add(save);
 		horizontalPanel.setSpacing(5);
 		horizontalPanel.getElement().getStyle().setPaddingTop(10, Unit.PX);
 		content.add(horizontalPanel);
 	}
 	
+	private Boolean getDisallowSorting(Boolean disallowSorting, CheckBox disallowSortingChk) {
+		
+		if(disallowSorting != null && disallowSorting == true) {
+			return disallowSorting;
+		}
+		
+		if(disallowSortingChk != null) {
+			return disallowSortingChk.getValue();
+		}
+		
+		return false;
+	}
+
+
+	@Override
+	public Boolean getDisallowSorting(Boolean disallowSorting) {
+		return getDisallowSorting(disallowSorting,disallowSortingChk);
+	}
 
 }

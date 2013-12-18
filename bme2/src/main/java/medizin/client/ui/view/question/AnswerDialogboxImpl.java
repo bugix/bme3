@@ -14,6 +14,8 @@ import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.ui.richtext.RichTextToolbar;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
+import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEvent;
+import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEventHandler;
 import medizin.client.ui.widget.dialogbox.receiver.ReceiverDialog;
 import medizin.client.ui.widget.resource.audio.AudioViewer;
 import medizin.client.ui.widget.resource.image.polygon.ImagePolygonViewer;
@@ -801,23 +803,47 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 				break;
 			}
 			
-			delegate.saveAnswerProxy(answer, answerTextArea.getHTML(), author.getSelected(), rewiewer.getSelected(), submitToReviewComitee.getValue(), (comment.getText().isEmpty() ? " " : comment.getText()),validity.getValue(),points,mediaPath,additionalKeywords,sequenceNumber, new Function<AnswerProxy,Void>() {
-
-				@Override
-				public Void apply(AnswerProxy input) {
-					
-					hide();
-					return null;
-				}
-				
-			});
-
+			if(QuestionTypes.Textual.equals(question.getQuestionType().getQuestionType()) || QuestionTypes.Sort.equals(question.getQuestionType().getQuestionType())) {
+				if(question.getQuestionType().getAnswerLength() != null  && answerTextMaxDiff != null && answerTextMinDiff != null) {
+					if(answerTextArea.getText().length() < answerTextMinDiff || answerTextArea.getText().length() > answerTextMaxDiff) {
+						final String fpoints = points; 
+						final String fmediaPath = mediaPath;
+						final String fadditionalKeywords = additionalKeywords; 
+						final Integer fsequenceNumber = sequenceNumber;
+						ConfirmationDialogBox.showYesNoDialogBox(constants.pleaseEnterWarning(), bmeMessages.answerTextMinMaxContinueAnyWay(answerTextMinDiff, answerTextMaxDiff), new ConfirmDialogBoxYesNoButtonEventHandler() {
+							
+							@Override
+							public void onYesButtonClicked(ConfirmDialogBoxYesNoButtonEvent event) {
+								saveAnswer(fpoints, fmediaPath, fadditionalKeywords, fsequenceNumber);
+							}
+							@Override
+							public void onNoButtonClicked(ConfirmDialogBoxYesNoButtonEvent event) {}
+						});
+						
+						return; //returns from method
+					} 
+				}	
+			}
+			
+			saveAnswer(points, mediaPath, additionalKeywords, sequenceNumber);
 		}else {
 			Log.info("Validation failed");
 		}
 		//delegate.addAnswerClicked();
 		// hide();
 	}
+	
+	private void saveAnswer(final String points, final String mediaPath, final String additionalKeywords, final Integer sequenceNumber) {
+		delegate.saveAnswerProxy(answer, answerTextArea.getHTML(), author.getSelected(), rewiewer.getSelected(), submitToReviewComitee.getValue(), (comment.getText().isEmpty() ? " " : comment.getText()),validity.getValue(),points,mediaPath,additionalKeywords,sequenceNumber, new Function<AnswerProxy,Void>() {
+
+			@Override
+			public Void apply(AnswerProxy input) {
+				hide();
+				return null;
+			}
+		});
+	}
+
 
 	private boolean validationOfFields() {
 		
@@ -865,7 +891,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 				answerTextArea.addStyleName("higlight_onViolation");
 			}
 			
-			if(QuestionTypes.Textual.equals(question.getQuestionType().getQuestionType()) || QuestionTypes.Sort.equals(question.getQuestionType().getQuestionType())) {
+			/*if(QuestionTypes.Textual.equals(question.getQuestionType().getQuestionType()) || QuestionTypes.Sort.equals(question.getQuestionType().getQuestionType())) {
 				if(question.getQuestionType().getAnswerLength() != null  && answerTextMaxDiff != null && answerTextMinDiff != null) {
 					if(answerTextArea.getText().length() < answerTextMinDiff || answerTextArea.getText().length() > answerTextMaxDiff) {
 						flag = false;
@@ -873,7 +899,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 						answerTextArea.addStyleName("higlight_onViolation");
 					}
 				}	
-			}
+			}*/
 		}
 		
 		if(question.getQuestionType() != null && QuestionTypes.ShowInImage.equals(question.getQuestionType().getQuestionType()) == true ) {
