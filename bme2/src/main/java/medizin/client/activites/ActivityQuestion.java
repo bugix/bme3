@@ -3,6 +3,8 @@ package medizin.client.activites;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.SortOrder;
+
 import medizin.client.events.RecordChangeEvent;
 import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
@@ -13,6 +15,7 @@ import medizin.client.proxy.McProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
+import medizin.client.style.resources.AdvanceCellTable;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.question.QuestionView;
 import medizin.client.ui.view.question.QuestionViewImpl;
@@ -29,6 +32,7 @@ import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchSubViewImp
 import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchTextSearchPopupViewImpl;
 import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchUserTypePopupViewImpl;
 import medizin.client.ui.widget.IconButton;
+import medizin.client.ui.widget.Sorting;
 import medizin.client.util.MathJaxs;
 import medizin.shared.criteria.AdvancedSearchCriteria;
 import medizin.shared.criteria.AdvancedSearchCriteriaUtils;
@@ -66,7 +70,7 @@ public class ActivityQuestion extends AbstractActivityWrapper implements Questio
 	private ActivityQuestionMapper activityQuestionMapper;
 	private SingleSelectionModel<QuestionProxy> selectionModel;
 
-	private CellTable<QuestionProxy> table;
+	private AdvanceCellTable<QuestionProxy> table;
 
 	private HandlerRegistration rangeChangeHandler;
 
@@ -84,6 +88,9 @@ public class ActivityQuestion extends AbstractActivityWrapper implements Questio
 		
 	private EntityProxyId<?> proxyId = null;
 
+	private Sorting sortorder = Sorting.ASC;
+	private String sortname = "id";
+	
 	@Inject
 	public ActivityQuestion(PlaceQuestion place, McAppRequestFactory requests, PlaceController placeController) {
 		super(place, requests, placeController);
@@ -142,6 +149,9 @@ public class ActivityQuestion extends AbstractActivityWrapper implements Questio
 		
 		RecordChangeEvent.register(requests.getEventBus(), (QuestionViewImpl)questionView);
 
+		//adding column mouse out on table.
+		((QuestionViewImpl)view).addColumnOnMouseout();
+			
 		rangeChangeHandler = table.addRangeChangeHandler(new RangeChangeEvent.Handler() {
 			public void onRangeChange(RangeChangeEvent event) {
 				ActivityQuestion.this.onRangeChanged();
@@ -252,7 +262,6 @@ public class ActivityQuestion extends AbstractActivityWrapper implements Questio
 		view.setDelegate(this);
 
 	}
-
 	private void setWidthOfWidget() {
 		String widgetWidthFromCookie = Cookies.getCookie(McAppConstant.QUESTION_VIEW_WIDTH);
         if(widgetWidthFromCookie !=null){
@@ -367,7 +376,7 @@ public class ActivityQuestion extends AbstractActivityWrapper implements Questio
 		List<String> encodedStringList = new ArrayList<String>();
 		encodedStringList = AdvancedSearchCriteriaUtils.encodeList(advancedSearchCriteriaList);
 		
-		requests.questionRequest().findQuestionByAdvancedSearchByLoginUserAndInstitute(encodedStringList, view.getSearchValue(), view.getSerachBox().getValue(), range.getStart(), range.getLength()).with(view.getPaths()).fire(new BMEReceiver<List<QuestionProxy>>() {
+		requests.questionRequest().findQuestionByAdvancedSearchByLoginUserAndInstitute(sortname,sortorder,encodedStringList, view.getSearchValue(), view.getSerachBox().getValue(), range.getStart(), range.getLength()).with(view.getPaths()).with("autor").fire(new BMEReceiver<List<QuestionProxy>>() {
 
 			@Override
 			public void onSuccess(List<QuestionProxy> response) {
@@ -592,5 +601,13 @@ public class ActivityQuestion extends AbstractActivityWrapper implements Questio
 	public void splitLayoutPanelResized() {
 		Double newWidth =(((QuestionViewImpl)view).getSplitLayoutPanel()).getWidgetSize(((QuestionViewImpl)view).getScrollpanel());
        	Cookies.setCookie(McAppConstant.QUESTION_VIEW_WIDTH, String.valueOf(newWidth));
+	}
+
+	@Override
+	public void columnClickedForSorting(String sortname, Sorting sortorder) {
+		this.sortname=sortname;
+		this.sortorder=sortorder;
+		init();
+		
 	}
 }

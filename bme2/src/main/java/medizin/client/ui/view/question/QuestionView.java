@@ -5,8 +5,10 @@ import java.util.Map;
 
 import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
+import medizin.client.style.resources.AdvanceCellTable;
 import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchSubViewImpl;
 import medizin.client.ui.widget.QuickSearchBox;
+import medizin.client.ui.widget.Sorting;
 
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.cellview.client.CellTable;
@@ -31,10 +33,12 @@ public interface QuestionView extends IsWidget {
 		void performSearch(String searchText);
 
 		void splitLayoutPanelResized();
+
+		void columnClickedForSorting(String sortname, Sorting sortorder);
 	}
     
     //Table for Assesments (Pr�fungshefter)
-    CellTable<QuestionProxy> getTable();
+	AdvanceCellTable<QuestionProxy> getTable();
     
     String[] getPaths();
     

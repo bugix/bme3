@@ -25,6 +25,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import medizin.client.ui.widget.Sorting;
 import medizin.server.utils.ServerConstants;
 import medizin.shared.Status;
 import medizin.shared.utils.PersonAccessRight;
@@ -623,7 +624,7 @@ public class Person {
 		return predicate;
 	}
 	
-	public static List<Person> findAllUsersOfGivenSearch(Integer start, Integer length,String searchValue){
+	public static List<Person> findAllUsersOfGivenSearch(String sortColumn,Sorting sortOrder,Integer start, Integer length,String searchValue){
 		
 		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
 		CriteriaQuery<Person> criteriaQuery = criteriaBuilder.createQuery(Person.class);
@@ -631,8 +632,13 @@ public class Person {
 		
 		final Predicate predicate = predicateUsersOfGivenSearch(searchValue,criteriaBuilder, from);
 		criteriaQuery.where(predicate);
-		criteriaQuery.orderBy(criteriaBuilder.asc(from.get("name")));
 		
+		if(sortOrder==Sorting.ASC)
+		{
+			criteriaQuery.orderBy(criteriaBuilder.asc(from.get(sortColumn)));
+		}else{
+			criteriaQuery.orderBy(criteriaBuilder.desc(from.get(sortColumn)));
+		}
 		TypedQuery<Person> q = entityManager().createQuery(criteriaQuery);
 		q.setFirstResult(start);
 		q.setMaxResults(length);

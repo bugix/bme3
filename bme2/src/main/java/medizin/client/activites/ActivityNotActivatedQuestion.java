@@ -14,6 +14,7 @@ import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.question.QuestionView;
 import medizin.client.ui.view.question.QuestionView.Delegate;
 import medizin.client.ui.view.question.QuestionViewImpl;
+import medizin.client.ui.widget.Sorting;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.activity.shared.ActivityManager;
@@ -43,7 +44,9 @@ public class ActivityNotActivatedQuestion extends AbstractActivityWrapper implem
 	private SingleSelectionModel<QuestionProxy> selectionModel;
 	private CellTable<QuestionProxy> table;
 	private HandlerRegistration rangeChangeHandler;
-
+	private Sorting sortorder = Sorting.ASC;
+	private String sortname = "id";
+	
 	public ActivityNotActivatedQuestion(PlaceNotActivatedQuestion place, McAppRequestFactory requests, PlaceController placeController) {
 		super(place, requests, placeController);
 		//this.placeNotActivatedQuestion = place;
@@ -80,6 +83,9 @@ public class ActivityNotActivatedQuestion extends AbstractActivityWrapper implem
 		activityManger.setDisplay(view.getDetailsPanel());
 
 		RecordChangeEvent.register(requests.getEventBus(), (QuestionViewImpl)view);
+		//adding column mouse out on table.
+		((QuestionViewImpl)view).addColumnOnMouseout();
+				
 		init();
 
 		// Inherit the view's key provider
@@ -144,7 +150,7 @@ public class ActivityNotActivatedQuestion extends AbstractActivityWrapper implem
 	private void onRangeChanged() {
 		final Range range = table.getVisibleRange();
 
-		requests.questionRequest().findAllNotActivatedQuestionsByPerson(view.getSerachBox().getValue(), view.getSearchValue(), range.getStart(), range.getLength()).with(view.getPaths()).fire(new BMEReceiver<List<QuestionProxy>>() {
+		requests.questionRequest().findAllNotActivatedQuestionsByPerson(sortname,sortorder,view.getSerachBox().getValue(), view.getSearchValue(), range.getStart(), range.getLength()).with(view.getPaths()).with("autor").fire(new BMEReceiver<List<QuestionProxy>>() {
 			@Override
 			public void onSuccess(List<QuestionProxy> values) {
 				if (view == null) {
@@ -188,9 +194,9 @@ public class ActivityNotActivatedQuestion extends AbstractActivityWrapper implem
 	@Override
 	public void performSearch(String searchText) {
 		
-		requests.questionRequest().countNotActivatedQuestionsByPerson(view.getSerachBox().getValue(), view.getSearchValue()).fire(new BMEReceiver<Long>() {
+		requests.questionRequest().countNotActivatedQuestionsByPerson(view.getSerachBox().getValue(), view.getSearchValue()).fire(new BMEReceiver<Integer>() {
 			@Override
-			public void onSuccess(Long response) {
+			public void onSuccess(Integer response) {
 				if (view == null) {
 					// This activity is dead
 					return;
@@ -210,6 +216,14 @@ public class ActivityNotActivatedQuestion extends AbstractActivityWrapper implem
 	public void splitLayoutPanelResized() {
 		Double newWidth =(((QuestionViewImpl)view).getSplitLayoutPanel()).getWidgetSize(((QuestionViewImpl)view).getScrollpanel());
        	Cookies.setCookie(McAppConstant.NONACTIVEQUESTION_VIEW_WIDTH, String.valueOf(newWidth));
+		
+	}
+
+	@Override
+	public void columnClickedForSorting(String sortname, Sorting sortorder) {
+		this.sortname=sortname;
+		this.sortorder=sortorder;
+		performSearch("");
 		
 	}
 }

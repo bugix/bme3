@@ -3,6 +3,7 @@ package medizin.client.ui.view;
 import java.util.Set;
 
 import medizin.client.proxy.QuestionTypeProxy;
+import medizin.client.style.resources.AdvanceCellTable;
 
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.cellview.client.CellTable;
@@ -25,9 +26,11 @@ public interface QuestiontypesView extends IsWidget {
 			void newClicked();
 			
 			void performSearch(String searchValue);
+
+			void setXandYOfTablePopyp(int x, int y);
 		}
 
-	    CellTable<QuestionTypeProxy> getTable();
+		AdvanceCellTable<QuestionTypeProxy> getTable();
 	    String[] getPaths();
 	    
 	    void setDelegate(Delegate delegate);

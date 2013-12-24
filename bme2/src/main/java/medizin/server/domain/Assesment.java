@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EntityManager;
@@ -30,12 +29,14 @@ import javax.servlet.ServletContext;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import medizin.client.ui.widget.Sorting;
 import medizin.server.mail.EmailServiceImpl;
 import medizin.shared.utils.PersonAccessRight;
 import medizin.shared.utils.SharedConstant;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -208,7 +209,7 @@ public class Assesment {
     }
     
     
-    public static List<Assesment> findAssesmentByInsitute(int firstResult, int maxResults)
+    public static List<Assesment> findAssesmentByInsitute(String sortname,Sorting sortOrder,int firstResult, int maxResults)
     {
     	EntityManager em = Assesment.entityManager();
     	
@@ -223,12 +224,16 @@ public class Assesment {
 				.createQuery(Assesment.class);
     	//from
     	Root<Assesment> from = criteriaQuery.from(Assesment.class);
-    	criteriaQuery.orderBy(criteriaBuilder.asc(from.get("id")));
-    	
+    	if(sortOrder==Sorting.ASC){
+    		criteriaQuery.orderBy(criteriaBuilder.asc(from.get(sortname)));
+    	}else{
+    		criteriaQuery.orderBy(criteriaBuilder.desc(from.get(sortname)));
+    	}
     	criteriaQuery.where(criteriaBuilder.equal(from.get("institution"), activeInstitute));
     	TypedQuery<Assesment> q=entityManager().createQuery(criteriaQuery);
     	q.setFirstResult(firstResult);
     	q.setMaxResults(maxResults);
+    	log.info("findAssesmentByInsitute Query : " + q.unwrap(Query.class).getQueryString());
     	return q.getResultList();
     }
     

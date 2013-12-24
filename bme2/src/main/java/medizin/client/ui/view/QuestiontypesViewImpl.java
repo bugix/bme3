@@ -1,11 +1,16 @@
 package medizin.client.ui.view;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import medizin.client.events.RecordChangeEvent;
 import medizin.client.events.RecordChangeHandler;
 import medizin.client.proxy.QuestionTypeProxy;
+import medizin.client.style.resources.AdvanceCellTable;
 import medizin.client.style.resources.MyCellTableResources;
 import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
@@ -16,7 +21,12 @@ import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.text.shared.Renderer;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -43,14 +53,20 @@ public class QuestiontypesViewImpl extends Composite implements QuestiontypesVie
 
 	private Presenter presenter;
 	 public BmeConstants constants = GWT.create(BmeConstants.class);
-
+	 private Map<String, String> columnName=new HashMap<String, String>();
+	 private List<String> columnNameorder = new ArrayList<String>();
+	 private List<String> path = new ArrayList<String>();
+	 private int x;
+	 private int y;	
+	 private String columnHeader;
+	 
 	 @UiField (provided = true)
 	 QuickSearchBox searchBox;
 	 
 	public QuestiontypesViewImpl() {
 		
 		CellTable.Resources tableResources = GWT.create(MyCellTableResources.class);
-		table = new CellTable<QuestionTypeProxy>(McAppConstant.TABLE_PAGE_SIZE, tableResources);
+		table = new AdvanceCellTable<QuestionTypeProxy>(McAppConstant.TABLE_PAGE_SIZE, tableResources);
 		
 		splitLayoutPanel =new SplitLayoutPanel(){
             @Override
@@ -68,6 +84,7 @@ public class QuestiontypesViewImpl extends Composite implements QuestiontypesVie
 			@Override
 			public void performAction() {
 				Log.info("Searchbox is visited");
+				table.setVisibleRange(0, McAppConstant.TABLE_PAGE_SIZE);
 				delegate.performSearch(searchBox.getValue());
 			}
 		});
@@ -109,7 +126,7 @@ public class QuestiontypesViewImpl extends Composite implements QuestiontypesVie
 	protected List<String> paths=new ArrayList<String>() ;
 	
 	@UiField(provided=true)
-	CellTable<QuestionTypeProxy> table;
+	AdvanceCellTable<QuestionTypeProxy> table;
 	
 	@UiField(provided = true)
 	public MySimplePager pager;
@@ -128,7 +145,7 @@ public class QuestiontypesViewImpl extends Composite implements QuestiontypesVie
 
 	
 	@Override
-	public CellTable<QuestionTypeProxy> getTable() {
+	public AdvanceCellTable<QuestionTypeProxy> getTable() {
 		
 		return table;
 	}
@@ -152,6 +169,8 @@ public class QuestiontypesViewImpl extends Composite implements QuestiontypesVie
 		DOM.setElementAttribute(splitLayoutPanel.getElement(), "style", "position: absolute; left: 0px; top: 0px; right: 5px; bottom: 0px;");
 		newQuestiontype.setText(constants.newQuestionType());
 
+		columnName.put(constants.name(), "shortName");
+		columnNameorder.add(constants.name());
 		paths.add("shortName");
         table.addColumn(new TextColumn<QuestionTypeProxy>() {
 
@@ -171,8 +190,10 @@ public class QuestiontypesViewImpl extends Composite implements QuestiontypesVie
             	return renderer.render(object == null ? null : object.getShortName()!=null?object.getShortName():"");
             	//return renderer.render(object.getShortName());
             }
-        }, constants.name());
+        }, constants.name(),true);
         
+        columnName.put(constants.type(), "questionType");
+		columnNameorder.add(constants.type());
         paths.add("questionType");
         table.addColumn(new TextColumn<QuestionTypeProxy>() {
 
@@ -192,7 +213,7 @@ public class QuestiontypesViewImpl extends Composite implements QuestiontypesVie
             	return renderer.render(object == null ? null : object.getQuestionType()!=null?object.getQuestionType().toString():"");
             	//return renderer.render(object.getShortName());
             }
-        }, constants.type());
+        }, constants.type(),true);
        
        
         /*paths.add("questionType");
@@ -220,6 +241,8 @@ public class QuestiontypesViewImpl extends Composite implements QuestiontypesVie
             }
         }, constants.type());*/
         
+        columnName.put(constants.answer(), "answer");
+		columnNameorder.add(constants.answer());
         paths.add("answer");
         table.addColumn(new TextColumn<QuestionTypeProxy>() {
 
@@ -240,10 +263,200 @@ public class QuestiontypesViewImpl extends Composite implements QuestiontypesVie
             	
             	return AnswerValue.getValue(object == null ? null : object);
             }
-        }, constants.answer());
+        }, constants.answer(),true);
+        
+        columnName.put(constants.description(), "description");
+		columnNameorder.add(constants.description());
+		paths.add("description");
+        table.addColumn(new TextColumn<QuestionTypeProxy>() {
+
+			{
+				this.setSortable(true);
+			}
+            Renderer<java.lang.String> renderer = new AbstractRenderer<java.lang.String>() {
+
+                public String render(java.lang.String obj) {
+                    return obj == null ? "" : String.valueOf(obj);
+                }
+            };
+
+            @Override
+            public String getValue(QuestionTypeProxy object) {
+            	return renderer.render(object == null ? null : object.getDescription()!=null?object.getDescription().toString():"");
+            }
+        }, constants.description(),false);
+
+        // commented as not to include at this time.
+        /*columnName.put(constants.institutionLbl(), "institution");
+		columnNameorder.add(constants.institutionLbl());
+		paths.add("institution");
+        table.addColumn(new TextColumn<QuestionTypeProxy>() {
+
+			{
+				this.setSortable(true);
+			}
+            Renderer<java.lang.String> renderer = new AbstractRenderer<java.lang.String>() {
+
+                public String render(java.lang.String obj) {
+                    return obj == null ? "" : String.valueOf(obj);
+                }
+            };
+
+            @Override
+            public String getValue(QuestionTypeProxy object) {
+            	String result="";
+            	if(object !=null){
+            		if(object.getInstitution()!=null){
+            			result = object.getInstitution().getInstitutionName(); 
+            			return renderer.render(result);
+            		}
+            	}else{
+            		return renderer.render("");
+            	}
+            	return renderer.render("");
+            }
+        }, constants.institutionLbl(),false);*/
+        
+        path=getPath();
+        addMouseDownHandler();
      }
 	
+	public void addColumnOnMouseout()
+	{
+		Set<String> selectedItems = table.getPopup().getMultiSelectionModel().getSelectedSet();
+
+		
+		int j = table.getColumnCount();
+		while (j > 0) {
+			
+			table.removeColumn(0);
+			j--;
+		}
+
+		path.clear();
+
+		Iterator<String> i;
+		if (selectedItems.size() == 0) {
+
+			i = table.getPopup().getDefaultValue().iterator();
+
+		} else {
+			i = selectedItems.iterator();
+		}
+
+		Iterator<String> i1=getColumnNameorder().iterator();
+
+		while (i1.hasNext()) {
+		
+			
+			String colValue=i1.next();
+
+			if(selectedItems.contains(colValue) || table.getInitList().contains(colValue))
+			{
+				
+				if(table.getInitList().contains(colValue))
+				{
+					table.getInitList().remove(colValue);
+				}
+			columnHeader = colValue;
+			String colName=(String)columnName.get(columnHeader);
+			path.add(colName.toString());
+				
+				
+			
+
+			table.addColumn(new TextColumn<QuestionTypeProxy>() {
+
+				{
+					this.setSortable(true);
+				}
+
+				Renderer<java.lang.String> renderer = new AbstractRenderer<java.lang.String>() {
+
+					public String render(java.lang.String obj) {
+						return obj == null ? "" : String.valueOf(obj);
+					}
+				};
+
+				String tempColumnHeader = columnHeader;
+
+				@Override
+				public String getValue(QuestionTypeProxy object) {
+
+					if(object !=null) {
 	
+						if (tempColumnHeader == constants.name()) {
+							return renderer.render(object.getShortName()!=null?object.getShortName():"");
+							
+						} else if (tempColumnHeader == constants.type()) {
+							return renderer.render(object.getQuestionType().name()!=null?object.getQuestionType().name():"");
+							
+						} else if (tempColumnHeader == constants.answer()) {
+							return renderer.render(object!=null ? AnswerValue.getValue(object):"");
+						} else if (tempColumnHeader == constants.description()) {
+							
+							return renderer.render(object.getDescription()!=null?object.getDescription():"");
+						}/* else if (tempColumnHeader == constants.institutionLbl()) {
+							
+							return renderer.render(object.getInstitution().getInstitutionName()!=null?object.getInstitution().getInstitutionName():"");
+						} */
+						else {
+							return "";
+						}
+					}else{
+						return "";
+					}
+				}
+			}, columnHeader, false);
+		}
+	}
+		table.addLastColumn();
+}
+	private void addMouseDownHandler() {
+		table.addHandler(new MouseDownHandler() {
+
+			@Override
+			public void onMouseDown(MouseDownEvent event) {
+				Log.info("mouse down");
+
+				x = event.getClientX();
+				y = event.getClientY();
+
+				delegate.setXandYOfTablePopyp(x-10,y);
+				
+				/*if(table.getRowCount()>0)
+				{
+				Log.info(table.getRowElement(0).getAbsoluteTop() + "--"+ event.getClientY());
+
+				
+				if (event.getNativeButton() == NativeEvent.BUTTON_RIGHT&& event.getClientY() < table.getRowElement(0).getAbsoluteTop()) {
+					
+					table.getPopup().setPopupPosition(x-10, y);
+					table.getPopup().show();
+
+					Log.info("right event");
+				}
+				}
+				else
+				{
+					table.getPopup().setPopupPosition(x, y);
+					table.getPopup().show();
+					
+				}*/
+
+			}
+		}, MouseDownEvent.getType());
+		
+		table.getPopup().addDomHandler(new MouseOutHandler() {
+
+			@Override
+			public void onMouseOut(MouseOutEvent event) {
+				table.getPopup().hide();
+				addColumnOnMouseout();
+				
+			}
+		}, MouseOutEvent.getType());
+	}
 	@Override
 	public void setDelegate(Delegate delegate) {
 		this.delegate = delegate;
@@ -273,6 +486,19 @@ public class QuestiontypesViewImpl extends Composite implements QuestiontypesVie
 		table.setPageSize(pagesize);	
 	}
 
+	public Map<String, String> getColumnName() {
+		return columnName;
+	}
 
-	
+	public List<String> getColumnNameorder() {
+		return columnNameorder;
+	}
+
+public List<String> getPath(){
+	return this.paths;
+}
+
+public List<String> getCurrentRows(){
+	return this.path;
+}
 }

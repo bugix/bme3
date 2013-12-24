@@ -1,7 +1,8 @@
 package medizin.client.ui.view.question;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -12,6 +13,7 @@ import medizin.client.events.RecordChangeHandler;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
+import medizin.client.style.resources.AdvanceCellTable;
 import medizin.client.style.resources.MyCellTableResources;
 import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
@@ -19,6 +21,7 @@ import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchSubViewImp
 import medizin.client.ui.view.renderer.EnumRenderer;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.QuickSearchBox;
+import medizin.client.ui.widget.Sorting;
 import medizin.client.ui.widget.pager.MySimplePager;
 import medizin.shared.Status;
 import medizin.shared.i18n.BmeConstants;
@@ -27,13 +30,19 @@ import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.text.shared.Renderer;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -41,6 +50,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.ColumnSortEvent;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.DOM;
@@ -59,11 +69,19 @@ public class QuestionViewImpl extends Composite implements QuestionView, RecordC
 	interface QuestionViewImplUiBinder extends UiBinder<Widget, QuestionViewImpl> {}
 
 	//private Presenter presenter;
-	protected Set<String> paths = new HashSet<String>();
+	protected List<String> paths = new ArrayList<String>();
 	private Delegate delegate;
 	private McAppRequestFactory requests;
 	private PlaceController placeController;
 	private BmeConstants constants = GWT.create(BmeConstants.class);
+	private Map<String, String> columnName=new HashMap<String, String>();
+	private List<String> columnNameorder = new ArrayList<String>();
+	private List<String> path = new ArrayList<String>();
+	private String columnHeader;
+	public int x;
+	public int y;
+	private Sorting sortorder = Sorting.ASC;
+	private String sortname = "name";
 	
 	/*
 	 * @UiField
@@ -160,7 +178,7 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 	QuestionFilterViewImpl filterPanel = new QuestionFilterViewImpl();
 
 	@UiField(provided = true)
-	CellTable<QuestionProxy> table;
+	AdvanceCellTable<QuestionProxy> table;
 
 	@UiField(provided = true)
 	public MySimplePager pager;
@@ -210,7 +228,7 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 		this.eventBus = eventBus;
 		
 		CellTable.Resources tableResources = GWT.create(MyCellTableResources.class);
-		table = new CellTable<QuestionProxy>(McAppConstant.TABLE_PAGE_SIZE, tableResources);
+		table = new AdvanceCellTable<QuestionProxy>(McAppConstant.TABLE_PAGE_SIZE, tableResources);
 
 		splitLayoutPanel =new SplitLayoutPanel(){
             @Override
@@ -233,6 +251,7 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 				Log.info("Question Save Event Clicked");
 				filterPanel.getShowNew().setValue(true);
 				setFieldForSearchBox();
+				delegate.performSearch(searchBox.getValue());
 			}
 		});
 		
@@ -241,6 +260,7 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 			@Override
 			public void onClose(CloseEvent<PopupPanel> event) {
 				setFieldForSearchBox();
+				delegate.performSearch(searchBox.getValue());
 			}
 		});
 
@@ -345,6 +365,9 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 				}
 				
 				delegate.performSearch(searchBox.getValue());*/
+				
+				table.setVisibleRange(0, McAppConstant.TABLE_PAGE_SIZE);
+				delegate.performSearch(searchBox.getValue());
 			}
 		});
 
@@ -397,6 +420,8 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 
 	private void init() {
 
+		columnName.put(constants.id(), "id");
+		columnNameorder.add(constants.id());
 		paths.add("id");
 		table.addColumn(new TextColumn<QuestionProxy>() {
 
@@ -411,9 +436,11 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 			public String getValue(QuestionProxy object) {
 				return renderer.render(object == null ? null : object.getId());
 			}
-		}, constants.id());
+		}, constants.id(),true);
 		
-		paths.add("shortName");
+		columnName.put(constants.questionShortName(), "questionShortName");
+		columnNameorder.add(constants.questionShortName());
+		paths.add("questionShortName");
 		table.addColumn(new TextColumn<QuestionProxy>() {
 
 			Renderer<java.lang.String> renderer = new AbstractRenderer<java.lang.String>() {
@@ -427,7 +454,7 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 			public String getValue(QuestionProxy object) {
 				return renderer.render(object == null ? null : object.getQuestionShortName()==null?"":object.getQuestionShortName());
 			}
-		},constants.questionShortName() );
+		},constants.questionShortName(),true );
 		
 		
 		/*
@@ -680,13 +707,17 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 		// return renderer.render(object.getAnswers());
 		// }
 		// }, "Answers");
+		
+		columnName.put(constants.questionText(), "questionText");
+		columnNameorder.add(constants.questionText());
+		paths.add("questionText");
 		table.addColumn(new Column<QuestionProxy, QuestionProxy>(
 				new QuestionTextCell()) {
 			@Override
 			public QuestionProxy getValue(QuestionProxy object) {
 				return object == null ? null : object;
 			}
-		}, constants.questionText());
+		}, constants.questionText(),true);
 
 		/*table.addColumn(new Column<QuestionProxy, QuestionProxy>(
 				new GridTreeCell()) {
@@ -696,7 +727,8 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 			}
 		}, "Grid");*/
 
-		
+		columnName.put(constants.questionType(), "questionType");
+		columnNameorder.add(constants.questionType());
 		paths.add("questionType");
 		table.addColumn(new TextColumn<QuestionProxy>() {
 
@@ -711,7 +743,10 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 			public String getValue(QuestionProxy object) {
 				return renderer.render(object == null ? null : object.getQuestionType()==null?"":object.getQuestionType().getShortName());
 			}
-		},constants.questionType() );
+		},constants.questionType(),true );
+		
+		columnName.put(constants.status(), "status");
+		columnNameorder.add(constants.status());
 		paths.add("status");
 		table.addColumn(new TextColumn<QuestionProxy>() {
 
@@ -721,7 +756,26 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 			public String getValue(QuestionProxy object) {
 				return renderer.render(object == null ? null : object.getStatus());
 			}
-		},constants.status() );
+		},constants.status(),true );
+		
+		// Alternative columns
+		columnName.put(constants.auther(), "autor");
+		columnNameorder.add(constants.auther());
+		paths.add("autor");
+		table.addColumn(new TextColumn<QuestionProxy>() {
+
+			Renderer<String> renderer = new AbstractRenderer<String>(){
+
+				public String render(java.lang.String obj) {
+					return obj == null ? "" : String.valueOf(obj);
+				}
+			};
+			
+			@Override
+			public String getValue(QuestionProxy object) {
+				return renderer.render(object == null ? null : object.getAutor().getName());
+			}
+		},constants.auther(),false);
 		
 		/*
 		table.addColumn(new Column<QuestionProxy, TreeItem>(null) {
@@ -743,11 +797,194 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 			}
 		}, "check");
 		*/
-		
-		
-		
+		path=getPath();
+		addMouseDownHandler();
+		addColumnSortHandler();
+		setFieldForSearchBox();
 	}
 
+	public void addColumnOnMouseout()
+	{
+		Set<String> selectedItems = table.getPopup().getMultiSelectionModel().getSelectedSet();
+
+		
+		int j = table.getColumnCount();
+		while (j > 0) {
+			
+			table.removeColumn(0);
+			j--;
+		}
+
+		path.clear();
+
+		Iterator<String> i;
+		if (selectedItems.size() == 0) {
+
+			i = table.getPopup().getDefaultValue().iterator();
+
+		} else {
+			i = selectedItems.iterator();
+		}
+
+		Iterator<String> i1=getColumnNameorder().iterator();
+
+		while (i1.hasNext()) {
+		
+			
+			String colValue=i1.next();
+
+			if(selectedItems.contains(colValue) || table.getInitList().contains(colValue))
+			{
+				
+				if(table.getInitList().contains(colValue))
+				{
+					table.getInitList().remove(colValue);
+				}
+			columnHeader = colValue;
+			String colName=(String)columnName.get(columnHeader);
+			path.add(colName.toString());
+				
+
+			if(columnHeader==constants.questionText()){
+				table.addColumn(new Column<QuestionProxy, QuestionProxy>(
+						new QuestionTextCell()) {
+					{
+						this.setSortable(true);
+					}
+					@Override
+					public QuestionProxy getValue(QuestionProxy object) {
+						return object == null ? null : object;
+					}
+				}, constants.questionText(),false);
+				
+			}else {
+				table.addColumn(new TextColumn<QuestionProxy>() {
+	
+					{
+						this.setSortable(true);
+					}
+	
+					Renderer<java.lang.String> renderer = new AbstractRenderer<java.lang.String>() {
+	
+						public String render(java.lang.String obj) {
+							return obj == null ? "" : String.valueOf(obj);
+						}
+					};
+	
+					
+					String tempColumnHeader = columnHeader;
+	
+					@Override
+					public String getValue(QuestionProxy object) {
+	
+						if(object !=null ){
+							if (tempColumnHeader == constants.id()) {
+								return renderer.render(object.getId()!=null?String.valueOf(object.getId()):"");
+								
+							} else if (tempColumnHeader == constants.questionShortName()) {
+								return renderer.render(object.getQuestionShortName()!=null?object.getQuestionShortName():"");
+								
+							} /*else if (tempColumnHeader == constants.questionText()) {
+								return renderer.render(object.getQuestionText()!=null?object.getQuestionText():"");
+								
+							}*/ else if (tempColumnHeader == constants.questionType()) {
+								return renderer.render(object.getQuestionType().getShortName()!=null?object.getQuestionType().getShortName():"");
+								
+							} else if (tempColumnHeader == constants.status()) {
+								return renderer.render(object.getStatus()!=null?object.getStatus().name():"");
+								
+							} else if (tempColumnHeader == constants.auther()) {
+								return renderer.render(object.getAutor()!=null?object.getAutor().getName():"");
+							} 
+							else {
+								return "";
+							}
+						}else{
+							return "";
+						}
+					}
+				}, columnHeader, false);
+		  }
+		}
+	}
+		table.addLastColumn();
+}
+	private void addMouseDownHandler() {
+		table.addHandler(new MouseDownHandler() {
+
+			@Override
+			public void onMouseDown(MouseDownEvent event) {
+				Log.info("mouse down");
+
+				x = event.getClientX();
+				y = event.getClientY();
+
+				/*if(table.getRowCount()>0)
+				{
+				Log.info(table.getRowElement(0).getAbsoluteTop() + "--"+ event.getClientY());
+
+				
+				if (event.getNativeButton() == NativeEvent.BUTTON_RIGHT&& event.getClientY() < table.getRowElement(0).getAbsoluteTop()) {
+					
+					table.getPopup().setPopupPosition(x, y);
+					table.getPopup().show();
+
+					Log.info("right event");
+				}
+				}
+				else
+				{
+					table.getPopup().setPopupPosition(x, y);
+					table.getPopup().show();
+					
+				}*/
+
+			}
+		}, MouseDownEvent.getType());
+		
+		table.getPopup().addDomHandler(new MouseOutHandler() {
+
+			@Override
+			public void onMouseOut(MouseOutEvent event) {
+				table.getPopup().hide();
+				addColumnOnMouseout();
+				
+			}
+		}, MouseOutEvent.getType());
+	}
+	
+	 public void addColumnSortHandler(){
+	    	
+			table.addColumnSortHandler(new ColumnSortEvent.Handler() {
+
+				@Override
+				public void onColumnSort(ColumnSortEvent event) {
+		
+					Column<QuestionProxy, String> col = (Column<QuestionProxy, String>) event.getColumn();
+					
+					
+					int index = table.getColumnIndex(col);
+					
+					Log.info("call for sort " + path.size() + "--index--" + index+ "cc=" + table.getColumnCount());
+					if (index == (table.getColumnCount() - 1)) {
+						
+						table.getPopup().setPopupPosition(x-10, y);
+						table.getPopup().show();
+		
+					} else {
+						if(table.getRowCount() > 0 ){
+							Log.info("call for sort " + path.size() + "--index--"+ index);
+							sortname = path.get(index);
+							Log.info("sort column name is " + sortname);
+							sortorder = (event.isSortAscending()) ? Sorting.ASC: Sorting.DESC;
+							Log.info("Call Init Search from addColumnSortHandler");
+							delegate.columnClickedForSorting(sortname,sortorder);
+						}
+					}
+				}
+			});
+		}
+	 
 	@Override
 	public QuickSearchBox getSerachBox()
 	{
@@ -776,7 +1013,7 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 	}*/
 
 	@Override
-	public CellTable<QuestionProxy> getTable() {
+	public AdvanceCellTable<QuestionProxy> getTable() {
 
 		return table;
 	}
@@ -817,9 +1054,9 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 			if (value == null) {
 				return;
 			}
-			String text = new HTML(value.getQuestionText()).getText();
+			String text = SafeHtmlUtils.fromString(new HTML(value.getQuestionText()).getText()).asString();
 			
-			String beginn = "<div title=' "+ text +"' style=\"white-space:normal;";
+			String beginn = "<div title='"+ text +"' style=\"white-space:normal;";
 			String end = "</div>";
 			
 			if (Status.DEACTIVATED.equals(value.getStatus()) == false && Status.ACTIVE.equals(value.getStatus()) == false)
@@ -954,7 +1191,8 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 			//searchFileds.add(new SearchValue("usedMcTo", filterPanel.usedMcEndDate.getValue().toString()));
 		}*/
 		
-		delegate.performSearch(searchBox.getValue());
+		/*table.setVisibleRange(0, McAppConstant.TABLE_PAGE_SIZE);
+		delegate.performSearch(searchBox.getValue());*/
 	}
 
 
@@ -988,5 +1226,15 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 	public ScrollPanel getScrollpanel() {
 		return scrollpanel;
 	}
-	
+
+	public Map<String, String> getColumnName() {
+		return columnName;
+	}
+
+	public List<String> getColumnNameorder() {
+		return columnNameorder;
+	}
+	public List<String> getPath(){
+		return this.paths;
+	}
 }

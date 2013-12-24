@@ -261,7 +261,7 @@ public class Institution {
     	return result.getSingleResult();
     }
     
-    public static List<Institution> findAllInstitutionsBySearchValue(String searchText, Long personId, int start, int length)
+    public static List<Institution> findAllInstitutionsBySearchValue(String searchname,Sorting sortOrder,String searchText, Long personId, int start, int length)
     {
     	Person loggedPerson = Person.myGetLoggedPerson();
     	if (loggedPerson == null)
@@ -271,8 +271,12 @@ public class Institution {
 		CriteriaQuery<Institution> criteriaQuery = criteriaBuilder.createQuery(Institution.class);
 		Root<Institution> from = criteriaQuery.from(Institution.class);
 		
-		criteriaQuery.orderBy(criteriaBuilder.asc(from.get("id")));
-		
+		if(sortOrder==Sorting.ASC){
+			criteriaQuery.orderBy(criteriaBuilder.asc(from.get(searchname)));
+		}
+		else{
+			criteriaQuery.orderBy(criteriaBuilder.desc(from.get(searchname)));
+		}
 		Expression<String> shortNameExp = from.get("institutionName");
 		Predicate pre1 = criteriaBuilder.like(shortNameExp, "%" + searchText + "%");
 		

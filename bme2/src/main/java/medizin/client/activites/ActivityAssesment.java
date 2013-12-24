@@ -11,6 +11,7 @@ import medizin.client.proxy.AssesmentProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.ui.view.assesment.AssesmentView;
 import medizin.client.ui.view.assesment.AssesmentViewImpl;
+import medizin.client.ui.widget.Sorting;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.activity.shared.ActivityManager;
@@ -37,7 +38,9 @@ public class ActivityAssesment extends AbstractActivityWrapper implements Assesm
 
 	private AcceptsOneWidget widget;
 	private AssesmentView view;
-
+	public String sortname = "id";
+	public Sorting sortorder = Sorting.ASC;
+	
 //	/**
 //	 * HashMap where the AssementProxies are stored after request 
 //	 */
@@ -121,6 +124,10 @@ public class ActivityAssesment extends AbstractActivityWrapper implements Assesm
 		});*/
 		
         RecordChangeEvent.register(requests.getEventBus(), (AssesmentViewImpl)view);
+        
+      //adding column mouse out on table.
+      ((AssesmentViewImpl)view).addColumnOnMouseout();
+      		
         init();
 		
 		activityManger.setDisplay(view.getDetailsPanel());
@@ -155,7 +162,7 @@ public class ActivityAssesment extends AbstractActivityWrapper implements Assesm
 	
 	//Request fetching Assesment-objects
 	 protected Request<java.util.List<medizin.client.proxy.AssesmentProxy>> createRangeRequest(Range range) {
-	        return requests.assesmentRequest().findAssesmentByInsitute(range.getStart(), range.getLength());
+	        return requests.assesmentRequest().findAssesmentByInsitute(sortname,sortorder,range.getStart(), range.getLength());
 	    }
 
 	    protected void fireCountRequest(BMEReceiver<Long> callback) {
@@ -274,6 +281,14 @@ public class ActivityAssesment extends AbstractActivityWrapper implements Assesm
 			
 			if (place instanceof PlaceAssesment)
 				init();
+		}
+
+		@Override
+		public void columnClickedForSorting(String sortname, Sorting sortorder) {
+			this.sortname=sortname;
+			this.sortorder=sortorder;
+			init();
+			
 		}
 
 

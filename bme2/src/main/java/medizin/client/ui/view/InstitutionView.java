@@ -1,6 +1,7 @@
 package medizin.client.ui.view;
 
 import medizin.client.proxy.InstitutionProxy;
+import medizin.client.ui.widget.Sorting;
 
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -22,6 +23,7 @@ public interface InstitutionView extends IsWidget {
 		void editClicked(InstitutionProxy proxy, String instituionName);
 		void newClicked(String institutionName);
 		void performSearch(String value);
+		void columnClickedForSorting(String sortname, Sorting sortorder, String string);
 	}
 
     CellTable<InstitutionProxy> getTable();

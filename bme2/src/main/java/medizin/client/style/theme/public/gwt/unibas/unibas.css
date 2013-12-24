@@ -3295,21 +3295,37 @@ background: rgb(201,201,253)  ;
 
 .ui-icon-triangle-1-s1 {
 	/* background: url("images/downArrow.png") ; */
-	background: transparent url(images/down.png) no-repeat right 4px;	
+	/*commnetd below to change css of advanced cell table right most column style and added new style-Manish  */
+	/* background: transparent url(images/down.png) no-repeat right 1px;	
 	height: 25px;
 	width: 25px;
 	background-repeat: no-repeat;
     display: block;
- background-position: center 4px;
+ 	background-position: center 4px;
     overflow: hidden;
   	height:22px;
     margin: auto;
-    border-right: 1px solid #AAA;
+    border: 1px solid #AAA; */
+    
+    background: url("images/down.png") no-repeat scroll center 0px rgba(0, 0, 0, 0);
+    /* border: 1px solid #AAAAAA; */
+    display: block;
+    height: 15px;
+    margin: auto;
+    overflow: hidden;
+    width: 16px;
 }
 .ui-icon-triangle-1-s1:hover{
 
+	background: url("images/down.png") no-repeat scroll center -2px rgba(0, 0, 0, 0);
+    border: 1px outset #AAAAAA;
+    display: block;
+    height: 12px;
+    margin: auto;
+    overflow: hidden;
+    width: 13px;
 	
-	border-left: 1px solid #AAA;
+	/* border-left: 1px solid #AAA; */
 }
 .videoBorder{
 	border: 1px solid gray;
@@ -4939,4 +4955,10 @@ background: url("images/colorpicker.png");
 .bookAssesmentShowButton{
 	margin-left: 10px;
     padding-left: 20px;
+}
+.tableCellWidth{
+	width: 100%;	
+}
+.lastColumnWidth{
+	width: 12px;
 }

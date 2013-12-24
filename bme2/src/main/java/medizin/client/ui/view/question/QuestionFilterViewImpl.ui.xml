@@ -37,21 +37,21 @@
 						<table>
 							<tr>
 								<td>
-									<g:CheckBox ui:field="questionText" text="{constants.questionText}"></g:CheckBox>
+									<g:CheckBox ui:field="questionText" text="{constants.questionText}" checked="true"></g:CheckBox>
 								</td>
 								
 								<td>
-									<g:CheckBox ui:field="instructionText" text="{constants.instruction}"></g:CheckBox>
+									<g:CheckBox ui:field="instructionText" text="{constants.instruction}" checked="true"></g:CheckBox>
 								</td>
 							</tr>
 							
 							<tr>
 								<td>
-									<g:CheckBox ui:field="keywordText" text="{constants.keyword}"></g:CheckBox>
+									<g:CheckBox ui:field="keywordText" text="{constants.keyword}" checked="true"></g:CheckBox>
 								</td>
 								
 								<td>
-									<g:CheckBox ui:field="showNew" text="{constants.showNew}"></g:CheckBox>
+									<g:CheckBox ui:field="showNew" text="{constants.showNew}" checked="true"></g:CheckBox>
 								</td>
 							</tr>
 						</table>

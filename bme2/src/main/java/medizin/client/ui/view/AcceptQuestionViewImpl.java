@@ -1,22 +1,35 @@
 package medizin.client.ui.view;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import medizin.client.events.RecordChangeEvent;
 import medizin.client.events.RecordChangeHandler;
 import medizin.client.proxy.QuestionProxy;
+import medizin.client.style.resources.AdvanceCellTable;
 import medizin.client.style.resources.MyCellTableResources;
 import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.roo.McProxyRenderer;
+import medizin.client.ui.widget.Sorting;
 import medizin.client.ui.widget.pager.MySimplePager;
 import medizin.shared.i18n.BmeConstants;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.text.shared.Renderer;
@@ -24,6 +37,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.ColumnSortEvent;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.DOM;
@@ -34,7 +48,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class AcceptQuestionViewImpl extends Composite implements AcceptQuestionView, RecordChangeHandler  {
+public class AcceptQuestionViewImpl extends Composite implements AcceptQuestionView, RecordChangeHandler,AcceptAnswerView.Delegate  {
 
 	private static AcceptQuestionViewImplUiBinder uiBinder = GWT
 			.create(AcceptQuestionViewImplUiBinder.class);
@@ -44,11 +58,19 @@ public class AcceptQuestionViewImpl extends Composite implements AcceptQuestionV
 	}
 
 	private Presenter presenter;
-
+	private Map<String, String> columnName=new HashMap<String, String>();
+	private List<String> columnNameorder = new ArrayList<String>();
+	private List<String> path = new ArrayList<String>();
+	private String columnHeader;
+	public int x;
+	public int y;
+	private Sorting sortorder = Sorting.ASC;
+	private String sortname = "name";
+	private Delegate delegate;
 
 	public AcceptQuestionViewImpl() {
 		CellTable.Resources tableResources = GWT.create(MyCellTableResources.class);
-		table = new CellTable<QuestionProxy>(McAppConstant.TABLE_PAGE_SIZE, tableResources);
+		table = new AdvanceCellTable<QuestionProxy>(McAppConstant.TABLE_PAGE_SIZE, tableResources);
 		
 		splitLayoutPanel =new SplitLayoutPanel(){
             @Override
@@ -98,7 +120,9 @@ public class AcceptQuestionViewImpl extends Composite implements AcceptQuestionV
 	}
 
 	private void init() {
-	     paths.add("id");
+		columnName.put(constants.id(), "id");
+		columnNameorder.add(constants.id());
+	    paths.add("id");
 	        table.addColumn(new TextColumn<QuestionProxy>() {
 
 	            Renderer<java.lang.Long> renderer = new AbstractRenderer<java.lang.Long>() {
@@ -112,10 +136,11 @@ public class AcceptQuestionViewImpl extends Composite implements AcceptQuestionV
 	            public String getValue(QuestionProxy object) {
 	                return renderer.render(object == null ? null : object.getId());
 	            }
-	        }, constants.id());
+	        }, constants.id(),true);
 	       
 		     	
-		     	
+	       columnName.put(constants.question(), "keywords");
+		   columnNameorder.add(constants.question()); 	
 	        paths.add("keywords");
 	        paths.add("comment");
 	        paths.add("previosVersion");
@@ -124,9 +149,10 @@ public class AcceptQuestionViewImpl extends Composite implements AcceptQuestionV
 	    	      public QuestionProxy getValue(QuestionProxy object) {
 	    	        return object;
 	    	      }
-	    	    },  constants.question());
+	    	    },  constants.question(),true);
 
-	     	
+	     	columnName.put(constants.acceptQuestion(), "rewiewer");
+			columnNameorder.add(constants.acceptQuestion()); 
 	     	paths.add("rewiewer");
 	     	paths.add("autor");
 	     	paths.add("questEvent");
@@ -137,7 +163,7 @@ public class AcceptQuestionViewImpl extends Composite implements AcceptQuestionV
 	    	      public QuestionProxy getValue(QuestionProxy object) {
 	    	        return object;
 	    	      }
-	    	},  "");
+	    	},  constants.acceptQuestion(),true);
 		     	
 
 		     	
@@ -171,10 +197,171 @@ public class AcceptQuestionViewImpl extends Composite implements AcceptQuestionV
 		    	table.addColumnStyleName(4, "deleteColumn");
 		    	table.getRowContainer().setClassName("tableBody");
 		    	
+		    	path=getPath();
+				addMouseDownHandler();
+				addColumnSortHandler();	
 	}
 
+	public void addColumnOnMouseout()
+	{
+		Set<String> selectedItems = table.getPopup().getMultiSelectionModel().getSelectedSet();
 
+		
+		int j = table.getColumnCount();
+		while (j > 0) {
+			
+			table.removeColumn(0);
+			j--;
+		}
 
+		path.clear();
+
+		Iterator<String> i;
+		if (selectedItems.size() == 0) {
+
+			i = table.getPopup().getDefaultValue().iterator();
+
+		} else {
+			i = selectedItems.iterator();
+		}
+
+		Iterator<String> i1=getColumnNameorder().iterator();
+
+		while (i1.hasNext()) {
+		
+			
+			String colValue=i1.next();
+
+			if(selectedItems.contains(colValue) || table.getInitList().contains(colValue))
+			{
+				
+				if(table.getInitList().contains(colValue))
+				{
+					table.getInitList().remove(colValue);
+				}
+			columnHeader = colValue;
+			String colName=(String)columnName.get(columnHeader);
+			path.add(colName.toString());
+				
+
+			if(columnHeader==constants.id()){
+				
+				 table.addColumn(new TextColumn<QuestionProxy>() {
+
+					 	{
+							this.setSortable(true);
+						}
+			            Renderer<java.lang.Long> renderer = new AbstractRenderer<java.lang.Long>() {
+
+			                public String render(java.lang.Long obj) {
+			                    return obj == null ? "" : String.valueOf(obj);
+			                }
+			            };
+
+			            @Override
+			            public String getValue(QuestionProxy object) {
+			                return renderer.render(object == null ? null : object.getId());
+			            }
+			        }, constants.id(),false);
+				
+			}else if(columnHeader==constants.question()) {
+				
+				table.addColumn(new Column<QuestionProxy, QuestionProxy>(new QuestionTextCell()) {
+		    	      @Override
+		    	      public QuestionProxy getValue(QuestionProxy object) {
+		    	        return object;
+		    	      }
+		    	    },  constants.question(),true);
+		  }
+			else if(columnHeader==constants.acceptQuestion()){
+				
+				table.addColumn(new Column<QuestionProxy, QuestionProxy>(new SimpleAttributeCell()) {
+		    	      @Override
+		    	      public QuestionProxy getValue(QuestionProxy object) {
+		    	        return object;
+		    	      }
+		    	},  constants.acceptQuestion(),true);
+			}
+		}
+	}
+		table.addLastColumn();
+}
+	private void addMouseDownHandler() {
+		table.addHandler(new MouseDownHandler() {
+
+			@Override
+			public void onMouseDown(MouseDownEvent event) {
+				Log.info("mouse down");
+
+				x = event.getClientX();
+				y = event.getClientY();
+
+				/*if(table.getRowCount()>0)
+				{
+				Log.info(table.getRowElement(0).getAbsoluteTop() + "--"+ event.getClientY());
+
+				
+				if (event.getNativeButton() == NativeEvent.BUTTON_RIGHT&& event.getClientY() < table.getRowElement(0).getAbsoluteTop()) {
+					
+					table.getPopup().setPopupPosition(x, y);
+					table.getPopup().show();
+
+					Log.info("right event");
+				}
+				}
+				else
+				{
+					table.getPopup().setPopupPosition(x, y);
+					table.getPopup().show();
+					
+				}*/
+
+			}
+		}, MouseDownEvent.getType());
+		
+		table.getPopup().addDomHandler(new MouseOutHandler() {
+
+			@Override
+			public void onMouseOut(MouseOutEvent event) {
+				table.getPopup().hide();
+				addColumnOnMouseout();
+				
+			}
+		}, MouseOutEvent.getType());
+	}
+	
+	 public void addColumnSortHandler(){
+	    	
+			table.addColumnSortHandler(new ColumnSortEvent.Handler() {
+
+				@Override
+				public void onColumnSort(ColumnSortEvent event) {
+		
+					Column<QuestionProxy, String> col = (Column<QuestionProxy, String>) event.getColumn();
+					
+					
+					int index = table.getColumnIndex(col);
+					
+					Log.info("call for sort " + path.size() + "--index--" + index+ "cc=" + table.getColumnCount());
+					if (index == (table.getColumnCount() - 1)) {
+						
+						table.getPopup().setPopupPosition(x-10, y);
+						table.getPopup().show();
+		
+					} else {
+						
+						if(table.getRowCount() > 0){
+							Log.info("call for sort " + path.size() + "--index--"+ index);
+							sortname = path.get(index);
+							Log.info("sort column name is " + sortname);
+								sortorder = (event.isSortAscending()) ? Sorting.ASC: Sorting.DESC;
+								Log.info("Call Init Search from addColumnSortHandler");
+								delegate.columnClickedForSorting(sortname,sortorder);
+						}
+					}
+				}
+			});
+		}
 
 
 	@Override
@@ -195,7 +382,9 @@ public class AcceptQuestionViewImpl extends Composite implements AcceptQuestionV
 	
 }
 
-
+	public List<String> getPath(){
+		return new ArrayList<String>(this.paths);
+	}
 	
 
 	  
@@ -247,7 +436,7 @@ public class AcceptQuestionViewImpl extends Composite implements AcceptQuestionV
 			}
 		  }
     @UiField(provided = true)
-    CellTable<QuestionProxy> table;
+    AdvanceCellTable<QuestionProxy> table;
 	
     @UiField(provided = true)
 	public MySimplePager pager;
@@ -356,6 +545,16 @@ public class AcceptQuestionViewImpl extends Composite implements AcceptQuestionV
 		}
 
 		table.setPageSize(pagesize);		
+	}
+
+	public List<String> getColumnNameorder() {
+		return columnNameorder;
+	}
+
+	@Override
+	public void setDelegate(Delegate delegate) {
+		this.delegate=delegate;
+		
 	}
 	  
 	

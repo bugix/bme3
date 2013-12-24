@@ -4,6 +4,7 @@ import java.util.List;
 
 import medizin.client.proxy.PersonAccessRightProxy;
 import medizin.client.proxy.PersonProxy;
+import medizin.client.ui.widget.Sorting;
 
 import org.springframework.roo.addon.gwt.RooGwtUnmanagedRequest;
 
@@ -31,7 +32,7 @@ public interface PersonRequest extends PersonRequest_Roo_Gwt {
 	
 	Request<List<PersonProxy>> findAllPeopleByNameASC();
 
-	Request<List<PersonProxy>> findAllUsersOfGivenSearch(Integer start, Integer length,String value);
+	Request<List<PersonProxy>> findAllUsersOfGivenSearch(String sortColumn,Sorting sortOrder,Integer start, Integer length,String value);
 
 	Request<Long> countAllUsersOfGivenSearch(String value);
 }

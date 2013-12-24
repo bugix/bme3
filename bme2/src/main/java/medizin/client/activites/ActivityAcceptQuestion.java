@@ -11,6 +11,7 @@ import medizin.client.place.PlaceQuestionDetails;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.ui.view.AcceptQuestionView;
 import medizin.client.ui.view.AcceptQuestionViewImpl;
+import medizin.client.ui.widget.Sorting;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.activity.shared.ActivityManager;
@@ -28,7 +29,7 @@ import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
 import com.google.web.bindery.requestfactory.shared.EntityProxyId;
 
-public class ActivityAcceptQuestion extends AbstractActivityWrapper implements AcceptQuestionView.Presenter {
+public class ActivityAcceptQuestion extends AbstractActivityWrapper implements AcceptQuestionView.Presenter,AcceptQuestionView.Delegate {
 
 	private PlaceAcceptQuestion questionPlace;
 
@@ -45,6 +46,8 @@ public class ActivityAcceptQuestion extends AbstractActivityWrapper implements A
 	private ActivityManager activityManger;
 	private ActivityAcceptQuestionMapper activityAcceptQuestionMapper;
 	
+	public Sorting sortorder = Sorting.ASC;
+	public String sortname = "id";
 	
 	@Inject
 	public ActivityAcceptQuestion(PlaceAcceptQuestion place,
@@ -96,7 +99,7 @@ public class ActivityAcceptQuestion extends AbstractActivityWrapper implements A
         widget.setWidget(acceptQuestionView.asWidget());
         
         table=view.getTable();
-        
+        acceptQuestionView.setDelegate(this);
         /*eventBus.addHandler(PlaceChangeEvent.TYPE,
 				new PlaceChangeEvent.Handler() {
 					public void onPlaceChange(PlaceChangeEvent event) {
@@ -131,6 +134,9 @@ public class ActivityAcceptQuestion extends AbstractActivityWrapper implements A
 
         RecordChangeEvent.register(requests.getEventBus(), (AcceptQuestionViewImpl)view);
         
+      //adding column mouse out of table.
+      	((AcceptQuestionViewImpl)view).addColumnOnMouseout();
+      		
         init();
         
     	/*requests.personRequest().myGetLoggedPerson()
@@ -219,7 +225,7 @@ public class ActivityAcceptQuestion extends AbstractActivityWrapper implements A
 	protected void onRangeChanged() {
 		final Range range = table.getVisibleRange();
 
-		requests.questionRequest().findQuestionsEntriesNonAcceptedAdmin(range.getStart(), range.getLength()).with(view.getPaths()).fire(new BMEReceiver<List<QuestionProxy>>() {
+		requests.questionRequest().findQuestionsEntriesNonAcceptedAdmin(sortname,sortorder,range.getStart(), range.getLength()).with(view.getPaths()).fire(new BMEReceiver<List<QuestionProxy>>() {
 			@Override
 			public void onSuccess(List<QuestionProxy> values) {
 				if (view == null) {
@@ -269,6 +275,14 @@ public class ActivityAcceptQuestion extends AbstractActivityWrapper implements A
 		if (place instanceof PlaceAcceptQuestion) {
 			init();
 		}
+	}
+
+	@Override
+	public void columnClickedForSorting(String sortname, Sorting sortorder) {
+		this.sortname=sortname;
+		this.sortorder=sortorder;
+		init();
+		
 	}
 
 }

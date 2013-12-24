@@ -1,6 +1,7 @@
 package medizin.client.ui.view.assesment;
 
 import medizin.client.ui.view.user.UserView.Delegate;
+import medizin.client.ui.widget.Sorting;
 import medizin.client.proxy.AssesmentProxy;
 import medizin.client.proxy.PersonProxy;
 
@@ -24,6 +25,7 @@ public interface AssesmentView extends IsWidget {
 	interface Delegate {
 		void detailsClicked(PersonProxy person);
 		void newClicked();
+		void columnClickedForSorting(String sortname, Sorting sortorder);
 	}
     
     //Table for Assesments (Pr�fungshefter)

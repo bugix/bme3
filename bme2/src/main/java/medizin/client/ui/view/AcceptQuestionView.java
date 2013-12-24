@@ -1,6 +1,7 @@
 package medizin.client.ui.view;
 
 import medizin.client.proxy.QuestionProxy;
+import medizin.client.ui.widget.Sorting;
 
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.cellview.client.CellTable;
@@ -16,12 +17,19 @@ public interface AcceptQuestionView extends IsWidget {
         void goTo(Place place);
     }
 
+    interface Delegate {
+
+		void columnClickedForSorting(String sortname, Sorting sortorder);
+		
+		
+	}
 
 	
 	   CellTable<QuestionProxy> getTable();
 	    
 	    String[] getPaths();
 		
+	    void setDelegate(Delegate delegate);
 
 	    
 		public SimplePanel getDetailsPanel();

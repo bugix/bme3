@@ -31,7 +31,7 @@ public interface InstitutionRequest extends InstitutionRequest_Roo_Gwt {
 	
 	Request<Long> countAllInstitutionsBySearchValue(String searchText, Long personId);
 	
-	Request<List<InstitutionProxy>> findAllInstitutionsBySearchValue(String searchText, Long personId, int start, int length);
+	Request<List<InstitutionProxy>> findAllInstitutionsBySearchValue(String searchname,Sorting sortorder,String searchText, Long personId, int start, int length);
 	
 	Request<List<InstitutionProxy>> findInstitutionByLoggedPerson();
 }

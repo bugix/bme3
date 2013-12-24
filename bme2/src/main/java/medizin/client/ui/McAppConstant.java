@@ -38,6 +38,7 @@ public class McAppConstant {
 	
 	//public static final SafeHtml DELETE_ICON = new SafeHtmlBuilder().appendHtmlConstant("<span class=\"ui-icon ui-icon-closethick\"></span>").toSafeHtml();
 	public static final SafeHtml DOWN_ICON =  new SafeHtmlBuilder().appendHtmlConstant("<span class=\"ui-icon ui-icon-carat-1-n\"></span>").toSafeHtml();
+	public static final SafeHtml DOWN_ICONFORCELLTABLE = new SafeHtmlBuilder().appendHtmlConstant("<span class=\"ui-icon-triangle-1-s1\"></span>").toSafeHtml();
 	public static final SafeHtml UP_ICON =  new SafeHtmlBuilder().appendHtmlConstant("<span class=\"ui-icon ui-icon-carat-1-s\"></span>").toSafeHtml();
 	public static int TABLE_PAGE_SIZE = 15;
 	public static final int TABLE_JUMP_SIZE = 30;

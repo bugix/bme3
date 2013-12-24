@@ -54,14 +54,14 @@ public class ActivityInstitution extends AbstractActivityWrapper implements /*In
 	private McAppRequestFactory requests;
 	private PlaceController placeController;
 	
-	public String sortname = "institutionName";
-	 public Sorting sortorder = Sorting.ASC;
+	public String sortname = "id";
+	public Sorting sortorder = Sorting.ASC;
 	 
 	 private InstitutionProxy selectedInstitution = null;
 	
 	 String searchValue = "";
 	 //Long loggedPersonId = 0l;
-
+		
 	@Inject
 	public ActivityInstitution(PlaceInstitution place,
 			McAppRequestFactory requests, PlaceController placeController) {
@@ -129,7 +129,9 @@ public class ActivityInstitution extends AbstractActivityWrapper implements /*In
 		
 		RecordChangeEvent.register(requests.getEventBus(), (InstitutionViewImpl)view);
 		
-
+		//adding column mouse out on table.
+		((InstitutionViewImpl)view).addColumnOnMouseout();
+		
 		activityManger.setDisplay(view.getDetailsPanel());
 
 		// Inherit the view's key provider
@@ -193,7 +195,7 @@ public class ActivityInstitution extends AbstractActivityWrapper implements /*In
 	{
 		//return requests.institutionRequest().findInstitutionEntries(range.getStart(), range.getLength());		
 		//return requests.institutionRequest().findAllInstitutions(range.getStart(),range.getLength(),sortname,sortorder,searchValue);
-		return requests.institutionRequest().findAllInstitutionsBySearchValue(searchValue, userLoggedIn.getId(), range.getStart(), range.getLength());				
+		return requests.institutionRequest().findAllInstitutionsBySearchValue(sortname,sortorder,searchValue, userLoggedIn.getId(), range.getStart(), range.getLength());				
 	}
 
 	protected void fireCountRequest(BMEReceiver<Long> callback) {
@@ -428,5 +430,15 @@ public class ActivityInstitution extends AbstractActivityWrapper implements /*In
 	public void placeChanged(Place place) {
 		// updateSelection(event.getNewPlace());
 		// TODO implement
+	}
+
+	@Override
+	public void columnClickedForSorting(String sortname, Sorting sortorder,String searchValue) {
+		Log.info("getting value for sorted column");
+		this.sortname=sortname;
+		this.sortorder=sortorder;
+		this.searchValue=searchValue;
+		init();
+		
 	}
 }

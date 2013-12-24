@@ -1,6 +1,8 @@
 package medizin.client.activites;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import medizin.client.events.RecordChangeEvent;
 import medizin.client.factory.receiver.BMEReceiver;
@@ -8,6 +10,7 @@ import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.PlaceQuestiontypes;
 import medizin.client.place.PlaceQuestiontypesDetails;
 import medizin.client.proxy.QuestionTypeProxy;
+import medizin.client.style.resources.AdvanceCellTable;
 import medizin.client.ui.view.QuestiontypesView;
 import medizin.client.ui.view.QuestiontypesViewImpl;
 import medizin.client.ui.widget.Sorting;
@@ -19,7 +22,6 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.cellview.client.AbstractHasData;
-import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
@@ -37,7 +39,7 @@ public class ActivityQuestiontypes extends AbstractActivityWrapper implements Qu
 	private PlaceQuestiontypes questiontypesPlace;
 
 	private AcceptsOneWidget widget;
-	private CellTable<QuestionTypeProxy> table;
+	private AdvanceCellTable<QuestionTypeProxy> table;
 	private ActivityManager activityManger;
 	private ActivityQuestiontypesMapper activityQuestiontypesMapper;
 	private QuestiontypesView view;
@@ -51,9 +53,13 @@ public class ActivityQuestiontypes extends AbstractActivityWrapper implements Qu
 	public String sortname = "shortName";
 	 public Sorting sortorder = Sorting.ASC;
 	 String sortName[];
-	 
+	 public String columnHeader;
 	 String searchValue = "";
-	 
+	 private Map<String, String> columnName;
+	 public List<String> path = new ArrayList<String>();
+	 public int x;
+	 public int y;
+		
 	@Inject	
 	public ActivityQuestiontypes(PlaceQuestiontypes place,
 			McAppRequestFactory requests, PlaceController placeController) {
@@ -148,6 +154,9 @@ public class ActivityQuestiontypes extends AbstractActivityWrapper implements Qu
 					}
 				});*/
 		
+		//adding mouse out of table.
+			((QuestiontypesViewImpl)view).addColumnOnMouseout();
+	
 		
 		activityManger.setDisplay(view.getDetailsPanel());
 		
@@ -195,8 +204,6 @@ public class ActivityQuestiontypes extends AbstractActivityWrapper implements Qu
 		
 	}//End start()
 	
-	
-
 	@Override
 	public void goTo(Place place) {
 		  placeController.goTo(place);
@@ -227,7 +234,7 @@ public class ActivityQuestiontypes extends AbstractActivityWrapper implements Qu
 				table.setRowCount(count.intValue());
 				
 			//	System.out.println("Start: " + range.getStart() + " Length: " + range.getLength());
-				requests.questionTypeRequest().findAllQuestionType(range.getStart(),range.getLength(),sortname,sortorder,searchValue).fire(new BMEReceiver<List<QuestionTypeProxy>>() {
+				requests.questionTypeRequest().findAllQuestionType(range.getStart(),range.getLength(),sortname,sortorder,searchValue).with("institution").fire(new BMEReceiver<List<QuestionTypeProxy>>() {
 
 					@Override
 					public void onSuccess(List<QuestionTypeProxy> arg0) {
@@ -254,7 +261,7 @@ public class ActivityQuestiontypes extends AbstractActivityWrapper implements Qu
 					table.setRowCount(response.intValue());
 					
 				//	System.out.println("Start: " + range.getStart() + " Length: " + range.getLength());
-					requests.questionTypeRequest().findAllQuestionType(range.getStart(),range.getLength(),sortname,sortorder,searchValue).fire(new BMEReceiver<List<QuestionTypeProxy>>() {
+					requests.questionTypeRequest().findAllQuestionType(range.getStart(),range.getLength(),sortname,sortorder,searchValue).with("institution").fire(new BMEReceiver<List<QuestionTypeProxy>>() {
 
 						@Override
 						public void onSuccess(List<QuestionTypeProxy> arg0) {
@@ -286,16 +293,27 @@ public class ActivityQuestiontypes extends AbstractActivityWrapper implements Qu
 						
 						
 						int index = table.getColumnIndex(col);
-						
-						
-							sortname = sortName[index];
-							sortorder = (event.isSortAscending()) ? Sorting.ASC: Sorting.DESC;
-							// By SPEC]end
-							// RoleActivity.this.init2("");
-							Log.info("Call Search from addColumnSortHandler sortname "+ sortname +" sortOrder "+sortorder +"index "+index);
-							// filter.hide();
-							tableRangeChangeCall();
+						if (index == (table.getColumnCount() - 1)) {
 							
+							table.getPopup().setPopupPosition(x, y);
+							table.getPopup().show();
+			
+						}else{ 
+						
+							if(table.getRowCount() > 0 ) {
+								sortname = ((QuestiontypesViewImpl)view).getCurrentRows().get(index);;
+								if(sortname !="answer"){
+									sortorder = (event.isSortAscending()) ? Sorting.ASC: Sorting.DESC;
+									// By SPEC]end
+									// RoleActivity.this.init2("");
+									Log.info("Call Search from addColumnSortHandler sortname "+ sortname +" sortOrder "+sortorder +"index "+index);
+									// filter.hide();
+									tableRangeChangeCall();
+								}else{
+									sortname="shortName";
+								}
+							}
+						}	
 						
 					}
 				});
@@ -509,6 +527,13 @@ public class ActivityQuestiontypes extends AbstractActivityWrapper implements Qu
 				init();
 			}
 	    }
+
+		@Override
+		public void setXandYOfTablePopyp(int x, int y) {
+			this.x=x;
+			this.y=y;
+			
+		}
 	
 		
 

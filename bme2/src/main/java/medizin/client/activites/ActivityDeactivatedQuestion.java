@@ -12,6 +12,7 @@ import medizin.client.proxy.QuestionProxy;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.question.QuestionView;
 import medizin.client.ui.view.question.QuestionViewImpl;
+import medizin.client.ui.widget.Sorting;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.activity.shared.ActivityManager;
@@ -40,7 +41,9 @@ public class ActivityDeactivatedQuestion extends AbstractActivityWrapper impleme
 	private HandlerRegistration rangeChangeHandler;
 	private ActivityManager activityManger;
 	private ActivityDeactivatedQuestionMapper activitydeactivatedQuestionMapper;
-
+	private Sorting sortorder = Sorting.ASC;
+	private String sortname = "id";
+	
 	public ActivityDeactivatedQuestion(PlaceDeactivatedQuestion place, McAppRequestFactory requests, PlaceController placeController) {
 		super(place, requests, placeController);
 		this.placeController = placeController;
@@ -75,6 +78,10 @@ public class ActivityDeactivatedQuestion extends AbstractActivityWrapper impleme
 		setWidthOfWidget();
 		
 		RecordChangeEvent.register(requests.getEventBus(), (QuestionViewImpl)view);
+		
+		//adding column mouse out on table.
+		((QuestionViewImpl)view).addColumnOnMouseout();
+		
 		init();
 
 		ProvidesKey<QuestionProxy> keyProvider = ((AbstractHasData<QuestionProxy>) table).getKeyProvider();
@@ -129,7 +136,7 @@ public class ActivityDeactivatedQuestion extends AbstractActivityWrapper impleme
 	private void onRangeChanged() {
 		final Range range = table.getVisibleRange();
 
-		requests.questionRequest().findDeactivatedQuestion(view.getSerachBox().getValue(), view.getSearchValue(), range.getStart(), range.getLength()).with(view.getPaths()).fire(new BMEReceiver<List<QuestionProxy>>() {
+		requests.questionRequest().findDeactivatedQuestion(sortname,sortorder, view.getSerachBox().getValue(), view.getSearchValue(), range.getStart(), range.getLength()).with(view.getPaths()).with("autor").fire(new BMEReceiver<List<QuestionProxy>>() {
 			@Override
 			public void onSuccess(List<QuestionProxy> values) {
 				if (view == null) {
@@ -185,6 +192,14 @@ public class ActivityDeactivatedQuestion extends AbstractActivityWrapper impleme
 	public void splitLayoutPanelResized() {
 		Double newWidth =(((QuestionViewImpl)view).getSplitLayoutPanel()).getWidgetSize(((QuestionViewImpl)view).getScrollpanel());
        	Cookies.setCookie(McAppConstant.DEACTIVATED_QUE_VIEW_WIDTH, String.valueOf(newWidth));
+		
+	}
+
+	@Override
+	public void columnClickedForSorting(String sortname, Sorting sortorder) {
+		this.sortname=sortname;
+		this.sortorder=sortorder;
+		performSearch("");
 		
 	}
 

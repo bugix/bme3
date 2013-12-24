@@ -8,8 +8,10 @@ import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.PlaceUser;
 import medizin.client.place.PlaceUserDetails;
 import medizin.client.proxy.PersonProxy;
+import medizin.client.style.resources.AdvanceCellTable;
 import medizin.client.ui.view.user.UserView;
 import medizin.client.ui.view.user.UserViewImpl;
+import medizin.client.ui.widget.Sorting;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.activity.shared.ActivityManager;
@@ -18,7 +20,6 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.cellview.client.AbstractHasData;
-import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.view.client.ProvidesKey;
@@ -38,7 +39,7 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 	private PlaceUser userPlace;
 	private AcceptsOneWidget widget;
 	private UserView view;
-	private CellTable<PersonProxy> table;
+	private AdvanceCellTable<PersonProxy> table;
 	private ActivityManager activityManger;
 	private ActivityUserMapper activityUserMapper;
 	private SingleSelectionModel<PersonProxy> selectionModel;
@@ -48,8 +49,9 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 	private PlaceController placeController;
 	private EntityProxyId<?> proxyId = null;
 	private String searchValue ="";
-
-
+	public Sorting sortorder = Sorting.ASC;
+	public String sortname = "name";
+	
 	@Inject
 	public ActivityUser(PlaceUser place, McAppRequestFactory requests,PlaceController placeController) {
 		super(place, requests, placeController);
@@ -97,7 +99,7 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 
 	}
 
-	public void setTable(CellTable<PersonProxy> table) {
+	public void setTable(AdvanceCellTable<PersonProxy> table) {
 		this.table = table;
 	}
 	
@@ -144,8 +146,11 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 		userView.setPresenter(this);
 		this.widget = widget;
 		this.view = userView;
-		widget.setWidget(userView.asWidget());
+		widget.setWidget(this.view.asWidget());
 		setTable(view.getTable());
+		 
+		
+		
 		SplitLayoutPanel splitLayoutPanel= view.getSplitLayoutPanel();
 		
 		/*eventBus.addHandler(PlaceChangeEvent.TYPE,
@@ -161,7 +166,12 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 				});*/
 		
 		RecordChangeEvent.register(requests.getEventBus(), (UserViewImpl)view);
+		//adding column mouse out of table.
+		((UserViewImpl)view).addColumnOnMouseout();
+		
 		init();
+		
+		
 
 		activityManger.setDisplay(view.getDetailsPanel());
 
@@ -169,7 +179,8 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 		ProvidesKey<PersonProxy> keyProvider = ((AbstractHasData<PersonProxy>) table).getKeyProvider();
 		selectionModel = new SingleSelectionModel<PersonProxy>(keyProvider);
 		table.setSelectionModel(selectionModel);
-
+		
+		
 		selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 					public void onSelectionChange(SelectionChangeEvent event) {
 						PersonProxy selectedObject = selectionModel.getSelectedObject();
@@ -216,7 +227,7 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 	protected void onRangeChanged() {
 		final Range range = table.getVisibleRange();
 
-		requests.personRequest().findAllUsersOfGivenSearch(range.getStart(),range.getLength(),searchValue).with(view.getPaths()).fire(new BMEReceiver<List<PersonProxy>>() {
+		requests.personRequest().findAllUsersOfGivenSearch(sortname,sortorder,range.getStart(),range.getLength(),searchValue).with(view.getPaths()).fire(new BMEReceiver<List<PersonProxy>>() {
 			
 			@Override
 			public void onSuccess(List<PersonProxy> values) {
@@ -314,6 +325,13 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 		Log.info("search text is" + value);
 		
 		this.searchValue = value;
+		init();
+	}
+
+	@Override
+	public void columnClickedForSorting(String sortname, Sorting sortorder) {
+		this.sortname=sortname;
+		this.sortorder=sortorder;
 		init();
 	}
 }

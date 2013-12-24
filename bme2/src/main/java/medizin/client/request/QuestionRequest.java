@@ -2,7 +2,10 @@ package medizin.client.request;
 
 import java.util.List;
 
+import javax.swing.SortOrder;
+
 import medizin.client.proxy.QuestionProxy;
+import medizin.client.ui.widget.Sorting;
 
 import org.springframework.roo.addon.gwt.RooGwtUnmanagedRequest;
 
@@ -33,7 +36,7 @@ public interface QuestionRequest extends QuestionRequest_Roo_Gwt {
 
 	Request<java.lang.Long> countQuestionsNonAcceptedAdmin();
 
-	Request<List<QuestionProxy>> findQuestionsEntriesNonAcceptedAdmin(
+	Request<List<QuestionProxy>> findQuestionsEntriesNonAcceptedAdmin(String sortname,Sorting sortOrder,
 			int start, int length);
 
 	Request<List<QuestionProxy>> findQuestionsAnswersNonAcceptedAdmin();
@@ -56,9 +59,9 @@ public interface QuestionRequest extends QuestionRequest_Roo_Gwt {
 
 	/*InstanceRequest<QuestionProxy, QuestionProxy> questionResendToReviewWithMajorVersion(boolean b);*/
 
-	Request<Long> countNotActivatedQuestionsByPerson(String searchText, List<String> searchField);
+	Request<Integer> countNotActivatedQuestionsByPerson(String searchText, List<String> searchField);
 
-	Request<List<QuestionProxy>> findAllNotActivatedQuestionsByPerson(String searchText, List<String> searchField, int start, int length);
+	Request<List<QuestionProxy>> findAllNotActivatedQuestionsByPerson(String sortname,Sorting sortorder,String searchText, List<String> searchField, int start, int length);
 
 	Request<Void> forcedActiveQuestion(Long questionId);
 
@@ -66,13 +69,13 @@ public interface QuestionRequest extends QuestionRequest_Roo_Gwt {
 	
 	Request<List<QuestionProxy>> findAllQuestionsAnswersNotActivatedByPerson();
 
-	Request<List<QuestionProxy>> findQuestionByAdvancedSearchByLoginUserAndInstitute(List<String> criteriaStringList, List<String> searchField, String searchText, int start, int length);
+	Request<List<QuestionProxy>> findQuestionByAdvancedSearchByLoginUserAndInstitute(String sortnmae,Sorting sortorder,List<String> criteriaStringList, List<String> searchField, String searchText, int start, int length);
 	
 	Request<Integer> countQuestionByAdvancedSearchByLoginUserAndInstitute(List<String> criteriaStringList, List<String> searchField, String searchText);
 	
 	Request<Long> countQuestionByLoggedUser(Long loggedUserId, boolean isAdminOrInstitutionalAdmin);
 
-	Request<List<QuestionProxy>> findDeactivatedQuestion(String searchValue, List<String> searchField, int start, int length);
+	Request<List<QuestionProxy>> findDeactivatedQuestion(String sortname,Sorting sortorder,String searchValue, List<String> searchField, int start, int length);
 	
 	Request<Integer> countDeactivatedQuestion(String searchValue, List<String> searchField);
 

@@ -1,7 +1,9 @@
 package medizin.client.ui.view;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -9,11 +11,13 @@ import java.util.Set;
 import medizin.client.events.RecordChangeEvent;
 import medizin.client.events.RecordChangeHandler;
 import medizin.client.proxy.InstitutionProxy;
+import medizin.client.style.resources.AdvanceCellTable;
 import medizin.client.style.resources.MyCellTableResources;
 import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.QuickSearchBox;
+import medizin.client.ui.widget.Sorting;
 import medizin.client.ui.widget.TextPopupViewImpl;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEvent;
@@ -21,15 +25,21 @@ import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEvent
 import medizin.client.ui.widget.pager.MySimplePager;
 import medizin.shared.i18n.BmeConstants;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.cell.client.AbstractEditableCell;
 import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Float;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.text.shared.Renderer;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -37,6 +47,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.ColumnSortEvent;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Cookies;
 import com.google.gwt.user.client.DOM;
@@ -73,7 +84,7 @@ public class InstitutionViewImpl extends Composite implements InstitutionView, R
 	SimplePanel slidingPanel;
 	
 	@UiField(provided=true)
-	CellTable<InstitutionProxy> table;
+	AdvanceCellTable<InstitutionProxy> table;
 	
 	@UiField(provided = true)
 	MySimplePager pager;
@@ -81,6 +92,15 @@ public class InstitutionViewImpl extends Composite implements InstitutionView, R
 	@UiField (provided = true)
 	QuickSearchBox searchBox;
 	
+	private Map<String, String> columnName=new HashMap<String, String>();
+	private List<String> columnNameorder = new ArrayList<String>();
+	private List<String> path = new ArrayList<String>();
+	private String columnHeader;
+	public int x;
+	public int y;
+	private Sorting sortorder = Sorting.ASC;
+	private String sortname = "name";
+	private boolean flag;
     /*@UiField
     CellTable<InstitutionProxy> table;
     */
@@ -103,7 +123,7 @@ public class InstitutionViewImpl extends Composite implements InstitutionView, R
 	public InstitutionViewImpl(Map<String, Widget> reciverMap, Boolean flag) {
 		
 		CellTable.Resources tableResources = GWT.create(MyCellTableResources.class);
-		table = new CellTable<InstitutionProxy>(McAppConstant.TABLE_PAGE_SIZE, tableResources);
+		table = new AdvanceCellTable<InstitutionProxy>(McAppConstant.TABLE_PAGE_SIZE, tableResources);
 			
 		splitLayoutPanel =new SplitLayoutPanel(){
             @Override
@@ -120,6 +140,7 @@ public class InstitutionViewImpl extends Composite implements InstitutionView, R
 		searchBox = new QuickSearchBox(new QuickSearchBox.Delegate() {
 			@Override
 			public void performAction() {
+				table.setVisibleRange(0, McAppConstant.TABLE_PAGE_SIZE);
 				delegate.performSearch(searchBox.getValue());
 			}
 		});
@@ -172,7 +193,7 @@ public class InstitutionViewImpl extends Composite implements InstitutionView, R
 	
     public void init(Boolean flag) {
     	editableCells = new ArrayList<AbstractEditableCell<?, ?>>();
-    	
+    	this.flag=flag;
 
       /*  paths.add("id");
         table.addColumn(new TextColumn<InstitutionProxy>() {
@@ -215,7 +236,8 @@ public class InstitutionViewImpl extends Composite implements InstitutionView, R
 			}
 		}, ClickEvent.getType());
 
-
+    	columnName.put(constants.institutionLbl(), "institutionName");
+		columnNameorder.add(constants.institutionLbl());
         paths.add("institutionName");
         table.addColumn(new TextColumn<InstitutionProxy>() {
 
@@ -230,7 +252,7 @@ public class InstitutionViewImpl extends Composite implements InstitutionView, R
             public String getValue(InstitutionProxy object) {
                 return renderer.render(object == null ? null : object.getInstitutionName());
             }
-        }, constants.institutionLbl());
+        }, constants.institutionLbl(),true);
         
         if (flag)
         {
@@ -309,10 +331,215 @@ public class InstitutionViewImpl extends Composite implements InstitutionView, R
     	
     	
     	table.addColumnStyleName(0, "questionTextColumn");
+    	
+    	path=getPath();
+		addMouseDownHandler();
+		addColumnSortHandler();
     }
     
+    public void addColumnOnMouseout()
+	{
+		Set<String> selectedItems = table.getPopup().getMultiSelectionModel().getSelectedSet();
+
+		
+		int j = table.getColumnCount();
+		while (j > 0) {
+			
+			table.removeColumn(0);
+			j--;
+		}
+
+		path.clear();
+
+		Iterator<String> i;
+		if (selectedItems.size() == 0) {
+
+			i = table.getPopup().getDefaultValue().iterator();
+
+		} else {
+			i = selectedItems.iterator();
+		}
+
+		Iterator<String> i1=getColumnNameorder().iterator();
+
+		while (i1.hasNext()) {
+		
+			
+			String colValue=i1.next();
+
+			if(selectedItems.contains(colValue) || table.getInitList().contains(colValue))
+			{
+				
+				if(table.getInitList().contains(colValue))
+				{
+					table.getInitList().remove(colValue);
+				}
+			columnHeader = colValue;
+			String colName=(String)columnName.get(columnHeader);
+			path.add(colName.toString());
+				
+
+			if(columnHeader==constants.institutionLbl()){
+				
+				table.addColumn(new TextColumn<InstitutionProxy>() {
+
+					{
+						this.setSortable(true);
+						this.setCellStyleNames("tableCellWidth");
+					}
+		            Renderer<java.lang.String> renderer = new AbstractRenderer<java.lang.String>() {
+
+		                public String render(java.lang.String obj) {
+		                    return obj == null ? "" : String.valueOf(obj);
+		                }
+		            };
+
+		            @Override
+		            public String getValue(InstitutionProxy object) {
+		                return renderer.render(object == null ? "" : object.getInstitutionName());
+		            }
+		        }, constants.institutionLbl(),false);
+				
+				if (flag)
+		        {
+		        	addColumn(new ActionCell<InstitutionProxy>(
+		            		McAppConstant.EDIT_ICON, new ActionCell.Delegate<InstitutionProxy>() {
+		    					public void execute(final InstitutionProxy institution) {
+		    						final TextPopupViewImpl popupView = new TextPopupViewImpl();
+		    						popupView.setText(institution.getInstitutionName());
+		    						popupView.addSaveClickHandler(new ClickHandler() {
+										
+										@Override
+										public void onClick(ClickEvent event) {
+											delegate.editClicked(institution, popupView.getText());
+											popupView.hide();
+										}
+									});
+		    						popupView.addCancelClickHandler(new ClickHandler() {
+										
+										@Override
+										public void onClick(ClickEvent event) {
+											popupView.hide();
+										}
+									});
+		    						popupView.setPopupPosition((left-200), (top-50));
+		    						popupView.show();
+		    					}	
+		    				}), "", new GetValue<InstitutionProxy>() {
+		    			public InstitutionProxy getValue(InstitutionProxy institution) {
+		    				return institution;
+		    			}
+		    		}, null);
+		        	
+		        	addColumn(new ActionCell<InstitutionProxy>(
+		            		McAppConstant.DELETE_ICON, new ActionCell.Delegate<InstitutionProxy>() {
+		    					public void execute(final InstitutionProxy institution) {
+		    						//Window.alert("You clicked " + institution.getInstitutionName());
+		    						ConfirmationDialogBox.showYesNoDialogBox(constants.warning(), constants.deleteInstitutionConfirmation(), new ConfirmDialogBoxYesNoButtonEventHandler() {
+		    							
+		    							@Override
+		    							public void onYesButtonClicked(ConfirmDialogBoxYesNoButtonEvent event) {
+		    								delegate.deleteClicked(institution);
+		    							}
+		    							
+		    							@Override
+		    							public void onNoButtonClicked(ConfirmDialogBoxYesNoButtonEvent event) {
+		    															
+		    							}
+		    						});
+		    						
+		    						
+		    					}	
+		    				}), "", new GetValue<InstitutionProxy>() {
+		    			public InstitutionProxy getValue(InstitutionProxy institution) {
+		    				return institution;
+		    			}
+		    		}, null);
+		        	
+		        	table.addColumnStyleName(1, "iconColumn");
+		        	table.addColumnStyleName(2, "iconColumn");
+		        }
+			}
+		}
+	}
+		table.addLastColumn();
+}
+    private void addMouseDownHandler() {
+		table.addHandler(new MouseDownHandler() {
+
+			@Override
+			public void onMouseDown(MouseDownEvent event) {
+				Log.info("mouse down");
+
+				x = event.getClientX();
+				y = event.getClientY();
+
+				/*if(table.getRowCount()>0)
+				{
+				Log.info(table.getRowElement(0).getAbsoluteTop() + "--"+ event.getClientY());
+
+				
+				if (event.getNativeButton() == NativeEvent.BUTTON_RIGHT&& event.getClientY() < table.getRowElement(0).getAbsoluteTop()) {
+					
+					table.getPopup().setPopupPosition(x, y);
+					table.getPopup().show();
+
+					Log.info("right event");
+				}
+				}
+				else
+				{
+					table.getPopup().setPopupPosition(x, y);
+					table.getPopup().show();
+					
+				}*/
+
+			}
+		}, MouseDownEvent.getType());
+		
+		table.getPopup().addDomHandler(new MouseOutHandler() {
+
+			@Override
+			public void onMouseOut(MouseOutEvent event) {
+				table.getPopup().hide();
+				addColumnOnMouseout();
+				
+			}
+		}, MouseOutEvent.getType());
+	}
     
-    
+    public void addColumnSortHandler(){
+    	
+		table.addColumnSortHandler(new ColumnSortEvent.Handler() {
+
+			@Override
+			public void onColumnSort(ColumnSortEvent event) {
+	
+				Column<InstitutionProxy, String> col = (Column<InstitutionProxy, String>) event.getColumn();
+				
+				
+				int index = table.getColumnIndex(col);
+				
+				Log.info("call for sort " + path.size() + "--index--" + index+ "cc=" + table.getColumnCount());
+				if (index == (table.getColumnCount() - 1)) {
+					
+					table.getPopup().setPopupPosition(x-10, y);
+					table.getPopup().show();
+	
+				} else {
+					
+					if(table.getRowCount() > 0){
+						Log.info("call for sort " + path.size() + "--index--"+ index);
+						sortname = path.get(index);
+						Log.info("sort column name is " + sortname);
+						sortorder = (event.isSortAscending()) ? Sorting.ASC: Sorting.DESC;
+						Log.info("Call Init Search from addColumnSortHandler");
+						delegate.columnClickedForSorting(sortname,sortorder,searchBox.getValue());
+					}
+				}
+			}
+		});
+	}
     
 	@Override
 	public CellTable<InstitutionProxy> getTable() {
@@ -402,4 +629,11 @@ public class InstitutionViewImpl extends Composite implements InstitutionView, R
 		table.setPageSize(pagesize);
 	}
 
+	private List<String> getPath(){
+		return new ArrayList<String>(this.paths);
+	}
+	
+	private List<String> getColumnNameorder() {
+		return columnNameorder;
+	}
 }
