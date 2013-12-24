@@ -237,6 +237,21 @@ public class Assesment {
     	return q.getResultList();
     }
     
+    public static List<Assesment> findAllAssesmentByInsitute() {
+    	
+    	Institution activeInstitute=Institution.myGetInstitutionToWorkWith();
+    	
+    	if (activeInstitute == null)
+    		throw new IllegalArgumentException("The person and institution arguments are required");
+    	
+    	CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+    	CriteriaQuery<Assesment> criteriaQuery = criteriaBuilder.createQuery(Assesment.class);
+    	Root<Assesment> from = criteriaQuery.from(Assesment.class);
+    	criteriaQuery.where(criteriaBuilder.equal(from.get("institution").get("id"), activeInstitute.getId()));
+    	TypedQuery<Assesment> q=entityManager().createQuery(criteriaQuery);
+    	return q.getResultList();
+    }
+    
     public static Long countAssesmentByInsitute()
     {
     	EntityManager em = Assesment.entityManager();

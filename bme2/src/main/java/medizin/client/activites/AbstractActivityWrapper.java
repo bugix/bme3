@@ -341,6 +341,16 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 					break;
 				}
 			}
+			for (UserAccessRightsProxy userRightsProxy : personRightProxy.getQuestionAccList())
+			{
+				if(proxy != null && userRightsProxy.getQuestion().getId().equals(proxy.getId())) {
+					if (AccessRights.AccAddAnswers.equals(userRightsProxy.getAccRights()) == true)
+					{
+						flag = true;
+						break;
+					}	
+				}
+			}
 		}
 		return flag;
 	}

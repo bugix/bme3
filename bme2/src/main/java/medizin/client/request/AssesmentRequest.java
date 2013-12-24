@@ -18,10 +18,8 @@ public interface AssesmentRequest extends AssesmentRequest_Roo_Gwt {
 	abstract Request<List<AssesmentProxy>> findActiveAssesments(Long selectedInstitutionId);
 	abstract Request<List<AssesmentProxy>> findAssesmentByInsitute(String sortname,Sorting sortOrder,int firstResult, int maxResults);
 	abstract Request<Long> countAssesmentByInsitute();
-
 	abstract Request<List<AssesmentProxy>> findAssessmentByLoggedUser(Long loggedUserId, boolean isAdminOrInstitutionalAdmin);
-	
 	abstract Request<Boolean> systemOverviewSendMail(Long personId, List<AssesmentProxy> assesmentList, String messageContent, String mailSubject);
-	
 	abstract Request<List<AssesmentProxy>> findAssesmentOfGivenYear(String selectedYear);
+	abstract Request<List<AssesmentProxy>> findAllAssesmentByInsitute();
 }
