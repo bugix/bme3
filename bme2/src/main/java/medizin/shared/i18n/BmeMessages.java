@@ -27,4 +27,6 @@ public interface BmeMessages extends Messages {
 	public String imageUploadSize(int width, int height);
 
 	public String answerTextMinMaxContinueAnyWay(long min, long max);
+	
+	public String questionAllowed(int msg);
 }

@@ -18,6 +18,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Query;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
@@ -123,7 +124,7 @@ public class AssesmentQuestion {
     @DateTimeFormat(pattern="dd.MM.YYYY hh:mm:ss")
     private Date dateChanged;
 
-    @NotNull
+    //@NotNull
     @ManyToOne
     private Person rewiewer;
 
@@ -160,6 +161,51 @@ public class AssesmentQuestion {
 
      }
     
+     public static List<AssesmentQuestion> findQuestionsByAssesmentRepeFor(Long assessmentId,List<Long> availableQuestionTypeList)
+ 	{
+		
+ 		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+ 		CriteriaQuery<AssesmentQuestion> criteriaQuery = criteriaBuilder.createQuery(AssesmentQuestion.class);
+
+ 		Root<AssesmentQuestion> assesmentQuestionRoot = criteriaQuery.from(AssesmentQuestion.class); 	
+ 		
+ 		Predicate p1 = criteriaBuilder.equal(assesmentQuestionRoot.get("assesment").get("id"),assessmentId);
+ 		Predicate p2 = criteriaBuilder.in(assesmentQuestionRoot.get("question").get("questionType").get("id")).value(availableQuestionTypeList);
+ 		Predicate p3 = criteriaBuilder.equal(assesmentQuestionRoot.get("isAssQuestionAcceptedAdmin"), Boolean.TRUE);
+ 		Predicate p4 = criteriaBuilder.equal(assesmentQuestionRoot.get("isForcedByAdmin"), Boolean.TRUE);
+ 		
+ 		Predicate mainPredicate = criteriaBuilder.and(p1, criteriaBuilder.or(p3, p4), p2);
+ 		criteriaQuery.where(mainPredicate);
+ 		
+ 		TypedQuery<AssesmentQuestion> query = entityManager().createQuery(criteriaQuery);
+ 			
+ 		return query.getResultList();
+ 		
+ 	}
+    
+     
+    public static List<Long> findQuestionsByAssesment(Long assessmentId)
+  	{
+  				
+  		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+  		CriteriaQuery criteriaQuery = criteriaBuilder.createQuery();
+  		Root<AssesmentQuestion> assesmentQuestionRoot = criteriaQuery.from(AssesmentQuestion.class);
+  	
+   		Predicate p2 = criteriaBuilder.equal(assesmentQuestionRoot.get("assesment"),assessmentId);
+  		
+  		criteriaQuery.select(assesmentQuestionRoot.get("question").get("id"));
+  		  	
+  		criteriaQuery.where(p2);
+  		
+  		Query query = entityManager().createQuery(criteriaQuery);
+  		
+  		
+  		List<Long> result = query.getResultList();
+  		
+  		
+  		return result;
+  		
+  	}
     
    /*
     * Past Question Tab

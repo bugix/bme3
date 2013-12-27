@@ -830,5 +830,7 @@ public interface BmeConstants extends Constants {
 	public String disallowSorting();
 
 	public String solutionKey();
+	
+	public String mainExamQuestion();
 }
 

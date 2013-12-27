@@ -61,6 +61,7 @@ import medizin.shared.QuestionTypes;
 import medizin.shared.Validity;
 import medizin.shared.criteria.AdvancedSearchCriteria;
 import medizin.shared.criteria.AdvancedSearchCriteriaUtils;
+import medizin.shared.i18n.BmeConstants;
 import medizin.shared.utils.SharedConstant;
 
 import com.allen_sauer.gwt.dnd.client.DragEndEvent;
@@ -70,6 +71,7 @@ import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.allen_sauer.gwt.dnd.client.VetoDragException;
 import com.allen_sauer.gwt.dnd.client.drop.VerticalPanelDropController;
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
@@ -88,7 +90,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 	private AcceptsOneWidget widget;
 	private AsignAssQuestionView view;
 	private Map<String, QuestionTypeCountProxy> questionTypeViewMap=new HashMap<String, QuestionTypeCountProxy>();
-
+	public BmeConstants constants = GWT.create(BmeConstants.class);
 	private McAppRequestFactory requests;
 	private PlaceController placeController;
 	private AddQuestionsTabPanel addQuestionsTabPanel;
@@ -107,7 +109,9 @@ QuestionAdvancedSearchPopupView.Delegate {
 	private CellTable<AdvancedSearchCriteria> criteriaTable;
 	
 	private QuestionAdvancedSearchAbstractPopupViewImpl advancedSearchAbstractPopupViewImpl;
-	
+	final HashMap<Long,Integer> availableQuestionList=new HashMap<Long,Integer>();
+	final HashMap<Long,Integer> totalAvailableRepeAssesmentQuestionList=new HashMap<Long,Integer>();
+	List<Long> asssmentQuestionNumberList;
 	private String questionShortName = "";
 	private String questionId = "";
 	private String questionType = "";
@@ -199,6 +203,12 @@ QuestionAdvancedSearchPopupView.Delegate {
 
 	}
 	
+	private String populateAssessmentRepeFor(){
+		String repeFor="";
+		
+		return repeFor;
+		
+	}
 	private void initAddQuestionsTabPanel() {
 		
 		addQuestionsTabPanel.setDelegate(this);
@@ -207,7 +217,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 	}
 	
 	private void initAssementTabPanel() {
-		requests.assesmentRequest().findAssesmentsOpenBetween().with("mc","questionTypeCountPerExams","questionTypeCountPerExams.questionTypesAssigned").fire(new BMEReceiver<List<AssesmentProxy>>(){
+		requests.assesmentRequest().findAssesmentsOpenBetween().with("mc","questionTypeCountPerExams","questionTypeCountPerExams.questionTypesAssigned","repeFor").fire(new BMEReceiver<List<AssesmentProxy>>(){
 
 			@Override
 			public void onSuccess(List<AssesmentProxy> response) {
@@ -360,10 +370,91 @@ QuestionAdvancedSearchPopupView.Delegate {
 					
 				}
 			});
+		}//main Exam Tab
+		else if (action == 3){
+//			if(author == null) { 
+//				return;
+//			}
+			
+			asssmentQuestionNumberList= new ArrayList<Long>();
+			
+			requests.assesmentQuestionRequest().findQuestionsByAssesment(assesment.getId()).fire(new BMEReceiver<List<Long>>() {
+
+				@Override
+				public void onSuccess(List<Long> response) {
+					asssmentQuestionNumberList=response;					
+				}
+			});
+			
+			ArrayList<Long> questionTypeList=getQuestionTypeList(assesment.getQuestionTypeCountPerExams());
+			
+			ArrayList<Long> repeForQuestionTypeList=getQuestionTypeList(assesment.getRepeFor().getQuestionTypeCountPerExams());
+			
+			List<Long> availableQuestionTypeList=new ArrayList<Long>();
+			
+			
+			for(Long questionTypes:questionTypeList){
+				
+				if(repeForQuestionTypeList.contains(questionTypes)){
+					availableQuestionTypeList.add(questionTypes);
+					availableQuestionList.put(questionTypes, 0);
+					totalAvailableRepeAssesmentQuestionList.put(questionTypes, 0);
+				}
+			}
+			
+			
+			requests.assesmentQuestionRequest().findQuestionsByAssesmentRepeFor(assesment.getRepeFor().getId(),availableQuestionTypeList ).with("question.rewiewer","question.autor","question.keywords","question.questEvent","question.questionType").fire(new BMEReceiver<List<AssesmentQuestionProxy>>() {
+
+				@Override
+				public void onSuccess(List<AssesmentQuestionProxy> response) {
+					
+					questionPanel.removeAll();
+					
+					for (Iterator iterator = response.iterator(); iterator.hasNext();) {
+						
+						AssesmentQuestionProxy assesmentQuestionProxy = (AssesmentQuestionProxy) iterator.next();						
+						Long questionType=assesmentQuestionProxy.getQuestion().getQuestionType().getId();
+						
+						if(!asssmentQuestionNumberList.contains(assesmentQuestionProxy.getQuestion().getId())){							
+							QuestionProxy questionProxy = assesmentQuestionProxy.getQuestion();						
+							QuestionView question = new QuestionViewImpl();
+							question.setProxy(questionProxy);
+							question.setDelegate(ActivityAsignAssQuestion.this);
+							dragController.makeDraggable(question.asWidget(), question.getDragControler());
+							questionPanel.addQuestion(question);							
+						}else{							
+							updateQuestionTypeList(questionType,availableQuestionList);	
+						}				
+						
+						 updateQuestionTypeList(questionType,totalAvailableRepeAssesmentQuestionList);	
+					}
+				}
+			});
 		}
 		
 	}
 
+
+	
+	private ArrayList<Long> getQuestionTypeList(List<QuestionTypeCountPerExamProxy> assesmentQuestionType){
+		
+		ArrayList<Long> questionTypeList=new ArrayList<Long>();
+		
+		for(QuestionTypeCountPerExamProxy assesmentQuestion :assesmentQuestionType){
+			
+			Set<medizin.client.proxy.QuestionTypeProxy> questionTypeProxySet=assesmentQuestion.getQuestionTypesAssigned();
+			
+			Iterator<QuestionTypeProxy> questionTypeProxyIterator=questionTypeProxySet.iterator();
+			
+			while(questionTypeProxyIterator.hasNext()){
+				QuestionTypeProxy questionTypeProxy=(QuestionTypeProxy)questionTypeProxyIterator.next();
+				questionTypeList.add(questionTypeProxy.getId());
+			}
+			
+		}
+		
+		return questionTypeList;
+	}
 	/*finds past assesment question according to selected author*/
 	private void findPastAssesmentQuestion(AssesmentProxy assesment,String questionName,String questionId,String questionType, List<String> encodedStringList) {
 		
@@ -725,6 +816,9 @@ QuestionAdvancedSearchPopupView.Delegate {
 			 initAssementQuestionPanel(userLoggedIn);
 		 }
 		 
+			 
+		addRepeForTab(assesment);
+		
 		// initAssementQuestionPanel(assementQuestionPanel.getAuthorListBox().getValue());
 		
 		//send mail button is visible to admin / institutional admin few days(Assesment.rememberBeforeClosing) before closing date of assesment
@@ -750,6 +844,31 @@ QuestionAdvancedSearchPopupView.Delegate {
 		
 	}
 	
+	public  void addRepeForTab(AssesmentProxy assesment){
+		
+		 if(assesment.getRepeFor()!=null)
+		 {
+			 if(!(personRightProxy.getIsAdmin() || personRightProxy.getIsInstitutionalAdmin()))
+			 {
+				 if(((AddQuestionsTabPanelImpl)addQuestionsTabPanel).getTabCount()==3)
+				 {
+					 ((AddQuestionsTabPanelImpl)addQuestionsTabPanel).addTab(constants.mainExamQuestion());
+				 }
+			 }
+		 }
+		 else
+		 {
+			 if(!(personRightProxy.getIsAdmin() || personRightProxy.getIsInstitutionalAdmin()))
+			 {
+				 if(((AddQuestionsTabPanelImpl)addQuestionsTabPanel).getTabCount()==4)
+				 {
+					 ((AddQuestionsTabPanelImpl)addQuestionsTabPanel).removeTab(3);
+					 ((AddQuestionsTabPanelImpl)addQuestionsTabPanel).selectTab(0);
+				 }
+			 }						 
+		}
+	
+	}
 	public static void addDays(Date d, int days)
 	{
 		d.setTime( d.getTime() - days*1000*60*60*24 );
@@ -851,7 +970,19 @@ QuestionAdvancedSearchPopupView.Delegate {
 					 
 				   }
 				   
-				   if(checkQuestionTypeCountBlocking(questionViewAktiv.getProxy()) && validateAssesmentQuestion(questionViewAktiv.getProxy(), (QuestionViewImpl)questionViewAktiv))
+				   if(addQuestionsTabPanel.getActiveTab()==3){
+					   if(!(personRightProxy.getIsAdmin() || personRightProxy.getIsInstitutionalAdmin())){
+						 if(checkQuestionTypeCountBlocking(questionViewAktiv.getProxy()) && validateAssesmentQuestion(questionViewAktiv.getProxy(), (QuestionViewImpl)questionViewAktiv)){		   
+						   if(validateQuestionAllowedForAssesment(questionViewAktiv.getProxy()))
+						   		assignNewQuestionToAssesment(questionViewAktiv, false);
+						   else						   		 
+						   	   throw new VetoDragException();						   	
+						  }
+						  else{						   		 
+						 	   throw new VetoDragException();
+						  }						 	
+					   }
+				    }else  if(checkQuestionTypeCountBlocking(questionViewAktiv.getProxy()) && validateAssesmentQuestion(questionViewAktiv.getProxy(), (QuestionViewImpl)questionViewAktiv))
 					{
 						//incrementBlockingCounter(questionViewAktiv.getProxy());
 						assignNewQuestionToAssesment(questionViewAktiv, false);
@@ -864,6 +995,28 @@ QuestionAdvancedSearchPopupView.Delegate {
 		}
 	}
 
+	private boolean validateQuestionAllowedForAssesment(final QuestionProxy questionProxy){
+		
+		   Long questionType=questionProxy.getQuestionType().getId();
+	   	   
+	   	   int questionAllowed=(totalAvailableRepeAssesmentQuestionList.get(questionProxy.getQuestionType().getId())*assesmentTabPanel.getActiveTab().getPercentSameQuestion())/100;
+	   	   int availableQuestion=Integer.parseInt(availableQuestionList.get(questionType).toString());
+	   	   
+	   	   if(availableQuestion<questionAllowed){
+	   		   updateQuestionTypeList(questionType,availableQuestionList);	   		   
+	   		   return true;
+	   	   }else{
+	   		   ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.questionAllowed(questionAllowed));
+	   		   return false;
+	   	   }
+		
+	}
+	
+	private void updateQuestionTypeList(Long questionType,HashMap<Long,Integer> availableQuestion){			
+		    Integer questionTypeValue=availableQuestion.get(questionType)+1;
+		    availableQuestion.put(questionType, questionTypeValue);
+	}
+	
 	protected void replaceQuestionThroughAssesmentQuestion( final AssesmentProxy assesment) {
 		Iterator<Widget> iter = assementQuestionPanel.getAssesmentQuestionDisplayPanel().iterator();
 		
@@ -1092,6 +1245,9 @@ QuestionAdvancedSearchPopupView.Delegate {
 	public void assignNewQuestionToAssesment(final QuestionView questionViewAktiv,final boolean viaAddButton)  throws VetoDragException 
 	{
 		   Iterator<Widget> iter = assementQuestionPanel.getAssesmentQuestionDisplayPanel().iterator();
+		   
+		   incrementBlockingCounter(questionViewAktiv.getProxy());
+		   
 		   while (iter.hasNext()){
 			   Widget wid = iter.next();
 			   if (wid instanceof AssesmentQuestionView){
@@ -1298,7 +1454,15 @@ QuestionAdvancedSearchPopupView.Delegate {
 	@Override
 	public void addNewQuestionToAssesment(QuestionViewImpl questionViewImpl)  {
 		try{
-			if(checkQuestionTypeCountBlocking(questionViewImpl.getProxy()) && validateAssesmentQuestion(questionViewImpl.getProxy(), questionViewImpl))
+			
+			if(addQuestionsTabPanel.getActiveTab()==3){
+			   if(!(personRightProxy.getIsAdmin() || personRightProxy.getIsInstitutionalAdmin())){
+				   if(checkQuestionTypeCountBlocking(questionViewImpl.getProxy()) &&validateAssesmentQuestion(questionViewImpl.getProxy(), questionViewImpl)){
+					   if(validateQuestionAllowedForAssesment(questionViewImpl.getProxy()))
+					    assignNewQuestionToAssesment(questionViewImpl, true);
+			   		}
+			 }
+			}else if(checkQuestionTypeCountBlocking(questionViewImpl.getProxy()) && validateAssesmentQuestion(questionViewImpl.getProxy(), questionViewImpl))
 			{
 				//incrementBlockingCounter(questionViewImpl.getProxy());
 				assignNewQuestionToAssesment(questionViewImpl, true);
@@ -1397,7 +1561,16 @@ QuestionAdvancedSearchPopupView.Delegate {
 		
 		
 	}
+	public boolean validateMainExamAssesmentQuestion(QuestionProxy questionProxy,QuestionViewImpl questionViewImpl)
+	{
 	
+		int totalQuestionCount=questionPanel.getQuestionDisplayPanel().getWidgetCount();
+		int questionAllowedPercentage =assesmentTabPanel.getActiveTab().getPercentSameQuestion();
+				
+	
+	
+		return true;
+	}
 	/*Question Type Validity*/
 	public boolean validateAssesmentQuestion(QuestionProxy questionProxy,QuestionViewImpl questionViewImpl)
 	{
