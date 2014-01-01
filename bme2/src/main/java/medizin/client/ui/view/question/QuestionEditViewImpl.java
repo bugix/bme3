@@ -28,8 +28,6 @@ import medizin.client.ui.widget.resource.dndview.ResourceView;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.ui.widget.resource.event.ResourceAddedEvent;
 import medizin.client.ui.widget.resource.event.ResourceAddedEventHandler;
-import medizin.client.ui.widget.resource.event.ResourceDeletedEvent;
-import medizin.client.ui.widget.resource.event.ResourceDeletedEventHandler;
 import medizin.client.ui.widget.resource.image.ImageViewer;
 import medizin.client.ui.widget.resource.upload.ResourceUpload;
 import medizin.client.ui.widget.resource.upload.event.ResourceUploadEvent;
@@ -694,7 +692,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 				}
 			});	
 			
-			viewer.addResourceDeletedHandler(new ResourceDeletedEventHandler() {
+			/*viewer.addResourceDeletedHandler(new ResourceDeletedEventHandler() {
 
 				@Override
 				public void onResourceDeleted(ResourceDeletedEvent event) {
@@ -703,7 +701,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 					delegate.deleteSelectedQuestionResource(event.getQuestionResourceClient().getId());
 				}
 			
-			});
+			});*/
 			// allowed extension
 			ArrayList<String> allowedExt = new ArrayList<String>();
 			Map<MultimediaType, String> paths = Maps.newHashMap();
@@ -736,7 +734,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 						
 						MultimediaType type = event.getType();
 						if (viewer != null) {
-							viewer.addUrl(event.getName(),filePath, type);
+							viewer.addUrl(event.getName(),filePath, type, event.getHeight(), event.getWidth());
 						}else {
 							Log.error("Viewer is null");
 						}		

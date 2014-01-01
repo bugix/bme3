@@ -85,6 +85,8 @@ public final class ClientUtility {
 				client.setState(State.CREATED);
 				client.setId(proxy.getId());
 				client.setName(proxy.getName());
+				client.setHeight(proxy.getImageHeight());
+				client.setWidth(proxy.getImageWidth());
 				clients.add(client);	
 			}
 		}

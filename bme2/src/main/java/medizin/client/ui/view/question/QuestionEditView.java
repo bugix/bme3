@@ -23,7 +23,7 @@ public interface QuestionEditView extends IsWidget {
 	interface Delegate {
 		void cancelClicked();
 
-		void deleteSelectedQuestionResource(Long id);
+		//void deleteSelectedQuestionResource(Long id);
 
 		//void deleteMediaFileFromDisk(String path);
 

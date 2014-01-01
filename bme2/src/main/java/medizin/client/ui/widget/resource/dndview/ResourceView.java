@@ -168,7 +168,7 @@ public class ResourceView extends Composite implements DragHandler {
 
 	}
 	
-	private void addUrl(String name,String url,MultimediaType type,boolean added) {
+	private void addUrl(String name,String url,MultimediaType type,boolean added,Integer height, Integer width) {
 		
 		QuestionResourceClient proxy =  new QuestionResourceClient();
 		
@@ -178,6 +178,8 @@ public class ResourceView extends Composite implements DragHandler {
 			proxy.setType(type);
 			proxy.setState(State.NEW);
 			proxy.setName(name);
+			proxy.setHeight(height);
+			proxy.setWidth(width);
 			frontRowNumber++;
 			
 			questionResources.add(proxy);
@@ -195,10 +197,10 @@ public class ResourceView extends Composite implements DragHandler {
 		addResourceView(subView,true);
 	}
 
-	public void addUrl(String name,String url,MultimediaType type) {
+	public void addUrl(String name,String url,MultimediaType type, Integer height, Integer width) {
 		switch (type) {
 		case Image:
-			addImageUrl(name,url);
+			addImageUrl(name,url,height,width);
 			break;
 		case Sound:
 			addSoundUrl(name,url);
@@ -211,15 +213,15 @@ public class ResourceView extends Composite implements DragHandler {
 		}
 	}
 	public void addVideoUrl(String name,String url) {
-		addUrl(name,url, MultimediaType.Video,queHaveVideo);
+		addUrl(name,url, MultimediaType.Video,queHaveVideo,null,null);
 	}
 
 	public void addSoundUrl(String name,String url) {
-		addUrl(name,url, MultimediaType.Sound,queHaveSound);
+		addUrl(name,url, MultimediaType.Sound,queHaveSound,null,null);
 	}
 
-	public void addImageUrl(String name,String url) {
-		addUrl(name,url, MultimediaType.Image,queHaveImage);		
+	public void addImageUrl(String name,String url, Integer height, Integer width) {
+		addUrl(name,url, MultimediaType.Image,queHaveImage,height,width);		
 	}
 
 	// drag hander methods.
@@ -271,15 +273,11 @@ public class ResourceView extends Composite implements DragHandler {
 		
 	}
 
-
-
 	@Override
 	public void onDragStart(DragStartEvent event) {
 		Log.info("Drag event started");
 		
 	}
-
-
 
 	@Override
 	public void onPreviewDragEnd(DragEndEvent event) throws VetoDragException {
@@ -287,11 +285,8 @@ public class ResourceView extends Composite implements DragHandler {
 		
 	}
 
-
-
 	@Override
-	public void onPreviewDragStart(DragStartEvent event)
-			throws VetoDragException {
+	public void onPreviewDragStart(DragStartEvent event) throws VetoDragException {
 		Log.info("Drag event onPreviewDragStartw");		
 	}
 
@@ -299,18 +294,15 @@ public class ResourceView extends Composite implements DragHandler {
 		return new HashSet<QuestionResourceClient>(questionResources);
 	}
 
-	public void addResourceDeletedHandler(
-			ResourceDeletedEventHandler handler) {
+	public void addResourceDeletedHandler(ResourceDeletedEventHandler handler) {
 		eventBus.addHandler(ResourceDeletedEvent.TYPE, handler);
 	}
 
-	public void addResourceAddedHandler(
-			ResourceAddedEventHandler handler) {
+	public void addResourceAddedHandler(ResourceAddedEventHandler handler) {
 		eventBus.addHandler(ResourceAddedEvent.TYPE, handler);
 	}
 
-	public void addResourceSequenceChangedHandler(
-			ResourceSequenceChangedHandler handler) {
+	public void addResourceSequenceChangedHandler(ResourceSequenceChangedHandler handler) {
 		eventBus.addHandler(ResourceSequenceChangedEvent.TYPE, handler);
 	}
 	

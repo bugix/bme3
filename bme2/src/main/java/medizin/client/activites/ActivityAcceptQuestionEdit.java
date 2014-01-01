@@ -35,6 +35,7 @@ import medizin.shared.Status;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
@@ -391,6 +392,8 @@ public class ActivityAcceptQuestionEdit extends AbstractActivityWrapper implemen
 				proxy.setType(questionResource.getType());
 				proxy.setQuestion(question);
 				proxy.setName(questionResource.getName());
+				proxy.setImageHeight(questionResource.getHeight());
+				proxy.setImageWidth(questionResource.getWidth());
 				questionResourceProxies.add(proxy);
 			}
 		}
@@ -460,6 +463,10 @@ public class ActivityAcceptQuestionEdit extends AbstractActivityWrapper implemen
 						questionResourceProxies.add(proxy);		
 					} else {
 						proxy = findQuestionResource(questionResource.getId(),questionResourceProxies);
+						if(proxy != null) {
+							proxy = questionResourceRequest.edit(proxy);
+						}
+						questionResourceProxies.add(proxy);
 					}
 					
 					if(proxy != null) {
@@ -468,6 +475,24 @@ public class ActivityAcceptQuestionEdit extends AbstractActivityWrapper implemen
 						proxy.setType(questionResource.getType());
 						proxy.setQuestion(questionProxy);	
 						proxy.setName(questionResource.getName());
+						proxy.setImageHeight(questionResource.getHeight());
+						proxy.setImageWidth(questionResource.getWidth());
+					}
+				} else if(questionResource.getState().equals(State.DELETED) == true) {
+					if(questionResource.getId() != null) {
+						
+						QuestionResourceProxy toDeleteProxy = findQuestionResource(questionResource.getId(),questionResourceProxies);
+						if(toDeleteProxy != null) {
+							questionResourceProxies.remove(toDeleteProxy);	
+						}
+						
+						questionResourceRequest.removeQuestionResource(questionResource.getId()).to(new BMEReceiver<Void>() {
+
+							@Override
+							public void onSuccess(Void response) {
+								Log.info("Resource Deleted");
+							}
+						});	
 					}
 				}
 			}
@@ -483,7 +508,7 @@ public class ActivityAcceptQuestionEdit extends AbstractActivityWrapper implemen
 
 			@Override
 			public boolean apply(final QuestionResourceProxy input) {
-				return input.getId().equals(id);
+				return Objects.equal(input.getId(), id);
 			}
 		};
 	}
@@ -519,7 +544,7 @@ public class ActivityAcceptQuestionEdit extends AbstractActivityWrapper implemen
 		
 	}
 
-	@Override
+	/*@Override
 	public void deleteSelectedQuestionResource(Long qestionResourceId) {
 		requests.questionResourceRequest().removeQuestionResource(qestionResourceId).fire(new BMEReceiver<Void>(reciverMap) {
 
@@ -528,7 +553,7 @@ public class ActivityAcceptQuestionEdit extends AbstractActivityWrapper implemen
 				Log.info("selected question resource deleted successfully");
 			}
 		});
-	}
+	}*/
 
 	@Override
 	public void placeChanged(Place place) {

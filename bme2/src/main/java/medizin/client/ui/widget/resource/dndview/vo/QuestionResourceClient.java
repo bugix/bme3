@@ -17,6 +17,10 @@ public class QuestionResourceClient {
 	private Long id;
 	
 	private String name;
+	
+	private Integer height;
+	
+	private Integer width;
 
 	public String getPath() {
 		return path;
@@ -65,6 +69,22 @@ public class QuestionResourceClient {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	public Integer getHeight() {
+		return height;
+	}
+
+	public void setHeight(Integer height) {
+		this.height = height;
+	}
+
+	public Integer getWidth() {
+		return width;
+	}
+
+	public void setWidth(Integer width) {
+		this.width = width;
+	}
 
 	@Override
 	public String toString() {
@@ -76,6 +96,8 @@ public class QuestionResourceClient {
 				.add("type", this.type)
 				.add("State", this.state)
 				.add("Name", this.name)
+				.add("Height", this.height)
+				.add("Width", this.width)
 				.toString();
 	}
 }
