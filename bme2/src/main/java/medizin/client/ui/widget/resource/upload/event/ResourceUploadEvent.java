@@ -23,6 +23,7 @@ public class ResourceUploadEvent extends GwtEvent<ResourceUploadEventHandler> {
 	private Integer height;
 	private Integer soundMediaSize;
 	private Integer videoMediaSize;
+	private String name;
 	
 	public ResourceUploadEvent(String data, Boolean resourceUploaded) {
 		this.resourceUploaded = resourceUploaded;
@@ -41,6 +42,7 @@ public class ResourceUploadEvent extends GwtEvent<ResourceUploadEventHandler> {
 		height = parseImageHeight(fluentIterable);
 		soundMediaSize = parseSoundMediaSize(fluentIterable);
 		videoMediaSize = parseVideoMediaSize(fluentIterable);
+		name = parseName(fluentIterable);
 	}
 
 	public static Type<ResourceUploadEventHandler> TYPE = new Type<ResourceUploadEventHandler>();
@@ -83,6 +85,10 @@ public class ResourceUploadEvent extends GwtEvent<ResourceUploadEventHandler> {
 		return videoMediaSize;
 	}
 	
+	public String getName() {
+		return name;
+	}
+	
 	private Integer parseVideoMediaSize(FluentIterable<String> fluentIterable) {
 		return parseValueToInteger(fluentIterable, vidoeSizePredicate);
 	}
@@ -107,6 +113,9 @@ public class ResourceUploadEvent extends GwtEvent<ResourceUploadEventHandler> {
 		return parseValueToString(fluentIterable, filepathPredicate);
 	}
 	
+	private String parseName(FluentIterable<String> fluentIterable) {
+		return parseValueToString(fluentIterable, namePredicate);
+	}
 	private String parseValueToString(FluentIterable<String> fluentIterable,Predicate<String> predicate) {
 		FluentIterable<String> iterable = fluentIterable.filter(predicate).transform(splitToValues);
 		if(iterable != null && !iterable.isEmpty()) {
@@ -168,6 +177,13 @@ public class ResourceUploadEvent extends GwtEvent<ResourceUploadEventHandler> {
 		}
 	};
 
+	private final Predicate<String> namePredicate =  new Predicate<String>() {
+
+		@Override
+		public boolean apply(String input) {
+			return input.contains(SharedConstant.NAME);
+		}
+	};
 	private final Function<String, String> splitToValues = new Function<String, String>() {
 		
 		@Override

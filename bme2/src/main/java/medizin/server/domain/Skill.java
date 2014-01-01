@@ -168,4 +168,20 @@ public class Skill {
 		
 		return query.getResultList();
 	}
+
+	public static Skill findSkillByClassificationTopicAndShortcut(Long classificationTopic, String shortcutSearch) {
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Skill> criteriaQuery = criteriaBuilder.createQuery(Skill.class);
+		Root<Skill> from = criteriaQuery.from(Skill.class);
+		Predicate predicate = criteriaBuilder.equal(from.get("topic").get("classificationTopic").get("id"), classificationTopic);
+		Predicate predicate2 = criteriaBuilder.equal(from.get("shortcut"), shortcutSearch.toUpperCase());
+		criteriaQuery.where(criteriaBuilder.and(predicate,predicate2));
+		TypedQuery<Skill> query = entityManager().createQuery(criteriaQuery);
+		List<Skill> resultList = query.getResultList();
+		if(resultList != null && resultList.isEmpty() == false) {
+			return resultList.get(0);
+		} else {
+			return null;	
+		}
+	}
 }

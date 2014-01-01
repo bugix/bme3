@@ -28,7 +28,7 @@ public interface MatrixAnswerView {
 
 		void closedMatrixValidityView();
 
-		void saveAllTheValuesToAnswerAndMatrixAnswer(List<MatrixValidityProxy> currentMatrixValidityProxy, Matrix<MatrixValidityVO> matrixList,PersonProxy author, PersonProxy rewiewer, Boolean submitToReviewComitee, String comment);
+		void saveAllTheValuesToAnswerAndMatrixAnswer(List<MatrixValidityProxy> currentMatrixValidityProxy, Matrix<MatrixValidityVO> matrixList,PersonProxy author, PersonProxy rewiewer, Boolean submitToReviewComitee, String comment, Boolean forcedActive);
 
 	}
 	

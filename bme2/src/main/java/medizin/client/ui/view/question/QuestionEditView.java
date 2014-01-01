@@ -29,7 +29,7 @@ public interface QuestionEditView extends IsWidget {
 
 		boolean isAdminOrInstitutionalAdmin();
 
-		void saveQuestionWithDetails();
+		void saveQuestionWithDetails(boolean isCreativeWork, Boolean forcedActive);
 
 		void resendToReview();
 
@@ -68,4 +68,6 @@ public interface QuestionEditView extends IsWidget {
 	void setResendToReviewBtn(boolean isResendToReview);
 
 	void setQuestionAuthor(PersonProxy autor);
+
+	boolean isPictureAddedForImgKeyOrShowInImage();
 }

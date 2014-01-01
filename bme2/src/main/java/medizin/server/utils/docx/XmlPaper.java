@@ -178,6 +178,7 @@ public class XmlPaper {
 		Element questionMedia = doc.createElement(QUESTION_MEDIA);
 		questionMedia.setAttribute(ID_ATTRIBUTE, resource.getId().toString());
 		addToElement(doc, questionMedia, QUESTION_MEDIA_PATH, resource.getPath());
+		addToElement(doc, questionMedia, QUESTION_MEDIA_NAME, resource.getName());
 		addToElement(doc, questionMedia, QUESTION_MEDIA_SEQUENCE, resource.getSequenceNumber());
 		addToElement(doc, questionMedia, QUESTION_MEDIA_TYPE, resource.getType().toString().toLowerCase()).setAttribute(ID_ATTRIBUTE, String.valueOf(resource.getType().ordinal()));
 		
@@ -536,6 +537,7 @@ public class XmlPaper {
 	private static final String QUESTION_RESOURCES = "resources";
 	private static final String QUESTION_MEDIA = "media";
 	private static final String QUESTION_MEDIA_PATH = "path";
+	private static final String QUESTION_MEDIA_NAME = "name";
 	private static final String QUESTION_MEDIA_HEIGHT = "height";
 	private static final String QUESTION_MEDIA_WIDTH = "width";
 	private static final String QUESTION_MEDIA_SEQUENCE = "sequence";

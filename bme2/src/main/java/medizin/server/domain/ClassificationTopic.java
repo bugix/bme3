@@ -6,6 +6,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.validation.constraints.Size;
 
@@ -38,6 +39,29 @@ public class ClassificationTopic {
 		criteriaQuery.orderBy(criteriaBuilder.asc(from.get("description")));
 		TypedQuery<ClassificationTopic> query = entityManager().createQuery(criteriaQuery);
 		return query.getResultList();
+	}
+
+	public static ClassificationTopic findClassificationTopicByMainClassificationAndshortCut(Long mainClassificationId, String classificationTopic) {
+		
+		if(mainClassificationId == null) {
+			return null;
+		}
+		
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<ClassificationTopic> criteriaQuery = criteriaBuilder.createQuery(ClassificationTopic.class);
+		Root<ClassificationTopic> from = criteriaQuery.from(ClassificationTopic.class);
+		
+		Predicate predicate1 = criteriaBuilder.equal(from.get("mainClassification").get("id"), mainClassificationId);
+		Predicate predicate2 = criteriaBuilder.equal(from.get("shortcut"), classificationTopic.toUpperCase());
+		criteriaQuery.where(criteriaBuilder.and(predicate1,predicate2));
+		TypedQuery<ClassificationTopic> query = entityManager().createQuery(criteriaQuery);
+		List<ClassificationTopic> resultList = query.getResultList();
+		if(resultList != null && resultList.isEmpty() == false) {
+			return resultList.get(0);
+		} else {
+			return null;	
+		}
+		
 	}
 }
 

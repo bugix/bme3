@@ -10,7 +10,6 @@ import java.util.Set;
 import medizin.client.events.QuestionSaveEvent;
 import medizin.client.events.RecordChangeEvent;
 import medizin.client.events.RecordChangeHandler;
-import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.style.resources.AdvanceCellTable;
@@ -30,7 +29,6 @@ import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
-import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
@@ -40,7 +38,6 @@ import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.text.shared.AbstractRenderer;
@@ -71,8 +68,8 @@ public class QuestionViewImpl extends Composite implements QuestionView, RecordC
 	//private Presenter presenter;
 	protected List<String> paths = new ArrayList<String>();
 	private Delegate delegate;
-	private McAppRequestFactory requests;
-	private PlaceController placeController;
+	//private McAppRequestFactory requests;
+	//private PlaceController placeController;
 	private BmeConstants constants = GWT.create(BmeConstants.class);
 	private Map<String, String> columnName=new HashMap<String, String>();
 	private List<String> columnNameorder = new ArrayList<String>();
@@ -208,11 +205,11 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 		filterPanel.institutionListBox.setAcceptableValues(values);
 	}*/
 
-	@Override
+	/*@Override
 	public void setSpecialisationFilter(List<QuestionEventProxy> values)
 	{
 		//filterPanel.specialiationListBox.setAcceptableValues(values);	
-	}
+	}*/
 	
 	public QuestionAdvancedSearchSubViewImpl getQuestionAdvancedSearchSubViewImpl() {
 		return questionAdvancedSearchSubViewImpl;
@@ -250,6 +247,7 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 			public void onSaveClicked(QuestionSaveEvent event) {
 				Log.info("Question Save Event Clicked");
 				filterPanel.getShowNew().setValue(true);
+				filterPanel.getCreativeWork().setValue(true);
 				setFieldForSearchBox();
 				delegate.performSearch(searchBox.getValue());
 			}
@@ -1140,6 +1138,12 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 		{
 			searchField.add("showNew");
 			searchField.add(filterPanel.showNew.getValue() ? "true" : "false");
+		}
+		
+		if (filterPanel.getCreativeWork().getValue())
+		{
+			searchField.add("showCreativeWork");
+			searchField.add(filterPanel.creativeWork.getValue() ? "true" : "false");
 		}
 		
 		/*if (filterPanel.institutionListBox.getValue() != null)

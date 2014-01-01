@@ -7,7 +7,6 @@ import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.PlaceDeactivatedQuestion;
 import medizin.client.place.PlaceDeactivatedQuestionDetails;
-import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.question.QuestionView;
@@ -70,6 +69,7 @@ public class ActivityDeactivatedQuestion extends AbstractActivityWrapper impleme
 		questionView.removeAdvancedSearchFromView();
 		
 		questionView.getFilterPanel().getShowNew().removeFromParent();
+		questionView.getFilterPanel().getCreativeWork().removeFromParent();
 
 		table = view.getTable();
 		activityManger.setDisplay(view.getDetailsPanel());
@@ -124,13 +124,13 @@ public class ActivityDeactivatedQuestion extends AbstractActivityWrapper impleme
 			}
 		});
 		
-		requests.questionEventRequest().findQuestionEventByInstitution(this.institutionActive).fire(new BMEReceiver<List<QuestionEventProxy>>() {
+		/*requests.questionEventRequest().findQuestionEventByInstitution(this.institutionActive).fire(new BMEReceiver<List<QuestionEventProxy>>() {
 
 			@Override
 			public void onSuccess(List<QuestionEventProxy> response) {
 				view.setSpecialisationFilter(response);
 			}
-		});
+		});*/
 	}
 	
 	private void onRangeChanged() {

@@ -158,7 +158,7 @@ public class FileDownloader extends HttpServlet{
 			return "error.docx";
 		}
 			
-		AssesmentQuestion.checkIfShuffleQuestionsAnswersNeeded(assignment,disallowSorting);
+		//AssesmentQuestion.checkIfShuffleQuestionsAnswersNeeded(assignment,disallowSorting);
 		DocxPaperMHTML paper = new DocxPaperMHTML(os,assignment,isVersionA,printAllQuestions,loggedPerson);
 		paper.createWordFile();
 		
@@ -186,7 +186,7 @@ public class FileDownloader extends HttpServlet{
 			return "error.docx";
 		}
 		
-		AssesmentQuestion.checkIfShuffleQuestionsAnswersNeeded(assignment,disallowSorting);
+		//AssesmentQuestion.checkIfShuffleQuestionsAnswersNeeded(assignment,disallowSorting);
 		DocxPaperMHTML paper = new DocxPaperMHTML(os,assignment,isVersionA,printAllQuestions,loggedPerson);
 		paper.createWordFile();
 		
@@ -218,7 +218,7 @@ public class FileDownloader extends HttpServlet{
 			return "error.zip";
 		}
 		
-		AssesmentQuestion.checkIfShuffleQuestionsAnswersNeeded(assignment,disallowSorting);
+		//AssesmentQuestion.checkIfShuffleQuestionsAnswersNeeded(assignment,disallowSorting);
 		XmlPaper paper = new XmlPaper(os, assignment,loggedPerson);
 		paper.createXMLFile();
 		
@@ -248,7 +248,7 @@ public class FileDownloader extends HttpServlet{
 			return "error.zip";
 		}
 		
-		AssesmentQuestion.checkIfShuffleQuestionsAnswersNeeded(assignment,disallowSorting);
+		//AssesmentQuestion.checkIfShuffleQuestionsAnswersNeeded(assignment,disallowSorting);
 		SolutionKeyZip solutionKeyZip = new SolutionKeyZip(os, assignment,loggedPerson);
 		solutionKeyZip.generate();
 		

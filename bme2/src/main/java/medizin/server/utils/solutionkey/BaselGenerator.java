@@ -255,11 +255,12 @@ public class BaselGenerator {
 	}
 
 	private char getCorrectAnswerIndex(List<AnswerToAssQuestion> answersToAssQuestion) {
-		
+		int index = 1;
 		for (AnswerToAssQuestion answerToAssQuestion : answersToAssQuestion) {
 			if(Validity.Wahr.equals(answerToAssQuestion.getAnswers().getValidity())) {
-				return String.valueOf(answerToAssQuestion.getSortOrder()+1).charAt(0); 
+				return String.valueOf(index).charAt(0); 
 			}
+			index++;
 		}
 		
 		return '0';

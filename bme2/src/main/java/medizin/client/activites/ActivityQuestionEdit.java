@@ -39,6 +39,8 @@ import medizin.shared.Status;
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
+import com.google.common.base.Predicate;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.gwt.event.shared.EventBus;
@@ -94,7 +96,7 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 	@Override
 	public void start2(AcceptsOneWidget widget, EventBus eventBus) {
 		this.eventBus = eventBus;
-		QuestionEditView questionEditView = new QuestionEditViewImpl(reciverMap, eventBus, userLoggedIn,false);
+		QuestionEditView questionEditView = new QuestionEditViewImpl(reciverMap, eventBus, userLoggedIn,false,isAdminOrInstitutionalAdmin());
 		this.view = questionEditView;
 		view.setDelegate(this);
 		
@@ -208,7 +210,7 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 	private boolean checkIsAuthorReviewerEditable() {
 		if(question == null || question.getStatus() == null) {
 			return true;
-		}else if(Objects.equal(question.getStatus(), Status.NEW) || Objects.equal(question.getStatus(), Status.ACTIVE)) {
+		}else if(Objects.equal(question.getStatus(), Status.NEW) || Objects.equal(question.getStatus(), Status.ACTIVE) || Objects.equal(question.getStatus(), Status.CREATIVE_WORK)) {
 			return true;
 		}
 		return false;
@@ -635,7 +637,7 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 	}
 	
 	@Override
-	public void saveQuestionWithDetails() {
+	public void saveQuestionWithDetails(boolean isCreativeWork,Boolean forcedActive) {
 		
 		final Function<EntityProxyId<?>, Void> gotoShowNewFunction = new Function<EntityProxyId<?>, Void>() {
 			@Override
@@ -648,12 +650,44 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 		
 		if(question == null) {
 			// save new question for first time
-			boolean isAcceptedByAdmin = isAdminOrInstitutionalAdmin();
-			boolean isAcceptedByReviewer = false;
-			boolean isAcceptedByAuthor = userLoggedIn.getId().equals(view.getAuthorId());
-			
-			createNewQuestion(null,Status.NEW,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor,gotoShowNewFunction);
-		}else {
+			boolean isAcceptedByAdmin;
+			boolean isAcceptedByReviewer;
+			boolean isAcceptedByAuthor;
+			boolean isForcedActive = false;
+			Status status;
+			if(isCreativeWork == true) {
+				isAcceptedByAdmin = false;                    
+				isAcceptedByReviewer = false;                                         
+				isAcceptedByAuthor = false; 
+				status = Status.CREATIVE_WORK;
+			} else {
+				isAcceptedByAdmin = isAdminOrInstitutionalAdmin();                    
+				isAcceptedByReviewer = false;                                         
+				isAcceptedByAuthor = userLoggedIn.getId().equals(view.getAuthorId());
+				isForcedActive = forcedActive;
+				status = Status.NEW;
+			}
+			createNewQuestion(null,status,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor,isForcedActive,gotoShowNewFunction);
+		} else if(Status.CREATIVE_WORK.equals(question.getStatus())) {
+			boolean isAcceptedByAdmin;
+			boolean isAcceptedByReviewer;
+			boolean isAcceptedByAuthor;
+			boolean isForcedActive = false;
+			Status status;
+			if(isCreativeWork == true) {
+				isAcceptedByAdmin = false;                    
+				isAcceptedByReviewer = false;                                         
+				isAcceptedByAuthor = false; 
+				status = Status.CREATIVE_WORK;
+			} else {
+				isAcceptedByAdmin = isAdminOrInstitutionalAdmin();                    
+				isAcceptedByReviewer = false;                                         
+				isAcceptedByAuthor = userLoggedIn.getId().equals(view.getAuthorId());
+				isForcedActive = forcedActive;
+				status = Status.NEW;
+			}
+			updateQuestion(status,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor,isForcedActive,gotoShowNewFunction);
+		} else {
 			// edit accepted question with major or minor version
 			final ConfirmQuestionHandler isMajorOrMinor = new ConfirmQuestionHandler() {
 
@@ -664,8 +698,8 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 						boolean isAcceptedByAdmin = isAdminOrInstitutionalAdmin();
 						boolean isAcceptedByReviewer = false;
 						boolean isAcceptedByAuthor = userLoggedIn.getId().equals(view.getAuthorId());
-						
-						createNewQuestion(question,Status.NEW,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor,gotoShowNewFunction);
+						//boolean isForcedActive = false;
+						createNewQuestion(question,Status.NEW,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor,isForceActive,gotoShowNewFunction);
 					}else {
 						Status status; 
 						
@@ -691,7 +725,6 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 							boolean isAcceptedByReviewer = false;
 							boolean isAcceptedByAuthor = userLoggedIn.getId().equals(view.getAuthorId());
 							boolean isForcedActive = true;
-							// if current state of the question is new so status will remain as it is.
 							status = Status.ACTIVE;
 							updateQuestion(status,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor,isForcedActive,gotoShowNewFunction);
 						} else if(Status.NEW.equals(question.getStatus())) {
@@ -720,7 +753,7 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 		}
 	}
 	
-	protected final void createNewQuestion(QuestionProxy previousQuestionProxy, final Status status, final boolean isAcceptedByAdmin, final boolean isAcceptedByReviewer, final boolean isAcceptedByAuthor, final Function<EntityProxyId<?>, Void> gotoFunction) {
+	private final void createNewQuestion(QuestionProxy previousQuestionProxy, final Status status, final boolean isAcceptedByAdmin, final boolean isAcceptedByReviewer, final boolean isAcceptedByAuthor, boolean isForcedActive, final Function<EntityProxyId<?>, Void> gotoFunction) {
 		
 		final QuestionResourceRequest questionResourceRequest = requests.questionResourceRequest();
 		final QuestionRequest oldQuestionRequest = requests.questionRequest();
@@ -728,16 +761,23 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 		
 		QuestionProxy question = questionRequest.create(QuestionProxy.class);
 		Set<QuestionResourceProxy> questionResourceProxies = Sets.newHashSet();
+		if(isForcedActive == true) {
+			question.setStatus(Status.ACTIVE);
+		} else {
+			question.setStatus(status);	
+		}
 		
-		question.setStatus(status);
 		view.setValuesForQuestion(question);
-		
-		
 		
 		question.setIsAcceptedAdmin(isAcceptedByAdmin);
 		question.setIsAcceptedAuthor(isAcceptedByAuthor);
-		question.setIsAcceptedRewiever(isAcceptedByReviewer);
-		question.setIsForcedActive(false);
+		if(question.getSubmitToReviewComitee() == false) {
+			question.setIsAcceptedRewiever(isAcceptedByReviewer);	
+		} else {
+			question.setIsAcceptedRewiever(true);
+		}
+		
+		question.setIsForcedActive(isForcedActive);
 		question.setQuestionVersion(previousQuestionProxy != null ? previousQuestionProxy.getQuestionVersion()+1 : 0);
 		question.setQuestionSubVersion(0);
 		question.setDateAdded(new Date());
@@ -764,6 +804,7 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 				proxy.setSequenceNumber(questionResource.getSequenceNumber());
 				proxy.setType(questionResource.getType());
 				proxy.setQuestion(question);
+				proxy.setName(questionResource.getName());
 				questionResourceProxies.add(proxy);
 			}
 		}
@@ -786,19 +827,26 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 		final QuestionRequest questionRequest = questionResourceRequest.append(requests.questionRequest());
 		
 		final QuestionProxy questionProxy = questionRequest.edit(this.question);
-		final Set<QuestionResourceProxy> questionResourceProxies = Sets.newHashSet();
 		
-		questionProxy.setStatus(status);
+		if(isForcedActive == true) {
+			questionProxy.setStatus(Status.ACTIVE);
+		} else {
+			questionProxy.setStatus(status);	
+		}
+		
 		view.setValuesForQuestion(questionProxy);
 		
 		questionProxy.setIsAcceptedAdmin(isAcceptedByAdmin);
 		questionProxy.setIsAcceptedAuthor(isAcceptedByAuthor);
-		questionProxy.setIsAcceptedRewiever(isAcceptedByReviewer);
+		if(questionProxy.getSubmitToReviewComitee() == false) {
+			questionProxy.setIsAcceptedRewiever(isAcceptedByReviewer);	
+		} else {
+			questionProxy.setIsAcceptedRewiever(true);
+		}
 		questionProxy.setIsForcedActive(isForcedActive);
 		questionProxy.setQuestionVersion(question.getQuestionVersion());
 		questionProxy.setQuestionSubVersion(question.getQuestionSubVersion() + 1);
 		questionProxy.setDateChanged(new Date());
-		questionProxy.setQuestionResources(questionResourceProxies);
 		
 		if(thirdPersonRightsForQuestionEdit()) {
 			questionProxy.setIsAcceptedAdmin(false);
@@ -808,20 +856,9 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 		
 		final QuestionTypes questionType = questionProxy.getQuestionType().getQuestionType();
 		
-		if(QuestionTypes.Textual.equals(questionType) || QuestionTypes.Sort.equals(questionType) || QuestionTypes.LongText.equals(questionType) || QuestionTypes.Drawing.equals(questionType)) {
-			for (QuestionResourceClient questionResource : view.getQuestionResources()) {
-				if (questionResource.getState().equals(State.NEW) || questionResource.getState().equals(State.EDITED)) {
-					QuestionResourceProxy proxy = questionResourceRequest.create(QuestionResourceProxy.class);
-					proxy.setPath(questionResource.getPath());
-					proxy.setSequenceNumber(questionResource.getSequenceNumber());
-					proxy.setType(questionResource.getType());
-					proxy.setQuestion(questionProxy);
-					questionResourceProxies.add(proxy);
-				}
-			}
-		}
+		addQuestionResourceToQuestion(questionResourceRequest, questionProxy, questionType);
 		
-		addPicturePathToQuestion(questionResourceRequest, questionResourceProxies, questionType,questionProxy);
+		addPicturePathToQuestion(questionResourceRequest, this.question.getQuestionResources(), questionType,questionProxy);
 		
 		final QuestionProxy questionProxy2 = questionProxy;
 		questionRequest.persist().using(questionProxy).fire(new BMEReceiver<Void>(reciverMap) {
@@ -832,20 +869,68 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 		});
 	}
 
+	private void addQuestionResourceToQuestion(final QuestionResourceRequest questionResourceRequest, final QuestionProxy questionProxy, final QuestionTypes questionType) {
+		if(QuestionTypes.Textual.equals(questionType) || QuestionTypes.Sort.equals(questionType) || QuestionTypes.LongText.equals(questionType) || QuestionTypes.Drawing.equals(questionType)) {
+			Set<QuestionResourceProxy> questionResourceProxies = questionProxy.getQuestionResources();
+			
+			if(questionResourceProxies == null) {
+				questionResourceProxies = Sets.newHashSet();
+				questionProxy.setQuestionResources(questionResourceProxies);
+			}
+			for (QuestionResourceClient questionResource : view.getQuestionResources()) {
+				if (questionResource.getState().equals(State.NEW) || questionResource.getState().equals(State.EDITED)) {
+					QuestionResourceProxy proxy;
+					if(questionResource.getId() == null) {
+						proxy = questionResourceRequest.create(QuestionResourceProxy.class);
+						questionResourceProxies.add(proxy);		
+					} else {
+						proxy = findQuestionResource(questionResource.getId(),questionResourceProxies);
+					}
+					
+					if(proxy != null) {
+						proxy.setPath(questionResource.getPath());
+						proxy.setSequenceNumber(questionResource.getSequenceNumber());
+						proxy.setType(questionResource.getType());
+						proxy.setQuestion(questionProxy);	
+						proxy.setName(questionResource.getName());
+					}
+				}
+			}
+		}
+	}
+
+	private QuestionResourceProxy findQuestionResource(final Long id, Set<QuestionResourceProxy> questionResourceProxies) {
+		return FluentIterable.from(questionResourceProxies).firstMatch(questionResourcePredicate(id)).orNull();
+	}
+
+	private Predicate<QuestionResourceProxy> questionResourcePredicate(final Long id) {
+		return new Predicate<QuestionResourceProxy>() {
+
+			@Override
+			public boolean apply(final QuestionResourceProxy input) {
+				return input.getId().equals(id);
+			}
+		};
+	}
+
 	private void addPicturePathToQuestion(final QuestionResourceRequest questionResourceRequest, final Set<QuestionResourceProxy> questionResourceProxies, final QuestionTypes questionType, final QuestionProxy questionProxy) {
 		if(QuestionTypes.Imgkey.equals(questionType) || QuestionTypes.ShowInImage.equals(questionType)) {
 		
-			final QuestionResourceProxy questionResourceProxyForPicture; 
-			if(questionResourceProxies.isEmpty() == true) {
-				questionResourceProxyForPicture = questionResourceRequest.create(QuestionResourceProxy.class);
-				questionResourceProxies.add(questionResourceProxyForPicture);
-			}else {
-				questionResourceProxyForPicture = Lists.newArrayList(questionResourceProxies).get(0);
+			if(view.isPictureAddedForImgKeyOrShowInImage()) {
+				QuestionResourceProxy questionResourceProxyForPicture; 
+				if(questionResourceProxies.isEmpty() == true) {
+					questionResourceProxyForPicture = questionResourceRequest.create(QuestionResourceProxy.class);
+					//questionResourceProxies.add(questionResourceProxyForPicture);
+				}else {
+					questionResourceProxyForPicture = Lists.newArrayList(questionResourceProxies).get(0);
+					questionResourceProxyForPicture = questionResourceRequest.edit(questionResourceProxyForPicture);
+				}
+				questionResourceProxyForPicture.setQuestion(questionProxy);
+				questionResourceProxyForPicture.setType(MultimediaType.Image);
+				questionResourceProxyForPicture.setSequenceNumber(0);
+				view.addPictureToQuestionResources(questionResourceProxyForPicture);
+				questionProxy.setQuestionResources(Sets.newHashSet(questionResourceProxyForPicture));
 			}
-			questionResourceProxyForPicture.setQuestion(questionProxy);
-			questionResourceProxyForPicture.setType(MultimediaType.Image);
-			questionResourceProxyForPicture.setSequenceNumber(0);
-			view.addPictureToQuestionResources(questionResourceProxyForPicture);
 		}
 	}
 

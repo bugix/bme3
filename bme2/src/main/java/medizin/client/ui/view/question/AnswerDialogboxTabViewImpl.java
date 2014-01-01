@@ -111,6 +111,9 @@ public class AnswerDialogboxTabViewImpl extends DialogBox implements AnswerDialo
 		}
 	});
 	
+	@UiField
+	CheckBox forcedActive;
+	
 	private Delegate delegate;
 
 	private AnswerProxy answer;
@@ -135,7 +138,7 @@ public class AnswerDialogboxTabViewImpl extends DialogBox implements AnswerDialo
 		mainTabPanel.selectTab(1);
 	}
 
-	public AnswerDialogboxTabViewImpl(QuestionProxy questionProxy, EventBus eventBus, Map<String, Widget> reciverMap) {
+	public AnswerDialogboxTabViewImpl(QuestionProxy questionProxy, EventBus eventBus, Map<String, Widget> reciverMap, boolean isAdminOrInstitutionalAdmin) {
 		this.question = questionProxy;
 		
 		answerTextArea = new RichTextArea();
@@ -179,6 +182,10 @@ public class AnswerDialogboxTabViewImpl extends DialogBox implements AnswerDialo
 		setTitle(constants.answerDialogBoxTitle());
 		setText(constants.answerDialogBoxTitle());
 		setHeight("100%");
+		
+		if(isAdminOrInstitutionalAdmin == false) {
+			forcedActive.removeFromParent();
+		}
 		
 		submitToReviewComitee.addClickHandler(new ClickHandler() {
 			
@@ -407,7 +414,10 @@ public class AnswerDialogboxTabViewImpl extends DialogBox implements AnswerDialo
 		if (lastSelectedReviwer != null) {
 			rewiewer.setSelected(lastSelectedReviwer);
 		}
-			
+		
+		if(question.getRewiewer() != null) {
+			rewiewer.setSelected(question.getRewiewer());
+		}
 	}
 
 	@Override
@@ -441,7 +451,7 @@ public class AnswerDialogboxTabViewImpl extends DialogBox implements AnswerDialo
 			}
 			}
 			
-			delegate.saveAnswerProxy(answer, answerText, author.getSelected(), rewiewer.getSelected(), submitToReviewComitee.getValue(), (comment.getText().isEmpty() ? " " : comment.getText()),validity.getValue(),points,mediaPath,additionalKeywords,sequenceNumber, new Function<AnswerProxy,Void>() {
+			delegate.saveAnswerProxy(answer, answerText, author.getSelected(), rewiewer.getSelected(), submitToReviewComitee.getValue(), (comment.getText().isEmpty() ? " " : comment.getText()),validity.getValue(),points,mediaPath,additionalKeywords,sequenceNumber, forcedActive.getValue(), new Function<AnswerProxy,Void>() {
 
 				@Override
 				public Void apply(AnswerProxy input) {
@@ -494,7 +504,9 @@ public class AnswerDialogboxTabViewImpl extends DialogBox implements AnswerDialo
 				flag = false;
 				Log.error("Polygon is not property added. Try again");
 				messages.add(constants.polygonErrorMessage());
-				imagePolygonViewer.addStyleName("higlight_onViolation");
+				if(imagePolygonViewer != null) {
+					imagePolygonViewer.addStyleName("higlight_onViolation");	
+				}
 			}
 			
 			if(answerTextArea.getText() == null || answerTextArea.getText().length() <= 0) {
@@ -507,7 +519,10 @@ public class AnswerDialogboxTabViewImpl extends DialogBox implements AnswerDialo
 			if(imageRectangleViewer == null || imageRectangleViewer.getPoint() == null) {
 				flag = false;
 				messages.add(constants.rectangleErrorMessage());
-				imageRectangleViewer.removeStyleName("higlight_onViolation");
+				if(imageRectangleViewer != null) {
+					imageRectangleViewer.addStyleName("higlight_onViolation");
+				}
+				
 				Log.error("Rectangle is not property added. Try again");
 			}
 		}

@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.validation.constraints.Size;
 
@@ -46,4 +47,19 @@ public class MainClassification {
 		    return query.getResultList();
 	    	
 	    }
+
+	public static MainClassification findMainClassificationByShortCut(String mainClassification) {
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<MainClassification> criteriaQuery = criteriaBuilder.createQuery(MainClassification.class);
+		Root<MainClassification> from = criteriaQuery.from(MainClassification.class);
+		Predicate predicate = criteriaBuilder.equal(from.get("shortcut"), mainClassification.toUpperCase());
+		criteriaQuery.where(predicate); 
+		TypedQuery<MainClassification> query = entityManager().createQuery(criteriaQuery);
+		List<MainClassification> list = query.getResultList();
+		if(list != null && list.isEmpty() == false) {
+			return list.get(0);
+		} else {
+			return null;
+		}
+	}
 }

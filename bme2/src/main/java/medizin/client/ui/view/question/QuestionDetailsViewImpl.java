@@ -7,10 +7,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 import medizin.client.proxy.McProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionProxy;
+import medizin.client.proxy.QuestionResourceProxy;
+import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.ui.view.question.keyword.QuestionKeywordView;
 import medizin.client.ui.view.question.learningobjective.QuestionLearningObjectiveSubViewImpl;
 import medizin.client.ui.view.question.usedinmc.QuestionUsedInMC;
@@ -19,6 +22,7 @@ import medizin.client.ui.widget.TabPanelHelper;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEvent;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEventHandler;
+import medizin.client.ui.widget.dialogbox.receiver.ReceiverDialog;
 import medizin.client.ui.widget.resource.dndview.ResourceView;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.util.ClientUtility;
@@ -136,10 +140,20 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 	@UiField
 	QuestionKeywordView questionKeyword;
 	
+	@UiField
+	IconButton pushToReviewProcess;
+	
+	private static final Comparator<McProxy> MC_COMPARATOR = new Comparator<McProxy>() {
+
+		@Override
+		public int compare(McProxy o1, McProxy o2) {	
+			return o1.getId().compareTo(o2.getId());
+		}
+	};
+	
 	@Override
 	public AnswerListViewImpl getAnswerListViewImpl() {
 		return answerListViewImpl;
-		
 	}
 
 	@UiHandler("delete")
@@ -154,7 +168,6 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 			@Override
 			public void onNoButtonClicked(ConfirmDialogBoxYesNoButtonEvent event) {}
 		});
-		
 	}
 
 	@UiHandler("edit")
@@ -210,9 +223,14 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 	public void onForcedActiveClicked(ClickEvent e) {
 		delegate.forcedActiveClicked();
 	}
-	// @UiField
-	// SpanElement displayRenderer;
 
+	@UiHandler("pushToReviewProcess")
+	public void onPushToReviewProcessClicked(ClickEvent e) {
+		if(validationOfFields(false)) {
+			delegate.pushToReviewProcessClicked();	
+		}
+	}
+	
 	@Override
 	public void setValue(QuestionProxy proxy) {
 		this.proxy = proxy;
@@ -234,13 +252,6 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 		lblQuestionEventValue.setText(proxy.getQuestEvent()==null?"":proxy.getQuestEvent().getEventName());
 		lblCommentValue.setText(proxy.getComment()==null?"":proxy.getComment());
 		
-		Comparator<McProxy> MC_COMPARATOR = new Comparator<McProxy>() {
-
-			@Override
-			public int compare(McProxy o1, McProxy o2) {	
-				return o1.getId().compareTo(o2.getId());
-			}
-		};
 		ArrayList<McProxy> mcList = newArrayList(proxy.getMcs());
 		Collections.sort(mcList, MC_COMPARATOR);
 		lblMcsValue.setText(proxy.getMcs() == null ? "": medizin.client.ui.view.roo.CollectionRenderer.of(medizin.client.ui.view.roo.McProxyRenderer.instance()).render(mcList));
@@ -258,85 +269,6 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 			answerVerticalPanel.removeFromParent();
 			acceptQueAnswer.removeFromParent();
 		}
-		
-		//delegate.checkForResendToReview();
-		/*
-		if(proxy.getIsReadOnly() == true) {
-			setVisibleEditAndDeleteBtn(false);
-		}*/
-		/*mcs.setInnerText(proxy.getMcs() == null ? ""
-				: medizin.client.ui.view.roo.CollectionRenderer.of(
-						medizin.client.ui.view.roo.McProxyRenderer.instance())
-						.render(proxy.getMcs()));
-    	*/    
-/*		// id.setInnerText(proxy.getId() == null ? "" :
-		// String.valueOf(proxy.getId()));
-		// version.setInnerText(proxy.getVersion() == null ? "" :
-		// String.valueOf(proxy.getVersion()));
-		dateAdded.setInnerText(proxy.getDateAdded() == null ? ""
-				: DateTimeFormat.getFormat(
-						DateTimeFormat.PredefinedFormat.DATE_SHORT).format(
-						proxy.getDateAdded()));
-		dateChanged.setInnerText(proxy.getDateChanged() == null ? ""
-				: DateTimeFormat.getFormat(
-						DateTimeFormat.PredefinedFormat.DATE_SHORT).format(
-						proxy.getDateChanged()));
-		rewiewer.setInnerText(proxy.getRewiewer() == null ? ""
-				: medizin.client.ui.view.roo.PersonProxyRenderer.instance()
-						.render(proxy.getRewiewer()));
-		autor.setInnerText(proxy.getAutor() == null ? ""
-				: medizin.client.ui.view.roo.PersonProxyRenderer.instance()
-						.render(proxy.getAutor()));
-		questionText.setInnerHTML(proxy.getQuestionText() == null ? "" : String
-				.valueOf(proxy.getQuestionText()));
-		questEvent.setInnerText(proxy.getQuestEvent() == null ? ""
-				: medizin.client.ui.view.roo.QuestionEventProxyRenderer
-						.instance().render(proxy.getQuestEvent()));
-		if (proxy.getPicturePath() == null)
-			Document.get().getElementById("picturePath").removeFromParent();
-		else
-			picturePath.setInnerText(String.valueOf(proxy.getPicturePath()));
-
-		if (proxy.getQuestionVersion() < 2)
-			Document.get().getElementById("previousVersion").removeFromParent();
-		else {
-
-			previousVersion
-					.setInnerText(proxy.getPreviousVersion() == null ? ""
-							: medizin.client.ui.view.roo.QuestionProxyRenderer
-									.instance().render(
-											proxy.getPreviousVersion()));
-		}
-
-		questionVersion
-				.setInnerText(String.valueOf(proxy.getQuestionVersion()));
-
-		isAcceptedRewiever
-				.setClassName(proxy.getIsAcceptedRewiever() == true ? "ui-icon ui-icon-check"
-						: "ui-icon ui-icon-closethick");
-		isAcceptedAdmin
-				.setClassName(proxy.getIsAcceptedAdmin() == true ? "ui-icon ui-icon-check"
-						: "ui-icon ui-icon-closethick");
-		isActive.setInnerText(proxy.getIsActive() == true ? "ja" : "nein");
-
-		keywords.setInnerText(proxy.getKeywords() == null ? ""
-				: medizin.client.ui.view.roo.CollectionRenderer.of(
-						medizin.client.ui.view.roo.KeywordProxyRenderer
-								.instance()).render(proxy.getKeywords()));
-
-		comment.setInnerText(proxy.getComment() == null ? ""
-				: medizin.client.ui.view.roo.CommentProxyRenderer.instance()
-						.render(proxy.getComment()));
-		questionType.setInnerText(proxy.getQuestionType() == null ? ""
-				: medizin.client.ui.view.roo.QuestionTypeProxyRenderer
-						.instance().render(proxy.getQuestionType()));
-		mcs.setInnerText(proxy.getMcs() == null ? ""
-				: medizin.client.ui.view.roo.CollectionRenderer.of(
-						medizin.client.ui.view.roo.McProxyRenderer.instance())
-						.render(proxy.getMcs()));*/
-		// answers.setInnerText(proxy.getAnswers() == null ? "" :
-		// medizin.client.ui.view.roo.CollectionRenderer.of(medizin.client.ui.view.roo.AnswerProxyRenderer.instance()).render(proxy.getAnswers()));
-
 	}
 
 	private final static String getPersonName(PersonProxy person) {
@@ -379,9 +311,11 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 			case ShowInImage:
 			{
 				if(proxy != null && proxy.getQuestionType()!= null && proxy.getQuestionType().getQuestionType() != null /*&& proxy.getPicturePath() != null*/) {
-					questionResourceClients = ClientUtility.getQuestionResourceClient(proxy.getQuestionResources());
-					haveImage = true;
-					isAdded = true;
+					if(proxy.getQuestionResources() != null && proxy.getQuestionResources().isEmpty() == false) {
+						questionResourceClients = ClientUtility.getQuestionResourceClient(proxy.getQuestionResources());
+						haveImage = true;
+						isAdded = true;	
+					}
 				}
 				
 				break;
@@ -414,7 +348,7 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 		}
 	}
 
-	public QuestionDetailsViewImpl(EventBus eventBus, Boolean editDeleteflag, boolean isAnswerEditable, boolean addAnswerRights, boolean isforceView, boolean isAcceptView, boolean isMCQQuestionType, boolean isDeleteLearningObjective) {
+	public QuestionDetailsViewImpl(EventBus eventBus, Boolean editDeleteflag, boolean isAnswerEditable, boolean addAnswerRights, boolean isforceView, boolean isAcceptView, boolean isMCQQuestionType, boolean isDeleteLearningObjective, boolean removePushToReviewProcess) {
 		answerListViewImpl = new AnswerListViewImpl(addAnswerRights, isAnswerEditable,isMCQQuestionType);
 		matrixAnswerListViewImpl = new MatrixAnswerListViewImpl(addAnswerRights, isAnswerEditable);
 		questionLearningObjectiveSubViewImpl = new QuestionLearningObjectiveSubViewImpl(isDeleteLearningObjective);
@@ -423,7 +357,7 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 		removeEditAndDeleteBtn(editDeleteflag);
 		removeForceView(isforceView);
 		removeAcceptView(isAcceptView);
-		
+		removePushToReviewProcess(removePushToReviewProcess);
 		this.eventBus = eventBus;
 		
 		questionTypeDetailPanel.selectTab(0);
@@ -452,7 +386,11 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 		});
 	}
 	
-	
+	private void removePushToReviewProcess(boolean removePushToReviewProcess) {
+		if(removePushToReviewProcess) {
+			pushToReviewProcess.removeFromParent();	
+		}
+	}
 
 	@Override
 	public void setDelegate(Delegate delegate) {
@@ -836,4 +774,103 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 	public QuestionKeywordView getQuestionKeywordView() {
 		return questionKeyword;
 	}
+	
+	private boolean validationOfFields(Boolean isCreativeWork) {
+		
+		ArrayList<String> messages = Lists.newArrayList();
+		boolean flag = true;
+		flag = authorReviewerValidation(messages, flag);
+		flag = questionTypeValidation(messages, flag);
+		flag = questionTextValidation(messages, flag);
+		flag = imageKeyAndShowInImageValidation(messages, flag);
+		flag = mcValidation(messages, flag);
+		if(flag == false) {
+			ReceiverDialog.showMessageDialog(constants.pleaseEnterWarning(),messages);
+		}
+		
+		return flag;
+	}
+
+	private boolean mcValidation(ArrayList<String> messages, boolean flag) {
+		Set<McProxy> mcs = proxy.getMcs();
+		if(mcs == null || mcs.isEmpty()) {
+			flag = false;
+			messages.add(constants.mcsMayNotBeNull());
+		}
+		return flag;
+	}
+
+	private boolean imageKeyAndShowInImageValidation(ArrayList<String> messages, boolean flag) {
+		QuestionTypeProxy questionType = proxy.getQuestionType();
+		Set<QuestionResourceProxy> questionResources = proxy.getQuestionResources();
+		if(questionType != null) {
+			switch (questionType.getQuestionType()) {
+			
+			case Imgkey:
+			case ShowInImage:
+			{
+				if(questionResources == null || questionResources.isEmpty()) {
+					flag = false;
+					messages.add(constants.imageMayNotBeNull());
+				} else {
+					QuestionResourceProxy questionResourceProxy = Lists.newArrayList(questionResources).get(0);
+					String path = questionResourceProxy.getPath();
+					if(path == null || path.trim().isEmpty()) {
+						flag = false;
+						messages.add(constants.imageMayNotBeNull());
+					}
+				}
+				break;
+			}
+			}
+		}
+		return flag;
+	}
+
+	private boolean questionTextValidation(ArrayList<String> messages, boolean flag) {
+		String questionText = proxy.getQuestionText();
+		if(questionText == null || questionText.isEmpty()) {
+			flag = false;
+			messages.add(constants.questionTextMayNotBeNull());
+		}else {
+			// question text is not null
+			QuestionTypeProxy questionType = proxy.getQuestionType();
+			if(questionType != null && questionType.getQuestionLength()  != null && questionType.getQuestionLength() < questionText.length()) {
+				flag = false;
+				messages.add(constants.questionTextMaxLength());
+			}
+		}
+		return flag;
+	}
+
+	private boolean questionTypeValidation(ArrayList<String> messages, boolean flag) {
+		QuestionTypeProxy questionType = proxy.getQuestionType();
+		if(questionType == null) {
+			flag = false;
+			messages.add(constants.questionTypeMayNotBeNull());
+		}
+		return flag;
+	}
+
+	private boolean authorReviewerValidation(ArrayList<String> messages, boolean flag) {
+		PersonProxy rewiewer = proxy.getRewiewer();
+		PersonProxy author = proxy.getAutor();
+		
+		if(proxy.getSubmitToReviewComitee() == false && rewiewer == null) {
+			flag = false;
+			messages.add(constants.selectReviewerOrComitee());
+		}
+		
+		if(author == null) {
+			flag = false;
+			messages.add(constants.authorMayNotBeNull());
+		}
+		
+		if(author != null && rewiewer != null && author.getId().equals(rewiewer.getId()) == true) {
+			flag = false;
+			messages.add(constants.authorReviewerMayNotBeSame());
+		}
+		return flag;
+	}
+
 }

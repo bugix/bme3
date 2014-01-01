@@ -54,6 +54,15 @@
 									<g:CheckBox ui:field="showNew" text="{constants.showNew}" checked="true"></g:CheckBox>
 								</td>
 							</tr>
+							<tr>
+								<td>
+									<g:CheckBox ui:field="creativeWork" text="{constants.creativeWork}" checked="true"></g:CheckBox>
+								</td>
+								
+								<td>
+									
+								</td>
+							</tr>
 						</table>
 					</g:HTMLPanel>
 				</g:VerticalPanel>

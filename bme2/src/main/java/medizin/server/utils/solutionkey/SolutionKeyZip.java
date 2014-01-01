@@ -25,7 +25,7 @@ public class SolutionKeyZip {
 	
 	public SolutionKeyZip(ByteArrayOutputStream os, Integer assessmentId, Person loggedPerson) {
 		this.os = os;
-		zipfileName = PaperUtils.getDocumentName(assessmentId.longValue(), null,loggedPerson.getShidId(), EXTENSION_ZIP);
+		zipfileName = "solution_" + PaperUtils.getDocumentName(assessmentId.longValue(), null,loggedPerson.getShidId(), EXTENSION_ZIP);
 		log.info("fileName : " + zipfileName);
 		baselGenerator = new BaselGenerator(assessmentId.longValue());
 		fragentypGenerator = new FragentypGenerator(assessmentId.longValue());

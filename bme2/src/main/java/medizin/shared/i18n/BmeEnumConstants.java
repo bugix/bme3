@@ -66,6 +66,8 @@ public interface BmeEnumConstants extends ConstantsWithLookup {
 	public String EDITED_BY_ADMIN();
 	
 	public String EDITED_BY_REVIEWER();
+	
+	public String CREATIVE_WORK();
 
 	//UserType
 	public String ADMIN();

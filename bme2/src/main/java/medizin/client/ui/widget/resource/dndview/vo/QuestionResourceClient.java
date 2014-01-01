@@ -15,6 +15,8 @@ public class QuestionResourceClient {
 	private State state;
 
 	private Long id;
+	
+	private String name;
 
 	public String getPath() {
 		return path;
@@ -55,13 +57,25 @@ public class QuestionResourceClient {
 	public Long getId() {
 		return this.id;
 	}
+	
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 
 	@Override
 	public String toString() {
 
-		return Objects.toStringHelper(this).add("id", this.id)
+		return Objects.toStringHelper(this)
+				.add("id", this.id)
 				.add("path", this.path)
 				.add("sequenceNumber", this.sequenceNumber)
-				.add("type", this.type).add("State", this.state).toString();
+				.add("type", this.type)
+				.add("State", this.state)
+				.add("Name", this.name)
+				.toString();
 	}
 }

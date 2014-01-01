@@ -128,17 +128,19 @@ public class BookAssesmentViewImpl extends Composite implements BookAssesmentVie
 	}
 
 	private void showClicked(){
-
-		String assesmentSelected = assesmentSuggestionBox.getSelected().getName();
-		if(tabLayout.getTabCount() > 0){
-			
-			if(idMap.containsValue(assesmentSuggestionBox.getSelected().stableId()) == false) {
+		
+		if(!assesmentSuggestionBox.isEmpty()){
+			String assesmentSelected = assesmentSuggestionBox.getSelected().getName();
+			if(tabLayout.getTabCount() > 0){
+				
+				if(idMap.containsValue(assesmentSuggestionBox.getSelected().stableId()) == false) {
+					createTab(assesmentSelected,assesmentSuggestionBox.getSelected().stableId() );
+					tabLayout.selectTab(tabId-1);
+				}
+			}else{
 				createTab(assesmentSelected,assesmentSuggestionBox.getSelected().stableId() );
-				tabLayout.selectTab(tabId-1);
-			}
-		}else{
-			createTab(assesmentSelected,assesmentSuggestionBox.getSelected().stableId() );
-			addTabHandler();
+				addTabHandler();
+			}	
 		}
 		
 	}

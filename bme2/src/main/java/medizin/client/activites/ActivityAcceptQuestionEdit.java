@@ -35,6 +35,8 @@ import medizin.shared.Status;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -72,7 +74,7 @@ public class ActivityAcceptQuestionEdit extends AbstractActivityWrapper implemen
 	
 	@Override
 	public void start2(final AcceptsOneWidget widget, EventBus eventBus) {
-		final QuestionEditView questionEditView = new QuestionEditViewImpl(reciverMap, eventBus, userLoggedIn,true);
+		final QuestionEditView questionEditView = new QuestionEditViewImpl(reciverMap, eventBus, userLoggedIn,true,isAdminOrInstitutionalAdmin());
 		this.view = questionEditView;
 		view.setDelegate(this);
 		
@@ -161,57 +163,51 @@ public class ActivityAcceptQuestionEdit extends AbstractActivityWrapper implemen
 		placeController.goTo(place);
 	}
 	
-	public void saveQuestionWithDetails() {
+	public void saveQuestionWithDetails(boolean isCreativeWork,Boolean forcedActive) {
 		// save with minor version in edit
 		Status status = question.getStatus();
 		boolean isAcceptedByAdmin = question.getIsAcceptedAdmin();
 		boolean isAcceptedByReviewer = question.getIsAcceptedRewiever();
 		boolean isAcceptedByAuthor = question.getIsAcceptedAuthor();
 		
-		final Function<EntityProxyId<?>, Void> gotoAuthorFunction = new Function<EntityProxyId<?>, Void>() {
-			
-			@Override
-			public Void apply(EntityProxyId<?> stableId) {
-				goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));
-				//goTo(new PlaceAcceptQuestionDetails(stableId,Operation.DETAILS));
-				return null;
-			}
-		};
+		final Function<EntityProxyId<?>, Void> gotoAuthorFunction = gotoAuthorFunction();
+		final Function<EntityProxyId<?>, Void> gotoFunction = gotoFunction();
+		final Function<EntityProxyId<?>, Void> gotoDetailsFunction = gotoDetailsFunction();
 		
-		final Function<EntityProxyId<?>, Void> gotoFunction = new Function<EntityProxyId<?>, Void>() {
-			
-			@Override
-			public Void apply(final EntityProxyId<?> stableId) {
-				String resendToReviewValue = Cookies.getCookie(McAppConstant.RESEND_TO_REVIEW_KEY);
-				
-				if (resendToReviewValue == null)
-				{
-					final ConfirmationCheckboxDialog checkBoxDialog = new ConfirmationCheckboxDialog(constants.acceptQueSaveMsg(), constants.neverShowMsg());
-					checkBoxDialog.showBaseDialog(constants.warning());
-					
-					checkBoxDialog.addOKClickHandler(new ClickHandler() {
-						
-						@Override
-						public void onClick(ClickEvent event) {
-							checkBoxDialog.hide();
-							
-							if (checkBoxDialog.getCheckBoxValue())
-								Cookies.setCookie(McAppConstant.RESEND_TO_REVIEW_KEY, String.valueOf(true), ClientUtility.getDateFromOneYear());
-							
-							goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));
-							goTo(new PlaceAcceptQuestionDetails(stableId,Operation.DETAILS));
-						}
-					});
-				}
-				else
-				{
-					goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));
-					goTo(new PlaceAcceptQuestionDetails(stableId,Operation.DETAILS));
-				}
-				return null;
+		if(isAdminOrInstitutionalAdmin() == true) {
+			if(Status.EDITED_BY_ADMIN.equals(question.getStatus())) {
+				status = Status.EDITED_BY_ADMIN;
+				updateQuestion(status,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor,gotoDetailsFunction);
+				Log.info("Admin : temparory save (with minor version)");
+			} else {
+				status = Status.EDITED_BY_ADMIN;
+				createNewQuestion(question, status, isAcceptedByAdmin, isAcceptedByReviewer, isAcceptedByAuthor, gotoFunction);
+				Log.info("Admin : temparory save (with major version)");
 			}
-		};
+
+		}else if(isQuestionReviewer(question) == true) {
+			if(Status.EDITED_BY_REVIEWER.equals(question.getStatus())) {
+				status = Status.EDITED_BY_REVIEWER;
+				updateQuestion(status,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor,gotoDetailsFunction);
+				Log.info("Reviewer : temparory save (with minor version)");
+			} else {
+				status = Status.EDITED_BY_REVIEWER;
+				createNewQuestion(question, status, isAcceptedByAdmin, isAcceptedByReviewer, isAcceptedByAuthor, gotoFunction);
+				Log.info("Reviewer : temparory save (with major version)");
+			}
+			
+		}else if(isQuestionAuthor(question) == true) {
+			status = Status.NEW;
+			isAcceptedByAdmin = false;
+			isAcceptedByReviewer = false;
+			isAcceptedByAuthor = true;
+			createNewQuestion(question,status,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor,gotoAuthorFunction);
+			Log.info("save (with major version)");
+		}
 		
+	}
+
+	private Function<EntityProxyId<?>, Void> gotoDetailsFunction() {
 		final Function<EntityProxyId<?>, Void> gotoDetailsFunction = new Function<EntityProxyId<?>, Void>() {
 			
 			@Override
@@ -246,38 +242,57 @@ public class ActivityAcceptQuestionEdit extends AbstractActivityWrapper implemen
 				return null;
 			}
 		};
-		
-		if(isAdminOrInstitutionalAdmin() == true) {
-			if(Status.EDITED_BY_ADMIN.equals(question.getStatus())) {
-				status = Status.EDITED_BY_ADMIN;
-				updateQuestion(status,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor,gotoDetailsFunction);
-				Log.info("Admin : temparory save (with minor version)");
-			} else {
-				status = Status.EDITED_BY_ADMIN;
-				createNewQuestion(question, status, isAcceptedByAdmin, isAcceptedByReviewer, isAcceptedByAuthor, gotoFunction);
-				Log.info("Admin : temparory save (with major version)");
-			}
+		return gotoDetailsFunction;
+	}
 
-		}else if(isQuestionReviewer(question) == true) {
-			if(Status.EDITED_BY_REVIEWER.equals(question.getStatus())) {
-				status = Status.EDITED_BY_REVIEWER;
-				updateQuestion(status,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor,gotoDetailsFunction);
-				Log.info("Reviewer : temparory save (with minor version)");
-			} else {
-				status = Status.EDITED_BY_REVIEWER;
-				createNewQuestion(question, status, isAcceptedByAdmin, isAcceptedByReviewer, isAcceptedByAuthor, gotoFunction);
-				Log.info("Reviewer : temparory save (with major version)");
-			}
+	private Function<EntityProxyId<?>, Void> gotoFunction() {
+		final Function<EntityProxyId<?>, Void> gotoFunction = new Function<EntityProxyId<?>, Void>() {
 			
-		}else if(isQuestionAuthor(question) == true) {
-			status = Status.NEW;
-			isAcceptedByAdmin = false;
-			isAcceptedByReviewer = false;
-			isAcceptedByAuthor = true;
-			createNewQuestion(question,status,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor,gotoAuthorFunction);
-			Log.info("save (with major version)");
-		}
-		
+			@Override
+			public Void apply(final EntityProxyId<?> stableId) {
+				String resendToReviewValue = Cookies.getCookie(McAppConstant.RESEND_TO_REVIEW_KEY);
+				
+				if (resendToReviewValue == null)
+				{
+					final ConfirmationCheckboxDialog checkBoxDialog = new ConfirmationCheckboxDialog(constants.acceptQueSaveMsg(), constants.neverShowMsg());
+					checkBoxDialog.showBaseDialog(constants.warning());
+					
+					checkBoxDialog.addOKClickHandler(new ClickHandler() {
+						
+						@Override
+						public void onClick(ClickEvent event) {
+							checkBoxDialog.hide();
+							
+							if (checkBoxDialog.getCheckBoxValue())
+								Cookies.setCookie(McAppConstant.RESEND_TO_REVIEW_KEY, String.valueOf(true), ClientUtility.getDateFromOneYear());
+							
+							goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));
+							goTo(new PlaceAcceptQuestionDetails(stableId,Operation.DETAILS));
+						}
+					});
+				}
+				else
+				{
+					goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));
+					goTo(new PlaceAcceptQuestionDetails(stableId,Operation.DETAILS));
+				}
+				return null;
+			}
+		};
+		return gotoFunction;
+	}
+
+	private Function<EntityProxyId<?>, Void> gotoAuthorFunction() {
+		final Function<EntityProxyId<?>, Void> gotoAuthorFunction = new Function<EntityProxyId<?>, Void>() {
+			
+			@Override
+			public Void apply(EntityProxyId<?> stableId) {
+				goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));
+				//goTo(new PlaceAcceptQuestionDetails(stableId,Operation.DETAILS));
+				return null;
+			}
+		};
+		return gotoAuthorFunction;
 	}
 	
 	@Override
@@ -354,7 +369,11 @@ public class ActivityAcceptQuestionEdit extends AbstractActivityWrapper implemen
 		
 		question.setIsAcceptedAdmin(isAcceptedByAdmin);
 		question.setIsAcceptedAuthor(isAcceptedByAuthor);
-		question.setIsAcceptedRewiever(isAcceptedByReviewer);
+		if(question.getSubmitToReviewComitee() == false) {
+			question.setIsAcceptedRewiever(isAcceptedByReviewer);	
+		} else {
+			question.setIsAcceptedRewiever(true);
+		}
 		question.setIsForcedActive(false);
 		question.setQuestionVersion(previousQuestionProxy != null ? previousQuestionProxy.getQuestionVersion()+1 : 0);
 		question.setQuestionSubVersion(0);
@@ -371,6 +390,7 @@ public class ActivityAcceptQuestionEdit extends AbstractActivityWrapper implemen
 				proxy.setSequenceNumber(questionResource.getSequenceNumber());
 				proxy.setType(questionResource.getType());
 				proxy.setQuestion(question);
+				proxy.setName(questionResource.getName());
 				questionResourceProxies.add(proxy);
 			}
 		}
@@ -393,36 +413,27 @@ public class ActivityAcceptQuestionEdit extends AbstractActivityWrapper implemen
 		final QuestionRequest questionRequest = questionResourceRequest.append(requests.questionRequest());
 		
 		final QuestionProxy questionProxy = questionRequest.edit(this.question);
-		final Set<QuestionResourceProxy> questionResourceProxies = Sets.newHashSet();
 		
 		questionProxy.setStatus(status);
 		view.setValuesForQuestion(questionProxy);
 		
 		questionProxy.setIsAcceptedAdmin(isAcceptedByAdmin);
 		questionProxy.setIsAcceptedAuthor(isAcceptedByAuthor);
-		questionProxy.setIsAcceptedRewiever(isAcceptedByReviewer);
+		if(questionProxy.getSubmitToReviewComitee() == false) {
+			questionProxy.setIsAcceptedRewiever(isAcceptedByReviewer);	
+		} else {
+			questionProxy.setIsAcceptedRewiever(true);
+		}
 		questionProxy.setIsForcedActive(false);
 		questionProxy.setQuestionVersion(question.getQuestionVersion());
 		questionProxy.setQuestionSubVersion(question.getQuestionSubVersion() + 1);
 		questionProxy.setDateChanged(new Date());
-		questionProxy.setQuestionResources(questionResourceProxies);
 		
 		final QuestionTypes questionType = questionProxy.getQuestionType().getQuestionType();
 		
-		if(QuestionTypes.Textual.equals(questionType) || QuestionTypes.Sort.equals(questionType) || QuestionTypes.LongText.equals(questionType) || QuestionTypes.Drawing.equals(questionType)) {
-			for (QuestionResourceClient questionResource : view.getQuestionResources()) {
-				if (questionResource.getState().equals(State.NEW) || questionResource.getState().equals(State.EDITED)) {
-					QuestionResourceProxy proxy = questionResourceRequest.create(QuestionResourceProxy.class);
-					proxy.setPath(questionResource.getPath());
-					proxy.setSequenceNumber(questionResource.getSequenceNumber());
-					proxy.setType(questionResource.getType());
-					proxy.setQuestion(questionProxy);
-					questionResourceProxies.add(proxy);
-				}
-			}
-		}
+		addQuestionResourceToQuestion(questionResourceRequest, questionProxy, questionType);
 		
-		addPicturePathToQuestion(questionResourceRequest, questionResourceProxies, questionType,questionProxy);
+		addPicturePathToQuestion(questionResourceRequest, this.question.getQuestionResources(), questionType,questionProxy);
 		
 		final QuestionProxy questionProxy2 = questionProxy;
 		questionRequest.persist().using(questionProxy).fire(new BMEReceiver<Void>(reciverMap) {
@@ -432,21 +443,69 @@ public class ActivityAcceptQuestionEdit extends AbstractActivityWrapper implemen
 			}
 		});
 	}
+	
+	private void addQuestionResourceToQuestion(final QuestionResourceRequest questionResourceRequest, final QuestionProxy questionProxy, final QuestionTypes questionType) {
+		if(QuestionTypes.Textual.equals(questionType) || QuestionTypes.Sort.equals(questionType) || QuestionTypes.LongText.equals(questionType) || QuestionTypes.Drawing.equals(questionType)) {
+			Set<QuestionResourceProxy> questionResourceProxies = questionProxy.getQuestionResources();
+			
+			if(questionResourceProxies == null) {
+				questionResourceProxies = Sets.newHashSet();
+				questionProxy.setQuestionResources(questionResourceProxies);
+			}
+			for (QuestionResourceClient questionResource : view.getQuestionResources()) {
+				if (questionResource.getState().equals(State.NEW) || questionResource.getState().equals(State.EDITED)) {
+					QuestionResourceProxy proxy;
+					if(questionResource.getId() == null) {
+						proxy = questionResourceRequest.create(QuestionResourceProxy.class);
+						questionResourceProxies.add(proxy);		
+					} else {
+						proxy = findQuestionResource(questionResource.getId(),questionResourceProxies);
+					}
+					
+					if(proxy != null) {
+						proxy.setPath(questionResource.getPath());
+						proxy.setSequenceNumber(questionResource.getSequenceNumber());
+						proxy.setType(questionResource.getType());
+						proxy.setQuestion(questionProxy);	
+						proxy.setName(questionResource.getName());
+					}
+				}
+			}
+		}
+	}
 
+	private QuestionResourceProxy findQuestionResource(final Long id, Set<QuestionResourceProxy> questionResourceProxies) {
+		return FluentIterable.from(questionResourceProxies).firstMatch(questionResourcePredicate(id)).orNull();
+	}
+
+	private Predicate<QuestionResourceProxy> questionResourcePredicate(final Long id) {
+		return new Predicate<QuestionResourceProxy>() {
+
+			@Override
+			public boolean apply(final QuestionResourceProxy input) {
+				return input.getId().equals(id);
+			}
+		};
+	}
+	
 	private void addPicturePathToQuestion(final QuestionResourceRequest questionResourceRequest, final Set<QuestionResourceProxy> questionResourceProxies, final QuestionTypes questionType, final QuestionProxy questionProxy) {
 		if(QuestionTypes.Imgkey.equals(questionType) || QuestionTypes.ShowInImage.equals(questionType)) {
-		
-			final QuestionResourceProxy questionResourceProxyForPicture; 
-			if(questionResourceProxies.isEmpty() == true) {
-				questionResourceProxyForPicture = questionResourceRequest.create(QuestionResourceProxy.class);
-				questionResourceProxies.add(questionResourceProxyForPicture);
-			}else {
-				questionResourceProxyForPicture = Lists.newArrayList(questionResourceProxies).get(0);
+			
+			if(view.isPictureAddedForImgKeyOrShowInImage()) {
+				QuestionResourceProxy questionResourceProxyForPicture; 
+				if(questionResourceProxies.isEmpty() == true) {
+					questionResourceProxyForPicture = questionResourceRequest.create(QuestionResourceProxy.class);
+					//questionResourceProxies.add(questionResourceProxyForPicture);
+				}else {
+					questionResourceProxyForPicture = Lists.newArrayList(questionResourceProxies).get(0);
+					questionResourceProxyForPicture = questionResourceRequest.edit(questionResourceProxyForPicture);
+				}
+				questionResourceProxyForPicture.setQuestion(questionProxy);
+				questionResourceProxyForPicture.setType(MultimediaType.Image);
+				questionResourceProxyForPicture.setSequenceNumber(0);
+				view.addPictureToQuestionResources(questionResourceProxyForPicture);
+				questionProxy.setQuestionResources(Sets.newHashSet(questionResourceProxyForPicture));
 			}
-			questionResourceProxyForPicture.setQuestion(questionProxy);
-			questionResourceProxyForPicture.setType(MultimediaType.Image);
-			questionResourceProxyForPicture.setSequenceNumber(0);
-			view.addPictureToQuestionResources(questionResourceProxyForPicture);
 		}
 	}
 

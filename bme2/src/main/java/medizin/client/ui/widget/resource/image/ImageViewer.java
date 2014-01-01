@@ -56,6 +56,7 @@ public class ImageViewer extends Composite{
 
 	@UiField
 	Image image;
+	private String name;
 	//private org.vaadin.gwtgraphics.client.Image image;
 	
 	public ImageViewer() {
@@ -188,6 +189,10 @@ public class ImageViewer extends Composite{
 		return url;
 	}
 
+	public String getName() {
+		return name;
+	}
+	
 	private void renderImage(Integer width, Integer height) {
 		Log.info("Rendering image");
 		init(width,height);
@@ -204,9 +209,10 @@ public class ImageViewer extends Composite{
 
 
 //	@Override
-	public void setUrl(String url,Integer width, Integer height, QuestionTypes questionType) {
+	public void setUrl(String name,String url,Integer width, Integer height, QuestionTypes questionType) {
 		Log.info("Set url : " + url);
 		this.url = url;
+		this.name = name;
 		/*if(questionType != null && QuestionTypes.Textual.equals(questionType)) {
 			renderTextualImage(480,480);
 		}else {*/
@@ -271,7 +277,9 @@ public class ImageViewer extends Composite{
 	}
 
 
-	public void setUrl(String url, QuestionTypes questionType) {
+	public void setUrl(String name,String url, QuestionTypes questionType) {
+		this.url = url;
+		this.name = name;
 		image.setUrl(url);
 		image.setHeight("100%");
 		image.setWidth("100%");

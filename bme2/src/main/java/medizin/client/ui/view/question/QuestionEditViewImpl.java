@@ -40,6 +40,7 @@ import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget
 import medizin.client.util.ClientUtility;
 import medizin.shared.MultimediaType;
 import medizin.shared.QuestionTypes;
+import medizin.shared.Status;
 import medizin.shared.i18n.BmeConstants;
 import medizin.shared.i18n.BmeMessages;
 import medizin.shared.utils.SharedConstant;
@@ -193,6 +194,12 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	@UiField
 	HTML lblDigitCount;
 	
+	@UiField
+	CheckBox pushToReviewProcess;
+	
+	@UiField
+	CheckBox forcedActive;
+	
 	private ResourceView viewer;
 	private ImageViewer imageViewer;
 	private QuestionProxy question = null;
@@ -207,22 +214,45 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	
 	@UiHandler("resendToReview")
 	void onResendToReview(ClickEvent event) {
-		if(validationOfFields()) {
+		if(validationOfFields(false)) {
 			delegate.resendToReview();
 		}
 	}
 
+	@UiHandler("forcedActive")
+	void onForcedActiveClicked(ClickEvent event) {
+		if(forcedActive.getValue()== true) {
+			pushToReviewProcess.setValue(false);
+		}
+	}
+	
+	@UiHandler("pushToReviewProcess")
+	void onPushToReviewProcessClicked(ClickEvent event) {
+		if(pushToReviewProcess.getValue()== true) {
+			forcedActive.setValue(false);
+		}
+	}
+	
 	@UiHandler("save")
 	void onSave(ClickEvent event) {
-		if(validationOfFields()) {
-			delegate.saveQuestionWithDetails();
-		}else {
+		boolean isCreativeWork = false;
+		if(forcedActive.getValue() == true) {
+			isCreativeWork = false;
+		} else if(pushToReviewProcess.getValue()== true) {
+			isCreativeWork = false;
+		} else {
+			isCreativeWork = true;
+		}
+		
+		if(validationOfFields(isCreativeWork)) {
+			// new question
+			delegate.saveQuestionWithDetails(isCreativeWork,forcedActive.getValue());
+		} else {
 			Log.info("Validation fail");
 		}
 	}
-
 	
-	public QuestionEditViewImpl(Map<String, Widget> reciverMap, EventBus eventBus, PersonProxy userLoggedIn,boolean isResendToReview) {
+	public QuestionEditViewImpl(Map<String, Widget> reciverMap, EventBus eventBus, PersonProxy userLoggedIn,boolean isResendToReview, boolean isAdminOrInstitutionalAdmin) {
 
 		this.eventBus = eventBus;
 		this.userLoggedIn = userLoggedIn;
@@ -284,6 +314,10 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		setDigitCount();
 		
 		setResendToReviewBtn(isResendToReview);
+		
+		if(isAdminOrInstitutionalAdmin == false) {
+			forcedActive.removeFromParent();
+		}
 	}
 
 	@Override
@@ -318,10 +352,17 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	
 	@Override
 	public void setValue(QuestionProxy question,boolean isAuthorReviewerEditable) {
+		if(Status.CREATIVE_WORK.equals(question.getStatus()) == false) {
+			pushToReviewProcess.removeFromParent();
+			forcedActive.removeFromParent();
+			DOM.setElementPropertyBoolean(questionType.getElement(), "disabled", true);
+		} else {
+			if(question.getRewiewer() != null && question.getRewiewer().getId().equals(userLoggedIn.getId())) {
+				pushToReviewProcess.removeFromParent();
+			}
+		}
 		
 		this.isAuthorReviewerEditable = isAuthorReviewerEditable;
-		DOM.setElementPropertyBoolean(questionType.getElement(), "disabled", true);
-		
 		disableEnableAuthorReviewerSuggestBox(isAuthorReviewerEditable);
 		
 		questionShortName.setValue(defaultString(question.getQuestionShortName()));
@@ -539,14 +580,15 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 				final Integer width = questionResourceProxy.getImageWidth();
 				final Integer height = questionResourceProxy.getImageHeight();
 				final String imagePath = questionResourceProxy.getPath();
+				final String name = questionResourceProxy.getName();
 						
 				if (width != null && height != null)
 				{
-					imageViewer.setUrl(imagePath, width, height, type);
+					imageViewer.setUrl(name,imagePath, width, height, type);
 				}
 				else
 				{
-					imageViewer.setUrl(imagePath, null, null, type);
+					imageViewer.setUrl(name,imagePath, null, null, type);
 				}
 			}
 		}
@@ -586,7 +628,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 										//delegate.deleteMediaFileFromDisk(imageViewer.getImageUrl().replace(GWT.getHostPageBaseURL(), ""));
 									}
 									
-									imageViewer.setUrl(filePath, event.getWidth(), event.getHeight(), type);	
+									imageViewer.setUrl(event.getName(),filePath, event.getWidth(), event.getHeight(), type);	
 								} else {
 									ConfirmationDialogBox.showOkDialogBox(constants.error(), messages.imageUploadSize(questionTypeProxy.getImageWidth(),questionTypeProxy.getImageHeight()));
 									/*ErrorPanel errorPanel = new ErrorPanel();
@@ -694,7 +736,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 						
 						MultimediaType type = event.getType();
 						if (viewer != null) {
-							viewer.addUrl(filePath, type);
+							viewer.addUrl(event.getName(),filePath, type);
 						}else {
 							Log.error("Viewer is null");
 						}		
@@ -745,8 +787,44 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		return viewer.getQuestionResources();
 	}
 	
-	private boolean validationOfFields() {
+	private boolean validationOfFields(Boolean isCreativeWork) {
 		
+		removeHighlight();
+		ArrayList<String> messages = Lists.newArrayList();
+		boolean flag = true;
+		
+		setSubmitToReviewCommittee();
+		
+		if(isCreativeWork == true) {
+			flag = questionTypeValidation(messages, flag);
+			flag = questionTextValidation(messages, flag);
+		} else {
+			flag = authorReviewerValidation(messages, flag);
+			flag = questionTypeValidation(messages, flag);
+			flag = questionTextValidation(messages, flag);
+			flag = imageKeyAndShowInImageValidation(messages, flag);
+			flag = mcValidation(messages, flag);
+		}
+		
+		if(flag == false) {
+			ReceiverDialog.showMessageDialog(constants.pleaseEnterWarning(),messages);
+		}
+		
+		return flag;
+	}
+
+	private void setSubmitToReviewCommittee() {
+		if(submitToReviewComitee.getValue() == true) 
+		{
+			if(rewiewer.isAttached()) rewiewer.setSelected(null);	
+		} 
+		else if(rewiewer.isAttached() && rewiewer.getSelected() != null)
+		{
+			submitToReviewComitee.setValue(false);
+		}
+	}
+
+	private void removeHighlight() {
 		author.getTextField().advancedTextBox.removeStyleName("higlight_onViolation");
 		//questionComment.removeStyleName("higlight_onViolation");
 		questionType.removeStyleName("higlight_onViolation");
@@ -756,16 +834,71 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		rewiewer.getTextField().advancedTextBox.removeStyleName("higlight_onViolation");
 		submitToReviewComitee.removeStyleName("higlight_onViolation");
 		mcs.removeStyleName("higlight_onViolation");
-		
-		ArrayList<String> messages = Lists.newArrayList();
-		boolean flag = true;
-		
+	}
+
+	private boolean mcValidation(ArrayList<String> messages, boolean flag) {
+		if(mcs.getValue() == null || mcs.getValue().isEmpty()) {
+			flag = false;
+			messages.add(constants.mcsMayNotBeNull());
+			mcs.addStyleName("higlight_onViolation");
+		}
+		return flag;
+	}
+
+	private boolean imageKeyAndShowInImageValidation(ArrayList<String> messages, boolean flag) {
+		if(questionType.getValue() != null) {
+			switch (questionType.getValue().getQuestionType()) {
+			
+			case Imgkey:
+			case ShowInImage:
+			{
+				if(imageViewer.getImageRelativeUrl() == null || imageViewer.getImageRelativeUrl().isEmpty()) {
+					flag = false;
+					messages.add(constants.imageMayNotBeNull());
+					imageViewer.addStyleName("higlight_onViolation");
+				}
+				break;
+			}
+			}
+		}
+		return flag;
+	}
+
+	private boolean questionTextValidation(ArrayList<String> messages, boolean flag) {
+		//TODO need to change this condition
+		if(questionTextArea.getText() == null || questionTextArea.getText().isEmpty()) {
+			flag = false;
+			messages.add(constants.questionTextMayNotBeNull());
+			questionTextArea.addStyleName("higlight_onViolation");
+		}else {
+			// question text is not null
+			
+			questionTextRemoveCommentsFromHTML();
+			if(questionType.getValue() != null && questionType.getValue().getQuestionLength()  != null && questionType.getValue().getQuestionLength() < questionTextArea.getText().length()) {
+				flag = false;
+				messages.add(constants.questionTextMaxLength());
+				questionTextArea.addStyleName("higlight_onViolation");
+			}
+		}
+		return flag;
+	}
+
+	private boolean questionTypeValidation(ArrayList<String> messages, boolean flag) {
+		if(questionType.getValue() == null) {
+			flag = false;
+			messages.add(constants.questionTypeMayNotBeNull());
+			questionType.addStyleName("higlight_onViolation");
+		}
+		return flag;
+	}
+
+	private boolean authorReviewerValidation(ArrayList<String> messages, boolean flag) {
 		if(isAuthorReviewerEditable == true ) {
 			if(submitToReviewComitee.getValue() == true) 
 			{
-				rewiewer.setSelected(null);	
+				if(rewiewer.isAttached()) rewiewer.setSelected(null);	
 			} 
-			else if(rewiewer.getSelected() != null)
+			else if(rewiewer.isAttached() && rewiewer.getSelected() != null)
 			{
 				submitToReviewComitee.setValue(false);
 			}
@@ -790,61 +923,6 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 				rewiewer.getTextField().advancedTextBox.addStyleName("higlight_onViolation");
 			}
 		}
-		
-		
-		/*if(questionComment.getText() == null || questionComment.getText().isEmpty()) {
-			flag = false;
-			messages.add(constants.commentMayNotBeNull());
-			questionComment.addStyleName("higlight_onViolation");
-		}*/
-		
-		if(questionType.getValue() == null) {
-			flag = false;
-			messages.add(constants.questionTypeMayNotBeNull());
-			questionType.addStyleName("higlight_onViolation");
-		}
-		
-		//TODO need to change this condition
-		if(questionTextArea.getText() == null || questionTextArea.getText().isEmpty()) {
-			flag = false;
-			messages.add(constants.questionTextMayNotBeNull());
-			questionTextArea.addStyleName("higlight_onViolation");
-		}else {
-			// question text is not null
-			
-			questionTextRemoveCommentsFromHTML();
-			if(questionType.getValue() != null && questionType.getValue().getQuestionLength()  != null && questionType.getValue().getQuestionLength() < questionTextArea.getText().length()) {
-				flag = false;
-				messages.add(constants.questionTextMaxLength());
-				questionTextArea.addStyleName("higlight_onViolation");
-			}
-		}
-		
-		if(questionType.getValue() != null) {
-			switch (questionType.getValue().getQuestionType()) {
-			
-			case Imgkey:
-			case ShowInImage:
-			{
-				if(imageViewer.getImageRelativeUrl() == null || imageViewer.getImageRelativeUrl().isEmpty()) {
-					flag = false;
-					messages.add(constants.imageMayNotBeNull());
-					imageViewer.addStyleName("higlight_onViolation");
-				}
-				break;
-			}
-			}
-		} 
-		
-		if(mcs.getValue() == null || mcs.getValue().isEmpty()) {
-			flag = false;
-			messages.add(constants.mcsMayNotBeNull());
-			mcs.addStyleName("higlight_onViolation");
-		}
-		if(flag == false) {
-			ReceiverDialog.showMessageDialog(constants.pleaseEnterWarning(),messages);
-		}
-		
 		return flag;
 	}
 
@@ -880,7 +958,7 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 		String picturePath = null;
 		Integer height = null;
 		Integer width = null;
-		
+		String name;
 		switch (questionType.getValue().getQuestionType()) {
 		
 		case Imgkey:
@@ -889,9 +967,11 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 			picturePath = imageViewer.getImageRelativeUrl();
 			height = imageViewer.getHeight();
 			width = imageViewer.getWidth();
+			name = imageViewer.getName();
 			questionResourceProxy.setImageHeight(height);
 			questionResourceProxy.setImageWidth(width);
 			questionResourceProxy.setPath(picturePath);
+			questionResourceProxy.setName(name);
 			break;
 		}
 		
@@ -978,6 +1058,15 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 				}
 			}
 			questionTextArea.setHTML(html);
+		}
+	}
+
+	@Override
+	public boolean isPictureAddedForImgKeyOrShowInImage() {
+		if(imageViewer.getImageRelativeUrl() == null) {
+			return false;
+		} else {
+			return true;	
 		}
 	}
 

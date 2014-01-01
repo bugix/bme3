@@ -414,7 +414,7 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 			switch (answer.getQuestion().getQuestionType().getMultimediaType()) {
 			case Image: {
 				final ImageViewer viewer = new ImageViewer();
-				viewer.setUrl(answer.getMediaPath(), answer.getQuestion().getQuestionType().getQuestionType());
+				viewer.setUrl("",answer.getMediaPath(), answer.getQuestion().getQuestionType().getQuestionType());
 				Function<Boolean,Void> closeViewer = new Function<Boolean,Void>(){
 
 					@Override

@@ -136,7 +136,7 @@ public class ResourceSubView extends Composite {
 				@Override
 				public void onClick(ClickEvent event) {
 					final ImageViewer viewer = new ImageViewer();
-					viewer.setUrl(questionResource.getPath(), questionType);
+					viewer.setUrl(questionResource.getName(),questionResource.getPath(), questionType);
 					DialogBox dialogBox = createDialogBox(constants.mediaViewer(),viewer,new Function<Boolean,Void>(){
 
 						@Override

@@ -77,13 +77,16 @@ public final class ClientUtility {
 
 		for (QuestionResourceProxy proxy : questionResources) {
 
-			QuestionResourceClient client = new QuestionResourceClient();
-			client.setPath(proxy.getPath());
-			client.setSequenceNumber(proxy.getSequenceNumber());
-			client.setType(proxy.getType());
-			client.setState(State.CREATED);
-			client.setId(proxy.getId());
-			clients.add(client);
+			if(proxy.getPath() != null) {
+				QuestionResourceClient client = new QuestionResourceClient();
+				client.setPath(proxy.getPath());
+				client.setSequenceNumber(proxy.getSequenceNumber());
+				client.setType(proxy.getType());
+				client.setState(State.CREATED);
+				client.setId(proxy.getId());
+				client.setName(proxy.getName());
+				clients.add(client);	
+			}
 		}
 		return clients;
 	}

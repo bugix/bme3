@@ -147,7 +147,7 @@ public class FileUploadServlet extends HttpServlet {
 					response.setContentType("text/html");
 					response.setStatus(HttpServletResponse.SC_CREATED);
 					
-					String data = getData(appUploadedFile,directory.concat(uuidFileName));
+					String data = getData(appUploadedFile,directory.concat(uuidFileName),fileName);
 					response.getWriter().append(data);
 					response.getWriter().close();
 					response.getWriter().flush();
@@ -169,9 +169,10 @@ public class FileUploadServlet extends HttpServlet {
 
 	}
 
-	private String getData(File appUploadedFile, String filePath) {
+	private String getData(File appUploadedFile, String filePath,String fileName) {
 		ToStringHelper helper = Objects.toStringHelper("");
 		helper.add(SharedConstant.FILEPATH, filePath);
+		helper.add(SharedConstant.NAME, fileName);
 		MultimediaType type = SharedUtility.getFileMultimediaType(SharedUtility.getFileExtension(filePath));		
 				
 		switch (type) {

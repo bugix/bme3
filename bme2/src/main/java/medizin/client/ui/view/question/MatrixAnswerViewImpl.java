@@ -88,6 +88,9 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 
 	@UiField
 	IconButton closeButton;
+	
+	@UiField
+	CheckBox forcedActive;
 
 	private final IconButton addAnswerX;
 	private final IconButton addAnswerY;
@@ -96,7 +99,7 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 
 	private List<MatrixValidityProxy> currentMatrixValidityProxy;
 
-	public MatrixAnswerViewImpl(QuestionProxy questionProxy) {
+	public MatrixAnswerViewImpl(QuestionProxy questionProxy,boolean isAdminOrInstitutionalAdmin) {
 		this.questionProxy = questionProxy;
 		setWidget(uiBinder.createAndBindUi(this));
 		//matrix.setWidth("100%");
@@ -110,6 +113,9 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 		setTitle(constants.answerDialogBoxTitle());
 		setText(constants.answerDialogBoxTitle());
 
+		if(isAdminOrInstitutionalAdmin == false) {
+			forcedActive.removeFromParent();
+		}
 		// Add a button that will add more rows to the table
 
 		addAnswerX = new IconButton(constants.addAnswerY(), new ClickHandler() {
@@ -470,6 +476,10 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 		PersonProxy lastSelectedReviwer = ClientUtility.getAnswerReviwerPersonProxyFromCookie(values);
 		if (lastSelectedReviwer != null)
 			rewiewer.setSelected(lastSelectedReviwer);
+		
+		if(questionProxy.getRewiewer() != null) {
+			rewiewer.setSelected(questionProxy.getRewiewer());
+		}
 	}
 
 	@Override
@@ -494,7 +504,7 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 			
 			if(validationOfFields(true,null) == true) {
                 //delegate.saveMatrixAnswer(currentMatrixValidityProxy,matrixList, author.getSelected(), rewiewer.getSelected(), submitToReviewComitee.getValue(), comment.getText());
-				delegate.saveAllTheValuesToAnswerAndMatrixAnswer(currentMatrixValidityProxy,matrixList, author.getSelected(), rewiewer.getSelected(), submitToReviewComitee.getValue(), comment.getText());
+				delegate.saveAllTheValuesToAnswerAndMatrixAnswer(currentMatrixValidityProxy,matrixList, author.getSelected(), rewiewer.getSelected(), submitToReviewComitee.getValue(), comment.getText(),forcedActive.getValue());
 				hide();
 			}
 		}

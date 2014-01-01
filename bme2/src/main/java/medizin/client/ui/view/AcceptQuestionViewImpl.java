@@ -25,7 +25,6 @@ import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.event.dom.client.MouseOutEvent;
@@ -405,29 +404,20 @@ public class AcceptQuestionViewImpl extends Composite implements AcceptQuestionV
 			      
 			      if(value.getRewiewer()!=null){
 			    	  sb.appendHtmlConstant(getTableRow(constants.reviewer(), value.getRewiewer().getPrename() + " " + value.getRewiewer().getName()));
-			    	 // sb.appendHtmlConstant("<tr><td><strong>Reviewer: </strong></td><td>" + value.getRewiewer().getPrename() + " " + value.getRewiewer().getName() + " " + "</td></tr>");
-			    	  
 			      }
-			      if(value.getRewiewer()!=null){
+			      if(value.getAutor()!=null){
 			    	  sb.appendHtmlConstant(getTableRow(constants.auther(),value.getAutor().getPrename() + " " + value.getAutor().getName()));
-			    	 // sb.appendHtmlConstant("<tr><td><strong>Autor: </strong></td><td>" + value.getAutor().getPrename() + " " + value.getAutor().getName() + " " + "</td></tr>");
 			      }
 			      if(value.getQuestEvent()!=null){
 			    	  sb.appendHtmlConstant(getTableRow(constants.questionEvent(),value.getQuestEvent().getEventName()));
-			    	  // sb.appendHtmlConstant("<tr><td><strong>Themenbereich: </strong></td><td>" + value.getQuestEvent().getEventName() + "</td></tr>");
 			      }
 			      if(value.getMcs()!=null){
 			    	  sb.appendHtmlConstant(getTableRow(constants.mcs(), medizin.client.ui.view.roo.CollectionRenderer.of(McProxyRenderer.instance()).render(value.getMcs())));
-			    	  
 			      }
-			     
 			      if( value.getQuestionType()!=null){
 			    	  sb.appendHtmlConstant(getTableRow(constants.questionType(), value.getQuestionType().getShortName()));
-			    	  
 			      }
-			      
 			      sb.appendHtmlConstant("</table>");
-				
 			}
 
 			private String getTableRow(String title, String value) {

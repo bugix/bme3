@@ -19,6 +19,7 @@ import medizin.client.proxy.QuestionProxy;
 import medizin.client.request.AnswerRequest;
 import medizin.client.request.MatrixValidityRequest;
 import medizin.client.request.PersonRequest;
+import medizin.client.request.QuestionRequest;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.question.AnswerDialogbox;
 import medizin.client.ui.view.question.AnswerDialogboxImpl;
@@ -67,8 +68,8 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	private PlaceController placeController;
 	private PlaceQuestionDetails questionPlace;
 	
-	protected QuestionProxy question;
-	protected QuestionDetailsView view;
+	private QuestionProxy question;
+	private QuestionDetailsView view;
 	private AnswerListViewImpl answerListView;
 	private CellTable<AnswerProxy> answerTable;
 	
@@ -79,8 +80,6 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	Boolean editDeleteBtnFlag = false;
 	Boolean answerFlag = false;
 	private PartActivityQuestionLearningObjective partActivityQuestionLearningObjective;
-	
-	QuestionProxy tempQuestionProxy = null;
 	private PartActivityQuestionKeyword activityQuestionKeyword;
 	private PartActivityQuestionUsedInMC partactivityQuestionUsedInMC;
 
@@ -116,9 +115,19 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 
 	public void initDetailsView(QuestionProxy questionProxy) {
 		editDeleteBtnFlag = hasQuestionWriteRights(questionProxy);
-				
-		QuestionDetailsViewImpl questionDetailsView = new QuestionDetailsViewImpl(eventBus, editDeleteBtnFlag,hasAnswerWriteRights(questionProxy, null),hasAnswerAddRights(questionProxy),false,false,isQuestionTypeMCQ(questionProxy), true);
+		boolean removePushToReviewProcess = false;
+		if(questionProxy.getStatus().equals(Status.CREATIVE_WORK) == false) {
+			removePushToReviewProcess = true;
+		} else {
+			if(questionProxy.getRewiewer() != null && questionProxy.getRewiewer().getId().equals(userLoggedIn.getId())) {
+				removePushToReviewProcess = true;
+			}
+		}
+		
+		QuestionDetailsViewImpl questionDetailsView = new QuestionDetailsViewImpl(eventBus, editDeleteBtnFlag,hasAnswerWriteRights(questionProxy, null),hasAnswerAddRights(questionProxy),false,false,isQuestionTypeMCQ(questionProxy), true,removePushToReviewProcess);
 		this.view = questionDetailsView;
+		
+		
         widget.setWidget(questionDetailsView.asWidget());
 		view.setDelegate(this);
 		this.answerListView = view.getAnswerListViewImpl();
@@ -374,7 +383,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 
 	private AnswerDialogboxTabView openImageKeyOrShowInInImageAnswerView(final AnswerProxy answer) {
 		
-		final AnswerDialogboxTabView answerDialogboxTabView = new AnswerDialogboxTabViewImpl(question, eventBus, reciverMap);
+		final AnswerDialogboxTabView answerDialogboxTabView = new AnswerDialogboxTabViewImpl(question, eventBus, reciverMap,isAdminOrInstitutionalAdmin());
 		answerDialogboxTabView.setDelegate(this);
 		answerDialogboxTabView.setValidityPickerValues(Arrays.asList(Validity.values()));
 		
@@ -891,7 +900,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	}*/
 
 	@Override
-	public void saveAnswerProxy(AnswerProxy answerProxy, String answerText, PersonProxy author, final PersonProxy rewiewer, Boolean submitToReviewComitee, String comment, Validity validity, String points, String mediaPath, String additionalKeywords,Integer sequenceNumber, final Function<AnswerProxy, Void> function) {
+	public void saveAnswerProxy(AnswerProxy answerProxy, String answerText, PersonProxy author, final PersonProxy rewiewer, Boolean submitToReviewComitee, String comment, Validity validity, String points, String mediaPath, String additionalKeywords,Integer sequenceNumber, Boolean forcedActive,final Function<AnswerProxy, Void> function) {
 		
 		Log.info("in saveAnswerProxy method");
 		
@@ -901,7 +910,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			AnswerProxy newAnswerProxy  = answerRequest.edit(answerProxy);
 			newAnswerProxy.setDateChanged(new Date());
 			
-			fillAnswerData(answerText, author, rewiewer, submitToReviewComitee, comment, validity, points, mediaPath, additionalKeywords, sequenceNumber, newAnswerProxy);
+			fillAnswerData(answerText, author, rewiewer, submitToReviewComitee, comment, validity, points, mediaPath, additionalKeywords, sequenceNumber, newAnswerProxy,forcedActive);
 					
 			final AnswerProxy finalAnswerProxy = newAnswerProxy;
 			answerRequest.persist().using(newAnswerProxy).fire(new BMEReceiver<Void>(reciverMap) {
@@ -919,7 +928,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			AnswerProxy newAnswerProxy = answerRequest.create(AnswerProxy.class);			
 			newAnswerProxy.setDateAdded(new Date());
 			
-			fillAnswerData(answerText, author, rewiewer, submitToReviewComitee, comment, validity, points, mediaPath, additionalKeywords, sequenceNumber, newAnswerProxy);
+			fillAnswerData(answerText, author, rewiewer, submitToReviewComitee, comment, validity, points, mediaPath, additionalKeywords, sequenceNumber, newAnswerProxy,forcedActive);
 			
 			final AnswerProxy finalAnswerProxy = newAnswerProxy;
 			
@@ -949,14 +958,20 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 
 	}
 
-	public void fillAnswerData(String answerText, PersonProxy author, PersonProxy rewiewer, Boolean submitToReviewComitee, String comment, Validity validity, String points, String mediaPath, String additionalKeywords, Integer sequenceNumber, AnswerProxy newAnswerProxy) {
+	public void fillAnswerData(String answerText, PersonProxy author, PersonProxy rewiewer, Boolean submitToReviewComitee, String comment, Validity validity, String points, String mediaPath, String additionalKeywords, Integer sequenceNumber, AnswerProxy newAnswerProxy, Boolean forcedActive) {
 		newAnswerProxy.setAnswerText(answerText);
 		newAnswerProxy.setAutor(author);
 		newAnswerProxy.setRewiewer(rewiewer);
 		newAnswerProxy.setSubmitToReviewComitee(submitToReviewComitee);
 		newAnswerProxy.setIsAnswerAcceptedAutor(userLoggedIn.getId().equals(author.getId()));
 		newAnswerProxy.setIsAnswerAcceptedAdmin(isAdminOrInstitutionalAdmin());
-		newAnswerProxy.setIsAnswerAcceptedReviewWahrer(false);
+		if(submitToReviewComitee == true) {
+			newAnswerProxy.setIsAnswerAcceptedReviewWahrer(true);
+		} else {
+			newAnswerProxy.setIsAnswerAcceptedReviewWahrer(false);
+		}
+		
+		newAnswerProxy.setIsForcedActive(forcedActive);
 		newAnswerProxy.setComment(comment);
 		newAnswerProxy.setQuestion(question);
 		newAnswerProxy.setValidity(validity);
@@ -966,7 +981,9 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		newAnswerProxy.setAdditionalKeywords(additionalKeywords);
 		newAnswerProxy.setSequenceNumber(sequenceNumber);
 		
-		if ((isAdminOrInstitutionalAdmin())) {
+		if(forcedActive == true) {
+			newAnswerProxy.setStatus(Status.ACTIVE);
+		}else if ((isAdminOrInstitutionalAdmin())) {
 			newAnswerProxy.setStatus(Status.ACCEPTED_ADMIN);
 		} else {
 			newAnswerProxy.setStatus(Status.NEW);
@@ -1177,7 +1194,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 
 	private AnswerDialogbox openAnswerView(final AnswerProxy answer) {
 		
-		final AnswerDialogbox answerDialogbox = new AnswerDialogboxImpl(question,eventBus,reciverMap);
+		final AnswerDialogbox answerDialogbox = new AnswerDialogboxImpl(question,eventBus,reciverMap,isAdminOrInstitutionalAdmin());
 		answerDialogbox.setDelegate(this);
 		
 		// because display need to be called after author and reviewer list.  
@@ -1287,7 +1304,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	}
 
 	private void openMatrixAnswerView(final MatrixValidityProxy matrixValidity, final boolean isNew, final boolean isEdit, final boolean isDelete) {
-		final MatrixAnswerView matrixAnswerView = new MatrixAnswerViewImpl(question);
+		final MatrixAnswerView matrixAnswerView = new MatrixAnswerViewImpl(question,isAdminOrInstitutionalAdmin());
 		matrixAnswerView.setDelegate(this);
 				
 		matrixAnswerView.setRewiewerPickerValues(Collections.<PersonProxy>emptyList());
@@ -1387,7 +1404,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	}
 	
     @Override
-	public void saveAllTheValuesToAnswerAndMatrixAnswer(List<MatrixValidityProxy> currentMatrixValidityProxy, Matrix<MatrixValidityVO> matrixList, PersonProxy author, final PersonProxy rewiewer, Boolean submitToReviewComitee, String comment) {
+	public void saveAllTheValuesToAnswerAndMatrixAnswer(List<MatrixValidityProxy> currentMatrixValidityProxy, Matrix<MatrixValidityVO> matrixList, PersonProxy author, final PersonProxy rewiewer, Boolean submitToReviewComitee, String comment, Boolean forcedActive) {
 		
 		final AnswerRequest answerRequest = requests.answerRequest();
 		final MatrixValidityRequest validityRequest = answerRequest.append(requests.MatrixValidityRequest());
@@ -1419,7 +1436,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 					answerX.setDateChanged(new Date());
 					answerX.setComment(comment);
 					
-					setMatrixAnswerValues(author, rewiewer, submitToReviewComitee, vo, answerX, vo.getAnswerX());
+					setMatrixAnswerValues(author, rewiewer, submitToReviewComitee, vo, answerX, vo.getAnswerX(),forcedActive);
 					answerXIndex.put(xIndex,answerX);
 				} else {
 					
@@ -1429,7 +1446,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 						newAnswerProxy.setComment(comment);
 						
 						newAnswerProxy.setDateAdded(new Date());
-						setMatrixAnswerValues(author, rewiewer, submitToReviewComitee, vo, newAnswerProxy, vo.getAnswerX());
+						setMatrixAnswerValues(author, rewiewer, submitToReviewComitee, vo, newAnswerProxy, vo.getAnswerX(),forcedActive);
 						
 						proxy.setAnswerX(newAnswerProxy);
 						answerXIndex.put(xIndex,newAnswerProxy);
@@ -1446,7 +1463,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 					AnswerProxy answerY = proxy.getAnswerY();
 					answerY.setDateChanged(new Date());
 					answerY.setComment(comment);
-					setMatrixAnswerValues(author, rewiewer, submitToReviewComitee, vo, answerY, vo.getAnswerY());
+					setMatrixAnswerValues(author, rewiewer, submitToReviewComitee, vo, answerY, vo.getAnswerY(),forcedActive);
 					answerYIndex.put(yIndex,proxy.getAnswerY());
 				}else {
 
@@ -1458,7 +1475,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 						proxy.setAnswerY(newAnswerProxy);
 						
 						newAnswerProxy.setDateAdded(new Date());
-						setMatrixAnswerValues(author, rewiewer, submitToReviewComitee, vo, newAnswerProxy, vo.getAnswerY());
+						setMatrixAnswerValues(author, rewiewer, submitToReviewComitee, vo, newAnswerProxy, vo.getAnswerY(),forcedActive);
 						answerYIndex.put(yIndex,newAnswerProxy);
 						
 						answerRequest.persist().using(newAnswerProxy);
@@ -1487,18 +1504,25 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		});
 	}
 
-	private void setMatrixAnswerValues(PersonProxy author, PersonProxy rewiewer, Boolean submitToReviewComitee, MatrixValidityVO vo, final AnswerProxy answer, AnswerVO answerVO) {
+	private void setMatrixAnswerValues(PersonProxy author, PersonProxy rewiewer, Boolean submitToReviewComitee, MatrixValidityVO vo, final AnswerProxy answer, AnswerVO answerVO, Boolean forcedActive) {
 		answer.setAnswerText(answerVO.getAnswer());
 		answer.setAutor(author);
 		answer.setRewiewer(rewiewer);
 		answer.setSubmitToReviewComitee(submitToReviewComitee);
 		answer.setIsAnswerAcceptedAdmin(isAdminOrInstitutionalAdmin());
-		answer.setIsAnswerAcceptedReviewWahrer(false);
+		if(submitToReviewComitee == true) {
+			answer.setIsAnswerAcceptedReviewWahrer(true);	
+		} else {
+			answer.setIsAnswerAcceptedReviewWahrer(false);
+		}
 		answer.setIsAnswerAcceptedAutor(userLoggedIn.getId().equals(author.getId()));
+		answer.setIsForcedActive(forcedActive);
 		answer.setQuestion(question);
 		answer.setValidity(vo.getValidity());
 		
-		if ((isAdminOrInstitutionalAdmin())) {
+		if(forcedActive == true) {
+			answer.setStatus(Status.ACTIVE);
+		}else if ((isAdminOrInstitutionalAdmin())) {
 			answer.setStatus(Status.ACCEPTED_ADMIN);
 		} else {
 			answer.setStatus(Status.NEW);
@@ -1512,5 +1536,39 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	public void showAllClicked() {
 		initAnswerView();
 	}
+
+	@Override
+	public void pushToReviewProcessClicked() {
+		boolean isAcceptedByAdmin = isAdminOrInstitutionalAdmin();
+		boolean isAcceptedByReviewer = false;
+		boolean isAcceptedByAuthor = userLoggedIn.getId().equals(question.getAutor().getId());
+		boolean isForcedActive = false;
+		Status status = Status.NEW;
+		updateQuestion(status,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor,isForcedActive);
+	}
+	
+	private final void updateQuestion(final Status status, final boolean isAcceptedByAdmin, final boolean isAcceptedByReviewer, final boolean isAcceptedByAuthor, final boolean isForcedActive) {
+		final QuestionRequest questionRequest = requests.questionRequest();
+		final QuestionProxy questionProxy = questionRequest.edit(this.question);
+		
+		questionProxy.setStatus(status);
+		questionProxy.setIsAcceptedAdmin(isAcceptedByAdmin);
+		questionProxy.setIsAcceptedAuthor(isAcceptedByAuthor);
+		questionProxy.setIsAcceptedRewiever(isAcceptedByReviewer);
+		questionProxy.setIsForcedActive(isForcedActive);
+		questionProxy.setQuestionVersion(question.getQuestionVersion());
+		questionProxy.setQuestionSubVersion(question.getQuestionSubVersion() + 1);
+		questionProxy.setDateChanged(new Date());
+		
+		final QuestionProxy questionProxy2 = questionProxy;
+		questionRequest.persist().using(questionProxy).fire(new BMEReceiver<Void>(reciverMap) {
+			@Override
+			public void onSuccess(Void response) {
+				placeController.goTo(new PlaceQuestion(PlaceQuestion.PLACE_QUESTION,questionProxy2.stableId()));
+				placeController.goTo(new PlaceQuestionDetails(questionProxy2.stableId()));
+			}
+		});
+	}
+	
 
 }

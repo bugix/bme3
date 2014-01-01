@@ -37,5 +37,9 @@ public interface QuestionResourceProxy extends EntityProxy {
 
     abstract void setImageWidth(Integer imageWidth);
 
+    abstract String getName();
+
+    abstract void setName(String name);
+
     abstract Integer getVersion();
 }

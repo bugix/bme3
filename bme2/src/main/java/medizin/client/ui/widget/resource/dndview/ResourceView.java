@@ -168,7 +168,7 @@ public class ResourceView extends Composite implements DragHandler {
 
 	}
 	
-	private void addUrl(String url,MultimediaType type,boolean added) {
+	private void addUrl(String name,String url,MultimediaType type,boolean added) {
 		
 		QuestionResourceClient proxy =  new QuestionResourceClient();
 		
@@ -177,6 +177,7 @@ public class ResourceView extends Composite implements DragHandler {
 			proxy.setSequenceNumber(frontRowNumber);
 			proxy.setType(type);
 			proxy.setState(State.NEW);
+			proxy.setName(name);
 			frontRowNumber++;
 			
 			questionResources.add(proxy);
@@ -194,31 +195,31 @@ public class ResourceView extends Composite implements DragHandler {
 		addResourceView(subView,true);
 	}
 
-	public void addUrl(String url,MultimediaType type) {
+	public void addUrl(String name,String url,MultimediaType type) {
 		switch (type) {
 		case Image:
-			addImageUrl(url);
+			addImageUrl(name,url);
 			break;
 		case Sound:
-			addSoundUrl(url);
+			addSoundUrl(name,url);
 			break;
 		case Video:
-			addVideoUrl(url);
+			addVideoUrl(name,url);
 			break;	
 		default:
 			break;
 		}
 	}
-	public void addVideoUrl(String url) {
-		addUrl(url, MultimediaType.Video,queHaveVideo);
+	public void addVideoUrl(String name,String url) {
+		addUrl(name,url, MultimediaType.Video,queHaveVideo);
 	}
 
-	public void addSoundUrl(String url) {
-		addUrl(url, MultimediaType.Sound,queHaveSound);
+	public void addSoundUrl(String name,String url) {
+		addUrl(name,url, MultimediaType.Sound,queHaveSound);
 	}
 
-	public void addImageUrl(String url) {
-		addUrl(url, MultimediaType.Image,queHaveImage);		
+	public void addImageUrl(String name,String url) {
+		addUrl(name,url, MultimediaType.Image,queHaveImage);		
 	}
 
 	// drag hander methods.

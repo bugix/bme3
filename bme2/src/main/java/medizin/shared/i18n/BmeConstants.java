@@ -832,5 +832,13 @@ public interface BmeConstants extends Constants {
 	public String solutionKey();
 	
 	public String mainExamQuestion();
+
+	public String pushToReviewProcess();
+	
+	public String creativeWork();
+	
+	public String forcedAnswerToActive();
+	
+	public String forcedQuestionActive();
 }
 

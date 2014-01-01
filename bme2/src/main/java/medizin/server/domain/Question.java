@@ -61,6 +61,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 @RooJavaBean
 @RooToString
@@ -120,7 +121,7 @@ public class Question {
 	@ManyToMany(fetch=FetchType.LAZY)
 	protected Set<Keyword> keywords = new HashSet<Keyword>();
 
-	@NotNull
+	//@NotNull
 	@ManyToOne
 	private QuestionEvent questEvent;
 
@@ -135,7 +136,7 @@ public class Question {
 	@NotNull
 	private Status status;
 
-	@NotNull
+	//@NotNull
 	@ManyToMany
 	protected Set<Mc> mcs = new HashSet<Mc>();
 
@@ -162,7 +163,7 @@ public class Question {
 	@ManyToOne
 	private Person rewiewer;
 
-	@NotNull
+	//@NotNull
 	@ManyToOne
 	private Person autor;
 
@@ -754,49 +755,18 @@ public class Question {
 					"The person and institution arguments are required");
 		// End filter fuctionality
 
-		/*StringBuilder queryBuilder = new StringBuilder(
-				"SELECT count(Question) FROM Question AS question WHERE question.status != " + Status.DEACTIVATED.ordinal() +" AND ");
-
-		Boolean isAccepted = false;
-
-		if (loggedUser.getIsAdmin()) {
-
-			queryBuilder.append("question.isAcceptedAdmin = :isAccepted ");
-
-		} else {
-			queryBuilder
-					.append("question.isAcceptedRewiever = :isAccepted AND question.rewiewer = :person");
-			queryBuilder.append("(question.isAcceptedRewiever = :isAccepted AND question.rewiewer = :person) OR (question.autor = :person AND question.status IN("+ Status.CORRECTION_FROM_ADMIN.ordinal() +","+ Status.CORRECTION_FROM_REVIEWER.ordinal() +"))");
-		}*/
-		
 		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
 		CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
 		Root<Question> from = criteriaQuery.from(Question.class);
 		criteriaQuery.select(criteriaBuilder.count(from));	
 
-		Predicate pre1 = criteriaBuilder.and(criteriaBuilder.equal(from.get("questEvent").get("institution").get("id"), institution.getId()), criteriaBuilder.notEqual(from.get("status"), Status.DEACTIVATED),criteriaBuilder.notEqual(from.get("isForcedActive"), true));
-
-		if (personAccessRight.getIsAdmin() || personAccessRight.getIsInstitutionalAdmin())
-		{
-			pre1 = criteriaBuilder.and(pre1, criteriaBuilder.equal(from.get("isAcceptedAdmin"), false));
-		}
-		else
-		{
-			Predicate pre2 = criteriaBuilder.and(criteriaBuilder.equal(from.get("isAcceptedRewiever"), false), criteriaBuilder.equal(from.get("rewiewer").get("id"), loggedUser.getId()));
-			Predicate pre3 = criteriaBuilder.and(criteriaBuilder.equal(from.get("autor").get("id"), loggedUser.getId()), criteriaBuilder.equal(from.get("isAcceptedAuthor"), false));
-
-			pre1 = criteriaBuilder.and(pre1, criteriaBuilder.or(pre2, pre3));
-		}
-
+		Predicate pre1 = predicateQuestionsNonAcceptedAdmin(personAccessRight, loggedUser, institution, criteriaBuilder, from);
 		criteriaQuery.where(pre1);
-		
 		TypedQuery<Long> q = entityManager().createQuery(criteriaQuery);
-
 		return q.getSingleResult();
 	}
 
-	public static List<Question> findQuestionsEntriesNonAcceptedAdmin(String sortname,Sorting sortOrder,
-			int start, int length) {
+	public static List<Question> findQuestionsEntriesNonAcceptedAdmin(String sortname,Sorting sortOrder,int start, int length) {
 		// Gets the Sessionattributes
 		PersonAccessRight personAccessRights = Person.fetchPersonAccessFromSession();
 		Person loggedUser = Person.myGetLoggedPerson();
@@ -805,23 +775,7 @@ public class Question {
 			throw new IllegalArgumentException(
 					"The person and institution arguments are required");
 		// End filter fuctionality
-
-		/*StringBuilder queryBuilder = new StringBuilder(
-				"SELECT Question FROM Question AS question WHERE  question.status != " + Status.DEACTIVATED.ordinal() +" AND ");
-
-		Boolean isAccepted = false;
-
-		if (loggedUser.getIsAdmin()) {
-
-			queryBuilder.append("question.isAcceptedAdmin = :isAccepted ");
-
-		} else {
-			queryBuilder
-					.append("question.isAcceptedRewiever = :isAccepted AND question.rewiewer = :person");
-			queryBuilder.append("(question.isAcceptedRewiever = :isAccepted AND question.rewiewer = :person) OR (question.autor = :person AND question.status IN("+ Status.CORRECTION_FROM_ADMIN.ordinal() +","+ Status.CORRECTION_FROM_REVIEWER.ordinal() +"))");
-		}
-
-		EntityManager em = Question.entityManager();*/
+		
 		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
 		CriteriaQuery<Question> criteriaQuery = criteriaBuilder.createQuery(Question.class);
 		Root<Question> from = criteriaQuery.from(Question.class);
@@ -832,7 +786,17 @@ public class Question {
 			criteriaQuery.orderBy(criteriaBuilder.desc(from.get(sortname)));
 		}
 		
-		Predicate pre1 = criteriaBuilder.and(criteriaBuilder.equal(from.get("questEvent").get("institution").get("id"), institution.getId()), criteriaBuilder.notEqual(from.get("status"), Status.DEACTIVATED),criteriaBuilder.notEqual(from.get("isForcedActive"), true));
+		Predicate pre1 = predicateQuestionsNonAcceptedAdmin(personAccessRights, loggedUser, institution, criteriaBuilder, from);
+		criteriaQuery.where(pre1);
+		TypedQuery<Question> q = entityManager().createQuery(criteriaQuery);
+		q.setFirstResult(start);
+		q.setMaxResults(length);
+		log.info("~~QUERY : " + q.unwrap(Query.class).getQueryString());
+		return q.getResultList();
+	}
+
+	private static Predicate predicateQuestionsNonAcceptedAdmin(PersonAccessRight personAccessRights, Person loggedUser, Institution institution, CriteriaBuilder criteriaBuilder, Root<Question> from) {
+		Predicate pre1 = criteriaBuilder.and(criteriaBuilder.equal(from.get("questEvent").get("institution").get("id"), institution.getId()), criteriaBuilder.not(from.get("status").in(Status.DEACTIVATED,Status.CREATIVE_WORK)),criteriaBuilder.notEqual(from.get("isForcedActive"), true));
 
 		if (personAccessRights.getIsAdmin() || personAccessRights.getIsInstitutionalAdmin())
 		{
@@ -840,21 +804,13 @@ public class Question {
 		}
 		else
 		{
-			Predicate pre2 = criteriaBuilder.and(criteriaBuilder.equal(from.get("isAcceptedRewiever"), false), criteriaBuilder.equal(from.get("rewiewer").get("id"), loggedUser.getId()));
+			final Predicate pre2 = criteriaBuilder.and(criteriaBuilder.equal(from.get("isAcceptedRewiever"), false), criteriaBuilder.equal(from.get("rewiewer").get("id"), loggedUser.getId()));
 			//Predicate pre3 = criteriaBuilder.and(criteriaBuilder.equal(from.get("autor").get("id"), loggedUser.getId()), from.get("status").in(Status.CORRECTION_FROM_ADMIN, Status.CORRECTION_FROM_REVIEWER));
-			Predicate pre3 = criteriaBuilder.and(criteriaBuilder.equal(from.get("autor").get("id"), loggedUser.getId()), criteriaBuilder.equal(from.get("isAcceptedAuthor"), false));
+			final Predicate pre3 = criteriaBuilder.and(criteriaBuilder.equal(from.get("autor").get("id"), loggedUser.getId()), criteriaBuilder.equal(from.get("isAcceptedAuthor"), false));
 
 			pre1 = criteriaBuilder.and(pre1, criteriaBuilder.or(pre2, pre3));
 		}
-
-		criteriaQuery.where(pre1);
-
-		TypedQuery<Question> q = entityManager().createQuery(criteriaQuery);
-
-		q.setFirstResult(start);
-		q.setMaxResults(length);
-		log.info("~~QUERY : " + q.unwrap(Query.class).getQueryString());
-		return q.getResultList();
+		return pre1;
 	}
 
 	public static List<Question> findQuestionsAnswersNonAcceptedAdmin() {
@@ -1784,7 +1740,7 @@ public class Question {
 				question.setStatus(Status.ACCEPTED_ADMIN);
 		}
 		
-		if (question.getRewiewer().getId().equals(userLoggedIn.getId())) {
+		if (question.getRewiewer() != null && question.getRewiewer().getId().equals(userLoggedIn.getId())) {
 			question.setIsAcceptedRewiever(true);
 
 			if (question.getIsAcceptedAdmin() && question.getIsAcceptedAuthor()) {
@@ -1792,7 +1748,7 @@ public class Question {
 				//question.setIsActive(true);
 			} else
 				question.setStatus(Status.ACCEPTED_REVIEWER);
-		} 
+		}
 		
 		if (question.getAutor().getId().equals(userLoggedIn.getId())) {
 			question.setIsAcceptedAuthor(true);
@@ -2031,10 +1987,16 @@ public class Question {
 	private static <T> TypedQuery<T> notActivatedQuestionsByPerson(Long institutionId, String searchText, List<String> searchField, CriteriaBuilder cb, CriteriaQuery<T> cq, Root<Question> from) {
 		
 		Predicate preIns1 = cb.equal(from.get("questEvent").get("institution").get("id"), institutionId);
-		Predicate preStatus2 = from.get("status").in(Status.ACCEPTED_ADMIN,Status.ACCEPTED_REVIEWER,Status.CORRECTION_FROM_ADMIN,Status.CORRECTION_FROM_REVIEWER,Status.NEW); 		
+		Map<String,String> searchFilterMap = BMEUtils.convertToMap(searchField);
+		Set<Status> status = Sets.newHashSet(Status.ACCEPTED_ADMIN,Status.ACCEPTED_REVIEWER,Status.CORRECTION_FROM_ADMIN,Status.CORRECTION_FROM_REVIEWER);
+		if(searchFilterMap.containsKey("showNew")) {
+			status.add(Status.NEW);
+		}
+		
+		Predicate preStatus2 = from.get("status").in(status); 		
 		Predicate andPredicate = null;
 		
-		andPredicate = simpleSearchForQuestion(BMEUtils.convertToMap(searchField), searchText, cb, from);
+		andPredicate = simpleSearchForQuestion(searchFilterMap, searchText, cb, from);
 		
 		//andPredicate = searchFilter(searchText, BMEUtils.convertToMap(searchField), cb, from);
 		
@@ -2245,9 +2207,20 @@ public class Question {
 		
 			Predicate statusNewPredicate = criteriaBuilder.equal(from.get("status"),Status.ACTIVE);
 			Map<String, String> searchFilterMap = BMEUtils.convertToMap(searchField);
-			if (searchFilterMap.containsKey("showNew")) {
-				statusNewPredicate =  from.get("status").in(Status.NEW,Status.ACTIVE);
-			}			
+			if (searchFilterMap.containsKey("showNew") || searchFilterMap.containsKey("creativeWork")) {
+				Set<Status> status = Sets.newHashSet(Status.ACTIVE);
+				
+				if(searchFilterMap.containsKey("showNew")) {
+					status.add(Status.NEW);
+				}
+				
+				if(searchFilterMap.containsKey("showCreativeWork")) {
+					status.add(Status.CREATIVE_WORK);
+				}
+
+				statusNewPredicate =  from.get("status").in(status);
+			}
+			
 			mainPredicate = criteriaBuilder.and(mainPredicate, statusNewPredicate);
 			
 			Predicate basicSearchPredicate = simpleSearchForQuestion(searchFilterMap, searchText, criteriaBuilder, from);
@@ -2765,5 +2738,18 @@ public class Question {
 		}
 		return null;
 		
+	}
+
+	public static List<Question> findAllQuestionsForInstitution(Long institution) {
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+    	CriteriaQuery<Question> criteriaQuery = criteriaBuilder.createQuery(Question.class);
+    	Root<Question> from = criteriaQuery.from(Question.class);
+    	Predicate pre2 = criteriaBuilder.equal(from.get("questEvent").get("institution").get("id"), institution);
+    	Expression<String> path = from.get("comment");
+		Predicate pre3 = criteriaBuilder.like(path, "%SCLO item%");
+    	criteriaQuery.where(criteriaBuilder.and(pre2,pre3));
+		TypedQuery<Question> query = entityManager().createQuery(criteriaQuery);
+		List<Question> resultList = query.getResultList();
+		return resultList;
 	}
 }

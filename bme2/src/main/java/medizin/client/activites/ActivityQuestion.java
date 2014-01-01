@@ -3,8 +3,6 @@ package medizin.client.activites;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.SortOrder;
-
 import medizin.client.events.RecordChangeEvent;
 import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
@@ -465,6 +463,11 @@ public class ActivityQuestion extends AbstractActivityWrapper implements Questio
 		}
 		
 		if (place instanceof PlaceQuestion) {
+			Log.info("in place changed");
+			if(((PlaceQuestion) place).getProxyId() != null) {
+				proxyId = ((PlaceQuestion) place).getProxyId();	
+			}
+			
 			init();
 		}
 	}

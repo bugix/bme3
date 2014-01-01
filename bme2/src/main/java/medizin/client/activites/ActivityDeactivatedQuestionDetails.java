@@ -67,7 +67,7 @@ public class ActivityDeactivatedQuestionDetails extends AbstractActivityWrapper 
 				if(response instanceof QuestionProxy){
 					Log.info(((QuestionProxy) response).getQuestionText());
 					
-					QuestionDetailsViewImpl questionDetailsView = new QuestionDetailsViewImpl(eventBus, false,false,false,false,false,isQuestionTypeMCQ((QuestionProxy) response), false);
+					QuestionDetailsViewImpl questionDetailsView = new QuestionDetailsViewImpl(eventBus, false,false,false,false,false,isQuestionTypeMCQ((QuestionProxy) response), false,true);
 					thiz.view = questionDetailsView;		
 					questionDetailsView.setDelegate(thiz);		
 					thiz.widget = panel;
@@ -242,7 +242,7 @@ public class ActivityDeactivatedQuestionDetails extends AbstractActivityWrapper 
 	public void closedMatrixValidityView() {}
 
 	@Override
-	public void saveAllTheValuesToAnswerAndMatrixAnswer(List<MatrixValidityProxy> currentMatrixValidityProxy, Matrix<MatrixValidityVO> matrixList, PersonProxy author, PersonProxy rewiewer, Boolean submitToReviewComitee, String comment) {}
+	public void saveAllTheValuesToAnswerAndMatrixAnswer(List<MatrixValidityProxy> currentMatrixValidityProxy, Matrix<MatrixValidityVO> matrixList, PersonProxy author, PersonProxy rewiewer, Boolean submitToReviewComitee, String comment, Boolean forcedActive) {}
 
 	@Override
 	public void deleteAnswerClicked(AnswerProxy Answer) {}
@@ -260,7 +260,7 @@ public class ActivityDeactivatedQuestionDetails extends AbstractActivityWrapper 
 	public void findAllAnswersPoints(Long id, Long currentAnswerId, Function<List<String>, Void> function) {}
 
 	@Override
-	public void saveAnswerProxy(AnswerProxy answerProxy, String answerText, PersonProxy author, PersonProxy rewiewer, Boolean submitToReviewComitee, String comment, Validity validity, String points, String mediaPath, String additionalKeywords,  Integer sequenceNumber, Function<AnswerProxy, Void> function) {}
+	public void saveAnswerProxy(AnswerProxy answerProxy, String answerText, PersonProxy author, PersonProxy rewiewer, Boolean submitToReviewComitee, String comment, Validity validity, String points, String mediaPath, String additionalKeywords,  Integer sequenceNumber, Boolean forcedActive, Function<AnswerProxy, Void> function) {}
 
 	@Override
 	public void deleteClicked() {}
@@ -276,4 +276,7 @@ public class ActivityDeactivatedQuestionDetails extends AbstractActivityWrapper 
 
 	@Override
 	public void showAllClicked() {}
+
+	@Override
+	public void pushToReviewProcessClicked() {}
 }

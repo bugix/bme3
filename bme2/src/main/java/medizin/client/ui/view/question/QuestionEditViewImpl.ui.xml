@@ -12,6 +12,22 @@
 			text-align: right;
 
 		}
+		.pushToReviewProcess {
+			float:right;
+			margin-right: 5px;
+    		margin-top: 5px;
+		}
+		
+		.pushToReviewProcess > input {
+		    height: 18px;
+		    vertical-align: middle;
+		}
+		
+		.pushToReviewProcess > label {
+		    height: 18px;
+		    vertical-align: top;
+		    margin-right: 2px;
+		}
 	</ui:style>
 	<ui:with type="medizin.shared.i18n.BmeConstants" field="constants"></ui:with>
 	
@@ -29,6 +45,8 @@
 				<m:IconButton ui:field="save" icon="disk"></m:IconButton>
 				<m:IconButton ui:field="cancel" icon="closethick"></m:IconButton>
 				<m:IconButton ui:field="resendToReview" icon="check" text="{constants.resendToReview}" visible="false"></m:IconButton>
+				<g:CheckBox ui:field="pushToReviewProcess" text="{constants.pushToReviewProcess}" checked="true" styleName="{style.pushToReviewProcess}"></g:CheckBox>
+				<g:CheckBox ui:field="forcedActive" text="{constants.forcedQuestionActive}" checked="false" styleName="{style.pushToReviewProcess}"></g:CheckBox>
 			</div>
 		</g:HTMLPanel>
 
@@ -46,8 +64,6 @@
 								</td>
 								<td>
 									<g:TextBox ui:field="questionShortName" width="174px"></g:TextBox>
-
-
 								</td>
 							</tr>
 

@@ -23,7 +23,7 @@ public interface AnswerDialogbox extends IsWidget {
 		void cancelAnswerClicked();
 		void findAllAnswersPoints(Long id,Long currentAnswerId, Function<List<String>, Void> function);
 		//void deleteUploadedFiles(Set<String> paths);
-		void saveAnswerProxy(AnswerProxy answerProxy, String answerText, PersonProxy author, PersonProxy rewiewer, Boolean submitToReviewComitee, String comment, Validity validity, String points, String mediaPath, String additionalKeywords, Integer sequenceNumber, final Function<AnswerProxy, Void> function);
+		void saveAnswerProxy(AnswerProxy answerProxy, String answerText, PersonProxy author, PersonProxy rewiewer, Boolean submitToReviewComitee, String comment, Validity validity, String points, String mediaPath, String additionalKeywords, Integer sequenceNumber, Boolean forcedActive, final Function<AnswerProxy, Void> function);
 	}
 
  

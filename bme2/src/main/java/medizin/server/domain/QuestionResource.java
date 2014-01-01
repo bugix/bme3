@@ -31,7 +31,7 @@ import com.google.common.collect.Sets;
 public class QuestionResource {
 	private static final Logger log = Logger.getLogger(QuestionResource.class);
 
-	@NotNull
+	//@NotNull
 	private String path;
 
 	@NotNull
@@ -47,6 +47,8 @@ public class QuestionResource {
 	private Integer imageHeight;
 	
 	private Integer imageWidth;
+	
+	private String name;
 	
 	public static void persistSet(Set<QuestionResource> questionResources) {
 		

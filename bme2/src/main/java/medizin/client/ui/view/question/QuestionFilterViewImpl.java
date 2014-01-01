@@ -56,12 +56,16 @@ public class QuestionFilterViewImpl extends PopupPanel{
 	@UiField
 	HorizontalPanel mainPanel;
 	
+	@UiField
+	CheckBox creativeWork;
+	
 	@UiHandler("resetButton")
 	void onClick(ClickEvent e) {
 		questionText.setValue(false);
 		instructionText.setValue(false);
 		keywordText.setValue(false);
 		showNew.setValue(false);
+		creativeWork.setValue(false);
 	}
 
 	public QuestionFilterViewImpl() {
@@ -74,7 +78,6 @@ public class QuestionFilterViewImpl extends PopupPanel{
 		mainPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		labelPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		buttonPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-		
 		/*setSize("235px", "100px");*/
 	}
 
@@ -92,5 +95,9 @@ public class QuestionFilterViewImpl extends PopupPanel{
 
 	public CheckBox getShowNew() {
 		return showNew;
+	}
+	
+	public CheckBox getCreativeWork() {
+		return creativeWork;
 	}
 }

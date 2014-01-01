@@ -204,7 +204,7 @@ public class AcceptAnswerSubViewImpl extends Composite implements AcceptAnswerSu
 									{
 										final ImageViewer imgViewer = new ImageViewer();
 										
-										imgViewer.setUrl(selectedObject.getMediaPath(), null, null, questionProxy.getQuestionType().getQuestionType());
+										imgViewer.setUrl("",selectedObject.getMediaPath(), null, null, questionProxy.getQuestionType().getQuestionType());
 										/*ClientUtility.getImageWidthHeight(selectedObject.getMediaPath(), new ImageWidthHeight() {
 											
 											@Override

@@ -148,6 +148,9 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 	
 	@UiField
 	DivElement digitCount;
+	
+	@UiField
+	CheckBox forcedActive;
 
 	private Delegate delegate;
 	private AnswerProxy answer;
@@ -201,7 +204,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 	 * @UiField SimplePanel toolbarPanel;
 	 */
 		
-	public AnswerDialogboxImpl(QuestionProxy questionProxy, EventBus eventBus, Map<String, Widget> reciverMap) {
+	public AnswerDialogboxImpl(QuestionProxy questionProxy, EventBus eventBus, Map<String, Widget> reciverMap, boolean isAdminOrInstitutionalAdmin) {
 		
 		this.question = questionProxy;
 		//this.eventBus = eventBus;
@@ -229,6 +232,10 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 		setTitle(constants.answerDialogBoxTitle());
 		setText(constants.answerDialogBoxTitle());
 		setHeight("100%");
+		
+		if(isAdminOrInstitutionalAdmin == false) {
+			forcedActive.removeFromParent();
+		}
 		/*questionTypePanel.selectTab(0);
 		questionTypePanel.getTabBar().setTabText(0, "Manage Answer");
 		questionTypePanel.getTabBar().setTabText(1, "Media");*/
@@ -742,6 +749,10 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 		PersonProxy lastSelectedReviwer = ClientUtility.getAnswerReviwerPersonProxyFromCookie(values);
 		if (lastSelectedReviwer != null)
 			rewiewer.setSelected(lastSelectedReviwer);
+		
+		if(question.getRewiewer() != null) {
+			rewiewer.setSelected(question.getRewiewer());
+		}
 	}
 
 	@Override
@@ -834,7 +845,7 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 	}
 	
 	private void saveAnswer(final String points, final String mediaPath, final String additionalKeywords, final Integer sequenceNumber) {
-		delegate.saveAnswerProxy(answer, answerTextArea.getHTML(), author.getSelected(), rewiewer.getSelected(), submitToReviewComitee.getValue(), (comment.getText().isEmpty() ? " " : comment.getText()),validity.getValue(),points,mediaPath,additionalKeywords,sequenceNumber, new Function<AnswerProxy,Void>() {
+		delegate.saveAnswerProxy(answer, answerTextArea.getHTML(), author.getSelected(), rewiewer.getSelected(), submitToReviewComitee.getValue(), (comment.getText().isEmpty() ? " " : comment.getText()),validity.getValue(),points,mediaPath,additionalKeywords,sequenceNumber, forcedActive.getValue(), new Function<AnswerProxy,Void>() {
 
 			@Override
 			public Void apply(AnswerProxy input) {

@@ -44,6 +44,8 @@ public interface QuestionDetailsView extends IsWidget {
 
 		void acceptQueAnswersClicked();
 
+		void pushToReviewProcessClicked();
+
 	}
 
 	AnswerListViewImpl getAnswerListViewImpl();

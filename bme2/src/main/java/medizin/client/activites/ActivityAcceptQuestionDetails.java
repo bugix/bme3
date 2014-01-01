@@ -79,7 +79,7 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 	}
 
 	public void initDetailsView(QuestionProxy questionProxy) {
-		QuestionDetailsViewImpl questionDetailsView = new QuestionDetailsViewImpl(eventBus, true,hasAnswerWriteRights(questionProxy, null),hasAnswerAddRights(questionProxy),false,true,isQuestionTypeMCQ(questionProxy), true);
+		QuestionDetailsViewImpl questionDetailsView = new QuestionDetailsViewImpl(eventBus, true,hasAnswerWriteRights(questionProxy, null),hasAnswerAddRights(questionProxy),false,true,isQuestionTypeMCQ(questionProxy), true,true);
 		this.view = questionDetailsView;
         widget.setWidget(questionDetailsView.asWidget());
 		view.setDelegate(this);
@@ -450,5 +450,8 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 		});
 		
 	}
+
+	@Override
+	public void pushToReviewProcessClicked() {}
 
 }
