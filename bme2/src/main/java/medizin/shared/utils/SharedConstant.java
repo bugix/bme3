@@ -40,6 +40,8 @@ public final class SharedConstant {
 
 	public static final String SOUND_MEDIA_SIZE = "soundMediaSize";
 	
+	public static final String NAME = "name";
+	
 	public static final String[] IMAGE_EXTENSIONS = {"png","jpg","jpge","jpe","jfif","gif","tif","tiff","img","bmp"};
 	                   
 	public static final String[] SOUND_EXTENSIONS = {"mp3"};
