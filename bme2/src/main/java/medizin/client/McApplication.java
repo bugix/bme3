@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import medizin.client.activites.AsyncActivityMapper;
+import medizin.client.activites.AsyncCachingActivityMapper;
+import medizin.client.activites.AsyncFilteredActivityMapper;
 import medizin.client.activites.FilterForMainPlaces;
 import medizin.client.activites.McAppActivityMapper;
 import medizin.client.factory.receiver.BMEReceiver;
@@ -15,6 +18,7 @@ import medizin.client.proxy.PersonProxy;
 import medizin.client.ui.McAppNav;
 import medizin.client.ui.TopPanel;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
+import medizin.client.util.AsyncActivityManager;
 import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
@@ -123,11 +127,18 @@ public class McApplication {
 		Log.debug("McApp.Mapper");
 		
 
-		
-		CachingActivityMapper cached = new CachingActivityMapper(mcAppActivitiesMapper);
 		FilterForMainPlaces filterForMainPlaces = new FilterForMainPlaces();
-		ActivityMapper masterActivityMap = new FilteredActivityMapper(filterForMainPlaces, cached);
-		final ActivityManager masterActivityManager = new ActivityManager(masterActivityMap, eventBus);
+		
+		 // Manish CachingActivityMapper cached = new CachingActivityMapper(mcAppActivitiesMapper);
+		// Manish ActivityMapper masterActivityMap = new FilteredActivityMapper(filterForMainPlaces, cached);
+		// Manish final ActivityManager masterActivityManager = new ActivityManager(masterActivityMap, eventBus);
+
+		// commented above code and added following to implement JS splitting.
+		AsyncCachingActivityMapper cached = new AsyncCachingActivityMapper(mcAppActivitiesMapper);
+		
+		AsyncActivityMapper masterActivityMap = new AsyncFilteredActivityMapper(filterForMainPlaces,cached);
+		
+		AsyncActivityManager masterActivityManager = new AsyncActivityManager(masterActivityMap, eventBus);
 
 		masterActivityManager.setDisplay(shell.getPanel());
 

@@ -58,7 +58,7 @@ import com.google.gwt.place.shared.Place;
 /**
  * Converts a {@link #ProxyPlace} to a {@link ProxyListPlace}.
  */
-public class FilterForMainPlaces implements FilteredActivityMapper.Filter {
+public class FilterForMainPlaces implements AsyncFilteredActivityMapper.Filter {
 
 	/**
 	 * Required by {@link FilteredActivityMapper.Filter}, calls
