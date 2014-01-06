@@ -42,6 +42,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -132,7 +133,7 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 	QuestionLearningObjectiveSubViewImpl questionLearningObjectiveSubViewImpl;
 
 	@UiField
-	IconButton acceptQueAnswer;
+	CheckBox acceptQueAnswer;
 	
 	@UiField
 	QuestionUsedInMC questionUsedInMC;
@@ -142,6 +143,9 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 	
 	@UiField
 	IconButton pushToReviewProcess;
+	
+	@UiField(provided=true)
+	MatrixAnswerListViewImpl matrixAnswerListViewImpl;
 	
 	private static final Comparator<McProxy> MC_COMPARATOR = new Comparator<McProxy>() {
 
@@ -653,8 +657,13 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 	
 	@UiHandler("accept")
 	public void onAcceptClicked(ClickEvent e) {
-		if (proxy != null)
-			delegate.acceptQuestionClicked(proxy);
+		if (proxy != null) {
+			if(acceptQueAnswer.getValue() == true) {
+				delegate.acceptQueAnswersClicked();
+			} else {
+				delegate.acceptQuestionClicked(proxy);	
+			}
+		}
 	}
 	
 	@UiHandler("resendToReview")
@@ -663,21 +672,18 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 			delegate.onResendToReviewClicked(proxy);
 	}
 	
-	@UiHandler("acceptQueAnswer")
+	/*@UiHandler("acceptQueAnswer")
 	public void onAcceptQueAnswerClicked(ClickEvent e)
 	{
 		delegate.acceptQueAnswersClicked();
-	}
+	}*/
 	
-	@UiField(provided=true)
-	MatrixAnswerListViewImpl matrixAnswerListViewImpl;
 
 	public MatrixAnswerListViewImpl getMatrixAnswerListViewImpl() {
 		return matrixAnswerListViewImpl;
 	}
 
-	public void setMatrixAnswerListViewImpl(
-			MatrixAnswerListViewImpl matrixAnswerListViewImpl) {
+	public void setMatrixAnswerListViewImpl(MatrixAnswerListViewImpl matrixAnswerListViewImpl) {
 		this.matrixAnswerListViewImpl = matrixAnswerListViewImpl;
 	}
 
@@ -704,7 +710,7 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 	}
 	
 	@Override
-	public IconButton getAcceptQueAnswer() {
+	public CheckBox getAcceptQueAnswer() {
 		return acceptQueAnswer;
 	}
 	

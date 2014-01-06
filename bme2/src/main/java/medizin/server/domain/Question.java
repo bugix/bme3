@@ -2152,7 +2152,7 @@ public class Question {
 		
 		TypedQuery<Question> q = entityManager().createQuery(criteriaQuery);
 		
-		System.out.println("~~QUERY : " + q.unwrap(Query.class).getQueryString());
+		//System.out.println("~~QUERY : " + q.unwrap(Query.class).getQueryString());
 		
 		return q.getResultList();
 	}

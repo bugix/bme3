@@ -354,6 +354,7 @@ public class XMLData {
 
 	public void createAssessmentInfo() {
 		for (int index = 0; index < 12; index++) {
+			log.info("index : " + index);
 			AssessmentPojo assessmentPojo = new AssessmentPojo();
 			assessmentPojo.assessmentName = "imported";//"Assesment " + dateOfAssessment.get(index);
 			assessmentPojo.assessmentdDate = getDate(dateOfAssessment.get(index));
@@ -448,8 +449,8 @@ public class XMLData {
 		String[] monthYear = StringUtils.split(value, ".");
 
 		if (monthYear != null && monthYear.length == 2) {
-			int month = Integer.parseInt(monthYear[0], 10);
-			int year = Integer.parseInt(monthYear[1], 10) + 2000;
+			int month = Integer.parseInt(monthYear[1], 10); 
+			int year = Integer.parseInt(monthYear[0], 10) + 2000;
 			Calendar calendar = Calendar.getInstance();
 			calendar.set(year, month - 1, 1, 0, 0, 0);
 			return calendar.getTime();

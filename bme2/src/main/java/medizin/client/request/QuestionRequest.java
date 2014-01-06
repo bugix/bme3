@@ -2,8 +2,6 @@ package medizin.client.request;
 
 import java.util.List;
 
-import javax.swing.SortOrder;
-
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.ui.widget.Sorting;
 
@@ -17,18 +15,13 @@ import com.google.web.bindery.requestfactory.shared.ServiceName;
 @ServiceName("medizin.server.domain.Question")
 public interface QuestionRequest extends QuestionRequest_Roo_Gwt {
 	
-	Request<List<QuestionProxy>> findQuestionAccessByPersonNonRoo(Long id,
-			int start, int length);
+	Request<List<QuestionProxy>> findQuestionAccessByPersonNonRoo(Long id, int start, int length);
 
 	Request<java.lang.Long>  countQuestionAccessByPersonNonRoo(Long id);
 
-	Request<java.lang.Long> countQuestionByInstitutionOrEventOrQuestionNameOrKeyword(
-			Long institutionId, Long eventId, String questiuonStringFilter,
-			Boolean filterQuestionText, Boolean filterKeywords);
+	Request<java.lang.Long> countQuestionByInstitutionOrEventOrQuestionNameOrKeyword(Long institutionId, Long eventId, String questiuonStringFilter, Boolean filterQuestionText, Boolean filterKeywords);
 	
-	Request<List<QuestionProxy>>  findQuestionByInstitutionOrEventOrQuestionNameOrKeyword(
-			Long institutionId, Long eventId, String questiuonStringFilter,
-			Boolean filterQuestionText, Boolean filterKeywords, int start, int length);
+	Request<List<QuestionProxy>>  findQuestionByInstitutionOrEventOrQuestionNameOrKeyword(Long institutionId, Long eventId, String questiuonStringFilter, Boolean filterQuestionText, Boolean filterKeywords, int start, int length);
 	
 	//Request<List<QuestionProxy>> findQuestionsByMc(Long mcId, List<String> criteriaStringList, String questionId, String questionType, String questionName,AssesmentProxy a,PersonProxy author);
 	
@@ -36,8 +29,7 @@ public interface QuestionRequest extends QuestionRequest_Roo_Gwt {
 
 	Request<java.lang.Long> countQuestionsNonAcceptedAdmin();
 
-	Request<List<QuestionProxy>> findQuestionsEntriesNonAcceptedAdmin(String sortname,Sorting sortOrder,
-			int start, int length);
+	Request<List<QuestionProxy>> findQuestionsEntriesNonAcceptedAdmin(String sortname,Sorting sortOrder, int start, int length);
 
 	Request<List<QuestionProxy>> findQuestionsAnswersNonAcceptedAdmin();
 

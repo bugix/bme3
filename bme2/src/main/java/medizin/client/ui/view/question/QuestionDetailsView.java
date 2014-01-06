@@ -7,6 +7,7 @@ import medizin.client.ui.view.question.usedinmc.QuestionUsedInMC;
 import medizin.client.ui.widget.IconButton;
 
 import com.google.common.base.Function;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -76,7 +77,7 @@ public interface QuestionDetailsView extends IsWidget {
 	
 	public QuestionUsedInMC getQuestionUsedInMC();
 	void removeQuestionUsedInMCTab();
-	IconButton getAcceptQueAnswer();
+	CheckBox getAcceptQueAnswer();
 	QuestionKeywordView getQuestionKeywordView();
 	
 }

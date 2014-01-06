@@ -38,6 +38,9 @@
 			min-height: 15px;
 			vertical-align: middle;
 		}
+		.allquesAnswers {
+			font-weight: bold; display: block; margin: 5px;
+		}
 	</ui:style>
 		
 	<g:HTMLPanel>
@@ -58,7 +61,7 @@
 							<medizin:IconButton ui:field="accept" icon="check" text="{constants.acceptQuestion}" visible="false"></medizin:IconButton>
 							<medizin:IconButton ui:field="resendToReview" icon="check" text="{constants.resendToReview}" visible="false"></medizin:IconButton>
 							<medizin:IconButton ui:field="forcedActive" icon="check" text="{constants.forcedActive}" visible="false"></medizin:IconButton>
-							<medizin:IconButton ui:field="acceptQueAnswer" icon="check" text="{constants.acceptQueAnswer}" visible="false"></medizin:IconButton>
+							<!-- <medizin:IconButton ui:field="acceptQueAnswer" icon="check" text="{constants.acceptQueAnswer}" visible="false"></medizin:IconButton> -->
 							<medizin:IconButton ui:field="pushToReviewProcess" icon="check" text="{constants.pushToReviewProcess}" visible="true"></medizin:IconButton>
 							<medizin:IconButton ui:field="delete" icon="trash" text="{constants.delete}"></medizin:IconButton>
 							<medizin:IconButton ui:field="edit" icon="pencil" text="{constants.edit}"></medizin:IconButton>
@@ -73,6 +76,7 @@
 				<g:Tab text="{constants.manageQuestion}">
 					<!-- <g:HorizontalPanel > -->
 					<g:HTMLPanel addStyleNames="{style.patientDetails}">
+						<g:CheckBox ui:field="acceptQueAnswer" checked="true" text="{constants.acceptQueAnswer}" visible="false" styleName="{style.allquesAnswers}"></g:CheckBox>
 						<table class="{style.fields}">
 							<tr>
 								<td colspan="2">
