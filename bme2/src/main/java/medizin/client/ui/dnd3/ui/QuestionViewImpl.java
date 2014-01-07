@@ -176,7 +176,7 @@ public class QuestionViewImpl extends VerticalPanel implements QuestionView {
 	private HorizontalPanel getInputPanel() {
 		HorizontalPanel panel = new HorizontalPanel();
 		
-		if(questionProxy.getQuestion().getQuestionType().getSumTrueAnswer() != 1) {
+		if(questionProxy.getQuestion().getQuestionType().getSumTrueAnswer() != null && questionProxy.getQuestion().getQuestionType().getSumTrueAnswer() != 1) {
 			Label percentLbl = new Label("percent");
 			panel.add(percentLbl);
 			panel.setCellVerticalAlignment(percentLbl, HasVerticalAlignment.ALIGN_MIDDLE);

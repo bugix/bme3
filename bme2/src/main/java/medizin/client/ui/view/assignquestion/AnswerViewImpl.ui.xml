@@ -38,7 +38,7 @@
 		float: right;
 		}
 		.validity{
-		width: 18px;
+		width: 16px;
 		}
 	
 	
@@ -50,7 +50,8 @@
 					<g:Label styleName="ui-icon {style.validity}" ui:field="lblIcon"></g:Label>
 				</td>
 				<td class="{style.maxWidth}">
-					<g:Label ui:field="lblAnswerText" styleName="{style.fill}" ></g:Label>
+					<g:HTML ui:field="lblAnswerText" styleName="{style.fill}" ></g:HTML>
+					<!-- <g:Label ui:field="lblAnswerText" styleName="{style.fill}" ></g:Label> -->
 				</td>
 				<td class="{style.validity}">
 					<g:Label styleName="ui-icon ui-icon-check {style.right}"

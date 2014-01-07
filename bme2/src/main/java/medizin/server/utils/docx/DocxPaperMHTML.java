@@ -216,8 +216,8 @@ public final class DocxPaperMHTML {
 		return imageInByte;
 	}
 
-	private final Pattern patternBegin = Pattern.compile("(?<=\\\\)\\[");
-	private final Pattern patternEnd = Pattern.compile("(?<=\\\\)\\]");
+	private final Pattern patternBegin = Pattern.compile("(?<=\\\\)\\(");
+	private final Pattern patternEnd = Pattern.compile("(?<=\\\\)\\)");
 
 	private String replaceEquationWithImageTag(String string) {
 
@@ -254,7 +254,7 @@ public final class DocxPaperMHTML {
 		for (String fnd : foundList) {
 			final String fileName = UUID.randomUUID().toString();  
 			final BufferedImage bufferedImage = PaperUtils.generateImageFromLaTex(fnd);
-			newString = newString.replace("\\[" + fnd + "\\]", "<img src=\""+fileName+"\"/>");
+			newString = newString.replace("\\(" + fnd + "\\)", "<img src=\""+fileName+"\"/>");
 			equationMap.put(fileName, bufferedImage);
 		}
 		log.info("New String  :" + newString);

@@ -238,7 +238,7 @@ public final class ClientUtility {
 	}
 
 	public static String removeMathJax(String text) {
-		return text.replaceAll("\\[", "").replaceAll("\\]", "");		
+		return text.replaceAll("\\(", "").replaceAll("\\)", "");		
 	}
 
 	@SuppressWarnings("deprecation")

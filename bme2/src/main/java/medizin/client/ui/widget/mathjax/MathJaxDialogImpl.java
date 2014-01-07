@@ -344,7 +344,7 @@ public class MathJaxDialogImpl extends DialogBox implements MathJaxDialog,ClickH
 
 	public String getEquation() {
 		if(isSaved) {
-			return "\\[" + txtInputBox.getText() + "\\]";	
+			return "\\(" + txtInputBox.getText() + "\\)";	
 		} else {
 			return "";
 		}

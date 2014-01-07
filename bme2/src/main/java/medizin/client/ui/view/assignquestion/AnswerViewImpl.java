@@ -7,10 +7,12 @@ import medizin.shared.Validity;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -35,10 +37,12 @@ public class AnswerViewImpl extends Composite implements AnswerView {
 	
 	public AnswerViewImpl(){
 		initWidget(uiBinder.createAndBindUi(this));
+		
+		answerViewClickEvent();
 	}
-	
+
 	@UiField
-	   Label lblAnswerText;
+	   HTML lblAnswerText;
 	@UiField
 	   Label lblIcon;
 //	   Validity validity ;
@@ -59,11 +63,11 @@ public class AnswerViewImpl extends Composite implements AnswerView {
 		return checked;
 	}
 	
-	@UiHandler(value = { "lblCheck", "lblDel", "lblIcon" , "lblAnswerText"})
+	/*@UiHandler(value = { "lblCheck", "lblDel", "lblIcon" , "lblAnswerText"})
 	void lblCheckClicked(ClickEvent event) {
 		toggleAnswerSelection();
 
-	}
+	}*/
 	
 	public void toggleAnswerSelection()
 	{
@@ -111,7 +115,7 @@ public class AnswerViewImpl extends Composite implements AnswerView {
 		//this.add(lblIcon);
 		//this.setStyleName("answerDND");	
 		//this.add(lblAnswerText);
-		lblAnswerText.setText(answer.getAnswerText());
+		lblAnswerText.setHTML(answer.getAnswerText());
 		if(addCheck) {
 			lblCheck.setVisible(true);
 			DOM.setElementAttribute(answerPanel.getElement(), "style", "cursor: pointer;");
@@ -147,5 +151,15 @@ public class AnswerViewImpl extends Composite implements AnswerView {
 		 init(addCheck);
 	}
 
+	private void answerViewClickEvent() {
+		sinkEvents(Event.ONCLICK);
+		addHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				toggleAnswerSelection();
+			}
+		}, ClickEvent.getType());
+	}
 
 }
