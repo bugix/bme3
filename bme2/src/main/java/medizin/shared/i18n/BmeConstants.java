@@ -840,5 +840,9 @@ public interface BmeConstants extends Constants {
 	public String forcedAnswerToActive();
 	
 	public String forcedQuestionActive();
+	
+	public String printPdf();
+	
+	public String showInImgErrorMsg();
 }
 

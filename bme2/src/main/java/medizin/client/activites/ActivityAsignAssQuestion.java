@@ -1618,7 +1618,9 @@ QuestionAdvancedSearchPopupView.Delegate {
 				}
 				else
 				{
-					if(sumOfTrueAnsw==trueAnswer && totalAnswerSelected==sumOfAnswer)
+					if (sumOfTrueAnsw == 0 && totalAnswerSelected==sumOfAnswer)
+						return true;
+					else if(sumOfTrueAnsw==trueAnswer && totalAnswerSelected==sumOfAnswer)
 						return true;
 					else
 					{
@@ -1726,6 +1728,68 @@ QuestionAdvancedSearchPopupView.Delegate {
 		{
 			int totalAnswers=questionViewImpl.getAnswerPanel().getWidgetCount();
 			int totalSelectedAnswers=0;
+			int trueAnswer = 0;
+			int falseAnswer = 0;
+			int totalFalseAnswer = 0;
+		//	int sumOfAnswer=questionProxy.getQuestionType().getSumAnswer();
+			for(int i=0;i<totalAnswers;i++)
+			{
+				AnswerViewImpl answerViewImpl=(AnswerViewImpl)questionViewImpl.getAnswerPanel().getWidget(i);
+				
+				if(answerViewImpl.getProxy().getValidity()== Validity.Falsch)
+					totalFalseAnswer++;
+				
+				if(answerViewImpl.getChecked() )
+				{
+					totalSelectedAnswers++;
+					
+					if(answerViewImpl.getProxy().getValidity()== Validity.Wahr)
+						trueAnswer++;
+					else if(answerViewImpl.getProxy().getValidity()== Validity.Falsch)
+						falseAnswer++;
+				}
+				
+			}
+			/*boolean flag = false;
+			int keywordCount = questionProxy.getQuestionType().getKeywordCount() > 0 ? questionProxy.getQuestionType().getKeywordCount() : 1;
+			
+			if (keywordCount > 1)
+			{
+				
+				
+			} else {
+				
+			}
+			
+			if (questionProxy.getQuestionType().getKeywordCount() > 0 && questionProxy.getQuestionType().getIsDictionaryKeyword())
+			{
+				if (totalFalseAnswer == falseAnswer && trueAnswer == questionProxy.getQuestionType().getKeywordCount())
+					return true;
+			}
+			else if (questionProxy.getQuestionType().getIsDictionaryKeyword() && totalFalseAnswer == falseAnswer && trueAnswer > 0)
+			{
+				return true;
+			}
+			else if (questionProxy.getQuestionType().getKeywordCount() > 0 && questionProxy.getQuestionType().getIsDictionaryKeyword() == false && totalAnswers == trueAnswer)
+			{
+				return true;
+			}
+			else*/
+			
+			if(totalSelectedAnswers>=1)
+			{
+				return true;					
+			}
+			else
+			{
+				ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.imageKey());
+				return false;
+			}
+		}
+		else if (questionProxy.getQuestionType().getQuestionType() == QuestionTypes.ShowInImage)
+		{
+			int totalAnswers=questionViewImpl.getAnswerPanel().getWidgetCount();
+			int totalSelectedAnswers=0;
 		//	int sumOfAnswer=questionProxy.getQuestionType().getSumAnswer();
 			for(int i=0;i<totalAnswers;i++)
 			{
@@ -1744,7 +1808,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 			}
 			else
 			{
-				ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.imageKey());
+				ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.showInImgErrorMsg());
 				return false;
 			}
 		}
