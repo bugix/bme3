@@ -29,4 +29,6 @@ public interface BmeMessages extends Messages {
 	public String answerTextMinMaxContinueAnyWay(long min, long max);
 	
 	public String questionAllowed(int msg);
+	
+	public String imgKeyError(String answerType, int noOfAns);
 }

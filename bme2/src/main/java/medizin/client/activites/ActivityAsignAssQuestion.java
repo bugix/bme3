@@ -1750,33 +1750,37 @@ QuestionAdvancedSearchPopupView.Delegate {
 				}
 				
 			}
-			/*boolean flag = false;
 			int keywordCount = questionProxy.getQuestionType().getKeywordCount() > 0 ? questionProxy.getQuestionType().getKeywordCount() : 1;
 			
-			if (keywordCount > 1)
+			if (questionProxy.getQuestionType().getIsDictionaryKeyword() && keywordCount == trueAnswer)
 			{
-				
-				
-			} else {
-				
-			}
-			
-			if (questionProxy.getQuestionType().getKeywordCount() > 0 && questionProxy.getQuestionType().getIsDictionaryKeyword())
-			{
-				if (totalFalseAnswer == falseAnswer && trueAnswer == questionProxy.getQuestionType().getKeywordCount())
+				if(totalFalseAnswer == falseAnswer) {
 					return true;
-			}
-			else if (questionProxy.getQuestionType().getIsDictionaryKeyword() && totalFalseAnswer == falseAnswer && trueAnswer > 0)
+				}
+				else {
+					ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.imgKeyError("false", totalFalseAnswer));
+					return false;
+				}				
+			} 
+			else if (questionProxy.getQuestionType().getIsDictionaryKeyword() && keywordCount != trueAnswer)
 			{
-				return true;
+				ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.imgKeyError("true", keywordCount));
+				return false;
 			}
-			else if (questionProxy.getQuestionType().getKeywordCount() > 0 && questionProxy.getQuestionType().getIsDictionaryKeyword() == false && totalAnswers == trueAnswer)
-			{
-				return true;
-			}
-			else*/
 			
-			if(totalSelectedAnswers>=1)
+			if (questionProxy.getQuestionType().getIsDictionaryKeyword() == false) {
+				if (keywordCount == trueAnswer)
+				{
+					return true;
+				}
+				else
+				{
+					ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.imgKeyError("true", keywordCount));
+					return false;
+				}
+			} 
+			
+			if(totalSelectedAnswers == 1)
 			{
 				return true;					
 			}
@@ -1784,7 +1788,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 			{
 				ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.imageKey());
 				return false;
-			}
+			}		
 		}
 		else if (questionProxy.getQuestionType().getQuestionType() == QuestionTypes.ShowInImage)
 		{
