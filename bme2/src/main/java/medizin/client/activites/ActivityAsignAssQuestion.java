@@ -268,7 +268,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 	 * @param advancedSearchCriteriaList2 
 	 * 
 	 * */
-	private void initQuestionPanel(int action, AssesmentProxy assesment,List<AdvancedSearchCriteria> advancedSearchCriteriaList, String questionName,String questionId,String questionType) {
+	private void initQuestionPanel(int action, final AssesmentProxy assesment,List<AdvancedSearchCriteria> advancedSearchCriteriaList, String questionName,String questionId,String questionType) {
 		
 		PersonProxy author=null;
 		
@@ -361,9 +361,12 @@ QuestionAdvancedSearchPopupView.Delegate {
 					
 					Iterator<QuestionProxy> iter = response.iterator();
 					while(iter.hasNext()){
-						QuestionView question = new QuestionViewImpl();
+						final QuestionView question = new QuestionViewImpl();
 						question.setProxy(iter.next());
 						question.setDelegate(ActivityAsignAssQuestion.this);
+						// setting assesment proxy so it can be used to call new RPC to get Last use of que in past assesment.
+						question.setAssesment(assesment);
+						
 						dragController.makeDraggable(question.asWidget(), question.getDragControler());
 						questionPanel.addQuestion(question);
 					}
@@ -1628,12 +1631,12 @@ QuestionAdvancedSearchPopupView.Delegate {
 					}
 				}
 			}
-			else//2. all answer should be false
+			else//2. If sum of answer if infinite then at least two answer should be selected
 			{
 				int totalAnswers=questionViewImpl.getAnswerPanel().getWidgetCount();
-				int sumFalseAnswers=questionViewImpl.getProxy().getQuestionType().getSumFalseAnswer();
-				int falseAnswerSelected=0;
-				boolean isAllAnswerFalse = true;
+				//int sumFalseAnswers=questionViewImpl.getProxy().getQuestionType().getSumFalseAnswer();
+				//int falseAnswerSelected=0;
+				//boolean isAllAnswerFalse = true;
 				for(int i=0;i<totalAnswers;i++)
 				{
 					AnswerViewImpl answerViewImpl=(AnswerViewImpl)questionViewImpl.getAnswerPanel().getWidget(i);
@@ -1641,32 +1644,32 @@ QuestionAdvancedSearchPopupView.Delegate {
 					{
 						totalAnswerSelected++;						
 						
-						if(answerViewImpl.getProxy().getValidity()== Validity.Falsch)
+						/*if(answerViewImpl.getProxy().getValidity()== Validity.Falsch)
 							falseAnswerSelected++;
 						else
 						{
 							isAllAnswerFalse=false;
 							break;							
-						}
+						}*/
 					}
 				}
 				
 				//if(sumFalseAnswers==falseAnswerSelected)
 				if (sumOfAnswer.equals(SharedConstant.INFINITE_VALUE) == true)
 				{
-					if (totalAnswerSelected >= 2 && isAllAnswerFalse)
+					if (totalAnswerSelected >= 2)
 						return true;
 					else
 					{
-						if (isAllAnswerFalse == false)
+					/*if (isAllAnswerFalse == false)
 							ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.sumOfFalseAnswerErrMsg());
 						else
-							ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.sumOfAnswer(2));
-						
+							ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.sumOfAnswer(2));*/
+						ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.sumOfAnswer(2));
 						return false;
 					}
 				}
-				else
+				/*else
 				{
 					if(isAllAnswerFalse && totalAnswerSelected==sumOfAnswer)
 					{
@@ -1680,7 +1683,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 							ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.sumOfAnswer(sumOfAnswer));
 						return false;
 					}
-				}
+				}*/
 			}
 		}//3. Need to validate only sum of answer
 		else if(questionProxy.getQuestionType().getQuestionType()==QuestionTypes.Sort)
@@ -1895,6 +1898,26 @@ QuestionAdvancedSearchPopupView.Delegate {
 		questionTypeView.setDelegate(this);
 		questionTypeView.display(addQuestionType);
 		questionTypeView.disableSearchTextBox();
+	}
+
+	@Override
+	public void questionTabOpened(Long assesmentId, Long questionId,final QuestionViewImpl question) {
+		// Making RPC call and filling data in Last use Lbl 
+		
+
+		Log.info("calling method to find pass AssesmentQuestion with assesment Id : " + assesmentId + " and question Id :" + questionId);
+		
+		requests.assesmentQuestionRequest().findPastAssesmentOfQuestion(assesmentId,questionId).fire(new BMEReceiver<AssesmentQuestionProxy>() {
+
+			@Override
+			public void onSuccess(AssesmentQuestionProxy response) {
+				Log.info("onSuccess called of findPastAssesmentOfQuestion()");
+				if(response !=null){
+					question.setLastUse(response);
+				}
+			}
+		});
+		
 	}
 
 }

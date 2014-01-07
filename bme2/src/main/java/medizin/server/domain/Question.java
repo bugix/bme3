@@ -1972,9 +1972,19 @@ public class Question {
 		Root<Question> from = criteriaQuery.from(Question.class);
 		
 		if(sortOrder==Sorting.ASC){
+			if(sortname.equals("autor")){
+				criteriaQuery.orderBy(criteriaBuilder.asc(from.get(sortname).get("name")));
+				
+			}else{
 			criteriaQuery.orderBy(criteriaBuilder.asc(from.get(sortname)));
+			}
+		}else{
+			if(sortname.equals("autor")){
+				criteriaQuery.orderBy(criteriaBuilder.asc(from.get(sortname).get("name")));
+				
 		}else{
 			criteriaQuery.orderBy(criteriaBuilder.desc(from.get(sortname)));
+		}
 		}
 		
 		TypedQuery<Question> q = notActivatedQuestionsByPerson(institution.getId(), searchText, searchField, criteriaBuilder, criteriaQuery, from);
@@ -2517,9 +2527,18 @@ public class Question {
 		Root<Question> from = criteriaQuery.from(Question.class);
 		criteriaQuery.distinct(true);
 		if(sortorder==Sorting.ASC){
+			if(sortname.equals("autor")){
+				criteriaQuery.orderBy(criteriaBuilder.asc(from.get(sortname).get("name")));
+				
+			}else{
 			criteriaQuery.orderBy(criteriaBuilder.asc(from.get(sortname)));
+			}
+		}else{
+			if(sortname.equals("autor")){
+				criteriaQuery.orderBy(criteriaBuilder.desc(from.get(sortname).get("name")));
 		}else{
 			criteriaQuery.orderBy(criteriaBuilder.desc(from.get(sortname)));
+		}
 		}
 		Predicate mainPredicate = findQusetionByAdvancedSearchCriteria(loggedUser,institution, criteriaBuilder, criteriaQuery, from, criteriaStringList, searchField, searchText);
 		criteriaQuery.where(mainPredicate);
@@ -2600,9 +2619,19 @@ public class Question {
 		criteriaQuery.distinct(true);
 		
 		if(sortOrder==Sorting.ASC){
+			if(sortname.equals("autor")){
+				criteriaQuery.orderBy(criteriaBuilder.asc(from.get(sortname).get("name")));
+				
+			}else{
 			criteriaQuery.orderBy(criteriaBuilder.asc(from.get(sortname)));
+			}
+		}else{
+			if(sortname.equals("autor")){
+				criteriaQuery.orderBy(criteriaBuilder.desc(from.get(sortname).get("name")));
+				
 		}else{
 			criteriaQuery.orderBy(criteriaBuilder.desc(from.get(sortname)));
+		}
 		}
 		
 		criteriaQuery.where(deactivateQuestionPredicate(searchValue, searchField, criteriaBuilder, criteriaQuery, from,institution.getId()));

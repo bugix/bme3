@@ -1,5 +1,7 @@
 package medizin.client.ui.view.assignquestion;
 
+import medizin.client.proxy.AssesmentProxy;
+import medizin.client.proxy.AssesmentQuestionProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.ui.view.QuestionTextViewDialogBoxImpl;
 import medizin.client.ui.view.roo.CollectionRenderer;
@@ -11,6 +13,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.dom.client.TableElement;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -28,7 +31,7 @@ public class QuestionViewImpl extends Composite implements QuestionView {
 
 	private Delegate delegate;
 	private QuestionProxy question;
-	
+	private AssesmentProxy assesmentProxy;
 
 	private static QuestionViewImplUiBinder uiBinder = GWT
 	.create(QuestionViewImplUiBinder.class);
@@ -72,7 +75,10 @@ public class QuestionViewImpl extends Composite implements QuestionView {
 	    
 	    @UiField
 		TableElement questionTable;
-		
+	    
+	    @UiField
+	    SpanElement lastUse;
+	    
 	@UiField
 	IconButton viewHtmlText;
 	
@@ -128,6 +134,10 @@ public class QuestionViewImpl extends Composite implements QuestionView {
 	}
 
 	private void open() {
+	
+		//Calling following method that will make RPC call to get Last use data.
+		delegate.questionTabOpened(assesmentProxy.getId(),question.getId(),this);
+		
 		if(answersLoaded==false){
 			delegate.twistieOpenQuestionClicked(this);
 			answersLoaded=true;
@@ -200,6 +210,30 @@ public class QuestionViewImpl extends Composite implements QuestionView {
 	public void addToAssesmentClicked(ClickEvent event)
 	{
 		delegate.addNewQuestionToAssesment(this);
+	}
+
+	@Override
+	public void setLastUse(AssesmentQuestionProxy response) {
+		Double rvalue =response.getSchwierigkeit();
+		Double sValue =response.getTrenschaerfe();
+		
+		String year ="";
+		if(response.getDateAdded()!=null)
+		year=DateTimeFormat.getFormat("yyyy").format(response.getDateAdded());
+		
+		if(rvalue==null){
+			rvalue=0D;
+		}
+		if(sValue==null){
+			sValue=0D;
+		}
+		this.lastUse.setInnerHTML(assesmentProxy.getMc().getMcName() + "(" + year + ")<br> r=" + rvalue + " - s=" + sValue) ;
+		
+	}
+
+	@Override
+	public void setAssesment(AssesmentProxy assesment) {
+		this.assesmentProxy=assesment;
 	}
 
 }

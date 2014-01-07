@@ -140,8 +140,14 @@ border-bottom: 1px solid #AAAAAA;
                 <td>
                     <span class="{style.label}">Keywords:</span>
                 </td>
-                <td collspan="3">
+                <td>
                     <span ui:field="keywords"/>
+                </td>
+                 <td>
+                    <span class="{style.label}">Last use:</span>
+                </td>
+                <td>
+                    <span ui:field="lastUse"/>
                 </td>
             </tr>
       <tr id="comment" >

@@ -36,9 +36,11 @@
 		<g:center>
 			<g:ScrollPanel>
 				<g:VerticalPanel styleName="{style.panelRight}">
+					<c:QuestionAdvancedSearchSubViewImpl ui:field="questionAdvancedSearchSubViewImpl"></c:QuestionAdvancedSearchSubViewImpl>
 					<m:AddQuestionsTabPanelImpl ui:field="addQuestionsTabPanel"></m:AddQuestionsTabPanelImpl>
 					<m:QuestionPanelImpl ui:field="questionPanel"></m:QuestionPanelImpl>
-					<c:QuestionAdvancedSearchSubViewImpl ui:field="questionAdvancedSearchSubViewImpl"></c:QuestionAdvancedSearchSubViewImpl>					
+					<!--commented this code and added thia as first line for issue 171 -->
+					<!-- <c:QuestionAdvancedSearchSubViewImpl ui:field="questionAdvancedSearchSubViewImpl"></c:QuestionAdvancedSearchSubViewImpl> -->					
 				</g:VerticalPanel>
 			</g:ScrollPanel>
 		</g:center>

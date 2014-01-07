@@ -64,4 +64,6 @@ public interface AssesmentQuestionRequest extends AssesmentQuestionRequest_Roo_G
 	abstract Request<List<AssesmentQuestionProxy>> findQuestionsByAssesmentRepeFor(Long assessmentId,List<Long> availableQuestionTypeList);
 	
 	abstract Request<List<Long>> findQuestionsByAssesment(Long assessmentId);
+	
+	abstract Request<AssesmentQuestionProxy> findPastAssesmentOfQuestion(Long assesmentId,Long questionId);
 }

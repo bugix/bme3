@@ -27,6 +27,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.SetJoin;
@@ -1699,5 +1700,30 @@ public class AssesmentQuestion {
 				return input.getId();
 			}
 		};
+	}
+	
+	public static AssesmentQuestion findPastAssesmentOfQuestion(Long assesmentId,Long questionId){
+		log.info("findPastAssesmentOfQuestion assesment id:" + assesmentId + "Question id  : " + questionId);
+		
+		Assesment assesment = Assesment.findAssesment(assesmentId);
+		String mcName= assesment.getMc().getMcName().substring(0,assesment.getMc().getMcName().indexOf(".")+1);
+		
+		EntityManager em = entityManager();
+		String queryString = "SELECT aq from AssesmentQuestion as aq where aq.assesment in (select id from Assesment as a where a.mc in (select id from Mc as m where" +
+				" m.mcName like '"+ mcName +"%' )) and aq.question= "+ questionId + " order by date_added desc";
+        
+		System.out.println("Query is "+ queryString);
+		
+		TypedQuery<AssesmentQuestion> query = em.createQuery(queryString, AssesmentQuestion.class);
+		List<AssesmentQuestion> assesmentQuestionList = query.getResultList();
+		log.info("retrieve query String :" + queryString);
+		log.info("AssesmentQuestion List Size :" + assesmentQuestionList.size());
+        
+		if(assesmentQuestionList.size() > 0){
+			return assesmentQuestionList.get(0);
+		}else{
+			return null;
+		}
+			
 	}
 }
