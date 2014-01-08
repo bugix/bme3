@@ -1980,7 +1980,7 @@ public class Question {
 			}
 		}else{
 			if(sortname.equals("autor")){
-				criteriaQuery.orderBy(criteriaBuilder.asc(from.get(sortname).get("name")));
+				criteriaQuery.orderBy(criteriaBuilder.desc(from.get(sortname).get("name")));
 				
 		}else{
 			criteriaQuery.orderBy(criteriaBuilder.desc(from.get(sortname)));
