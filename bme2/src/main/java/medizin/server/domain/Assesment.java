@@ -15,6 +15,7 @@ import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
@@ -108,6 +109,7 @@ public class Assesment {
     private Integer percentSameQuestion;
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "assesment",fetch=FetchType.LAZY)
+    @OrderBy("sort_order")
     private Set<QuestionSumPerPerson> questionSumPerPerson = new HashSet<QuestionSumPerPerson>();
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "assesment",fetch=FetchType.LAZY)
@@ -118,6 +120,7 @@ public class Assesment {
     Institution institution;
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "assesment",fetch=FetchType.LAZY)
+    @OrderBy("sort_order")
     private List<QuestionTypeCountPerExam> questionTypeCountPerExams=new ArrayList<QuestionTypeCountPerExam>();
 
     private Boolean disallowSorting;

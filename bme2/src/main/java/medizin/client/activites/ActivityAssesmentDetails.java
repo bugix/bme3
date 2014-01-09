@@ -1,6 +1,5 @@
 package medizin.client.activites;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -18,8 +17,6 @@ import medizin.client.proxy.StudentToAssesmentProxy;
 import medizin.client.request.QuestionSumPerPersonRequest;
 import medizin.client.request.QuestionTypeCountPerExamRequest;
 import medizin.client.request.StudentToAssesmentRequest;
-import medizin.client.ui.ErrorPanel;
-import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.assesment.AssesmentDetailsView;
 import medizin.client.ui.view.assesment.AssesmentDetailsViewImpl;
 import medizin.client.ui.view.assesment.QuestionSumPerPersonDialogbox;
@@ -30,8 +27,6 @@ import medizin.client.ui.view.assesment.QuestionTypeCountAddDialogboxImpl;
 import medizin.client.ui.view.assesment.QuestionTypeCountView;
 import medizin.client.ui.view.assesment.StudentView;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
-import medizin.client.ui.widget.process.ApplicationLoadingPopupView;
-import medizin.server.domain.Institution;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.shared.EventBus;
@@ -44,10 +39,6 @@ import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.RangeChangeEvent;
 import com.google.inject.Inject;
 import com.google.web.bindery.requestfactory.gwt.client.RequestFactoryEditorDriver;
-import com.google.web.bindery.requestfactory.shared.Receiver;
-import com.google.web.bindery.requestfactory.shared.Request;
-import com.google.web.bindery.requestfactory.shared.ServerFailure;
-import com.google.web.bindery.requestfactory.shared.Violation;
 /**
  * Activity for Handling AssesementDetailsViews
  * @author masterthesis
@@ -62,65 +53,52 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 	StudentView.Presenter, StudentView.Delegate{
 
 	private PlaceAssesmentDetails assesmentPlace;
-
 	private AcceptsOneWidget widget;
 	private AssesmentDetailsView view;
-
 	private HandlerRegistration rangeChangeHandler;
-	
 	private AssesmentProxy assesment;
-	
-
 	private McAppRequestFactory requests;
 	private PlaceController placeController;
+	private QuestionTypeCountView questionTypeCountView;
+	private CellTable<QuestionTypeCountPerExamProxy> questionTypeCountTable;
+	private HandlerRegistration rangeQuestionTypeCountChangeHandler;
+	private QuestionSumPerPersonView questionSumPerPersonView;
+	private CellTable<QuestionSumPerPersonProxy> questionSumPerPersonTable;
+	private StudentView studentView;
+	private AssesmentDetailsView assesmentDetailsView;
+	private int questionTypeCountNextSortOrder;
+	private QuestionTypeCountAddDialogbox questionTypeCountAddDialogbox;
+	private  RequestFactoryEditorDriver<QuestionTypeCountPerExamProxy,QuestionTypeCountAddDialogboxImpl> driver;
+	private QuestionTypeCountPerExamProxy questionTypeCountPerExamProxy;
+	private QuestionSumPerPersonDialogbox questionSumPerPersonDialogbox;
+	private QuestionSumPerPersonProxy questionSumPerPersonProxy;
+	private Integer questionSumPerPersonNextSortOrder;
 
-
-
+	
 	@Inject
-	public ActivityAssesmentDetails(PlaceAssesmentDetails place,
-			McAppRequestFactory requests, PlaceController placeController) {
+	public ActivityAssesmentDetails(PlaceAssesmentDetails place, McAppRequestFactory requests, PlaceController placeController) {
 		super(place, requests, placeController);
 		this.assesmentPlace = place;
         this.requests = requests;
         this.placeController = placeController;
-
 	}
 
 	@Override
 	public String mayStop() {
-
 		return null;
 	}
 
 	@Override
 	public void onCancel() {
 		onStop();
-
 	}
 
 	@Override
 	public void onStop() {
 //		((SlidingPanel)widget).remove(view.asWidget());
 
-
 	}
 	
-	private AssesmentDetailsView assesmentDetailsView;
-
-	/**
-	 * Function is called from GWT-ActivityManager
-	 * the View for assesment Details will be created an tables are filled with data
-	 * calls @see medizin.client.a_nonroo.app.activities.ActivityAssesmentDetails#init(AssesmentProxy) , 
-	 * Overriden funtion from @see com.google.gwt.activity.shared.Activity
-	 */
-	/*@Override
-	public void start(AcceptsOneWidget widget, EventBus eventBus) {
-		super.start(widget, eventBus);
-
-	}*/
-	
-
-
 	@Override
 	public void start2(AcceptsOneWidget widget, EventBus eventBus) {
 		assesmentDetailsView = new AssesmentDetailsViewImpl();
@@ -143,32 +121,22 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 		
 		requests.find(assesmentPlace.getProxyId()).with("repeFor","mc","institution","questionSumPerPerson").fire(new BMEReceiver<Object>() {
 
-			/*public void onFailure(ServerFailure error){
-				Log.error(error.getMessage());
-			}*/
 			@Override
 			public void onSuccess(Object response) {
 				if(response instanceof AssesmentProxy){
 					Log.info(((AssesmentProxy) response).getName());
 					init((AssesmentProxy) response);
 				}
-
-				
 			}
-		    });
+		});
 
 	}
-
 
 	@Override
 	public void goTo(Place place) {
 		  placeController.goTo(place);
 	}
     
-	/**
-	 * 
-	 * @param AssesmentProxy assesment
-	 */
 	private void init(AssesmentProxy assesment) {
 
 		this.assesment = assesment;
@@ -180,18 +148,6 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 		initStudentView();
 	}
 
-	private QuestionTypeCountView questionTypeCountView;
-
-	private CellTable<QuestionTypeCountPerExamProxy> questionTypeCountTable;
-
-	private HandlerRegistration rangeQuestionTypeCountChangeHandler;
-
-	private QuestionSumPerPersonView questionSumPerPersonView;
-
-	private CellTable<QuestionSumPerPersonProxy> questionSumPerPersonTable;
-	
-	private StudentView studentView;
-	
 	private void initStudentView()
 	{
 		studentView = assesmentDetailsView.getStudentViewImpl();
@@ -244,7 +200,7 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 		questionTypeCountView.setPresenter(this);
 		questionTypeCountView.setDelegate(this);
 		Log.debug("request");
-		fireQuestionTypeCountCountRequest(new BMEReceiver<Long>() {
+		requests.questionTypeCountPerExamRequest().countQuestionTypeCountByAssesmentNonRoo(assesment.getId()).fire(new BMEReceiver<Long>() {
 			@Override
 			public void onSuccess(Long response) {
 				if (view == null) {
@@ -252,17 +208,11 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 					return;
 				}
 				Log.debug("Geholte QuestionTypeCount aus der Datenbank: " + response);
+				questionTypeCountNextSortOrder = response.intValue() + 1;
 				questionTypeCountTable.setRowCount(response.intValue(), true);
-
 				onQuestionTypeCountChanged();
 			}
-
-			
 		});
-		
-		
-		
-		
 		
 		rangeQuestionTypeCountChangeHandler = questionTypeCountTable.addRangeChangeHandler(new RangeChangeEvent.Handler() {
 			public void onRangeChange(RangeChangeEvent event) {
@@ -271,6 +221,21 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 		});
 	}
 	
+	private void onQuestionTypeCountChanged() {
+		final Range range = questionTypeCountTable.getVisibleRange();
+		requests.questionTypeCountPerExamRequest().findQuestionTypeCountByAssesmentNonRoo(assesment.getId(), range.getStart(), range.getLength()).with("questionTypesAssigned").fire(new BMEReceiver<List<QuestionTypeCountPerExamProxy>>() {
+		
+			@Override
+			public void onSuccess(List<QuestionTypeCountPerExamProxy> values) {
+				if (view == null) {
+					// This activity is dead
+					return;
+				}
+				questionTypeCountTable.setRowData(range.getStart(), values);
+			}
+		});
+	}
+	 
 	private void initQuestionSumPerPerson() {
 		questionSumPerPersonView = assesmentDetailsView.getQuestionSumPerPersonViewImpl();
 		
@@ -279,7 +244,7 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 		questionSumPerPersonView.setPresenter(this);
 		questionSumPerPersonView.setDelegate(this);
 		
-		fireQuestionSumPerPersonCountRequest(new BMEReceiver<Long>() {
+		requests.questionSumPerPersonRequest().countQuestionSumPerPersonByAssesmentNonRoo(assesment.getId()).fire(new BMEReceiver<Long>() {
 			@Override
 			public void onSuccess(Long response) {
 				if (view == null) {
@@ -287,6 +252,7 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 					return;
 				}
 				Log.debug("Geholte QuestionSumPerPerson aus der Datenbank: " + response);
+				questionSumPerPersonNextSortOrder = response.intValue() +1;
 				questionSumPerPersonTable.setRowCount(response.intValue(), true);
 
 				onQuestionSumPerPersonChanged();
@@ -296,80 +262,16 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 		});
 		
 
-		questionTypeCountTable.addRangeChangeHandler(new RangeChangeEvent.Handler() {
+		questionSumPerPersonTable.addRangeChangeHandler(new RangeChangeEvent.Handler() {
 			public void onRangeChange(RangeChangeEvent event) {
 				ActivityAssesmentDetails.this.onQuestionSumPerPersonChanged();
 			}
 		});
 	}
-	
-    protected void fireQuestionTypeCountCountRequest(BMEReceiver<java.lang.Long> callback) {
-    	requests.questionTypeCountPerExamRequest().countQuestionTypeCountByAssesmentNonRoo(assesment.getId()).fire(callback);
-    }
-    
-    protected void 	fireQuestionSumPerPersonCountRequest(BMEReceiver<java.lang.Long> callback) {
-    	requests.questionSumPerPersonRequest().countQuestionSumPerPersonByAssesmentNonRoo(assesment.getId()).fire(callback);
-    }
-    
-    private int sort_order;
-    
-    private void onQuestionTypeCountChanged() {
-		final Range range = questionTypeCountTable.getVisibleRange();
-
-		final BMEReceiver<List<QuestionTypeCountPerExamProxy>> callback = new BMEReceiver<List<QuestionTypeCountPerExamProxy>>() {
-			
-			@Override
-			public void onSuccess(List<QuestionTypeCountPerExamProxy> values) {
-				if (view == null) {
-					// This activity is dead
-					return;
-				}
-				
-				if(values.size()>0)
-				{
-					sort_order=values.get(values.size()-1).getSort_order()+1;
-				}
-				else
-				{
-					sort_order=1;
-				}
-				questionTypeCountTable.setRowData(range.getStart(), values);
-
-			}
-	           /*@Override
-				public void onFailure(ServerFailure error) {
-						Log.warn(McAppConstant.ERROR_WHILE_DELETE + " in Institution:Event -" + error.getMessage());
-						if(error.getMessage().contains("ConstraintViolationException")){
-							Log.debug("Fehlen beim erstellen: Doppelter name");
-							// TODO mcAppFactory.getErrorPanel().setErrorMessage(McAppConstant.EVENT_IS_REFERENCED);
-						}
-						
-					
-				}
-				@Override
-				public void onViolation(Set<Violation> errors) {
-					Iterator<Violation> iter = errors.iterator();
-					String message = "";
-					while(iter.hasNext()){
-						message += iter.next().getMessage() + "<br>";
-					}
-					Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Event -" + message);
-					
-					ErrorPanel erorPanel = new ErrorPanel();
-			        	  erorPanel.setWarnMessage(message);
-
-					
-				}*/
-		};
-
-		fireQuestionTypeCountRangeRequest(range, callback);
-		
-	}
     
     private void onQuestionSumPerPersonChanged() {
 		final Range range = questionSumPerPersonTable.getVisibleRange();
-
-		final BMEReceiver<List<QuestionSumPerPersonProxy>> callback = new BMEReceiver<List<QuestionSumPerPersonProxy>>() {
+		requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmentNonRoo(assesment.getId(), range.getStart(), range.getLength()).with("responsiblePerson", "questionEvent").fire(new BMEReceiver<List<QuestionSumPerPersonProxy>>() {
 			
 			@Override
 			public void onSuccess(List<QuestionSumPerPersonProxy> values) {
@@ -377,70 +279,11 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 					// This activity is dead
 					return;
 				}
-
-				//sort_orderQuestSum = values.size()+1;
-				
-				if(values.size()>0)
-				{
-					sort_orderQuestSum=values.get(values.size()-1).getSort_order()+1;
-				}
-				else
-				{
-					sort_orderQuestSum=1;
-				}
-				
 				questionSumPerPersonTable.setRowData(range.getStart(), values);
-
 			}
-	          /* @Override
-				public void onFailure(ServerFailure error) {
-						Log.warn(McAppConstant.ERROR_WHILE_DELETE + " in Institution:Event -" + error.getMessage());
-						if(error.getMessage().contains("ConstraintViolationException")){
-							Log.debug("Fehlen beim erstellen: Doppelter name");
-							// TODO mcAppFactory.getErrorPanel().setErrorMessage(McAppConstant.EVENT_IS_REFERENCED);
-						}
-						
-					
-				}
-				@Override
-				public void onViolation(Set<Violation> errors) {
-					Iterator<Violation> iter = errors.iterator();
-					String message = "";
-					while(iter.hasNext()){
-						message += iter.next().getMessage() + "<br>";
-					}
-					Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Event -" + message);
-					
-					ErrorPanel erorPanel = new ErrorPanel();
-			        	  erorPanel.setWarnMessage(message);
-
-					
-				}*/
-		};
-
-		fireQuestionSumPerPersonRangeRequest(range, callback);
-		
+		});
 	}
 
-	private void fireQuestionTypeCountRangeRequest(Range range, BMEReceiver<List<QuestionTypeCountPerExamProxy>> callback) {
-				createQuestionTypeCountRangeRequest(range).fire(callback);
-		
-	}
-
-	private Request<List<QuestionTypeCountPerExamProxy>> createQuestionTypeCountRangeRequest(Range range) {
-        return requests.questionTypeCountPerExamRequest().findQuestionTypeCountByAssesmentNonRoo(assesment.getId(), range.getStart(), range.getLength()).with("questionTypesAssigned");
-
-	}
-	
-	private void fireQuestionSumPerPersonRangeRequest(Range range, BMEReceiver<List<QuestionSumPerPersonProxy>> callback) {
-		createQuestionSumPerPersonRangeRequest(range).fire(callback);
-
-}
-
-private Request<List<QuestionSumPerPersonProxy>> createQuestionSumPerPersonRangeRequest(Range range) {
-return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmentNonRoo(assesment.getId(), range.getStart(), range.getLength()).with("responsiblePerson", "questionEvent");
-
-}
 
 	@Override
 	public void deleteClicked() {
@@ -451,29 +294,6 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
             	placeController.goTo(new PlaceAssesment("PlaceAssesment!DELETED"));
             	
             }
-            /*@Override
-			public void onFailure(ServerFailure error) {
-					Log.warn(McAppConstant.ERROR_WHILE_DELETE + " in Assesment -" + error.getMessage());
-					if(error.getMessage().contains("ConstraintViolationException")){
-						Log.debug("Fehlen beim erstellen: Doppelter name");
-						//TODO mcAppFactory.getErrorPanel().setErrorMessage(McAppConstant.EVENT_IS_REFERENCED);
-					}
-				
-			}
-			@Override
-			public void onViolation(Set<Violation> errors) {
-				Iterator<Violation> iter = errors.iterator();
-				String message = "";
-				while(iter.hasNext()){
-					message += iter.next().getMessage() + "<br>";
-				}
-				Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Event -" + message);
-				
-				//TODO mcAppFactory.getErrorPanel().setErrorMessage(message);
-
-				
-			}*/
-            
         });
 		
 	}
@@ -481,216 +301,94 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 	@Override
 	public void editClicked() {
 		placeController.goTo(new PlaceAssesmentDetails(assesment.stableId(), PlaceAssesmentDetails.Operation.EDIT));
-
-		
 	}
 
 	@Override
 	public void newClicked(String institutionName) {
 		placeController.goTo(new PlaceAssesmentDetails(PlaceAssesmentDetails.Operation.CREATE));
-
-		
 	}
+	
 	@Override
 	public void moveDown(final QuestionTypeCountPerExamProxy questionTypeCount) {
-		requests.questionTypeCountPerExamRequest().findQuestionTypeCountByAssesmentAndOrderNonRoo(assesment.getId(), questionTypeCount.getSort_order()-1)
-		.fire(new BMEReceiver<QuestionTypeCountPerExamProxy>() {
+		Log.info("Move down QuestionTypeCountPerExamProxy");
+		if(questionTypeCount != null) {
+			requests.questionTypeCountPerExamRequest().findQuestionTypeCountByAssesmentAndOrderNonRoo(assesment.getId(), questionTypeCount.getSort_order()-1).fire(new BMEReceiver<QuestionTypeCountPerExamProxy>() {
 
-			@Override
-			public void onSuccess(QuestionTypeCountPerExamProxy response) {
-				moveUpRequest(response);
-				moveDownRequest(questionTypeCount);
-				//initQuestionTypeCount();
-			}
-           /* @Override
-			public void onFailure(ServerFailure error) {
-					Log.warn(McAppConstant.ERROR_WHILE_DELETE + " in Assesment -" + error.getMessage());
-					if(error.getMessage().contains("ConstraintViolationException")){
-						Log.debug("Fehlen beim erstellen: Doppelter name");
-						//TODO mcAppFactory.getErrorPanel().setErrorMessage(McAppConstant.EVENT_IS_REFERENCED);
+				@Override
+				public void onSuccess(QuestionTypeCountPerExamProxy response) {
+					if(response != null) {
+						QuestionTypeCountPerExamRequest moveUpRequest = moveUpRequest(response);
+						QuestionTypeCountPerExamRequest moveDownRequest = moveDownRequest(questionTypeCount,moveUpRequest);
+						moveDownRequest.fire();
 					}
-				
-			}
-			@Override
-			public void onViolation(Set<Violation> errors) {
-				Iterator<Violation> iter = errors.iterator();
-				String message = "";
-				while(iter.hasNext()){
-					message += iter.next().getMessage() + "<br>";
 				}
-				Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Event -" + message);
-				
-				//TODO mcAppFactory.getErrorPanel().setErrorMessage(message);
-
-				
-			}*/
-		});
-		
-		
+			});			
+		}
 	}
 	
-	private int bothPersists =0;
+	@Override
+	public void moveUp(final QuestionTypeCountPerExamProxy questionTypeCount) {
+		Log.info("Move up QuestionTypeCountPerExamProxy");
+		if(questionTypeCount != null) {
+			requests.questionTypeCountPerExamRequest().findQuestionTypeCountByAssesmentAndOrderNonRoo(assesment.getId(), questionTypeCount.getSort_order()+1).fire(new BMEReceiver<QuestionTypeCountPerExamProxy>() {
+
+				@Override
+				public void onSuccess(QuestionTypeCountPerExamProxy response) {
+					if(response != null) {
+						QuestionTypeCountPerExamRequest moveUpRequest = moveUpRequest(questionTypeCount);
+						QuestionTypeCountPerExamRequest moveDownRequest = moveDownRequest(response,moveUpRequest);
+						moveDownRequest.fire();
+					}
+				}
+			});
+		}
+	}
 	
-	private void moveDownRequest(QuestionTypeCountPerExamProxy questionTypeCount){
-		QuestionTypeCountPerExamRequest req = requests.questionTypeCountPerExamRequest();
+	private QuestionTypeCountPerExamRequest moveDownRequest(QuestionTypeCountPerExamProxy questionTypeCount, QuestionTypeCountPerExamRequest moveUpRequest){
+		QuestionTypeCountPerExamRequest req = moveUpRequest.append(requests.questionTypeCountPerExamRequest());
 		QuestionTypeCountPerExamProxy questionTypeCountEditable = req.edit(questionTypeCount);
 		questionTypeCountEditable.setSort_order(questionTypeCountEditable.getSort_order()-1);
-		req.persist().using(questionTypeCount).fire(new BMEReceiver<Void>() {
+		req.persist().using(questionTypeCount).to(new BMEReceiver<Void>() {
 
 			@Override
 			public void onSuccess(Void response) {
-				bothPersists++;
-				if(bothPersists>1){
-					initQuestionTypeCount();
-					bothPersists=0;
-				}
-				
-				
+				initQuestionTypeCount();
+				Log.info("QuestionTypeCountPerExamProxy moved down.");
 			}
-            /*@Override
-			public void onFailure(ServerFailure error) {
-					Log.warn(McAppConstant.ERROR_WHILE_DELETE + " in Assesment -" + error.getMessage());
-					if(error.getMessage().contains("ConstraintViolationException")){
-						Log.debug("Fehlen beim erstellen: Doppelter name");
-						//TODO mcAppFactory.getErrorPanel().setErrorMessage(McAppConstant.EVENT_IS_REFERENCED);
-					}
-				
-			}
-			@Override
-			public void onViolation(Set<Violation> errors) {
-				Iterator<Violation> iter = errors.iterator();
-				String message = "";
-				while(iter.hasNext()){
-					message += iter.next().getMessage() + "<br>";
-				}
-				Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Event -" + message);
-				
-				//TODO mcAppFactory.getErrorPanel().setErrorMessage(message);
-
-				
-			}*/
 		});
-	}
-
-	@Override
-	public void moveUp(final QuestionTypeCountPerExamProxy questionTypeCount) {
-		requests.questionTypeCountPerExamRequest().findQuestionTypeCountByAssesmentAndOrderNonRoo(assesment.getId(), questionTypeCount.getSort_order()+1)
-		.fire(new BMEReceiver<QuestionTypeCountPerExamProxy>() {
-
-			@Override
-			public void onSuccess(QuestionTypeCountPerExamProxy response) {
-				moveUpRequest(questionTypeCount);
-				moveDownRequest(response);
-				//initQuestionTypeCount();
-			}
-            /*@Override
-			public void onFailure(ServerFailure error) {
-					Log.warn("Error get Upper" + error.getMessage());
-					if(error.getMessage().contains("ConstraintViolationException")){
-						Log.debug("Fehlen beim erstellen: Doppelter name");
-						//TODO mcAppFactory.getErrorPanel().setErrorMessage(McAppConstant.EVENT_IS_REFERENCED);
-					}
-				
-			}
-			@Override
-			public void onViolation(Set<Violation> errors) {
-				Iterator<Violation> iter = errors.iterator();
-				String message = "";
-				while(iter.hasNext()){
-					message += iter.next().getMessage() + "<br>";
-				}
-				Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Event -" + message);
-				
-				//TODO mcAppFactory.getErrorPanel().setErrorMessage(message);
-
-				
-			}*/
-		});
-
-		
+		return req;
 	}
 	
-	public void moveUpRequest(QuestionTypeCountPerExamProxy questionTypeCount){
+	public QuestionTypeCountPerExamRequest moveUpRequest(QuestionTypeCountPerExamProxy questionTypeCount){
 		QuestionTypeCountPerExamRequest req = requests.questionTypeCountPerExamRequest();
 		QuestionTypeCountPerExamProxy questionTypeCountEditable = req.edit(questionTypeCount);
 		questionTypeCountEditable.setSort_order(questionTypeCountEditable.getSort_order()+1);
-		req.persist().using(questionTypeCountEditable).fire(new BMEReceiver<Void>() {
+		req.persist().using(questionTypeCountEditable).to(new BMEReceiver<Void>() {
 
 			@Override
 			public void onSuccess(Void response) {
-				
-				bothPersists++;
-				if(bothPersists>1){
-					initQuestionTypeCount();
-					bothPersists=0;
-				}
+				Log.info("QuestionTypeCountPerExamProxy moved up.");
 			}
-            /*@Override
-			public void onFailure(ServerFailure error) {
-					Log.warn("Could not persist" + error.toString());
-					if(error.getMessage().contains("ConstraintViolationException")){
-						Log.debug("Fehlen beim erstellen: Doppelter name");
-						//TODO mcAppFactory.getErrorPanel().setErrorMessage(McAppConstant.EVENT_IS_REFERENCED);
-					}
-				
-			}
-			@Override
-			public void onViolation(Set<Violation> errors) {
-				Iterator<Violation> iter = errors.iterator();
-				String message = "";
-				while(iter.hasNext()){
-					message += iter.next().getMessage() + "<br>";
-				}
-				Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Event -" + message);
-				
-				//TODO mcAppFactory.getErrorPanel().setErrorMessage(message);
-
-				
-			}*/
 		});
+		return req;
 	}
 
 	@Override
-	public void deleteQuestionTypeCountClicked(
-			QuestionTypeCountPerExamProxy questionTypeCountPerExam) {
-		requests.questionTypeCountPerExamRequest().remove().using(questionTypeCountPerExam).fire(new BMEReceiver<Void>() {
+	public void deleteQuestionTypeCountClicked(QuestionTypeCountPerExamProxy questionTypeCountPerExam) {
+		requests.questionTypeCountPerExamRequest().removeAndUpdateOrder(questionTypeCountPerExam).fire(new BMEReceiver<Boolean>() {
 
 			@Override
-			public void onSuccess(Void response) {
+			public void onSuccess(Boolean response) {
 				
-				initQuestionTypeCount();
-			}
-            /*@Override
-			public void onFailure(ServerFailure error) {
-					Log.warn(McAppConstant.ERROR_WHILE_DELETE + " in Assesment -" + error.getMessage());
-					if(error.getMessage().contains("ConstraintViolationException")){
-						Log.debug("Fehlen beim erstellen: Doppelter name");
-						//TODO mcAppFactory.getErrorPanel().setErrorMessage(McAppConstant.EVENT_IS_REFERENCED);
-					}
-				
-			}
-			@Override
-			public void onViolation(Set<Violation> errors) {
-				Iterator<Violation> iter = errors.iterator();
-				String message = "";
-				while(iter.hasNext()){
-					message += iter.next().getMessage() + "<br>";
+				if(response) {
+					initQuestionTypeCount();	
+				} else {
+					Log.error("Error while trying to remove the QuestionTypeCountPerExamProxy");
 				}
-				Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Event -" + message);
-				
-				//TODO mcAppFactory.getErrorPanel().setErrorMessage(message);
-
-				
-			}*/
+			}
 		});
-		
-		
 	}
 	
-	private QuestionTypeCountAddDialogbox questionTypeCountAddDialogbox;
-	private  RequestFactoryEditorDriver<QuestionTypeCountPerExamProxy,QuestionTypeCountAddDialogboxImpl> driver;
-
-	private QuestionTypeCountPerExamProxy questionTypeCountPerExamProxy;
 
 	@Override
 	public void addNewQuestionTypeCountClicked() {
@@ -708,7 +406,7 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 	    request.persist().using(questionTypeCountPerExamProxy);
 	    driver.edit(questionTypeCountPerExamProxy, request);
 	    questionTypeCountPerExamProxy.setAssesment(assesment);
-	    questionTypeCountPerExamProxy.setSort_order(sort_order);
+	    questionTypeCountPerExamProxy.setSort_order(questionTypeCountNextSortOrder);
 	    driver.flush();
 
 		
@@ -721,12 +419,6 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 			}
 			
 		});
-		
-		
-		
-		
-
-		
 	}
 
 	@Override
@@ -771,48 +463,20 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 	@Override
 	public void deleteQuestionSumPerPersonClicked(QuestionSumPerPersonProxy questionSumPerPerson) {
 		
-			requests.questionSumPerPersonRequest().remove().using(questionSumPerPerson).fire(new BMEReceiver<Void>() {
+		requests.questionSumPerPersonRequest().removeAndUpdateOrder(questionSumPerPerson).fire(new BMEReceiver<Boolean>() {
 
-				@Override
-				public void onSuccess(Void response) {
-					
-					initQuestionSumPerPerson();
+			@Override
+			public void onSuccess(Boolean response) {
+				
+				if(response == true) {
+					initQuestionSumPerPerson();	
+				} else {
+					Log.error("Error in deleting QuestionSumPerPersonProxy");
 				}
-	            /*@Override
-				public void onFailure(ServerFailure error) {
-						Log.warn(McAppConstant.ERROR_WHILE_DELETE + " in Assesment -" + error.getMessage());
-						if(error.getMessage().contains("ConstraintViolationException")){
-							Log.debug("Fehlen beim erstellen: Doppelter name");
-							//TODO mcAppFactory.getErrorPanel().setErrorMessage(McAppConstant.EVENT_IS_REFERENCED);
-						}
-					
-				}
-				@Override
-				public void onViolation(Set<Violation> errors) {
-					Iterator<Violation> iter = errors.iterator();
-					String message = "";
-					while(iter.hasNext()){
-						message += iter.next().getMessage() + "<br>";
-					}
-					Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Event -" + message);
-					
-					//TODO mcAppFactory.getErrorPanel().setErrorMessage(message);
-
-					
-				}*/
-			});
-		 
+			}
+		});
 	}
 
-	private QuestionSumPerPersonDialogbox questionSumPerPersonDialogbox;
-
-	//private RequestFactoryEditorDriver<QuestionSumPerPersonProxy, QuestionSumPerPersonDialogboxImpl> driverQuestSum;
-
-	private QuestionSumPerPersonProxy questionSumPerPersonProxy;
-
-	private Integer sort_orderQuestSum;
-	
-	
 	@Override
 	public void addNewQuestionSumPerPersonClicked() {
 		questionSumPerPersonDialogbox = new QuestionSumPerPersonDialogboxImpl();
@@ -873,7 +537,7 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 		QuestionSumPerPersonRequest request = requests.questionSumPerPersonRequest();
 		this.questionSumPerPersonProxy = request.create(QuestionSumPerPersonProxy.class);
 		questionSumPerPersonProxy.setAssesment(assesment);
-		questionSumPerPersonProxy.setSort_order(sort_orderQuestSum);
+		questionSumPerPersonProxy.setSort_order(questionSumPerPersonNextSortOrder);
 		questionSumPerPersonDialogbox.setValueInProxy(questionSumPerPersonProxy);
 		
 		//driverQuestSum.flush().fire(new BMEReceiver<Void>() {
@@ -926,26 +590,7 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 	        		initQuestionSumPerPerson();
 	          //	goTo(new PlaceAssesment(person.stableId()));
 	          }
-	          
-	          /*public void onFailure(ServerFailure error){
-					Log.error(error.getMessage());
-				}
-	          @Override
-				public void onViolation(Set<Violation> errors) {
-					Iterator<Violation> iter = errors.iterator();
-					String message = "";
-					while(iter.hasNext()){
-						message += iter.next().getMessage() + "<br>";
-					}
-					Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Event -" + message);
-					
-					ErrorPanel erorPanel = new ErrorPanel();
-			        	  erorPanel.setWarnMessage(message);
-
-					
-				}*/
-	      });
-		
+		});
 	}
 
 	@Override
@@ -959,26 +604,7 @@ return requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmen
 	        		initQuestionSumPerPerson();
 	          //	goTo(new PlaceAssesment(person.stableId()));
 	          }
-	          
-	          /*public void onFailure(ServerFailure error){
-					Log.error(error.getMessage());
-				}
-	          @Override
-				public void onViolation(Set<Violation> errors) {
-					Iterator<Violation> iter = errors.iterator();
-					String message = "";
-					while(iter.hasNext()){
-						message += iter.next().getMessage() + "<br>";
-					}
-					Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Event -" + message);
-					
-					ErrorPanel erorPanel = new ErrorPanel();
-			        	  erorPanel.setWarnMessage(message);
-
-					
-				}*/
-	      });
-		
+		});
 	}
 
 	@Override

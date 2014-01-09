@@ -1,5 +1,7 @@
 package medizin.server.domain;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -16,6 +18,9 @@ import javax.validation.constraints.NotNull;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
+
+import com.google.common.collect.Lists;
+import com.google.common.primitives.Ints;
 
 @RooJavaBean
 @RooToString
@@ -90,8 +95,12 @@ public class QuestionSumPerPerson {
        TypedQuery<QuestionSumPerPerson> q = em.createQuery("SELECT qsum FROM QuestionSumPerPerson qsum " + 
        		" WHERE qsum.assesment = :assesment AND qsum.sort_order = " + sort_order, QuestionSumPerPerson.class);
        q.setParameter("assesment", assesment);
-
-       return q.getSingleResult();
+       List<QuestionSumPerPerson> resultList = q.getResultList();
+       if(resultList.isEmpty()) {
+    	   return null;
+       } else {
+    	   return resultList.get(0);
+       }
 	}
 
 	public static QuestionSumPerPerson findQuestionSumPerPersonByEventNonRoo(Long eventId) {
@@ -174,5 +183,34 @@ public class QuestionSumPerPerson {
 		TypedQuery<QuestionSumPerPerson> query = entityManager().createQuery(criteriaQuery);
 		
 		return query.getResultList();
+	}
+	
+	public static Boolean removeAndUpdateOrder(QuestionSumPerPerson toDeleteQuestionSumPerPerson) {
+		if(toDeleteQuestionSumPerPerson == null) {
+			return false;
+		}
+		
+		Long assesmentId = toDeleteQuestionSumPerPerson.getAssesment().getId();
+		toDeleteQuestionSumPerPerson.remove();
+		
+		Assesment assesment = Assesment.findAssesment(assesmentId);
+		
+		List<QuestionSumPerPerson> questionSumPerPersons = Lists.newArrayList(assesment.getQuestionSumPerPerson());
+		
+		Collections.sort(questionSumPerPersons,new Comparator<QuestionSumPerPerson>() {
+
+			@Override
+			public int compare(QuestionSumPerPerson o1, QuestionSumPerPerson o2) {
+				return Ints.compare(o1.getSort_order(), o2.getSort_order());
+			}
+		});
+		
+		int order = 1;
+		for (QuestionSumPerPerson questionSumPerPerson : questionSumPerPersons) {
+			questionSumPerPerson.setSort_order(order);
+			questionSumPerPerson.persist();
+			order+=1;
+		}
+		return true;
 	}
 }

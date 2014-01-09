@@ -122,7 +122,8 @@ public class QuestionSumPerPersonViewImpl extends Composite implements  Question
 
             @Override
             public String getValue(QuestionSumPerPersonProxy object) {
-                return renderer.render(object.getResponsiblePerson());
+            	
+                return renderer.render(object == null ? null : object.getResponsiblePerson());
             }
         }, "Verantwortlicher");
         paths.add("questionEvent");
@@ -132,7 +133,7 @@ public class QuestionSumPerPersonViewImpl extends Composite implements  Question
 
             @Override
             public String getValue(QuestionSumPerPersonProxy object) {
-                return renderer.render(object.getQuestionEvent());
+                return renderer.render(object == null ? null : object.getQuestionEvent());
             }
         }, "Themenbereich");
   
@@ -148,7 +149,7 @@ public class QuestionSumPerPersonViewImpl extends Composite implements  Question
 
             @Override
             public String getValue(QuestionSumPerPersonProxy object) {
-                return renderer.render(object.getQuestionSum());
+                return renderer.render(object == null ? null : object.getQuestionSum());
             }
         }, new Header<String>(new IconHeader()){
 
@@ -169,7 +170,7 @@ public class QuestionSumPerPersonViewImpl extends Composite implements  Question
 
             @Override
             public String getValue(QuestionSumPerPersonProxy object) {
-                return renderer.render(object.getSort_order());
+                return renderer.render(object == null ? null : object.getSort_order());
             }
         }, new Header<String>(new IconHeader()){
 

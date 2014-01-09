@@ -1,11 +1,12 @@
 package medizin.server.domain;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.EntityManager;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
@@ -17,6 +18,8 @@ import medizin.shared.BlockingTypes;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
+
+import com.google.common.primitives.Ints;
 
 @RooJavaBean
 @RooToString
@@ -60,8 +63,14 @@ public class QuestionTypeCountPerExam {
 	    Assesment asses = Assesment.findAssesment(assesmentId);
 	    TypedQuery<QuestionTypeCountPerExam> q = em.createQuery("SELECT questTypePerExam FROM QuestionTypeCountPerExam AS questTypePerExam WHERE questTypePerExam.assesment = :asses AND sort_order=" + Integer.toString(order), QuestionTypeCountPerExam.class);
 	    q.setParameter("asses", asses);
-	    return q.getSingleResult();
+	    List<QuestionTypeCountPerExam> resultList = q.getResultList();
+	    if(resultList.isEmpty()) {
+	    	return null;
+	    } else {
+	    	return resultList.get(0);
+	    }
     }
+    
     public static List<QuestionTypeCountPerExam> findQuestionTypesCountSortedByAssesmentNonRoo(Long id){
     	Assesment asses = Assesment.findAssesment(id);
 	    if (asses == null) throw new IllegalArgumentException("The asses argument is required");
@@ -118,5 +127,35 @@ public class QuestionTypeCountPerExam {
         }
         return questionTypes;
 
+	}
+	
+	public static Boolean removeAndUpdateOrder(QuestionTypeCountPerExam toDeleteQuestionTypeCountPerExam) {
+		
+		if(toDeleteQuestionTypeCountPerExam == null) {
+			return false;
+		}
+		
+		Long assesmentId = toDeleteQuestionTypeCountPerExam.getAssesment().getId();
+		toDeleteQuestionTypeCountPerExam.remove();
+		
+		Assesment assesment = Assesment.findAssesment(assesmentId);
+		
+		List<QuestionTypeCountPerExam> questionTypeCountPerExams = assesment.getQuestionTypeCountPerExams();
+		
+		Collections.sort(questionTypeCountPerExams,new Comparator<QuestionTypeCountPerExam>() {
+
+			@Override
+			public int compare(QuestionTypeCountPerExam o1, QuestionTypeCountPerExam o2) {
+				return Ints.compare(o1.getSort_order(), o2.getSort_order());
+			}
+		});
+		
+		int order = 1;
+		for (QuestionTypeCountPerExam questionTypeCountPerExam : questionTypeCountPerExams) {
+			questionTypeCountPerExam.setSort_order(order);
+			questionTypeCountPerExam.persist();
+			order+=1;
+		}
+		return true;
 	}
 }

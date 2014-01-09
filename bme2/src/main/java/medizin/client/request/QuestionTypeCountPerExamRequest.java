@@ -21,6 +21,7 @@ public interface QuestionTypeCountPerExamRequest extends QuestionTypeCountPerExa
 	Request<QuestionTypeCountPerExamProxy> findQuestionTypeCountByAssesmentAndOrderNonRoo(Long assesmentId, int order);
 	Request<List<QuestionTypeCountPerExamProxy>> findQuestionTypesCountSortedByAssesmentNonRoo(Long assesmentId);
 	InstanceRequest<QuestionTypeCountPerExamProxy, Void> moveUp();
-	InstanceRequest<QuestionTypeCountPerExamProxy, Void> moveDown();	    
+	InstanceRequest<QuestionTypeCountPerExamProxy, Void> moveDown();
+	Request<Boolean> removeAndUpdateOrder(QuestionTypeCountPerExamProxy questionTypeCountPerExam);	    
 	
 }
