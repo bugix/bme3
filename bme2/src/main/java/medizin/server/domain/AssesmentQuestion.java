@@ -30,6 +30,7 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Selection;
 import javax.persistence.criteria.SetJoin;
 import javax.persistence.criteria.Subquery;
 import javax.validation.constraints.NotNull;
@@ -150,7 +151,20 @@ public class AssesmentQuestion {
      	
      	log.info("findAuthorListByAssesment ");
      	
-     	Set<QuestionSumPerPerson> questionSumPerPersons=assesment.getQuestionSumPerPerson();
+     	CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+     	CriteriaQuery<Person> criteriaQuery = criteriaBuilder.createQuery(Person.class);
+     	Root<QuestionSumPerPerson> from = criteriaQuery.from(QuestionSumPerPerson.class);
+     	criteriaQuery.orderBy(criteriaBuilder.asc(from.get("responsiblePerson").get("id")));
+     	criteriaQuery.distinct(true);
+     	Path<Person> path = from.get("responsiblePerson");
+     	criteriaQuery.select(path);
+     	Predicate pre1 = criteriaBuilder.equal(from.get("assesment").get("id"), assesment.getId());
+     	criteriaQuery.where(pre1);
+     	
+     	TypedQuery<Person> query = entityManager().createQuery(criteriaQuery);
+     	return query.getResultList();
+     	
+     	/*Set<QuestionSumPerPerson> questionSumPerPersons=assesment.getQuestionSumPerPerson();
      	
      	List<Person> authorList=new ArrayList<Person>();
      	for(QuestionSumPerPerson questionSumPerPerson:questionSumPerPersons)
@@ -158,7 +172,7 @@ public class AssesmentQuestion {
      		if(!authorList.contains(questionSumPerPerson.getResponsiblePerson()))
      		authorList.add(questionSumPerPerson.getResponsiblePerson());
      	}
-     	return authorList;
+     	return authorList;*/
 
      }
     
@@ -218,7 +232,7 @@ public class AssesmentQuestion {
     * 4. Not Assigned in current Assesment
     * */
     
-    public static List<AssesmentQuestion> findAssesmentQuestionsByMc(Long assesmentId,Long id, List<String> criteriaStringList, String questionId,String questionType,String questionName,Person author){
+   /* public static List<AssesmentQuestion> findAssesmentQuestionsByMc(Long assesmentId,Long id, List<String> criteriaStringList, String questionId,String questionType,String questionName,Person author){
     	
     	log.info("Past Question Tab ");
     	
@@ -431,6 +445,138 @@ public class AssesmentQuestion {
     		
     		return aqList;
         }        
+    }*/
+    
+    public static List<AssesmentQuestion> findAssesmentQuestionsByMc(Long assesmentId, Long mcId, List<String> criteriaStringList, String questionId, String questionType, String questionName, Person author){
+    	
+    	log.info("Past Question Tab ");
+    	try
+    	{
+    		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+    		CriteriaQuery<AssesmentQuestion> criteriaQuery = criteriaBuilder.createQuery(AssesmentQuestion.class);
+    		Root<AnswerToAssQuestion> from = criteriaQuery.from(AnswerToAssQuestion.class);
+    		Selection<AssesmentQuestion> assQueSelection = from.get("assesmentQuestion");
+    		criteriaQuery.select(assQueSelection);
+    		criteriaQuery.distinct(true);
+            criteriaQuery.groupBy(from.get("assesmentQuestion").get("question").get("id"), from.get("answers").get("id"));
+    		
+    		Subquery<Long> cq = criteriaQuery.subquery(Long.class);
+    		Root<AssesmentQuestion> assQuefrom = cq.from(AssesmentQuestion.class);
+    		cq.distinct(true);
+    		
+    		Predicate pre1=criteriaBuilder.equal(assQuefrom.get("isAssQuestionAcceptedAdmin"), new Boolean(true));
+    		Predicate pre2=criteriaBuilder.equal(assQuefrom.get("isForcedByAdmin"), new Boolean(true));
+    		Predicate pre3=criteriaBuilder.or(pre1,pre2);		
+    		Predicate pre4=criteriaBuilder.equal(assQuefrom.get("question").get("status"), Status.ACTIVE);
+    		
+    		if (author == null) //if author is null then it is examiner
+    			author = Person.myGetLoggedPerson();
+    		    		
+    		Subquery<Long> queSumSubQuery = cq.subquery(Long.class);
+    		Root<QuestionSumPerPerson> queSumRoot = queSumSubQuery.from(QuestionSumPerPerson.class);
+    		Predicate subPre11 = criteriaBuilder.equal(queSumRoot.get("responsiblePerson").get("id"), author.getId());
+    		Predicate subPre22 = criteriaBuilder.equal(queSumRoot.get("assesment").get("id"), assesmentId);
+    		Expression<Long> questioneEventIdSelection = queSumRoot.get("questionEvent").get("id");
+    		queSumSubQuery.select(questioneEventIdSelection).where(criteriaBuilder.and(subPre11, subPre22));
+    		Predicate queSumPerPersonPredicate = criteriaBuilder.in(assQuefrom.get("question").get("questEvent").get("id")).value(queSumSubQuery);
+    		
+    		Subquery<Long> queTypeSubQuery = cq.subquery(Long.class);
+    		Root<QuestionTypeCountPerExam> queTypeRoot = queTypeSubQuery.from(QuestionTypeCountPerExam.class);
+    		Predicate queTypePre1 = criteriaBuilder.equal(queTypeRoot.get("assesment").get("id"), assesmentId);
+    		SetJoin<QuestionTypeCountPerExam, QuestionType> questionTypeJoin = queTypeRoot.joinSet("questionTypesAssigned");
+    		Expression<Long> questionTypeIdSelection = questionTypeJoin.get("id");
+    		queTypeSubQuery.select(questionTypeIdSelection).where(queTypePre1);
+    		Predicate queTypeCountPerExamPredicate = criteriaBuilder.in(assQuefrom.get("question").get("questionType").get("id")).value(queTypeSubQuery);
+    		
+    		Predicate searchPre1=null;
+    		Predicate searchPre2=null;
+    		Predicate searchPre3=null;
+    		Predicate searchPre=null;
+    		
+    		if(!questionId.equalsIgnoreCase(""))
+    		{
+    			searchPre1=criteriaBuilder.equal(assQuefrom.get("question").get("id"), new Long(questionId));
+    			searchPre = searchPre1;
+    		}
+    		if(!questionType.equalsIgnoreCase(""))
+    		{
+    			Predicate shortNamePre=criteriaBuilder.like(assQuefrom.get("question").get("questionType").<String>get("shortName"),"%"+questionType+"%");
+    			Predicate longNamePre=criteriaBuilder.like(assQuefrom.get("question").get("questionType").<String>get("longName"),"%"+questionType+"%");
+    			searchPre2=criteriaBuilder.or(shortNamePre,longNamePre);
+    			if (searchPre == null)
+    				searchPre = searchPre2;
+    			else
+    				searchPre = criteriaBuilder.or(searchPre, searchPre2);
+    		}
+    		if(!questionName.equalsIgnoreCase(""))
+    		{
+    			Predicate shortNamePre=criteriaBuilder.like(assQuefrom.get("question").<String>get("questionShortName"),"%"+questionName+"%");
+    			Predicate namePre=criteriaBuilder.like(assQuefrom.get("question").<String>get("questionText"),"%"+questionName+"%");
+    			searchPre3=criteriaBuilder.or(shortNamePre,namePre);
+    			if (searchPre == null)
+    				searchPre = searchPre3;
+    			else
+    				searchPre = criteriaBuilder.or(searchPre, searchPre3);
+    		}
+    		
+    		//past assessment
+    		Predicate pre5=criteriaBuilder.lessThan(assQuefrom.get("assesment").<Date>get("dateOfAssesment"), criteriaBuilder.currentDate());
+    		
+    		//Not Assigned in current Assesment		
+    		Subquery<Assesment> assSubQuery = cq.subquery(Assesment.class);
+    		Root assRoot = assSubQuery.from(Assesment.class);
+    		Predicate subPre1 = criteriaBuilder.equal(assRoot.get("mc").get("id"), mcId);
+    		Predicate subPre2 = criteriaBuilder.notEqual(assRoot.get("id"), assesmentId);
+    		assSubQuery.select(assRoot.get("id")).where(criteriaBuilder.and(subPre1, subPre2));
+    		
+    		Predicate pre7 = criteriaBuilder.in(assQuefrom.get("assesment").get("id")).value(assSubQuery);
+    	
+    		Predicate p1 = criteriaBuilder.or(criteriaBuilder.equal(assQuefrom.get("question").get("autor").get("id"), author.getId()), criteriaBuilder.equal(assQuefrom.get("question").get("rewiewer").get("id"), author.getId()));
+    			
+			Predicate mainpre1 = criteriaBuilder.in(assQuefrom.get("question").get("questEvent").get("id")).value(queSumSubQuery);
+			mainpre1 = criteriaBuilder.and( p1, mainpre1);
+			
+			//Question Access
+			Subquery<UserAccessRights> subQry = cq.subquery(UserAccessRights.class);
+			Root queAccRoot = subQry.from(UserAccessRights.class);
+			Predicate quePre1 = criteriaBuilder.equal(queAccRoot.get("person"), author.getId());
+			Predicate quePre2 = criteriaBuilder.in(queAccRoot.get("question").get("questEvent").get("id")).value(queSumSubQuery);
+			subQry.select(queAccRoot.get("question").get("id")).where(criteriaBuilder.and(quePre1, quePre2));
+			Predicate mainpre2 = criteriaBuilder.in(assQuefrom.get("question").get("id")).value(subQry);
+			
+			//Event Access
+			Subquery<UserAccessRights> subQuery = cq.subquery(UserAccessRights.class);
+			Root questionAccessRoot = subQuery.from(UserAccessRights.class);
+			subQuery.select(questionAccessRoot.get("questionEvent").get("id")).where(criteriaBuilder.equal(questionAccessRoot.get("person"),author.getId()));
+			Predicate mainpre3 = criteriaBuilder.in(assQuefrom.get("question").get("questEvent").get("id")).value(subQuery);
+			
+			//Author and institution filter or (Question Access / Event Access / institutional Access)
+			Predicate andAdminPredicate = criteriaBuilder.or(mainpre1, criteriaBuilder.or(mainpre2, mainpre3));
+			
+			Predicate pre=null;
+			
+			if(searchPre==null)
+				pre = criteriaBuilder.and(pre3,pre4,pre5,pre7,andAdminPredicate, queSumPerPersonPredicate, queTypeCountPerExamPredicate);
+			else
+				pre = criteriaBuilder.and(pre3,pre4,pre5,pre7,andAdminPredicate,searchPre, queSumPerPersonPredicate, queTypeCountPerExamPredicate);
+    		
+    		Predicate advPredicate = findAssesmentQuestionByAdvancedSearchCriteria(criteriaStringList, criteriaBuilder, criteriaQuery, assQuefrom, pre);
+    		Expression<Long> assQueId = assQuefrom.get("id");        		
+    		cq.select(assQueId).where(advPredicate);
+    		
+    		Predicate answerPredicate = criteriaBuilder.in(from.get("assesmentQuestion").get("id")).value(cq);
+    		criteriaQuery.where(answerPredicate);
+    		
+			TypedQuery<AssesmentQuestion> q = entityManager().createQuery(criteriaQuery);
+			
+    		return q.getResultList();                    
+    	}
+    	catch(Exception e)
+    	{
+    		e.printStackTrace();
+    	}
+    	
+        return null;
     }
     
     /**
@@ -1616,6 +1762,24 @@ public class AssesmentQuestion {
         return q.getResultList();
 	}
 
+	public static List<AssesmentQuestion> findAllAssesmentQueByQueId(Long questionId)
+	{
+		/*Person loggedUser = Person.myGetLoggedPerson();
+		Institution institution = Institution.myGetInstitutionToWorkWith();
+		
+		if (loggedUser == null || institution == null)
+			throw new IllegalArgumentException("The person and institution arguments are required");*/
+		
+		
+		CriteriaBuilder cb = entityManager().getCriteriaBuilder();
+		CriteriaQuery<AssesmentQuestion> cq = cb.createQuery(AssesmentQuestion.class);
+		Root<AssesmentQuestion> from = cq.from(AssesmentQuestion.class);
+		cq.orderBy(cb.asc(from.get("assesment").get("dateOfAssesment")));
+		Predicate predicate = allAssessmnetQuestionByQuestionPredicate(questionId,cb, from);
+		cq.where(predicate);
+        TypedQuery<AssesmentQuestion> q = entityManager().createQuery(cq);
+        return q.getResultList();
+	}
 
 	public static List<AssesmentQuestion> findAllAssesmentQuestionsForAssesment(Long assessmentId) {
 		CriteriaBuilder cb = entityManager().getCriteriaBuilder();

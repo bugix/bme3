@@ -294,6 +294,7 @@ public class PartActivityQuestionLearningObjective implements LearningObjectiveV
 			});
 		}
 	
+		learningObjectiveView.getMultiselectionModel().clear();
 	}
 
 	@Override
@@ -318,6 +319,8 @@ public class PartActivityQuestionLearningObjective implements LearningObjectiveV
 				}
 			});
 		}
+		
+		learningObjectiveView.getMultiselectionModel().clear();
 	}
 
 	@Override

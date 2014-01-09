@@ -531,9 +531,9 @@ QuestionAdvancedSearchPopupView.Delegate {
 					//authorListBox.setValue(response.get(0),true);
 					authorListBox.setVisible(true);
 				//}
-				
-				
 				examAutorListMap.put(assesment, response);
+				
+				initQuestionPanel(addQuestionsTabPanel.getActiveTab(), assesmentTabPanel.getActiveTab(), advancedSearchCriteriaList, "","","");
 			}
 		});
 		
@@ -841,7 +841,9 @@ QuestionAdvancedSearchPopupView.Delegate {
 		{
 			assementQuestionPanel.getSendMail().removeFromParent();
 		}
-		 initQuestionPanel(addQuestionsTabPanel.getActiveTab(), assesment, advancedSearchCriteriaList, "","","");
+		
+		if (examAutorListMap.get(assesment) != null)	
+			initQuestionPanel(addQuestionsTabPanel.getActiveTab(), assesment, advancedSearchCriteriaList, "","","");
 		 
 		 
 		
