@@ -1876,7 +1876,7 @@ public class AssesmentQuestion {
 		String queryString = "SELECT aq from AssesmentQuestion as aq where aq.assesment in (select id from Assesment as a where a.mc in (select id from Mc as m where" +
 				" m.mcName like '"+ mcName +"%' )) and aq.question= "+ questionId + " order by date_added desc";
         
-		System.out.println("Query is "+ queryString);
+		//System.out.println("Query is "+ queryString);
 		
 		TypedQuery<AssesmentQuestion> query = em.createQuery(queryString, AssesmentQuestion.class);
 		List<AssesmentQuestion> assesmentQuestionList = query.getResultList();

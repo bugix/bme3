@@ -114,10 +114,19 @@
 		<g:VerticalPanel styleName="{style.answers}" ui:field="answers">
 
 		</g:VerticalPanel>
-		
+
 		<g:HTMLPanel  ui:field="detailsTablePanel" visible="false" styleName="{style.detailsTablePanel}">
 		<table class="{style.questionDetails}">
 		      <tr id="questEvent">
+		      <!--To display short name  -->
+		       <td>
+                    <span class="{style.label}">Short Name:</span>
+                </td>
+                <td>
+                    <span ui:field="shortName"/>
+                </td>
+                </tr>
+                <tr>
                 <td style="width: 100px;">
                     <span class="{style.label}">Themenbereich:</span>
                 </td>
