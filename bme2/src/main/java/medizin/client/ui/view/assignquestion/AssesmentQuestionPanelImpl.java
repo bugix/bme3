@@ -27,7 +27,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
@@ -94,6 +93,46 @@ public class AssesmentQuestionPanelImpl extends Composite implements AssesmentQu
     @UiField(provided = true)
     CellTable<QuestionTypeCountProxy> table;
 	
+    // Open All Questions button to open all the assigned question panel.
+    @UiField
+    Button openAllQuestionsBtn;
+    
+    // Close All Questions button to close all the assigned question panel.
+    @UiField
+    Button closeAllQuestionsBtn;
+    
+    //Open All Questions Button click handler.
+    @UiHandler("openAllQuestionsBtn")
+    public void openAllButtonClicked(ClickEvent event){
+    	Log.info("open All Questions Button Clicked Total widget of view is : " + assesmentQuestionDisplayPanel.getWidgetCount());
+    	try{
+    		for(int widgetCount=0;widgetCount < assesmentQuestionDisplayPanel.getWidgetCount(); widgetCount++){
+    			Widget widget = assesmentQuestionDisplayPanel.getWidget(widgetCount);
+    			if(widget!=null){
+    				((AssesmentQuestionViewImpl)widget).open();
+    			}
+    		}
+    	}catch (Exception e) {
+    		e.printStackTrace();
+    		Log.info("Exception occured while opening All Questions Panels");
+		}
+    }
+    //Close All Questions Button click handler.
+    @UiHandler("closeAllQuestionsBtn")
+    public void closeAllButtonClicked(ClickEvent event){
+    	Log.info("Close All Questions Button Clicked Total widget of view is : " + assesmentQuestionDisplayPanel.getWidgetCount());
+    	try{
+    		for(int widgetCount=0;widgetCount < assesmentQuestionDisplayPanel.getWidgetCount(); widgetCount++){
+    			Widget widget = assesmentQuestionDisplayPanel.getWidget(widgetCount);
+    			if(widget!=null){
+    				((AssesmentQuestionViewImpl)widget).close();
+    			}
+    		}
+    	}catch (Exception e) {
+    		e.printStackTrace();
+    		Log.info("Exception occured while closing All Questions panels");
+		}
+    }
     
     public CellTable<QuestionTypeCountProxy> getTable() {
 		return table;
@@ -151,6 +190,9 @@ public class AssesmentQuestionPanelImpl extends Composite implements AssesmentQu
 //		assesmentQuestionDisplayPanel.setBorderWidth(1);
 //		assesmentQuestionDisplayPanel.setHeight("100px");
 //		assesmentQuestionDisplayPanel.setWidth("100px");
+		openAllQuestionsBtn.setText(constants.openAll());
+		closeAllQuestionsBtn.setText(constants.closeAll());
+		
 		assesmentQuestionDisplayPanel.setSpacing(5);
 		sendMail.setText(constants.sendMail());
 		authorListBox.addValueChangeHandler(new ValueChangeHandler<PersonProxy>() {
@@ -234,7 +276,7 @@ public class AssesmentQuestionPanelImpl extends Composite implements AssesmentQu
 
 	@Override
 	public void addAssesmentQuestion(AssesmentQuestionView question) {
-		assesmentQuestionDisplayPanel.add(question);		
+		assesmentQuestionDisplayPanel.add(question);	
 	}
 	
 

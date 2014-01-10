@@ -844,5 +844,9 @@ public interface BmeConstants extends Constants {
 	public String printPdf();
 	
 	public String showInImgErrorMsg();
+	
+	public String openAll();
+	
+	public String closeAll();
 }
 

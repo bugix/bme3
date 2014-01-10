@@ -131,7 +131,7 @@ public class AssesmentQuestionViewImpl extends Composite implements AssesmentQue
 	
 	
 	
-	private void close() {
+	public void close() {
 		twistieOpen.setVisible(true);
 		answers.setVisible(false);
 		twistieClose.setVisible(false);	
@@ -141,7 +141,7 @@ public class AssesmentQuestionViewImpl extends Composite implements AssesmentQue
 		questionTable.removeClassName("questionTable-open");
 	}
 
-	private void open() {
+	public void open() {
 		if(answersLoaded==false){
 			delegate.twistieOpenAssQuestionClicked(this, issInAssement);
 			answersLoaded=true;
