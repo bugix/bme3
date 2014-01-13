@@ -251,15 +251,15 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 	    
 		private static final ArrayList<String> textualSortList = Lists.newArrayList("sumAnswer","sumTrueAnswer","sumFalseAnswer","questionLength","answerLength","answerDiff","queHaveImg","queHaveVideo","queHaveSound");
 		
-		private static final ArrayList<String> imgKeyList = Lists.newArrayList("questionLength","keywordCount","showAutoComplete","isDictionaryKeyword","allowTyping","minLetterForAutoComp","answerLength","acceptNonKeyword","shortAnswerLength"/*,"imageWidth","imageLength","imageProportion"*/);
+		private static final ArrayList<String> imgKeyList = Lists.newArrayList("questionLength","keywordCount","showAutoComplete","isDictionaryKeyword","allowTyping","minLetterForAutoComp","answerLength","acceptNonKeyword","shortAnswerLength");
 
-		private static final ArrayList<String> showInImgList = Lists.newArrayList("questionLength"/*,"answerLength","imageWidth","imageLength","imageProportion","linearPoint","linearPercentage"*/);
+		private static final ArrayList<String> showInImgList = Lists.newArrayList("questionLength");
 		
 		private static final ArrayList<String> longTextList = Lists.newArrayList("questionLength","keywordHighlight","richText","minLength","maxLength","minWordCount","maxWordCount","queHaveImg","queHaveVideo","queHaveSound");
 		
 		private static final ArrayList<String> matrixList = Lists.newArrayList("questionLength","answerLength","oneToOneAss");
 		
-		private static final ArrayList<String> mcqList = Lists.newArrayList("questionLength",/*"imageWidth","imageLength","imageProportion",*/"multimediaType","selectionType","column",/*"thumbWidth","thumbHeight",*/"richText",/*"allowZoomOut","allowZoomIn",*/"maxBytes");
+		private static final ArrayList<String> mcqList = Lists.newArrayList("questionLength","multimediaType","selectionType","column","richText","maxBytes");
 		
 		private static final ArrayList<String> drawingList = Lists.newArrayList("questionLength","queHaveImg","queHaveVideo","queHaveSound");
 		
@@ -318,19 +318,11 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 	    	   answerLengthValLbl.setText(defaultString(proxy.getAnswerLength()));
 	    	   acceptNonKeywordValLbl.setText(defaultString(proxy.getAcceptNonKeyword()));
 	    	   shortAnswerLengthValLbl.setText(defaultString(proxy.getLengthShortAnswer()));
-	    	   /*imageWidthValLbl.setText(defaultString(proxy.getImageWidth()));
-	    	   imageLengthValLbl.setText(defaultString(proxy.getImageHeight()));
-	    	   imageProportionValLbl.setText(defaultString(proxy.getImageProportion()));*/
 	       }
 	       else if (proxy.getQuestionType().equals(QuestionTypes.ShowInImage))
 	       {
 	    	   questionLengthValLbl.setText(defaultString(proxy.getQuestionLength()));
 	    	   answerLengthValLbl.setText(defaultString(proxy.getAnswerLength()));
-	    	  /* imageWidthValLbl.setText(defaultString(proxy.getImageWidth()));
-	    	   imageLengthValLbl.setText(defaultString(proxy.getImageHeight()));
-	    	   imageProportionValLbl.setText(defaultString(proxy.getImageProportion()));*/
-	    	   /*linearPointValLbl.setText(defaultString(proxy.getLinearPoint()));
-	    	   linearPercentageValLbl.setText(defaultString(proxy.getLinearPercentage()));*/	    	   
 	       }
 	       else if (proxy.getQuestionType().equals(QuestionTypes.LongText))
 	       {
@@ -347,7 +339,6 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 	       }
 	       else if (proxy.getQuestionType().equals(QuestionTypes.Matrix))
 	       {
-	    	   //maxLengthValLbl.setText(proxy.getMaxLength()));
 	    	   questionLengthValLbl.setText(defaultString(proxy.getQuestionLength()));
 	    	   answerLengthValLbl.setText(defaultString(proxy.getAnswerLength()));
 	    	   oneToOneAssValLbl.setText(defaultString(proxy.getAllowOneToOneAss()));
@@ -355,17 +346,10 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 	       else if (proxy.getQuestionType().equals(QuestionTypes.MCQ))
 	       {
 	    	   questionLengthValLbl.setText(defaultString(proxy.getQuestionLength()));
-	    	   /*imageWidthValLbl.setText(defaultString(proxy.getImageWidth()));
-	    	   imageLengthValLbl.setText(defaultString(proxy.getImageHeight()));
-	    	   imageProportionValLbl.setText(defaultString(proxy.getImageProportion()));*/
 	    	   multimediaTypeValLbl.setText(enumRenderer.render(proxy.getMultimediaType()));
 	    	   selectionTypeValLbl.setText(enumRenderer.render(proxy.getSelectionType()));
 	    	   columnValLbl.setText(defaultString(proxy.getColumns()));
 	    	   richTextValLbl.setText(defaultString(proxy.getRichText()));
-	    	   /*thumbWidthValLbl.setText(defaultString(proxy.getThumbWidth()));
-	    	   thumbHeightValLbl.setText(defaultString(proxy.getThumbHeight()));	    	   
-	    	   allowZoomOutValLbl.setText(defaultString(proxy.getAllowZoomOut()));
-	    	   allowZoomInValLbl.setText(defaultString(proxy.getAllowZoomIn()));*/
 	    	   maxBytesValLbl.setText(defaultString(proxy.getMaxBytes()));
 	       }
 	       else if (proxy.getQuestionType().equals(QuestionTypes.Drawing))

@@ -93,8 +93,6 @@ public interface BmeConstants extends Constants {
 	public String imgWidth();
 			
 	public String imgProportion();
-	
-	public String linearPoint();
 			
 	public String linearPercentage();
 	
