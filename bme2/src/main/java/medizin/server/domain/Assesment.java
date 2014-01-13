@@ -250,6 +250,23 @@ public class Assesment {
     	CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
     	CriteriaQuery<Assesment> criteriaQuery = criteriaBuilder.createQuery(Assesment.class);
     	Root<Assesment> from = criteriaQuery.from(Assesment.class);
+    	criteriaQuery.orderBy(criteriaBuilder.asc(from.get("id")));
+    	criteriaQuery.where(criteriaBuilder.equal(from.get("institution").get("id"), activeInstitute.getId()));
+    	TypedQuery<Assesment> q=entityManager().createQuery(criteriaQuery);
+    	return q.getResultList();
+    }
+    
+    public static List<Assesment> findAllAssesmentByInstituteDescDateOfAssessment() {
+    	
+    	Institution activeInstitute=Institution.myGetInstitutionToWorkWith();
+    	
+    	if (activeInstitute == null)
+    		throw new IllegalArgumentException("The person and institution arguments are required");
+    	
+    	CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+    	CriteriaQuery<Assesment> criteriaQuery = criteriaBuilder.createQuery(Assesment.class);
+    	Root<Assesment> from = criteriaQuery.from(Assesment.class);
+    	criteriaQuery.orderBy(criteriaBuilder.desc(from.get("dateOfAssesment")));
     	criteriaQuery.where(criteriaBuilder.equal(from.get("institution").get("id"), activeInstitute.getId()));
     	TypedQuery<Assesment> q=entityManager().createQuery(criteriaQuery);
     	return q.getResultList();

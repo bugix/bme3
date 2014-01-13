@@ -58,6 +58,7 @@
 		<g:VerticalPanel addStyleNames='{style.mainNavPanelContent}' width="100%">
 			<g:Anchor ui:field="assesment"></g:Anchor>
 			<g:Anchor ui:field="asignAssQuestion"></g:Anchor>
+			<g:Anchor ui:field="questionInAssessment"></g:Anchor>
 			<g:Anchor ui:field="acceptAssQuestion"></g:Anchor>
 			<g:Anchor ui:field="bookAssesment"></g:Anchor>
 			<g:Anchor ui:field="staticContent"></g:Anchor>

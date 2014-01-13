@@ -17,6 +17,7 @@ import medizin.client.place.PlaceNotActivatedAnswer;
 import medizin.client.place.PlaceNotActivatedQuestion;
 import medizin.client.place.PlaceOpenDemand;
 import medizin.client.place.PlaceQuestion;
+import medizin.client.place.PlaceQuestionInAssessment;
 import medizin.client.place.PlaceQuestiontypes;
 import medizin.client.place.PlaceStaticContent;
 import medizin.client.place.PlaceSystemOverview;
@@ -369,6 +370,25 @@ public class McAppActivityMapper implements AsyncActivityMapper {
 					@Override
 					public void onSuccess() {
 						callbackHandler.onRecieveActivity(new ActivityDeactivatedQuestion((PlaceDeactivatedQuestion)place,requests, placeController));	
+					}
+					
+					@Override
+					public void onFailure(Throwable reason) {
+						
+						Window.alert("Not able to provide ActivityDeactivatedQuestion");
+					}
+				});
+		 }
+		 
+		 if (place instanceof PlaceQuestionInAssessment){
+			 	//return new ActivityDeactivatedQuestion((PlaceDeactivatedQuestion)place, requests, placeController);
+			 Log.debug("is PlaceDeactivatedQuestion");
+				
+				GWT.runAsync(new RunAsyncCallback() {
+					
+					@Override
+					public void onSuccess() {
+						callbackHandler.onRecieveActivity(new ActivityQuestionInAssessment((PlaceQuestionInAssessment)place,requests, placeController));	
 					}
 					
 					@Override

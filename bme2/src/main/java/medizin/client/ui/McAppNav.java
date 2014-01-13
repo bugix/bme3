@@ -17,6 +17,7 @@ import medizin.client.place.PlaceNotActivatedAnswer;
 import medizin.client.place.PlaceNotActivatedQuestion;
 import medizin.client.place.PlaceOpenDemand;
 import medizin.client.place.PlaceQuestion;
+import medizin.client.place.PlaceQuestionInAssessment;
 import medizin.client.place.PlaceQuestiontypes;
 import medizin.client.place.PlaceStaticContent;
 import medizin.client.place.PlaceSystemOverview;
@@ -120,6 +121,8 @@ public class McAppNav extends Composite {
 	Anchor deactivatedQuestion;	
 	@UiField
 	Anchor notActivatedAnswer;
+	@UiField
+	Anchor questionInAssessment;
 
 	@UiHandler("systemOverview")
 		void systemOverviewClicked(ClickEvent event) {
@@ -189,6 +192,11 @@ public class McAppNav extends Composite {
 	@UiHandler("deactivatedQuestion")
 	void deactivatedQuestionClicked(ClickEvent event){
 		placeController.goTo(new PlaceDeactivatedQuestion(PlaceDeactivatedQuestion.PLACE_DEACTIVATED_QUESTION, true));
+	}
+	
+	@UiHandler("questionInAssessment")
+	void questionInAssessmentClicked(ClickEvent event){
+		placeController.goTo(new PlaceQuestionInAssessment(PlaceQuestionInAssessment.PLACE_QUESTION_IN_ASSESSMENT, true));
 	}
 //	public McAppNav() {
 //		initWidget(uiBinderUser.createAndBindUi(this));
@@ -486,6 +494,7 @@ public class McAppNav extends Composite {
 		assementPanel.getHeaderTextAccessor().setText(constants.assementPanel());
 		assesment.setText(constants.assesment());
 		asignAssQuestion.setText(constants.asignAssQuestion());
+		questionInAssessment.setText(constant.questionInAssessment());
 		bookAssesment.setText(constants.bookAssesment());
 		staticContent.setText(constants.staticContent());
 	}
@@ -514,6 +523,7 @@ public class McAppNav extends Composite {
 		questionType.setVisible(true);
 		institution.setVisible(true);
 		assesment.setVisible(true);
+		questionInAssessment.setVisible(true);
 		bookAssesment.setVisible(true);
 		staticContent.setVisible(true);
 		deactivatedQuestion.setVisible(true);
@@ -532,6 +542,7 @@ public class McAppNav extends Composite {
 		questionType.setVisible(false);
 		institution.setVisible(false);
 		assesment.setVisible(false);
+		questionInAssessment.setVisible(false);
 		bookAssesment.setVisible(false);
 		staticContent.setVisible(false);
 		deactivatedQuestion.setVisible(false);
