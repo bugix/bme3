@@ -1,5 +1,9 @@
 package medizin.server.utils.docx;
 
+import ij.ImagePlus;
+import ij.io.Opener;
+import ij.process.ImageProcessor;
+
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -17,7 +21,6 @@ import java.util.regex.Pattern;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
-import javax.activation.FileDataSource;
 import javax.imageio.ImageIO;
 import javax.mail.BodyPart;
 import javax.mail.MessagingException;
@@ -35,6 +38,7 @@ import medizin.server.domain.Person;
 import medizin.server.domain.Question;
 import medizin.server.domain.QuestionResource;
 import medizin.server.domain.QuestionType;
+import medizin.server.utils.imagej.plugin.Resize;
 import medizin.shared.MultimediaType;
 import medizin.shared.QuestionTypes;
 import medizin.shared.utils.SharedConstant;
@@ -64,6 +68,7 @@ import com.google.common.collect.Maps;
 
 public final class DocxPaperMHTML {
 
+	private static final String MAX_IMAGE_WIDTH = "600";
 	private static final String EXTENSION_DOCX = ".docx";
 	private static final Logger log = Logger.getLogger(DocxPaperMHTML.class);
 	private final ByteArrayOutputStream os;
@@ -177,7 +182,7 @@ public final class DocxPaperMHTML {
 		return htmlFile;
 	}
 
-	private void addImageToMessage(MimeMessage message, MimeMultipart mpart) {
+	/*private void addImageToMessage(MimeMessage message, MimeMultipart mpart) {
 		for (String path : imagePath) {
 			try {
 				mpart.addBodyPart(bodyPart(new FileDataSource(path)));
@@ -186,6 +191,47 @@ public final class DocxPaperMHTML {
 				log.error("Error in add image",e);
 			}	
 		}
+	}*/
+	
+	private void addImageToMessage(MimeMessage message, MimeMultipart mpart) {
+		for (String path : imagePath) {
+			try {
+				ByteArrayDataSource ds = new ByteArrayDataSource(getByteArrayForImage(path), "Application/octet-stream");
+				ds.setName(FilenameUtils.getName(path));
+				mpart.addBodyPart(bodyPart(ds));
+			    message.setContent(mpart);	
+			} catch (Exception e) {
+				log.error("Error in add image",e);
+			}	
+		}
+	}
+
+	private byte[] getByteArrayForImage(String path) {
+		// get image
+		ImagePlus image;
+		String inputURL = "file:///" + path;
+		try {
+			Opener opener = new Opener();
+			image = opener.openURL(inputURL);
+
+			// resize image
+			Resize pif = new Resize();
+
+			pif.setup(MAX_IMAGE_WIDTH, image);
+			ImageProcessor ip = image.getProcessor();
+			pif.run(ip);
+			BufferedImage bufferedImage = pif.getImage();
+			
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			ImageIO.write(bufferedImage, FilenameUtils.getExtension(path), baos);
+			baos.flush();
+			byte[] imageInByte = baos.toByteArray();
+			baos.close();
+			return imageInByte;
+		} catch (IOException e) {
+			log.error("Error in resizeImage Method", e);
+		}
+		return null;
 	}
 
 	private void addEquationImageToMessage(MimeMessage message, MimeMultipart mpart) throws IOException, MessagingException {
@@ -254,7 +300,7 @@ public final class DocxPaperMHTML {
 		for (String fnd : foundList) {
 			final String fileName = UUID.randomUUID().toString();  
 			final BufferedImage bufferedImage = PaperUtils.generateImageFromLaTex(fnd);
-			newString = newString.replace("\\(" + fnd + "\\)", "<img src=\""+fileName+"\"/>");
+			newString = newString.replace("\\(" + fnd + "\\)", "<img src=\""+fileName+"\" style='vertical-align:bottom'/>");
 			equationMap.put(fileName, bufferedImage);
 		}
 		log.info("New String  :" + newString);
@@ -352,7 +398,7 @@ public final class DocxPaperMHTML {
 		
 		if(new File(path).exists()) {
 			imagePath.add(path);
-			return "<img src=\""+ FilenameUtils.getName(path) + "\"/>";	
+			return "<img src=\""+ FilenameUtils.getName(path) + "\" />";	
 		} else {
 			return "<p> File "+ FilenameUtils.getName(path) + " does not exists.</p>";
 		}
@@ -375,47 +421,47 @@ public final class DocxPaperMHTML {
 		li.html(li.html() + "<p>" + paragraphText + "</p>");
 	}
 	
-	 static BodyPart bodyPart(DataSource ds) throws MessagingException
-	    {
-	        MimeBodyPart body = new MimeBodyPart();
-	        DataHandler dh = new DataHandler(ds);
-	        body.setDisposition("inline");
-	        body.setDataHandler(dh);
-	        body.setFileName(dh.getName());
-	        // the URL of the file; we set it simply to its name
-	        body.addHeader("Content-Location", dh.getName());
-	        return body;
-	    }
+	static BodyPart bodyPart(DataSource ds) throws MessagingException
+    {
+        MimeBodyPart body = new MimeBodyPart();
+        DataHandler dh = new DataHandler(ds);
+        body.setDisposition("inline");
+        body.setDataHandler(dh);
+        body.setFileName(dh.getName());
+        // the URL of the file; we set it simply to its name
+        body.addHeader("Content-Location", dh.getName());
+        return body;
+    }
 
-	    /**
-	     * A simple in-memory implementation of {@link DataSource}.
-	     */
-	    static final class StringSource implements DataSource
-	    {
-	        private final String contentType;
-	        private final String name;
-	        private final byte[] data;
-	        public StringSource(String contentType, String name, String data)
-	        {
-	            this.contentType = contentType;
-	            this.data = data.getBytes();
-	            this.name = name;
-	        }
-	        public String getContentType()
-	        {
-	            return contentType;
-	        }
-	        public OutputStream getOutputStream() throws IOException
-	        {
-	            throw new IOException();
-	        }
-	        public InputStream getInputStream() throws IOException
-	        {
-	            return new ByteArrayInputStream(data);
-	        }
-	        public String getName()
-	        {
-	            return name;
-	        }
-	    }
+    /**
+     * A simple in-memory implementation of {@link DataSource}.
+     */
+    static final class StringSource implements DataSource
+    {
+        private final String contentType;
+        private final String name;
+        private final byte[] data;
+        public StringSource(String contentType, String name, String data)
+        {
+            this.contentType = contentType;
+            this.data = data.getBytes();
+            this.name = name;
+        }
+        public String getContentType()
+        {
+            return contentType;
+        }
+        public OutputStream getOutputStream() throws IOException
+        {
+            throw new IOException();
+        }
+        public InputStream getInputStream() throws IOException
+        {
+            return new ByteArrayInputStream(data);
+        }
+        public String getName()
+        {
+            return name;
+        }
+    }
 }

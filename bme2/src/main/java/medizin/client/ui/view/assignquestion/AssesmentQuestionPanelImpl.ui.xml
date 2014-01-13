@@ -77,6 +77,11 @@ border-bottom: 1px solid #AAAAAA;
 	            		
 	        <!--     	</g:VerticalPanel>
 	         -->      
+	         		<!--Added following Horizontal panel containing two buttons openAllQuestionsBtn and closeAllQuestionsBtn to open and close all Question panel  -->
+	         		<g:HorizontalPanel ui:field="OpenAllOrCloseAllBtnContainer" width="100px" spacing="10">
+						<g:Button ui:field="openAllQuestionsBtn">Expand All Questions</g:Button>
+						<g:Button ui:field="closeAllQuestionsBtn">Close All Questions</g:Button>
+					</g:HorizontalPanel>
 	               </g:VerticalPanel>
 	            </td>
 	        </tr>

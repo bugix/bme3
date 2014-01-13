@@ -5,6 +5,7 @@ import java.util.List;
 import medizin.client.proxy.AssesmentProxy;
 import medizin.client.proxy.AssesmentQuestionProxy;
 import medizin.client.proxy.PersonProxy;
+import medizin.client.ui.widget.Sorting;
 
 import org.springframework.roo.addon.gwt.RooGwtUnmanagedRequest;
 
@@ -66,4 +67,8 @@ public interface AssesmentQuestionRequest extends AssesmentQuestionRequest_Roo_G
 	abstract Request<List<Long>> findQuestionsByAssesment(Long assessmentId);
 	
 	abstract Request<AssesmentQuestionProxy> findPastAssesmentOfQuestion(Long assesmentId,Long questionId);
+	
+	abstract Request<Integer> countAssessmentQuestionByAssessment(Long assessmentId, List<String> criteriaStringList);
+	
+	abstract Request<List<AssesmentQuestionProxy>> findAssessmentQuestionByAssessmentForAdmin(Long assessmentId, String sortname,Sorting sortorder,List<String> criteriaStringList, int start, int length);
 }

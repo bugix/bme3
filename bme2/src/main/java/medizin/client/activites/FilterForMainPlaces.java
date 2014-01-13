@@ -44,6 +44,8 @@ import medizin.client.place.PlaceNotActivatedQuestionDetails;
 import medizin.client.place.PlaceOpenDemand;
 import medizin.client.place.PlaceQuestion;
 import medizin.client.place.PlaceQuestionDetails;
+import medizin.client.place.PlaceQuestionInAssessment;
+import medizin.client.place.PlaceQuestionInAssessmentDetails;
 import medizin.client.place.PlaceQuestiontypes;
 import medizin.client.place.PlaceQuestiontypesDetails;
 import medizin.client.place.PlaceStaticContent;
@@ -172,6 +174,15 @@ public class FilterForMainPlaces implements AsyncFilteredActivityMapper.Filter {
 		 if (place instanceof PlaceDeactivatedQuestionDetails){
 			 PlaceDeactivatedQuestionDetails placeDeactivatedQuestionDetails = (PlaceDeactivatedQuestionDetails) place;
 			 return new PlaceDeactivatedQuestion(PlaceDeactivatedQuestion.PLACE_DEACTIVATED_QUESTION, placeDeactivatedQuestionDetails.getProxyId());
+		 }
+		 
+		 if (place instanceof PlaceQuestionInAssessment){
+			 return (PlaceQuestionInAssessment)place;
+		 }
+		 if (place instanceof PlaceQuestionInAssessmentDetails)
+		 {
+			 PlaceQuestionInAssessmentDetails placeQuestionInAssessmentDetails = (PlaceQuestionInAssessmentDetails) place;
+			 return new PlaceQuestionInAssessment(PlaceQuestionInAssessment.PLACE_QUESTION_IN_ASSESSMENT, placeQuestionInAssessmentDetails.getProxyId());
 		 }
 		 
 		 return null;

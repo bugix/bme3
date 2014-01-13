@@ -52,6 +52,7 @@ public class QuestionViewImpl extends Composite implements QuestionView {
 	@UiField
 	Label addToAssesment;
 	
+	
 	  @UiField
 	    SpanElement rewiewer;
 
@@ -78,6 +79,9 @@ public class QuestionViewImpl extends Composite implements QuestionView {
 	    
 	    @UiField
 	    SpanElement lastUse;
+	    
+	    @UiField
+	    SpanElement shortName;
 	    
 	@UiField
 	IconButton viewHtmlText;
@@ -160,7 +164,7 @@ public class QuestionViewImpl extends Composite implements QuestionView {
 	public void setProxy(QuestionProxy question) {
 		this.question = question;
 		header.setHTML(new HTML(ClientUtility.removeMathJax(question.getQuestionText())).getText());
-		
+		shortName.setInnerHTML(question.getQuestionShortName()==null ?"":question.getQuestionShortName());
         rewiewer.setInnerText(question.getRewiewer() == null ? "" : medizin.client.ui.view.roo.PersonProxyRenderer.instance().render(question.getRewiewer()));
         autor.setInnerText(question.getAutor() == null ? "" : medizin.client.ui.view.roo.PersonProxyRenderer.instance().render(question.getAutor()));
         keywords.setInnerText(question.getKeywords() == null ? "" : CollectionRenderer.of(medizin.client.ui.view.roo.KeywordProxyRenderer.instance()).render(question.getKeywords()));

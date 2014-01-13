@@ -107,6 +107,9 @@ public class AssesmentQuestionViewImpl extends Composite implements AssesmentQue
 	    SpanElement questionType;
 	    
 	    @UiField
+	    SpanElement shortName;
+	    
+	    @UiField
 	    HTMLPanel detailsTablePanel;
 	    
 	 @UiField
@@ -131,7 +134,7 @@ public class AssesmentQuestionViewImpl extends Composite implements AssesmentQue
 	
 	
 	
-	private void close() {
+	public void close() {
 		twistieOpen.setVisible(true);
 		answers.setVisible(false);
 		twistieClose.setVisible(false);	
@@ -141,7 +144,7 @@ public class AssesmentQuestionViewImpl extends Composite implements AssesmentQue
 		questionTable.removeClassName("questionTable-open");
 	}
 
-	private void open() {
+	public void open() {
 		if(answersLoaded==false){
 			delegate.twistieOpenAssQuestionClicked(this, issInAssement);
 			answersLoaded=true;
@@ -215,7 +218,8 @@ public class AssesmentQuestionViewImpl extends Composite implements AssesmentQue
 			addToAssesment.removeFromParent();
 		}
 		QuestionProxy question = assesmentQuestion.getQuestion();
-	     rewiewer.setInnerText(question.getRewiewer() == null ? "" : medizin.client.ui.view.roo.PersonProxyRenderer.instance().render(question.getRewiewer()));
+		shortName.setInnerHTML(question.getQuestionShortName()==null ?"":question.getQuestionShortName()); 
+		rewiewer.setInnerText(question.getRewiewer() == null ? "" : medizin.client.ui.view.roo.PersonProxyRenderer.instance().render(question.getRewiewer()));
 	     autor.setInnerText(question.getAutor() == null ? "" : medizin.client.ui.view.roo.PersonProxyRenderer.instance().render(question.getAutor()));
 	     keywords.setInnerText(question.getKeywords() == null ? "" : CollectionRenderer.of(medizin.client.ui.view.roo.KeywordProxyRenderer.instance()).render(question.getKeywords()));
 	     questEvent.setInnerText(question.getQuestEvent() == null ? "" : medizin.client.ui.view.roo.QuestionEventProxyRenderer.instance().render(question.getQuestEvent()));

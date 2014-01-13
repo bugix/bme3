@@ -257,8 +257,19 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 			
 			@Override
 			public void onClose(CloseEvent<PopupPanel> event) {
+				Log.info("onClose() of serch box is called");
+				// Taking previous search criteria.
+				List<String> oldSearchValues = new ArrayList<String>(searchField);
 				setFieldForSearchBox();
-				delegate.performSearch(searchBox.getValue());
+				if(oldSearchValues.equals(searchField)){
+					Log.info("No changes is make by user for search");
+					return;
+				}else{
+					Log.info("Changes is make by user for search criteria");
+					// Calling perform search as changes is make by user.
+					delegate.performSearch(searchBox.getValue());
+				}
+				
 			}
 		});
 

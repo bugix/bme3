@@ -36,6 +36,8 @@ private final PlaceNotActivatedQuestionDetails.Tokenizer placeNotActivatedQuesti
 private final PlaceNotActivatedAnswer.Tokenizer placeNotActivatedAnswer;
 private final PlaceDeactivatedQuestion.Tokenizer placeDeactivatedQuestion;
 private final PlaceDeactivatedQuestionDetails.Tokenizer placeDeactivatedQuestionDetails;
+private final PlaceQuestionInAssessment.Tokenizer placeQuestionInAssessment;
+private final PlaceQuestionInAssessmentDetails.Tokenizer placeQuestionInAssessmentDetails;
 
 public PlaceUserDetailsEvent.Tokenizer getPlaceUserDetailsEventTokenizer() {
 	return placeUserDetailsEventTokenizer;
@@ -167,6 +169,14 @@ public PlaceDeactivatedQuestion.Tokenizer getPlaceDeactivatedQuestionTokenizer()
 public PlaceDeactivatedQuestionDetails.Tokenizer getPlaceDeactivatedQuestionDetailsTokenizer() {
 	return placeDeactivatedQuestionDetails;
 }
+
+public PlaceQuestionInAssessment.Tokenizer getPlaceQuestionInAssessmentTokenizer() {
+	return placeQuestionInAssessment;
+}
+
+public PlaceQuestionInAssessmentDetails.Tokenizer getPlaceQuestionInAssessmentDetailsTokenizer() {
+	return placeQuestionInAssessmentDetails;
+}
 //	private final NationalityPlace.Tokenizer nationalityPlaceTokenizer;
 //	private final NationalityDetailsPlace.Tokenizer nationalityDetailsPlaceTokenizer;
 
@@ -203,6 +213,8 @@ public PlaceDeactivatedQuestionDetails.Tokenizer getPlaceDeactivatedQuestionDeta
 		this.placeNotActivatedAnswer = new PlaceNotActivatedAnswer.Tokenizer(requestFactory);
 		this.placeDeactivatedQuestion = new PlaceDeactivatedQuestion.Tokenizer(requestFactory);
 		this.placeDeactivatedQuestionDetails = new PlaceDeactivatedQuestionDetails.Tokenizer(requestFactory);
+		this.placeQuestionInAssessment = new PlaceQuestionInAssessment.Tokenizer(requestFactory);
+		this.placeQuestionInAssessmentDetails = new PlaceQuestionInAssessmentDetails.Tokenizer(requestFactory);
 	}
 
 //	public PlaceTokenizer<NationalityPlace> getNationalityPlaceTokenizer() {

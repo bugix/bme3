@@ -3,6 +3,8 @@ package medizin.server.utils.docx;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -24,8 +26,10 @@ import medizin.shared.utils.SharedConstant;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.log4j.Logger;
+import org.scilab.forge.jlatexmath.ParseException;
 import org.scilab.forge.jlatexmath.TeXConstants;
 import org.scilab.forge.jlatexmath.TeXFormula;
+import org.scilab.forge.jlatexmath.TeXIcon;
 
 import sun.misc.BASE64Encoder;
 
@@ -138,9 +142,29 @@ public final class PaperUtils {
 	
 	public static BufferedImage generateImageFromLaTex(String convertToTex) {
 		TeXFormula formula = new TeXFormula(convertToTex);
-		return (BufferedImage) formula.createBufferedImage(TeXConstants.STYLE_TEXT,40, Color.BLACK, Color.WHITE);
+		//return (BufferedImage) formula.createBufferedImage(TeXConstants.STYLE_TEXT,15, Color.BLACK, Color.WHITE);
+		return (BufferedImage) createBufferedImage(formula,TeXConstants.STYLE_TEXT,20, Color.BLACK, Color.WHITE);
 	}
 
+	public static Image createBufferedImage(TeXFormula formula,int style, float size, Color fg, Color bg) throws ParseException {
+        TeXIcon icon = formula.createTeXIcon(style, size);
+        icon.setInsets(new Insets(0, 0, -2, 0));
+        int w = icon.getIconWidth(), h = icon.getIconHeight();
+
+        BufferedImage image = new BufferedImage(w, h, bg == null ? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2 = image.createGraphics();
+        if (bg != null) {
+            g2.setColor(bg);
+            g2.fillRect(0, 0, w, h);
+        }
+
+        icon.setForeground(fg == null ? Color.BLACK : fg);
+        icon.paintIcon(null, g2, 0, 0);
+        g2.dispose();
+
+        return image;
+    }
+	 
 	public static BufferedImage generateImageFromPath(String path,int width) throws IOException {
 		BufferedImage image = ImageIO.read(new File(path));
 		int newWidth = width;
