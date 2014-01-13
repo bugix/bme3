@@ -328,6 +328,7 @@ public class QuestionEvent {
 	    	CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
 	    	CriteriaQuery<QuestionEvent> criteriaQuery = criteriaBuilder.createQuery(QuestionEvent.class);
 	    	Root<QuestionEvent> from = criteriaQuery.from(QuestionEvent.class);
+	    	criteriaQuery.orderBy(criteriaBuilder.asc(from.get("eventName")));
 	    	
 	    	if (loggedPerson.getIsAdmin() == false)
 	    	{

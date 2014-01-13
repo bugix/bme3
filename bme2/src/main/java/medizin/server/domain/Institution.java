@@ -137,6 +137,7 @@ public class Institution {
     	CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
  		CriteriaQuery<Institution> criteriaQuery = criteriaBuilder.createQuery(Institution.class);
  		Root<Institution> from = criteriaQuery.from(Institution.class);
+ 		criteriaQuery.orderBy(criteriaBuilder.asc(from.get("institutionName")));
  		
  		if (loggedPerson.getIsAdmin() == false)
  		{
