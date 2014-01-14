@@ -91,9 +91,6 @@ public class QuestiontypesViewImpl extends Composite implements QuestiontypesVie
 		
 		initWidget(uiBinder.createAndBindUi(this));
 		init();
-		//splitLayoutPanel.setWidgetMinSize(splitLayoutPanel.getWidget(0), McAppConstant.SPLIT_PANEL_MINWIDTH);
-		//splitLayoutPanel.setWidgetMinSize(splitLayoutPanel.getWidget(0), McAppConstant.SPLIT_PANEL_MINWIDTH);
-		//setting widget width from cookie.
         setWidgetWidth();
 	}
 
@@ -103,20 +100,6 @@ public class QuestiontypesViewImpl extends Composite implements QuestiontypesVie
         	splitLayoutPanel.setWidgetSize(scrollPanel,Double.valueOf(widgetWidthFromCookie));	
         }
 	}
-	
-//    @Override
-//    public RequestFactoryEditorDriver<medizin.client.managed.request.QuestionTypeProxy, QuestiontypesViewImpl> createEditorDriver() {
-//        RequestFactoryEditorDriver<QuestionTypeProxy, QuestiontypesViewImpl> driver = GWT.create(Driver.class);
-//        driver.initialize(this);
-//        return driver;
-//    }
-//    
-//    interface Driver extends RequestFactoryEditorDriver<QuestionTypeProxy, QuestiontypesViewImpl> {
-//    }
-
-
-
-
 
 	@Override
 	public void setPresenter(Presenter presenter) {
@@ -161,11 +144,6 @@ public class QuestiontypesViewImpl extends Composite implements QuestiontypesVie
 	ScrollPanel scrollPanel;
 	
 	public void init() {
-		
-		/*ResolutionSettings.setSplitLayoutPanelPosition(splitLayoutPanel,true);
-		
-		ResolutionSettings.setSplitLayoutPanelAnimation(splitLayoutPanel);
-		splitLayoutPanel.animate(McAppConstant.ANIMATION_TIME);*/	
 		DOM.setElementAttribute(splitLayoutPanel.getElement(), "style", "position: absolute; left: 0px; top: 0px; right: 5px; bottom: 0px;");
 		newQuestiontype.setText(constants.newQuestionType());
 
@@ -209,37 +187,9 @@ public class QuestiontypesViewImpl extends Composite implements QuestiontypesVie
 
             @Override
             public String getValue(QuestionTypeProxy object) {
-                //return renderer.render(object.getQuestionTypeName());
             	return renderer.render(object == null ? null : object.getQuestionType()!=null?object.getQuestionType().toString():"");
-            	//return renderer.render(object.getShortName());
             }
         }, constants.type(),true);
-       
-       
-        /*paths.add("questionType");
-        table.addColumn(new TextColumn<QuestionTypeProxy>() {
-
-			{
-				this.setSortable(true);
-			}
-            Renderer<java.lang.Integer> renderer = new AbstractRenderer<java.lang.Integer>() {
-
-                public String render(java.lang.Integer obj) {
-                    return obj == null ? "" : String.valueOf(obj);
-                }
-            };
-
-            @Override
-            public String getValue(QuestionTypeProxy object) {
-                //return renderer.render(object.getTrueAnswers());
-            	if (object.getSumTrueAnswer() != null)
-            		return object.getSumTrueAnswer().toString();
-            	else 
-            		return "1";
-            	return renderer.render(object.getq getQuestionType()!=null?object.getQuestionType():"");
-            	//return "1";
-            }
-        }, constants.type());*/
         
         columnName.put(constants.answer(), "answer");
 		columnNameorder.add(constants.answer());
@@ -254,13 +204,7 @@ public class QuestiontypesViewImpl extends Composite implements QuestiontypesVie
             };
 
             @Override
-            public String getValue(QuestionTypeProxy object) {
-              //  return renderer.render(object.getFalseAnswers());
-            	/*if (object.getSumFalseAnswer().toString() != null)
-            		return object.getSumFalseAnswer().toString();
-            	else 
-            		return "2";*/
-            	
+            public String getValue(QuestionTypeProxy object) {            	
             	return AnswerValue.getValue(object == null ? null : object);
             }
         }, constants.answer(),true);
@@ -285,37 +229,6 @@ public class QuestiontypesViewImpl extends Composite implements QuestiontypesVie
             	return renderer.render(object == null ? null : object.getDescription()!=null?object.getDescription().toString():"");
             }
         }, constants.description(),false);
-
-        // commented as not to include at this time.
-        /*columnName.put(constants.institutionLbl(), "institution");
-		columnNameorder.add(constants.institutionLbl());
-		paths.add("institution");
-        table.addColumn(new TextColumn<QuestionTypeProxy>() {
-
-			{
-				this.setSortable(true);
-			}
-            Renderer<java.lang.String> renderer = new AbstractRenderer<java.lang.String>() {
-
-                public String render(java.lang.String obj) {
-                    return obj == null ? "" : String.valueOf(obj);
-                }
-            };
-
-            @Override
-            public String getValue(QuestionTypeProxy object) {
-            	String result="";
-            	if(object !=null){
-            		if(object.getInstitution()!=null){
-            			result = object.getInstitution().getInstitutionName(); 
-            			return renderer.render(result);
-            		}
-            	}else{
-            		return renderer.render("");
-            	}
-            	return renderer.render("");
-            }
-        }, constants.institutionLbl(),false);*/
         
         path=getPath();
         addMouseDownHandler();
@@ -325,25 +238,14 @@ public class QuestiontypesViewImpl extends Composite implements QuestiontypesVie
 	{
 		Set<String> selectedItems = table.getPopup().getMultiSelectionModel().getSelectedSet();
 
-		
 		int j = table.getColumnCount();
 		while (j > 0) {
 			
 			table.removeColumn(0);
 			j--;
 		}
-
+		
 		path.clear();
-
-		Iterator<String> i;
-		if (selectedItems.size() == 0) {
-
-			i = table.getPopup().getDefaultValue().iterator();
-
-		} else {
-			i = selectedItems.iterator();
-		}
-
 		Iterator<String> i1=getColumnNameorder().iterator();
 
 		while (i1.hasNext()) {
@@ -361,12 +263,8 @@ public class QuestiontypesViewImpl extends Composite implements QuestiontypesVie
 			columnHeader = colValue;
 			String colName=(String)columnName.get(columnHeader);
 			path.add(colName.toString());
-				
-				
 			
-
 			table.addColumn(new TextColumn<QuestionTypeProxy>() {
-
 				{
 					this.setSortable(true);
 				}
@@ -396,10 +294,7 @@ public class QuestiontypesViewImpl extends Composite implements QuestiontypesVie
 						} else if (tempColumnHeader == constants.description()) {
 							
 							return renderer.render(object.getDescription()!=null?object.getDescription():"");
-						}/* else if (tempColumnHeader == constants.institutionLbl()) {
-							
-							return renderer.render(object.getInstitution().getInstitutionName()!=null?object.getInstitution().getInstitutionName():"");
-						} */
+						}
 						else {
 							return "";
 						}
@@ -423,27 +318,6 @@ public class QuestiontypesViewImpl extends Composite implements QuestiontypesVie
 				y = event.getClientY();
 
 				delegate.setXandYOfTablePopyp(x-10,y);
-				
-				/*if(table.getRowCount()>0)
-				{
-				Log.info(table.getRowElement(0).getAbsoluteTop() + "--"+ event.getClientY());
-
-				
-				if (event.getNativeButton() == NativeEvent.BUTTON_RIGHT&& event.getClientY() < table.getRowElement(0).getAbsoluteTop()) {
-					
-					table.getPopup().setPopupPosition(x-10, y);
-					table.getPopup().show();
-
-					Log.info("right event");
-				}
-				}
-				else
-				{
-					table.getPopup().setPopupPosition(x, y);
-					table.getPopup().show();
-					
-				}*/
-
 			}
 		}, MouseDownEvent.getType());
 		

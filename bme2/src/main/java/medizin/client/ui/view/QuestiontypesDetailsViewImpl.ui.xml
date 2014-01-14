@@ -308,54 +308,6 @@
 											</td>
 										</tr>
 
-										<!-- <tr id="imageWidth">
-											<td>
-												<g:Label styleName="{style.label}" ui:field="imageWidthLbl"></g:Label>
-											</td>
-											<td>
-												<g:Label addStyleNames="{style.valueHeight}" ui:field="imageWidthValLbl"></g:Label>
-											</td>
-										</tr>
-
-										<tr id="imageLength">
-											<td>
-												<g:Label styleName="{style.label}" ui:field="imageLengthLbl"></g:Label>
-											</td>
-											<td>
-												<g:Label addStyleNames="{style.valueHeight}" ui:field="imageLengthValLbl"></g:Label>
-											</td>
-										</tr>
-
-										<tr id="imageProportion">
-											<td>
-												<g:Label styleName="{style.label}" ui:field="imageProportionLbl"></g:Label>
-											</td>
-											<td>
-												<g:Label addStyleNames="{style.valueHeight}" ui:field="imageProportionValLbl"></g:Label>
-											</td>
-										</tr> -->
-
-										<!-- Area Question Type Field -->
-
-										<!-- <tr id="linearPoint">
-											<td>
-												<g:Label styleName="{style.label}" ui:field="linearPointLbl"></g:Label>
-											</td>
-											<td>
-
-												<g:Label addStyleNames="{style.valueHeight}" ui:field="linearPointValLbl"></g:Label>
-											</td>
-										</tr>
-
-										<tr id="linearPercentage">
-											<td>
-												<g:Label styleName="{style.label}" ui:field="linearPercentageLbl"></g:Label>
-											</td>
-											<td>
-												<g:Label addStyleNames="{style.valueHeight}" ui:field="linearPercentageValLbl"></g:Label>
-											</td>
-										</tr> -->
-
 										<!-- Long Text Type Field -->
 
 										<tr id="keywordHighlight">
@@ -451,42 +403,6 @@
 												<g:Label addStyleNames="{style.valueHeight}" ui:field="columnValLbl"></g:Label>
 											</td>
 										</tr>
-
-										<!-- <tr id="thumbWidth">
-											<td>
-												<g:Label styleName="{style.label}" ui:field="thumbWidthLbl"></g:Label>
-											</td>
-											<td>
-												<g:Label addStyleNames="{style.valueHeight}" ui:field="thumbWidthValLbl"></g:Label>
-											</td>
-										</tr>
-
-										<tr id="thumbHeight">
-											<td>
-												<g:Label styleName="{style.label}" ui:field="thumbHeightLbl"></g:Label>
-											</td>
-											<td>
-												<g:Label addStyleNames="{style.valueHeight}" ui:field="thumbHeightValLbl"></g:Label>
-											</td>
-										</tr>
-
-										<tr id="allowZoomOut">
-											<td>
-												<g:Label styleName="{style.label}" ui:field="allowZoomOutLbl"></g:Label>
-											</td>
-											<td>
-												<g:Label addStyleNames="{style.valueHeight}" ui:field="allowZoomOutValLbl"></g:Label>
-											</td>
-										</tr>
-
-										<tr id="allowZoomIn">
-											<td>
-												<g:Label styleName="{style.label}" ui:field="allowZoomInLbl"></g:Label>
-											</td>
-											<td>
-												<g:Label addStyleNames="{style.valueHeight}" ui:field="allowZoomInValLbl"></g:Label>
-											</td>
-										</tr> -->
 
 										<tr id="maxBytes">
 											<td>

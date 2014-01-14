@@ -19,25 +19,5 @@
 			<!-- <gwtgraphics:DrawingArea ui:field="drawingArea"></gwtgraphics:DrawingArea> -->
 			<g:Image ui:field="image" styleName="{style.altText}"></g:Image>
 		</g:VerticalPanel>
-		<!-- <g:VerticalPanel>
-			<g:HTMLPanel>
-			<table>
-				<tr>
-					<td><g:CheckBox ui:field="chkChangeSize"></g:CheckBox></td>
-					<td><g:Label ui:field="lblCurrentSize"></g:Label> </td>
-					<td></td>
-					<td></td>
-				</tr>
-				<tr>
-					<td><g:Label ui:field="lblHeight"></g:Label></td>
-					<td><g:TextBox ui:field="txtHeight"></g:TextBox></td>
-				</tr>
-				<tr>
-					<td><g:Label ui:field="lblWidth"></g:Label></td>
-					<td><g:TextBox ui:field="txtWidth"></g:TextBox></td>
-				</tr>
-			</table>
-			</g:HTMLPanel>
-		</g:VerticalPanel> -->
 	</g:HTMLPanel>
 </ui:UiBinder> 

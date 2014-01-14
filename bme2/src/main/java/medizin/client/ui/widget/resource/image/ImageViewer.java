@@ -24,151 +24,21 @@ public class ImageViewer extends Composite{
 	
 	interface ImageViewerUiBinder extends UiBinder<Widget, ImageViewer> {
 	}
-
-	private Integer originalWidth;
-	private Integer originalHeight;
-	/*private int currentWidth;
-	private int currentHeight;
-	private int predefinedWidth;
-	private int predefinedHeight;*/
 	
-	
-	/*@UiField(provided = true)
-	DrawingArea drawingArea;*/
-	
-	/*@UiField
-	CheckBox chkChangeSize;
-	
-	@UiField
-	Label lblCurrentSize;*/
-	
-	/*@UiField
-	Label lblHeight;
-	
-	@UiField
-	Label lblWidth;
-	
-	@UiField
-	TextBox txtHeight;
-	
-	@UiField
-	TextBox txtWidth;*/
-
 	@UiField
 	Image image;
 	private String name;
 	//private org.vaadin.gwtgraphics.client.Image image;
 	
 	public ImageViewer() {
-		
-		/*drawingArea = new DrawingArea(100, 100);*/
 		initWidget(uiBinder.createAndBindUi(this));
-		
-		/*lblHeight.setText(constants.height());
-		lblWidth.setText(constants.width());*/
-		
-		/*predefinedWidth = 600;
-		predefinedHeight = 500;*/
-		
-		/*chkChangeSize.setText(setWidthHeight(constants.changeToSize(),predefinedWidth,predefinedHeight));
-		
-		chkChangeSize.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<Boolean> event) {
-				
-				chkChangeSizeOnValueChangeHandler(event);	
-				
-			}
-		});*/
-		
-		/*txtHeight.addValueChangeHandler(new ValueChangeHandler<String>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				changeHeightandWidthUsingTextBox(event);
-			}
-
-		});
-		
-		txtWidth.addValueChangeHandler(new ValueChangeHandler<String>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				changeHeightandWidthUsingTextBox(event);
-			}
-		});*/
-		
 	}
-
-	
-	/*private void changeHeightandWidthUsingTextBox(
-			ValueChangeEvent<String> event) {
-		
-		try {
-			currentHeight = Integer.parseInt(txtHeight.getValue(), 10);
-			currentWidth = Integer.parseInt(txtWidth.getValue(), 10);
-			lblCurrentSize.setText(setWidthHeight(constants.currentSize(),currentWidth,currentHeight));
-			setImageAndCanvasSize(currentWidth, currentHeight);
-		}catch (Exception e) {
-			Window.alert("Set height and width as number.");
-		}
-	}*/
-	
-	/*private void chkChangeSizeOnValueChangeHandler(
-			ValueChangeEvent<Boolean> event) {
-		
-		txtHeight.setText("");
-		txtWidth.setText("");
-		
-		if(event.getValue() == true) {
-			// change to predefined width and height
-			chkChangeSize.setText(setWidthHeight(constants.changeToSize(),originalWidth,originalHeight));
-			lblCurrentSize.setText(setWidthHeight(constants.currentSize(),predefinedWidth,predefinedHeight));
-			currentWidth = predefinedWidth;
-			currentHeight = predefinedHeight;
-			setImageAndCanvasSize(predefinedWidth,predefinedHeight);
-			
-		}else {
-			// change to original width and height
-			chkChangeSize.setText(setWidthHeight(constants.changeToSize(),predefinedWidth,predefinedHeight));
-			lblCurrentSize.setText(setWidthHeight(constants.currentSize(),originalWidth,originalHeight));
-			currentWidth = originalWidth;
-			currentHeight = originalHeight;
-			setImageAndCanvasSize(originalWidth,originalHeight);
-		}
-				
-	}*/
-
-	/*private void setImageAndCanvasSize(int width,int height) {
-		image.setHeight(height);
-		image.setWidth(width);
-		drawingArea.setHeight(height);
-		drawingArea.setWidth(width);
-	}*/
 		
 	private void init(Integer width,Integer height) {
 		
 		Log.info("Init method called ");
 		Log.info("Image path : " + url);
-		/*Image tempImage = new Image(url);
-		
-		originalWidth = tempImage.getWidth();
-		originalHeight = tempImage.getHeight();*/
-		
-//		lblCurrentSize.setText(setWidthHeight(constants.currentSize(),originalWidth,originalHeight));
-		
-		originalWidth = width;
-		originalHeight = height;
-		
-		/*drawingArea.setHeight(originalHeight);
-		drawingArea.setWidth(originalWidth);
-		
-		image = new org.vaadin.gwtgraphics.client.Image(
-				0, 0, originalWidth ,originalHeight, url);
-		
-		drawingArea.add(image);*/
-		
+				
 		image.setUrl(url);
 		if(height != null) {
 			image.setHeight(height + "px");	
@@ -178,12 +48,7 @@ public class ImageViewer extends Composite{
 			image.setWidth(width + "px");	
 		}
 		
-		
 	}
-
-	/*private final String setWidthHeight(String size, int width, int height) {	
-		return size.replace("(0)", width +"").replace("(1)", height + "");
-	}*/
 	
 	public String getImageUrl() {
 		return url;
@@ -197,51 +62,14 @@ public class ImageViewer extends Composite{
 		Log.info("Rendering image");
 		init(width,height);
 	}
-	
-	/*public Request<String> saveImage(McAppRequestFactory  request) {
-		
-		String size = String.valueOf(currentWidth).concat(",").concat(String.valueOf(currentHeight));
-		
-		String tempUrl = url.replace(GWT.getHostPageBaseURL(), "");
-		Log.info("URL is "+ tempUrl);
-		return request.questionRequest().saveQuestionImage(tempUrl,size);
-	}*/
 
-
-//	@Override
 	public void setUrl(String name,String url,Integer width, Integer height, QuestionTypes questionType) {
 		Log.info("Set url : " + url);
 		this.url = url;
 		this.name = name;
-		/*if(questionType != null && QuestionTypes.Textual.equals(questionType)) {
-			renderTextualImage(480,480);
-		}else {*/
-			renderImage(width,height);	
-		/*}*/
+		renderImage(width,height);
 	}
-
-
-	/*private void renderTextualImage(int width,int height) {
-		
-		Log.info("Init method called ");
-		Log.info("Image path : " + url);
-		
-		originalWidth = width;
-		originalHeight = height;
-		
-//		lblCurrentSize.setText(setWidthHeight(constants.currentSize(),originalWidth,originalHeight));
-		
-		drawingArea.setHeight(originalHeight);
-		drawingArea.setWidth(originalWidth);
-		
-		image = new org.vaadin.gwtgraphics.client.Image(
-				0, 0, originalWidth ,originalHeight, url);
-		
-		drawingArea.add(image);
-		
-	}*/
-
-
+	
 	public String getImageRelativeUrl() {
 		
 		if(getImageUrl() == null) {
@@ -259,7 +87,6 @@ public class ImageViewer extends Composite{
 
 	public void clear() {
 		image.setUrl("");
-		//drawingArea.clear();
 	}
 
 	public Integer getHeight() {

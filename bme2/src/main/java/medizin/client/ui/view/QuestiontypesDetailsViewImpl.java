@@ -405,7 +405,7 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 			
 			multimediaTypeLbl.setText(constants.multimediaType());
 			selectionTypeLbl.setText(constants.selectionType());
-			columnLbl.setText(constants.column());
+			columnLbl.setText(constants.columns());
 			maxBytesLbl.setText(constants.maxBytes());
 		}
 	

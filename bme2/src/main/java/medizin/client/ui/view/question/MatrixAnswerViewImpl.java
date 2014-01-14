@@ -102,10 +102,6 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 	public MatrixAnswerViewImpl(QuestionProxy questionProxy,boolean isAdminOrInstitutionalAdmin) {
 		this.questionProxy = questionProxy;
 		setWidget(uiBinder.createAndBindUi(this));
-		//matrix.setWidth("100%");
-		//matrix.setHeight("200px");
-		//matrix.setCellSpacing(5);
-		//matrix.setCellPadding(3);
 		matrix.setStyleName("matrix-table", true);
 		
 		setGlassEnabled(true);
@@ -128,7 +124,6 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 		});
 		addAnswerX.setIcon("plusthick");
 		addAnswerX.addStyleName("matrix-answerX-btn");
-		//addAnswerX.getElement().getStyle().setMarginLeft(10, Unit.PX);
 
 		addAnswerY = new IconButton(constants.addAnswerX(), new ClickHandler() {
 
@@ -140,8 +135,6 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 
 		addAnswerY.setIcon("plusthick");
 		addAnswerY.addStyleName("matrix-answerY-btn");
-		//addAnswerY.addStyleName("rowRotate90");
-		//addAnswerY.getElement().getStyle().setPaddingTop(0, Unit.PX);
 				
 		matrix.setWidget(0, 1, addAnswerY);
 		matrix.setWidget(1, 0, addAnswerX);

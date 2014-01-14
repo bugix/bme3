@@ -570,7 +570,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		multimediaType.setHelpText(contextHelp.qtMultimediaType());
 		selectionType.setLabelText(constants.selectionType());
 		selectionType.setHelpText(contextHelp.qtSelectionType());
-		column.setLabelText(constants.column());
+		column.setLabelText(constants.columns());
 		column.setHelpText(contextHelp.qtColumns());
 		maxBytes.setLabelText(constants.maxBytes());
 		maxBytes.setHelpText(contextHelp.qtMaxBytes());
@@ -1272,7 +1272,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				if ((msg = checkTextWidgetForNumber(column.getIntegerBox())) != "")
 				{
 					flag = false;
-					errorMessage.add(constants.column() + " " + msg);
+					errorMessage.add(constants.columns() + " " + msg);
 					column.getTextBox().addStyleName("higlight_onViolation");
 				}
 

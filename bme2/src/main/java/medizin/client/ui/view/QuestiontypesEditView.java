@@ -79,16 +79,6 @@ public interface QuestiontypesEditView extends IsWidget {
 
 	public TextBox getShortAnswerLengthTxtbox();
 	
-	/*public TextBox getImageWidthTxtbox();
-	
-	public TextBox getImageLengthTxtbox();
-
-	public TextBox getImageProportionTxtbox();*/
-	
-	/*public CheckBox getLinearPointChkBox();
-	
-	public TextBox getLinearPercentageTxtbox();*/
-	
 	public CheckBox getKeywordHighlightChkBox();
 	
 	public CheckBox getRichTextChkBox(); 
@@ -108,14 +98,6 @@ public interface QuestiontypesEditView extends IsWidget {
 	public ValueListBox<SelectionType> getSelectionTypeListBox();
 
 	public TextBox getColumnTxtbox();
-
-	/*public TextBox getThumbWidthTxtbox();
-
-	public TextBox getThumbHeightTxtbox();
-	
-	public CheckBox getAllowZoomOutChkBox(); 
-	
-	public CheckBox getAllowZoomInChkBox();*/
 	
 	public TextBox getMaxBytesTxtbox();
 }

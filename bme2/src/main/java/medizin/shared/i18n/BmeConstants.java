@@ -93,8 +93,6 @@ public interface BmeConstants extends Constants {
 	public String imgWidth();
 			
 	public String imgProportion();
-			
-	public String linearPercentage();
 	
 	public String keywordHighlight();
 	
@@ -114,21 +112,7 @@ public interface BmeConstants extends Constants {
 			
 	public String selectionType();
 			
-	public String column();
-			
-	public String width();
-			
-	public String height();
-			
-	public String thumbWidth();
-			
-	public String thumbHeight();
-			
-	public String propostions();
-			
-	public String allowZoomOut();
-			
-	public String allowZoomIn();
+	public String columns();
 	
 	public String maxBytes();
 	
@@ -177,10 +161,6 @@ public interface BmeConstants extends Constants {
 	public String manageQuestion();
 
 	public String uploadResource();
-	
-	public String currentSize();
-	
-	public String changeToSize();
 	
 	public String id();
 	
@@ -289,18 +269,6 @@ public interface BmeConstants extends Constants {
 	public String audioViewerError();
 	
 	public String videoViewerError();
-
-	public String enterAllValue();
-
-	public String enterAllImageKeyValue();
-
-	public String enterAllAreaValue();
-
-	public String enterAllLongTextValue();
-
-	public String enterAllMatrixValue();
-
-	public String enterAllMCQValue();
 
 	public String create();
 
