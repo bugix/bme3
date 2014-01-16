@@ -155,7 +155,7 @@ public class BaselGenerator {
 	public void getCount() {
 		single = 0;
 		multi = 0;
-		List<AssesmentQuestion> assesmentQuestions = AssesmentQuestion.findAssementQuestionForAssementBookByQuestionTypeAndQuestionEvent(this.assessmentId);
+		List<AssesmentQuestion> assesmentQuestions =  SolutionUtils.getAssessmentQuestions(assessmentId);//AssesmentQuestion.findAssementQuestionForAssementBookByQuestionTypeAndQuestionEvent(this.assessmentId);
 		for (AssesmentQuestion assesmentQuestion : assesmentQuestions) {
 			QuestionType questionType = assesmentQuestion.getQuestion().getQuestionType();
 			List<AnswerToAssQuestion> answersToAssQuestion = sort(assesmentQuestion.getAnswersToAssQuestion());

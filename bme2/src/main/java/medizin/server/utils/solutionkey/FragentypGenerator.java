@@ -28,9 +28,8 @@ public class FragentypGenerator{
 		return fileName;
 	}
 	
-	
 	public void generate() {
-		List<AssesmentQuestion> assesmentQuestions = AssesmentQuestion.findAssementQuestionForAssementBookByQuestionTypeAndQuestionEvent(this.assessmentId);
+		List<AssesmentQuestion> assesmentQuestions = SolutionUtils.getAssessmentQuestions(assessmentId);//AssesmentQuestion.findAssementQuestionForAssementBookByQuestionTypeAndQuestionEvent(this.assessmentId);
 		int i =1;
 		for (AssesmentQuestion assesmentQuestion : assesmentQuestions) {
 			QuestionType questionType = assesmentQuestion.getQuestion().getQuestionType();
@@ -53,4 +52,5 @@ public class FragentypGenerator{
 		out.flush();
 		out.close();
 	}
+	
 }
