@@ -72,4 +72,6 @@ public interface QuestionRequest extends QuestionRequest_Roo_Gwt {
 	Request<Integer> countDeactivatedQuestion(String searchValue, List<String> searchField);
 
 	Request<Boolean> acceptQuestionAndAllAnswers(Long questionId, Boolean isAdminOrInstitutionalAdmin);
+	
+	Request<Void> findQuestionByAdvancedSearchForPrint(String sortname,Sorting sortorder,List<String> criteriaStringList, List<String> searchField, String searchText);
 }

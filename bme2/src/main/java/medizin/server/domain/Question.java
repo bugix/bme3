@@ -33,11 +33,13 @@ import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Selection;
 import javax.persistence.criteria.SetJoin;
 import javax.persistence.criteria.Subquery;
+import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import medizin.client.ui.widget.Sorting;
 import medizin.server.utils.BMEUtils;
+import medizin.server.utils.ServerConstants;
 import medizin.shared.MultimediaType;
 import medizin.shared.QuestionTypes;
 import medizin.shared.Status;
@@ -62,6 +64,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.google.web.bindery.requestfactory.server.RequestFactoryServlet;
 
 @RooJavaBean
 @RooToString
@@ -2780,5 +2783,42 @@ public class Question {
 		TypedQuery<Question> query = entityManager().createQuery(criteriaQuery);
 		List<Question> resultList = query.getResultList();
 		return resultList;
+	}
+	
+	public static void findQuestionByAdvancedSearchForPrint(String sortname,Sorting sortorder,List<String> criteriaStringList, List<String> searchField, String searchText)
+	{
+		Person loggedUser = Person.myGetLoggedPerson();
+		Institution institution = Institution.myGetInstitutionToWorkWith();
+		if (loggedUser == null || institution == null)
+			throw new IllegalArgumentException("The person and institution arguments are required");
+		
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+		Root<Question> from = criteriaQuery.from(Question.class);
+		criteriaQuery.distinct(true);
+		Selection<Long> path = from.get("id");
+		criteriaQuery.select(path);		
+		if(sortorder==Sorting.ASC){
+			if(sortname.equals("autor")){
+				criteriaQuery.orderBy(criteriaBuilder.asc(from.get(sortname).get("name")));				
+			}
+			else{
+				criteriaQuery.orderBy(criteriaBuilder.asc(from.get(sortname)));
+			}
+		}
+		else{
+			if(sortname.equals("autor")){
+				criteriaQuery.orderBy(criteriaBuilder.desc(from.get(sortname).get("name")));
+			}else{
+				criteriaQuery.orderBy(criteriaBuilder.desc(from.get(sortname)));
+			}
+		}
+		
+		Predicate mainPredicate = findQusetionByAdvancedSearchCriteria(loggedUser,institution, criteriaBuilder, criteriaQuery, from,criteriaStringList, searchField, searchText);
+		criteriaQuery.where(mainPredicate);
+		TypedQuery<Long> query = entityManager().createQuery(criteriaQuery);	
+		
+		HttpSession session = RequestFactoryServlet.getThreadLocalRequest().getSession();
+		session.setAttribute(ServerConstants.QUESTION_PRINT_PDF_KEY, query.getResultList());
 	}
 }

@@ -62,7 +62,7 @@ public class ActivityNotActivatedQuestion extends AbstractActivityWrapper implem
 	@Override
 	public void start2(AcceptsOneWidget widget, EventBus eventBus) {
 		Log.debug("start()");
-		QuestionView questionView = new QuestionViewImpl(eventBus, false);
+		QuestionView questionView = new QuestionViewImpl(eventBus, false, false);
 		Log.debug("start()");
 		//questionView.setPresenter(this);
 		questionView.setDelegate(this);
@@ -225,5 +225,9 @@ public class ActivityNotActivatedQuestion extends AbstractActivityWrapper implem
 		this.sortorder=sortorder;
 		performSearch("");
 		
+	}
+
+	@Override
+	public void printPdfClicked(int left, int top) {
 	}
 }

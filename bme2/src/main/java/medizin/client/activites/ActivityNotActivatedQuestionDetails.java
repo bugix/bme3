@@ -88,7 +88,7 @@ public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper
 				if(response instanceof QuestionProxy){
 					Log.info(((QuestionProxy) response).getQuestionText());
 					
-					QuestionDetailsViewImpl questionDetailsView = new QuestionDetailsViewImpl(eventBus, false,false,false,true,false,isQuestionTypeMCQ((QuestionProxy) response), false,true);
+					QuestionDetailsViewImpl questionDetailsView = new QuestionDetailsViewImpl(eventBus, false,false,false,true,false,isQuestionTypeMCQ((QuestionProxy) response), false,true, false);
 					thiz.view = questionDetailsView;
 					
 					questionDetailsView.setDelegate(thiz);

@@ -8,10 +8,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import medizin.server.domain.AssesmentQuestion;
 import medizin.server.domain.Person;
 import medizin.server.utils.docx.DocxPaperMHTML;
 import medizin.server.utils.docx.XmlPaper;
+import medizin.server.utils.questionprint.QuestionPrintPdf;
 import medizin.server.utils.solutionkey.SolutionKeyZip;
 import medizin.shared.utils.FileDownloaderProps;
 import medizin.shared.utils.FileDownloaderProps.Method;
@@ -84,6 +84,11 @@ public class FileDownloader extends HttpServlet{
 					fileName = createSolutionKey(request,response,os,loggedPerson);
 					break;
 				}
+				case PRINT_QUESTION_PDF:
+				{
+					fileName = createQuesitonPdf(request, response, os);
+					break;
+				}
 				default:
 					log.error("Error in method ordinal");
 					break;
@@ -101,6 +106,39 @@ public class FileDownloader extends HttpServlet{
 				os = null;
 			}
 		}	
+	}
+
+	private String createQuesitonPdf(HttpServletRequest request, HttpServletResponse response, ByteArrayOutputStream os) {
+		String questionId = null;
+		
+		if(StringUtils.isNotBlank(request.getParameter(FileDownloaderProps.ID))) {
+			questionId = request.getParameter(FileDownloaderProps.ID);			
+		}else {
+			log.error("Error in assignment id");			
+		}
+		
+		Boolean questionDetails = getBooleanValue(request,FileDownloaderProps.QUESTION_DETAIL);
+		Boolean keyword = getBooleanValue(request, FileDownloaderProps.KEYWORD);
+		Boolean learningObjective = getBooleanValue(request, FileDownloaderProps.LEARNING_OBJECTIVE);
+		Boolean usedInMc = getBooleanValue(request, FileDownloaderProps.USED_IN_MC);
+		Boolean answer = getBooleanValue(request, FileDownloaderProps.ANSWER);
+		
+		String locale = request.getParameter(FileDownloaderProps.LOCALE);
+		
+		String fileName = "Demo.pdf";
+		
+		QuestionPrintPdf questionPrintPdf = new QuestionPrintPdf(request, os, questionId, questionDetails, keyword, learningObjective, usedInMc, answer, locale);
+		questionPrintPdf.writeToPdf();
+		
+		return fileName;
+	}
+
+	private Boolean getBooleanValue(HttpServletRequest request, String key) {
+		if(StringUtils.isNotBlank(request.getParameter(key))) {
+			return Boolean.parseBoolean(request.getParameter(key));			
+		}else {
+			return false;
+		}
 	}
 
 	private void sendFile(HttpServletResponse response, byte[] resource, String fileName) throws IOException {

@@ -35,6 +35,8 @@ public interface QuestionView extends IsWidget {
 		void splitLayoutPanelResized();
 
 		void columnClickedForSorting(String sortname, Sorting sortorder);
+
+		void printPdfClicked(int left, int top);
 	}
     
     //Table for Assesments (Pr�fungshefter)

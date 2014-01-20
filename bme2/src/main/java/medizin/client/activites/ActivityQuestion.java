@@ -15,6 +15,7 @@ import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.style.resources.AdvanceCellTable;
 import medizin.client.ui.McAppConstant;
+import medizin.client.ui.view.question.QuestionPrintFilterViewImpl;
 import medizin.client.ui.view.question.QuestionView;
 import medizin.client.ui.view.question.QuestionViewImpl;
 import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchAbstractPopupViewImpl;
@@ -34,16 +35,23 @@ import medizin.client.ui.widget.Sorting;
 import medizin.client.util.MathJaxs;
 import medizin.shared.criteria.AdvancedSearchCriteria;
 import medizin.shared.criteria.AdvancedSearchCriteriaUtils;
+import medizin.shared.utils.FileDownloaderProps;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.activity.shared.ActivityManager;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.http.client.URL;
+import com.google.gwt.i18n.client.LocaleInfo;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.cellview.client.AbstractHasData;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.Cookies;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.view.client.ProvidesKey;
@@ -128,7 +136,7 @@ public class ActivityQuestion extends AbstractActivityWrapper implements Questio
 		
 		Log.debug("in Ativity Question");
 		
-		QuestionView questionView = new QuestionViewImpl(eventBus,hasQuestionAddRights());
+		QuestionView questionView = new QuestionViewImpl(eventBus,hasQuestionAddRights(), true);
 		//questionView.setPresenter(this);
 		this.widget = widget;
 		this.view = questionView;
@@ -611,6 +619,43 @@ public class ActivityQuestion extends AbstractActivityWrapper implements Questio
 		this.sortname=sortname;
 		this.sortorder=sortorder;
 		init();
+	}
+
+	@Override
+	public void printPdfClicked(int left, int top) {
 		
+		final QuestionPrintFilterViewImpl filterView = new QuestionPrintFilterViewImpl();
+		filterView.getPrintButton().addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				filterView.hide();
+				
+				List<String> encodedStringList = new ArrayList<String>();
+				encodedStringList = AdvancedSearchCriteriaUtils.encodeList(advancedSearchCriteriaList);
+				
+				requests.questionRequest().findQuestionByAdvancedSearchForPrint(sortname,sortorder,encodedStringList, view.getSearchValue(), view.getSerachBox().getValue()).fire(new BMEReceiver<Void>() {
+
+					@Override
+					public void onSuccess(Void response) {
+						String ordinal = URL.encodeQueryString(String.valueOf(FileDownloaderProps.Method.PRINT_QUESTION_PDF.ordinal()));          
+						String url = GWT.getHostPageBaseURL() + "downloadFile?".concat(FileDownloaderProps.METHOD_KEY).concat("=").concat(ordinal)
+								.concat("&").concat(FileDownloaderProps.ID).concat("=").concat(URL.encodeQueryString("ALL"))
+								.concat("&").concat(FileDownloaderProps.QUESTION_DETAIL).concat("=").concat(URL.encodeQueryString(filterView.getDetailsCheckBoxValue()))
+								.concat("&").concat(FileDownloaderProps.KEYWORD).concat("=").concat(URL.encodeQueryString(filterView.getKeywordCheckBoxValue()))
+								.concat("&").concat(FileDownloaderProps.LEARNING_OBJECTIVE).concat("=").concat(URL.encodeQueryString(filterView.getLearningObjectiveCheckBoxValue()))
+								.concat("&").concat(FileDownloaderProps.USED_IN_MC).concat("=").concat(URL.encodeQueryString(filterView.getUsedInMcCheckBoxValue()))
+								.concat("&").concat(FileDownloaderProps.ANSWER).concat("=").concat(URL.encodeQueryString(filterView.getAnswerCheckBoxValue()))
+								.concat("&").concat(FileDownloaderProps.LOCALE).concat("=").concat(URL.encodeQueryString(LocaleInfo.getCurrentLocale().getLocaleName()));
+								
+						Log.info("--> url is : " +url);
+						
+						Window.open(url, "", "");
+					}
+				});				
+			}
+		});		
+		filterView.setPopupPosition(left-200, top-5);
+		filterView.show();	
 	}
 }

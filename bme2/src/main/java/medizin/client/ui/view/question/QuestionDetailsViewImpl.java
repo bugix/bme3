@@ -27,8 +27,10 @@ import medizin.client.ui.widget.resource.dndview.ResourceView;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.util.ClientUtility;
 import medizin.shared.QuestionTypes;
+import medizin.shared.Status;
 import medizin.shared.i18n.BmeConstants;
 import medizin.shared.i18n.BmeMessages;
+import medizin.shared.utils.FileDownloaderProps;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.base.Function;
@@ -36,12 +38,16 @@ import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.http.client.URL;
+import com.google.gwt.i18n.client.LocaleInfo;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
@@ -147,6 +153,9 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 	@UiField(provided=true)
 	MatrixAnswerListViewImpl matrixAnswerListViewImpl;
 	
+	@UiField
+	IconButton printPdf;
+	
 	private static final Comparator<McProxy> MC_COMPARATOR = new Comparator<McProxy>() {
 
 		@Override
@@ -158,6 +167,39 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 	@Override
 	public AnswerListViewImpl getAnswerListViewImpl() {
 		return answerListViewImpl;
+	}
+
+	@UiHandler("printPdf")
+	public void printPdfButtonClicked(ClickEvent e)
+	{
+		Widget eventSource = (Widget) e.getSource();
+		final QuestionPrintFilterViewImpl filterView = new QuestionPrintFilterViewImpl();
+		filterView.getPrintButton().addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				
+				if (proxy != null)
+				{
+					String ordinal = URL.encodeQueryString(String.valueOf(FileDownloaderProps.Method.PRINT_QUESTION_PDF.ordinal()));          
+					String url = GWT.getHostPageBaseURL() + "downloadFile?".concat(FileDownloaderProps.METHOD_KEY).concat("=").concat(ordinal)
+							.concat("&").concat(FileDownloaderProps.ID).concat("=").concat(URL.encodeQueryString(proxy.getId().toString()))
+							.concat("&").concat(FileDownloaderProps.QUESTION_DETAIL).concat("=").concat(URL.encodeQueryString(filterView.getDetailsCheckBoxValue()))
+							.concat("&").concat(FileDownloaderProps.KEYWORD).concat("=").concat(URL.encodeQueryString(filterView.getKeywordCheckBoxValue()))
+							.concat("&").concat(FileDownloaderProps.LEARNING_OBJECTIVE).concat("=").concat(URL.encodeQueryString(filterView.getLearningObjectiveCheckBoxValue()))
+							.concat("&").concat(FileDownloaderProps.USED_IN_MC).concat("=").concat(URL.encodeQueryString(filterView.getUsedInMcCheckBoxValue()))
+							.concat("&").concat(FileDownloaderProps.ANSWER).concat("=").concat(URL.encodeQueryString(filterView.getAnswerCheckBoxValue()))
+							.concat("&").concat(FileDownloaderProps.LOCALE).concat("=").concat(URL.encodeQueryString(LocaleInfo.getCurrentLocale().getLocaleName()));
+					Log.info("--> url is : " +url);
+					
+					Window.open(url, "", "");
+					
+					filterView.hide();
+				}
+			}
+		});		
+		filterView.setPopupPosition(eventSource.getAbsoluteLeft()-200, eventSource.getAbsoluteTop()-5);
+		filterView.show();	
 	}
 
 	@UiHandler("delete")
@@ -241,6 +283,13 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 		final String qVersion = defaultString(proxy.getQuestionVersion(), "0");
 		final String qSubVersion = defaultString(proxy.getQuestionSubVersion(),"0");
 		final String version = "(" + qVersion + "." + qSubVersion + ")";
+		
+		if (Status.ACTIVE.equals(proxy.getStatus())){
+			removePrintPdfBtn(true);
+		}
+		else{
+			removePrintPdfBtn(false);
+		}
 		
 		final String title = proxy.getQuestionShortName()==null?proxy.getId().toString():proxy.getQuestionShortName();
 		displayRenderer.setInnerText(title);
@@ -352,7 +401,7 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 		}
 	}
 
-	public QuestionDetailsViewImpl(EventBus eventBus, Boolean editDeleteflag, boolean isAnswerEditable, boolean addAnswerRights, boolean isforceView, boolean isAcceptView, boolean isMCQQuestionType, boolean isDeleteLearningObjective, boolean removePushToReviewProcess) {
+	public QuestionDetailsViewImpl(EventBus eventBus, Boolean editDeleteflag, boolean isAnswerEditable, boolean addAnswerRights, boolean isforceView, boolean isAcceptView, boolean isMCQQuestionType, boolean isDeleteLearningObjective, boolean removePushToReviewProcess, boolean printPdfBtnFlag) {
 		answerListViewImpl = new AnswerListViewImpl(addAnswerRights, isAnswerEditable,isMCQQuestionType);
 		matrixAnswerListViewImpl = new MatrixAnswerListViewImpl(addAnswerRights, isAnswerEditable);
 		questionLearningObjectiveSubViewImpl = new QuestionLearningObjectiveSubViewImpl(isDeleteLearningObjective);
@@ -362,6 +411,7 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 		removeForceView(isforceView);
 		removeAcceptView(isAcceptView);
 		removePushToReviewProcess(removePushToReviewProcess);
+		removePrintPdfBtn(printPdfBtnFlag);
 		this.eventBus = eventBus;
 		
 		questionTypeDetailPanel.selectTab(0);
@@ -390,6 +440,13 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 		});
 	}
 	
+	private void removePrintPdfBtn(boolean printPdfBtnFlag) {
+		if (printPdfBtnFlag == false)
+		{
+			printPdf.removeFromParent();
+		}
+	}
+
 	private void removePushToReviewProcess(boolean removePushToReviewProcess) {
 		if(removePushToReviewProcess) {
 			pushToReviewProcess.removeFromParent();	

@@ -824,5 +824,11 @@ public interface BmeConstants extends Constants {
 	public String details();
 
 	public String questionInAssessment();
+	
+	public String modifiedDate();
+			
+	public String majorSkill();
+			
+	public String minorSkill();
 }
 

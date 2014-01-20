@@ -3,7 +3,11 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:n="urn:import:medizin.client.ui"
 	xmlns:b="urn:import:com.google.gwt.user.cellview.client" xmlns:m="urn:import:medizin.client.ui.widget" xmlns:i="urn:import:medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl" xmlns:c="urn:import:medizin.client.ui.view.question.criteria" xmlns:p="urn:import:medizin.client.ui.widget.pager" xmlns:r="urn:import:medizin.client.style.resources">
 
-	<ui:style src="../../styles.css" />
+	<ui:style src="../../styles.css">
+	.printBtn{
+		float: right !important;
+	}
+	</ui:style>
 		
 	<g:SplitLayoutPanel styleName="{style.panelHTML}"
 		ui:field="splitLayoutPanel">
@@ -11,9 +15,9 @@
 			<g:ScrollPanel ui:field="scrollpanel">
 				<g:HTMLPanel styleName="{style.listView}">
 					<div class="{style.controls} {style.controlsleft}">
-
 						<m:QuickSearchBox ui:field="searchBox"></m:QuickSearchBox>
 						<m:IconButton ui:field="filterButton" icon="wrench"></m:IconButton>
+						<m:IconButton ui:field="printPdf" icon="print" addStyleNames="{style.printBtn}"></m:IconButton>
 					</div>
 					<!-- <b:CellTable ui:field="table" addStyleNames="{style.standardTable}" width="500" /> -->
 					<r:AdvanceCellTable ui:field="table" addStyleNames="{style.standardTable}" width="500"></r:AdvanceCellTable>

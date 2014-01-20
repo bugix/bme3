@@ -61,7 +61,7 @@ public class ActivityDeactivatedQuestion extends AbstractActivityWrapper impleme
 
 	@Override
 	public void start2(AcceptsOneWidget widget, EventBus eventBus) {
-		QuestionView questionView = new QuestionViewImpl(eventBus, false);
+		QuestionView questionView = new QuestionViewImpl(eventBus, false, false);
 		questionView.setDelegate(this);
 		this.widget = widget;
 		this.view = questionView;
@@ -201,6 +201,10 @@ public class ActivityDeactivatedQuestion extends AbstractActivityWrapper impleme
 		this.sortorder=sortorder;
 		performSearch("");
 		
+	}
+
+	@Override
+	public void printPdfClicked(int left, int top) {		
 	}
 
 

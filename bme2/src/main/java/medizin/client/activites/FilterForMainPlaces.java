@@ -185,6 +185,10 @@ public class FilterForMainPlaces implements AsyncFilteredActivityMapper.Filter {
 			 return new PlaceQuestionInAssessment(PlaceQuestionInAssessment.PLACE_QUESTION_IN_ASSESSMENT, placeQuestionInAssessmentDetails.getProxyId());
 		 }
 		 
+		 if(place instanceof Place && Place.NOWHERE.equals(place)) {
+			 return place;
+		 }
+		 
 		 return null;
 	}
 }

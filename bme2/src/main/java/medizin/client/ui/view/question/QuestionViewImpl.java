@@ -10,7 +10,6 @@ import java.util.Set;
 import medizin.client.events.QuestionSaveEvent;
 import medizin.client.events.RecordChangeEvent;
 import medizin.client.events.RecordChangeHandler;
-import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.style.resources.AdvanceCellTable;
 import medizin.client.style.resources.MyCellTableResources;
@@ -187,6 +186,9 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 	IconButton newQuestion;
 	
 	@UiField
+	IconButton printPdf;
+	
+	@UiField
 	QuestionAdvancedSearchSubViewImpl questionAdvancedSearchSubViewImpl;
 
 	@UiHandler(value = { "newQuestion" })
@@ -221,7 +223,7 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 	}
 
 	
-	public QuestionViewImpl(EventBus eventBus,Boolean questionAddRightsFlag) {
+	public QuestionViewImpl(EventBus eventBus,Boolean questionAddRightsFlag, Boolean printBtnFlag) {
 		this.eventBus = eventBus;
 		
 		CellTable.Resources tableResources = GWT.create(MyCellTableResources.class);
@@ -384,6 +386,10 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 		DOM.setElementAttribute(splitLayoutPanel.getElement(), "style","position: absolute; left: 0px; top: 0px; right: 5px; bottom: 0px;");
 		
 		newQuestion.setText(constants.newQuestion());
+		printPdf.setText(constants.print());
+		
+		if (printBtnFlag == false)
+			printPdf.removeFromParent();		
 		
 		if (questionAddRightsFlag == false){
 			newQuestion.removeFromParent();
@@ -396,6 +402,14 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
         //setWidgetWidth();
 		
 	}
+	
+	@UiHandler("printPdf")
+	public void printPdfClicked(ClickEvent event)
+	{
+		Widget eventSource = (Widget) event.getSource();
+		delegate.printPdfClicked(eventSource.getAbsoluteLeft(), eventSource.getAbsoluteTop());
+	}
+	
 	private void setWidgetWidth() {
 		String widgetWidthFromCookie = Cookies.getCookie(McAppConstant.QUESTION_VIEW_WIDTH);
         if(widgetWidthFromCookie !=null){

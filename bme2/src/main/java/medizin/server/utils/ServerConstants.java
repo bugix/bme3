@@ -7,4 +7,6 @@ public interface ServerConstants {
 	String SESSION_INSTITUTION_ID_KEY = "institutionId";
 
 	String SESSION_PERSON_ACCESS_KEY = "personAccessRights";
+
+	String QUESTION_PRINT_PDF_KEY = "qusetionPrintPdf";
 }

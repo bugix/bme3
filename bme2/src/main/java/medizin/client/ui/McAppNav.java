@@ -463,7 +463,7 @@ public class McAppNav extends Composite {
         //changeMenue(place);
         setConstantText();
         
-        placeController.goTo(new PlaceSystemOverview(PlaceSystemOverview.PLACE_SYSTEM_OVERVIEW));
+        placeController.goTo(Place.NOWHERE);
         placeController.goTo(place);
 	}
 		

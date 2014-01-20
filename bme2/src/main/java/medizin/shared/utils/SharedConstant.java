@@ -6,7 +6,7 @@ public final class SharedConstant {
 
 	public static String getUploadBaseDIRPath() {
 		
-		//String UPLOAD_BASE_DIR_PATH = "d:/";
+		//String UPLOAD_BASE_DIR_PATH = "e:/";
 		String UPLOAD_BASE_DIR_PATH =  "/usr/local/bme/";
 		
 		if(GWT.isClient()) {
@@ -29,6 +29,8 @@ public final class SharedConstant {
 	public static final String UPLOAD_MEDIA_SOUND_PATH = UPLOAD_MEDIA_PATH + "sound/";
 
 	public static final String UPLOAD_MEDIA_VIDEO_PATH = UPLOAD_MEDIA_PATH + "video/";
+	
+	public static final String UPLOAD_PRINT_MEDIA_PATH = UPLOAD_MEDIA_PATH + "print/";
 
 	public static final String FILEPATH = "filepath";
 

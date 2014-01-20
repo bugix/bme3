@@ -124,7 +124,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			}
 		}
 		
-		QuestionDetailsViewImpl questionDetailsView = new QuestionDetailsViewImpl(eventBus, editDeleteBtnFlag,hasAnswerWriteRights(questionProxy, null),hasAnswerAddRights(questionProxy),false,false,isQuestionTypeMCQ(questionProxy), true,removePushToReviewProcess);
+		QuestionDetailsViewImpl questionDetailsView = new QuestionDetailsViewImpl(eventBus, editDeleteBtnFlag,hasAnswerWriteRights(questionProxy, null),hasAnswerAddRights(questionProxy),false,false,isQuestionTypeMCQ(questionProxy), true,removePushToReviewProcess, true);
 		this.view = questionDetailsView;
 		
 		

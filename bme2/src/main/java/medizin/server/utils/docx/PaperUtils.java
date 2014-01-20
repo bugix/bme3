@@ -213,4 +213,42 @@ public final class PaperUtils {
 			}
 		}).filter(Predicates.notNull()).iterator());
 	}
+	
+	public static String imageToFile(BufferedImage image, String type) {
+        
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		File file = new File("E:\\demo.png");
+
+        try {
+            ImageIO.write(image, type, file);
+            /*bos.close();
+            byte[] imageBytes = bos.toByteArray();  
+            return imageBytes;*/
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return file.getAbsolutePath();        		
+	}
+	
+	public static byte[] imageToBytes(BufferedImage image, String type) {
+        
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		//File file = new File("E:\\demo.png");
+
+        try {
+            ImageIO.write(image, type, bos);
+            bos.close();
+            byte[] imageBytes = bos.toByteArray();  
+            return imageBytes;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;        		
+	}
+		
+	
+	public static BufferedImage generateImageFromLaTex1(String convertToTex) {
+		TeXFormula formula = new TeXFormula(convertToTex);
+		return (BufferedImage) formula.createBufferedImage(TeXConstants.STYLE_TEXT,40, Color.BLACK, Color.WHITE);
+	}
 }
