@@ -133,6 +133,31 @@
 		   <version>1.0.0</version>
 		</dependency>
 		
+		<!-- For PDF -->
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>itextpdf</artifactId>
+			<version>5.4.5</version>
+		</dependency>
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>itext-xtra</artifactId>
+			<version>5.4.5</version>
+		</dependency>            
+		
+		<dependency>
+			<groupId>org.xhtmlrenderer</groupId>
+			<artifactId>flying-saucer-pdf</artifactId>
+			<version>9.0.4</version>
+		</dependency>
+          
+         <!-- For Freemarker Template -->
+        <dependency>
+			<groupId>org.freemarker</groupId>
+			<artifactId>freemarker</artifactId>
+			<version>2.3.14</version>
+		</dependency>  
+            
 		<!-- For Quartz Scheduling -->
 		<dependency>
       		<groupId>org.quartz-scheduler</groupId>
