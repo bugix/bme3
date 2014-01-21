@@ -34,7 +34,7 @@ public class LoggingFilter implements Filter{
             	Person person = Person.myGetLoggedPerson(httpServletRequest.getSession());
             	
             	if(person != null) {
-            		MDC.put(USER_NAME, person.getName());
+            		MDC.put(USER_NAME, getFullName(person));
                 	String pageURL = httpServletRequest.getHeader(PAGEURL);
                 	if(StringUtils.isNotBlank(pageURL)) {
                 		log.debug(pageURL);	
@@ -45,6 +45,10 @@ public class LoggingFilter implements Filter{
         } finally {
             MDC.remove(USER_NAME);
         }
+	}
+
+	private String getFullName(Person person) {
+		return (person.getPrename() + " " + person.getName()).trim();
 	}
 
 	@Override
