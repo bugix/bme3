@@ -292,4 +292,9 @@ public final class ClientUtility {
 		
 		return sumOfAnswer.toString();
 	}
+	
+	public static String getSignedNumber(Integer number)
+	{
+		return number > 0 ? "+" + number.toString() : number.toString();
+	}
 }

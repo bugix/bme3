@@ -13,6 +13,7 @@ import medizin.client.style.resources.MyCellTableNoHilightResources;
 import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.widget.pager.MySimplePager;
 import medizin.client.ui.widget.sendmail.SendMailPopupViewImpl;
+import medizin.client.util.ClientUtility;
 import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
@@ -211,7 +212,7 @@ public class AssesmentQuestionPanelImpl extends Composite implements AssesmentQu
 
 			@Override
 			public String getValue(QuestionTypeCountProxy object) {
-				return object.getCount().toString();
+				return (ClientUtility.getSignedNumber(object.getCount()) + " / " + object.getTotalQuestionAllocated().toString());
 			}
 		},"Count");
 	   

@@ -99,8 +99,7 @@ public class QuestionUsedInMCImpl extends Composite implements RecordChangeHandl
 		};
 
 		table.addColumn(mc, constants.tableHeaderMC());
-		table.setColumnWidth(1, "7%");
-
+		
 		paths.add("assesment.dateOfAssesment");
 		TextColumn<AssesmentQuestionProxy> dateOfAssessment = new TextColumn<AssesmentQuestionProxy>() {
 
@@ -118,8 +117,7 @@ public class QuestionUsedInMCImpl extends Composite implements RecordChangeHandl
 		};
 
 		table.addColumn(dateOfAssessment, constants.dateOfAssessment());
-		table.setColumnWidth(2, "10%");
-
+		
 		paths.add("schwierigkeit");
 		TextColumn<AssesmentQuestionProxy> schwierigkeit = new TextColumn<AssesmentQuestionProxy>() {
 
@@ -137,8 +135,7 @@ public class QuestionUsedInMCImpl extends Composite implements RecordChangeHandl
 		};
 
 		table.addColumn(schwierigkeit, constants.schwierigkeit());
-		table.setColumnWidth(3, "10%");
-
+		
 		paths.add("trenschaerfe");
 		TextColumn<AssesmentQuestionProxy> trenschaerfe = new TextColumn<AssesmentQuestionProxy>() {
 
@@ -155,8 +152,7 @@ public class QuestionUsedInMCImpl extends Composite implements RecordChangeHandl
 			}
 		};
 
-		table.addColumn(trenschaerfe, constants.trenschaerfe());
-		table.setColumnWidth(4, "10%");
+		table.addColumn(trenschaerfe, constants.trenschaerfe());		
 	}
 
 	@Override
