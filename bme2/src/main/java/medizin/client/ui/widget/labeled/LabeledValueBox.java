@@ -54,7 +54,7 @@ public abstract class LabeledValueBox<T> extends Composite implements Focusable,
 		FocusDelegatingHandler handler = new FocusDelegatingHandler(valueBox);
 		wrapper.addClickHandler(handler);
 		wrapper.addFocusHandler(handler);
-		wrapper.addMouseOverHandler(handler);
+//		wrapper.addMouseOverHandler(handler);
 		
 		valueBox.addFocusHandler(new FocusHandler() {
 			@Override

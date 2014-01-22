@@ -410,7 +410,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		matrixFields.addAll(baseFields);
 		
 		mcqFields = Lists.newArrayList((Widget) questionLength, multimediaType,
-				selectionType, column, richText, maxBytes);
+				selectionType, column, maxBytes);
 		mcqFields.addAll(baseFields);
 		
 		drawingFields = Lists.newArrayList((Widget) questionLength, queHasMedia);
@@ -1040,7 +1040,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 					errorMessage.add(constants.sumOfAnsMsg());
 					sumAnswer.getTextBox().addStyleName("higlight_onViolation");
 				}
-				else if (infiniteChkBox.getValue() && sumAnswer.getValue().equals(SharedConstant.INFINITE_VALUE.toString()) == false)
+				else if (infiniteChkBox.getValue() && !sumAnswer.getValue().equals(SharedConstant.INFINITE_VALUE.toString()))
 				{
 					flag = false;
 					answerFlag = true;
@@ -1080,9 +1080,9 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 					sumFalseAnswer.getTextBox().addStyleName("higlight_onViolation");
 				}
 				
-				if (answerFlag == false)
+				if (!answerFlag)
 				{
-					if (checkTextualAnswerCondition(Integer.parseInt(sumAnswer.getValue()), Integer.parseInt(sumTrueAnswer.getValue()), Integer.parseInt(sumFalseAnswer.getValue())) == false)
+					if (!checkTextualAnswerCondition(Integer.parseInt(sumAnswer.getValue()), Integer.parseInt(sumTrueAnswer.getValue()), Integer.parseInt(sumFalseAnswer.getValue())))
 					{
 						flag = false;
 						errorMessage.add(constants.sumOfAnsValidateMsg());
@@ -1304,7 +1304,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				break;
 		}
 		
-		if(flag == false) {
+		if(!flag) {
 			ReceiverDialog.showMessageDialog(constants.pleaseEnterWarning(),errorMessage);
 		}
 		

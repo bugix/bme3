@@ -18,6 +18,7 @@ import com.google.gwt.event.dom.client.HasFocusHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.text.shared.AbstractRenderer;
+import com.google.gwt.text.shared.Renderer;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FocusPanel;
@@ -25,6 +26,7 @@ import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.view.client.ProvidesKey;
 
 public class LabeledValueListBox<T> extends Composite implements Focusable, HasFocusHandlers, HasBlurHandlers, HasValue<T>, IsEditor<TakesValueEditor<T>>, HasContextHelp  {
 	protected final String styleName = "unibas-LabelledTextBox";
@@ -38,7 +40,15 @@ public class LabeledValueListBox<T> extends Composite implements Focusable, HasF
 	
 	public LabeledValueListBox(AbstractRenderer<T> renderer) {
 		valueListBox = new FocusableValueListBox<T>(renderer);
-
+		init();
+	}
+	
+	public LabeledValueListBox(Renderer<T> renderer, ProvidesKey<T> keyProvider) {
+		valueListBox = new FocusableValueListBox<T>(renderer, keyProvider);
+		init();
+	}
+	
+	private void init() {
 		panel = new VerticalPanel();
 		wrapper = new FocusPanel();
 		label = new Label();
@@ -50,7 +60,7 @@ public class LabeledValueListBox<T> extends Composite implements Focusable, HasF
 		FocusDelegatingHandler handler = new FocusDelegatingHandler(valueListBox);		
 		wrapper.addClickHandler(handler);
 		wrapper.addFocusHandler(handler);
-		wrapper.addMouseOverHandler(handler);
+//		wrapper.addMouseOverHandler(handler);
 		
 		valueListBox.addFocusHandler(new FocusHandler() {
 			@Override

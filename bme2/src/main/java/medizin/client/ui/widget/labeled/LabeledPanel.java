@@ -132,7 +132,6 @@ public class LabeledPanel extends Composite implements HasWidgets, Focusable, Ha
 				FocusDelegatingHandler handler = new FocusDelegatingHandler((Focusable) w);		
 				wrapperPanel.addClickHandler(handler);
 				wrapperPanel.addFocusHandler(handler);
-				wrapperPanel.addMouseOverHandler(handler);
 			}
 			
 			if (w instanceof HasFocusHandlers) {
