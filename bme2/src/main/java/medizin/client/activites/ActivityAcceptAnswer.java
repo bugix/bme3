@@ -210,11 +210,11 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 				answerProxy.setIsAnswerAcceptedAdmin(true);
 				answerProxy.setStatus(Status.ACCEPTED_ADMIN);
 			} 
-			if(answerProxy2.getRewiewer().getId() == userLoggedIn.getId()) {
+			if(answerProxy2.getRewiewer() != null && answerProxy2.getRewiewer().getId().equals(userLoggedIn.getId())) {
 				answerProxy.setIsAnswerAcceptedReviewWahrer(true);
 				answerProxy.setStatus(Status.ACCEPTED_REVIEWER);
 			}
-			if(answerProxy2.getAutor().getId() == userLoggedIn.getId())	{
+			if(answerProxy2.getAutor().getId().equals(userLoggedIn.getId()))	{
 				answerProxy.setIsAnswerAcceptedAutor(true);
 			}
 			
