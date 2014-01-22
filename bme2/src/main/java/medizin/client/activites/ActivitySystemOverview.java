@@ -99,7 +99,7 @@ public class ActivitySystemOverview extends AbstractActivityWrapper implements S
 
 				@Override
 				public void onSuccess(List<PersonProxy> response) {
-					createExaminerSubView(response);
+					createExaminerSubViewPanel(response);
 				}				
 			});
 			
@@ -148,80 +148,27 @@ public class ActivitySystemOverview extends AbstractActivityWrapper implements S
 		assesmentRequest.fire();
 	}
 	
-	private void createExaminerSubView(List<PersonProxy> response) {
-		AssesmentRequest finalAssesmentRequest = null;
-		for (final PersonProxy personProxy : response)
+	private void createExaminerSubViewPanel(List<PersonProxy> response)
+	{
+		view.getMainVerticalPanel().setSpacing(5);
+		
+		for (PersonProxy personProxy : response)
 		{
 			if (personProxy.getId().equals(userLoggedIn.getId()) == false)
 			{
-				final PersonProxy tempPersonProxy = personProxy;
 				final SystemOverviewExaminerSubView examinerSubView = new SystemOverviewExaminerSubViewImpl();
 				examinerSubView.setDelegate(ActivitySystemOverview.this);
 				examinerSubView.setPersonProxy(personProxy);
+				examinerSubView.setExaminerLabel(personProxy.getPrename() + " " + personProxy.getName());
 				
-				QuestionRequest questionRequest;
-				if(finalAssesmentRequest != null) {
-					questionRequest = finalAssesmentRequest.append(requests.questionRequest());
-				}else {
-					questionRequest = requests.questionRequest();
-				}
-				
-				questionRequest.countQuestionByLoggedUser(personProxy.getId(), false).to(new BMEReceiver<Long>() {
-
-					@Override
-					public void onSuccess(Long response) {
-						acceptQuestionCount = response;
-					}
-				});
-				
-				AnswerRequest answerRequest = questionRequest.append(requests.answerRequest());
-				answerRequest.countAnswerByLoggedUser(false, personProxy.getId()).to(new BMEReceiver<Long>() {
-
-					@Override
-					public void onSuccess(Long response) {
-						acceptAnswerCount = response;		
-						examinerSubView.setAcceptAnswerAndQuestion((tempPersonProxy.getPrename() + " " + tempPersonProxy.getName()), acceptQuestionCount, acceptAnswerCount);
-						
-						if (acceptQuestionCount > 0 || acceptAnswerCount > 0)
-						{
-							view.getMainVerticalPanel().setSpacing(5);
-							
-							if (view.getMainVerticalPanel().getWidgetCount() == 1)
-								examinerSubView.getExaminerDisclosurePanel().setOpen(true); 
-								
-							view.getMainVerticalPanel().add(examinerSubView);
-						}
-					}
-				});
-				
-				finalAssesmentRequest = answerRequest.append(requests.assesmentRequest());
-				finalAssesmentRequest.findAssessmentByLoggedUser(personProxy.getId(), false).with("mc", "questionSumPerPerson", "questionSumPerPerson.responsiblePerson", "questionSumPerPerson.questionEvent", "questionTypeCountPerExams", "questionTypeCountPerExams.questionTypesAssigned", "assesmentQuestions.question", "assesmentQuestions.question.questEvent", "assesmentQuestions.question.questionType", "assesmentQuestions.autor").to(new BMEReceiver<List<AssesmentProxy>>() {
-
-					@Override
-					public void onSuccess(List<AssesmentProxy> response) {
-						if (response != null && response.size() == 0)
-						{
-							examinerSubView.getSendMailBtn().removeFromParent();
-						}
-						
-						examinerSubView.setAssesmentProxy(response);
-						for (AssesmentProxy assesmentProxy : response)
-						{
-							Map<String, String> quesitonTypeCountMap = countQuestionTypeCountPerAssesment(assesmentProxy, personProxy);
-							
-							view.setQuestionTypesCountByAssessmentExaminer(assesmentProxy.getMc().getMcName(), ClientUtility.SHORT_FORMAT.format(assesmentProxy.getDateClosed()), quesitonTypeCountMap, examinerSubView);
-						}
-					}
-				});
-				
-				//assesmentRequest.fire();
+				if (view.getMainVerticalPanel().getWidgetCount() == 1)
+					examinerSubView.getExaminerDisclosurePanel().setOpen(true); 
+					
+				view.getMainVerticalPanel().add(examinerSubView);
 			}
 		}
-		
-		if(finalAssesmentRequest != null)
-			finalAssesmentRequest.fire();
 	}
-	
+
 	private Map<String, String> countQuestionTypeCountPerAssesment(AssesmentProxy assesmentProxy, PersonProxy personProxy)
 	{
 		Map<String, String> quesitonTypeCountMap = Maps.newHashMap();
@@ -295,5 +242,54 @@ public class ActivitySystemOverview extends AbstractActivityWrapper implements S
 				examinerSubViewImpl.displayMail(response);
 			}
 		});
+	}
+
+	@Override
+	public void openDisclosurePanelClicked(final PersonProxy personProxy,final SystemOverviewExaminerSubView examinerSubView) {
+		QuestionRequest questionRequest = requests.questionRequest();
+		
+		examinerSubView.getExaminerVerticalPanel().clear();
+		
+		questionRequest.countQuestionByLoggedUser(personProxy.getId(), false).to(new BMEReceiver<Long>() {
+
+			@Override
+			public void onSuccess(Long response) {
+				acceptQuestionCount = response;
+			}
+		});
+		
+		AnswerRequest answerRequest = questionRequest.append(requests.answerRequest());
+		answerRequest.countAnswerByLoggedUser(false, personProxy.getId()).to(new BMEReceiver<Long>() {
+
+			@Override
+			public void onSuccess(Long response) {
+				acceptAnswerCount = response;		
+				examinerSubView.setAcceptAnswerAndQuestion(acceptQuestionCount, acceptAnswerCount);			
+			}
+		});
+		
+		AssesmentRequest finalAssesmentRequest = answerRequest.append(requests.assesmentRequest());
+		finalAssesmentRequest.findAssessmentByLoggedUser(personProxy.getId(), false).with("mc", "questionSumPerPerson", "questionSumPerPerson.responsiblePerson", "questionSumPerPerson.questionEvent", "questionTypeCountPerExams", "questionTypeCountPerExams.questionTypesAssigned", "assesmentQuestions.question", "assesmentQuestions.question.questEvent", "assesmentQuestions.question.questionType", "assesmentQuestions.autor").to(new BMEReceiver<List<AssesmentProxy>>() {
+
+			@Override
+			public void onSuccess(List<AssesmentProxy> response) {
+				if (response != null && response.size() == 0){
+					examinerSubView.getSendMailBtn().removeFromParent();
+				}
+				else{
+					examinerSubView.getSendMailBtn().setVisible(true);
+				}
+				
+				examinerSubView.setAssesmentProxy(response);
+				for (AssesmentProxy assesmentProxy : response)
+				{
+					Map<String, String> quesitonTypeCountMap = countQuestionTypeCountPerAssesment(assesmentProxy, personProxy);
+					
+					view.setQuestionTypesCountByAssessmentExaminer(assesmentProxy.getMc().getMcName(), ClientUtility.SHORT_FORMAT.format(assesmentProxy.getDateClosed()), quesitonTypeCountMap, examinerSubView);
+				}
+			}
+		});
+		
+		finalAssesmentRequest.fire();
 	}
 }

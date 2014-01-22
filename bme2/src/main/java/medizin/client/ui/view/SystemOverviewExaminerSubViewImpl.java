@@ -15,6 +15,8 @@ import com.google.common.collect.Maps;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.OpenEvent;
+import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -62,17 +64,28 @@ public class SystemOverviewExaminerSubViewImpl extends Composite implements Syst
 	private BmeMessages messages = GWT.create(BmeMessages.class);
 	
 	private SendMailPopupViewImpl sendMailPopupViewImpl=null;
-
+	private final SystemOverviewExaminerSubViewImpl thiz;
 	public SystemOverviewExaminerSubViewImpl() {
 		initWidget(uiBinder.createAndBindUi(this));
+		this.thiz = this;
 		sendMailBtn.setText(constants.sendMail());
-		examinerDisclosurePanel.addStyleName("systemOverviewExaminerDisclosurePanel");
+		examinerDisclosurePanel.addStyleName("systemOverviewExaminerDisclosurePanel");		
+		
+		examinerDisclosurePanel.addOpenHandler(new OpenHandler<DisclosurePanel>() {
+			
+			@Override
+			public void onOpen(OpenEvent<DisclosurePanel> event) {
+				delegate.openDisclosurePanelClicked(personProxy, thiz);
+			}
+		});
 	}
 	
 	@UiHandler("sendMailBtn")
 	public void sendMailBtnClicked(ClickEvent event)
 	{
-		examinerDisclosurePanel.setOpen(!examinerDisclosurePanel.isOpen());
+		event.preventDefault();
+		event.stopPropagation();
+		//examinerDisclosurePanel.setOpen(!examinerDisclosurePanel.isOpen());
 		
 		if(sendMailPopupViewImpl==null)
 		{
@@ -162,12 +175,16 @@ public class SystemOverviewExaminerSubViewImpl extends Composite implements Syst
 		this.examinerVerticalPanel = examinerVerticalPanel;
 	}
 	
-	public void setAcceptAnswerAndQuestion(String examinerName, Long acceptQuestionCount, Long acceptAnswerCount)
+	public void setAcceptAnswerAndQuestion(Long acceptQuestionCount, Long acceptAnswerCount)
 	{
-		examinerNameLbl.setText(examinerName);
 		acceptQueAnswerLbl.setText(messages.acceptQuestionAndAnswerExaminer(acceptQuestionCount, acceptAnswerCount));		
 	}
-
+	
+	public void setExaminerLabel(String examinerName)
+	{
+		examinerNameLbl.setText(examinerName);
+	}
+	
 	public PersonProxy getPersonProxy() {
 		return personProxy;
 	}

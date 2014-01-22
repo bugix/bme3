@@ -17,6 +17,8 @@ public interface SystemOverviewExaminerSubView extends IsWidget {
 		void sendMailBtnClicked(PersonProxy personProxy, List<AssesmentProxy> assesmentProxy, String messageContent);
 
 		void loadTemplate(SystemOverviewExaminerSubViewImpl examinerSubViewImpl);
+
+		void openDisclosurePanelClicked(PersonProxy personProxy, SystemOverviewExaminerSubView subView);
 	}
 
 	public Label getAcceptQueAnswerLbl();
@@ -25,7 +27,7 @@ public interface SystemOverviewExaminerSubView extends IsWidget {
 	
 	public VerticalPanel getExaminerVerticalPanel();
 
-	public void setAcceptAnswerAndQuestion(String examinerName, Long acceptQuestionCount, Long acceptAnswerCount);
+	public void setAcceptAnswerAndQuestion(Long acceptQuestionCount, Long acceptAnswerCount);
 	
 	public void setPersonProxy(PersonProxy personProxy);
 	
@@ -38,4 +40,6 @@ public interface SystemOverviewExaminerSubView extends IsWidget {
 	public DisclosurePanel getExaminerDisclosurePanel();
 	
 	public IconButton getSendMailBtn();
+	
+	public void setExaminerLabel(String examinerName);
 }

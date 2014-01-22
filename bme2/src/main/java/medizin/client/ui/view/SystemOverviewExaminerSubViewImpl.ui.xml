@@ -30,7 +30,7 @@
 						<g:Label ui:field="examinerNameLbl" styleName="{style.examinerLabelStyle}"></g:Label>
 					</g:cell>
 					<g:cell width="16px" horizontalAlignment="ALIGN_CENTER">
-						<m:IconButton ui:field="sendMailBtn" icon="mail-closed"></m:IconButton>
+						<m:IconButton ui:field="sendMailBtn" icon="mail-closed" visible="false" ></m:IconButton>
 					</g:cell>
 				</g:HorizontalPanel>
 			</g:customHeader>
