@@ -123,6 +123,7 @@ public class Assesment {
     @OrderBy("sort_order")
     private List<QuestionTypeCountPerExam> questionTypeCountPerExams=new ArrayList<QuestionTypeCountPerExam>();
 
+    @Column(columnDefinition="BIT", length = 1)
     private Boolean disallowSorting;
     
     /* Business Login

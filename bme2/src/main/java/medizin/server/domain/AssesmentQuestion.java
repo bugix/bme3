@@ -139,6 +139,7 @@ public class AssesmentQuestion {
     
     private String points;
     
+    @Column(columnDefinition="BIT", length = 1)
     private Boolean eliminateQuestion;
     
     private static final DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
