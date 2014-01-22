@@ -4,6 +4,7 @@ import java.util.List;
 
 import medizin.client.events.RecordChangeHandler;
 import medizin.client.proxy.AssesmentQuestionProxy;
+import medizin.client.ui.widget.process.ApplicationLoadingView;
 
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.cellview.client.AbstractHasData;
@@ -33,4 +34,6 @@ public interface QuestionUsedInMC extends IsWidget,RecordChangeHandler {
 	String[] getPaths();
 	
 	void initUsedInMCView();
+
+	ApplicationLoadingView getLoadingPopup();
 }

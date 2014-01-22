@@ -37,13 +37,9 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Cookies;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DisclosurePanel;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 /**
@@ -155,7 +151,7 @@ public class McAppNav extends Composite {
 	}
 	@UiHandler("question")
 	void questionClicked(ClickEvent event) {
-		placeController.goTo(new PlaceQuestion(PlaceQuestion.PLACE_QUESTION, true));
+		placeController.goTo(new PlaceQuestion(PlaceQuestion.PLACE_QUESTION, true,shell.getMasterPanel().getOffsetHeight()));
 	}
 	@UiHandler("notActivatedQuestion")
 	void notActivatedQuestionClicked(ClickEvent event) {

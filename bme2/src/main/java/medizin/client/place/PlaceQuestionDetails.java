@@ -27,6 +27,16 @@ public class PlaceQuestionDetails extends AbstractDetailsPlace {
 		super(stableId, operation);
 		Log.debug("PlaceQuestionDetails wird erstellt");
 	}
+	
+	public PlaceQuestionDetails(EntityProxyId<?> stableId, boolean reload) {
+		super(stableId);
+		//this.reload = reload;
+		Log.debug("PlaceQuestionDetails wird erstellt");
+	}
+
+	public PlaceQuestionDetails(EntityProxyId<?> stableId, int height) {
+		super(stableId,height);
+	}
 
 	@Prefix(PLACE_QUESTION_DETAILS)
 	public static class Tokenizer extends AbstractDetailsPlace.AbstractTokenizer<PlaceQuestionDetails> {

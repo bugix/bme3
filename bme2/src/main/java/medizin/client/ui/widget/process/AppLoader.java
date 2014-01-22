@@ -1,10 +1,13 @@
 package medizin.client.ui.widget.process;
 
+import java.util.List;
+
 import medizin.client.factory.request.RequestEvent;
 import medizin.client.factory.request.RequestEvent.Handler;
 import medizin.client.util.MathJaxs;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.common.collect.Lists;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -16,14 +19,15 @@ public class AppLoader {
 	private static boolean showLoader = true;
 	private static final int LOADING_TIMEOUT = 50;
 	// private boolean show;
-	
+	static List<ApplicationLoadingView> currentLoaders = Lists.newArrayList();
+
 	private final Timer showTimer = new Timer() {
-	    @Override
-	    public void run() {
-	      if (eventCounter > 0) {
-	    	  ApplicationLoadingPopupView.showApplicationLoadingPopup(true);
-	      }
-	    }
+		@Override
+		public void run() {
+			if (eventCounter > 0) {
+				ApplicationLoadingPopupView.showApplicationLoadingPopup(true);
+			}
+		}
 	};
 
 	public static boolean isShowLoader() {
@@ -43,7 +47,7 @@ public class AppLoader {
 		if (show) {
 			eventCounter++;
 			showTimer.schedule(LOADING_TIMEOUT);
-			//ApplicationLoadingPopupView.showApplicationLoadingPopup(show);
+			// ApplicationLoadingPopupView.showApplicationLoadingPopup(show);
 		} else {
 			eventCounter--;
 			if (eventCounter <= 0) {
@@ -64,17 +68,16 @@ public class AppLoader {
 
 				RequestEvent.State state = event.getState();
 				if (showLoader) {
-	
 
 					switch (state) {
 					case SENT: {
 						display(true);
-	//					Log.info("state : SENT ");
+						// Log.info("state : SENT ");
 						break;
 					}
 					case RECEIVED: {
 						display(false);
-	//					Log.info("state : RECEIVED ");
+						// Log.info("state : RECEIVED ");
 						break;
 					}
 					default: {
@@ -83,11 +86,18 @@ public class AppLoader {
 						break;
 					}
 					}
-	
+
 				}
 			}
 		});
 
 	}
-	
+
+	public static void setNoLoader() {
+		currentLoaders.add(ApplicationLoadingView.EMPTY_LOADER);
+	}
+
+	public static void setCurrentLoader(ApplicationLoadingView loadingPopup) {
+		currentLoaders.add(loadingPopup);
+	}
 }

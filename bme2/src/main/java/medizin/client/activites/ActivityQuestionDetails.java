@@ -33,6 +33,7 @@ import medizin.client.ui.view.question.MatrixAnswerViewImpl;
 import medizin.client.ui.view.question.QuestionDetailsView;
 import medizin.client.ui.view.question.QuestionDetailsViewImpl;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
+import medizin.client.ui.widget.process.AppLoader;
 import medizin.client.util.AnswerVO;
 import medizin.client.util.ClientUtility;
 import medizin.client.util.MathJaxs;
@@ -199,6 +200,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			answerRangeChangeHandler=null;
 		}
 		
+		AppLoader.setCurrentLoader(answerListView.getLoadingPopup());
 		requests.answerRequest().contAnswersByQuestion(question.getId()).fire( new BMEReceiver<Long>(){
 
 
@@ -225,7 +227,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	protected void onAnswerTableRangeChanged() {
 		final Range range = answerTable.getVisibleRange();
 		
-		
+		AppLoader.setNoLoader();
 		requests.answerRequest().findAnswersEntriesByQuestion(question.getId(), range.getStart(), range.getLength()).with("question","rewiewer","autor","question.questionType").fire( new BMEReceiver<List<AnswerProxy>>(){
 
 
@@ -846,7 +848,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			answerRangeChangeHandler.removeHandler();
 			answerRangeChangeHandler=null;
 		}
-		
+		AppLoader.setCurrentLoader(view.getMatrixAnswerListViewImpl().getLoadingPopup());
 		requests.MatrixValidityRequest().countAllMatrixValidityForQuestion(question.getId()).with("answerX","answerY").fire(new BMEReceiver<Long>() {
 
 			@Override
@@ -867,6 +869,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	
 	private void onMatrixAnswerTableRangeChanged()
 	{
+		AppLoader.setNoLoader();
 		final Range range = view.getMatrixAnswerListViewImpl().getTable().getVisibleRange();
 		requests.MatrixValidityRequest().findAllMatrixValidityForAcceptQuestion(question.getId(), range.getStart(), range.getLength()).with("answerX","answerY").fire(new BMEReceiver<List<MatrixValidityProxy>>() {
 

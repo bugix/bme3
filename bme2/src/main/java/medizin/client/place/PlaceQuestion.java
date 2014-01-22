@@ -8,6 +8,7 @@ import medizin.client.factory.request.McAppRequestFactory;
 public class PlaceQuestion extends AbstractPlace {
 
 	public static final String PLACE_QUESTION = "PlaceQuestion";
+	private PlaceQuestionDetails placeQuestionDetails;
 	
 	public PlaceQuestion(String placeName) {
 		super(placeName);
@@ -19,6 +20,15 @@ public class PlaceQuestion extends AbstractPlace {
 
 	public PlaceQuestion(String placeName, EntityProxyId<?> stableId) {
 		super(placeName,stableId);
+	}
+
+	public PlaceQuestion(String placeName, EntityProxyId<?> stableId, PlaceQuestionDetails placeQuestionDetails) {
+		super(placeName, stableId);
+		this.placeQuestionDetails = placeQuestionDetails;
+	}
+
+	public PlaceQuestion(String placeName, boolean reload, int height) {
+		super(placeName, reload,height);
 	}
 
 	@Prefix(PLACE_QUESTION)
@@ -34,6 +44,9 @@ public class PlaceQuestion extends AbstractPlace {
 		}
 	}
 	
+	public PlaceQuestionDetails getPlaceQuestionDetails() {
+		return placeQuestionDetails;
+	}
 	/*@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {

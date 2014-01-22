@@ -38,6 +38,11 @@ public abstract class AbstractDetailsPlace extends AbstractPlace {
 		assert (operation != Operation.CREATE);
 	}
 
+	public AbstractDetailsPlace(EntityProxyId<?> record, int height) {
+		this(record, Operation.DETAILS);
+		this.height = height;
+	}
+
 	public Operation getOperation() {
 		Log.debug("AbstractDetailsPlace.getOperation: " + operation);
 		return operation;

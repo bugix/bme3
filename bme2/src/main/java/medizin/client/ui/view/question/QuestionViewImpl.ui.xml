@@ -37,7 +37,7 @@
 
 		</g:west>
 		<g:center>
-			<g:ScrollPanel>
+			<g:ScrollPanel ui:field="scrollDetailPanel">
 				<g:SimplePanel ui:field="detailsPanel"></g:SimplePanel>
 			</g:ScrollPanel>
 		</g:center>

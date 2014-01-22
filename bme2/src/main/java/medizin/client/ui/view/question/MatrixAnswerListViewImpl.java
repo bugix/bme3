@@ -12,6 +12,7 @@ import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.renderer.EnumRenderer;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.pager.MySimplePager;
+import medizin.client.ui.widget.process.ApplicationLoadingView;
 import medizin.shared.Status;
 import medizin.shared.i18n.BmeConstants;
 
@@ -54,6 +55,9 @@ public class MatrixAnswerListViewImpl extends Composite implements MatrixAnswerL
 	@UiField(provided = true)
 	public MySimplePager pager;
 
+	@UiField
+	ApplicationLoadingView loadingPopup;
+	
 	public BmeConstants constant = GWT.create(BmeConstants.class);
     private Delegate delegate;
     //private String name;
@@ -556,6 +560,10 @@ public class MatrixAnswerListViewImpl extends Composite implements MatrixAnswerL
 	}
 	public void setNewAnswer(IconButton newAnswer) {
 		this.newAnswer = newAnswer;
+	}
+	
+	public ApplicationLoadingView getLoadingPopup() {
+		return loadingPopup;
 	}
 
 }

@@ -3,16 +3,14 @@ package medizin.client.ui.view.question;
 import java.util.List;
 import java.util.Map;
 
-import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.style.resources.AdvanceCellTable;
 import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchSubViewImpl;
 import medizin.client.ui.widget.QuickSearchBox;
 import medizin.client.ui.widget.Sorting;
 
-import com.google.gwt.place.shared.Place;
-import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 
 public interface QuestionView extends IsWidget {
@@ -65,5 +63,7 @@ public interface QuestionView extends IsWidget {
 	void removeAdvancedSearchFromView();
 	 
 	public QuestionFilterViewImpl getFilterPanel();
+
+	ScrollPanel getScrollDetailPanel();
 
 }

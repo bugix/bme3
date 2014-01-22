@@ -12,7 +12,7 @@ public abstract class AbstractPlace extends Place {
 	private final String placeName;
 	private EntityProxyId<?> proxyId;
 	private boolean reload;
-
+	protected Integer height;
 	public AbstractPlace(String placeName) {
 		this.placeName = placeName;
 		reload = false;
@@ -28,6 +28,11 @@ public abstract class AbstractPlace extends Place {
 		this.proxyId = proxyId;
 	}
 	
+	public AbstractPlace(String placeName, boolean reload, int height) {
+		this(placeName, reload);
+		this.height = height;
+	}
+
 	public final String getPlaceName() {
 		return placeName;
 	}
@@ -80,5 +85,9 @@ public abstract class AbstractPlace extends Place {
 	@Override
 	public int hashCode() {
 		 return Objects.hashCode(this.getPlaceName()); 
+	}
+
+	public Integer getHeight() {
+		return height;
 	}
 }

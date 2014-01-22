@@ -16,6 +16,7 @@ import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEvent;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEventHandler;
+import medizin.client.ui.widget.process.ApplicationLoadingView;
 import medizin.shared.i18n.BmeConstants;
 
 import com.google.gwt.cell.client.AbstractEditableCell;
@@ -73,6 +74,9 @@ public class QuestionLearningObjectiveSubViewImpl extends Composite implements Q
 		
 	@UiField
 	public IconButton btnAdd;	
+	
+	@UiField
+	ApplicationLoadingView loadingPopup;
 	
 	public QuestionLearningObjectivePopupView popUpView;
 	
@@ -578,4 +582,7 @@ public class QuestionLearningObjectiveSubViewImpl extends Composite implements Q
 		delegate.initLearningObjectiveView();
 	}
 
+	public ApplicationLoadingView getLoadingPopup() {
+		return loadingPopup;
+	}
 }

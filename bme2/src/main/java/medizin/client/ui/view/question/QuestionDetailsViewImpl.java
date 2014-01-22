@@ -23,6 +23,7 @@ import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEvent;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEventHandler;
 import medizin.client.ui.widget.dialogbox.receiver.ReceiverDialog;
+import medizin.client.ui.widget.process.AppLoader;
 import medizin.client.ui.widget.resource.dndview.ResourceView;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.util.ClientUtility;
@@ -430,10 +431,13 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 				} else if (tagName.equals(constants.media())) {
 					// not to do
 				} else if (tagName.equals(constants.keywords())) {
+					AppLoader.setCurrentLoader(questionKeyword.getLoadingPopup());
 					questionKeyword.initKeywordView();
 				} else if (tagName.equals(constants.learning())) {
+					AppLoader.setCurrentLoader(questionLearningObjectiveSubViewImpl.getLoadingPopup()); 
 					questionLearningObjectiveSubViewImpl.initLearningObjectiveView();
 				} else if (tagName.equals(constants.usedInMC())) {
+					AppLoader.setCurrentLoader(questionUsedInMC.getLoadingPopup());
 					questionUsedInMC.initUsedInMCView();
 				}
 			}

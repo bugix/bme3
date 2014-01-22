@@ -190,6 +190,9 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 	
 	@UiField
 	QuestionAdvancedSearchSubViewImpl questionAdvancedSearchSubViewImpl;
+	
+	@UiField
+	ScrollPanel scrollDetailPanel;
 
 	@UiHandler(value = { "newQuestion" })
 	public void newButtonClicked(ClickEvent e) {
@@ -985,5 +988,9 @@ osceMap.put("osceValue", osceValue.getTextField().advancedTextBox);
 	}
 	public List<String> getPath(){
 		return this.paths;
+	}
+	@Override
+	public ScrollPanel getScrollDetailPanel() {
+		return scrollDetailPanel;
 	}
 }

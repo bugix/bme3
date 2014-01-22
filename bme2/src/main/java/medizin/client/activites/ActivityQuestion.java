@@ -32,6 +32,7 @@ import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchTextSearch
 import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchUserTypePopupViewImpl;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.Sorting;
+import medizin.client.ui.widget.process.AppLoader;
 import medizin.client.util.MathJaxs;
 import medizin.shared.criteria.AdvancedSearchCriteria;
 import medizin.shared.criteria.AdvancedSearchCriteriaUtils;
@@ -279,7 +280,7 @@ public class ActivityQuestion extends AbstractActivityWrapper implements Questio
 	protected void showDetails(QuestionProxy question) {
 		Log.debug("Question Stable id: " + question.stableId() + " "
 				+ PlaceQuestionDetails.Operation.DETAILS);
-		placeController.goTo(new PlaceQuestionDetails(question.stableId()));
+		placeController.goTo(new PlaceQuestionDetails(question.stableId(),view.getScrollDetailPanel().getOffsetHeight()));
 	}
 
 	@Override
@@ -340,7 +341,7 @@ public class ActivityQuestion extends AbstractActivityWrapper implements Questio
 		
 		List<String> encodedStringList = new ArrayList<String>();
 		encodedStringList = AdvancedSearchCriteriaUtils.encodeList(advancedSearchCriteriaList);
-		
+		AppLoader.setNoLoader();
 		requests.questionRequest().countQuestionByAdvancedSearchByLoginUserAndInstitute(encodedStringList, view.getSearchValue(), view.getSerachBox().getValue()).fire(new BMEReceiver<Integer>() {
 
 			@Override
@@ -381,7 +382,7 @@ public class ActivityQuestion extends AbstractActivityWrapper implements Questio
 		
 		List<String> encodedStringList = new ArrayList<String>();
 		encodedStringList = AdvancedSearchCriteriaUtils.encodeList(advancedSearchCriteriaList);
-		
+		AppLoader.setNoLoader();
 		requests.questionRequest().findQuestionByAdvancedSearchByLoginUserAndInstitute(sortname,sortorder,encodedStringList, view.getSearchValue(), view.getSerachBox().getValue(), range.getStart(), range.getLength()).with(view.getPaths()).with("autor").fire(new BMEReceiver<List<QuestionProxy>>() {
 
 			@Override
