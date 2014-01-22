@@ -71,10 +71,10 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.base.Splitter;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
-import com.google.gwt.thirdparty.guava.common.base.Splitter;
 import com.lowagie.text.Image;
 
 import freemarker.cache.FileTemplateLoader;

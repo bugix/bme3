@@ -71,9 +71,6 @@ public class UserEditViewImpl extends Composite implements UserEditView  {
     CheckBox isAdmin;
     
     @UiField
-    CheckBox isAccepted;
-    
-    @UiField
     CheckBox isDoctor;    
     
     @UiField 
@@ -88,8 +85,6 @@ public class UserEditViewImpl extends Composite implements UserEditView  {
 	
 	@UiField
 	SpanElement title;
-
-
 	
     @UiHandler("cancel")
     void onCancel(ClickEvent event) {
@@ -102,12 +97,6 @@ public class UserEditViewImpl extends Composite implements UserEditView  {
         delegate.saveClicked();
     }
 
-
-//    @UiField
-//    SpanElement displayRenderer;
-
-
-
 	public UserEditViewImpl(Map<String, Widget> reciverMap) {
 		initWidget(uiBinder.createAndBindUi(this));
 		
@@ -117,7 +106,6 @@ public class UserEditViewImpl extends Composite implements UserEditView  {
 		//reciverMap.put("alternativEmail", alternativEmail);
 		reciverMap.put("phoneNumber", phoneNumber);
 		reciverMap.put("isAdmin", isAdmin);
-		reciverMap.put("isAccepted", isAccepted);
 		reciverMap.put("isDoctor", isDoctor);
 		reciverMap.put("doctor", doctorSuggestBox);		
 								
@@ -176,7 +164,6 @@ public class UserEditViewImpl extends Composite implements UserEditView  {
 		alternativEmail.setText(person.getAlternativEmail() == null ? "" : person.getAlternativEmail());
 		phoneNumber.setText(person.getPhoneNumber() == null ? "" : person.getPhoneNumber());
 		isAdmin.setValue(proxy.getIsAdmin() == null ? Boolean.FALSE : person.getIsAdmin());
-		isAccepted.setValue(proxy.getIsAccepted() == null ? Boolean.FALSE : person.getIsAccepted());
 		isDoctor.setValue(proxy.getIsDoctor() == null ? Boolean.FALSE : person.getIsDoctor());
 		
 		Document.get().getElementById("doctorDisplay").getStyle().clearDisplay();
@@ -217,10 +204,6 @@ public class UserEditViewImpl extends Composite implements UserEditView  {
 
 	public CheckBox getIsAdmin() {
 		return isAdmin;
-	}
-
-	public CheckBox getIsAccepted() {
-		return isAccepted;
 	}
 
 	public CheckBox getIsDoctor() {
