@@ -198,6 +198,7 @@ public class UserViewImpl extends Composite implements UserView, RecordChangeHan
 	                return renderer.render(object == null ? null : object.getName());
 	            }
 	        }, constants.name(),true);
+
 	        
 	        columnName.put(constants.prename(), "prename");
 			columnNameorder.add(constants.prename());

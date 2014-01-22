@@ -269,7 +269,6 @@ public class ActivityUserCreate  extends AbstractActivityWrapper  implements Use
 		personProxy.setEmail(view.getEmail().getText());
 		personProxy.setAlternativEmail(view.getAlternativEmail().getText().isEmpty() == true ? "" : view.getAlternativEmail().getText());
 		personProxy.setPhoneNumber(view.getPhoneNumber().getText());
-		personProxy.setIsAccepted(view.getIsAccepted().getValue());
 		personProxy.setIsAdmin(view.getIsAdmin().getValue());
 		personProxy.setIsDoctor(view.getIsDoctor().getValue());
 		
@@ -285,40 +284,12 @@ public class ActivityUserCreate  extends AbstractActivityWrapper  implements Use
 		final PersonProxy finalPersonProxy = personProxy;
 		
 		personRequest.persist().using(personProxy).fire(new BMEReceiver<Void>(reciverMap) {
-
 			@Override
 			public void onSuccess(Void response) {
 				placeController.goTo(new PlaceUser(PlaceUser.PLACE_USER));
 				placeController.goTo(new PlaceUserDetails(finalPersonProxy.stableId(), PlaceUserDetails.Operation.DETAILS));
-			}
-			
-			/*@Override
-			public void onFailure(ServerFailure error) {
-				Log.info(error.getMessage());
-			}*/
-			
-			/*@Override
-			public void onViolation(Set<Violation> errors) {
-				ConfirmationDialogBox.showOkDialogBox(constants.information(),constants.userCreateConstraintsViolationMessage());
-				Log.info("error "+errors.toString());
-			}*/
-		});
-		
-		/*editorDriver.flush().fire(new Receiver<Void>() {
-			
-          @Override
-          public void onSuccess(Void response) {
-        	  Log.info("PersonSucesfullSaved");
-        	  
-        		placeController.goTo(new PlaceUserDetails(person.stableId(), PlaceUserDetails.Operation.DETAILS));
-          //	goTo(new PlaceUser(person.stableId()));
-          }
-          
-          public void onFailure(ServerFailure error){
-				Log.error(error.getMessage());
-			}
-      }); */
-		
+			}			
+		});	
 	}
 
 	@Override

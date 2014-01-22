@@ -55,20 +55,7 @@ public class UserDetailsViewImpl extends Composite implements UserDetailsView
     @UiField
     IconButton delete;
 
-    private Delegate delegate;
-    
-   /* @UiField
-	DisclosurePanel userDisclosurePanel;*/
-    
-	/*@UiField
-	Image arrow;*/
-
-	
-//    @UiField
-//    SpanElement id;
-//
-//    @UiField
-//    SpanElement version;
+    private Delegate delegate;  
 
     @UiField
     Label name;
@@ -76,9 +63,6 @@ public class UserDetailsViewImpl extends Composite implements UserDetailsView
     @UiField
     Label prename;
     
-    /*@UiField
-    SpanElement header;*/
-
     @UiField
     Label email;
 
@@ -90,19 +74,13 @@ public class UserDetailsViewImpl extends Composite implements UserDetailsView
 
     @UiField
     Label isAdmin;
-
-    @UiField
-    Label isAccepted;
-    
+  
     @UiField
     Label isDoctor;
     
     @UiField
     Label doctorLbl;
 
-//    @UiField
-//    SpanElement questionAccesses;
-    
     @UiField
     EventAccessViewImpl eventAccessView;
     
@@ -138,17 +116,12 @@ public class UserDetailsViewImpl extends Composite implements UserDetailsView
         this.proxy = proxy;
         
         displayRenderer.setInnerText( (this.proxy.getPrename()==null?"":this.proxy.getPrename()) +" "+ (this.proxy.getName()==null?"":this.proxy.getName()));
-       
-//        id.setInnerText(proxy.getId() == null ? "" : String.valueOf(proxy.getId()));
-//        version.setInnerText(proxy.getVersion() == null ? "" : String.valueOf(proxy.getVersion()));
-  //      header.setInnerText((proxy.getName() == null ? "" : String.valueOf(proxy.getName()) )+" "+ (proxy.getPrename() == null ? "" : String.valueOf(proxy.getPrename())));
         name.setText(proxy.getName() == null ? "" : String.valueOf(proxy.getName()));
         prename.setText(proxy.getPrename() == null ? "" : String.valueOf(proxy.getPrename()));
         email.setText(proxy.getEmail() == null ? "" : String.valueOf(proxy.getEmail()));
         alternativEmail.setText(proxy.getAlternativEmail() == null ? "" : String.valueOf(proxy.getAlternativEmail()));
         phoneNumber.setText(proxy.getPhoneNumber() == null ? "" : String.valueOf(proxy.getPhoneNumber()));
         isAdmin.setText(proxy.getIsAdmin() == null ? "" : (proxy.getIsAdmin()? "ja" : "nein"));
-        isAccepted.setText(proxy.getIsAccepted() == null ? "" : (proxy.getIsAccepted()? "ja" : "nein"));
         isDoctor.setText(proxy.getIsDoctor() == null ? "" : proxy.getIsDoctor().toString());
         
         if (proxy.getIsDoctor() != null && proxy.getIsDoctor())
@@ -160,43 +133,11 @@ public class UserDetailsViewImpl extends Composite implements UserDetailsView
         {
         	Document.get().getElementById("doctorDisplay").getStyle().setDisplay(Display.NONE);
         }
-//        Log.info(proxy.getQuestionAccesses().toString());       
-//        questionAccesses.setInnerText(proxy.getQuestionAccesses() == null ? "" : medizin.client.ui.view.roo.CollectionRenderer.of(medizin.client.ui.view.roo.QuestionAccessProxyRenderer.instance()).render(proxy.getQuestionAccesses()));
-//        displayRenderer.setInnerText(medizin.client.ui.view.roo.PersonProxyRenderer.instance().render(proxy));
     }
 
-   /* @UiHandler("arrow")
-	void handleClick(ClickEvent e) {
-		if (userDisclosurePanel.isOpen()) {
-			userDisclosurePanel.setOpen(false);
-			///bme2/src/main/java/medizin/client/ui/view/user/UserDetailsViewImpl.ui.xml
-			///bme2/src/main/java/medizin/client/style/theme/public/gwt/unibas/images/arrowdownselect.png
-			
-			//arrow.setUrl("/application/gwt/unibas/images/arrowdownselect.png");// set
-			arrow.setUrl("application/gwt/unibas/images/right.png");// set
-																				// url
-																				// of
-																				// up
-															// image
-
-		} else {
-			userDisclosurePanel.setOpen(true);
-			arrow.setUrl("application/gwt/unibas/images/down.png");// set
-																				// url
-																				// of
-																				// down
-																				// image
-		}
-
-	}*/
-    
-	public UserDetailsViewImpl() {
+   	public UserDetailsViewImpl() {
 		initWidget(uiBinder.createAndBindUi(this));
-		
-		/*userDisclosurePanel.setOpen(true);
-		userDisclosurePanel.setContent(userDetailPanel);
-		userDisclosurePanel.setStyleName("");*/
-
+	
 		userDetailPanel.selectTab(0);
 		userDetailPanel.getTabBar().setTabText(0, "Users");
 		TabPanelHelper.moveTabBarToBottom(userDetailPanel);
@@ -206,40 +147,25 @@ public class UserDetailsViewImpl extends Composite implements UserDetailsView
 		userAccessDetailPanel.getTabBar().setTabText(0, constants.institutionAccess());
 		userAccessDetailPanel.getTabBar().setTabText(1, constants.eventAccess());
 		userAccessDetailPanel.getTabBar().setTabText(2, constants.questionAccess());
-		
-		
-		//userAccessDetailPanel.getTabBar().setTabEnabled(0, false);
-		
-		
-		
-		
-
 	}
 
 
 	@Override
-	public void setName(String helloName) {
-		// TODO Auto-generated method stub
-		
+	public void setName(String helloName) {		
 	}
-
-
 
 	@Override
 	public void setPresenter(Presenter presenter) {
 		this.presenter = presenter;
-		
 	}
 
 	@Override
 	public void setDelegate(Delegate delegate) {
-		this.delegate = delegate;
-		
+		this.delegate = delegate;		
 	}
 
 	@Override
 	public QuestionAccessViewImpl getQuestionAccessView() {
-		// TODO Auto-generated method stub
 		return questionAccessView;
 	}
 
@@ -250,8 +176,4 @@ public class UserDetailsViewImpl extends Composite implements UserDetailsView
 	public void setInstituteAccessView(InstituteAccessViewImpl instituteAccessView) {
 		this.instituteAccessView = instituteAccessView;
 	}
-
-	
-
-
 }

@@ -157,16 +157,7 @@
 						<g:CheckBox ui:field="isAdmin" />
 					</td>
 				</tr>
-
-				<tr id="isAccepted">
-					<td>
-						<div class="{style.label}"><g:Label text="{constants.accessRights}" /></div>
-					</td>
-					<td>
-						<g:CheckBox ui:field="isAccepted" />
-					</td>
-				</tr>
-						</table>
+				</table>
 						
 
 					</g:HTMLPanel>

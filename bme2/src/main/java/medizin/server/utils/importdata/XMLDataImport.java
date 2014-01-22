@@ -376,7 +376,6 @@ public class XMLDataImport {
 			person.setPrename(prename);
 			person.setEmail(name.replace(" ", "_") + "@" + prename.replace(" ", "_") + ".ch");
 			person.setAlternativEmail(null);
-			person.setIsAccepted(true);
 			person.setIsAdmin(false);
 			person.setPhoneNumber("061 611 11 11");
 			person.persist();
