@@ -28,6 +28,18 @@ public class PlaceUserDetails extends AbstractDetailsPlace {
 		Log.debug("PlaceUserDetails will be created");
 	}
 
+	public PlaceUserDetails(EntityProxyId<?> stableId, Integer height) {
+		super(stableId, height);
+	}
+
+	public PlaceUserDetails(Operation operation, Integer height) {
+		super(operation, height);
+	}
+
+	public PlaceUserDetails(EntityProxyId<?> stableId, Operation operation,Integer height) {		
+		super(stableId, operation, height);
+	}
+
 	@Prefix(PLACE_USER_DETAILS)
 	public static class Tokenizer extends AbstractDetailsPlace.AbstractTokenizer<PlaceUserDetails> {
 

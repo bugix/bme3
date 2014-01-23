@@ -237,9 +237,9 @@ public class ActivityUserCreate  extends AbstractActivityWrapper  implements Use
 	@Override
 	public void cancelClicked() {
 		if(this.operation==PlaceUserDetails.Operation.EDIT)
-			placeController.goTo(new PlaceUserDetails(person.stableId(), PlaceUserDetails.Operation.DETAILS));
+			placeController.goTo(new PlaceUserDetails(person.stableId(), PlaceUserDetails.Operation.DETAILS,userPlace.getHeight()));
 		else
-			placeController.goTo(new PlaceUser(PlaceUser.PLACE_USER));
+			placeController.goTo(new PlaceUser(PlaceUser.PLACE_USER,userPlace.getHeight()));
 		
 	}
 

@@ -501,16 +501,10 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 	 * Functionality implemented from @see medizin.client.ui.view.user.UserDetailsView.Delegate#editClicked()
 	 */
 	@Override
-	public void editClicked() {
-		placeController.goTo(new PlaceUserDetails(person.stableId(), PlaceUserDetails.Operation.EDIT));
-		
+	public void editClicked() {		
+		placeController.goTo(new PlaceUserDetails(person.stableId(), PlaceUserDetails.Operation.EDIT, userPlace.getHeight()));
 	}
 
-	@Override
-	public void newClicked(String institutionName) {
-		placeController.goTo(new PlaceUserDetails(person.stableId(), PlaceUserDetails.Operation.CREATE));
-		
-	}
 
 	@Override
 	public void deleteEventAccessClicked(UserAccessRightsProxy questionAccess) {

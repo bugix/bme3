@@ -84,6 +84,9 @@ public class QuestionInAssessmentViewImpl extends Composite implements QuestionI
 
 	@UiField
 	ScrollPanel scrollpanel;
+	
+	@UiField
+	ScrollPanel scrollDetailPanel;
 
 	@UiField(provided = true)
 	AdvanceCellTable<AssesmentQuestionProxy> table;
@@ -541,5 +544,10 @@ public class QuestionInAssessmentViewImpl extends Composite implements QuestionI
 	
 	public DefaultSuggestBox<AssesmentProxy, EventHandlingValueHolderItem<AssesmentProxy>> getAssessmentSuggestBox() {
 		return assessmentSuggestBox;
+	}
+	
+	@Override
+	public ScrollPanel getScrollDetailPanel() {
+		return scrollDetailPanel;
 	}
 }

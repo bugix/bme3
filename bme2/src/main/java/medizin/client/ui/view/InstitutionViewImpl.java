@@ -83,6 +83,9 @@ public class InstitutionViewImpl extends Composite implements InstitutionView, R
 	@UiField
 	SimplePanel slidingPanel;
 	
+	@UiField
+	ScrollPanel scrollDetailPanel;
+	
 	@UiField(provided=true)
 	AdvanceCellTable<InstitutionProxy> table;
 	
@@ -636,4 +639,10 @@ public class InstitutionViewImpl extends Composite implements InstitutionView, R
 	private List<String> getColumnNameorder() {
 		return columnNameorder;
 	}
+	
+	@Override
+	public ScrollPanel getScrollDetailPanel() {
+		return scrollDetailPanel;
+	}
+
 }

@@ -166,25 +166,9 @@ public class ActivityQuestiontypesDetails extends AbstractActivityWrapper implem
 
 	@Override
 	public void editClicked() {
-		placeController.goTo(new PlaceQuestiontypesDetails(questionType.stableId(), PlaceQuestiontypesDetails.Operation.EDIT));
+		placeController.goTo(new PlaceQuestiontypesDetails(questionType.stableId(), PlaceQuestiontypesDetails.Operation.EDIT,questiontypePlace.getHeight() ));
 		
 	}
-
-	@Override
-	public void newClicked() {
-		placeController.goTo(new PlaceQuestiontypesDetails(PlaceQuestiontypesDetails.Operation.CREATE));
-		
-	}
-
-
-
-	@Override
-	public void newClicked(String institutionName) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
 
 	@Override
 	public void placeChanged(Place place) {

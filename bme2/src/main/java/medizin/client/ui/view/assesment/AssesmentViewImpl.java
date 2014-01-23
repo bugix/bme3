@@ -70,6 +70,9 @@ public class AssesmentViewImpl extends Composite implements AssesmentView, Recor
 	@UiField
 	ScrollPanel scrollPanel;
 	
+	@UiField
+	ScrollPanel scrollDetailPanel;
+	
 	private Map<String, String> columnName=new HashMap<String, String>();
 	private List<String> columnNameorder = new ArrayList<String>();
 	private List<String> path = new ArrayList<String>();
@@ -600,5 +603,10 @@ public class AssesmentViewImpl extends Composite implements AssesmentView, Recor
 		}
 		private List<String> getColumnNameorder() {
 			return columnNameorder;
+		}
+		
+		@Override
+		public ScrollPanel getScrollDetailPanel() {
+			return scrollDetailPanel;
 		}
 }

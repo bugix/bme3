@@ -8,6 +8,7 @@ import medizin.client.proxy.PersonProxy;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 
 public interface AssesmentView extends IsWidget {
@@ -36,4 +37,6 @@ public interface AssesmentView extends IsWidget {
     void setDelegate(Delegate delegate);
     
 	SimplePanel getDetailsPanel();
+	
+	ScrollPanel getScrollDetailPanel();	
 }

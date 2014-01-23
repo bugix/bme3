@@ -28,8 +28,13 @@ public abstract class AbstractPlace extends Place {
 		this.proxyId = proxyId;
 	}
 	
-	public AbstractPlace(String placeName, boolean reload, int height) {
+	public AbstractPlace(String placeName, boolean reload, Integer height) {
 		this(placeName, reload);
+		this.height = height;
+	}
+
+	public AbstractPlace(String placeName, Integer height) {
+		this(placeName);
 		this.height = height;
 	}
 

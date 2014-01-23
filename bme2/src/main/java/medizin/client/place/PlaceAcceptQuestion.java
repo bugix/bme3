@@ -21,6 +21,11 @@ public class PlaceAcceptQuestion extends AbstractPlace {
 		super(placeName, proxyId);
 	}
 
+	public PlaceAcceptQuestion(String placeAcceptQuestion, boolean reload,
+			Integer height) {
+		super(placeAcceptQuestion,reload,height);
+	}
+
 	@Prefix(PLACE_ACCEPT_QUESTION)
 	public static class Tokenizer extends AbstractPlace.AbstractTokenizer<PlaceAcceptQuestion> {
 		public Tokenizer(McAppRequestFactory requestFactory) {

@@ -537,9 +537,9 @@ public class ActivityAcceptQuestionEdit extends AbstractActivityWrapper implemen
 	@Override
 	public void cancelClicked() {
 		if (question != null && question.getId() != null) {
-			goTo(new PlaceAcceptQuestionDetails(question.stableId(),Operation.DETAILS));
+			goTo(new PlaceAcceptQuestionDetails(question.stableId(),Operation.DETAILS, questionPlace.getHeight()));
 		} else {
-			goTo(new PlaceQuestion(PlaceQuestion.PLACE_QUESTION));
+			goTo(new PlaceQuestion(PlaceQuestion.PLACE_QUESTION, questionPlace.getHeight()));
 		}
 		
 	}

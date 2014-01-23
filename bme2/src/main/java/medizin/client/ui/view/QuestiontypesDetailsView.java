@@ -16,11 +16,6 @@ public interface QuestiontypesDetailsView extends IsWidget {
 		void deleteClicked();
 
 		void editClicked();
-		
-
-		void newClicked(String institutionName);
-
-		void newClicked();
 
 		void getQuestionCount(QuestionTypeProxy proxy, Function<Long, Void> function);
 	}

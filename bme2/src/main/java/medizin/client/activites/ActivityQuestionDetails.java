@@ -266,7 +266,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		/*if (questionPlace.getFromPlace().equals("ACCEPT_QUESTION"))
 			placeController.goTo(new PlaceQuestionDetails(question.stableId(), PlaceQuestionDetails.Operation.EDIT, "ACCEPT_QUESTION"));
 		else*/
-			placeController.goTo(new PlaceQuestionDetails(question.stableId(), PlaceQuestionDetails.Operation.EDIT));
+			placeController.goTo(new PlaceQuestionDetails(question.stableId(), PlaceQuestionDetails.Operation.EDIT,questionPlace.getHeight()));
 		
 	}
 

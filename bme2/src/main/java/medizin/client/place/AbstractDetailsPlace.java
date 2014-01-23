@@ -38,8 +38,20 @@ public abstract class AbstractDetailsPlace extends AbstractPlace {
 		assert (operation != Operation.CREATE);
 	}
 
-	public AbstractDetailsPlace(EntityProxyId<?> record, int height) {
+	public AbstractDetailsPlace(EntityProxyId<?> record, Integer height) {
 		this(record, Operation.DETAILS);
+		this.height = height;
+	}
+
+	public AbstractDetailsPlace(Operation operation, Integer height) {
+		super("");
+		this.operation = operation;
+		this.height = height;
+	}
+
+	public AbstractDetailsPlace(EntityProxyId<?> stableId, Operation operation, Integer height) {
+		super("",stableId);
+		this.operation = operation;
 		this.height = height;
 	}
 

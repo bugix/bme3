@@ -5,6 +5,7 @@ import medizin.client.ui.widget.Sorting;
 
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 
 public interface InstitutionView extends IsWidget {
@@ -33,5 +34,5 @@ public interface InstitutionView extends IsWidget {
     
 	SimplePanel getDetailsPanel();
 
-
+	ScrollPanel getScrollDetailPanel();	
 }

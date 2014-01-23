@@ -294,7 +294,7 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 
 	private void showDetails(PersonProxy person) {
 		Log.debug("Person Stable id: " + person.stableId() + " " + PlaceUserDetails.Operation.DETAILS);
-		placeController.goTo(new PlaceUserDetails(person.stableId()));
+		placeController.goTo(new PlaceUserDetails(person.stableId(),view.getScrollDetailPanel().getOffsetHeight()));
 	}
 
 	@Override
@@ -304,7 +304,7 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 
 	@Override
 	public void newClicked() {
-		placeController.goTo(new PlaceUserDetails(PlaceUserDetails.Operation.CREATE));
+		placeController.goTo(new PlaceUserDetails(PlaceUserDetails.Operation.CREATE,view.getScrollDetailPanel().getOffsetHeight()));
 		
 	}
 

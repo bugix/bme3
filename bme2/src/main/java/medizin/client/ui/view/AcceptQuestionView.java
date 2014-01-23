@@ -6,6 +6,7 @@ import medizin.client.ui.widget.Sorting;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 
 public interface AcceptQuestionView extends IsWidget {
@@ -33,5 +34,6 @@ public interface AcceptQuestionView extends IsWidget {
 
 	    
 		public SimplePanel getDetailsPanel();
-
+		
+		ScrollPanel getScrollDetailPanel();	
 }

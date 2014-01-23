@@ -31,8 +31,6 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 	private AcceptsOneWidget widget;
 	private QuestiontypesEditView view;
 
-	private PlaceUserDetails userPlace;
-
 	private PlaceQuestiontypesDetails.Operation operation;
 
 	private HandlerRegistration rangeChangeHandler;
@@ -190,10 +188,10 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 	@Override
 	public void cancelClicked() {
 		if(questionType.getId()!=null){
-			goTo(new PlaceQuestiontypesDetails(questionType.stableId(),PlaceQuestiontypesDetails.Operation.DETAILS));
+			goTo(new PlaceQuestiontypesDetails(questionType.stableId(),PlaceQuestiontypesDetails.Operation.DETAILS,questiontypePlace.getHeight()));
 		}
 		else {			
-			goTo(new PlaceQuestiontypes(PlaceQuestiontypes.PLACE_QUESTIONTYPES));
+			goTo(new PlaceQuestiontypes(PlaceQuestiontypes.PLACE_QUESTIONTYPES, questiontypePlace.getHeight()));
 		}
 	}
 

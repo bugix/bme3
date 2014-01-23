@@ -28,6 +28,15 @@ public class PlaceAcceptQuestionDetails extends AbstractDetailsPlace {
 		Log.debug("PlaceAcceptQuestionDetails wird erstellt");
 	}
 
+	public PlaceAcceptQuestionDetails(EntityProxyId<?> stableId,
+			Integer height) {
+		super(stableId,height);
+	}
+
+	public PlaceAcceptQuestionDetails(EntityProxyId<?> stableId, Operation operation, Integer height) {
+		super(stableId, operation, height);
+	}
+
 	@Prefix(PLACE_ACCEPT_QUESTION_DETAILS)
 	public static class Tokenizer extends AbstractDetailsPlace.AbstractTokenizer<PlaceAcceptQuestionDetails> {
 

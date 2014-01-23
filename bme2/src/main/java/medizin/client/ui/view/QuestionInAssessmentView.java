@@ -11,6 +11,7 @@ import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
 
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 
 public interface QuestionInAssessmentView extends IsWidget {
@@ -31,6 +32,8 @@ public interface QuestionInAssessmentView extends IsWidget {
 	    void setDelegate(Delegate delegate);
 	    
 		SimplePanel getDetailsPanel();
+		
+		ScrollPanel getScrollDetailPanel();
 		
 		QuestionAdvancedSearchSubViewImpl getQuestionAdvancedSearchSubViewImpl();
 		

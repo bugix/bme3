@@ -179,7 +179,7 @@ public class ActivityAcceptQuestion extends AbstractActivityWrapper implements A
 
 	private void showDetails(QuestionProxy question) {
 		Log.debug("Question Stable id: " + question.stableId() + " " + PlaceQuestionDetails.Operation.DETAILS);
-		placeController.goTo(new PlaceAcceptQuestionDetails(question.stableId()));
+		placeController.goTo(new PlaceAcceptQuestionDetails(question.stableId(),view.getScrollDetailPanel().getOffsetHeight()));
 	}
 	
 

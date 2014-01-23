@@ -29,6 +29,18 @@ public class PlaceAssesmentDetails extends AbstractDetailsPlace {
 		Log.debug("PlaceAssesmentDetails wird erstellt");
 	}
 
+	public PlaceAssesmentDetails(EntityProxyId<?> stableId, Integer height) {
+		super(stableId, height);
+	}
+
+	public PlaceAssesmentDetails(Operation operation, Integer height) {
+		super(operation, height);
+	}
+
+	public PlaceAssesmentDetails(EntityProxyId<?> stableId, Operation operation, Integer height) {
+		super(stableId, operation, height);
+	}
+
 	@Prefix(PLACE_ASSESMENT_DETAILS)
 	public static class Tokenizer extends AbstractDetailsPlace.AbstractTokenizer<PlaceAssesmentDetails>  {
 

@@ -183,7 +183,7 @@ public class ActivityInstitution extends AbstractActivityWrapper implements /*In
 				+ PlaceInstitutionEvent.Operation.DETAILS);
 		placeController.goTo(
 				new PlaceInstitutionEvent(institution.stableId(),
-						PlaceInstitutionEvent.Operation.DETAILS));
+						PlaceInstitutionEvent.Operation.DETAILS,view.getScrollDetailPanel().getOffsetHeight()));
 	}
 
 //	@Override

@@ -300,7 +300,7 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 
 	@Override
 	public void editClicked() {
-		placeController.goTo(new PlaceAssesmentDetails(assesment.stableId(), PlaceAssesmentDetails.Operation.EDIT));
+		placeController.goTo(new PlaceAssesmentDetails(assesment.stableId(), PlaceAssesmentDetails.Operation.EDIT, assesmentPlace.getHeight()));
 	}
 
 	@Override

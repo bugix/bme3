@@ -31,6 +31,10 @@ public class PlaceQuestion extends AbstractPlace {
 		super(placeName, reload,height);
 	}
 
+	public PlaceQuestion(String placeName, Integer height) {
+		super(placeName, height);
+	}
+
 	@Prefix(PLACE_QUESTION)
 	public static class Tokenizer extends AbstractPlace.AbstractTokenizer<PlaceQuestion> {
 

@@ -114,7 +114,7 @@ public class ActivityNotActivatedQuestion extends AbstractActivityWrapper implem
 	}
 	private void showDetails(QuestionProxy question) {
 		Log.debug("Question Stable id: " + question.stableId() + " " + PlaceQuestionDetails.Operation.DETAILS);
-		placeController.goTo(new PlaceNotActivatedQuestionDetails(question.stableId()));
+		placeController.goTo(new PlaceNotActivatedQuestionDetails(question.stableId(),view.getScrollDetailPanel().getOffsetHeight()));
 	}
 
 	private void init() {

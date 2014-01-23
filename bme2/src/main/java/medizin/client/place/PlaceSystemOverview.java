@@ -16,6 +16,11 @@ public class PlaceSystemOverview extends AbstractPlace {
 		super(placeName, reload);
 	}
 
+	public PlaceSystemOverview(String placeSystemOverview, boolean relaod,
+			Integer height) {
+		super(placeSystemOverview,relaod,height);
+	}
+
 	@Prefix(PLACE_SYSTEM_OVERVIEW)
 	public static class Tokenizer extends AbstractPlace.AbstractTokenizer<PlaceSystemOverview> {
 

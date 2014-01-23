@@ -462,17 +462,14 @@ public class ActivityQuestiontypes extends AbstractActivityWrapper implements Qu
 			Log.debug("Questiontype Stable id: " + questiontype.stableId() + " "
 					+ PlaceQuestiontypesDetails.Operation.DETAILS);
 			placeController.goTo(
-					new PlaceQuestiontypesDetails(questiontype.stableId()));
+					new PlaceQuestiontypesDetails(questiontype.stableId(), view.getScrollDetailPanel().getOffsetHeight()));
 		}
-		
-		
-
-
+			
 		@Override
 		public void newClicked() {
 
 					Log.debug("New Clicked in Acitivity Qeustiontype");
-					placeController.goTo(new PlaceQuestiontypesDetails(PlaceQuestiontypesDetails.Operation.CREATE));
+					placeController.goTo(new PlaceQuestiontypesDetails(PlaceQuestiontypesDetails.Operation.CREATE,view.getScrollDetailPanel().getOffsetHeight()));
 				
 		}
 

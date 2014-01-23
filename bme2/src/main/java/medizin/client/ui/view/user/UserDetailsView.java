@@ -23,9 +23,7 @@ public interface UserDetailsView extends IsWidget {
 		void deleteClicked();
 
 		void editClicked();
-		
 
-		void newClicked(String institutionName);
 	}
 
 	QuestionAccessViewImpl getQuestionAccessView();

@@ -226,7 +226,7 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 		if (question != null && question.getId() != null) {
 			cancelClickedGoto(question);
 		} else {
-			goTo(new PlaceQuestion(PlaceQuestion.PLACE_QUESTION));
+			goTo(new PlaceQuestion(PlaceQuestion.PLACE_QUESTION,questionPlace.getHeight()));
 		}
 	}
 
@@ -248,7 +248,7 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 
 	// also overriden in subclass 
 	private void cancelClickedGoto(QuestionProxy questionProxy) {
-		goTo(new PlaceQuestionDetails(questionProxy.stableId(), Operation.DETAILS));
+		goTo(new PlaceQuestionDetails(questionProxy.stableId(), Operation.DETAILS, questionPlace.getHeight()));
 	}
 
 	@Override

@@ -116,7 +116,7 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 	
 	@Override
 	public void editClicked() {
-		goTo(new PlaceAcceptQuestionDetails(question.stableId(), PlaceQuestionDetails.Operation.EDIT));
+		goTo(new PlaceAcceptQuestionDetails(question.stableId(), PlaceQuestionDetails.Operation.EDIT, place.getHeight()));
 	}
 	
 	@Override

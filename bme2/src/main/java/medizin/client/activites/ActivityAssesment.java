@@ -257,7 +257,7 @@ public class ActivityAssesment extends AbstractActivityWrapper implements Assesm
 			Log.debug("Assesement Stable id: " + assesement.stableId() + " "
 					+ PlaceAssesmentDetails.Operation.DETAILS);
 			placeController.goTo(
-					new PlaceAssesmentDetails(assesement.stableId()));
+					new PlaceAssesmentDetails(assesement.stableId(), view.getScrollDetailPanel().getOffsetHeight()));
 		}
 
 		@Override
@@ -268,7 +268,7 @@ public class ActivityAssesment extends AbstractActivityWrapper implements Assesm
 
 		@Override
 		public void newClicked() {
-			placeController.goTo(new PlaceAssesmentDetails(PlaceAssesmentDetails.Operation.CREATE));
+			placeController.goTo(new PlaceAssesmentDetails(PlaceAssesmentDetails.Operation.CREATE,view.getScrollDetailPanel().getOffsetHeight()));
 			
 		}
 

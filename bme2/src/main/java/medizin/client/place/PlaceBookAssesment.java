@@ -16,6 +16,11 @@ public class PlaceBookAssesment extends AbstractPlace {
 		super(placeName, reload);
 	}
 
+	public PlaceBookAssesment(String placeBookAssesment, boolean reload,
+			Integer height) {
+		super(placeBookAssesment, reload, height);
+	}
+
 	@Prefix(PLACE_BOOK_ASSESMENT)
 	public static class Tokenizer extends AbstractPlace.AbstractTokenizer<PlaceBookAssesment> {
 

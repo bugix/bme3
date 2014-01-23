@@ -82,17 +82,17 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 	
 	@Override
 	public final void start(final AcceptsOneWidget panel, final EventBus eventBus) {
-		if(this instanceof ActivityQuestion || this instanceof ActivityQuestionDetails || this instanceof ActivityQuestionEdit) {
-			Integer height = ((AbstractPlace)place).getHeight();
-			if(height != null) {
-				ApplicationLoadingView loadingView = new ApplicationLoadingView();
-				panel.setWidget(loadingView);
-				loadingView.setVisible(true);
-				loadingView.setHeight(height+"px");
-				loadingView.setWidth("100%");	
-			}
-			AppLoader.setNoLoader();
+		
+		Integer height = ((AbstractPlace)place).getHeight();
+		if(height != null) {
+			ApplicationLoadingView loadingView = new ApplicationLoadingView();
+			panel.setWidget(loadingView);
+			loadingView.setVisible(true);
+			loadingView.setHeight(height+"px");
+			loadingView.setWidth("100%");	
 		}
+		AppLoader.setNoLoader();
+		
 		
 		
 			Log.info("start method called");

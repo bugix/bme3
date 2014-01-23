@@ -428,7 +428,7 @@ public class ActivityQuestion extends AbstractActivityWrapper implements Questio
 	@Override
 	public void newClicked() {
 		placeController.goTo(new PlaceQuestionDetails(
-				PlaceQuestionDetails.Operation.CREATE));
+				PlaceQuestionDetails.Operation.CREATE, view.getScrollDetailPanel().getOffsetHeight()));
 
 	}
 

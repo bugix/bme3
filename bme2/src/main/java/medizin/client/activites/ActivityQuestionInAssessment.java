@@ -161,7 +161,7 @@ public class ActivityQuestionInAssessment extends AbstractActivityWrapper implem
 	}
 
 	protected void showDetails(AssesmentQuestionProxy selectedObject) {
-		placeController.goTo(new PlaceQuestionInAssessmentDetails(selectedObject.stableId()));
+		placeController.goTo(new PlaceQuestionInAssessmentDetails(selectedObject.stableId(),view.getScrollDetailPanel().getOffsetHeight()));
 	}
 	
 	public void displayQuestionByAssessment(Long assessmentID)

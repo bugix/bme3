@@ -25,6 +25,11 @@ public class PlaceDeactivatedQuestionDetails extends AbstractDetailsPlace {
 		super(stableId, operation);
 	}
 
+	public PlaceDeactivatedQuestionDetails(EntityProxyId<?> stableId,
+			Integer height) {
+		super(stableId, height);
+	}
+
 	@Prefix(PLACE_DEACTIVATED_QUESTION_DETAILS)
 	public static class Tokenizer extends AbstractDetailsPlace.AbstractTokenizer<PlaceDeactivatedQuestionDetails> {
 

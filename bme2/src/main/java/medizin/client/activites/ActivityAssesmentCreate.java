@@ -229,9 +229,9 @@ public class ActivityAssesmentCreate  extends AbstractActivityWrapper  implement
 	@Override
 	public void cancelClicked() {
 		if(this.operation==PlaceAssesmentDetails.Operation.EDIT)
-			placeController.goTo(new PlaceAssesmentDetails(assesment.stableId()));
+			placeController.goTo(new PlaceAssesmentDetails(assesment.stableId(), assesmentPlace.getHeight()));
 		else
-			placeController.goTo(new PlaceAssesment("PlaceAssesment!CANCEL"));
+			placeController.goTo(new PlaceAssesment("PlaceAssesment!CANCEL", assesmentPlace.getHeight()));
 		
 	}
 

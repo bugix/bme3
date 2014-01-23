@@ -4,6 +4,7 @@ import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchSubViewImp
 
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.ScrollPanel;
 
 public interface AsignAssQuestionView extends IsWidget {
 
@@ -18,4 +19,5 @@ public interface AsignAssQuestionView extends IsWidget {
 	AssesmentQuestionPanelImpl getAssesmentQuestionPanel();
 	AddQuestionsTabPanelImpl getAddQuestionsTabPanel();
 	QuestionAdvancedSearchSubViewImpl getQuestionAdvancedSearchSubViewImpl();
+	ScrollPanel getScrollDetailPanel();	
 }

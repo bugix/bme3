@@ -107,7 +107,7 @@ public class ActivityDeactivatedQuestion extends AbstractActivityWrapper impleme
 		
 	}
 	private void showDetails(QuestionProxy selectedObject) {
-		placeController.goTo(new PlaceDeactivatedQuestionDetails(selectedObject.stableId()));
+		placeController.goTo(new PlaceDeactivatedQuestionDetails(selectedObject.stableId(),view.getScrollDetailPanel().getOffsetHeight()));
 	}
 
 	private void init() {
