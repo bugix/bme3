@@ -44,6 +44,7 @@ import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DialogBox;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -166,7 +167,7 @@ public class QuestionAccessDialogboxImpl extends DialogBox implements QuestionAc
 	            Renderer<java.lang.String> renderer = new AbstractRenderer<java.lang.String>() {
 
 	                public String render(java.lang.String obj) {
-	                    return obj == null ? "" : String.valueOf(obj);
+	                    return obj == null ? "" : SafeHtmlUtils.fromString(new HTML(obj).getText()).asString();
 	                }
 	            };
 
