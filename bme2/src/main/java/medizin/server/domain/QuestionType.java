@@ -161,6 +161,9 @@ public class QuestionType {
     
     private Integer maxWordCount;
     
+    @Column(columnDefinition="BIT", length = 1)
+    private Boolean showFilterDialog;
+    
     public static List<QuestionType> findAllQuestionTypesByAssesment(Long assesmentId) {
 		Assesment assesment = Assesment.findAssesment(assesmentId);
         if (assesment == null) throw new IllegalArgumentException("The institution argument is required");

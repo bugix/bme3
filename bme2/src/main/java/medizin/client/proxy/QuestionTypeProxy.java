@@ -179,5 +179,9 @@ public interface QuestionTypeProxy extends EntityProxy {
 
     abstract void setMaxWordCount(Integer maxWordCount);
 
+    abstract Boolean getShowFilterDialog();
+
+    abstract void setShowFilterDialog(Boolean showFilterDialog);
+
     abstract Integer getVersion();
 }

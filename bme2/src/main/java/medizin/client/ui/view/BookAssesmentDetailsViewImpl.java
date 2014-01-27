@@ -185,9 +185,10 @@ public class BookAssesmentDetailsViewImpl extends Composite implements BookAsses
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				String ordinal = URL.encodeQueryString(String.valueOf(FileDownloaderProps.Method.SOLUTION_KEY.ordinal()));          
+				String ordinal = URL.encodeQueryString(String.valueOf(FileDownloaderProps.Method.XML_PAPER.ordinal()));          
 				String url = GWT.getHostPageBaseURL() + "downloadFile?".concat(FileDownloaderProps.METHOD_KEY).concat("=").concat(ordinal)
-						.concat("&").concat(FileDownloaderProps.ASSIGNMENT).concat("=").concat(URL.encodeQueryString(delegate.getAssignemtId() + ""));
+						.concat("&").concat(FileDownloaderProps.ASSIGNMENT).concat("=").concat(URL.encodeQueryString(delegate.getAssignemtId() + ""))
+						.concat("&").concat(FileDownloaderProps.DISALLOW_SORTING).concat("=").concat(URL.encodeQueryString(getDisallowSorting(disallowSorting,disallowSortingChk) + ""));
 				Log.info("--> url is : " +url);
 				
 				Window.open(url, "", "");

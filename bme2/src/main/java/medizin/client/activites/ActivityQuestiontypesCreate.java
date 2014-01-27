@@ -224,7 +224,7 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 				questionTypeProxy.setQuestionType(selectedQuestionType);
 				questionTypeProxy.setInstitution(view.getInstituteListBox().getValue());
 
-				if (selectedQuestionType.equals(QuestionTypes.Textual) || selectedQuestionType.equals(QuestionTypes.Sort))
+				if (selectedQuestionType.equals(QuestionTypes.Textual))
 				{
 					questionTypeProxy.setSumAnswer(Integer.parseInt(view.getSumAnswerTxtbox().getValue()));
 					questionTypeProxy.setSumTrueAnswer(Integer.parseInt(view.getSumTrueAnswerTxtbox().getValue()));
@@ -235,6 +235,20 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 					questionTypeProxy.setQueHaveImage(view.getQueHaveImgChkBox().getValue());
 					questionTypeProxy.setQueHaveSound(view.getQueHaveSoundChkBox().getValue());
 					questionTypeProxy.setQueHaveVideo(view.getQueHaveVideoChkBox().getValue());
+					questionTypeProxy.setShowFilterDialog(view.getShowFilterDialogChkBox().getValue());
+				}
+				else if( selectedQuestionType.equals(QuestionTypes.Sort))
+				{
+					questionTypeProxy.setSumAnswer(Integer.parseInt(view.getSumAnswerTxtbox().getValue()));
+					questionTypeProxy.setSumTrueAnswer(Integer.parseInt(view.getSumTrueAnswerTxtbox().getValue()));
+					questionTypeProxy.setSumFalseAnswer(Integer.parseInt(view.getSumFalseAnswerTxtbox().getValue()));
+					questionTypeProxy.setQuestionLength(Integer.parseInt(view.getQuestionLengthTxtbox().getValue()));
+					questionTypeProxy.setAnswerLength(Integer.parseInt(view.getAnswerLengthTxtbox().getValue()));
+					questionTypeProxy.setDiffBetAnswer(Double.parseDouble(view.getAnswerDiffTxtbox().getValue()));
+					questionTypeProxy.setQueHaveImage(view.getQueHaveImgChkBox().getValue());
+					questionTypeProxy.setQueHaveSound(view.getQueHaveSoundChkBox().getValue());
+					questionTypeProxy.setQueHaveVideo(view.getQueHaveVideoChkBox().getValue());
+					
 				}
 				else if (selectedQuestionType.equals(QuestionTypes.Imgkey))
 				{

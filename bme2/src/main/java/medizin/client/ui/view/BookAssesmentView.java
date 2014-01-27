@@ -23,5 +23,6 @@ public interface BookAssesmentView extends IsWidget {
 	public void createTab(String name, EntityProxyId<?> stableId);
 	public AcceptsOneWidget getDetailsPanel();
 	void addTabHandler();
+	String getSelectedYear();
     
 }

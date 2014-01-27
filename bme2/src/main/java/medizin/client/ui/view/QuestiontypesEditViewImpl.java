@@ -186,6 +186,10 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 	@UiField
     CheckBox acceptNonKeywordChkBox;
 	 
+	
+	@UiField
+	CheckBox showFilterDialogChkBox;	
+	 
 	@UiField
 	LabeledIntegerBox shortAnswerLength;
 	
@@ -253,6 +257,9 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
     LabeledPanel oneToOneAss;
     
     @UiField
+    LabeledPanel showFilterDialog;
+    
+    @UiField
     LabeledPanel keywordHighlight;
     
     @UiField
@@ -296,7 +303,28 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
        longName.setValue(proxy.getLongName());
        description.setValue(proxy.getDescription());
        
-       if (proxy.getQuestionType().equals(QuestionTypes.Textual) || proxy.getQuestionType().equals(QuestionTypes.Sort))
+       if (proxy.getQuestionType().equals(QuestionTypes.Textual) )
+       {
+    	   if (SharedConstant.INFINITE_VALUE.equals(proxy.getSumAnswer()))
+    	   {
+    		   sumAnswer.getTextBox().setEnabled(false);
+    		   infiniteChkBox.setValue(true);
+    	   }
+    	   sumAnswer.setValue(defaultString(proxy.getSumAnswer()));
+    	   sumTrueAnswer.setValue(defaultString(proxy.getSumTrueAnswer()));
+    	   sumFalseAnswer.setValue(defaultString(proxy.getSumFalseAnswer()));
+    	   questionLength.setValue(defaultString(proxy.getQuestionLength()));
+    	   answerLength.setValue(defaultString(proxy.getAnswerLength()));
+    	   answerDiff.setValue(defaultString(proxy.getDiffBetAnswer()));
+    	   queHaveImgChkBox.setValue(proxy.getQueHaveImage());
+    	   queHaveVideoChkBox.setValue(proxy.getQueHaveVideo());
+    	   queHaveSoundChkBox.setValue(proxy.getQueHaveSound());
+    	   showFilterDialogChkBox.setValue(proxy.getShowFilterDialog());
+    	   
+    	   
+       }
+       
+       else if( proxy.getQuestionType().equals(QuestionTypes.Sort))
        {
     	   if (SharedConstant.INFINITE_VALUE.equals(proxy.getSumAnswer()))
     	   {
@@ -368,6 +396,8 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
        updateImgKeyFields();
     }
     
+    private ArrayList<Widget> sortFields;
+    
     private ArrayList<Widget> baseFields;
     private ArrayList<Widget> textualFields;
     private ArrayList<Widget> imgKeyFields;
@@ -388,8 +418,14 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		
 		textualFields = Lists.newArrayList((Widget) sumAnswer, sumTrueAnswer,
 				sumFalseAnswer, questionLength, answerLength, answerDiff,
-				queHasMedia, infiniteChkBox);
+				queHasMedia, infiniteChkBox,showFilterDialog,showFilterDialogChkBox);
 		textualFields.addAll(baseFields);
+		
+		sortFields=Lists.newArrayList((Widget) shortName, longName, description,
+				institute, questionType,sumAnswer, sumTrueAnswer,
+				sumFalseAnswer, questionLength, answerLength, answerDiff,
+				queHasMedia, infiniteChkBox);
+		sortFields.addAll(baseFields);
 		
 		imgKeyFields = Lists.newArrayList((Widget) shortName, longName, description,
 				institute, questionType, questionLength, keywordCount, allowTyping, 
@@ -429,7 +465,7 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 				minLetterForAutoComp, acceptNonKeyword, shortAnswerLength,
 				keywordHighlight, richText, minLength, maxLength, minWordCount,
 				maxWordCount, oneToOneAss, multimediaType, selectionType,
-				column, maxBytes, showAutoComplete, infiniteChkBox);
+				column, maxBytes, showAutoComplete, infiniteChkBox,showFilterDialog,showFilterDialogChkBox);
 		allBoxes.addAll(baseFields);
 	    		
 		uiStyles.uiCss().ensureInjected();
@@ -524,6 +560,9 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		queHaveImgChkBox.setText(constants.queHaveImg());
 		queHaveVideoChkBox.setText(constants.queHaveVideo());
 		queHaveSoundChkBox.setText(constants.queHaveSound());
+		
+		showFilterDialog.setLabelText(constants.showFilterDialog());
+		showFilterDialogChkBox.setText(constants.showFilterDialog());
 		
 		keywordCount.setLabelText(constants.countKeyword());
 		keywordCount.setHelpText(contextHelp.qtKeywordCount());
@@ -713,14 +752,26 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 
 	public void showFieldsForQuestionType(QuestionTypes questionTypes)
 	{
-		if (questionTypes.equals(QuestionTypes.Textual) || questionTypes.equals(QuestionTypes.Sort))
+		if (questionTypes.equals(QuestionTypes.Textual) )
 		{
+			
 			changeVisibility(allBoxes, false);
 			changeVisibility(textualFields, true);
 			evaluationGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.NONE);
 			examGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.BLOCK);
 			multimediaGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.NONE);
 		}
+		
+		else if( questionTypes.equals(QuestionTypes.Sort))
+		{
+			changeVisibility(allBoxes, false);
+			changeVisibility(sortFields, true);
+			evaluationGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.NONE);
+			examGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.BLOCK);
+			multimediaGroupLbl.getElement().getParentElement().getStyle().setDisplay(Display.NONE);
+		}
+		
+		
 		else if (questionTypes.equals(QuestionTypes.Imgkey))
 		{
 			changeVisibility(allBoxes, false);
@@ -787,7 +838,23 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		longName.setValue("");
 		description.setValue("");
 		
-		if (questionTypes.equals(QuestionTypes.Textual) || questionTypes.equals(QuestionTypes.Sort))
+		if (questionTypes.equals(QuestionTypes.Textual) )
+		{
+	    	   sumAnswer.setValue("");
+	    	   sumTrueAnswer.setValue("");
+	    	   sumFalseAnswer.setValue("");
+	    	   questionLength.setValue("");
+	    	   answerLength.setValue("");
+	    	   answerDiff.setValue("");
+	    	   queHaveImgChkBox.setValue(false);
+	    	   queHaveVideoChkBox.setValue(false);
+	    	   queHaveSoundChkBox.setValue(false);
+	    	   infiniteChkBox.setValue(false);
+	    	   sumAnswer.getTextBox().setEnabled(true);
+	    	   showFilterDialogChkBox.setValue(false);
+		}
+		
+		else if( questionTypes.equals(QuestionTypes.Sort))
 	       {
 	    	   sumAnswer.setValue("");
 	    	   sumTrueAnswer.setValue("");
@@ -1383,4 +1450,11 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		selectionType.getValueListBox().removeStyleName("higlight_onViolation");
 		multimediaType.getValueListBox().removeStyleName("higlight_onViolation");
 	}
+
+	@Override
+	public CheckBox getShowFilterDialogChkBox() {
+		return showFilterDialogChkBox;
+	}
+	
+	
 }

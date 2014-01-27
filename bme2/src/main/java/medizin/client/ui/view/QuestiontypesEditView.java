@@ -100,4 +100,6 @@ public interface QuestiontypesEditView extends IsWidget {
 	public TextBox getColumnTxtbox();
 	
 	public TextBox getMaxBytesTxtbox();
+	
+	public CheckBox getShowFilterDialogChkBox();
 }

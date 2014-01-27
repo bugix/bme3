@@ -79,6 +79,7 @@ public class ActivityBookAssesment extends AbstractActivityWrapper implements Bo
 		this.view = bookAssesmentView;
         widget.setWidget(bookAssesmentView.asWidget());
         view.setDelegate(this);
+        yearSelected(view.getSelectedYear());
         
         /*eventBus.addHandler(PlaceChangeEvent.TYPE, new PlaceChangeEvent.Handler() {
 			public void onPlaceChange(PlaceChangeEvent event) {

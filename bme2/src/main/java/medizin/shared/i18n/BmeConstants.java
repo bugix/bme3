@@ -830,5 +830,7 @@ public interface BmeConstants extends Constants {
 	public String majorSkill();
 			
 	public String minorSkill();
+	
+	public String showFilterDialog();
 }
 

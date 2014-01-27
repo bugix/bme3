@@ -199,8 +199,10 @@ public class XmlPaper {
 		addToElement(doc, questionTypeElement, QUESTION_TYPE_LONG_NAME,questionType.getLongName());     
 		addToElement(doc, questionTypeElement, QUESTION_TYPE_DESCRIPTION,questionType.getDescription());
 		
-		if(QuestionTypes.Textual.equals(questionType.getQuestionType()) || QuestionTypes.Sort.equals(questionType.getQuestionType())) {
-			textualOrSortQuestionType(doc, questionTypeElement,questionType);
+		if(QuestionTypes.Textual.equals(questionType.getQuestionType())) {
+			textualQuestionType(doc, questionTypeElement,questionType);
+		} else if(QuestionTypes.Sort.equals(questionType.getQuestionType())) {
+			sortQuestionType(doc, questionTypeElement,questionType);
 		} else if(QuestionTypes.Matrix.equals(questionType.getQuestionType())) {
 			matrixQuestionType(doc, questionTypeElement,questionType);
 		} else if(QuestionTypes.MCQ.equals(questionType.getQuestionType())) {
@@ -270,7 +272,7 @@ public class XmlPaper {
 		addToElement(doc, questionTypeElement, QUESTION_TYPE_ALLOW_ONE_TO_ONE,questionType.getAllowOneToOneAss());
 	}
 
-	private void textualOrSortQuestionType(Document doc, Element questionTypeElement, QuestionType questionType) {
+	private void sortQuestionType(Document doc, Element questionTypeElement, QuestionType questionType) {
 		addToElement(doc, questionTypeElement, QUESTION_TYPE_SUM_ANSWER,questionType.getSumAnswer());               
 		addToElement(doc, questionTypeElement, QUESTION_TYPE_SUM_TRUE_ANSWER,questionType.getSumTrueAnswer());      	
 		addToElement(doc, questionTypeElement, QUESTION_TYPE_SUM_FALSE_ANSWER,questionType.getSumFalseAnswer());    
@@ -279,7 +281,12 @@ public class XmlPaper {
 		addToElement(doc, questionTypeElement, QUESTION_TYPE_MAX_ANSWER_DIFFERENCE,questionType.getDiffBetAnswer());	
 		addToElement(doc, questionTypeElement, QUESTION_TYPE_HAVE_IMAGE,questionType.getQueHaveImage());            
 		addToElement(doc, questionTypeElement, QUESTION_TYPE_HAVE_AUDIO,questionType.getQueHaveSound());            
-		addToElement(doc, questionTypeElement, QUESTION_TYPE_HAVE_VIDEO,questionType.getQueHaveVideo());            
+		addToElement(doc, questionTypeElement, QUESTION_TYPE_HAVE_VIDEO,questionType.getQueHaveVideo());		
+	}
+	
+	private void textualQuestionType(Document doc, Element questionTypeElement, QuestionType questionType) {
+		sortQuestionType(doc, questionTypeElement, questionType);
+		addToElement(doc, questionTypeElement, QUESTION_TYPE_SHOW_FILTER_DIALOG,questionType.getShowFilterDialog());
 	}
 
 	private Node getAnswers(Document doc, List<AnswerToAssQuestion> answerToAssQuestions, Question question) {
@@ -534,6 +541,7 @@ public class XmlPaper {
 	private static final String QUESTION_TYPE_HAVE_IMAGE = "haveimage";
 	private static final String QUESTION_TYPE_HAVE_AUDIO = "haveaudio";
 	private static final String QUESTION_TYPE_HAVE_VIDEO = "havevideo";
+	private static final String QUESTION_TYPE_SHOW_FILTER_DIALOG = "showfilterdialog";
 	private static final String QUESTION_RESOURCES = "resources";
 	private static final String QUESTION_MEDIA = "media";
 	private static final String QUESTION_MEDIA_PATH = "path";

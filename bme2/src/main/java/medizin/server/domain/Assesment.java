@@ -50,6 +50,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Lists;
 import com.google.web.bindery.requestfactory.server.RequestFactoryServlet;
 
 @RooJavaBean
@@ -531,8 +532,13 @@ public class Assesment {
 	}
 	
 	public static List<Assesment> findAssesmentOfGivenYear(String selectedYear){
-		 EntityManager em = Assesment.entityManager();
-	    TypedQuery<Assesment> q = em.createQuery("SELECT distinct Assesment FROM Assesment AS assesment WHERE assesment.dateOfAssesment >='" +selectedYear + "-01-01 00:00:00'  AND assesment.dateOfAssesment <='"+selectedYear + "-12-31 00:00:00' order by dateOfAssesment desc, mc asc ,assesment.name asc", Assesment.class);
+		Institution institution = Institution.myGetInstitutionToWorkWith();
+		
+		if(institution == null) {
+			return Lists.newArrayList();
+		}
+		EntityManager em = Assesment.entityManager();
+	    TypedQuery<Assesment> q = em.createQuery("SELECT distinct Assesment FROM Assesment AS assesment WHERE assesment.dateOfAssesment >='" +selectedYear + "-01-01 00:00:00'  AND assesment.dateOfAssesment <='"+selectedYear + "-12-31 00:00:00' and institution = " + institution.getId() +" order by dateOfAssesment desc, mc asc ,assesment.name asc", Assesment.class);
 	    return q.getResultList();
 		
 	}

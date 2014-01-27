@@ -271,4 +271,9 @@ public class BookAssesmentViewImpl extends Composite implements BookAssesmentVie
 		return assesmentSuggestionBox;
 	}
 
+	@Override
+	public String getSelectedYear() {
+		return yearListBox.getValue(yearListBox.getSelectedIndex());
+	}
+
 }

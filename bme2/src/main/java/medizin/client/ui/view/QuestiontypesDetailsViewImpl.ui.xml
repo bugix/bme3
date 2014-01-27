@@ -242,6 +242,14 @@
 												<g:Label addStyleNames="{style.valueHeight}" ui:field="queHaveSoundValLbl"></g:Label>
 											</td>
 										</tr>
+										<tr id="filter">
+											<td>
+												<g:Label styleName="{style.label}" ui:field="filterDialog"></g:Label>
+											</td>
+											<td>
+												<g:Label addStyleNames="{style.valueHeight}" ui:field="filterDialogVal"></g:Label>
+											</td>
+										</tr>
 
 										<!-- ImgKey Question Type Field -->
 

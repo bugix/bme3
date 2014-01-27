@@ -139,6 +139,13 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 		Label queHaveSoundValLbl;
 		
 		@UiField
+		Label filterDialog;
+		
+		@UiField
+		Label filterDialogVal;
+		
+		
+		@UiField
 		Label keywordCountLbl;
 		 
 		@UiField
@@ -249,7 +256,11 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 		@UiField
 		Label maxBytesValLbl;
 	    
-		private static final ArrayList<String> textualSortList = Lists.newArrayList("sumAnswer","sumTrueAnswer","sumFalseAnswer","questionLength","answerLength","answerDiff","queHaveImg","queHaveVideo","queHaveSound");
+		
+	    
+		private static final ArrayList<String> textualList = Lists.newArrayList("sumAnswer","sumTrueAnswer","sumFalseAnswer","questionLength","answerLength","answerDiff","queHaveImg","queHaveVideo","queHaveSound","filter");
+		
+		private static final ArrayList<String> sortList=Lists.newArrayList("sumAnswer","sumTrueAnswer","sumFalseAnswer","questionLength","answerLength","answerDiff","queHaveImg","queHaveVideo","queHaveSound");
 		
 		private static final ArrayList<String> imgKeyList = Lists.newArrayList("questionLength","keywordCount","showAutoComplete","isDictionaryKeyword","allowTyping","minLetterForAutoComp","answerLength","acceptNonKeyword","shortAnswerLength");
 
@@ -295,7 +306,21 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 	    	questionTypeValLbl.setText(enumRenderer.render(proxy.getQuestionType()));
 	    	instituteValLbl.setText(proxy.getInstitution().getInstitutionName());
 	    	
-	       if (proxy.getQuestionType().equals(QuestionTypes.Textual) || proxy.getQuestionType().equals(QuestionTypes.Sort))
+	       if (proxy.getQuestionType().equals(QuestionTypes.Textual) )
+	       {
+	    	   sumAnswerValLbl.setText(sumAnswerValue(proxy.getSumAnswer()));
+	    	   sumTrueAnswerValLbl.setText(defaultString(proxy.getSumTrueAnswer()));
+	    	   sumFalseAnswerValLbl.setText(defaultString(proxy.getSumFalseAnswer()));
+	    	   questionLengthValLbl.setText(defaultString(proxy.getQuestionLength()));
+	    	   answerLengthValLbl.setText(defaultString(proxy.getAnswerLength()));
+	    	   answerDiffValLbl.setText(defaultString(proxy.getDiffBetAnswer()));
+	    	   queHaveImgValLbl.setText(defaultString(proxy.getQueHaveImage()));
+	    	   queHaveVideoValLbl.setText(defaultString(proxy.getQueHaveVideo()));
+	    	   queHaveSoundValLbl.setText(defaultString(proxy.getQueHaveSound()));
+	    	  // filterDialog.setText(defaultString(proxy.getShowFilterDialog()));
+	    	   filterDialogVal.setText(defaultString(proxy.getShowFilterDialog()));
+	       }
+	       else if(proxy.getQuestionType().equals(QuestionTypes.Sort))
 	       {
 	    	   sumAnswerValLbl.setText(sumAnswerValue(proxy.getSumAnswer()));
 	    	   sumTrueAnswerValLbl.setText(defaultString(proxy.getSumTrueAnswer()));
@@ -385,7 +410,7 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 			queHaveImgLbl.setText(constants.queHaveImg());
 			queHaveVideoLbl.setText(constants.queHaveVideo());
 			queHaveSoundLbl.setText(constants.queHaveSound());
-			
+			filterDialog.setText(constants.showFilterDialog());
 			keywordCountLbl.setText(constants.countKeyword());
 			showAutoCompleteLbl.setText(constants.showAutocomplete());
 			isDictionaryKeywordLbl.setText(constants.isDictionaryKeyword());
@@ -424,7 +449,7 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 
 		public void disableField(QuestionTypes questionTypes)
 		{
-			if (questionTypes.equals(QuestionTypes.Textual) || questionTypes.equals(QuestionTypes.Sort))
+			if (questionTypes.equals(QuestionTypes.Textual) )
 			{
 				disableField(imgKeyList);
 				disableField(showInImgList);
@@ -432,21 +457,37 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 				disableField(longTextList);
 				disableField(mcqList);
 				disableField(drawingList);
-				showField(textualSortList);			
+				disableField(sortList);
+				showField(textualList);
+				
 			}
-			else if (questionTypes.equals(QuestionTypes.Imgkey))
+			else if(questionTypes.equals(QuestionTypes.Sort))
 			{
-				disableField(textualSortList);
+				disableField(imgKeyList);
 				disableField(showInImgList);
 				disableField(matrixList);
 				disableField(longTextList);
 				disableField(mcqList);
 				disableField(drawingList);
+				disableField(textualList);
+				showField(sortList);
+				
+			}
+			else if (questionTypes.equals(QuestionTypes.Imgkey))
+			{
+				disableField(textualList);
+				disableField(showInImgList);
+				disableField(matrixList);
+				disableField(longTextList);
+				disableField(mcqList);
+				disableField(drawingList);
+				disableField(sortList);
 				showField(imgKeyList);			
 			}
 			else if (questionTypes.equals(QuestionTypes.ShowInImage))
 			{
-				disableField(textualSortList);
+				disableField(textualList);
+				disableField(sortList);
 				disableField(imgKeyList);
 				disableField(matrixList);
 				disableField(longTextList);
@@ -456,7 +497,8 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 			}
 			else if (questionTypes.equals(QuestionTypes.LongText))
 			{
-				disableField(textualSortList);
+				disableField(textualList);
+				disableField(sortList);
 				disableField(imgKeyList);
 				disableField(matrixList);
 				disableField(showInImgList);
@@ -466,7 +508,8 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 			}
 			else if (questionTypes.equals(QuestionTypes.Matrix))
 			{
-				disableField(textualSortList);
+				disableField(textualList);
+				disableField(sortList);
 				disableField(imgKeyList);
 				disableField(showInImgList);
 				disableField(longTextList);
@@ -476,7 +519,8 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 			} 
 			else if (questionTypes.equals(QuestionTypes.MCQ))
 			{
-				disableField(textualSortList);
+				disableField(textualList);
+				disableField(sortList);
 				disableField(imgKeyList);
 				disableField(matrixList);
 				disableField(longTextList);
@@ -486,7 +530,8 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 			}
 			else if (questionTypes.equals(QuestionTypes.Drawing))
 			{
-				disableField(textualSortList);
+				disableField(textualList);
+				disableField(sortList);
 				disableField(imgKeyList);
 				disableField(matrixList);
 				disableField(longTextList);
@@ -496,8 +541,9 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 			}
 			else
 			{
+				disableField(sortList);
 				disableField(mcqList);
-				disableField(textualSortList);
+				disableField(textualList);
 				disableField(imgKeyList);
 				disableField(matrixList);
 				disableField(longTextList);
