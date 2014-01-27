@@ -190,7 +190,7 @@ public class QuestionPrintPdf {
 			labelPojo.setSkillLevel(constants.skillLevel());
 			labelPojo.setUsedInMc(constants.usedinMC());
 			labelPojo.setAssessmentName(constants.assessmentName());
-			labelPojo.setMc(constants.mc());
+			labelPojo.setMc(constants.tableHeaderMC());
 			labelPojo.setDateOfAssessment(constants.dateOfAssessment());
 			labelPojo.setSchwierigkeit(constants.schwierigkeit());
 			labelPojo.setTrenschaerfe(constants.trenschaerfe());

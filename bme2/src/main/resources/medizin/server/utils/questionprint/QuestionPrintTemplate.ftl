@@ -104,9 +104,9 @@
 			    		<tr>
 			    			<td>${assQue.assesment.name}</td>
 			    			<td>${assQue.assesment.mc.mcName}</td>
-			    			<td>${assQue.dateOfAssesment?string("dd.MM.yyyy")}</td>
-			    			<td>${assQue.schwierigkeit}</td>
-			    			<td>${assQue.trenschaerfe}</td>
+			    			<td>${assQue.assesment.dateOfAssesment?string("dd.MM.yyyy")}</td>
+			    			<td>${assQue.schwierigkeit!""}</td>
+			    			<td>${assQue.trenschaerfe!""}</td>
 			    		</tr>
 			    	</#if>		    	
 			    </#list>
