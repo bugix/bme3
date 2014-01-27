@@ -10,7 +10,6 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
@@ -21,7 +20,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -46,7 +44,6 @@ import medizin.shared.Validity;
 import medizin.shared.i18n.BmeConstants;
 import medizin.shared.utils.SharedConstant;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
@@ -352,10 +349,7 @@ public class QuestionPrintPdf {
 				{
 					if (answer.getPoints() != null)
 					{
-						String newUrl = SharedConstant.UPLOAD_PRINT_MEDIA_PATH + UUID.randomUUID() + ".png";
-						FileUtils.touch(new File(newUrl));
-						String newImagePath = saveImage(imagePath, newUrl, Lists.newArrayList(answer.getPoints()));
-						answer.setMediaPath(addImage(newImagePath));
+						answer.setMediaPath(addImageForShowInImgAnswer(imagePath, answer.getPoints()));
 					}										
 				}
 			}
@@ -382,13 +376,7 @@ public class QuestionPrintPdf {
 				{
 					if (answer.getPoints() != null)
 					{
-						List<String> pointList = Lists.newArrayList(Splitter.on(",").split(answer.getPoints()));
-						Rectangle rectangle = new Rectangle(Integer.parseInt(pointList.get(0)), Integer.parseInt(pointList.get(1)), 10, 10);
-						Polygon convertToPolygon = convertToPolygon(rectangle);
-						String newUrl = SharedConstant.UPLOAD_PRINT_MEDIA_PATH + UUID.randomUUID() + ".png";
-						FileUtils.touch(new File(newUrl));
-						String newImagePath = saveImageForImgKeyAnswer(imagePath, newUrl, Lists.newArrayList(convertToPolygon));
-						answer.setAnswerText(addImage(newImagePath));
+						answer.setAnswerText(addImageForImgKeyAnswer(imagePath, answer.getPoints()));						
 					}										
 				}
 			}
@@ -489,6 +477,14 @@ public class QuestionPrintPdf {
 		
 	}
 	
+	private String addImageForShowInImgAnswer(String newImagePath, String points) {
+		return "<img class=\"showInImgAnswerMedia\" src=\""+ newImagePath + "\" points=\""+ points + "\"/>";			
+	}
+
+	private String addImageForImgKeyAnswer(String newImagePath, String points) {
+		return "<img class=\"imgKeyAnswerMedia\" src=\""+ newImagePath + "\" points=\""+ points + "\"/>";			
+	}
+
 	private String replaceWithImageTag(String string) {
 
 		List<String> foundList = Lists.newArrayList();
@@ -593,6 +589,65 @@ public class QuestionPrintPdf {
 	            }
 			}
 	        
+	        else if ("img".equals(nodeName) && "imgKeyAnswerMedia".equals(className)) {
+	        	 try {
+	            	String imgPath = element.getAttribute("src");
+	            	String imgPoints = element.getAttribute("points");
+	            	
+	            	List<String> pointList = Lists.newArrayList(Splitter.on(",").split(imgPoints));
+					Rectangle rectangle = new Rectangle(Integer.parseInt(pointList.get(0)), Integer.parseInt(pointList.get(1)), 10, 10);
+					Polygon convertToPolygon = convertToPolygon(rectangle);
+					byte[] imgInBytes = saveImageForImgKeyAnswer(imgPath, Lists.newArrayList(convertToPolygon));
+				
+					Image image = Image.getInstance(imgInBytes);
+	                FSImage fsImage = new ITextFSImage(image);
+	              
+	                cssWidth = (int) image.getWidth() * 9;
+	                cssHeight = (int) image.getHeight() * 9;
+	                
+	                if (fsImage != null) {
+	                    if ((cssWidth != -1) || (cssHeight != -1)) {
+	                        fsImage.scale(cssWidth, cssHeight);
+	                    }
+	                    else
+	                    {
+	                    	fsImage.scale((int)image.getWidth(), (int)image.getHeight());	                    	
+	                    }
+	                    return new ITextImageElement(fsImage);
+	                }
+	            } catch (Exception e) {
+	            	log.error(e.getMessage(), e);
+	            }
+			}
+	        
+	        else if ("img".equals(nodeName) && "showInImgAnswerMedia".equals(className)) {
+	        	 try {
+	        		 String imgPath = element.getAttribute("src");
+	        		 String imgPoints = element.getAttribute("points");
+		            
+	        		 byte[] imgInByte = saveImageForShowInImg(imgPath, Lists.newArrayList(imgPoints));
+	        		 
+	        		 Image image = Image.getInstance(imgInByte);
+	        		 FSImage fsImage = new ITextFSImage(image);
+	              
+	        		 cssWidth = (int) image.getWidth() * 9;
+	        		 cssHeight = (int) image.getHeight() * 9;
+	                
+	        		 if (fsImage != null) {
+	                    if ((cssWidth != -1) || (cssHeight != -1)) {
+	                        fsImage.scale(cssWidth, cssHeight);
+	                    }
+	                    else
+	                    {
+	                    	fsImage.scale((int)image.getWidth(), (int)image.getHeight());	                    	
+	                    }
+	                    return new ITextImageElement(fsImage);
+	        		 }
+	            } catch (Exception e) {
+	            	log.error(e.getMessage(), e);
+	            } 
+			}
+	      	        
 	        return superFactory.createReplacedElement(layoutContext, blockBox, userAgentCallback, cssWidth, cssHeight);
 	    }
 
@@ -612,56 +667,66 @@ public class QuestionPrintPdf {
 	    }
 
 	}
-	public static String saveImage(String inputURL,String newUrl,List<String> polygonPathsString) {
-		// get image
-		ImagePlus image;
-		/*String inputURL = "file:///" + url;
-		String newUrl = "public/images/" + UUID.randomUUID() + ".png";*/
-		
-		Opener opener = new Opener();
-		image = opener.openURL(inputURL);
+	public static byte[] saveImageForShowInImg(String inputURL,List<String> polygonPathsString) {
+		try
+		{
+			ImagePlus image;	
+			
+			Opener opener = new Opener();
+			image = opener.openURL(inputURL);
 
-		// resize image
-		DrawPolygon pif = new DrawPolygon();
-		pif.setPolygonPaths(convertToPolygon(polygonPathsString));
-	
-		pif.setup("", image);
-		ImageProcessor ip = image.getProcessor();
-		pif.run(ip);
-		BufferedImage bufferedImage = pif.getImage();
-		try {
-			ImageIO.write(bufferedImage, "png",FileUtils.getFile(new File(newUrl)));
-		} catch (IOException e) {
-			log.error("error in saveImage ", e);
-		}
+			DrawPolygon pif = new DrawPolygon();
+			pif.setPolygonPaths(convertToPolygon(polygonPathsString));
 		
-		return newUrl;
+			pif.setup("", image);
+			ImageProcessor ip = image.getProcessor();
+			pif.run(ip);
+			BufferedImage bufferedImage = pif.getImage();
+			
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			ImageIO.write(bufferedImage, FilenameUtils.getExtension(inputURL), baos);
+			baos.flush();
+			byte[] imageInByte = baos.toByteArray();
+			baos.close();
+			return imageInByte;
+		}
+		catch (Exception e)
+		{
+			log.error("Error in resizeImage Method", e);
+		}
+		return null;	
 	}
 	
-	public static String saveImageForImgKeyAnswer(String inputURL,String newUrl, List<Polygon> polygon) {
-		// get image
-		ImagePlus image;
-		/*String inputURL = "file:///" + url;
-		String newUrl = "public/images/" + UUID.randomUUID() + ".png";*/
+	public static byte[] saveImageForImgKeyAnswer(String inputURL, List<Polygon> polygon) {
 		
-		Opener opener = new Opener();
-		image = opener.openURL(inputURL);
+		try
+		{
+			ImagePlus image;
+			
+			Opener opener = new Opener();
+			image = opener.openURL(inputURL);
 
-		// resize image
-		DrawPolygon pif = new DrawPolygon();
-		pif.setPolygonPaths(polygon);
-	
-		pif.setup("", image);
-		ImageProcessor ip = image.getProcessor();
-		pif.run(ip);
-		BufferedImage bufferedImage = pif.getImage();
-		try {
-			ImageIO.write(bufferedImage, "png",FileUtils.getFile(new File(newUrl)));
-		} catch (IOException e) {
-			log.error("error in saveImage ", e);
-		}
+			DrawPolygon pif = new DrawPolygon();
+			pif.setPolygonPaths(polygon);
 		
-		return newUrl;
+			pif.setup("", image);
+			ImageProcessor ip = image.getProcessor();
+			pif.run(ip);
+			BufferedImage bufferedImage = pif.getImage();
+			
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			ImageIO.write(bufferedImage, FilenameUtils.getExtension(inputURL), baos);
+			baos.flush();
+			byte[] imageInByte = baos.toByteArray();
+			baos.close();
+			return imageInByte;
+		}
+		catch (Exception e)
+		{
+			log.error("Error in resizeImage Method", e);
+		}
+		return null;
+	
 	}
 	
 	private static List<Polygon> convertToPolygon(List<String> polygonPathsString) {
@@ -703,5 +768,5 @@ public class QuestionPrintPdf {
 		result.addPoint(rect.x + rect.width, rect.y + rect.height); 
 		result.addPoint(rect.x, rect.y + rect.height); 
 		return result;
-	}
+	}	
 }
