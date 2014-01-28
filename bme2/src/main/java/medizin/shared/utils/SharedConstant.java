@@ -28,9 +28,7 @@ public final class SharedConstant {
 
 	public static final String UPLOAD_MEDIA_SOUND_PATH = UPLOAD_MEDIA_PATH + "sound/";
 
-	public static final String UPLOAD_MEDIA_VIDEO_PATH = UPLOAD_MEDIA_PATH + "video/";
-	
-	public static final String UPLOAD_PRINT_MEDIA_PATH = UPLOAD_MEDIA_PATH + "print/";
+	public static final String UPLOAD_MEDIA_VIDEO_PATH = UPLOAD_MEDIA_PATH + "video/";	
 
 	public static final String FILEPATH = "filepath";
 
@@ -44,7 +42,7 @@ public final class SharedConstant {
 	
 	public static final String NAME = "name";
 	
-	public static final String[] IMAGE_EXTENSIONS = {"png","jpg","jpge","jpe","jfif","gif","tif","tiff","img","bmp"};
+	public static final String[] IMAGE_EXTENSIONS = {"png","jpg","jpeg","jpe","jfif","gif","tif","tiff","img","bmp"};
 	                   
 	public static final String[] SOUND_EXTENSIONS = {"mp3"};
 	                   

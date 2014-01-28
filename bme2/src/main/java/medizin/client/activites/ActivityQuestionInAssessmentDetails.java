@@ -14,30 +14,34 @@ import medizin.client.ui.view.AcceptAnswerSubViewImpl;
 import medizin.client.ui.view.AcceptMatrixAnswerSubView;
 import medizin.client.ui.view.AcceptMatrixAnswerSubViewImpl;
 import medizin.client.ui.view.QuestionInAssessmentDetailsView;
-import medizin.client.ui.view.QuestionInAssessmentDetailsViewImpl;
+import medizin.client.ui.view.question.QuestionDetailsView;
+import medizin.client.ui.view.question.QuestionDetailsViewImpl;
 import medizin.shared.QuestionTypes;
 
-import com.google.gwt.dom.client.Style.Unit;
+import com.google.common.base.Function;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.cellview.client.AbstractHasData;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.view.client.Range;
 
 public class ActivityQuestionInAssessmentDetails extends AbstractActivityWrapper implements
 															QuestionInAssessmentDetailsView.Delegate, 
 															AcceptAnswerSubView.Delegate, 
-															AcceptMatrixAnswerSubView.Delegate
+															AcceptMatrixAnswerSubView.Delegate,QuestionDetailsView.Delegate
 { 
 	private PlaceQuestionInAssessmentDetails place;
 	private McAppRequestFactory requests;
 	private PlaceController placeController;
 	private AcceptsOneWidget widget;
 	private EventBus eventBus;
-	private QuestionInAssessmentDetailsView view;
+	//private QuestionInAssessmentDetailsView view;
+	private QuestionDetailsViewImpl view;
 	private QuestionProxy question;
+
+	private PartActivityQuestionKeyword activityQuestionKeyword;
+	private PartActivityQuestionLearningObjective partActivityQuestionLearningObjective;
 
 	public ActivityQuestionInAssessmentDetails(PlaceQuestionInAssessmentDetails place,McAppRequestFactory requests, PlaceController placeController) {
 		super(place, requests, placeController);
@@ -48,36 +52,58 @@ public class ActivityQuestionInAssessmentDetails extends AbstractActivityWrapper
 
 	@Override
 	public void start2(AcceptsOneWidget panel, EventBus eventBus) {
-		QuestionInAssessmentDetailsView view = new QuestionInAssessmentDetailsViewImpl();
-		this.view = view;
 		this.widget = panel;
 		this.eventBus = eventBus;
-		widget.setWidget(view.asWidget());
-		view.setDelegate(this);
-		createAnswerPanel();
+		getQuestionDetails();
+		
 	}
 	
-	public void createAnswerPanel()
+	public void getQuestionDetails()
 	{
-		requests.find(place.getProxyId()).with("question", "question.questEvent","question.questionType","question.mcs", "question.rewiewer", "question.autor","question.questionResources","question.answers").fire(new BMEReceiver<Object>() {
+		if(userLoggedIn==null) return;
+		
+		requests.find(place.getProxyId()).with("question", "question.keywords", "question.questEvent","question.questionType","question.mcs", "question.rewiewer", "question.autor","question.questionResources","question.answers").fire(new BMEReceiver<Object>() {
 			
 			@Override
 			public void onSuccess(final Object response) {
 				
 				if(response instanceof AssesmentQuestionProxy){
-					
-					initDetailsView((AssesmentQuestionProxy) response);
-					
+					question = ((AssesmentQuestionProxy) response).getQuestion();	
+					initDetailsView((AssesmentQuestionProxy) response);					
 				}				
 			}
 		});
 	}
 
 	protected void initDetailsView(AssesmentQuestionProxy response) {
+		
+		QuestionDetailsViewImpl questionDetailsView = new QuestionDetailsViewImpl(eventBus, false, false, false, false, false, isQuestionTypeMCQ(response.getQuestion()), false, true, false);
+		this.view = questionDetailsView;
+        widget.setWidget(questionDetailsView.asWidget());
+		view.setDelegate(this);
+		view.setVisibleAcceptButton();
+		view.getAnswerListViewImpl().removeFromParent();
+		view.getMatrixAnswerListViewImpl().removeFromParent();
+		view.removeQuestionUsedInMCTab();
+		
+		activityQuestionKeyword = new PartActivityQuestionKeyword(requests, view.getQuestionKeywordView(),true);
+		activityQuestionKeyword.setQuestionProxy(question);		
+		view.getQuestionKeywordView().setDelegate(activityQuestionKeyword);
+		
+		partActivityQuestionLearningObjective = new PartActivityQuestionLearningObjective(requests, view.getQuestionLearningObjectiveSubViewImpl(),true);
+		view.getQuestionLearningObjectiveSubViewImpl().setDelegate(partActivityQuestionLearningObjective);
+		partActivityQuestionLearningObjective.setQuestionProxy(question);
+		
+		view.setValue(question);	
+		
 		if (response.getQuestion().getQuestionType() != null && QuestionTypes.Matrix.equals(response.getQuestion().getQuestionType().getQuestionType()))
 			initMatrixAnswerView(response);
 		else
 			initAnswerView(response);
+	}
+	
+	private boolean isQuestionTypeMCQ(QuestionProxy questionProxy) {
+		return questionProxy != null && questionProxy.getQuestionType() != null && QuestionTypes.MCQ.equals(questionProxy.getQuestionType().getQuestionType());
 	}
 	
 	private void initAnswerView(AssesmentQuestionProxy response)
@@ -85,9 +111,6 @@ public class ActivityQuestionInAssessmentDetails extends AbstractActivityWrapper
 		AcceptAnswerSubView acceptAnswerSubView = new AcceptAnswerSubViewImpl(false, false);				
 	    acceptAnswerSubView.setDelegate(ActivityQuestionInAssessmentDetails.this);
 	    acceptAnswerSubView.setProxy(response.getQuestion());
-	    Label header = new Label(response.getQuestion().getQuestionShortName());
-		header.getElement().getStyle().setPadding(10, Unit.PX);
-	    acceptAnswerSubView.getQuestionDisclosurePanel().setHeader(header);
 	    acceptAnswerSubView.getQuestionDisclosurePanel().setOpen(true);
 	    
 	    view.getAnswerVerticalPanel().add(acceptAnswerSubView);
@@ -98,9 +121,6 @@ public class ActivityQuestionInAssessmentDetails extends AbstractActivityWrapper
 		AcceptMatrixAnswerSubView matrixAnswerSubView = new AcceptMatrixAnswerSubViewImpl(false, false);
 		matrixAnswerSubView.setDelegate(ActivityQuestionInAssessmentDetails.this);
 		matrixAnswerSubView.setProxy(response.getQuestion());
-		Label header = new Label(response.getQuestion().getQuestionShortName());
-		header.getElement().getStyle().setPadding(10, Unit.PX);
-		matrixAnswerSubView.getQuestionDisclosurePanel().setHeader(header);
 		matrixAnswerSubView.getQuestionDisclosurePanel().setOpen(true);
 		
 		view.getAnswerVerticalPanel().add(matrixAnswerSubView);
@@ -119,9 +139,7 @@ public class ActivityQuestionInAssessmentDetails extends AbstractActivityWrapper
 				if (view == null) {
 					return;
 				}
-				
 				table.setRowCount(response.intValue(), true);
-				
 				findAnswersEntriesNonAcceptedAdminByQuestion(questionProxy.getId(), range.getStart(), range.getLength(), table);
 			}
 		});
@@ -182,46 +200,58 @@ public class ActivityQuestionInAssessmentDetails extends AbstractActivityWrapper
 	}
 
 	@Override
-	public void matrixAcceptClicked(QuestionProxy questionProxy) {
-		// TODO Auto-generated method stub
-		
+	public QuestionProxy getLatestQuestionDetails() {
+		return question;
 	}
 
 	@Override
-	public void forceMatrixAcceptClicked(QuestionProxy questionProxy) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void matrixAcceptClicked(QuestionProxy questionProxy) {}
 
 	@Override
-	public void matrixRejectClicked(QuestionProxy questionProxy) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void forceMatrixAcceptClicked(QuestionProxy questionProxy) {}
 
 	@Override
-	public void acceptClicked(AnswerProxy answerProxy,
-			AcceptAnswerSubView acceptAnswerSubView) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void matrixRejectClicked(QuestionProxy questionProxy) {}
 
 	@Override
-	public void forcedAcceptClicked(AnswerProxy answerProxy,
-			AcceptAnswerSubView acceptAnswerSubView) {
-		// TODO Auto-generated method stub
+	public void acceptClicked(AnswerProxy answerProxy, AcceptAnswerSubView acceptAnswerSubView) {}
 		
-	}
+	@Override
+	public void forcedAcceptClicked(AnswerProxy answerProxy, AcceptAnswerSubView acceptAnswerSubView) {}
 
 	@Override
-	public void rejectClicked(AnswerProxy answerProxy) {
-		// TODO Auto-generated method stub
+	public void rejectClicked(AnswerProxy answerProxy) {}
 		
-	}
+	@Override
+	public void placeChanged(Place place) {}
 
 	@Override
-	public void placeChanged(Place place) {
-		// TODO Auto-generated method stub
+	public void deleteClicked() {}
 		
-	}
+	@Override
+	public void editClicked() {}
+
+	@Override
+	public void acceptQuestionClicked(QuestionProxy proxy) {}
+		
+	@Override
+	public void getQuestionDetails(QuestionProxy previousVersion, Function<QuestionProxy, Void> function) {}
+
+	@Override
+	public void onResendToReviewClicked(QuestionProxy proxy) {}
+		
+	@Override
+	public void checkForResendToReview() {}
+
+	@Override
+	public void forcedActiveClicked() {}
+		
+	@Override
+	public void enableBtnOnLatestClicked() {}
+
+	@Override
+	public void acceptQueAnswersClicked() {}
+		
+	@Override
+	public void pushToReviewProcessClicked() {}
 }

@@ -149,9 +149,7 @@ public class QuestionPrintPdf {
 	{
 		try
 		{
-			if (new File(SharedConstant.UPLOAD_PRINT_MEDIA_PATH).exists() == false)
-				new File(SharedConstant.UPLOAD_PRINT_MEDIA_PATH).mkdir();
-
+			
 			List<Long> questionIdList = new ArrayList<Long>();
 			
 			if ("ALL".equals(questionId))
