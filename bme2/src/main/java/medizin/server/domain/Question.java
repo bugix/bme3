@@ -1954,7 +1954,8 @@ public class Question {
 		CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
 		Root<Question> from = criteriaQuery.from(Question.class);
 		Selection<Long> path = from.get("id");
-		criteriaQuery.select(path);	
+		criteriaQuery.select(path);
+		criteriaQuery.distinct(true);
 		
 		TypedQuery<Long> q = notActivatedQuestionsByPerson(institution.getId(), searchText, searchField, criteriaBuilder, criteriaQuery, from);
 		
@@ -1973,6 +1974,7 @@ public class Question {
 		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
 		CriteriaQuery<Question> criteriaQuery = criteriaBuilder.createQuery(Question.class);
 		Root<Question> from = criteriaQuery.from(Question.class);
+		criteriaQuery.distinct(true);
 		
 		if(sortOrder==Sorting.ASC){
 			if(sortname.equals("autor")){
