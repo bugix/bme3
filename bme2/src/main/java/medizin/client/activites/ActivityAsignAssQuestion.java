@@ -1771,7 +1771,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 			}
 			
 			if (questionProxy.getQuestionType().getIsDictionaryKeyword() == false) {
-				if (keywordCount == trueAnswer)
+				if (trueAnswer >= keywordCount)
 				{
 					return true;
 				}
