@@ -1752,9 +1752,9 @@ QuestionAdvancedSearchPopupView.Delegate {
 				}
 				
 			}
-			int keywordCount = questionProxy.getQuestionType().getKeywordCount() > 0 ? questionProxy.getQuestionType().getKeywordCount() : 1;
+			int keywordCount = questionProxy.getQuestionType().getKeywordCount(); // > 0 ? questionProxy.getQuestionType().getKeywordCount() : 1;
 			
-			if (questionProxy.getQuestionType().getIsDictionaryKeyword() && keywordCount == trueAnswer)
+			/*if (questionProxy.getQuestionType().getIsDictionaryKeyword() && keywordCount == trueAnswer)
 			{
 				if(totalFalseAnswer == falseAnswer) {
 					return true;
@@ -1778,6 +1778,54 @@ QuestionAdvancedSearchPopupView.Delegate {
 				else
 				{
 					ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.imgKeyError("true", keywordCount));
+					return false;
+				}
+			}*/
+			
+			if (questionProxy.getQuestionType().getIsDictionaryKeyword() && keywordCount > 0)
+			{
+				if(keywordCount == trueAnswer && totalFalseAnswer == falseAnswer) {
+					return true;
+				}
+				else if(keywordCount != trueAnswer) {
+					ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.imgKeyError("true", keywordCount));
+					return false;
+				}
+				else {
+					ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.imgKeyError("false", totalFalseAnswer));
+					return false;
+				}				
+			} 
+			else if (questionProxy.getQuestionType().getIsDictionaryKeyword() && keywordCount == 0)
+			{
+				if(trueAnswer>= 1) {
+					return true;
+				}
+				else
+				{
+					ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.imgKeyAtleastError("true", 1));
+					return false;
+				}				
+			}			
+			else if (questionProxy.getQuestionType().getIsDictionaryKeyword() == false && keywordCount > 0) {
+				if (keywordCount == trueAnswer)
+				{
+					return true;
+				}
+				else
+				{
+					ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.imgKeyError("true", keywordCount));
+					return false;
+				}
+			}
+			else if (questionProxy.getQuestionType().getIsDictionaryKeyword() == false && keywordCount == 0) {
+				if (trueAnswer>=1)
+				{
+					return true;
+				}
+				else
+				{
+					ConfirmationDialogBox.showOkDialogBox(constants.warning(), bmeMessages.imgKeyAtleastError("true", 1));
 					return false;
 				}
 			} 

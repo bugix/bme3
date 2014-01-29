@@ -31,4 +31,6 @@ public interface BmeMessages extends Messages {
 	public String questionAllowed(int msg);
 	
 	public String imgKeyError(String answerType, int noOfAns);
+	
+	public String imgKeyAtleastError(String answerType, int noOfAns);
 }

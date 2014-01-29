@@ -121,6 +121,7 @@ public class XmlPaper {
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes"); 
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "3");
+            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
             DOMSource source = new DOMSource(doc);
             StreamResult console = new StreamResult(xmlOS);
             transformer.transform(source, console);
