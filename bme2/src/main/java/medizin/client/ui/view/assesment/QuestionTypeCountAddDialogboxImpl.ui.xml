@@ -70,9 +70,9 @@
             
         </table>
 
-    <div class="{style.bar}">
-      <g:Button addStyleNames="{style.button}" ui:field="save">Speichern</g:Button>
-      <g:Button addStyleNames="{style.button}" ui:field="closeButton">Abbrechen</g:Button>
-    </div>
+		<g:HorizontalPanel>
+			<g:Button addStyleNames="{style.button}" ui:field="save">Speichern</g:Button>
+			<g:Button addStyleNames="{style.button}" ui:field="closeButton">Abbrechen</g:Button>
+		</g:HorizontalPanel>
 	</g:HTMLPanel>
 </ui:UiBinder> 
