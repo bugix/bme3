@@ -5,6 +5,7 @@ import java.util.List;
 import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.UserAccessRightsProxy;
+import medizin.client.ui.widget.process.ApplicationLoadingView;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.EventHandlingValueHolderItem;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
 
@@ -41,4 +42,5 @@ public interface EventAccessDialogbox extends IsWidget {
     public DefaultSuggestBox<InstitutionProxy, EventHandlingValueHolderItem<InstitutionProxy>> getSearchInstitution();
     
     public void setUserAccessRightsList(List<UserAccessRightsProxy> userAccessRightsList);
+	ApplicationLoadingView getLoadingPopup();
 }

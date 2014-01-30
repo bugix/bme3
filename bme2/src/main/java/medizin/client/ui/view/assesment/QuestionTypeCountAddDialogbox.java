@@ -7,6 +7,7 @@ import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionTypeCountPerExamProxy;
 import medizin.client.proxy.QuestionTypeProxy;
+import medizin.client.ui.widget.process.ApplicationLoadingView;
 
 import com.google.gwt.place.shared.Place;
 import com.google.web.bindery.requestfactory.gwt.client.RequestFactoryEditorDriver;
@@ -37,6 +38,7 @@ public interface QuestionTypeCountAddDialogbox extends IsWidget {
     void setDelegate(Delegate delegate);
 	void setQuestionTypesAssignedPickerValues(Collection<QuestionTypeProxy> values);
 	RequestFactoryEditorDriver<QuestionTypeCountPerExamProxy, QuestionTypeCountAddDialogboxImpl> createEditorDriver();
+	ApplicationLoadingView getLoadingPopup();
 
     
 

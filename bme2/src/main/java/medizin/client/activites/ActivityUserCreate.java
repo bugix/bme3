@@ -11,6 +11,7 @@ import medizin.client.proxy.PersonProxy;
 import medizin.client.request.PersonRequest;
 import medizin.client.ui.view.user.UserEditView;
 import medizin.client.ui.view.user.UserEditViewImpl;
+import medizin.client.ui.widget.process.AppLoader;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.simple.DefaultSuggestOracle;
 import medizin.shared.i18n.BmeConstants;
 
@@ -148,6 +149,7 @@ public class ActivityUserCreate  extends AbstractActivityWrapper  implements Use
 		
 		if(this.operation==PlaceUserDetails.Operation.EDIT){
 			Log.info("edit");
+			AppLoader.setCurrentLoader(view.getLoadingPopup());			
 		requests.find(userPlace.getProxyId()).fire(new BMEReceiver<Object>() {
 
 			/*public void onFailure(ServerFailure error){
@@ -282,12 +284,12 @@ public class ActivityUserCreate  extends AbstractActivityWrapper  implements Use
 		
 		
 		final PersonProxy finalPersonProxy = personProxy;
-		
+		AppLoader.setNoLoader();
 		personRequest.persist().using(personProxy).fire(new BMEReceiver<Void>(reciverMap) {
 			@Override
 			public void onSuccess(Void response) {
-				placeController.goTo(new PlaceUser(PlaceUser.PLACE_USER));
-				placeController.goTo(new PlaceUserDetails(finalPersonProxy.stableId(), PlaceUserDetails.Operation.DETAILS));
+				placeController.goTo(new PlaceUser(PlaceUser.PLACE_USER,userPlace.getHeight()));
+				placeController.goTo(new PlaceUserDetails(finalPersonProxy.stableId(), PlaceUserDetails.Operation.DETAILS, userPlace.getHeight()));
 			}			
 		});	
 	}

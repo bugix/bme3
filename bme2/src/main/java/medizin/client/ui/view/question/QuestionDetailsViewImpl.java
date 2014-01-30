@@ -24,6 +24,7 @@ import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEvent
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEventHandler;
 import medizin.client.ui.widget.dialogbox.receiver.ReceiverDialog;
 import medizin.client.ui.widget.process.AppLoader;
+import medizin.client.ui.widget.process.ApplicationLoadingView;
 import medizin.client.ui.widget.resource.dndview.ResourceView;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.util.ClientUtility;
@@ -156,6 +157,9 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 	
 	@UiField
 	IconButton printPdf;
+	
+	@UiField
+	ApplicationLoadingView loadingPopup;
 	
 	private static final Comparator<McProxy> MC_COMPARATOR = new Comparator<McProxy>() {
 
@@ -701,5 +705,10 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 		}
 		return flag;
 	}
+	
+	@Override
+	public ApplicationLoadingView getLoadingPopup() {
+			return loadingPopup;
+		}
 
 }

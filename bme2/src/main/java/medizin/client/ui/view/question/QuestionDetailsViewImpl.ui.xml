@@ -2,7 +2,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:n="urn:import:medizin.client.ui"
 	xmlns:s="urn:import:medizin.client.ui.view.user" xmlns:m="urn:import:medizin.client.ui.view.question"
-	xmlns:medizin="urn:import:medizin.client.ui.widget" xmlns:c="urn:import:com.google.gwt.user.cellview.client" xmlns:i="urn:import:medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl" xmlns:p="urn:import:medizin.client.ui.widget.pager" xmlns:l="urn:import:medizin.client.ui.view.question.learningobjective" xmlns:u="urn:import:medizin.client.ui.view.question.usedinmc" xmlns:k="urn:import:medizin.client.ui.view.question.keyword">
+	xmlns:medizin="urn:import:medizin.client.ui.widget" xmlns:c="urn:import:com.google.gwt.user.cellview.client" xmlns:i="urn:import:medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl" xmlns:p="urn:import:medizin.client.ui.widget.pager" xmlns:l="urn:import:medizin.client.ui.view.question.learningobjective" xmlns:u="urn:import:medizin.client.ui.view.question.usedinmc" xmlns:k="urn:import:medizin.client.ui.view.question.keyword" xmlns:loader="urn:import:medizin.client.ui.widget.process">
 	
 	<ui:with type="medizin.shared.i18n.BmeConstants" field="constants"></ui:with>
 	<ui:style src="../../styles.css" >
@@ -70,7 +70,8 @@
 					</div>
 				</g:HTMLPanel>
 			</g:HTMLPanel>
-
+			<g:HTMLPanel addStyleNames="{style.applicationLoadingPopupViewStyle}">
+			<loader:ApplicationLoadingView ui:field="loadingPopup"  visible="false"></loader:ApplicationLoadingView>
 			<g:TabPanel ui:field="questionTypeDetailPanel"
 				addStyleNames="gwt-InvertedTabPanel" width="100%">
 
@@ -179,6 +180,7 @@
 					</g:VerticalPanel>
 				</g:Tab>
 			</g:TabPanel>
+			</g:HTMLPanel>
 			<g:VerticalPanel ui:field="answerVerticalPanel" addStyleNames="{style.answerVp}">
 				<m:AnswerListViewImpl ui:field="answerListViewImpl"></m:AnswerListViewImpl> 
 				<m:MatrixAnswerListViewImpl ui:field="matrixAnswerListViewImpl"></m:MatrixAnswerListViewImpl>

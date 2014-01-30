@@ -38,6 +38,12 @@ public abstract class AbstractPlace extends Place {
 		this.height = height;
 	}
 
+	public AbstractPlace(String placeName, EntityProxyId<?> stableId,
+			Integer height) {
+		this(placeName,stableId);
+		this.height = height;
+	}
+
 	public final String getPlaceName() {
 		return placeName;
 	}

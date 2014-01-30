@@ -1,12 +1,13 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:n="urn:import:medizin.client.ui"
-	xmlns:a="urn:import:medizin.client.ui.widget" xmlns:lbl="urn:import:medizin.client.ui.widget.labeled">
+	xmlns:a="urn:import:medizin.client.ui.widget" xmlns:lbl="urn:import:medizin.client.ui.widget.labeled" xmlns:loader="urn:import:medizin.client.ui.widget.process">
 	 <ui:with field='uiStyles' type='medizin.client.style.resources.UiStyles'/>
 	<ui:style src="../styles.css">
 	</ui:style>
 
-	<g:HTMLPanel ui:field="panel">
+	<g:HTMLPanel ui:field="panel" addStyleNames="{style.applicationLoadingPopupViewStyle}">
+		<loader:ApplicationLoadingView ui:field="loadingPopup"  visible="false"></loader:ApplicationLoadingView>
 		<div class="{style.controlPanel}">
 			<h3 class="{style.header}" style="display:inline">
 				<span ui:field="title"></span>

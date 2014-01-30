@@ -2,6 +2,7 @@ package medizin.client.ui.view;
 
 import medizin.client.proxy.InstitutionProxy;
 import medizin.client.ui.widget.Sorting;
+import medizin.client.ui.widget.process.ApplicationLoadingView;
 
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -34,5 +35,7 @@ public interface InstitutionView extends IsWidget {
     
 	SimplePanel getDetailsPanel();
 
-	ScrollPanel getScrollDetailPanel();	
+	ScrollPanel getScrollDetailPanel();
+	
+	ApplicationLoadingView getLoadingPopup();	
 }

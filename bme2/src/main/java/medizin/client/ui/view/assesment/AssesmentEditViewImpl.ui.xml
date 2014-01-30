@@ -3,14 +3,17 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:n="urn:import:medizin.client.ui"
 	xmlns:d="urn:import:com.google.gwt.user.datepicker.client" 
-	 xmlns:m="urn:import:medizin.client.ui.widget" 
+	 xmlns:m="urn:import:medizin.client.ui.widget"
+	 xmlns:loader="urn:import:medizin.client.ui.widget.process" 
 	>
 	<ui:style src="../../styles.css" />
     
 
  <g:VerticalPanel addStyleNames="{style.tabStyle}">
 
-
+		<g:HTMLPanel addStyleNames="{style.applicationLoadingPopupViewStyle}">
+		<loader:ApplicationLoadingView ui:field="loadingPopup"  visible="false"></loader:ApplicationLoadingView>
+		
 		<g:HTMLPanel styleName="{style.patientControls}">
 
 			<div class="{style.controlsright}">
@@ -173,7 +176,7 @@
 			</g:TabPanel>
 
 		</g:HTMLPanel>
-		
+	</g:HTMLPanel>	
 </g:VerticalPanel>
 
 

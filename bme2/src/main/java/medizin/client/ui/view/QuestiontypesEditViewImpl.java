@@ -23,6 +23,7 @@ import medizin.client.ui.widget.labeled.LabeledPanel;
 import medizin.client.ui.widget.labeled.LabeledTextArea;
 import medizin.client.ui.widget.labeled.LabeledTextBox;
 import medizin.client.ui.widget.labeled.LabeledValueListBox;
+import medizin.client.ui.widget.process.ApplicationLoadingView;
 import medizin.client.util.ClientUtility;
 import medizin.shared.MultimediaType;
 import medizin.shared.QuestionTypes;
@@ -107,6 +108,9 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 	
 	@UiField
 	LabeledTextArea description;	
+	
+	@UiField
+	ApplicationLoadingView loadingPopup;
 	
 	@UiField (provided = true)
 	LabeledValueListBox<InstitutionProxy> institute = new LabeledValueListBox<InstitutionProxy>(new AbstractRenderer<InstitutionProxy>() {
@@ -1383,4 +1387,9 @@ public class QuestiontypesEditViewImpl extends Composite implements Questiontype
 		selectionType.getValueListBox().removeStyleName("higlight_onViolation");
 		multimediaType.getValueListBox().removeStyleName("higlight_onViolation");
 	}
+	
+	@Override
+	public ApplicationLoadingView getLoadingPopup() {
+			return loadingPopup;
+		}
 }

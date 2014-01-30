@@ -22,6 +22,7 @@ import medizin.client.place.PlaceQuestiontypes;
 import medizin.client.place.PlaceStaticContent;
 import medizin.client.place.PlaceSystemOverview;
 import medizin.client.place.PlaceUser;
+import medizin.client.ui.widget.process.AppLoader;
 import medizin.client.util.ClientUtility;
 import medizin.shared.i18n.BmeConstants;
 
@@ -122,55 +123,68 @@ public class McAppNav extends Composite {
 
 	@UiHandler("systemOverview")
 		void systemOverviewClicked(ClickEvent event) {
+			AppLoader.setNoLoader();
 			placeController.goTo(new PlaceSystemOverview(PlaceSystemOverview.PLACE_SYSTEM_OVERVIEW, true,shell.getMasterPanel().getOffsetHeight()));
 		}
 	@UiHandler("acceptPerson")
 	void acceptPersonClicked(ClickEvent event) {
+		AppLoader.setNoLoader();
 		placeController.goTo(new PlaceAcceptPerson(PlaceAcceptPerson.PLACE_ACCEPT_PERSON, true,shell.getMasterPanel().getOffsetHeight()));
 	}
 	
 	@UiHandler("acceptQuestion")
 	void acceptQuestionClicked(ClickEvent event) {
+		AppLoader.setNoLoader();
 		placeController.goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION, true,shell.getMasterPanel().getOffsetHeight()));
 	}
 	@UiHandler("acceptAnswer")
 	void PlaceAcceptAnswerClicked(ClickEvent event) {
+		AppLoader.setNoLoader();
 		placeController.goTo(new PlaceAcceptAnswer(PlaceAcceptAnswer.PLACE_ACCEPT_ANSWER, true,shell.getMasterPanel().getOffsetHeight()));
 	}
 	@UiHandler("acceptAssQuestion")
 	void acceptAssQuestionClicked(ClickEvent event) {
+		AppLoader.setNoLoader();
 		placeController.goTo(new PlaceAcceptAssQuestion(PlaceAcceptAssQuestion.PLACE_ACCEPT_ASS_QUESTION, true,shell.getMasterPanel().getOffsetHeight()));
 	}
 	@UiHandler("openDemand")
 	void openDemandClicked(ClickEvent event) {
+		AppLoader.setNoLoader();
 		placeController.goTo(new PlaceOpenDemand(PlaceOpenDemand.PLACE_OPEN_DEMAND, true,shell.getMasterPanel().getOffsetHeight()));
 	}
 	@UiHandler("user")
 	void userClicked(ClickEvent event) {
+		AppLoader.setNoLoader();
 		placeController.goTo(new PlaceUser(PlaceUser.PLACE_USER, true,shell.getMasterPanel().getOffsetHeight()));
 	}
 	@UiHandler("question")
 	void questionClicked(ClickEvent event) {
+		AppLoader.setNoLoader();
 		placeController.goTo(new PlaceQuestion(PlaceQuestion.PLACE_QUESTION, true,shell.getMasterPanel().getOffsetHeight()));
 	}
 	@UiHandler("notActivatedQuestion")
 	void notActivatedQuestionClicked(ClickEvent event) {
+		AppLoader.setNoLoader();
 		placeController.goTo(new PlaceNotActivatedQuestion(PlaceNotActivatedQuestion.PLACE_NOT_ACTIVATED_QUESTION, true, shell.getMasterPanel().getOffsetHeight()));
 	}
 	@UiHandler("questionType")
 	void questionTypeClicked(ClickEvent event) {
+		AppLoader.setNoLoader();
 		placeController.goTo(new PlaceQuestiontypes(PlaceQuestiontypes.PLACE_QUESTIONTYPES, true,shell.getMasterPanel().getOffsetHeight()));
 	}
 	@UiHandler("institution")
 	void institutionClicked(ClickEvent event) {
+		AppLoader.setNoLoader();
 		placeController.goTo(new PlaceInstitution(PlaceInstitution.PLACE_INSTITUTION, true,shell.getMasterPanel().getOffsetHeight()));
 	}
 	@UiHandler("assesment")
 	void assesmentClicked(ClickEvent event) {
+		AppLoader.setNoLoader();
 		placeController.goTo(new PlaceAssesment(PlaceAssesment.PLACE_ASSESMENT, true,shell.getMasterPanel().getOffsetHeight()));
 	}
 	@UiHandler("asignAssQuestion")
 	void asignAssQuestionClicked(ClickEvent event) {
+		AppLoader.setNoLoader();
 		placeController.goTo(new PlaceAsignAssQuestion(PlaceAsignAssQuestion.PLACE_ASIGN_ASS_QUESTION, true,shell.getMasterPanel().getOffsetHeight()));
 	}
 	@UiHandler("bookAssesment")
@@ -179,19 +193,23 @@ public class McAppNav extends Composite {
 	}
 	@UiHandler("staticContent")
 	void staticContentClicked(ClickEvent event) {
+		AppLoader.setNoLoader();
 		placeController.goTo(new PlaceStaticContent(PlaceStaticContent.PLACE_STATIC_CONTENT, true,shell.getMasterPanel().getOffsetHeight()));
 	}
 	@UiHandler("notActivatedAnswer")
 	void notActivatedAnswerClicked(ClickEvent event){
+		AppLoader.setNoLoader();
 		placeController.goTo(new PlaceNotActivatedAnswer(PlaceNotActivatedAnswer.PLACE_NOT_ACTIVATED_ANSWER, true,shell.getMasterPanel().getOffsetHeight()));
 	}
 	@UiHandler("deactivatedQuestion")
 	void deactivatedQuestionClicked(ClickEvent event){
+		AppLoader.setNoLoader();
 		placeController.goTo(new PlaceDeactivatedQuestion(PlaceDeactivatedQuestion.PLACE_DEACTIVATED_QUESTION, true,shell.getMasterPanel().getOffsetHeight()));
 	}
 	
 	@UiHandler("questionInAssessment")
 	void questionInAssessmentClicked(ClickEvent event){
+		AppLoader.setNoLoader();
 		placeController.goTo(new PlaceQuestionInAssessment(PlaceQuestionInAssessment.PLACE_QUESTION_IN_ASSESSMENT, true,shell.getMasterPanel().getOffsetHeight()));
 	}
 //	public McAppNav() {
@@ -385,7 +403,8 @@ public class McAppNav extends Composite {
 		{
 			MC_APP_NAV.hideAllMenu();
 			
-			if(isValiduser)
+			if(isValiduser){
+			AppLoader.setNoLoader();
 			requests.personRequest().checkAdminRightToLoggedPerson().fire(new BMEReceiver<Boolean>() {
 		        
 				@Override
@@ -400,6 +419,7 @@ public class McAppNav extends Composite {
 				}
 			});
 		}
+	}
 	}
 	
 	//private PersonProxy loggedUser;
@@ -454,11 +474,12 @@ public class McAppNav extends Composite {
         
         Place place = placeController.getWhere();
         if(place == null || place.equals(Place.NOWHERE)) {
-        	place =  new PlaceSystemOverview(PlaceSystemOverview.PLACE_SYSTEM_OVERVIEW);
+        	place =  new PlaceSystemOverview(PlaceSystemOverview.PLACE_SYSTEM_OVERVIEW,shell.getMasterPanel().getOffsetHeight());
         }
         //changeMenue(place);
         setConstantText();
         
+        AppLoader.setNoLoader();
         placeController.goTo(Place.NOWHERE);
         placeController.goTo(place);
 	}

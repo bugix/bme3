@@ -1,6 +1,6 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:b="urn:import:com.google.gwt.user.cellview.client" xmlns:m="urn:import:medizin.client.ui.widget" xmlns:p="urn:import:medizin.client.ui.widget.pager">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:b="urn:import:com.google.gwt.user.cellview.client" xmlns:m="urn:import:medizin.client.ui.widget" xmlns:p="urn:import:medizin.client.ui.widget.pager" xmlns:loader="urn:import:medizin.client.ui.widget.process">
 	<ui:with type="medizin.shared.i18n.BmeConstants" field="cc"></ui:with>
 	<ui:style src="../../styles.css" >
 		.panelHTML {
@@ -104,7 +104,8 @@
 	</ui:style>
 
 <g:VerticalPanel width="100%">
-	<g:HTMLPanel width="100%">
+	<g:HTMLPanel width="100%" addStyleNames="{style.applicationLoadingPopupViewStyle}">
+	<loader:ApplicationLoadingView ui:field="loadingPopup"  visible="false"></loader:ApplicationLoadingView>
 	<b:CellTable ui:field="tableEvent" addStyleNames="{style.standardTableIcon}" width="500" />
 						
 						<g:HorizontalPanel width="100%">

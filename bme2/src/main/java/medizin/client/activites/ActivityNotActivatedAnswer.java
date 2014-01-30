@@ -16,6 +16,7 @@ import medizin.client.ui.view.AcceptAnswerView;
 import medizin.client.ui.view.AcceptAnswerViewImpl;
 import medizin.client.ui.view.AcceptMatrixAnswerSubView;
 import medizin.client.ui.view.AcceptMatrixAnswerSubViewImpl;
+import medizin.client.ui.widget.process.AppLoader;
 import medizin.shared.QuestionTypes;
 import medizin.shared.Status;
 
@@ -62,6 +63,7 @@ public class ActivityNotActivatedAnswer extends AbstractActivityWrapper implemen
 
 	private void init() {
 		questionPanel.clear();
+		AppLoader.setNoLoader();
 		requests.questionRequest().findAllQuestionsAnswersNotActivatedByPerson().with("answers", "questionType").fire(new BMEReceiver<List<QuestionProxy>>() {
 			@Override
 			public void onSuccess(List<QuestionProxy> response) {
@@ -99,7 +101,7 @@ public class ActivityNotActivatedAnswer extends AbstractActivityWrapper implemen
 	public void onRangeChanged(final QuestionProxy questionProxy, final AbstractHasData<AnswerProxy> table) {
 		
 		final Range range = table.getVisibleRange();
-		
+		AppLoader.setNoLoader();
 		requests.answerRequest().countAnswersForForceActiveByQuestion(questionProxy.getId()).with("question", "autor", "rewiewer").fire(new BMEReceiver<Long>() {
 			@Override
 			public void onSuccess(Long response) {
@@ -116,7 +118,7 @@ public class ActivityNotActivatedAnswer extends AbstractActivityWrapper implemen
 		
 	}
 	void findAnswersEntriesNonAcceptedAdminByQuestion(Long questionId, Integer start, Integer length, final AbstractHasData<AnswerProxy> table){
-		
+		AppLoader.setNoLoader();
 		requests.answerRequest().findAnswersForForceActiveByQuestion(questionId, start, length).with("rewiewer","autor", "question", "question.questionType").fire(new BMEReceiver<List<AnswerProxy>>() {
 			@Override
 			public void onSuccess(List<AnswerProxy> response) {
@@ -141,7 +143,7 @@ public class ActivityNotActivatedAnswer extends AbstractActivityWrapper implemen
 	@Override
 	public void onMatrixRangeChanged(final QuestionProxy questionProxy, final AbstractHasData<MatrixValidityProxy> table, final AcceptMatrixAnswerSubView matrixAnswerListView) {
 		final Range range = table.getVisibleRange();
-		
+		AppLoader.setNoLoader();
 		requests.MatrixValidityRequest().countAllMatrixValidityForForceActiveByQuestion(questionProxy.getId(), personRightProxy.getIsInstitutionalAdmin()).fire(new BMEReceiver<Long>() {
 
 			@Override
@@ -159,7 +161,7 @@ public class ActivityNotActivatedAnswer extends AbstractActivityWrapper implemen
 	}
 
 	void findMatrixAnswersEntriesNonAcceptedAdminByQuestion(Long questionId, Integer start, Integer length, final AbstractHasData<MatrixValidityProxy> table, final AcceptMatrixAnswerSubView matrixAnswerListView){
-		
+		AppLoader.setNoLoader();
 		requests.MatrixValidityRequest().findAllMatrixValidityForForceActiveByQuestion(questionId, personRightProxy.getIsInstitutionalAdmin(), start, length).with("answerX", "answerY", "answerX.rewiewer","answerX.autor", "answerX.question", "answerX.question.questionType", "answerY.rewiewer","answerY.autor", "answerY.question", "answerY.question.questionType").fire(new BMEReceiver<List<MatrixValidityProxy>>() {
 
 			@Override
@@ -184,6 +186,7 @@ public class ActivityNotActivatedAnswer extends AbstractActivityWrapper implemen
 
 	@Override
 	public void forceMatrixAcceptClicked(QuestionProxy questionProxy) {
+		AppLoader.setCurrentLoader(view.getLoadingPopup());
 		requests.answerRequest().forceAcceptMatrixAnswer(questionProxy, userLoggedIn.getIsAdmin(), personRightProxy.getIsInstitutionalAdmin()).fire(new BMEReceiver<Boolean>() {
 
 			@Override
@@ -202,7 +205,7 @@ public class ActivityNotActivatedAnswer extends AbstractActivityWrapper implemen
 			answerProxy.setIsForcedActive(true);
 			answerProxy.setStatus(Status.ACTIVE);
 		} 
-		
+		AppLoader.setCurrentLoader(view.getLoadingPopup());
 		req.persist().using(answerProxy).fire(new BMEReceiver<Void>(){
 
 			@Override

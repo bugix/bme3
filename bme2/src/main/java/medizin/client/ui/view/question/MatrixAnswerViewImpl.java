@@ -16,6 +16,7 @@ import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEvent;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEventHandler;
 import medizin.client.ui.widget.dialogbox.receiver.ReceiverDialog;
+import medizin.client.ui.widget.process.ApplicationLoadingView;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.EventHandlingValueHolderItem;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.simple.DefaultSuggestOracle;
@@ -91,6 +92,9 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 	
 	@UiField
 	CheckBox forcedActive;
+	
+	@UiField
+	ApplicationLoadingView loadingPopup;
 
 	private final IconButton addAnswerX;
 	private final IconButton addAnswerY;
@@ -1228,6 +1232,11 @@ public class MatrixAnswerViewImpl extends DialogBox implements MatrixAnswerView 
 			return false;
 		}
 		
+	}
+
+	@Override
+	public ApplicationLoadingView getLoadingPopup() {	
+		return loadingPopup;
 	}
 	
 }

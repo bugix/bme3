@@ -12,6 +12,7 @@ import medizin.client.style.resources.AdvanceCellTable;
 import medizin.client.ui.view.user.UserView;
 import medizin.client.ui.view.user.UserViewImpl;
 import medizin.client.ui.widget.Sorting;
+import medizin.client.ui.widget.process.AppLoader;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.activity.shared.ActivityManager;
@@ -201,7 +202,7 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 			rangeChangeHandler = null;
 		}
 
-
+		AppLoader.setNoLoader();
 		requests.personRequest().countAllUsersOfGivenSearch(searchValue).fire(new BMEReceiver<Long>() {
 			@Override
 			public void onSuccess(Long response) {
@@ -227,6 +228,7 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 	protected void onRangeChanged() {
 		final Range range = table.getVisibleRange();
 
+		AppLoader.setNoLoader();
 		requests.personRequest().findAllUsersOfGivenSearch(sortname,sortorder,range.getStart(),range.getLength(),searchValue).with(view.getPaths()).fire(new BMEReceiver<List<PersonProxy>>() {
 			
 			@Override

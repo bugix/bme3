@@ -27,6 +27,7 @@ import medizin.client.ui.view.assesment.QuestionTypeCountAddDialogboxImpl;
 import medizin.client.ui.view.assesment.QuestionTypeCountView;
 import medizin.client.ui.view.assesment.StudentView;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
+import medizin.client.ui.widget.process.AppLoader;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.shared.EventBus;
@@ -118,7 +119,7 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 		//init();
 		
 		view.setDelegate(this);
-		
+		AppLoader.setCurrentLoader(assesmentDetailsView.getLoadingPopup());		
 		requests.find(assesmentPlace.getProxyId()).with("repeFor","mc","institution","questionSumPerPerson").fire(new BMEReceiver<Object>() {
 
 			@Override
@@ -150,6 +151,7 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 
 	private void initStudentView()
 	{
+		AppLoader.setNoLoader();
 		studentView = assesmentDetailsView.getStudentViewImpl();
 		studentView.setDelegate(this);
 		studentView.setPresenter(this);
@@ -168,6 +170,7 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 	
 	private void fireStudentCountRequest()
 	{
+		AppLoader.setNoLoader();
 		requests.studentToAssesmentRequest().countStudentToAssesmentByAssesment(assesment.getId()).fire(new BMEReceiver<Long>() {
 
 			@Override
@@ -182,7 +185,7 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 	private void onStudentRangeChanged()
 	{
 		final Range range = studentView.getTable().getVisibleRange();
-		
+		AppLoader.setNoLoader();
 		requests.studentToAssesmentRequest().findStudentToAssesmentByAssesment(assesment.getId(), range.getStart(), range.getLength()).with("student").fire(new BMEReceiver<List<StudentToAssesmentProxy>>() {
 
 			@Override
@@ -200,6 +203,7 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 		questionTypeCountView.setPresenter(this);
 		questionTypeCountView.setDelegate(this);
 		Log.debug("request");
+		AppLoader.setNoLoader();		
 		requests.questionTypeCountPerExamRequest().countQuestionTypeCountByAssesmentNonRoo(assesment.getId()).fire(new BMEReceiver<Long>() {
 			@Override
 			public void onSuccess(Long response) {
@@ -223,6 +227,7 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 	
 	private void onQuestionTypeCountChanged() {
 		final Range range = questionTypeCountTable.getVisibleRange();
+		AppLoader.setNoLoader();
 		requests.questionTypeCountPerExamRequest().findQuestionTypeCountByAssesmentNonRoo(assesment.getId(), range.getStart(), range.getLength()).with("questionTypesAssigned").fire(new BMEReceiver<List<QuestionTypeCountPerExamProxy>>() {
 		
 			@Override
@@ -243,7 +248,7 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 		Log.debug("setPresenter");
 		questionSumPerPersonView.setPresenter(this);
 		questionSumPerPersonView.setDelegate(this);
-		
+		AppLoader.setNoLoader();		
 		requests.questionSumPerPersonRequest().countQuestionSumPerPersonByAssesmentNonRoo(assesment.getId()).fire(new BMEReceiver<Long>() {
 			@Override
 			public void onSuccess(Long response) {
@@ -271,6 +276,7 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
     
     private void onQuestionSumPerPersonChanged() {
 		final Range range = questionSumPerPersonTable.getVisibleRange();
+		AppLoader.setNoLoader();
 		requests.questionSumPerPersonRequest().findQuestionSumPerPersonByAssesmentNonRoo(assesment.getId(), range.getStart(), range.getLength()).with("responsiblePerson", "questionEvent").fire(new BMEReceiver<List<QuestionSumPerPersonProxy>>() {
 			
 			@Override
@@ -287,11 +293,12 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 
 	@Override
 	public void deleteClicked() {
+		AppLoader.setNoLoader();
 		requests.assesmentRequest().remove().using(assesment).fire(new BMEReceiver<Void>() {
 
             public void onSuccess(Void ignore) {
             	Log.debug("Sucessfull deleted");
-            	placeController.goTo(new PlaceAssesment("PlaceAssesment!DELETED"));
+            	placeController.goTo(new PlaceAssesment(PlaceAssesment.PLACE_ASSESMENT));
             	
             }
         });
@@ -304,21 +311,21 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 	}
 
 	@Override
-	public void newClicked(String institutionName) {
-		placeController.goTo(new PlaceAssesmentDetails(PlaceAssesmentDetails.Operation.CREATE));
-	}
+	public void newClicked(String institutionName) {}
 	
 	@Override
 	public void moveDown(final QuestionTypeCountPerExamProxy questionTypeCount) {
 		Log.info("Move down QuestionTypeCountPerExamProxy");
 		if(questionTypeCount != null) {
+			AppLoader.setNoLoader();
 			requests.questionTypeCountPerExamRequest().findQuestionTypeCountByAssesmentAndOrderNonRoo(assesment.getId(), questionTypeCount.getSort_order()-1).fire(new BMEReceiver<QuestionTypeCountPerExamProxy>() {
 
 				@Override
 				public void onSuccess(QuestionTypeCountPerExamProxy response) {
 					if(response != null) {
 						QuestionTypeCountPerExamRequest moveUpRequest = moveUpRequest(response);
-						QuestionTypeCountPerExamRequest moveDownRequest = moveDownRequest(questionTypeCount,moveUpRequest);
+						QuestionTypeCountPerExamRequest moveDownRequest = moveDownRequest(questionTypeCount,moveUpRequest);		
+						AppLoader.setNoLoader();
 						moveDownRequest.fire();
 					}
 				}
@@ -330,6 +337,7 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 	public void moveUp(final QuestionTypeCountPerExamProxy questionTypeCount) {
 		Log.info("Move up QuestionTypeCountPerExamProxy");
 		if(questionTypeCount != null) {
+			AppLoader.setNoLoader();
 			requests.questionTypeCountPerExamRequest().findQuestionTypeCountByAssesmentAndOrderNonRoo(assesment.getId(), questionTypeCount.getSort_order()+1).fire(new BMEReceiver<QuestionTypeCountPerExamProxy>() {
 
 				@Override
@@ -337,6 +345,7 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 					if(response != null) {
 						QuestionTypeCountPerExamRequest moveUpRequest = moveUpRequest(questionTypeCount);
 						QuestionTypeCountPerExamRequest moveDownRequest = moveDownRequest(response,moveUpRequest);
+						AppLoader.setNoLoader();
 						moveDownRequest.fire();
 					}
 				}
@@ -348,6 +357,7 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 		QuestionTypeCountPerExamRequest req = moveUpRequest.append(requests.questionTypeCountPerExamRequest());
 		QuestionTypeCountPerExamProxy questionTypeCountEditable = req.edit(questionTypeCount);
 		questionTypeCountEditable.setSort_order(questionTypeCountEditable.getSort_order()-1);
+		AppLoader.setNoLoader();
 		req.persist().using(questionTypeCount).to(new BMEReceiver<Void>() {
 
 			@Override
@@ -363,6 +373,7 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 		QuestionTypeCountPerExamRequest req = requests.questionTypeCountPerExamRequest();
 		QuestionTypeCountPerExamProxy questionTypeCountEditable = req.edit(questionTypeCount);
 		questionTypeCountEditable.setSort_order(questionTypeCountEditable.getSort_order()+1);
+		AppLoader.setNoLoader();
 		req.persist().using(questionTypeCountEditable).to(new BMEReceiver<Void>() {
 
 			@Override
@@ -375,6 +386,7 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 
 	@Override
 	public void deleteQuestionTypeCountClicked(QuestionTypeCountPerExamProxy questionTypeCountPerExam) {
+		AppLoader.setCurrentLoader(assesmentDetailsView.getLoadingPopupQuestionTypeCount());
 		requests.questionTypeCountPerExamRequest().removeAndUpdateOrder(questionTypeCountPerExam).fire(new BMEReceiver<Boolean>() {
 
 			@Override
@@ -409,7 +421,7 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 	    questionTypeCountPerExamProxy.setSort_order(questionTypeCountNextSortOrder);
 	    driver.flush();
 
-		
+	    AppLoader.setNoLoader();
 		requests.questionTypeRequest().findAllQuestionTypesForInstituteInSession(assesment).fire(new BMEReceiver<List<QuestionTypeProxy>>(){
 
 			@Override
@@ -423,6 +435,7 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 
 	@Override
 	public void addClicked() {
+		AppLoader.setCurrentLoader(questionTypeCountAddDialogbox.getLoadingPopup());
 		driver.flush().fire(new BMEReceiver<Void>() {
 			
 	          @Override
@@ -430,6 +443,7 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 	        	  Log.info("fullSaved");
 	        	  
 	        		initQuestionTypeCount();
+	        		((QuestionTypeCountAddDialogboxImpl)questionTypeCountAddDialogbox).hide();
 	          //	goTo(new PlaceAssesment(person.stableId()));
 	          }
 	          
@@ -462,7 +476,7 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 
 	@Override
 	public void deleteQuestionSumPerPersonClicked(QuestionSumPerPersonProxy questionSumPerPerson) {
-		
+		AppLoader.setCurrentLoader(assesmentDetailsView.getLoadingPopupSumPerPerson());
 		requests.questionSumPerPersonRequest().removeAndUpdateOrder(questionSumPerPerson).fire(new BMEReceiver<Boolean>() {
 
 			@Override
@@ -496,7 +510,7 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
         //questionSumPerPersonProxy.setSort_order(sort_orderQuestSum);
         //driverQuestSum.flush();
 
-		
+		AppLoader.setNoLoader();
 		requests.personRequest().findAllPeople().fire(new BMEReceiver<List<PersonProxy>>(){
 			
 
@@ -505,7 +519,7 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 				questionSumPerPersonDialogbox.setResponsiblePersonValues(response);
 			}
 		});
-		
+		AppLoader.setNoLoader();
 		requests.questionEventRequest().findQuestionEventByInstitution(institutionActive).fire(new BMEReceiver<List<QuestionEventProxy>>(){
 			
 
@@ -541,11 +555,13 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 		questionSumPerPersonDialogbox.setValueInProxy(questionSumPerPersonProxy);
 		
 		//driverQuestSum.flush().fire(new BMEReceiver<Void>() {
+		AppLoader.setCurrentLoader(questionSumPerPersonDialogboxImpl.getLoadingPopup());
 		request.persist().using(questionSumPerPersonProxy).fire(new BMEReceiver<Void>() {	
 			
 	          @Override
 	          public void onSuccess(Void response) {
 	        	  Log.info("fullSaved");
+	        	  AppLoader.setCurrentLoader(questionSumPerPersonDialogboxImpl.getLoadingPopup());
 	        	  questionSumPerPersonDialogboxImpl.hide();
 	        		initQuestionSumPerPerson();
 	          //	goTo(new PlaceAssesment(person.stableId()));
@@ -581,6 +597,7 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 
 	@Override
 	public void moveQuestionSumPerPersonDown(QuestionSumPerPersonProxy questionSumPerPerson) {
+		AppLoader.setNoLoader();
 		requests.questionSumPerPersonRequest().moveDown().using(questionSumPerPerson).fire(new BMEReceiver<Void>() {
 			
 	          @Override
@@ -595,6 +612,7 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 
 	@Override
 	public void moveQuestionSumPerPersonUp(QuestionSumPerPersonProxy questionSumPerPerson) {
+		AppLoader.setNoLoader();
 		requests.questionSumPerPersonRequest().moveUp().using(questionSumPerPerson).fire(new BMEReceiver<Void>() {
 			
 	          @Override
@@ -627,7 +645,7 @@ public class ActivityAssesmentDetails extends AbstractActivityWrapper implements
 		studentToAssesmentProxy = studentToAssesmentRequest.edit(studentToAssesmentProxy);
 		
 		studentToAssesmentProxy.setIsEnrolled(!flag);
-		
+		AppLoader.setNoLoader();
 		studentToAssesmentRequest.persist().using(studentToAssesmentProxy).fire(new BMEReceiver<Void>() {
 
 			@Override

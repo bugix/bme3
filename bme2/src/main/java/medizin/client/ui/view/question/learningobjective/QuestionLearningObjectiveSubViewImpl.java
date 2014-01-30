@@ -78,6 +78,12 @@ public class QuestionLearningObjectiveSubViewImpl extends Composite implements Q
 	@UiField
 	ApplicationLoadingView loadingPopup;
 	
+	@UiField
+	ApplicationLoadingView loadingPopupMajor;
+	
+	@UiField
+	ApplicationLoadingView loadingPopupMinor;
+	
 	public QuestionLearningObjectivePopupView popUpView;
 	
 	public LearningObjectiveViewImpl learningObjectiveViewImpl;
@@ -582,7 +588,19 @@ public class QuestionLearningObjectiveSubViewImpl extends Composite implements Q
 		delegate.initLearningObjectiveView();
 	}
 
+	
+	@Override
 	public ApplicationLoadingView getLoadingPopup() {
-		return loadingPopup;
+			return loadingPopup;
+	}
+	
+	@Override
+	public ApplicationLoadingView getLoadingPopupMajor() {
+		return loadingPopupMajor;
+	}
+	
+	@Override
+	public ApplicationLoadingView getLoadingPopupMinor() {
+		return loadingPopupMinor;
 	}
 }

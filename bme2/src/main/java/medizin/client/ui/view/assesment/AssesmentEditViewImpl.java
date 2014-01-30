@@ -16,6 +16,7 @@ import medizin.client.proxy.PersonProxy;
 import medizin.client.request.PersonRequest;
 import medizin.client.ui.view.roo.QuestionAccessSetEditor;
 import medizin.client.ui.widget.IconButton;
+import medizin.client.ui.widget.process.ApplicationLoadingView;
 import medizin.shared.i18n.BmeConstants;
 
 
@@ -103,7 +104,10 @@ public class AssesmentEditViewImpl extends Composite implements AssesmentEditVie
     
     @UiField
     IntegerBox rememberBeforeClosing;
-
+    
+    @UiField
+	ApplicationLoadingView loadingPopup;
+    
     @UiField(provided = true)
     CheckBox isClosed = new CheckBox() {
 
@@ -283,4 +287,8 @@ public class AssesmentEditViewImpl extends Composite implements AssesmentEditVie
 		institution.setValue(institutionProxy);
 	}
 
+	@Override
+	public ApplicationLoadingView getLoadingPopup() {
+			return loadingPopup;
+	}
 }

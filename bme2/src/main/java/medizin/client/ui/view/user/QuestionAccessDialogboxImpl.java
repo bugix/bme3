@@ -13,6 +13,7 @@ import medizin.client.style.resources.MyCellTableResources;
 import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.widget.pager.MySimplePager;
+import medizin.client.ui.widget.process.ApplicationLoadingView;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.EventHandlingValueHolderItem;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
 import medizin.shared.AccessRights;
@@ -67,6 +68,9 @@ public class QuestionAccessDialogboxImpl extends DialogBox implements QuestionAc
             
           }
 
+	@UiField
+	ApplicationLoadingView loadingPopup;
+	
 	private BmeConstants constants = GWT.create(BmeConstants.class);
 	
 	private List<UserAccessRightsProxy> userAccessRightsList = new ArrayList<UserAccessRightsProxy>();
@@ -495,5 +499,9 @@ public class QuestionAccessDialogboxImpl extends DialogBox implements QuestionAc
 			}
 		}
 		return flag;
+	}
+	@Override
+	public ApplicationLoadingView getLoadingPopup() {
+		return loadingPopup;
 	}
 }

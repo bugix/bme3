@@ -483,7 +483,8 @@ public class ActivityQuestion extends AbstractActivityWrapper implements Questio
 
 	@Override
 	public void keywordAddClicked(final IconButton addKeyword) {		
-		// Added this to show key word by name as ASC. 
+		// Added this to show key word by name as ASC.
+		AppLoader.setNoLoader();
 		requests.keywordRequest().findAllKeywordsByNameASC().fire(new BMEReceiver<List<KeywordProxy>>() {
 		//requests.keywordRequest().findAllKeywords().fire(new BMEReceiver<List<KeywordProxy>>() {
 
@@ -528,6 +529,7 @@ public class ActivityQuestion extends AbstractActivityWrapper implements Questio
 	public void questionEventAddClicked(final IconButton addKeyword) {
 		if (institutionActive != null)
 		{
+			AppLoader.setNoLoader();
 			requests.questionEventRequest().findQuestionEventByInstitution(institutionActive).fire(new BMEReceiver<List<QuestionEventProxy>>() {
 
 				@Override
@@ -562,6 +564,7 @@ public class ActivityQuestion extends AbstractActivityWrapper implements Questio
 	@Override
 	public void mcAddClicked(final IconButton addMc)
 	{
+		AppLoader.setNoLoader();
 		requests.mcRequest().findAllMcs().fire(new BMEReceiver<List<McProxy>>() {
 
 			@Override
@@ -578,6 +581,7 @@ public class ActivityQuestion extends AbstractActivityWrapper implements Questio
 	@Override
 	public void userTypeAddClicked(final IconButton addUserType)
 	{
+		AppLoader.setNoLoader();
 		requests.personRequest().findAllPeopleByNameASC().fire(new BMEReceiver<List<PersonProxy>>() {
 		//requests.personRequest().findAllPeople().fire(new BMEReceiver<List<PersonProxy>>() {
 

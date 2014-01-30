@@ -16,9 +16,12 @@ public class PlaceSystemOverview extends AbstractPlace {
 		super(placeName, reload);
 	}
 
-	public PlaceSystemOverview(String placeSystemOverview, boolean relaod,
-			Integer height) {
-		super(placeSystemOverview,relaod,height);
+	public PlaceSystemOverview(String placeName, boolean relaod, Integer height) {
+		super(placeName,relaod,height);
+	}
+
+	public PlaceSystemOverview(String placeName, Integer height) {
+		super(placeName, height);
 	}
 
 	@Prefix(PLACE_SYSTEM_OVERVIEW)

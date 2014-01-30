@@ -1,6 +1,7 @@
 package medizin.client.ui.view;
 
 import medizin.client.ui.widget.IntegerBox;
+import medizin.client.ui.widget.process.ApplicationLoadingView;
 import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.QuestionTypeProxy;
 import medizin.shared.MultimediaType;
@@ -100,4 +101,6 @@ public interface QuestiontypesEditView extends IsWidget {
 	public TextBox getColumnTxtbox();
 	
 	public TextBox getMaxBytesTxtbox();
+	
+	ApplicationLoadingView getLoadingPopup();
 }

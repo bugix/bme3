@@ -16,9 +16,12 @@ public class PlaceNotActivatedQuestion extends AbstractPlace {
 		super(placeName, reload);
 	}
 
-	public PlaceNotActivatedQuestion(String placeNotActivatedQuestion,
-			boolean reload, Integer height) {
-		super(placeNotActivatedQuestion, reload, height);
+	public PlaceNotActivatedQuestion(String placeName, boolean reload, Integer height) {
+		super(placeName, reload, height);
+	}
+
+	public PlaceNotActivatedQuestion(String placeName, Integer height) {
+		super(placeName, height);
 	}
 
 	@Prefix(PLACE_NOT_ACTIVATED_QUESTION)

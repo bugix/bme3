@@ -9,6 +9,7 @@ import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.pager.MySimplePager;
+import medizin.client.ui.widget.process.ApplicationLoadingView;
 import medizin.shared.i18n.BmeConstants;
 
 import com.google.gwt.cell.client.AbstractEditableCell;
@@ -41,6 +42,9 @@ public class InstituteAccessDialogBoxImpl extends DialogBox implements Institute
 			UiBinder<Widget, InstituteAccessDialogBoxImpl> {
 	}
 
+	@UiField
+	ApplicationLoadingView loadingPopup;
+	
 	public InstituteAccessDialogBoxImpl() {
 		CellTable.Resources tableResources = GWT.create(MyCellTableResources.class);
 		tableEvent = new CellTable<InstitutionProxy>(McAppConstant.TABLE_PAGE_SIZE,tableResources);
@@ -193,5 +197,9 @@ public class InstituteAccessDialogBoxImpl extends DialogBox implements Institute
 	            hide();
 	    }
 		
+		@Override
+		public ApplicationLoadingView getLoadingPopup() {
+				return loadingPopup;
+			}
 		
 }

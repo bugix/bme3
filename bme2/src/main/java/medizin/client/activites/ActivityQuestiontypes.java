@@ -14,6 +14,7 @@ import medizin.client.style.resources.AdvanceCellTable;
 import medizin.client.ui.view.QuestiontypesView;
 import medizin.client.ui.view.QuestiontypesViewImpl;
 import medizin.client.ui.widget.Sorting;
+import medizin.client.ui.widget.process.AppLoader;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.activity.shared.ActivityManager;
@@ -224,7 +225,7 @@ public class ActivityQuestiontypes extends AbstractActivityWrapper implements Qu
 	private void tableRangeChangeCall()
 	{
 		final Range range =table.getVisibleRange();
-		
+		AppLoader.setNoLoader();
 		requests.questionTypeRequest().countAllQuestionType(searchValue).fire(new  BMEReceiver<Long>() {
 
 			@Override
@@ -234,6 +235,7 @@ public class ActivityQuestiontypes extends AbstractActivityWrapper implements Qu
 				table.setRowCount(count.intValue());
 				
 			//	System.out.println("Start: " + range.getStart() + " Length: " + range.getLength());
+				AppLoader.setNoLoader();
 				requests.questionTypeRequest().findAllQuestionType(range.getStart(),range.getLength(),sortname,sortorder,searchValue).with("institution").fire(new BMEReceiver<List<QuestionTypeProxy>>() {
 
 					@Override
@@ -251,7 +253,8 @@ public class ActivityQuestiontypes extends AbstractActivityWrapper implements Qu
 	private void init() {
 			
 			
-			final Range range =table.getVisibleRange();
+			final Range range =table.getVisibleRange();		
+			AppLoader.setNoLoader();
 			requests.questionTypeRequest().countAllQuestionType(searchValue).fire(new  BMEReceiver<Long>() {
 
 				@Override
@@ -432,6 +435,7 @@ public class ActivityQuestiontypes extends AbstractActivityWrapper implements Qu
 					public void onSuccess(final Object response) {
 						if (response != null && response instanceof QuestionTypeProxy)
 						{
+							AppLoader.setNoLoader();
 							requests.questionTypeRequest().findAllQuestionType(range.getStart(), count.intValue(), sortname, sortorder, searchValue).fire(new BMEReceiver<List<QuestionTypeProxy>>() {
 
 								@Override

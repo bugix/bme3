@@ -2,7 +2,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:n="urn:import:medizin.client.ui"
-	xmlns:b="urn:import:com.google.gwt.user.cellview.client" xmlns:m="urn:import:medizin.client.ui.widget" xmlns:p="urn:import:medizin.client.ui.widget.pager">
+	xmlns:b="urn:import:com.google.gwt.user.cellview.client" xmlns:m="urn:import:medizin.client.ui.widget" xmlns:p="urn:import:medizin.client.ui.widget.pager" xmlns:loader="urn:import:medizin.client.ui.widget.process">
 
 	<ui:style src="../styles.css">
     .panelHTML {
@@ -58,7 +58,8 @@
 	<ui:with type="medizin.shared.i18n.BmeConstants" field="cc"></ui:with>
 	
 	<g:ScrollPanel>
-				<g:HTMLPanel width="100%" >
+				<g:HTMLPanel width="100%" addStyleNames="{style.applicationLoadingPopupViewStyle}" >
+					<loader:ApplicationLoadingView ui:field="loadingPopup"  visible="false"></loader:ApplicationLoadingView>
 						<!-- <div class="{style.controls} {style.controlsleft}"> -->
 						
 						<b:CellTable ui:field="tableEvent" addStyleNames="{style.standardTableIcon}"  />

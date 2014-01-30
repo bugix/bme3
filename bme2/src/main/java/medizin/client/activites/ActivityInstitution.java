@@ -13,6 +13,7 @@ import medizin.client.ui.view.InstitutionView;
 import medizin.client.ui.view.InstitutionViewImpl;
 import medizin.client.ui.widget.Sorting;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
+import medizin.client.ui.widget.process.AppLoader;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.activity.shared.ActivityManager;
@@ -195,6 +196,7 @@ public class ActivityInstitution extends AbstractActivityWrapper implements /*In
 	{
 		//return requests.institutionRequest().findInstitutionEntries(range.getStart(), range.getLength());		
 		//return requests.institutionRequest().findAllInstitutions(range.getStart(),range.getLength(),sortname,sortorder,searchValue);
+		AppLoader.setNoLoader();
 		return requests.institutionRequest().findAllInstitutionsBySearchValue(sortname,sortorder,searchValue, userLoggedIn.getId(), range.getStart(), range.getLength());				
 	}
 
@@ -207,7 +209,7 @@ public class ActivityInstitution extends AbstractActivityWrapper implements /*In
 	private void init() {
 
 		
-		
+		AppLoader.setNoLoader();
 		fireCountRequest(new BMEReceiver<Long>() {
 			@Override
 			public void onSuccess(Long response) {
@@ -338,7 +340,8 @@ public class ActivityInstitution extends AbstractActivityWrapper implements /*In
 
 	@Override
 	public void deleteClicked(InstitutionProxy institution) {
-
+		
+		AppLoader.setCurrentLoader(view.getLoadingPopup());
 		requests.institutionRequest().remove()
 				.using(institution).fire(new BMEReceiver<Void>(reciverMap) {
 
@@ -366,6 +369,7 @@ public class ActivityInstitution extends AbstractActivityWrapper implements /*In
 		proxy.setInstitutionName(institutionName);
 
 		final InstitutionProxy tempProxy = proxy;
+		AppLoader.setCurrentLoader(view.getLoadingPopup());
 		request.persist().using(proxy).fire(new BMEReceiver<Void>(reciverMap) {
 
 			public void onSuccess(Void ignore) {
@@ -381,8 +385,8 @@ public class ActivityInstitution extends AbstractActivityWrapper implements /*In
 		InstitutionRequest request = requests.institutionRequest();
 		final InstitutionProxy institution = request.create(InstitutionProxy.class);
 		institution.setInstitutionName(institutionName);
-//		institution.setVersion(0);
-
+//		institution.setVersion(0);		
+		AppLoader.setCurrentLoader(view.getLoadingPopup());
 		request.persist().using(institution).fire(new BMEReceiver<Void>(reciverMap) {
 
 			public void onSuccess(Void ignore) {
@@ -397,7 +401,7 @@ public class ActivityInstitution extends AbstractActivityWrapper implements /*In
 	{
 		
 		final Range range =table.getVisibleRange();
-		
+		AppLoader.setNoLoader();
 		requests.institutionRequest().countAllInstitutions(searchValue).fire(new  BMEReceiver<Long>() {
 
 			@Override

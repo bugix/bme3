@@ -11,6 +11,7 @@ import medizin.client.proxy.QuestionProxy;
 import medizin.client.proxy.QuestionResourceProxy;
 import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.ui.view.question.ConfirmQuestionChangesPopup.ConfirmQuestionHandler;
+import medizin.client.ui.widget.process.ApplicationLoadingView;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 
 import com.google.gwt.user.client.ui.IsWidget;
@@ -70,4 +71,6 @@ public interface QuestionEditView extends IsWidget {
 	void setQuestionAuthor(PersonProxy autor);
 
 	boolean isPictureAddedForImgKeyOrShowInImage();
+
+	ApplicationLoadingView getLoadingPopup();
 }

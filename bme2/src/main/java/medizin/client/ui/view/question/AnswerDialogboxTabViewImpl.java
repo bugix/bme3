@@ -12,6 +12,7 @@ import medizin.client.proxy.QuestionResourceProxy;
 import medizin.client.ui.richtext.RichTextToolbar;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.dialogbox.receiver.ReceiverDialog;
+import medizin.client.ui.widget.process.ApplicationLoadingView;
 import medizin.client.ui.widget.resource.image.polygon.ImagePolygonViewer;
 import medizin.client.ui.widget.resource.image.rectangle.ImageRectangleViewer;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.EventHandlingValueHolderItem;
@@ -127,6 +128,9 @@ public class AnswerDialogboxTabViewImpl extends DialogBox implements AnswerDialo
 	private ImageRectangleViewer imageRectangleViewer;
 	
 	private ImagePolygonViewer imagePolygonViewer;
+	
+	@UiField
+	ApplicationLoadingView loadingPopup;
 	
 	@UiHandler("closeButton")
 	public void onCloseButtonClick(ClickEvent event) {
@@ -561,4 +565,9 @@ public class AnswerDialogboxTabViewImpl extends DialogBox implements AnswerDialo
 		comment.setText(answer.getComment() != null?answer.getComment() : null);
 		
 	}
+	
+	@Override
+	public ApplicationLoadingView getLoadingPopup() {
+			return loadingPopup;
+		}
 }

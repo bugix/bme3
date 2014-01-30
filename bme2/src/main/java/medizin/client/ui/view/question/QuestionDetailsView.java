@@ -5,6 +5,7 @@ import medizin.client.ui.view.question.keyword.QuestionKeywordView;
 import medizin.client.ui.view.question.learningobjective.QuestionLearningObjectiveSubViewImpl;
 import medizin.client.ui.view.question.usedinmc.QuestionUsedInMC;
 import medizin.client.ui.widget.IconButton;
+import medizin.client.ui.widget.process.ApplicationLoadingView;
 
 import com.google.common.base.Function;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -79,5 +80,6 @@ public interface QuestionDetailsView extends IsWidget {
 	void removeQuestionUsedInMCTab();
 	CheckBox getAcceptQueAnswer();
 	QuestionKeywordView getQuestionKeywordView();
+	ApplicationLoadingView getLoadingPopup();
 	
 }

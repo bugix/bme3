@@ -15,6 +15,7 @@ import medizin.client.ui.view.AcceptAnswerView;
 import medizin.client.ui.view.AcceptAnswerViewImpl;
 import medizin.client.ui.view.AcceptMatrixAnswerSubView;
 import medizin.client.ui.view.AcceptMatrixAnswerSubViewImpl;
+import medizin.client.ui.widget.process.AppLoader;
 import medizin.shared.QuestionTypes;
 import medizin.shared.Status;
 
@@ -134,6 +135,7 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 	private void init() {
 
 		questionPanel.clear();
+		AppLoader.setNoLoader();
 		requests.questionRequest().findQuestionsAnswersNonAcceptedAdmin().with("answers", "questionType","questionResources").fire(new BMEReceiver<List<QuestionProxy>>() {
 			@Override
 			public void onSuccess(List<QuestionProxy> response) {
@@ -172,6 +174,7 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 	public void onRangeChanged(final QuestionProxy questionProxy, final AbstractHasData<AnswerProxy> table) {
 		final Range range = table.getVisibleRange();
 		
+		AppLoader.setNoLoader();
 		requests.answerRequest().countAnswersNonAcceptedAdminByQuestion(questionProxy.getId()).with("question", "autor", "rewiewer").fire(new BMEReceiver<Long>() {
 			@Override
 			public void onSuccess(Long response) {
@@ -179,7 +182,7 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 					// This activity is dead
 					return;
 				}
-				
+				AppLoader.setNoLoader();	
 				findAnswersEntriesNonAcceptedAdminByQuestion(questionProxy.getId(), range.getStart(), range.getLength(), table);
 				
 			}
@@ -222,6 +225,9 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 				answerProxy.setStatus(Status.ACTIVE);
 			}
 			
+			
+			
+			AppLoader.setCurrentLoader(view.getLoadingPopup());
 			req.persist().using(answerProxy).fire(new BMEReceiver<Void>(){
 
 				@Override
@@ -297,6 +303,7 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 		
 		answerProxy.setStatus(Status.DEACTIVATED);
 		
+		AppLoader.setCurrentLoader(view.getLoadingPopup());
 		req.persist().using(answerProxy).fire(new BMEReceiver<Void>(){
 
 			@Override
@@ -310,7 +317,7 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 	@Override
 	public void onMatrixRangeChanged(final QuestionProxy questionProxy, final AbstractHasData<MatrixValidityProxy> table, final AcceptMatrixAnswerSubView matrixAnswerListView) {
 		final Range range = table.getVisibleRange();
-		
+		AppLoader.setNoLoader();
 		requests.MatrixValidityRequest().countAllMatrixValidityForQuestionForAcceptAnswerView(questionProxy.getId(), personRightProxy.getIsInstitutionalAdmin()).fire(new BMEReceiver<Long>() {
 
 			@Override
@@ -328,7 +335,7 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 	}
 
 	void findMatrixAnswersEntriesNonAcceptedAdminByQuestion(Long questionId, Integer start, Integer length, final AbstractHasData<MatrixValidityProxy> table, final AcceptMatrixAnswerSubView matrixAnswerListView){
-		
+		AppLoader.setNoLoader();
 		requests.MatrixValidityRequest().findAllMatrixValidityForQuestionForAcceptAnswerView(questionId, personRightProxy.getIsInstitutionalAdmin(), start, length).with("answerX", "answerY", "answerX.rewiewer","answerX.autor", "answerX.question", "answerX.question.questionType", "answerY.rewiewer","answerY.autor", "answerY.question", "answerY.question.questionType").fire(new BMEReceiver<List<MatrixValidityProxy>>() {
 
 			@Override
@@ -341,7 +348,7 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 	
 	@Override
 	public void matrixAcceptClicked(QuestionProxy questionProxy) {
-
+		AppLoader.setCurrentLoader(view.getLoadingPopup());
 		requests.answerRequest().acceptMatrixAnswer(questionProxy, userLoggedIn.getIsAdmin(), personRightProxy.getIsInstitutionalAdmin()).fire(new BMEReceiver<Boolean>() {
 
 			@Override
@@ -357,7 +364,7 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 		
 		//List<AnswerProxy> ansProxyList = (List<AnswerProxy>) questionProxy.getAnswers();
 		AnswerRequest req = requests.answerRequest();
-		
+		AppLoader.setCurrentLoader(view.getLoadingPopup());
 		for (AnswerProxy proxy : questionProxy.getAnswers())
 		{
 			AnswerProxy answerProxy =  req.edit(proxy);

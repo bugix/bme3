@@ -7,6 +7,7 @@ import medizin.client.place.PlaceQuestiontypesDetails;
 import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.ui.view.QuestiontypesDetailsView;
 import medizin.client.ui.view.QuestiontypesDetailsViewImpl;
+import medizin.client.ui.widget.process.AppLoader;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.base.Function;
@@ -84,13 +85,14 @@ public class ActivityQuestiontypesDetails extends AbstractActivityWrapper implem
 		//init();
 		
 		view.setDelegate(this);
-		
+		AppLoader.setNoLoader();
 		requests.find(questiontypePlace.getProxyId()).with("institution").fire(new BMEReceiver<Object>() {
 
 			@Override
 			public void onSuccess(Object response) {
 				if(response instanceof QuestionTypeProxy){
 					//Log.info(((QuestionTypeProxy) response).getQuestionTypeName());
+					AppLoader.setCurrentLoader(view.getLoadingPopup());
 					init((QuestionTypeProxy) response);
 				}
 
@@ -153,12 +155,12 @@ public class ActivityQuestiontypesDetails extends AbstractActivityWrapper implem
 	
 	@Override
 	public void deleteClicked() {
-		
+		AppLoader.setNoLoader();
 		requests.questionTypeRequest().remove().using(questionType).fire(new BMEReceiver<Void>() {
 
             public void onSuccess(Void ignore) {
             	Log.debug("Sucessfull deleted");
-            	placeController.goTo(new PlaceQuestiontypes(PlaceQuestiontypes.PLACE_QUESTIONTYPES));
+            	placeController.goTo(new PlaceQuestiontypes(PlaceQuestiontypes.PLACE_QUESTIONTYPES,questiontypePlace.getHeight()));
            }
        });
 		

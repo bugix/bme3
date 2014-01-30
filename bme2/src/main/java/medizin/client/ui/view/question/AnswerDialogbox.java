@@ -5,6 +5,7 @@ import java.util.List;
 
 import medizin.client.proxy.AnswerProxy;
 import medizin.client.proxy.PersonProxy;
+import medizin.client.ui.widget.process.ApplicationLoadingView;
 import medizin.shared.QuestionTypes;
 import medizin.shared.Validity;
 
@@ -52,6 +53,8 @@ public interface AnswerDialogbox extends IsWidget {
 	void setValues(AnswerProxy answer);
 
 	void setMaxDifferenceBetween(long diff1, long diff2);
+
+	ApplicationLoadingView getLoadingPopup();
 
 	/*DefaultSuggestBox<PersonProxy, EventHandlingValueHolderItem<PersonProxy>> getAutherSuggestBox();
 

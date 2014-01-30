@@ -18,6 +18,7 @@ import medizin.client.proxy.PersonProxy;
 import medizin.client.ui.McAppNav;
 import medizin.client.ui.TopPanel;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
+import medizin.client.ui.widget.process.AppLoader;
 import medizin.client.util.AsyncActivityManager;
 import medizin.shared.i18n.BmeConstants;
 
@@ -90,6 +91,7 @@ public class McApplication {
 	}
 
 	private void init() {
+		AppLoader.setNoLoader();
 		Log.debug("McApp.init()");
 		GWT.setUncaughtExceptionHandler(new GWT.UncaughtExceptionHandler() {
 			public void onUncaughtException(Throwable e) {
@@ -166,6 +168,7 @@ public class McApplication {
 		final TopPanel topPanel = TopPanel.instance(requestFactory, placeController);
 		shell.setTopPanel(topPanel);
 		topPanel.setShell(shell);
+		AppLoader.setNoLoader();
 		requestFactory.personRequest().findAllPeople().fire(new BMEReceiver<List<PersonProxy>>(){
 
 			@Override
@@ -205,7 +208,7 @@ public class McApplication {
 					
 				}
 		});*/
-		
+		AppLoader.setNoLoader();
 		requestFactory.personRequest().myGetLoggedPerson().fire(new BMEReceiver<PersonProxy>() {
 
 			@Override

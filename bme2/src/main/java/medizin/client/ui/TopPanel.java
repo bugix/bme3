@@ -15,6 +15,7 @@ import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.style.resources.UiStyles;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
+import medizin.client.ui.widget.process.AppLoader;
 import medizin.shared.Locale;
 import medizin.shared.i18n.BmeConstants;
 
@@ -112,11 +113,14 @@ public class TopPanel extends Composite {
 
     @UiHandler ("loggedUser")
     public void loginUser(ValueChangeEvent<PersonProxy> event){
-    	if (event.getValue() != null)
+    	if (event.getValue() != null){
+    		AppLoader.setNoLoader();
     		requests.personRequest().loginPerson().using(loggedUser.getValue()).fire();
+    		}
     }
     @UiHandler ("institutionListBox")
     public void setInstitution(ValueChangeEvent<InstitutionProxy> event){
+    	AppLoader.setNoLoader();
     	requests.institutionRequest().mySetCurrentInstitution().using(institutionListBox.getValue()).fire();
     	McAppNav.checkAdminRights(requests,true);
     }
@@ -161,7 +165,7 @@ public class TopPanel extends Composite {
 				setInstitutionValue(requests, event.getValue());
 			}	
 		});
-		
+		AppLoader.setNoLoader();
 		requests.personRequest().myGetLoggedPerson().fire(new BMEReceiver<PersonProxy>() {
 
 			@Override
@@ -198,6 +202,7 @@ public class TopPanel extends Composite {
 
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
+				AppLoader.setNoLoader();
 				requests.getEventBus().fireEvent(new RecordChangeEvent(recordViewListBox.getValue()));	
 			}
 		});
@@ -239,7 +244,7 @@ public class TopPanel extends Composite {
 			
 			if (userLoggedIn.getIsAdmin())
 			{
-				
+				AppLoader.setNoLoader();
 				requests.institutionRequest().findAllInstitutions().fire(new BMEReceiver<List<InstitutionProxy>>() {
 
 					@Override
@@ -249,6 +254,7 @@ public class TopPanel extends Composite {
 							Log.info("ADMIN IS SELECTED");
 							institutionListBox.setValue(response.get(0));
 							institutionListBox.setAcceptableValues(response);
+							AppLoader.setNoLoader();
 							TopPanel.this.requests.institutionRequest().mySetCurrentInstitution().using(institutionListBox.getValue()).fire();
 							McAppNav.checkAdminRights(requests,true);
 							
@@ -264,7 +270,7 @@ public class TopPanel extends Composite {
 			}
 			else
 			{
-				
+				AppLoader.setNoLoader();	
 				TopPanel.this.requests.userAccessRightsRequest().findInstituionFromQuestionAccessByPerson(userLoggedIn.getId()).fire(new BMEReceiver<List<InstitutionProxy>>() {
 
 					@Override
@@ -280,12 +286,14 @@ public class TopPanel extends Composite {
 							
 							institutionListBox.setValue(response.get(0));
 							institutionListBox.setAcceptableValues(response);
+							AppLoader.setNoLoader();
 							TopPanel.this.requests.institutionRequest().mySetCurrentInstitution().using(institutionListBox.getValue()).fire();
 							McAppNav.checkAdminRights(requests,true);
 							institutionalList=response;
 						}
 						else
 						{
+							AppLoader.setNoLoader();
 							requests.institutionRequest().fillCurrentInstitutionNull().fire();
 							McAppNav.checkAdminRights(requests,true);
 							ConfirmationDialogBox.showOkDialogBox(constants.information(),constants.noInstitutionaccssMessage());	
@@ -296,6 +304,7 @@ public class TopPanel extends Composite {
 		}
 		else
 		{
+			AppLoader.setNoLoader();
 			requests.institutionRequest().fillCurrentInstitutionNull().fire();
 			List<InstitutionProxy> temp = new ArrayList<InstitutionProxy>();
 			institutionListBox.setValue(null);

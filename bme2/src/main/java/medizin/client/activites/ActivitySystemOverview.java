@@ -23,6 +23,7 @@ import medizin.client.ui.view.SystemOverviewExaminerSubViewImpl;
 import medizin.client.ui.view.SystemOverviewView;
 import medizin.client.ui.view.SystemOverviewViewImpl;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
+import medizin.client.ui.widget.process.AppLoader;
 import medizin.client.util.ClientUtility;
 
 import com.google.common.base.Function;
@@ -257,7 +258,7 @@ public class ActivitySystemOverview extends AbstractActivityWrapper implements S
 				acceptQuestionCount = response;
 			}
 		});
-		
+		AppLoader.setCurrentLoader(examinerSubView.getLoadingPopup());
 		AnswerRequest answerRequest = questionRequest.append(requests.answerRequest());
 		answerRequest.countAnswerByLoggedUser(false, personProxy.getId()).to(new BMEReceiver<Long>() {
 

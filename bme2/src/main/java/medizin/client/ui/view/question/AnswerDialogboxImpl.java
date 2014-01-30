@@ -17,6 +17,7 @@ import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEvent;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEventHandler;
 import medizin.client.ui.widget.dialogbox.receiver.ReceiverDialog;
+import medizin.client.ui.widget.process.ApplicationLoadingView;
 import medizin.client.ui.widget.resource.audio.AudioViewer;
 import medizin.client.ui.widget.resource.image.polygon.ImagePolygonViewer;
 import medizin.client.ui.widget.resource.image.rectangle.ImageRectangleViewer;
@@ -104,6 +105,9 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 	
 	@UiField
 	Label lblUploadText;
+	
+	@UiField
+	ApplicationLoadingView loadingPopup;
 	
 	@UiField
 	@Ignore
@@ -1071,4 +1075,10 @@ public class AnswerDialogboxImpl extends DialogBox implements AnswerDialogbox/*,
 	public TextBox getSequenceNumber() {
 		return txtSequenceNumber;
 	}*/
+	
+	@Override
+	public ApplicationLoadingView getLoadingPopup() {
+			return loadingPopup;
+		}
+
 }

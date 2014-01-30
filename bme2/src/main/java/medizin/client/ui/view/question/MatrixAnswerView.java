@@ -6,6 +6,7 @@ import java.util.List;
 import medizin.client.proxy.AnswerProxy;
 import medizin.client.proxy.MatrixValidityProxy;
 import medizin.client.proxy.PersonProxy;
+import medizin.client.ui.widget.process.ApplicationLoadingView;
 import medizin.client.util.Matrix;
 import medizin.client.util.MatrixValidityVO;
 
@@ -41,5 +42,7 @@ public interface MatrixAnswerView {
 	void display();
 
 	void setValues(List<MatrixValidityProxy> response, boolean isNew, boolean isEdit, boolean isDelete);
+
+	ApplicationLoadingView getLoadingPopup();
 	 
 }

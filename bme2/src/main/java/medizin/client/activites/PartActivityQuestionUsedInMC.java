@@ -20,6 +20,7 @@ import medizin.client.proxy.AssesmentQuestionProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.ui.view.question.AnswerListViewImpl;
 import medizin.client.ui.view.question.usedinmc.QuestionUsedInMC;
+import medizin.client.ui.widget.process.AppLoader;
 
 public class PartActivityQuestionUsedInMC implements QuestionUsedInMC.Delegate {
 	
@@ -53,6 +54,7 @@ public class PartActivityQuestionUsedInMC implements QuestionUsedInMC.Delegate {
 		RecordChangeEvent.register(requests.getEventBus(), view);
 		if (question != null)
 		{
+			AppLoader.setNoLoader();
 			requests.assesmentQuestionRequest().countAllAssesmentQuestionByQuestion(question.getId()).fire(new BMEReceiver<Integer>() {
 
 				@Override
@@ -100,7 +102,7 @@ public class PartActivityQuestionUsedInMC implements QuestionUsedInMC.Delegate {
 				answerRangeChangeHandler.removeHandler();
 				answerRangeChangeHandler=null;
 			}
-			
+			AppLoader.setNoLoader();
 			requests.answerToAssQuestionRequest().countAllAnswerToAssQuestion(assesmentQuestionProxy.getId()).fire(new BMEReceiver<Long>() {
 
 				@Override
@@ -127,7 +129,7 @@ public class PartActivityQuestionUsedInMC implements QuestionUsedInMC.Delegate {
 	private void onUsedInMcAnswerTableRangeChanged() {
 		
 		final Range range = answerTable.getVisibleRange();
-		
+		AppLoader.setNoLoader();
 		requests.answerToAssQuestionRequest().findAllAnswerToAssQuestion(this.assesmentQuestionProxy.getId(), range.getStart(), range.getLength()).with("question","rewiewer","autor","question.questionType").fire( new BMEReceiver<List<AnswerProxy>>(){
 
 
@@ -143,6 +145,7 @@ public class PartActivityQuestionUsedInMC implements QuestionUsedInMC.Delegate {
 		if (question != null)
 		{
 			final Range range = view.getTableVisibleRange();
+			AppLoader.setNoLoader();
 			requests.assesmentQuestionRequest().findAllAssesmentQuestionByQuestion(question.getId(), range.getStart(), range.getLength()).with(view.getPaths()).fire(new BMEReceiver<List<AssesmentQuestionProxy>>() {
 
 				@Override

@@ -6,6 +6,7 @@ import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.proxy.DoctorProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.ui.widget.IconButton;
+import medizin.client.ui.widget.process.ApplicationLoadingView;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.EventHandlingValueHolderItem;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
 
@@ -72,6 +73,9 @@ public class UserEditViewImpl extends Composite implements UserEditView  {
     
     @UiField
     CheckBox isDoctor;    
+    
+    @UiField
+	ApplicationLoadingView loadingPopup;
     
     @UiField 
     DefaultSuggestBox<DoctorProxy, EventHandlingValueHolderItem<DoctorProxy>> doctorSuggestBox;
@@ -166,11 +170,13 @@ public class UserEditViewImpl extends Composite implements UserEditView  {
 		isAdmin.setValue(proxy.getIsAdmin() == null ? Boolean.FALSE : person.getIsAdmin());
 		isDoctor.setValue(proxy.getIsDoctor() == null ? Boolean.FALSE : person.getIsDoctor());
 		
-		Document.get().getElementById("doctorDisplay").getStyle().clearDisplay();
 		if (person.getIsDoctor() != null && person.getIsDoctor())
 		{
-			if (proxy.getDoctor() != null)
+			if (proxy.getDoctor() != null) {
 				doctorSuggestBox.setSelected(proxy.getDoctor());
+				Document.get().getElementById("doctorDisplay").getStyle().clearDisplay();
+			}
+				
 		}
 	}
 
@@ -232,6 +238,9 @@ public class UserEditViewImpl extends Composite implements UserEditView  {
 		this.doctorSuggestBox = doctorSuggestBox;
 	}
 	
-	
+	@Override
+	public ApplicationLoadingView getLoadingPopup() {
+			return loadingPopup;
+		}	
 
 }
