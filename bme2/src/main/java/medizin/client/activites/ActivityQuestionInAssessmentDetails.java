@@ -108,7 +108,7 @@ public class ActivityQuestionInAssessmentDetails extends AbstractActivityWrapper
 	
 	private void initAnswerView(AssesmentQuestionProxy response)
 	{
-		AcceptAnswerSubView acceptAnswerSubView = new AcceptAnswerSubViewImpl(false, false);				
+		AcceptAnswerSubView acceptAnswerSubView = new AcceptAnswerSubViewImpl(false, false, false);				
 	    acceptAnswerSubView.setDelegate(ActivityQuestionInAssessmentDetails.this);
 	    acceptAnswerSubView.setProxy(response.getQuestion());
 	    acceptAnswerSubView.getQuestionDisclosurePanel().setOpen(true);
@@ -254,4 +254,8 @@ public class ActivityQuestionInAssessmentDetails extends AbstractActivityWrapper
 		
 	@Override
 	public void pushToReviewProcessClicked() {}
+
+	@Override
+	public void acceptAllAnswerClicked(QuestionProxy questionProxy) {
+	}
 }

@@ -23,6 +23,8 @@ public interface AcceptAnswerSubView extends IsWidget {
 		void forcedAcceptClicked(AnswerProxy answerProxy, AcceptAnswerSubView acceptAnswerSubView);
        
 		void rejectClicked(AnswerProxy answerProxy);
+
+		void acceptAllAnswerClicked(QuestionProxy questionProxy);
     }
 
 

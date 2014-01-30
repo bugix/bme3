@@ -17,6 +17,9 @@
 			padding-left: 20px;			
 			padding-top: 3px;
 		}
+	.acceptBtn{
+		margin-right: 5px;
+	}
 	</ui:style>
 	
 	<g:HTMLPanel >
@@ -38,7 +41,10 @@
 						<g:Label ui:field="headerText"></g:Label>
 					</g:cell>
 					<g:cell width="16px" horizontalAlignment="ALIGN_CENTER">
-						<m:IconButton ui:field="viewHtmlText" icon="comment" visible="false"></m:IconButton>
+						<g:HorizontalPanel spacing="1">
+							<m:IconButton ui:field="acceptAllAnswer" icon="check" addStyleNames="{style.acceptBtn}"></m:IconButton>						
+							<m:IconButton ui:field="viewHtmlText" icon="comment" visible="false"></m:IconButton>	
+						</g:HorizontalPanel>						
 					</g:cell>
 				</g:HorizontalPanel>
 			</g:customHeader>

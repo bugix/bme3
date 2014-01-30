@@ -184,7 +184,7 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 	
 	private void initAnswerView()
 	{
-		AcceptAnswerSubView acceptAnswerSubView = new AcceptAnswerSubViewImpl(false, false);				
+		AcceptAnswerSubView acceptAnswerSubView = new AcceptAnswerSubViewImpl(false, false, false);				
 	    acceptAnswerSubView.setDelegate(ActivityAcceptQuestionDetails.this);
 	    acceptAnswerSubView.setProxy(question);
 	    acceptAnswerSubView.getQuestionDisclosurePanel().setOpen(true);
@@ -453,5 +453,9 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 
 	@Override
 	public void pushToReviewProcessClicked() {}
+
+	@Override
+	public void acceptAllAnswerClicked(QuestionProxy questionProxy) {
+	}
 
 }

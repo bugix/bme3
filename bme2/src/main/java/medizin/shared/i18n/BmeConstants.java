@@ -832,5 +832,9 @@ public interface BmeConstants extends Constants {
 	public String minorSkill();
 	
 	public String showFilterDialog();
+	
+	public String acceptAllAnswer();
+	
+	public String assessmentQueDelMsg();
 }
 

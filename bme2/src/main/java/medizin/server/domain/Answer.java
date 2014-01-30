@@ -291,6 +291,8 @@ public class Answer {
 		Predicate predicate = nonAcceptAnswerPredicate(questionId, loggedUser, institution, accessRight, cb, from);
 		cq.where(predicate);
         TypedQuery<Answer> q = entityManager().createQuery(cq);
+        q.setFirstResult(start);
+        q.setMaxResults(length);
         return q.getResultList();
 	}	
 	
@@ -637,6 +639,8 @@ public class Answer {
 		cq.where(cb.and(pre0,pre1));
 		
         TypedQuery<Answer> q = entityManager().createQuery(cq);
+        q.setFirstResult(start);
+        q.setMaxResults(length);
         return q.getResultList();
 	}
 	
@@ -720,5 +724,71 @@ public class Answer {
 			return resultList.get(0);
 		}
 		return null;
+	}
+	
+	public static void acceptAllAnswerClicked(Long questionId)
+	{		
+		Person loggedUser = Person.myGetLoggedPerson();
+		Institution institution = Institution.myGetInstitutionToWorkWith();
+		PersonAccessRight accessRight = Person.fetchPersonAccessFromSession();
+		
+		if (loggedUser == null || institution == null || accessRight == null)
+			throw new IllegalArgumentException("The person and institution arguments are required");
+	
+		CriteriaBuilder cb = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Answer> cq = cb.createQuery(Answer.class);
+		Root<Answer> from = cq.from(Answer.class);
+		Predicate predicate = nonAcceptAnswerPredicate(questionId, loggedUser, institution, accessRight, cb, from);
+		cq.where(predicate);
+        TypedQuery<Answer> q = entityManager().createQuery(cq);     
+	
+        for (Answer answer : q.getResultList())
+        {
+        	if(accessRight.getIsAdmin() || accessRight.getIsInstitutionalAdmin()){
+        		answer.setIsAnswerAcceptedAdmin(true);
+        		answer.setStatus(Status.ACCEPTED_ADMIN);
+			} 
+			if(answer.getRewiewer() != null && answer.getRewiewer().getId().equals(loggedUser.getId())) {
+				answer.setIsAnswerAcceptedReviewWahrer(true);
+				answer.setStatus(Status.ACCEPTED_REVIEWER);
+			}
+			if(answer.getAutor().getId().equals(loggedUser.getId()))	{
+				answer.setIsAnswerAcceptedAutor(true);
+			}
+			
+			if(answer.getIsAnswerAcceptedAdmin() == true && answer.getIsAnswerAcceptedAutor() == true && answer.getIsAnswerAcceptedReviewWahrer() == true) {
+				answer.setStatus(Status.ACTIVE);
+			}
+			
+			answer.persist();
+        }
+	}
+	
+	public static void acceptAllForceActiveAnswer(Long questionId)
+	{
+		Person loggedUser = Person.myGetLoggedPerson();
+		Institution institution = Institution.myGetInstitutionToWorkWith();
+		if (loggedUser == null || institution == null)
+			throw new IllegalArgumentException("The person and institution arguments are required");
+		
+		CriteriaBuilder cb = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Answer> cq = cb.createQuery(Answer.class);
+		Root<Answer> from = cq.from(Answer.class);
+		
+		Predicate pre0 = cb.equal(from.get("question").get("questEvent").get("institution"), institution);
+		Predicate pre1 = cb.equal(from.get("question").get("id"), questionId);
+		
+		pre1 = cb.and(from.get("status").in(Status.NEW, Status.ACCEPTED_REVIEWER, Status.ACCEPTED_ADMIN), pre1);
+		
+		cq.where(cb.and(pre0,pre1));
+		
+        TypedQuery<Answer> q = entityManager().createQuery(cq);
+
+        for (Answer answer : q.getResultList())
+        {
+        	answer.setIsForcedActive(true);
+        	answer.setStatus(Status.ACTIVE);
+			answer.persist();
+        }
 	}
 }

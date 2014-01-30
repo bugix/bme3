@@ -102,10 +102,13 @@ public class AcceptAnswerSubViewImpl extends Composite implements AcceptAnswerSu
 	
 	@UiField
 	IconButton viewHtmlText;
+	
+	@UiField
+	IconButton acceptAllAnswer;
 
 	private Boolean forcedActive;
 	
-	public AcceptAnswerSubViewImpl(Boolean flag, Boolean forcedActive) {
+	public AcceptAnswerSubViewImpl(Boolean flag, Boolean forcedActive, Boolean acceptAllAnswerFlag) {
 		
 		this.flag = flag;
 		this.forcedActive = forcedActive;
@@ -249,6 +252,12 @@ public class AcceptAnswerSubViewImpl extends Composite implements AcceptAnswerSu
 				}	
 			}
 		});
+        
+        acceptAllAnswer.setText(constants.acceptAllAnswer());
+        
+        if (acceptAllAnswerFlag == false)
+        	acceptAllAnswer.removeFromParent();
+        
         /*selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
         	
 			public void onSelectionChange(SelectionChangeEvent event) {
@@ -476,6 +485,16 @@ DivElement questionText;*/
 	@UiField
 	DisclosurePanel questionDisclosurePanel;
 
+	@UiHandler("acceptAllAnswer")
+	public void acceptAllAnswerClicked(ClickEvent event)
+	{
+		questionDisclosurePanel.setOpen(!questionDisclosurePanel.isOpen());
+		if (questionProxy != null)
+		{
+			delegate.acceptAllAnswerClicked(questionProxy);
+		}
+	}
+	
 	@UiHandler("viewHtmlText")
 	public void viewHtmlTextClicked(ClickEvent event)
 	{

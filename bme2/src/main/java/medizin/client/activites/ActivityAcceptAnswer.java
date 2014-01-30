@@ -155,7 +155,7 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 					}
 					else
 					{
-						AcceptAnswerSubView acceptAnswerSubView = new AcceptAnswerSubViewImpl(true, false);				
+						AcceptAnswerSubView acceptAnswerSubView = new AcceptAnswerSubViewImpl(true, false, true);				
 					    acceptAnswerSubView.setDelegate(ActivityAcceptAnswer.this);
 					    acceptAnswerSubView.setProxy(questionProxy);
 					    acceptAnswerSubView.setAcceptAnswerSubView(acceptAnswerSubView);
@@ -393,5 +393,16 @@ public class ActivityAcceptAnswer extends AbstractActivityWrapper implements Acc
 			AcceptAnswerSubView acceptAnswerSubView) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void acceptAllAnswerClicked(QuestionProxy questionProxy) {
+		requests.answerRequest().acceptAllAnswerClicked(questionProxy.getId()).fire(new BMEReceiver<Void>() {
+
+			@Override
+			public void onSuccess(Void response) {
+				init();
+			}
+		});
 	}
 }

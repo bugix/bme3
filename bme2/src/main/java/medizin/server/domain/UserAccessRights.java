@@ -245,9 +245,10 @@ public class UserAccessRights {
 			CriteriaQuery<Answer> ansCq = ansCb.createQuery(Answer.class);
 			Root<Answer> ansFrom = ansCq.from(Answer.class);
 			
+			Predicate ansPre1 = criteriaBuilder.equal(ansFrom.get("autor").get("id"), personId);
 			Predicate ansPre2 = criteriaBuilder.equal(ansFrom.get("rewiewer").get("id"), personId);
 			
-			ansCq.where(ansPre2);
+			ansCq.where(ansCb.or(ansPre1, ansPre2));
 			
 			TypedQuery<Answer> ansq = entityManager().createQuery(ansCq);
 			

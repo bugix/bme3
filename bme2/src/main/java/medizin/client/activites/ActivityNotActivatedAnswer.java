@@ -4,7 +4,6 @@ import java.util.List;
 
 import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
-import medizin.client.place.PlaceAcceptAnswer;
 import medizin.client.place.PlaceNotActivatedAnswer;
 import medizin.client.proxy.AnswerProxy;
 import medizin.client.proxy.MatrixValidityProxy;
@@ -83,7 +82,7 @@ public class ActivityNotActivatedAnswer extends AbstractActivityWrapper implemen
 					}
 					else
 					{
-						AcceptAnswerSubView acceptAnswerSubView = new AcceptAnswerSubViewImpl(false, true);				
+						AcceptAnswerSubView acceptAnswerSubView = new AcceptAnswerSubViewImpl(false, true, true);				
 					    acceptAnswerSubView.setDelegate(ActivityNotActivatedAnswer.this);
 					    acceptAnswerSubView.setProxy(questionProxy);
 					    acceptAnswerSubView.setAcceptAnswerSubView(acceptAnswerSubView);
@@ -220,5 +219,16 @@ public class ActivityNotActivatedAnswer extends AbstractActivityWrapper implemen
 		});
 	
 
+	}
+
+	@Override
+	public void acceptAllAnswerClicked(QuestionProxy questionProxy) {
+		requests.answerRequest().acceptAllForceActiveAnswer(questionProxy.getId()).fire(new BMEReceiver<Void>() {
+
+			@Override
+			public void onSuccess(Void response) {
+				init();
+			}
+		});
 	}
 }
