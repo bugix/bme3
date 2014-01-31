@@ -77,7 +77,7 @@ public class ActivityQuestionInAssessmentDetails extends AbstractActivityWrapper
 
 	protected void initDetailsView(AssesmentQuestionProxy response) {
 		
-		QuestionDetailsViewImpl questionDetailsView = new QuestionDetailsViewImpl(eventBus, false, false, false, false, false, isQuestionTypeMCQ(response.getQuestion()), false, true, false);
+		QuestionDetailsViewImpl questionDetailsView = new QuestionDetailsViewImpl(eventBus, false,false,false,false,false,false,true,false,getQuestionType(response.getQuestion()));
 		this.view = questionDetailsView;
         widget.setWidget(questionDetailsView.asWidget());
 		view.setDelegate(this);
@@ -102,8 +102,11 @@ public class ActivityQuestionInAssessmentDetails extends AbstractActivityWrapper
 			initAnswerView(response);
 	}
 	
-	private boolean isQuestionTypeMCQ(QuestionProxy questionProxy) {
-		return questionProxy != null && questionProxy.getQuestionType() != null && QuestionTypes.MCQ.equals(questionProxy.getQuestionType().getQuestionType());
+	private QuestionTypes getQuestionType(QuestionProxy questionProxy) {
+		if(questionProxy != null && questionProxy.getQuestionType() != null) {
+			return questionProxy.getQuestionType().getQuestionType();	
+		} 
+		return null;
 	}
 	
 	private void initAnswerView(AssesmentQuestionProxy response)

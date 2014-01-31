@@ -401,8 +401,8 @@ public class QuestionDetailsViewImpl extends Composite implements QuestionDetail
 		}
 	}
 
-	public QuestionDetailsViewImpl(EventBus eventBus, Boolean editDeleteflag, boolean isAnswerEditable, boolean addAnswerRights, boolean isforceView, boolean isAcceptView, boolean isMCQQuestionType, boolean isDeleteLearningObjective, boolean removePushToReviewProcess, boolean printPdfBtnFlag) {
-		answerListViewImpl = new AnswerListViewImpl(addAnswerRights, isAnswerEditable,isMCQQuestionType);
+	public QuestionDetailsViewImpl(EventBus eventBus, Boolean editDeleteflag, boolean isAnswerEditable, boolean addAnswerRights, boolean isforceView, boolean isAcceptView, boolean isDeleteLearningObjective, boolean removePushToReviewProcess, boolean printPdfBtnFlag, QuestionTypes questionTypes) {
+		answerListViewImpl = new AnswerListViewImpl(addAnswerRights, isAnswerEditable,questionTypes);
 		matrixAnswerListViewImpl = new MatrixAnswerListViewImpl(addAnswerRights, isAnswerEditable);
 		questionLearningObjectiveSubViewImpl = new QuestionLearningObjectiveSubViewImpl(isDeleteLearningObjective);
 		initWidget(uiBinder.createAndBindUi(this));

@@ -61,6 +61,7 @@ import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
 
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -1785,14 +1786,18 @@ public class Question {
 
 	private void replaceAssessmentQuestionWithNewQue()
 	{
-		if (this.getPreviousVersion() == null)
+		Question tempQuestion =this.getPreviousVersion(); 
+		if (tempQuestion == null)
 			return;
-		
-		List<AssesmentQuestion> assesmentQuestions = AssesmentQuestion.findAssesmentQuestionsByQuestion(this.getPreviousVersion().getId());
-		for (AssesmentQuestion assesmentQuestion : assesmentQuestions) {
-			assesmentQuestion.setQuestion(this);
-			assesmentQuestion.persist();
-		}
+
+		do {
+			List<AssesmentQuestion> assesmentQuestions = AssesmentQuestion.findAssesmentQuestionsByQuestion(tempQuestion.getId());
+			for (AssesmentQuestion assesmentQuestion : assesmentQuestions) {
+				assesmentQuestion.setQuestion(this);
+				assesmentQuestion.persist();
+			}			
+			tempQuestion = tempQuestion.getPreviousVersion();
+		} while (tempQuestion != null);
 	}
 	
 	private static void inActivePreviousQuestion(Question tempQuestion) {
@@ -2133,8 +2138,11 @@ public class Question {
 			}else {
 				oldQuestion.setIsReadOnly(true);
 			}
-				
 			oldQuestion.persist();
+			if(Objects.equal(this.status, Status.ACTIVE)) {
+				inActivePreviousQuestion(this.getPreviousVersion());
+				this.replaceAssessmentQuestionWithNewQue();
+			}
 		}
 	}
 	
@@ -2822,5 +2830,15 @@ public class Question {
 		
 		HttpSession session = RequestFactoryServlet.getThreadLocalRequest().getSession();
 		session.setAttribute(ServerConstants.QUESTION_PRINT_PDF_KEY, query.getResultList());
+	}
+	
+	public void updateQuestion()
+	{
+		this.persist();
+		if(Objects.equal(this.status, Status.ACTIVE)) {
+			inActivePreviousQuestion(this.getPreviousVersion());
+			this.replaceAssessmentQuestionWithNewQue();
+		}
+		
 	}
 }

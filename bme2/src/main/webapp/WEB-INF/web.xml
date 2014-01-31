@@ -63,7 +63,7 @@
     </listener>
     
     <!-- Handles Spring requests -->
-    <servlet>
+    <!-- <servlet>
         <servlet-name>bme2</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
         <init-param>
@@ -72,18 +72,15 @@
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
-    
-    
+    <servlet-mapping>
+        <servlet-name>bme2</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping> -->
     
     <servlet>
         <servlet-name>requestFactory</servlet-name>
         <servlet-class>medizin.server.CustomRequestFactoryServlet</servlet-class>
     </servlet>
-    <servlet-mapping>
-        <servlet-name>bme2</servlet-name>
-        <url-pattern>/</url-pattern>
-    </servlet-mapping>
-    
     
     
     <servlet-mapping>

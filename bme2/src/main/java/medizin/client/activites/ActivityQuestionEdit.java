@@ -484,7 +484,7 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 		addPicturePathToQuestion(questionResourceRequest, this.question.getQuestionResources(), questionType,questionProxy);
 		
 		final QuestionProxy questionProxy2 = questionProxy;
-		questionRequest.persist().using(questionProxy).fire(new BMEReceiver<Void>(reciverMap) {
+		questionRequest.updateQuestion().using(questionProxy).fire(new BMEReceiver<Void>(reciverMap) {
 			@Override
 			public void onSuccess(Void response) {
 				gotoFunction.apply(questionProxy2.stableId());

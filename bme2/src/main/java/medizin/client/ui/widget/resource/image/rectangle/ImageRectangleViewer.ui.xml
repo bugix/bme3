@@ -7,6 +7,10 @@
 			height: 500px;
 			width: 1000px;
 		}
+		.drawingAreaCenter {
+			margin:auto;
+		}
+		
 	</ui:style>
 	<ui:with type="medizin.shared.i18n.BmeConstants" field="cc"></ui:with>
 	
@@ -16,11 +20,11 @@
 				<!-- <m:IconButton ui:field="btnAdd" text="{cc.add}" icon="plus"></m:IconButton> -->
 				<m:IconButton ui:field="btnClear" text="{cc.clear}" icon="cancel"></m:IconButton>				
 			</g:HorizontalPanel>
-			<g:HTMLPanel>
+			<g:HTMLPanel ui:field="hrPanel">
 				<hr />				
 			</g:HTMLPanel>
 			<g:HTMLPanel styleName="{style.imageBox}">
-				<gwtgraphics:DrawingArea ui:field="drawingArea"></gwtgraphics:DrawingArea>
+				<gwtgraphics:DrawingArea ui:field="drawingArea" styleName="{style.drawingAreaCenter}"></gwtgraphics:DrawingArea>
 			</g:HTMLPanel>
 		</g:VerticalPanel>
 	</g:HTMLPanel>

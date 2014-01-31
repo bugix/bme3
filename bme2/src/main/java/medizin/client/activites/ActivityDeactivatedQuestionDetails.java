@@ -67,7 +67,7 @@ public class ActivityDeactivatedQuestionDetails extends AbstractActivityWrapper 
 				if(response instanceof QuestionProxy){
 					Log.info(((QuestionProxy) response).getQuestionText());
 					
-					QuestionDetailsViewImpl questionDetailsView = new QuestionDetailsViewImpl(eventBus, false,false,false,false,false,isQuestionTypeMCQ((QuestionProxy) response), false,true, false);
+					QuestionDetailsViewImpl questionDetailsView = new QuestionDetailsViewImpl(eventBus, false,false,false,false,false, false,true, false,getQuestionType((QuestionProxy) response));
 					thiz.view = questionDetailsView;		
 					questionDetailsView.setDelegate(thiz);		
 					thiz.widget = panel;
@@ -83,8 +83,11 @@ public class ActivityDeactivatedQuestionDetails extends AbstractActivityWrapper 
 		});
 	}
 
-	private boolean isQuestionTypeMCQ(QuestionProxy questionProxy) {
-		return questionProxy != null && questionProxy.getQuestionType() != null && QuestionTypes.MCQ.equals(questionProxy.getQuestionType().getQuestionType());
+	private QuestionTypes getQuestionType(QuestionProxy questionProxy) {
+		if(questionProxy != null && questionProxy.getQuestionType() != null) {
+			return questionProxy.getQuestionType().getQuestionType();	
+		} 
+		return null;
 	}
 	
 	private void init(QuestionProxy response) {

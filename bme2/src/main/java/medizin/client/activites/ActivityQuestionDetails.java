@@ -124,7 +124,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			}
 		}
 		
-		QuestionDetailsViewImpl questionDetailsView = new QuestionDetailsViewImpl(eventBus, editDeleteBtnFlag,hasAnswerWriteRights(questionProxy, null),hasAnswerAddRights(questionProxy),false,false,isQuestionTypeMCQ(questionProxy), true,removePushToReviewProcess, true);
+		QuestionDetailsViewImpl questionDetailsView = new QuestionDetailsViewImpl(eventBus, editDeleteBtnFlag,hasAnswerWriteRights(questionProxy, null),hasAnswerAddRights(questionProxy),false,false, true,removePushToReviewProcess, true,getQuestionType(questionProxy));
 		this.view = questionDetailsView;
 		
 		
@@ -145,8 +145,11 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		partactivityQuestionUsedInMC.setAnswerTable(answerTable);
 	}
 	
-	private boolean isQuestionTypeMCQ(QuestionProxy questionProxy) {
-		return questionProxy != null && questionProxy.getQuestionType() != null && QuestionTypes.MCQ.equals(questionProxy.getQuestionType().getQuestionType());
+	private QuestionTypes getQuestionType(QuestionProxy questionProxy) {
+		if(questionProxy != null && questionProxy.getQuestionType() != null) {
+			return questionProxy.getQuestionType().getQuestionType();	
+		} 
+		return null;
 	}
 	
 	private void getQuestionDetails(){
@@ -226,7 +229,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		final Range range = answerTable.getVisibleRange();
 		
 		
-		requests.answerRequest().findAnswersEntriesByQuestion(question.getId(), range.getStart(), range.getLength()).with("question","rewiewer","autor","question.questionType").fire( new BMEReceiver<List<AnswerProxy>>(){
+		requests.answerRequest().findAnswersEntriesByQuestion(question.getId(), range.getStart(), range.getLength()).with("question","question.questionResources","rewiewer","autor","question.questionType").fire( new BMEReceiver<List<AnswerProxy>>(){
 
 
 			@Override

@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Set;
 
 import medizin.client.proxy.AnswerProxy;
+import medizin.client.proxy.QuestionProxy;
+import medizin.client.proxy.QuestionResourceProxy;
 import medizin.client.style.resources.MyCellTableResources;
 import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
@@ -16,15 +18,21 @@ import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEvent
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEventHandler;
 import medizin.client.ui.widget.pager.MySimplePager;
 import medizin.client.ui.widget.resource.audio.AudioViewer;
+import medizin.client.ui.widget.resource.image.ImageAltTextViewer;
 import medizin.client.ui.widget.resource.image.ImageViewer;
+import medizin.client.ui.widget.resource.image.rectangle.ImageRectangleViewer;
 import medizin.client.ui.widget.resource.video.VideoViewer;
 import medizin.client.util.ClientUtility;
+import medizin.client.util.ImageWidthHeight;
+import medizin.client.util.Point;
 import medizin.shared.QuestionTypes;
 import medizin.shared.Status;
 import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.AbstractEditableCell;
 import com.google.gwt.cell.client.ActionCell;
@@ -79,11 +87,10 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 	
 	public BmeConstants constant =GWT.create(BmeConstants.class);
     private Delegate delegate;
-	//private String name;
     protected Set<String> paths = new HashSet<String>();
     private List<AbstractEditableCell<?, ?>> editableCells;
 
-	public AnswerListViewImpl(boolean addAnswerRights, boolean isEditable,boolean isMCQQuestionType) {
+	public AnswerListViewImpl(boolean addAnswerRights, boolean isEditable, QuestionTypes questionTypes) {
 		CellTable.Resources tableResources = GWT.create(MyCellTableResources.class);
 		tableAnswer = new CellTable<AnswerProxy>(McAppConstant.TABLE_PAGE_SIZE,tableResources);
 		MySimplePager.Resources pagerResources = GWT.create(MySimplePagerResources.class);
@@ -95,7 +102,7 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 			newAnswer.removeFromParent();
 		}
 		
-		init(isEditable,isMCQQuestionType);
+		init(isEditable,questionTypes);
 		
 		headerText.setText("");
 		headerText.setHeight("23px");
@@ -121,188 +128,7 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 	}
 
 	
-	public void init(boolean isEditable, boolean isMCQQuestionType) {
-    
-    	
-//        paths.add("dateAdded");
-//        tableAnswer.addColumn(new TextColumn<AnswerProxy>() {
-//
-//            Renderer<java.util.Date> renderer = new DateTimeFormatRenderer(DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_SHORT));
-//
-//            @Override
-//            public String getValue(AnswerProxy object) {
-//                return renderer.render(object.getDateAdded());
-//            }
-//        }, "Date Added");
-//        paths.add("dateChanged");
-//        tableAnswer.addColumn(new TextColumn<AnswerProxy>() {
-//
-//            Renderer<java.util.Date> renderer = new DateTimeFormatRenderer(DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_SHORT));
-//
-//            @Override
-//            public String getValue(AnswerProxy object) {
-//                return renderer.render(object.getDateChanged());
-//            }
-//        }, "Date Changed");
-//        paths.add("rewiewer");
-//        tableAnswer.addColumn(new TextColumn<AnswerProxy>() {
-//
-//            Renderer<medizin.client.managed.request.PersonProxy> renderer = medizin.client.ui.view.roo.PersonProxyRenderer.instance();
-//
-//            @Override
-//            public String getValue(AnswerProxy object) {
-//                return renderer.render(object.getRewiewer());
-//            }
-//        }, "Rewiewer");
-//        paths.add("autor");
-//        tableAnswer.addColumn(new TextColumn<AnswerProxy>() {
-//
-//            Renderer<medizin.client.managed.request.PersonProxy> renderer = medizin.client.ui.view.roo.PersonProxyRenderer.instance();
-//
-//            @Override
-//            public String getValue(AnswerProxy object) {
-//                return renderer.render(object.getAutor());
-//            }
-//        }, "Autor");
-    	
-//        paths.add("validity");
-//        tableAnswer.addColumn(new TextColumn<AnswerProxy>() {
-//
-//            Renderer<medizin.client.shared.Validity> renderer = new AbstractRenderer<medizin.client.shared.Validity>() {
-//
-//                public String render(medizin.client.shared.Validity obj) {
-//                    return obj == null ? "" : String.valueOf(obj);
-//                }
-//            };
-//
-//            @Override
-//            public String getValue(AnswerProxy object) {
-//                return renderer.render(object.getValidity());
-//            }
-//        }, "Validity");
-        
-//        paths.add("answerText");
-//        tableAnswer.addColumn(new TextColumn<AnswerProxy>() {
-//
-//            Renderer<java.lang.String> renderer = new AbstractRenderer<java.lang.String>() {
-//
-//                public String render(java.lang.String obj) {
-//                    return obj == null ? "" : String.valueOf(obj);
-//                }
-//            };
-//
-//            @Override
-//            public String getValue(AnswerProxy object) {
-//            	
-//                return renderer.render(object.getAnswerText());
-//            }
-//        }, "Answer Text");
-//        paths.add("isAnswerActive");
-//        tableAnswer.addColumn(new TextColumn<AnswerProxy>() {
-//
-//            Renderer<java.lang.Boolean> renderer = new AbstractRenderer<java.lang.Boolean>() {
-//
-//                public String render(java.lang.Boolean obj) {
-//                    return obj == null ? "" : String.valueOf(obj);
-//                }
-//            };
-//
-//            @Override
-//            public String getValue(AnswerProxy object) {
-//                return renderer.render(object.getIsAnswerActive());
-//            }
-//        }, "Is Answer Active");
-//        paths.add("isPicture");
-//        tableAnswer.addColumn(new TextColumn<AnswerProxy>() {
-//
-//            Renderer<java.lang.Boolean> renderer = new AbstractRenderer<java.lang.Boolean>() {
-//
-//                public String render(java.lang.Boolean obj) {
-//                    return obj == null ? "" : String.valueOf(obj);
-//                }
-//            };
-//
-//            @Override
-//            public String getValue(AnswerProxy object) {
-//                return renderer.render(object.getIsPicture());
-//            }
-//        }, "Is Picture");
-//        paths.add("isAnswerAcceptedReviewWahrer");
-//        tableAnswer.addColumn(new TextColumn<AnswerProxy>() {
-//
-//            Renderer<java.lang.Boolean> renderer = new AbstractRenderer<java.lang.Boolean>() {
-//
-//                public String render(java.lang.Boolean obj) {
-//                    return obj == null ? "" : String.valueOf(obj);
-//                }
-//            };
-//
-//            @Override
-//            public String getValue(AnswerProxy object) {
-//                return renderer.render(object.getIsAnswerAcceptedReviewWahrer());
-//            }
-//        }, "Is Answer Accepted Review Wahrer");
-//        paths.add("isAnswerAcceptedAutor");
-//        tableAnswer.addColumn(new TextColumn<AnswerProxy>() {
-//
-//            Renderer<java.lang.Boolean> renderer = new AbstractRenderer<java.lang.Boolean>() {
-//
-//                public String render(java.lang.Boolean obj) {
-//                    return obj == null ? "" : String.valueOf(obj);
-//                }
-//            };
-//
-//            @Override
-//            public String getValue(AnswerProxy object) {
-//                return renderer.render(object.getIsAnswerAcceptedAutor());
-//            }
-//        }, "Is Answer Accepted Autor");
-//        paths.add("isAnswerAcceptedAdmin");
-//        tableAnswer.addColumn(new TextColumn<AnswerProxy>() {
-//
-//            Renderer<java.lang.Boolean> renderer = new AbstractRenderer<java.lang.Boolean>() {
-//
-//                public String render(java.lang.Boolean obj) {
-//                    return obj == null ? "" : String.valueOf(obj);
-//                }
-//            };
-//
-//            @Override
-//            public String getValue(AnswerProxy object) {
-//                return renderer.render(object.getIsAnswerAcceptedAdmin());
-//            }
-//        }, "Is Answer Accepted Admin");
-
-//        paths.add("picturePath");
-//        
-//        
-//        
-//        tableAnswer.addColumn(new TextColumn<AnswerProxy>() {
-//
-//            Renderer<java.lang.String> renderer = new AbstractRenderer<java.lang.String>() {
-//
-//                public String render(java.lang.String obj) {
-//                    return obj == null ? "" : String.valueOf(obj);
-//                }
-//            };
-//
-//            @Override
-//            public String getValue(AnswerProxy object) {
-//                return renderer.render(object.getPicturePath());
-//            }
-//        }, "Picture Path");
-//        paths.add("question");
-//        tableAnswer.addColumn(new TextColumn<AnswerProxy>() {
-//
-//            Renderer<medizin.client.managed.request.QuestionProxy> renderer = medizin.client.ui.view.roo.QuestionProxyRenderer.instance();
-//
-//            @Override
-//            public String getValue(AnswerProxy object) {
-//                return renderer.render(object.getQuestion());
-//            }
-//        }, "Question");
-        
-    	
+	public void init(boolean isEditable, QuestionTypes questionTypes) {
     	Log.debug("Im AnswerListView.init() ");
     	
     	editableCells = new ArrayList<AbstractEditableCell<?, ?>>();
@@ -335,7 +161,7 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
     	tableAnswer.getColumn(columnIndex).setCellStyleNames("answerTextColumn");
     	columnIndex++;
     	
-        if(isMCQQuestionType == true) {
+        if(Objects.equal(questionTypes, QuestionTypes.MCQ)) {
 			ActionCell.Delegate<AnswerProxy> resourceDelegate = new ActionCell.Delegate<AnswerProxy>() {
 
 				@Override
@@ -344,6 +170,26 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 				}
 			};
 			tableAnswer.addColumn(new Column<AnswerProxy, AnswerProxy>(new MCAQAnswerCell(McAppConstant.HELP_ICON, resourceDelegate)) {
+				@Override
+				public AnswerProxy getValue(AnswerProxy object) {
+					return object;
+				}
+			}, constant.media());
+			
+			tableAnswer.addColumnStyleName(columnIndex, "iconColumn");
+			tableAnswer.setColumnWidth(columnIndex, "20px");
+			columnIndex++;
+        }
+        
+        if(Objects.equal(questionTypes, QuestionTypes.Imgkey)) {
+			ActionCell.Delegate<AnswerProxy> resourceDelegate = new ActionCell.Delegate<AnswerProxy>() {
+
+				@Override
+				public void execute(AnswerProxy answer) {
+					openImageKeyDialog(answer);
+				}
+			};
+			tableAnswer.addColumn(new Column<AnswerProxy, AnswerProxy>(new ImageKeyAnswerCell(McAppConstant.HELP_ICON, resourceDelegate)) {
 				@Override
 				public AnswerProxy getValue(AnswerProxy object) {
 					return object;
@@ -409,6 +255,51 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
     	columnIndex++;
     }
     
+	private void openImageKeyDialog(AnswerProxy answer) {
+		DialogBox dialogBox = new DialogBox();
+	 	dialogBox.setTitle(constants.imageViewer());
+	 	dialogBox.setText(constants.imageViewer());
+	 	
+	 	final VerticalPanel vp = new VerticalPanel();
+	 	QuestionProxy questionProxy= answer.getQuestion();
+		final List<Point> points = Point.getPoints(Lists.newArrayList(answer.getPoints()));
+			
+		if(questionProxy.getQuestionResources() != null && questionProxy.getQuestionResources().isEmpty() == false) {
+			QuestionResourceProxy questionResourceProxy = Lists.newArrayList(questionProxy.getQuestionResources()).get(0);
+		
+			final Integer imageHeight = questionResourceProxy.getImageHeight();
+			final Integer imageWidth = questionResourceProxy.getImageWidth();
+			final String path = questionResourceProxy.getPath();
+			
+			if (imageWidth != null && imageHeight != null)
+			{
+				ImageRectangleViewer viewer = new ImageRectangleViewer(path, imageWidth, imageHeight, points, false);
+				vp.add(viewer);
+			}
+			else
+			{
+				ClientUtility.getImageWidthHeight(path, new ImageWidthHeight() {
+					
+					@Override
+					public void apply(Integer width, Integer height) {
+						ImageRectangleViewer viewer = new ImageRectangleViewer(path, width, height, points, false);
+						vp.add(viewer);
+					}
+				});
+			}
+		}else {
+			Log.error("Question resources are null imagekey");
+			ImageAltTextViewer viewer = new ImageAltTextViewer();
+			vp.add(viewer);
+		}
+		dialogBox.setWidget(vp);	
+		dialogBox.setGlassEnabled(true);
+		dialogBox.setAutoHideEnabled(true);
+		dialogBox.getElement().getStyle().setZIndex(5);
+		dialogBox.center();	
+		dialogBox.show();
+	}
+
 	private void openResourceDialog(AnswerProxy answer) {
 		if(answer != null && answer.getQuestion() != null && answer.getQuestion().getQuestionType() != null && answer.getQuestion().getQuestionType().getMultimediaType() != null) {
 			switch (answer.getQuestion().getQuestionType().getMultimediaType()) {
@@ -556,9 +447,19 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 	  
 	  private static String getAnswerValue(AnswerProxy value) {
 		  
-		  if(value != null && value.getQuestion() != null && value.getQuestion().getQuestionType() != null && value.getQuestion().getQuestionType().getQuestionType() != null && value.getQuestion().getQuestionType().getQuestionType().equals(QuestionTypes.MCQ)) {
-			  return ClientUtility.getFileName(value.getMediaPath(), value.getQuestion().getQuestionType().getMultimediaType());
-		  } else if(value != null && value.getAnswerText() != null) {
+		  if(value != null && value.getQuestion() != null && value.getQuestion().getQuestionType() != null && value.getQuestion().getQuestionType().getQuestionType() != null) {
+			  
+			  if(Objects.equal(value.getQuestion().getQuestionType().getQuestionType(), QuestionTypes.MCQ)) {
+				  return ClientUtility.getFileName(value.getMediaPath(), value.getQuestion().getQuestionType().getMultimediaType());  
+			  }
+			  
+			  if(Objects.equal(value.getQuestion().getQuestionType().getQuestionType(), QuestionTypes.Imgkey)) {
+				  return value.getAdditionalKeywords();  
+			  }
+
+		  } 
+		  
+		  if(value != null && value.getAnswerText() != null) {
 			  return value.getAnswerText();
 		  }
 			
@@ -646,7 +547,23 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 			      sb.appendHtmlConstant(validityIcon);
 			}
 	  }
-	  
+	  private class ImageKeyAnswerCell extends ActionCell<AnswerProxy> {
+		  public ImageKeyAnswerCell(SafeHtml message, com.google.gwt.cell.client.ActionCell.Delegate<AnswerProxy> delegate) {
+			  super(message, delegate);
+		  }
+
+			@Override
+			public void render(com.google.gwt.cell.client.Cell.Context context, AnswerProxy value, SafeHtmlBuilder sb) {
+			      // Always do a null check on the value. Cell widgets can pass null to cells
+			      // if the underlying data contains a null, or if the data arrives out of order.
+			      if (value == null) {
+			    	  sb.appendHtmlConstant("<span class=\"ui-icon ui-icon-help\" style=\"margin:auto\"></span>");
+			        return;
+			      }
+			      String validityIcon = "<span class=\"ui-icon ui-icon-image\" style=\"margin:auto\"></span>";
+			      sb.appendHtmlConstant(validityIcon);
+			}
+	  }
 	  private static class ValidityHeader extends AbstractCell<String> {
 
 

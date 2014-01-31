@@ -79,7 +79,7 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 	}
 
 	public void initDetailsView(QuestionProxy questionProxy) {
-		QuestionDetailsViewImpl questionDetailsView = new QuestionDetailsViewImpl(eventBus, true,hasAnswerWriteRights(questionProxy, null),hasAnswerAddRights(questionProxy),false,true,isQuestionTypeMCQ(questionProxy), true,true, false);
+		QuestionDetailsViewImpl questionDetailsView = new QuestionDetailsViewImpl(eventBus, true,hasAnswerWriteRights(questionProxy, null),hasAnswerAddRights(questionProxy),false,true,true,true, false, getQuestionType(questionProxy));
 		this.view = questionDetailsView;
         widget.setWidget(questionDetailsView.asWidget());
 		view.setDelegate(this);
@@ -96,8 +96,11 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 		partActivityQuestionLearningObjective.setQuestionProxy(questionProxy);
 	}
 	
-	private boolean isQuestionTypeMCQ(QuestionProxy questionProxy) {
-		return questionProxy != null && questionProxy.getQuestionType() != null && QuestionTypes.MCQ.equals(questionProxy.getQuestionType().getQuestionType());
+	private QuestionTypes getQuestionType(QuestionProxy questionProxy) {
+		if(questionProxy != null && questionProxy.getQuestionType() != null) {
+			return questionProxy.getQuestionType().getQuestionType();	
+		} 
+		return null;
 	}
 
 	private void init(QuestionProxy question) {

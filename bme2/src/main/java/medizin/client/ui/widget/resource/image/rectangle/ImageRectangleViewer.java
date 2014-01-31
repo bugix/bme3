@@ -21,6 +21,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -41,6 +42,9 @@ public class ImageRectangleViewer extends Composite{
 	
 	@UiField
 	HorizontalPanel btnHPPanel;
+	
+	@UiField
+	HTMLPanel hrPanel;
 	
 	private boolean validRectangle = false;
 	private boolean btnAddClicked = false;
@@ -111,7 +115,9 @@ public class ImageRectangleViewer extends Composite{
 					target.setCenter(x, y);
 				}
 			});
-		}		
+		} else {
+			hrPanel.removeFromParent();
+		}
 		
 		//btnAdd.setVisible(displayBtnFlag);
 		btnClear.setVisible(displayBtnFlag);
