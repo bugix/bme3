@@ -29,6 +29,11 @@ public class PlaceUser extends AbstractPlace {
 		super(placeName, height);
 	}
 
+	public PlaceUser(String placeName, Integer height, EntityProxyId<?> stableId) {
+		super(placeName, height);
+		this.setProxyId(stableId);
+	}
+
 	@Prefix(PLACE_USER)
 	public static class Tokenizer extends AbstractPlace.AbstractTokenizer<PlaceUser> {
 

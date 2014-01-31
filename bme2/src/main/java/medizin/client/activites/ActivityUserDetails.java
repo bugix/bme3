@@ -29,7 +29,6 @@ import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget
 import medizin.shared.AccessRights;
 
 import com.allen_sauer.gwt.log.client.Log;
-import com.google.gwt.activity.shared.ActivityManager;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.place.shared.Place;
@@ -45,107 +44,85 @@ import com.google.inject.Inject;
 import com.google.web.bindery.requestfactory.shared.Request;
 /**
  * Activity for Handling UserDetailsViews.
- * @author masterthesis
  *
  */
 public class ActivityUserDetails extends AbstractActivityWrapper implements UserDetailsView.Presenter, UserDetailsView.Delegate,
 		EventAccessView.Presenter, EventAccessView.Delegate, QuestionAccessView.Presenter, QuestionAccessView.Delegate,
-		 EventAccessDialogbox.Presenter, EventAccessDialogbox.Delegate,  QuestionAccessDialogbox.Presenter, QuestionAccessDialogbox.Delegate,
-		 InstituteAccessView.Delegate, InstituteAccessView.Presenter, InstituteAccessDialogBox.Delegate, InstituteAccessDialogBox.Presenter{
+		EventAccessDialogbox.Presenter, EventAccessDialogbox.Delegate,  QuestionAccessDialogbox.Presenter, QuestionAccessDialogbox.Delegate,
+		InstituteAccessView.Delegate, InstituteAccessView.Presenter, InstituteAccessDialogBox.Delegate, InstituteAccessDialogBox.Presenter{
 
 	private PlaceUserDetails userPlace;
-
-	private AcceptsOneWidget widget;
 	private UserDetailsView view;
-
 	private HandlerRegistration rangeChangeHandler;
-	
 	private PersonProxy person;
-	
-
 	private McAppRequestFactory requests;
 	private PlaceController placeController;
-
-//	private ActivityUserDetailsMapper activityUserDetailsMapper;
-
-	private ActivityManager activityManger;
+	private UserDetailsView userDetailsView;
+	private InstituteAccessView instituteAccessView;
+	private EventAccessView eventAccessView;
+	private SingleSelectionModel<QuestionEventProxy> selectionModelEventAccess;
+	private HandlerRegistration rangeEventAccessChangeHandler;
+	private QuestionAccessView questionAccessView;
+	private SingleSelectionModel<QuestionProxy> selectionModelQuestionAccess;
+	private HandlerRegistration rangeQuestionAccessChangeHandler;
+	private CellTable<UserAccessRightsProxy> questionTable;
+	/**
+	 * CellTable for EntitiesProxis of Type @see medizin.client.a_nonroo.app.request.QuestionAccessProxy
+	 * This table is designed for showing acceses to questions oven question events
+	 */
+	private CellTable<UserAccessRightsProxy> questionEventTable;
+	EventAccessDialogbox dialogBoxEvent;
+	QuestionAccessDialogbox dialogBoxQuestion;
+	InstituteAccessDialogBox dialogBoxInstitute;
+	//ListBox institutionListbox;
+	private CellTable<QuestionEventProxy> eventAccessTable;
+	/**
+	 * Range change Handler for the Question Accesses
+	 */
+	private HandlerRegistration rangeQuestionAccessAllChangeHandler;
+	private QuestionEventProxy eventFilter;
+	private Boolean filterQuestionText = true;
+	private Boolean filterKeywords = false;
+	private InstitutionProxy institutionFilter=null;
+	private String eventNameFilter = "";
+	private String questiuonStringFilter;
+	private ListBox eventListbox;
+	private CellTable<QuestionProxy> questionAccessTable;
 
 	@Inject
-	public ActivityUserDetails(PlaceUserDetails place,
-			McAppRequestFactory requests, PlaceController placeController) {
+	public ActivityUserDetails(PlaceUserDetails place, McAppRequestFactory requests, PlaceController placeController) {
 		super(place, requests, placeController);
 		this.userPlace = place;
         this.requests = requests;
         this.placeController = placeController;
-        
-//		this.activityUserDetailsMapper = new ActivityUserDetailsMapper(requests, placeController);
-//		this.activityManger = new ActivityManager(activityUserDetailsMapper,
-//				requests.getEventBus());
 	}
 
 	@Override
 	public String mayStop() {
-
 		return null;
 	}
 
 	@Override
 	public void onCancel() {
 		onStop();
-
 	}
 
 	@Override
 	public void onStop() {
 //		((SlidingPanel)widget).remove(view.asWidget());
-
-
 	}
-	
-	private UserDetailsView userDetailsView;
-
-	private InstituteAccessView instituteAccessView;
-
-
-	/**
-	 * Function is called from GWT-ActivityManager
-	 * the View for user Details will be created an tables are filled with data
-	 * calls @see medizin.client.a_nonroo.app.activities.ActivityUserDetails#init(PersonProxy) , 
-	 * Overriden funtion from @see com.google.gwt.activity.shared.Activity
-	 */
-	
-	/*@Override
-	public void start(AcceptsOneWidget widget, EventBus eventBus) {
-		super.start(widget, eventBus);
-
-	}*/
 	
 	@Override
 	public void start2(AcceptsOneWidget widget, EventBus eventBus) {
 		userDetailsView = new UserDetailsViewImpl();
 		userDetailsView.setName("hallo");
 		userDetailsView.setPresenter(this);
-		this.widget = widget;
 		this.view = userDetailsView;
         widget.setWidget(userDetailsView.asWidget());
-		//setTable(view.getTable());
-        
-		/*eventBus.addHandler(PlaceChangeEvent.TYPE, new PlaceChangeEvent.Handler() {
-			public void onPlaceChange(PlaceChangeEvent event) {
-				//updateSelection(event.getNewPlace());
-				// TODO implement
-			}
-		});*/
-		//init();
         AppLoader.setCurrentLoader(userDetailsView.getLoadingPopup());
-        
 		view.setDelegate(this);
-		
 		requests.find(userPlace.getProxyId()).fire(new BMEReceiver<Object>() {
 
-			/*public void onFailure(ServerFailure error){
-				Log.error(error.getMessage());
-			}*/
 			@Override
 			public void onSuccess(Object response) {
 				if(response instanceof PersonProxy){
@@ -159,13 +136,9 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 							init(responseProxy);
 						}
 					});
-					
 				}
-
-				
 			}
-		    });
-
+		});
 	}
 
 
@@ -179,39 +152,13 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 	 * @param PersonProxy person
 	 */
 	private void init(PersonProxy person) {
-
 		this.person = person;
 		Log.debug("Details für: "+person.getEmail());
 		view.setValue(person);
-
 		initEventAccess();
 		initQuestionAccess();
-		
-		/*requests.personRequest().myGetLoggedPerson().fire(new Receiver<PersonProxy>() {
-
-			@Override
-			public void onSuccess(PersonProxy response) {
-			
-				if(response!=null && response.getIsAdmin())
-				{	
-					initInstituteAccess();
-				}
-				else{
-					view.getUserAccessDetailPanel().selectTab(1);
-					view.getUserAccessDetailPanel().remove(0);
-					
-				}
-			}
-		});*/
 		initInstituteAccess();
 	}
-	
-	private EventAccessView eventAccessView;
-
-	private SingleSelectionModel<QuestionEventProxy> selectionModelEventAccess;
-
-	private HandlerRegistration rangeEventAccessChangeHandler;
-	
 	
 	private void initEventAccess() {
 		this.eventAccessView = userDetailsView.getEventAccessView();
@@ -238,8 +185,6 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 			}
 		});
 		
-		
-		
 		rangeEventAccessChangeHandler = questionEventTable.addRangeChangeHandler(new RangeChangeEvent.Handler() {
 			public void onRangeChange(RangeChangeEvent event) {
 				ActivityUserDetails.this.onRangeEventAccessChanged();
@@ -248,7 +193,6 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 	}
 	
 	protected void onRangeEventAccessChanged() {
-		
 		Log.debug("Im QuestionEvent.onRangeEventAccessChanged");
 		final Range range = questionEventTable.getVisibleRange();
 		AppLoader.setNoLoader();
@@ -259,50 +203,8 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 					// This activity is dead
 					return;
 				}
-//				idToRow.clear();
-//				idToProxy.clear();
-//				for (int i = 0, row = range.getStart(); i < values.size(); i++, row++) {
-//					QuestionEventProxy questionEvent = values.get(i);
-//					@SuppressWarnings("unchecked")
-//					// Why is this cast needed?
-//					EntityProxyId<QuestionEventProxy> proxyId = (EntityProxyId<QuestionEventProxy>) questionEvent.stableId();
-//					idToRow.put(proxyId, row);
-//					idToProxy.put(proxyId, questionEvent);
-//				}
-//				Log.debug("Im ActivityInsitutionEvent.onRangeChanged-before Table");
 				questionEventTable.setRowData(range.getStart(), values);
-//				Log.debug("Im ActivityInsitutionEvent.onRangeChanged-after Table");
-				
-//				finishPendingSelection();
-//			if (widget != null) {
-//		          widget.setWidget(view.asWidget());
-//				}
 			}
-			 /* @Override
-				public void onFailure(ServerFailure error) {
-						Log.warn(McAppConstant.ERROR_WHILE_DELETE + " in Institution:Event -" + error.getMessage());
-						if(error.getMessage().contains("ConstraintViolationException")){
-							Log.debug("Fehlen beim erstellen: Doppelter name");
-							// TODO mcAppFactory.getErrorPanel().setErrorMessage(McAppConstant.EVENT_IS_REFERENCED);
-						}
-						
-					
-				}
-				
-	          @Override
-				public void onViolation(Set<Violation> errors) {
-					Iterator<Violation> iter = errors.iterator();
-					String message = "";
-					while(iter.hasNext()){
-						message += iter.next().getMessage() + "<br>";
-					}
-					Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Event -" + message);
-					
-					ErrorPanel erorPanel = new ErrorPanel();
-			        	  erorPanel.setWarnMessage(message);
-
-					
-				}*/
 		};
 
 		fireEventAccessRangeRequest(range, callback, null, null);
@@ -315,9 +217,6 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 				
 				requests.find(requests.getProxyId(proxyId)).fire(new BMEReceiver<Object>() {
 
-				/*	public void onFailure(ServerFailure error){
-						Log.error(error.getMessage());
-					}*/
 					@Override
 					public void onSuccess(Object response) {
 						if(response instanceof InstitutionProxy){
@@ -330,8 +229,8 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 			else{
 				createEventAccessRangeRequest(range).fire(callback);
 			}
-			
-}
+	}
+	
     protected Request<java.util.List<medizin.client.proxy.UserAccessRightsProxy>> createEventAccessRangeRequest(Range range) {
         return requests.userAccessRightsRequest().findQuestionEventAccessByPersonNonRooNonRoo(person.getId(), range.getStart(), range.getLength()).with("questionEvent");
     }
@@ -340,14 +239,6 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
     	requests.userAccessRightsRequest().countQuestionEventAccessByPersonNonRoo(person.getId()).fire(callback);
     }
 
-	private QuestionAccessView questionAccessView;
-
-	private SingleSelectionModel<QuestionProxy> selectionModelQuestionAccess;
-
-	private HandlerRegistration rangeQuestionAccessChangeHandler;
-
-	private CellTable<UserAccessRightsProxy> questionTable;
-	
 	private void initQuestionAccess() {
 		this.questionAccessView = userDetailsView.getQuestionAccessView();
 		this.questionTable = questionAccessView.getTable();
@@ -373,8 +264,6 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 			}
 		});
 		
-		
-		
 		rangeQuestionAccessChangeHandler = questionTable.addRangeChangeHandler(new RangeChangeEvent.Handler() {
 			public void onRangeChange(RangeChangeEvent event) {
 				ActivityUserDetails.this.onRangeQuestionAccessChanged();
@@ -383,7 +272,6 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 		
 	}
 	
-	///////
 	protected void onRangeQuestionAccessChanged() {
 		
 		final Range range = questionTable.getVisibleRange();		
@@ -398,40 +286,15 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 				questionTable.setRowData(range.getStart(), values);
 
 			}
-			/* @Override
-				public void onFailure(ServerFailure error) {
-						Log.warn(McAppConstant.ERROR_WHILE_DELETE + " in Institution:Event -" + error.getMessage());
-						if(error.getMessage().contains("ConstraintViolationException")){
-							Log.debug("Fehlen beim erstellen: Doppelter name");
-							// TODO mcAppFactory.getErrorPanel().setErrorMessage(McAppConstant.EVENT_IS_REFERENCED);
-						}
-					
-				}
-				
-	           @Override
-				public void onViolation(Set<Violation> errors) {
-					Iterator<Violation> iter = errors.iterator();
-					String message = "";
-					while(iter.hasNext()){
-						message += iter.next().getMessage() + "<br>";
-					}
-					Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Event -" + message);
-					
-					ErrorPanel erorPanel = new ErrorPanel();
-			        	  erorPanel.setWarnMessage(message);
-
-					
-				}*/
 		};
 
 		fireQuestionAccessRangeRequest(range, callback);
 		
 	}
 	
-	private void fireQuestionAccessRangeRequest(final Range range,
-            final BMEReceiver<List<UserAccessRightsProxy>> callback) {
+	private void fireQuestionAccessRangeRequest(final Range range, final BMEReceiver<List<UserAccessRightsProxy>> callback) {
 			createQuestionAccessRangeRequest(range).fire(callback);
-}
+	}
     protected Request<java.util.List<medizin.client.proxy.UserAccessRightsProxy>> createQuestionAccessRangeRequest(Range range) {
         return requests.userAccessRightsRequest().findQuestionAccessQuestionByPersonNonRoo(person.getId(), range.getStart(), range.getLength()).with("question");
     }
@@ -439,18 +302,6 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
     protected void fireQuestionAccessCountRequest(BMEReceiver<java.lang.Long> callback) {
     	requests.userAccessRightsRequest().countQuestionAccessQuestionByPersonNonRoo(person.getId()).fire(callback);
     }
-    //////
-
-	/**
-	 * CellTable for EntitiesProxis of Type @see medizin.client.a_nonroo.app.request.QuestionAccessProxy
-	 * This table is designed for showing acceses to questions oven question events
-	 */
-	private CellTable<UserAccessRightsProxy> questionEventTable;
-
-
-
-
-
 
 
 	/**
@@ -468,29 +319,6 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
             	placeController.goTo(new PlaceUser(PlaceUser.PLACE_USER,userPlace.getHeight()));
             	
             }
-            /* @Override
-			public void onFailure(ServerFailure error) {
-					Log.warn(McAppConstant.ERROR_WHILE_DELETE + " in Institution:Event -" + error.getMessage());
-					if(error.getMessage().contains("ConstraintViolationException")){
-						Log.debug("Fehlen beim erstellen: Doppelter name");
-						//TODO mcAppFactory.getErrorPanel().setErrorMessage(McAppConstant.EVENT_IS_REFERENCED);
-					}
-				
-			}
-			@Override
-			public void onViolation(Set<Violation> errors) {
-				Iterator<Violation> iter = errors.iterator();
-				String message = "";
-				while(iter.hasNext()){
-					message += iter.next().getMessage() + "<br>";
-				}
-				Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Event -" + message);
-				
-				//TODO mcAppFactory.getErrorPanel().setErrorMessage(message);
-
-				
-			}*/
-            
         });
 		
 	}
@@ -517,54 +345,10 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 				Log.debug("Sucessfull deleted");
 				initEventAccess();
 			}
-
-			/*@Override
-			public void onFailure(ServerFailure error) {
-				Log.warn(McAppConstant.ERROR_WHILE_DELETE
-						+ " in Institution -" + error.getMessage());
-				if (error.getMessage().contains(
-						"ConstraintViolationException")) {
-					Log.debug("Fehlen beim erstellen: Doppelter name");
-					//TODO mcAppFactory.getErrorPanel().setErrorMessage(cAppConstant.INSTITUTION_IS_REFERENCED);
-				}
-
-			}
-
-			@Override
-			public void onViolation(Set<Violation> errors) {
-				Iterator<Violation> iter = errors.iterator();
-				String message = "";
-				while (iter.hasNext()) {
-					message += iter.next().getMessage() + "<br>";
-				}
-				Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION
-						+ " in Institution -" + message);
-				
-				//TODO mcAppFactory.getErrorPanel().setErrorMessage(message);
-
-			}
-*/
 		});
 		
 	}
 
-	EventAccessDialogbox dialogBoxEvent;
-	QuestionAccessDialogbox dialogBoxQuestion;
-	
-	InstituteAccessDialogBox dialogBoxInstitute;
-	
-	//ListBox institutionListbox;
-
-	private CellTable<QuestionEventProxy> eventAccessTable;
-
-	/**
-	 * Range change Handler for the Question Accesses
-	 */
-	private HandlerRegistration rangeQuestionAccessAllChangeHandler;
-
-	private QuestionEventProxy eventFilter;
-	
-	
 	/* (non-Javadoc)
 	 * @see medizin.client.ui.view.user.EventAccessView.Delegate#addNewEventAccessClicked()
 	 */
@@ -601,7 +385,6 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 
 					@Override
 					public String render(InstitutionProxy object) {
-						// TODO Auto-generated method stub
 						if(object!=null)
 						{
 							return object.getInstitutionName();
@@ -612,40 +395,8 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 						}
 					}
 				});
-				
-				/*Iterator<InstitutionProxy> iter = values.iterator();
-				institutionListbox.addItem("", "");
-				while(iter.hasNext()){
-					InstitutionProxy institution = iter.next();
-					institutionListbox.addItem(institution.getInstitutionName(), institution.stableId().toString());
-				}*/
-				
-				//eventAccessTable.setRowData( values);
 
 			}
-			/* @Override
-				public void onFailure(ServerFailure error) {
-						Log.warn(McAppConstant.ERROR_WHILE_DELETE + " in Institution:Event -" + error.getMessage());
-						if(error.getMessage().contains("ConstraintViolationException")){
-							Log.debug("Fehlen beim erstellen: Doppelter name");
-							// TODO mcAppFactory.getErrorPanel().setErrorMessage(McAppConstant.EVENT_IS_REFERENCED);
-						}
-					
-				}
-				@Override
-				public void onViolation(Set<Violation> errors) {
-					Iterator<Violation> iter = errors.iterator();
-					String message = "";
-					while(iter.hasNext()){
-						message += iter.next().getMessage() + "<br>";
-					}
-					Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Event -" + message);
-					
-					ErrorPanel erorPanel = new ErrorPanel();
-			        	  erorPanel.setWarnMessage(message);
-
-					
-				}*/
 		};
 
 		fireRequestAllInstitution( callback2);
@@ -686,20 +437,13 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 			});
 		}				
 	}
-	private Boolean filterQuestionText = true;
-	private Boolean filterKeywords = false;
 	
     protected void fireQuestionAccessCountByInstitutionOrEventOrQuestionNameOrKeywordRequest(BMEReceiver<java.lang.Long> callback) {
-    	
-    	requests.questionRequest().countQuestionByInstitutionOrEventOrQuestionNameOrKeyword(
-    			institutionFilter==null? null:institutionFilter.getId(), eventFilter==null? null:eventFilter.getId(), 
-    					questiuonStringFilter, filterQuestionText, filterKeywords).fire(callback);
+    	requests.questionRequest().countQuestionByInstitutionOrEventOrQuestionNameOrKeyword(institutionFilter==null? null:institutionFilter.getId(), eventFilter==null? null:eventFilter.getId(), questiuonStringFilter, filterQuestionText, filterKeywords).fire(callback);
     }
     
     protected void  fireQuestionAccessByInstitutionOrEventOrQuestionNameOrKeywordRequest(Range range, BMEReceiver<List<QuestionProxy>> callback){
-    	requests.questionRequest().findQuestionByInstitutionOrEventOrQuestionNameOrKeyword(
-    			institutionFilter==null? null:institutionFilter.getId(), eventFilter==null? null:eventFilter.getId(), 
-    					questiuonStringFilter, filterQuestionText, filterKeywords, range.getStart(), range.getLength()).fire(callback);
+    	requests.questionRequest().findQuestionByInstitutionOrEventOrQuestionNameOrKeyword(institutionFilter==null? null:institutionFilter.getId(), eventFilter==null? null:eventFilter.getId(), questiuonStringFilter, filterQuestionText, filterKeywords, range.getStart(), range.getLength()).fire(callback);
     }
 	
 	private void initQuestionAccessDialogbox() {
@@ -749,7 +493,6 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 		
 	}
 
-	///////
 	protected void onRangeEventAccessByInstitutionOrEventnameChanged() {
 		
 		final Range range = eventAccessTable.getVisibleRange();
@@ -764,37 +507,13 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 				eventAccessTable.setRowData(range.getStart(), values);
 
 			}
-			/* @Override
-				public void onFailure(ServerFailure error) {
-						Log.warn(McAppConstant.ERROR_WHILE_DELETE + " in Institution:Event -" + error.getMessage());
-						if(error.getMessage().contains("ConstraintViolationException")){
-							Log.debug("Fehlen beim erstellen: Doppelter name");
-							// TODO mcAppFactory.getErrorPanel().setErrorMessage(McAppConstant.EVENT_IS_REFERENCED);
-						}
-					
-				}
-				@Override
-				public void onViolation(Set<Violation> errors) {
-					Iterator<Violation> iter = errors.iterator();
-					String message = "";
-					while(iter.hasNext()){
-						message += iter.next().getMessage() + "<br>";
-					}
-					Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION + " in Event -" + message);
-					
-					ErrorPanel erorPanel = new ErrorPanel();
-			        	  erorPanel.setWarnMessage(message);
-
-					
-				}*/
 		};
 
 		fireEventAccessByInstitutionOrEventnameRangeRequest(range, callback);
 		
 	}
 	
-	private void fireEventAccessByInstitutionOrEventnameRangeRequest(final Range range,
-            final BMEReceiver<List<QuestionEventProxy>> callback) {
+	private void fireEventAccessByInstitutionOrEventnameRangeRequest(final Range range, final BMEReceiver<List<QuestionEventProxy>> callback) {
 			createEventAccessByInstitutionOrEventnameRangeRequest(range).fire(callback);
 	}
     protected Request<java.util.List<medizin.client.proxy.QuestionEventProxy>> createEventAccessByInstitutionOrEventnameRangeRequest(Range range) {
@@ -837,22 +556,12 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 		createRequestAllEvents().fire(callback);
 	}
 	
-	private String eventNameFilter = "";
-
-	private String questiuonStringFilter;
-
-	private ListBox eventListbox;
-
-	private CellTable<QuestionProxy> questionAccessTable;
     protected void fireQuestionAccessCountByInstitutionOrEventnameRequest(BMEReceiver<java.lang.Long> callback) {
-    	
     	requests.questionEventRequest().countQuestionEventsByInstitutionOrEvent(institutionFilter==null? null:institutionFilter.getId(), eventNameFilter).fire(callback);
     }
-    //////
 
 	@Override
 	public void deleteQuestionAccessClicked(UserAccessRightsProxy questionAccess) {
-		//AppLoader.setNoLoader();
 		AppLoader.setCurrentLoader(questionAccessView.getLoadingPopup());
 		requests.userAccessRightsRequest().remove()
 		.using(questionAccess).fire(new BMEReceiver<Void>() {
@@ -861,37 +570,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 				Log.debug("Sucessfull deleted");
 				initQuestionAccess();
 			}
-
-			/*@Override
-			public void onFailure(ServerFailure error) {
-				Log.warn(McAppConstant.ERROR_WHILE_DELETE
-						+ " in Institution -" + error.getMessage());
-				if (error.getMessage().contains(
-						"ConstraintViolationException")) {
-					Log.debug("Fehlen beim erstellen: Doppelter name");
-					//TODO mcAppFactory.getErrorPanel().setErrorMessage(cAppConstant.INSTITUTION_IS_REFERENCED);
-				}
-
-			}
-
-			@Override
-			public void onViolation(Set<Violation> errors) {
-				Iterator<Violation> iter = errors.iterator();
-				String message = "";
-				while (iter.hasNext()) {
-					message += iter.next().getMessage() + "<br>";
-				}
-				Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION
-						+ " in Institution -" + message);
-				
-				//TODO mcAppFactory.getErrorPanel().setErrorMessage(message);
-
-			}*/
-
 		});
-		
-	
-		
 	}
 
 	@Override
@@ -920,7 +599,6 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 
 					@Override
 					public String render(InstitutionProxy object) {
-						// TODO Auto-generated method stub
 						if(object!=null)
 						{
 							return object.getInstitutionName();
@@ -980,31 +658,6 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 
 	@Override
 	public void addClicked(AccessRights rights, QuestionEventProxy questionEvent) {
-		/*UserAccessRightsRequest request = requests.userAccessRightsRequest();
-		UserAccessRightsProxy eventAccess = request.create(UserAccessRightsProxy.class);
-
-		request.persist().using(eventAccess);
-
-		eventAccess.setAccRights(rights);
-		eventAccess.setPerson(person);
-		eventAccess.setQuestionEvent(questionEvent);
-//		eventAccess.setVersion(0);
-		
-		request.fire(new BMEReceiver<Void>() {
-			
-	          @Override
-	          public void onSuccess(Void response) {
-	        	  Log.info("PersonSucesfullSaved");
-	        	  
-	        		initEventAccess();
-	        		initEventAccessDialogbox();
-	          //	goTo(new PlaceUser(person.stableId()));
-	          }
-	          
-	          public void onFailure(ServerFailure error){
-					Log.error(error.getMessage());
-				}
-	      }); */
 		AppLoader.setCurrentLoader(dialogBoxEvent.getLoadingPopup());
 		requests.userAccessRightsRequest().persistQuestionEventAccess(rights, person.getId(), questionEvent.getId()).fire(new BMEReceiver<Boolean>() {
 
@@ -1025,10 +678,6 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 		
 	}
 
-	private InstitutionProxy institutionFilter=null;
-//	private InstitutionProxy institutionQuestionFilter=null;
-
-
 	@Override
 	public void filterInstitutionChanged(Long value) {
 		
@@ -1042,24 +691,6 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 					initEventAccessDialogbox();
 				}
 			});
-			
-			/*requests.find(requests.getProxyId(value)).fire(new BMEReceiver<Object>() {
-	
-				
-				public void onFailure(ServerFailure error){
-					Log.error(error.getMessage());
-				}
-				@Override
-				public void onSuccess(Object response) {
-					if(response instanceof InstitutionProxy){
-						Log.info(((InstitutionProxy) response).getInstitutionName());
-						institutionFilter=(InstitutionProxy)response;
-						initEventAccessDialogbox();
-					}
-	
-					
-				}
-			    });*/
 		}
 		else {
 			this.institutionFilter=null;
@@ -1071,29 +702,10 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 	@Override
 	public void filterEventChanged(String value) {
 		
-		
-		
 		if (value!=null&&!value.equals(""))
 		{
 			Log.debug(value);
 			this.eventNameFilter=value;
-//			requests.find(requests.getProxyId(value)).fire(new BMEReceiver<Object>() {
-//	
-//				
-//				public void onFailure(ServerFailure error){
-//					Log.error(error.getMessage());
-//				}
-//				@Override
-//				public void onSuccess(Object response) {
-//					if(response instanceof QuestionEventProxy){
-//						Log.info(((QuestionEventProxy) response).getEventName());
-//						eventFilter=(QuestionEventProxy)response;
-//						initEventAccessDialogbox();
-//					}
-//	
-//					
-//				}
-//			    });
 		}
 		else {
 			this.eventNameFilter="";
@@ -1120,24 +732,6 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 						initQuestionAccessDialogbox();
 					}
 				});
-				
-				/*requests.find(requests.getProxyId(value)).fire(new BMEReceiver<Object>() {
-		
-					
-					public void onFailure(ServerFailure error){
-						Log.error(error.getMessage());
-					}
-					@Override
-					public void onSuccess(Object response) {
-						if(response instanceof QuestionEventProxy){
-							Log.info(((QuestionEventProxy) response).getEventName());
-							eventFilter=(QuestionEventProxy)response;
-							initQuestionAccessDialogbox();
-						}
-		
-						
-					}
-				    });*/
 			}
 			else {
 				this.eventFilter=null;
@@ -1152,33 +746,6 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 
 		@Override
 		public void addClicked(AccessRights rights, QuestionProxy question) {
-			/*Log.debug("im add clicked");
-			UserAccessRightsRequest request = requests.userAccessRightsRequest();
-			UserAccessRightsProxy eventAccess = request.create(UserAccessRightsProxy.class);
-
-			request.persist().using(eventAccess);
-
-			eventAccess.setAccRights(rights);
-			eventAccess.setPerson(person);
-			eventAccess.setQuestion(question);
-//			eventAccess.setVersion(0);
-			
-			request.fire(new BMEReceiver<Void>() {
-				
-		          @Override
-		          public void onSuccess(Void response) {
-		        	  Log.info("eventAccessnSucesfullSaved");
-		        	  
-		        		initQuestionAccess();
-		        		initQuestionAccessDialogbox();
-		          //	goTo(new PlaceUser(person.stableId()));
-		          }
-		          
-		          public void onFailure(ServerFailure error){
-						Log.error(error.getMessage());
-					}
-		      }); */
-			
 			AppLoader.setCurrentLoader(dialogBoxQuestion.getLoadingPopup());
 			requests.userAccessRightsRequest().persistQuestionAccess(rights, person.getId(), question.getId()).fire(new BMEReceiver<Boolean>() {
 
@@ -1215,24 +782,6 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 						initQuestionAccessDialogbox();
 					}
 				});
-				
-				/*requests.find(requests.getProxyId(value)).fire(new BMEReceiver<Object>() {
-		
-					
-					public void onFailure(ServerFailure error){
-						Log.error(error.getMessage());
-					}
-					@Override
-					public void onSuccess(Object response) {
-						if(response instanceof InstitutionProxy){
-							Log.info(((InstitutionProxy) response).getInstitutionName());
-							institutionFilter=(InstitutionProxy)response;
-							initQuestionAccessDialogbox();
-						}
-		
-						
-					}
-				    });*/
 			}
 			else {
 				this.institutionFilter=null;
@@ -1287,11 +836,6 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 							initInstituteAccess();
 							initInstituteAccessDialogBox();
 						}
-						
-						/*@Override
-						public void onFailure(ServerFailure error) {
-							Log.info(error.getMessage());
-						}*/
 					});
 				}
 			});
@@ -1301,7 +845,6 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 		
 		public void initInstituteAccess()
 		{
-			//this.instituteAccessView = view.getInstituteAccessView();
 			this.instituteAccessView = userDetailsView.getInstituteAccessView();
 			instituteAccessView.setDelegate(this);
 			instituteAccessView.setPresenter(this);
@@ -1341,7 +884,6 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 
 		@Override
 		public void deleteInstituteAccessClicked(UserAccessRightsProxy event) {
-			//AppLoader.setNoLoader();
 			AppLoader.setCurrentLoader(instituteAccessView.getLoadingPopup());
 			requests.userAccessRightsRequest().remove().using(event).fire(new BMEReceiver<Void>() {
 
@@ -1349,10 +891,6 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 				public void onSuccess(Void response) {
 					initInstituteAccess();
 				}
-				/*@Override
-				public void onFailure(ServerFailure error) {
-					Log.info(error.getMessage());
-				}*/
 			});
 		}
 
@@ -1365,20 +903,6 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 			dialogBoxInstitute.setPresenter(this);
 			dialogBoxInstitute.setDelegate(this);
 			
-			/*requests.institutionRequest().findAllInstitutions().fire(new BMEReceiver<List<InstitutionProxy>>() {
-
-				@Override
-				public void onSuccess(List<InstitutionProxy> response) {
-					
-					dialogBoxInstitute.getTable().setRowCount(response.size(), true);					
-					dialogBoxInstitute.getTable().setRowData(dialogBoxInstitute.getTable().getVisibleRange().getStart(), response);
-				}
-				
-				@Override
-				public void onFailure(ServerFailure error) {
-					Log.info(error.getMessage());
-				}
-			});*/
 			initInstituteAccessDialogBox();
 			
 			dialogBoxInstitute.getTable().addRangeChangeHandler(new RangeChangeEvent.Handler() {
@@ -1422,8 +946,5 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 		}
 
 		@Override
-		public void placeChanged(Place place) {
-			//updateSelection(event.getNewPlace());
-			// TODO implement
-		}
+		public void placeChanged(Place place) {}
 }

@@ -22,7 +22,6 @@ import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.cellview.client.AbstractHasData;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
-import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.view.client.ProvidesKey;
 import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.RangeChangeEvent;
@@ -32,12 +31,10 @@ import com.google.inject.Inject;
 import com.google.web.bindery.requestfactory.shared.EntityProxyId;
 /**
  * Activity Handling UserViews.
- * @author masterthesis
  *
  */
 public class ActivityUser extends AbstractActivityWrapper implements UserView.Presenter, UserView.Delegate {
 
-	private PlaceUser userPlace;
 	private AcceptsOneWidget widget;
 	private UserView view;
 	private AdvanceCellTable<PersonProxy> table;
@@ -45,7 +42,6 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 	private ActivityUserMapper activityUserMapper;
 	private SingleSelectionModel<PersonProxy> selectionModel;
 	private HandlerRegistration rangeChangeHandler;
-	private ActivityUser activityUser;
 	private McAppRequestFactory requests;
 	private PlaceController placeController;
 	private EntityProxyId<?> proxyId = null;
@@ -56,17 +52,8 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 	@Inject
 	public ActivityUser(PlaceUser place, McAppRequestFactory requests,PlaceController placeController) {
 		super(place, requests, placeController);
-		this.userPlace = place;
         this.requests = requests;
         this.placeController = placeController;
-        this.activityUser=this;
-        
-//        // Filter
-//		CachingActivityMapper cached = new CachingActivityMapper(activityUserMapper);
-//		FilterForUserDeitalPlaces filterForUserDeitalPlaces = new FilterForUserDeitalPlaces();
-//		ActivityMapper masterActivityMap = new FilteredActivityMapper(filterForUserDeitalPlaces, cached);
-//		activityManger = new ActivityManager(masterActivityMap, requests.getEventBus());
-        
 		this.activityUserMapper = new ActivityUserMapper(requests, placeController);
 		this.activityManger = new ActivityManager(activityUserMapper,requests.getEventBus());
 	}
@@ -104,75 +91,21 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 		this.table = table;
 	}
 	
-	
-	/*@Override
-	public void start(final AcceptsOneWidget widget, final EventBus eventBus) {
-		requests.questionAccessRequest().checkInstitutionalAdmin().fire(new BMEReceiver<Boolean>() {
-
-			@Override
-			public void onSuccess(Boolean response) {
-			if(response){
-				 start2(widget, eventBus);
-				}
-			}
-		});
-		//super.start(widget, eventBus);
-
-	}*/
-	
-	@Override
-	public void start2(final AcceptsOneWidget widget, final EventBus eventBus) {
-		
-		if (isAdminOrInstitutionalAdmin())
-		{
-			start3(widget, eventBus);
-		}
-
-		/*requests.userAccessRightsRequest().checkInstitutionalAdmin().fire(new BMEReceiver<Boolean>() {
-
-			@Override
-			public void onSuccess(Boolean response) {
-			if(response){
-				 start3(widget, eventBus);
-				}
-			}
-		});*/
-	}
-	
-	public void start3(AcceptsOneWidget widget, EventBus eventBus) {
+	public void start2(AcceptsOneWidget widget, EventBus eventBus) {
 		Log.info("Activity Person start");
 		
 		UserView userView = new UserViewImpl();
-		
 		userView.setPresenter(this);
 		this.widget = widget;
 		this.view = userView;
 		widget.setWidget(this.view.asWidget());
 		setTable(view.getTable());
-		 
-		
-		
-		SplitLayoutPanel splitLayoutPanel= view.getSplitLayoutPanel();
-		
-		/*eventBus.addHandler(PlaceChangeEvent.TYPE,
-				new PlaceChangeEvent.Handler() {
-					public void onPlaceChange(PlaceChangeEvent event) {
-
-						Place place = event.getNewPlace();
-						if(place instanceof PlaceUserDetails){
-							init();
-						}
-						
-					}
-				});*/
 		
 		RecordChangeEvent.register(requests.getEventBus(), (UserViewImpl)view);
 		//adding column mouse out of table.
 		((UserViewImpl)view).addColumnOnMouseout();
 		
 		init();
-		
-		
 
 		activityManger.setDisplay(view.getDetailsPanel());
 
@@ -181,17 +114,15 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 		selectionModel = new SingleSelectionModel<PersonProxy>(keyProvider);
 		table.setSelectionModel(selectionModel);
 		
-		
 		selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-					public void onSelectionChange(SelectionChangeEvent event) {
-						PersonProxy selectedObject = selectionModel.getSelectedObject();
-						if (selectedObject != null) {
-							Log.debug(selectedObject.getEmail() + " selected!");
-							showDetails(selectedObject);
-						}
-					}
-				});
-
+			public void onSelectionChange(SelectionChangeEvent event) {
+				PersonProxy selectedObject = selectionModel.getSelectedObject();
+				if (selectedObject != null) {
+					Log.debug(selectedObject.getEmail() + " selected!");
+					showDetails(selectedObject);
+				}
+			}
+		});
 		
 		view.setDelegate(this);
 	}
@@ -219,10 +150,10 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 		});
 
 		rangeChangeHandler = table.addRangeChangeHandler(new RangeChangeEvent.Handler() {
-					public void onRangeChange(RangeChangeEvent event) {
-						ActivityUser.this.onRangeChanged();
-					}
-				});
+			public void onRangeChange(RangeChangeEvent event) {
+				ActivityUser.this.onRangeChanged();
+			}
+		});
 	}
 	
 	protected void onRangeChanged() {
@@ -259,40 +190,22 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 				public void onSuccess(Object response) {
 					if (response != null && response instanceof PersonProxy)
 					{
-						PersonProxy selectedProxy = (PersonProxy) response;
-						selectionModel.setSelected(selectedProxy, true);
-						int start = table.getRowCount() - range.getLength();
-						table.setPageStart((start < 0 ? 0 : start));
+						final PersonProxy selectedProxy = (PersonProxy) response;
+						requests.personRequest().getRangeStartForPerson(selectedProxy.getId(),sortname,sortorder,searchValue,range.getLength()).fire(new BMEReceiver<Integer>() {
+
+							@Override
+							public void onSuccess(Integer start) {
+								selectionModel.setSelected(selectedProxy, true);
+								table.setPageStart(start < 0 ? 0 : start);
+							}
+						});
+						
 					}
 					proxyId = null;
 				}
 			});
 		}
 	}
-
-	/*private void getLastPage() {
-		requests.personRequest().findAllPersonCount().fire(new BMEReceiver<Long>() {
-			@Override
-			public void onSuccess(Long response) {
-				if (view == null) {
-					// This activity is dead
-					return;
-				}
-				int rows = response.intValue();
-				table.setRowCount(rows, true);
-				if (rows > 0) {
-					int pageSize = table.getVisibleRange().getLength();
-					int remnant = rows % pageSize;
-					if (remnant == 0) {
-						table.setVisibleRange(rows - pageSize, pageSize);
-					} else {
-						table.setVisibleRange(rows - remnant, pageSize);
-					}
-				}
-				onRangeChanged();
-			}
-		});
-	}*/
 
 	private void showDetails(PersonProxy person) {
 		Log.debug("Person Stable id: " + person.stableId() + " " + PlaceUserDetails.Operation.DETAILS);
@@ -307,17 +220,12 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 	@Override
 	public void newClicked() {
 		placeController.goTo(new PlaceUserDetails(PlaceUserDetails.Operation.CREATE,view.getScrollDetailPanel().getOffsetHeight()));
-		
 	}
 
 	@Override
 	public void placeChanged(Place place) {
-		if(place instanceof PlaceUserDetails){
-			if (((PlaceUserDetails)place).getProxyId() != null)
-				proxyId  = ((PlaceUserDetails)place).getProxyId();
-		}
-		
 		if(place instanceof PlaceUser) {
+			proxyId  = ((PlaceUser)place).getProxyId();
 			init();
 		}
 	}
@@ -325,7 +233,6 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 	@Override
 	public void performSearch(String value) {
 		Log.info("search text is" + value);
-		
 		this.searchValue = value;
 		init();
 	}

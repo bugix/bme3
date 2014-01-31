@@ -35,4 +35,6 @@ public interface PersonRequest extends PersonRequest_Roo_Gwt {
 	Request<List<PersonProxy>> findAllUsersOfGivenSearch(String sortColumn,Sorting sortOrder,Integer start, Integer length,String value);
 
 	Request<Long> countAllUsersOfGivenSearch(String value);
+
+	Request<Integer> getRangeStartForPerson(Long personId,String sortColumn,Sorting sortOrder,String value, Integer length);
 }

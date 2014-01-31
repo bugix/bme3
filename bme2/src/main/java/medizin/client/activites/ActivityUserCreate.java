@@ -25,29 +25,21 @@ import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 /**
  * Activity for creating a new User
- * @author masterthesis
  *
  */
 public class ActivityUserCreate  extends AbstractActivityWrapper  implements UserEditView.Presenter, UserEditView.Delegate {
 	
 	
 	private PlaceUserDetails userPlace;
-
-	private AcceptsOneWidget widget;
 	private UserEditView view;
 	private PlaceUserDetails.Operation operation;
 	private PersonProxy person;
-	
 	private McAppRequestFactory requests;
 	private PlaceController placeController;
-
-	private boolean save;
-	
 	public BmeConstants constants = GWT.create(BmeConstants.class);
 
 	@Inject
-	public ActivityUserCreate(PlaceUserDetails place,
-			McAppRequestFactory requests, PlaceController placeController) {
+	public ActivityUserCreate(PlaceUserDetails place, McAppRequestFactory requests, PlaceController placeController) {
 		super(place, requests, placeController);
 		this.userPlace = place;
         this.requests = requests;
@@ -55,9 +47,7 @@ public class ActivityUserCreate  extends AbstractActivityWrapper  implements Use
 	}
 
 	@Inject
-	public ActivityUserCreate(PlaceUserDetails place,
-			McAppRequestFactory requests, PlaceController placeController,
-			PlaceUserDetails.Operation operation) {
+	public ActivityUserCreate(PlaceUserDetails place,McAppRequestFactory requests, PlaceController placeController,	PlaceUserDetails.Operation operation) {
 		super(place, requests, placeController);
 		this.userPlace = place;
         this.requests = requests;
@@ -67,55 +57,23 @@ public class ActivityUserCreate  extends AbstractActivityWrapper  implements Use
 
 	@Override
 	public String mayStop() {
-	/*	if(!save)
-			return McAppConstant.DO_NOT_SAVE_CHANGES;
-		else*/
-			return null;
+		return null;
 	}
 
 	@Override
 	public void onCancel() {
 		onStop();
-
 	}
 
 	@Override
-	public void onStop() {
-		
-
-	}
-	
-	//private RequestFactoryEditorDriver<PersonProxy,UserEditViewImpl> editorDriver;
-
-	
-	/*@Override
-	public void start(AcceptsOneWidget widget, EventBus eventBus) {
-		super.start(widget, eventBus);
-
-	}*/
+	public void onStop() {}
 	
 	@Override
 	public void start2(AcceptsOneWidget widget, EventBus eventBus) {
 		UserEditView userEditView = new UserEditViewImpl(reciverMap);
-
-		this.widget = widget;
 		this.view = userEditView;
-		//editorDriver = view.createEditorDriver();
 		view.setDelegate(this);
-
-//		view.initialiseDriver(requests);
         widget.setWidget(userEditView.asWidget());
-		//setTable(view.getTable());
-        
-		/*eventBus.addHandler(PlaceChangeEvent.TYPE, new PlaceChangeEvent.Handler() {
-			public void onPlaceChange(PlaceChangeEvent event) {
-				
-				//updateSelection(event.getNewPlace());
-				// TODO implement
-			}
-		});*/
-		//init();
-		
 		requests.personRequest().myGetLoggedPerson().fire(new BMEReceiver<PersonProxy>() {
 
 			@Override
@@ -126,9 +84,8 @@ public class ActivityUserCreate  extends AbstractActivityWrapper  implements Use
 					view.disableAdminField(false);
 			}
 		});
-		// Added this to get doctor by name ASC - Manish.
+		// Added this to get doctor by name ASC.
 		requests.doctorRequest().findAllDoctorByNameASC().fire(new BMEReceiver<List<DoctorProxy>>() {
-		//requests.doctorRequest().findAllDoctors().fire(new BMEReceiver<List<DoctorProxy>>() {
 
 			@Override
 			public void onSuccess(List<DoctorProxy> response) {
@@ -150,90 +107,41 @@ public class ActivityUserCreate  extends AbstractActivityWrapper  implements Use
 		if(this.operation==PlaceUserDetails.Operation.EDIT){
 			Log.info("edit");
 			AppLoader.setCurrentLoader(view.getLoadingPopup());			
-		requests.find(userPlace.getProxyId()).fire(new BMEReceiver<Object>() {
+			requests.find(userPlace.getProxyId()).fire(new BMEReceiver<Object>() {
 
-			/*public void onFailure(ServerFailure error){
-				Log.error(error.getMessage());
-			}*/
-			@Override
-			public void onSuccess(Object response) {
-				if(response instanceof PersonProxy){
-					Log.info(((PersonProxy) response).getEmail());
-					//init((PersonProxy) response);
-					person=(PersonProxy)response;
-					
-					requests.personRequest().findPerson(person.getId()).with("doctor").fire(new BMEReceiver<PersonProxy>() {
-
-						@Override
-						public void onSuccess(PersonProxy response) {
-							person = response;
-							init();
-						}
-					});
-					
+				@Override
+				public void onSuccess(Object response) {
+					if(response instanceof PersonProxy){
+						Log.info(((PersonProxy) response).getEmail());
+						person=(PersonProxy)response;
+						requests.personRequest().findPerson(person.getId()).with("doctor").fire(new BMEReceiver<PersonProxy>() {
+	
+							@Override
+							public void onSuccess(PersonProxy response) {
+								person = response;
+								init();
+							}
+						});
+					}
 				}
-
-				
-			}
 		    });
 		}
 		else{
-			
 			Log.info("neuePerson");
-			//userPlace.setProxyId(person.stableId());
 			init();
 		}
 		
 		view.setDelegate(this);
 	}
 	private void init() {
-		if(person==null){
-			/*PersonProxy person = request.create(PersonProxy.class);
-			this.person=person;
-			view.setEditTitle(false);*/
-		}
-		else
-		{
+		if(person!=null){
 			view.setValue(person);
-		}
-		
-		Log.info("edit");
-	      
-	    Log.info("persist");
-	     //   request.persist().using(person);
-		//editorDriver.edit(person, request);
-
-		Log.info("flush");
-		//editorDriver.flush();
-		this.person = person;
-		//Log.debug("Create für: "+person.getEmail());
-//		view.setValue(person);
-		
+		}		
 	}
-	
-	
-	/*private void init(PersonProxy person) {
-
-		this.person = person;
-		PersonRequest request = requests.personRequest();
-		request.persist().using(person);
-		Log.info("edit");
-		editorDriver.edit(person, request);
-
-		Log.info("flush");
-		editorDriver.flush();
-		Log.debug("Edit für: "+person.getEmail());
-//		view.setValue(person);
-		
-	}*/
-
-
-
 
 	@Override
 	public void goTo(Place place) {
-		// TODO Auto-generated method stub
-		
+		placeController.goTo(place);
 	}
 
 	@Override
@@ -242,17 +150,10 @@ public class ActivityUserCreate  extends AbstractActivityWrapper  implements Use
 			placeController.goTo(new PlaceUserDetails(person.stableId(), PlaceUserDetails.Operation.DETAILS,userPlace.getHeight()));
 		else
 			placeController.goTo(new PlaceUser(PlaceUser.PLACE_USER,userPlace.getHeight()));
-		
 	}
 
 	@Override
 	public void saveClicked() {
-		save=true;
-		
-		/*if(view.getName().getText().equals("") || view.getPrename().getText().equals("") || view.getEmail().getText().equals("") || view.getAlternativEmail().getText().equals("") || view.getPhoneNumber().getText().equals("")){
-			ConfirmationDialogBox.showOkDialogBox(constants.information(),constants.userCreateConstraintsViolationMessage());
-			return;
-		}*/
 		PersonRequest personRequest = requests.personRequest();
 		PersonProxy personProxy;
 		
@@ -288,7 +189,7 @@ public class ActivityUserCreate  extends AbstractActivityWrapper  implements Use
 		personRequest.persist().using(personProxy).fire(new BMEReceiver<Void>(reciverMap) {
 			@Override
 			public void onSuccess(Void response) {
-				placeController.goTo(new PlaceUser(PlaceUser.PLACE_USER,userPlace.getHeight()));
+				placeController.goTo(new PlaceUser(PlaceUser.PLACE_USER,userPlace.getHeight(),finalPersonProxy.stableId()));
 				placeController.goTo(new PlaceUserDetails(finalPersonProxy.stableId(), PlaceUserDetails.Operation.DETAILS, userPlace.getHeight()));
 			}			
 		});	
@@ -296,8 +197,6 @@ public class ActivityUserCreate  extends AbstractActivityWrapper  implements Use
 
 	@Override
 	public void placeChanged(Place place) {
-		//updateSelection(event.getNewPlace());
-		// TODO implement
 	}
 
 }

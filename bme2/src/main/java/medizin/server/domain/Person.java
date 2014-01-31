@@ -646,4 +646,26 @@ public class Person {
 		return q.getResultList();
 
 	}
+	
+	public static Integer getRangeStartForPerson(Long personId,String sortColumn,Sorting sortOrder,String searchValue,Integer length) {
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+		Root<Person> from = criteriaQuery.from(Person.class);
+		criteriaQuery.select(from.<Long>get("id"));
+		
+		final Predicate predicate = predicateUsersOfGivenSearch(searchValue,criteriaBuilder, from);
+		criteriaQuery.where(predicate);
+		
+		if(sortOrder==Sorting.ASC)
+		{
+			criteriaQuery.orderBy(criteriaBuilder.asc(from.get(sortColumn)));
+		}else{
+			criteriaQuery.orderBy(criteriaBuilder.desc(from.get(sortColumn)));
+		}
+		TypedQuery<Long> q = entityManager().createQuery(criteriaQuery);
+		List<Long> list = q.getResultList();
+		log.info("Query String: " + q.unwrap(Query.class).getQueryString());
+		return (list.indexOf(personId) / length) * length;
+		
+	}
 }
