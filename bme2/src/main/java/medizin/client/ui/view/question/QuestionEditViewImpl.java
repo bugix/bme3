@@ -24,6 +24,7 @@ import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.dialogbox.receiver.ReceiverDialog;
 import medizin.client.ui.widget.mcs.McCheckboxEditor;
+import medizin.client.ui.widget.process.ApplicationLoadingView;
 import medizin.client.ui.widget.resource.dndview.ResourceView;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.ui.widget.resource.event.ResourceAddedEvent;
@@ -197,6 +198,9 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 	
 	@UiField
 	CheckBox forcedActive;
+	
+	@UiField
+	ApplicationLoadingView loadingPopup;
 	
 	private ResourceView viewer;
 	private ImageViewer imageViewer;
@@ -1067,5 +1071,12 @@ public class QuestionEditViewImpl extends Composite implements QuestionEditView 
 			return true;	
 		}
 	}
+
+	@Override
+	public ApplicationLoadingView getLoadingPopup() {
+		return loadingPopup;
+	}
+	
+	
 
 }

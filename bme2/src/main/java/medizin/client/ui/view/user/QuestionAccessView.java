@@ -4,6 +4,7 @@ package medizin.client.ui.view.user;
 import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.proxy.UserAccessRightsProxy;
+import medizin.client.ui.widget.process.ApplicationLoadingView;
 
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.cellview.client.CellTable;
@@ -30,6 +31,8 @@ public interface QuestionAccessView extends IsWidget {
     String[] getPaths();
     
     void setDelegate(Delegate delegate);
+
+	ApplicationLoadingView getLoadingPopup();
     
 
 

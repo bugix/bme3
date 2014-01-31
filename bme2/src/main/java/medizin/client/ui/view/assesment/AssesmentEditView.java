@@ -7,6 +7,7 @@ import medizin.client.proxy.AssesmentProxy;
 import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.McProxy;
 import medizin.client.proxy.PersonProxy;
+import medizin.client.ui.widget.process.ApplicationLoadingView;
 
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -46,4 +47,6 @@ public interface AssesmentEditView extends IsWidget {
 	void disableInstituteField();
 
 	void setInstitutionValue(InstitutionProxy institutionProxy);
+
+	ApplicationLoadingView getLoadingPopup();
 }

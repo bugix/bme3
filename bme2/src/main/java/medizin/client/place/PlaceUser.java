@@ -21,6 +21,14 @@ public class PlaceUser extends AbstractPlace {
 		super(placeName, proxyId);
 	}
 
+	public PlaceUser(String placeName, boolean reload, Integer height) {
+		super(placeName,reload,height);
+	}
+
+	public PlaceUser(String placeName, Integer height) {		
+		super(placeName, height);
+	}
+
 	@Prefix(PLACE_USER)
 	public static class Tokenizer extends AbstractPlace.AbstractTokenizer<PlaceUser> {
 

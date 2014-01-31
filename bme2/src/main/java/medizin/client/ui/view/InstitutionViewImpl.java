@@ -23,6 +23,7 @@ import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEvent;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEventHandler;
 import medizin.client.ui.widget.pager.MySimplePager;
+import medizin.client.ui.widget.process.ApplicationLoadingView;
 import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
@@ -83,6 +84,9 @@ public class InstitutionViewImpl extends Composite implements InstitutionView, R
 	@UiField
 	SimplePanel slidingPanel;
 	
+	@UiField
+	ScrollPanel scrollDetailPanel;
+	
 	@UiField(provided=true)
 	AdvanceCellTable<InstitutionProxy> table;
 	
@@ -91,6 +95,9 @@ public class InstitutionViewImpl extends Composite implements InstitutionView, R
 	
 	@UiField (provided = true)
 	QuickSearchBox searchBox;
+
+	@UiField
+	ApplicationLoadingView loadingPopup;
 	
 	private Map<String, String> columnName=new HashMap<String, String>();
 	private List<String> columnNameorder = new ArrayList<String>();
@@ -636,4 +643,14 @@ public class InstitutionViewImpl extends Composite implements InstitutionView, R
 	private List<String> getColumnNameorder() {
 		return columnNameorder;
 	}
+	
+	@Override
+	public ScrollPanel getScrollDetailPanel() {
+		return scrollDetailPanel;
+	}
+
+	@Override
+	public ApplicationLoadingView getLoadingPopup() {
+			return loadingPopup;
+		}
 }

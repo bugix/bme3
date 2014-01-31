@@ -12,6 +12,7 @@ import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.question.QuestionView;
 import medizin.client.ui.view.question.QuestionViewImpl;
 import medizin.client.ui.widget.Sorting;
+import medizin.client.ui.widget.process.AppLoader;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.activity.shared.ActivityManager;
@@ -107,7 +108,7 @@ public class ActivityDeactivatedQuestion extends AbstractActivityWrapper impleme
 		
 	}
 	private void showDetails(QuestionProxy selectedObject) {
-		placeController.goTo(new PlaceDeactivatedQuestionDetails(selectedObject.stableId()));
+		placeController.goTo(new PlaceDeactivatedQuestionDetails(selectedObject.stableId(),view.getScrollDetailPanel().getOffsetHeight()));
 	}
 
 	private void init() {
@@ -135,7 +136,7 @@ public class ActivityDeactivatedQuestion extends AbstractActivityWrapper impleme
 	
 	private void onRangeChanged() {
 		final Range range = table.getVisibleRange();
-
+		AppLoader.setNoLoader();
 		requests.questionRequest().findDeactivatedQuestion(sortname,sortorder, view.getSerachBox().getValue(), view.getSearchValue(), range.getStart(), range.getLength()).with(view.getPaths()).with("autor").fire(new BMEReceiver<List<QuestionProxy>>() {
 			@Override
 			public void onSuccess(List<QuestionProxy> values) {
@@ -176,6 +177,7 @@ public class ActivityDeactivatedQuestion extends AbstractActivityWrapper impleme
 	@Override
 	public void performSearch(String searchText) {
 		
+		AppLoader.setNoLoader();
 		requests.questionRequest().countDeactivatedQuestion(view.getSerachBox().getValue(), view.getSearchValue()).fire(new BMEReceiver<Integer>() {
 			@Override
 			public void onSuccess(Integer response) {

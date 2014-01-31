@@ -1,5 +1,6 @@
 package medizin.client.ui.widget.process;
 
+import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.DialogBox;
@@ -7,11 +8,9 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class ApplicationLoadingPopupView extends DialogBox {
 
-	private static ApplicationLoadingPopupViewImplUiBinder uiBinder = GWT
-			.create(ApplicationLoadingPopupViewImplUiBinder.class);
+	private static ApplicationLoadingPopupViewImplUiBinder uiBinder = GWT.create(ApplicationLoadingPopupViewImplUiBinder.class);
 
-	interface ApplicationLoadingPopupViewImplUiBinder extends
-			UiBinder<Widget, ApplicationLoadingPopupView> {
+	interface ApplicationLoadingPopupViewImplUiBinder extends UiBinder<Widget, ApplicationLoadingPopupView> {
 	}
 
 	static private ApplicationLoadingPopupView applicationLoadingPopupViewImpl;
@@ -36,10 +35,36 @@ public class ApplicationLoadingPopupView extends DialogBox {
 				applicationLoadingPopupViewImpl = new ApplicationLoadingPopupView();
 			}
 			if (!applicationLoadingPopupViewImpl.isShowing()) {
-				applicationLoadingPopupViewImpl.show();
+				showCurrentLoading();
+
 			}
 		} else if (applicationLoadingPopupViewImpl != null) {
-			applicationLoadingPopupViewImpl.hide();
+			hideAll();
+
+		}
+	}
+
+	private static void hideAll() {
+		applicationLoadingPopupViewImpl.hide();
+		if (AppLoader.currentLoaders != null && AppLoader.currentLoaders.size() > 0) {
+			Log.info("IN custom loader hide");
+			for (ApplicationLoadingView loadingView : AppLoader.currentLoaders) {
+				loadingView.setVisible(false);
+			}
+			AppLoader.currentLoaders.clear();
+		}
+	}
+
+	private static void showCurrentLoading() {
+		if (AppLoader.currentLoaders != null && AppLoader.currentLoaders.size() > 0) {
+			Log.info("IN custom loader");
+			Log.info("size : " + AppLoader.currentLoaders.size());
+			for (ApplicationLoadingView loadingView : AppLoader.currentLoaders) {
+				loadingView.setVisible(true);
+			}
+		} else {
+			Log.info("Full loader show");
+			applicationLoadingPopupViewImpl.show();
 		}
 	}
 

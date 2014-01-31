@@ -18,6 +18,7 @@ import medizin.client.ui.view.AcceptMatrixAnswerSubViewImpl;
 import medizin.client.ui.view.question.QuestionDetailsView;
 import medizin.client.ui.view.question.QuestionDetailsViewImpl;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
+import medizin.client.ui.widget.process.AppLoader;
 import medizin.shared.QuestionTypes;
 import medizin.shared.Status;
 
@@ -119,7 +120,7 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 	
 	@Override
 	public void editClicked() {
-		goTo(new PlaceAcceptQuestionDetails(question.stableId(), PlaceQuestionDetails.Operation.EDIT));
+		goTo(new PlaceAcceptQuestionDetails(question.stableId(), PlaceQuestionDetails.Operation.EDIT, place.getHeight()));
 	}
 	
 	@Override
@@ -175,12 +176,12 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 				goTo(new PlaceAcceptQuestion(""));
 			}
 		});*/
-		
+		AppLoader.setNoLoader();
 		requests.questionRequest().questionAccepted(question, (userLoggedIn.getIsAdmin() || personRightProxy.getIsInstitutionalAdmin())).fire(new BMEReceiver<Void>() {
 
 			@Override
 			public void onSuccess(Void response) {
-				goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));				
+				goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION,place.getHeight()));				
 			}
 		});
 	}
@@ -209,7 +210,7 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 	public void onRangeChanged(final QuestionProxy questionProxy, final AbstractHasData<AnswerProxy> table) {
 	
 		final Range range = table.getVisibleRange();
-
+		AppLoader.setNoLoader();
 		requests.answerRequest().countAnswerForAcceptQuestion(questionProxy.getId()).with("question", "autor", "rewiewer").fire(new BMEReceiver<Long>() {
 
 			@Override
@@ -228,6 +229,7 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 	
 	void findAnswersEntriesNonAcceptedAdminByQuestion(Long questionId, final Integer start, Integer length, final AbstractHasData<AnswerProxy> table){
 		
+		AppLoader.setNoLoader();
 		requests.answerRequest().findAnswerForAcceptQuestion(questionId, start, length).with("rewiewer","autor", "question", "question.questionType").fire(new BMEReceiver<List<AnswerProxy>>() {
 			@Override
 			public void onSuccess(List<AnswerProxy> response) {
@@ -242,7 +244,7 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 	@Override
 	public void onMatrixRangeChanged(final QuestionProxy questionProxy, final AbstractHasData<MatrixValidityProxy> table, final AcceptMatrixAnswerSubView matrixAnswerListView) {
 		final Range range = table.getVisibleRange();
-		
+		AppLoader.setNoLoader();
 		requests.MatrixValidityRequest().countAllMatrixValidityForAcceptQuestion(questionProxy.getId()).fire(new BMEReceiver<Long>() {
 
 			@Override
@@ -260,7 +262,7 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 	}
 
 	void findMatrixAnswersEntriesNonAcceptedAdminByQuestion(final Long questionId, final Integer start, final Integer length, final AbstractHasData<MatrixValidityProxy> table, final AcceptMatrixAnswerSubView matrixAnswerListView){
-		
+		AppLoader.setNoLoader();
 		requests.MatrixValidityRequest().findAllMatrixValidityForQuestion(questionId).with("answerX", "answerY", "answerX.rewiewer","answerX.autor", "answerX.question", "answerX.question.questionType", "answerY.rewiewer","answerY.autor", "answerY.question", "answerY.question.questionType").fire(new BMEReceiver<List<MatrixValidityProxy>>() {
 
 			@Override
@@ -319,12 +321,12 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 		editedQuestion.setIsAcceptedAdmin(isAcceptedAdmin);
 		editedQuestion.setIsAcceptedAuthor(isAcceptedAuthor);
 		editedQuestion.setIsAcceptedRewiever(isAcceptedReviewer);
-		
+		AppLoader.setNoLoader();
 		questionRequest.persist().using(editedQuestion).fire(new BMEReceiver<Void>() {
 
 			@Override
 			public void onSuccess(Void response) {
-				goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));
+				goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION,place.getHeight()));
 			}
 		});
 	}
@@ -388,6 +390,8 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 
 	@Override
 	public void getQuestionDetails(QuestionProxy previousVersion, final Function<QuestionProxy, Void> function) {
+		
+		AppLoader.setCurrentLoader(view.getLoadingPopup());
 		requests.questionRequest().findQuestion(previousVersion.getId()).with("previousVersion","keywords","questEvent","questionType","mcs", "rewiewer", "autor","questionResources").fire(new BMEReceiver<Object>() {
 
 			@Override
@@ -399,6 +403,7 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 
 	@Override
 	public QuestionProxy getLatestQuestionDetails() {
+		AppLoader.setCurrentLoader(view.getLoadingPopup());
 		return question;
 	}
 	
@@ -440,6 +445,7 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 
 	@Override
 	public void acceptQueAnswersClicked() {
+		AppLoader.setNoLoader();
 		requests.questionRequest().acceptQuestionAndAllAnswers(question.getId(),isAdminOrInstitutionalAdmin()).fire(new BMEReceiver<Boolean>() {
 
 			@Override
@@ -447,7 +453,7 @@ public class ActivityAcceptQuestionDetails extends AbstractActivityWrapper imple
 				if(response == null ||  response == false) {
 					ConfirmationDialogBox.showOkDialogBox(constants.error(), constants.notResponsiblePerson());
 				} else {
-					goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));
+					goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION,place.getHeight()));
 				}
 			}
 		});

@@ -17,6 +17,7 @@ import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEvent;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEventHandler;
 import medizin.client.ui.widget.pager.MySimplePager;
+import medizin.client.ui.widget.process.ApplicationLoadingView;
 import medizin.client.ui.widget.resource.audio.AudioViewer;
 import medizin.client.ui.widget.resource.image.ImageAltTextViewer;
 import medizin.client.ui.widget.resource.image.ImageViewer;
@@ -84,6 +85,9 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 
 	@UiField
 	HorizontalPanel headerHP;
+	
+	@UiField
+	ApplicationLoadingView loadingPopup;
 	
 	public BmeConstants constant =GWT.create(BmeConstants.class);
     private Delegate delegate;
@@ -669,5 +673,9 @@ public class AnswerListViewImpl extends Composite implements  AnswerListView {
 
 	public void hideAddAnswer() {
 		newAnswer.setVisible(false);
+	}
+	
+	public ApplicationLoadingView getLoadingPopup() {
+		return loadingPopup;
 	}
 }

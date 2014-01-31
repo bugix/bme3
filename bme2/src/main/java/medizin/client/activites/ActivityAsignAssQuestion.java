@@ -56,6 +56,7 @@ import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchTextSearch
 import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchUserTypePopupViewImpl;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
+import medizin.client.ui.widget.process.AppLoader;
 import medizin.shared.BlockingTypes;
 import medizin.shared.QuestionTypes;
 import medizin.shared.Validity;
@@ -217,6 +218,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 	}
 	
 	private void initAssementTabPanel() {
+		AppLoader.setNoLoader();
 		requests.assesmentRequest().findAssesmentsOpenBetween().with("mc","questionTypeCountPerExams","questionTypeCountPerExams.questionTypesAssigned","repeFor").fire(new BMEReceiver<List<AssesmentProxy>>(){
 
 			@Override
@@ -323,6 +325,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 		
 		//proposed Question
 		if (action==0){
+			AppLoader.setNoLoader();
 			requests.assesmentQuestionRequest().findAssesmentQuestionsByMcProposal(assesment.getId(), encodedStringList, questionId,questionType,questionName).with("question.rewiewer","question.autor","question.keywords","question.questEvent","question.questionType").fire(new BMEReceiver<List<AssesmentQuestionProxy>>() {
 
 				@Override
@@ -351,7 +354,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 			if(author == null) { 
 				return;
 			}
-			
+			AppLoader.setNoLoader();
 			requests.questionRequest().findQuestionsByMc(assesment.getId(), author.getId(), encodedStringList, questionId, questionType, questionName).with("rewiewer", "questEvent", "autor", "questionType", "keywords").fire(new BMEReceiver<List<QuestionProxy>>() {
 
 				@Override
@@ -380,7 +383,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 //			}
 			
 			asssmentQuestionNumberList= new ArrayList<Long>();
-			
+			AppLoader.setNoLoader();
 			requests.assesmentQuestionRequest().findQuestionsByAssesment(assesment.getId()).fire(new BMEReceiver<List<Long>>() {
 
 				@Override
@@ -405,7 +408,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 				}
 			}
 			
-			
+			AppLoader.setNoLoader();
 			requests.assesmentQuestionRequest().findQuestionsByAssesmentRepeFor(assesment.getRepeFor().getId(),availableQuestionTypeList ).with("question.rewiewer","question.autor","question.keywords","question.questEvent","question.questionType").fire(new BMEReceiver<List<AssesmentQuestionProxy>>() {
 
 				@Override
@@ -471,6 +474,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 		{
 			author=userLoggedIn;
 		}
+		AppLoader.setNoLoader();
 		requests.assesmentQuestionRequest().findAssesmentQuestionsByMc(assesment.getId(),assesment.getMc().getId(), encodedStringList, questionId,questionType,questionName,assementQuestionPanel.getAuthorListBox().getValue()).with("question.rewiewer","question.autor","question.keywords","question.questEvent","question.questionType").fire(new BMEReceiver<List<AssesmentQuestionProxy>>() {
 
 			@Override
@@ -499,6 +503,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 	 * */
 	private void populateAuthorListBox(final ValueListBox<PersonProxy> authorListBox,final AssesmentProxy assesment,final boolean isRightSide) {
 		
+		AppLoader.setNoLoader();
 		requests.assesmentQuestionRequest().findAuthorListByAssesment(assesment).fire(new BMEReceiver<List<PersonProxy>>() {
 
 			@Override
@@ -558,6 +563,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 			
 			
 		//}
+			AppLoader.setNoLoader();
 		requests.assesmentQuestionRequest().findAssesmentQuestionsByAssesment(assesmentTabPanel.getActiveTab().getId(),author).with("question.rewiewer","question.autor","question.keywords","question.questEvent","question.questionType").fire(new BMEReceiver<List<AssesmentQuestionProxy>>() {
 
 			@Override
@@ -576,7 +582,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 					//dragController.makeDraggable(question.asWidget(), question.getDragControler());
 					assementQuestionPanel.addAssesmentQuestion(question);
 				}
-				
+				AppLoader.setNoLoader();
 				requests.questionSumPerPersonRequest().findPercentageOfQuestionAssignedToExaminer(assesmentProxy, author).with("questionEvent").fire(new BMEReceiver<List<QuestionSumPerPersonProxy>>() {
 
 					@Override
@@ -764,7 +770,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 
 	@Override
 	public void twistieOpenQuestionClicked(final QuestionView questionView) {
-		
+		AppLoader.setNoLoader();
 		requests.answerRequest().findAnswersByQuestion(questionView.getProxy().getId()).fire(new BMEReceiver<List<AnswerProxy>>() {
 
 			@Override
@@ -1029,7 +1035,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 			Widget widget = (Widget) iter.next();
 			   if (widget instanceof QuestionView){
 				   final Integer index = new Integer( assementQuestionPanel.getAssesmentQuestionDisplayPanel().getWidgetIndex(widget));
-				   
+				   AppLoader.setNoLoader();
 				   requests.assesmentQuestionRequest()
 				   			.findAssesmentQuestionByAssesmentAndQuestion(((QuestionView)widget)
 						   .getProxy().getId(), assesment.getId()).with("question.rewiewer","question.autor","question.keywords","question.questEvent","question.questionType").fire(new BMEReceiver<AssesmentQuestionProxy>(){
@@ -1082,6 +1088,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 
 	@Override
 	public void twistieOpenAssQuestionClicked(final AssesmentQuestionView questionView, final boolean isInAssement) {
+		AppLoader.setNoLoader();
 		requests.answerToAssQuestionRequest().findAnswerToAssQuestionByAssesmentQuestion(questionView.getProxy().getId()).with("answers").fire(new BMEReceiver<List<AnswerToAssQuestionProxy>>() {
 
 			@Override
@@ -1145,12 +1152,14 @@ QuestionAdvancedSearchPopupView.Delegate {
 			assesmentQuestion.setIsAssQuestionAcceptedAdmin(true);
 			assesmentQuestion.setIsAssQuestionAcceptedAutor(false);
 		}
+		AppLoader.setNoLoader();
 		request.persist().using(assesmentQuestion).fire(new BMEReceiver<Void>() {
 
 			@Override
 			public void onSuccess(Void response) {
 				assesmentQuestionViewImpl.getDeleteFromAssesment().removeFromParent();
-				assesmentQuestionViewImpl.getForceAcceptButton().removeFromParent();	
+				assesmentQuestionViewImpl.getForceAcceptButton().removeFromParent();
+				AppLoader.setNoLoader();
 				requests.assesmentQuestionRequest().findAssesmentQuestion(assesmentQuestionViewImpl.getProxy().getId()).with("question.rewiewer","question.autor","question.keywords","question.questEvent","question.questionType").fire(new BMEReceiver<AssesmentQuestionProxy>() {
 
 					@Override
@@ -1171,7 +1180,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 
 	@Override
 	public void loadTemplate() {
-		
+		AppLoader.setNoLoader();
 		requests.assesmentQuestionRequest().loadTemplate().fire(new BMEReceiver<String>() {
 
 			@Override
@@ -1186,6 +1195,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 	/*Send mail to all examiner assigned to assesment*/
 	@Override
 	public void sendMail(String messageContent) {
+		AppLoader.setNoLoader();
 		requests.assesmentQuestionRequest().sendMail(examAutorListMap.get(assesmentTabPanel.getActiveTab()),messageContent,constants.mailSubject(),assesmentTabPanel.getActiveTab()).fire(new BMEReceiver<Boolean>() {
 
 			@Override
@@ -1369,7 +1379,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 		   }
 		   
 		   
-		   
+		   AppLoader.setNoLoader();
 		   assQuestion.setAnswersToAssQuestion(answerToAssQuestionProxySet);
 	     assesmentQuestionRequest.persist().using(assQuestion).with("answersToAssQuestion").fire(new BMEReceiver<Void>() {
 
@@ -1414,7 +1424,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 		   }
 		  
 		  
-		   
+		   AppLoader.setNoLoader();
 		   requests.assesmentQuestionRequest().copyAssesmentQuestion(assesmentQuestionViewAktiv.getProxy().getId(), assesmentTabPanel.getActiveTab().getId(),selectedAuthor).with("question.rewiewer","question.autor","question.keywords","question.questEvent","question.questionType").fire(new BMEReceiver<AssesmentQuestionProxy>() {
 
 				@Override
@@ -1503,6 +1513,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 		AssesmentQuestionProxy a=assesmentQuestionViewImpl.getProxy();
 		final QuestionTypeCountProxy questionTypeCountProxy =getQuestionTypeCountProxy(a.getQuestion());
 		a=request.edit(a);
+		AppLoader.setNoLoader();
 		request.remove().using(a).fire(new BMEReceiver<Void>() {
 
 			@Override
@@ -1893,6 +1904,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 	@Override
 	public void keywordAddClicked(final IconButton addKeyword) {		
 		// Added this to show key word by name as ASC. 
+		AppLoader.setNoLoader();
 		requests.keywordRequest().findAllKeywordsByNameASC().fire(new BMEReceiver<List<KeywordProxy>>() {
 		//requests.keywordRequest().findAllKeywords().fire(new BMEReceiver<List<KeywordProxy>>() {
 
@@ -1937,6 +1949,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 	public void questionEventAddClicked(final IconButton addKeyword) {
 		if (institutionActive != null)
 		{
+			AppLoader.setNoLoader();
 			requests.questionEventRequest().findQuestionEventByInstitution(institutionActive).fire(new BMEReceiver<List<QuestionEventProxy>>() {
 
 				@Override
@@ -1971,6 +1984,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 	@Override
 	public void mcAddClicked(final IconButton addMc)
 	{
+		AppLoader.setNoLoader();
 		requests.mcRequest().findAllMcs().fire(new BMEReceiver<List<McProxy>>() {
 
 			@Override
@@ -1987,6 +2001,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 	@Override
 	public void userTypeAddClicked(final IconButton addUserType)
 	{
+		AppLoader.setNoLoader();
 		requests.personRequest().findAllPeopleByNameASC().fire(new BMEReceiver<List<PersonProxy>>() {
 		//requests.personRequest().findAllPeople().fire(new BMEReceiver<List<PersonProxy>>() {
 
@@ -2002,7 +2017,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 	}
 	
 	public void mediaAvailabilityAddClicked(IconButton addMediaAvailability)
-	{
+	{		
 		QuestionAdvancedSearchMediaAvailabilityPopupViewImpl mediaAvailabilityView = new QuestionAdvancedSearchMediaAvailabilityPopupViewImpl();
 		hidePreviousPopup(mediaAvailabilityView);
 		mediaAvailabilityView.setDelegate(this);
@@ -2024,7 +2039,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 		
 
 		Log.info("calling method to find pass AssesmentQuestion with assesment Id : " + assesmentId + " and question Id :" + questionId);
-		
+		AppLoader.setNoLoader();
 		requests.assesmentQuestionRequest().findPastAssesmentOfQuestion(assesmentId,questionId).fire(new BMEReceiver<AssesmentQuestionProxy>() {
 
 			@Override

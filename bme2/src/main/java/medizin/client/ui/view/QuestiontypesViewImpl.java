@@ -114,6 +114,8 @@ public class QuestiontypesViewImpl extends Composite implements QuestiontypesVie
 	@UiField(provided = true)
 	public MySimplePager pager;
 	
+	@UiField
+	ScrollPanel scrollDetailPanel;
 	
 	@UiField
 	IconButton newQuestiontype;
@@ -375,4 +377,10 @@ public List<String> getPath(){
 public List<String> getCurrentRows(){
 	return this.path;
 }
+
+@Override
+public ScrollPanel getScrollDetailPanel() {
+	return scrollDetailPanel;
+}
+
 }

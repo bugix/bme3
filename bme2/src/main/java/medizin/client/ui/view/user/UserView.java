@@ -10,6 +10,7 @@ import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 
@@ -41,5 +42,7 @@ public interface UserView extends IsWidget {
 	SimplePanel getDetailsPanel();
 	SplitLayoutPanel getSplitLayoutPanel();
 	List<String> getColumnSortSet();
+	
+	ScrollPanel getScrollDetailPanel();	
 
 }

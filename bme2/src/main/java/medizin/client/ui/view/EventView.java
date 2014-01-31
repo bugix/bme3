@@ -1,6 +1,7 @@
 package medizin.client.ui.view;
 
 import medizin.client.proxy.QuestionEventProxy;
+import medizin.client.ui.widget.process.ApplicationLoadingView;
 
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.cellview.client.CellTable;
@@ -27,6 +28,8 @@ public interface EventView extends IsWidget {
     String[] getPaths();
     
     void setDelegate(Delegate delegate);
+
+	ApplicationLoadingView getLoadingPopup();
     
 
 

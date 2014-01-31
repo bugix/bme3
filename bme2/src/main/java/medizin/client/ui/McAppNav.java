@@ -22,6 +22,7 @@ import medizin.client.place.PlaceQuestiontypes;
 import medizin.client.place.PlaceStaticContent;
 import medizin.client.place.PlaceSystemOverview;
 import medizin.client.place.PlaceUser;
+import medizin.client.ui.widget.process.AppLoader;
 import medizin.client.util.ClientUtility;
 import medizin.shared.i18n.BmeConstants;
 
@@ -37,13 +38,9 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Cookies;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Element;
-import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DisclosurePanel;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 /**
@@ -126,77 +123,94 @@ public class McAppNav extends Composite {
 
 	@UiHandler("systemOverview")
 		void systemOverviewClicked(ClickEvent event) {
-			placeController.goTo(new PlaceSystemOverview(PlaceSystemOverview.PLACE_SYSTEM_OVERVIEW, true));
+			AppLoader.setNoLoader();
+			placeController.goTo(new PlaceSystemOverview(PlaceSystemOverview.PLACE_SYSTEM_OVERVIEW, true,shell.getMasterPanel().getOffsetHeight()));
 		}
 	@UiHandler("acceptPerson")
 	void acceptPersonClicked(ClickEvent event) {
-		placeController.goTo(new PlaceAcceptPerson(PlaceAcceptPerson.PLACE_ACCEPT_PERSON, true));
+		AppLoader.setNoLoader();
+		placeController.goTo(new PlaceAcceptPerson(PlaceAcceptPerson.PLACE_ACCEPT_PERSON, true,shell.getMasterPanel().getOffsetHeight()));
 	}
 	
 	@UiHandler("acceptQuestion")
 	void acceptQuestionClicked(ClickEvent event) {
-		placeController.goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION, true));
+		AppLoader.setNoLoader();
+		placeController.goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION, true,shell.getMasterPanel().getOffsetHeight()));
 	}
 	@UiHandler("acceptAnswer")
 	void PlaceAcceptAnswerClicked(ClickEvent event) {
-		placeController.goTo(new PlaceAcceptAnswer(PlaceAcceptAnswer.PLACE_ACCEPT_ANSWER, true));
+		AppLoader.setNoLoader();
+		placeController.goTo(new PlaceAcceptAnswer(PlaceAcceptAnswer.PLACE_ACCEPT_ANSWER, true,shell.getMasterPanel().getOffsetHeight()));
 	}
 	@UiHandler("acceptAssQuestion")
 	void acceptAssQuestionClicked(ClickEvent event) {
-		placeController.goTo(new PlaceAcceptAssQuestion(PlaceAcceptAssQuestion.PLACE_ACCEPT_ASS_QUESTION, true));
+		AppLoader.setNoLoader();
+		placeController.goTo(new PlaceAcceptAssQuestion(PlaceAcceptAssQuestion.PLACE_ACCEPT_ASS_QUESTION, true,shell.getMasterPanel().getOffsetHeight()));
 	}
 	@UiHandler("openDemand")
 	void openDemandClicked(ClickEvent event) {
-		placeController.goTo(new PlaceOpenDemand(PlaceOpenDemand.PLACE_OPEN_DEMAND, true));
+		AppLoader.setNoLoader();
+		placeController.goTo(new PlaceOpenDemand(PlaceOpenDemand.PLACE_OPEN_DEMAND, true,shell.getMasterPanel().getOffsetHeight()));
 	}
 	@UiHandler("user")
 	void userClicked(ClickEvent event) {
-		placeController.goTo(new PlaceUser(PlaceUser.PLACE_USER, true));
+		AppLoader.setNoLoader();
+		placeController.goTo(new PlaceUser(PlaceUser.PLACE_USER, true,shell.getMasterPanel().getOffsetHeight()));
 	}
 	@UiHandler("question")
 	void questionClicked(ClickEvent event) {
-		placeController.goTo(new PlaceQuestion(PlaceQuestion.PLACE_QUESTION, true));
+		AppLoader.setNoLoader();
+		placeController.goTo(new PlaceQuestion(PlaceQuestion.PLACE_QUESTION, true,shell.getMasterPanel().getOffsetHeight()));
 	}
 	@UiHandler("notActivatedQuestion")
 	void notActivatedQuestionClicked(ClickEvent event) {
-		placeController.goTo(new PlaceNotActivatedQuestion(PlaceNotActivatedQuestion.PLACE_NOT_ACTIVATED_QUESTION, true));
+		AppLoader.setNoLoader();
+		placeController.goTo(new PlaceNotActivatedQuestion(PlaceNotActivatedQuestion.PLACE_NOT_ACTIVATED_QUESTION, true, shell.getMasterPanel().getOffsetHeight()));
 	}
 	@UiHandler("questionType")
 	void questionTypeClicked(ClickEvent event) {
-		placeController.goTo(new PlaceQuestiontypes(PlaceQuestiontypes.PLACE_QUESTIONTYPES, true));
+		AppLoader.setNoLoader();
+		placeController.goTo(new PlaceQuestiontypes(PlaceQuestiontypes.PLACE_QUESTIONTYPES, true,shell.getMasterPanel().getOffsetHeight()));
 	}
 	@UiHandler("institution")
 	void institutionClicked(ClickEvent event) {
-		placeController.goTo(new PlaceInstitution(PlaceInstitution.PLACE_INSTITUTION, true));
+		AppLoader.setNoLoader();
+		placeController.goTo(new PlaceInstitution(PlaceInstitution.PLACE_INSTITUTION, true,shell.getMasterPanel().getOffsetHeight()));
 	}
 	@UiHandler("assesment")
 	void assesmentClicked(ClickEvent event) {
-		placeController.goTo(new PlaceAssesment(PlaceAssesment.PLACE_ASSESMENT, true));
+		AppLoader.setNoLoader();
+		placeController.goTo(new PlaceAssesment(PlaceAssesment.PLACE_ASSESMENT, true,shell.getMasterPanel().getOffsetHeight()));
 	}
 	@UiHandler("asignAssQuestion")
 	void asignAssQuestionClicked(ClickEvent event) {
-		placeController.goTo(new PlaceAsignAssQuestion(PlaceAsignAssQuestion.PLACE_ASIGN_ASS_QUESTION, true));
+		AppLoader.setNoLoader();
+		placeController.goTo(new PlaceAsignAssQuestion(PlaceAsignAssQuestion.PLACE_ASIGN_ASS_QUESTION, true,shell.getMasterPanel().getOffsetHeight()));
 	}
 	@UiHandler("bookAssesment")
 	void bookAssesmentClicked(ClickEvent event) {
-		placeController.goTo(new PlaceBookAssesment(PlaceBookAssesment.PLACE_BOOK_ASSESMENT, true));
+		placeController.goTo(new PlaceBookAssesment(PlaceBookAssesment.PLACE_BOOK_ASSESMENT, true,shell.getMasterPanel().getOffsetHeight()));
 	}
 	@UiHandler("staticContent")
 	void staticContentClicked(ClickEvent event) {
-		placeController.goTo(new PlaceStaticContent(PlaceStaticContent.PLACE_STATIC_CONTENT, true));
+		AppLoader.setNoLoader();
+		placeController.goTo(new PlaceStaticContent(PlaceStaticContent.PLACE_STATIC_CONTENT, true,shell.getMasterPanel().getOffsetHeight()));
 	}
 	@UiHandler("notActivatedAnswer")
 	void notActivatedAnswerClicked(ClickEvent event){
-		placeController.goTo(new PlaceNotActivatedAnswer(PlaceNotActivatedAnswer.PLACE_NOT_ACTIVATED_ANSWER, true));
+		AppLoader.setNoLoader();
+		placeController.goTo(new PlaceNotActivatedAnswer(PlaceNotActivatedAnswer.PLACE_NOT_ACTIVATED_ANSWER, true,shell.getMasterPanel().getOffsetHeight()));
 	}
 	@UiHandler("deactivatedQuestion")
 	void deactivatedQuestionClicked(ClickEvent event){
-		placeController.goTo(new PlaceDeactivatedQuestion(PlaceDeactivatedQuestion.PLACE_DEACTIVATED_QUESTION, true));
+		AppLoader.setNoLoader();
+		placeController.goTo(new PlaceDeactivatedQuestion(PlaceDeactivatedQuestion.PLACE_DEACTIVATED_QUESTION, true,shell.getMasterPanel().getOffsetHeight()));
 	}
 	
 	@UiHandler("questionInAssessment")
 	void questionInAssessmentClicked(ClickEvent event){
-		placeController.goTo(new PlaceQuestionInAssessment(PlaceQuestionInAssessment.PLACE_QUESTION_IN_ASSESSMENT, true));
+		AppLoader.setNoLoader();
+		placeController.goTo(new PlaceQuestionInAssessment(PlaceQuestionInAssessment.PLACE_QUESTION_IN_ASSESSMENT, true,shell.getMasterPanel().getOffsetHeight()));
 	}
 //	public McAppNav() {
 //		initWidget(uiBinderUser.createAndBindUi(this));
@@ -389,7 +403,8 @@ public class McAppNav extends Composite {
 		{
 			MC_APP_NAV.hideAllMenu();
 			
-			if(isValiduser)
+			if(isValiduser){
+			AppLoader.setNoLoader();
 			requests.personRequest().checkAdminRightToLoggedPerson().fire(new BMEReceiver<Boolean>() {
 		        
 				@Override
@@ -404,6 +419,7 @@ public class McAppNav extends Composite {
 				}
 			});
 		}
+	}
 	}
 	
 	//private PersonProxy loggedUser;
@@ -458,11 +474,12 @@ public class McAppNav extends Composite {
         
         Place place = placeController.getWhere();
         if(place == null || place.equals(Place.NOWHERE)) {
-        	place =  new PlaceSystemOverview(PlaceSystemOverview.PLACE_SYSTEM_OVERVIEW);
+        	place =  new PlaceSystemOverview(PlaceSystemOverview.PLACE_SYSTEM_OVERVIEW,shell.getMasterPanel().getOffsetHeight());
         }
         //changeMenue(place);
         setConstantText();
         
+        AppLoader.setNoLoader();
         placeController.goTo(Place.NOWHERE);
         placeController.goTo(place);
 	}

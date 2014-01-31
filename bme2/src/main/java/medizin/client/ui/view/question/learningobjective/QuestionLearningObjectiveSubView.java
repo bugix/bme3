@@ -4,6 +4,7 @@ import java.util.Map;
 
 import medizin.client.proxy.MainQuestionSkillProxy;
 import medizin.client.proxy.MinorQuestionSkillProxy;
+import medizin.client.ui.widget.process.ApplicationLoadingView;
 
 public interface QuestionLearningObjectiveSubView {
 	interface Delegate {
@@ -31,4 +32,8 @@ public interface QuestionLearningObjectiveSubView {
 	public LearningObjectiveViewImpl getLearningObjectiveViewImpl();
 	
 	void initLearningObjectiveView();
+	
+	ApplicationLoadingView getLoadingPopup();
+	ApplicationLoadingView getLoadingPopupMajor();
+	ApplicationLoadingView getLoadingPopupMinor();
 }

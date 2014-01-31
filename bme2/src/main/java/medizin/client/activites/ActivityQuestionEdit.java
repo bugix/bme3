@@ -28,6 +28,7 @@ import medizin.client.ui.view.question.ConfirmQuestionChangesPopup.ConfirmQuesti
 import medizin.client.ui.view.question.QuestionEditView;
 import medizin.client.ui.view.question.QuestionEditViewImpl;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
+import medizin.client.ui.widget.process.AppLoader;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.ui.widget.resource.dndview.vo.State;
 import medizin.client.util.ClientUtility;
@@ -99,8 +100,11 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 		QuestionEditView questionEditView = new QuestionEditViewImpl(reciverMap, eventBus, userLoggedIn,false,isAdminOrInstitutionalAdmin());
 		this.view = questionEditView;
 		view.setDelegate(this);
-		
 		view.setRewiewerPickerValues(Collections.<PersonProxy> emptyList(), null);
+				
+		widget.setWidget(questionEditView.asWidget());
+		
+		AppLoader.setCurrentLoader(view.getLoadingPopup());
 		PersonRequest personRequestForReviewer = requests.personRequest();
 		//Added this to show people in ASC order Manish
 		personRequestForReviewer.findAllPeopleByNameASC().with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).to(new BMEReceiver<List<PersonProxy>>() {
@@ -192,7 +196,7 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 			mcRequest.fire();
 		}
 		
-		widget.setWidget(questionEditView.asWidget());
+		//widget.setWidget(questionEditView.asWidget());
 		
 	}
 
@@ -226,7 +230,7 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 		if (question != null && question.getId() != null) {
 			cancelClickedGoto(question);
 		} else {
-			goTo(new PlaceQuestion(PlaceQuestion.PLACE_QUESTION));
+			goTo(new PlaceQuestion(PlaceQuestion.PLACE_QUESTION,questionPlace.getHeight()));
 		}
 	}
 
@@ -248,7 +252,7 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 
 	// also overriden in subclass 
 	private void cancelClickedGoto(QuestionProxy questionProxy) {
-		goTo(new PlaceQuestionDetails(questionProxy.stableId(), Operation.DETAILS));
+		goTo(new PlaceQuestionDetails(questionProxy.stableId(), Operation.DETAILS, questionPlace.getHeight()));
 	}
 
 	@Override
@@ -264,7 +268,7 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 			@Override
 			public Void apply(EntityProxyId<?> stableId) {
 				showNewDisplay();
-				placeController.goTo(new PlaceQuestionDetails(stableId, PlaceQuestionDetails.Operation.DETAILS));
+				placeController.goTo(new PlaceQuestionDetails(stableId, PlaceQuestionDetails.Operation.DETAILS, questionPlace.getHeight()));
 				return null;
 			}
 		};
@@ -336,7 +340,7 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 						final Function<EntityProxyId<?>, Void> gotoFunction = new Function<EntityProxyId<?>, Void>() {
 							@Override
 							public Void apply(EntityProxyId<?> stableId) {
-								placeController.goTo(new PlaceQuestion(PlaceQuestion.PLACE_QUESTION));
+								placeController.goTo(new PlaceQuestion(PlaceQuestion.PLACE_QUESTION,questionPlace.getHeight()));
 								return null;
 							}
 						};
@@ -435,6 +439,7 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 		addPicturePathToQuestion(questionResourceRequest, questionResourceProxies, questionType,question);
 		
 		final QuestionProxy questionProxy2 = question;
+		AppLoader.setNoLoader();
 		questionRequest.persistQuestion().using(question).fire(new BMEReceiver<Void>(reciverMap) {
 
 			@Override
@@ -484,6 +489,7 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 		addPicturePathToQuestion(questionResourceRequest, this.question.getQuestionResources(), questionType,questionProxy);
 		
 		final QuestionProxy questionProxy2 = questionProxy;
+		AppLoader.setNoLoader();
 		questionRequest.updateQuestion().using(questionProxy).fire(new BMEReceiver<Void>(reciverMap) {
 			@Override
 			public void onSuccess(Void response) {

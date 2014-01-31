@@ -70,6 +70,9 @@ public class UserViewImpl extends Composite implements UserView, RecordChangeHan
 	@UiField
 	ScrollPanel scrollPanel;
 	
+	@UiField
+	ScrollPanel scrollDetailPanel;
+	
 	private Presenter presenter;
 
 	Map<String, String> columnName=new HashMap<String, String>();
@@ -544,4 +547,9 @@ public class UserViewImpl extends Composite implements UserView, RecordChangeHan
 		public List<String> getPath(){
 			return this.paths;
 		}
+		
+		@Override
+		public ScrollPanel getScrollDetailPanel() {
+			return scrollDetailPanel;
+		}	
 }

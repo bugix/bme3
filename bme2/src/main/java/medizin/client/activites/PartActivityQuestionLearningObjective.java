@@ -24,6 +24,7 @@ import medizin.client.ui.view.question.learningobjective.LearningObjectiveView;
 import medizin.client.ui.view.question.learningobjective.QuestionLearningObjectivePopupView;
 import medizin.client.ui.view.question.learningobjective.QuestionLearningObjectiveSubView;
 import medizin.client.ui.view.question.learningobjective.QuestionLearningObjectiveSubViewImpl;
+import medizin.client.ui.widget.process.AppLoader;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.simple.DefaultSuggestOracle;
 import medizin.shared.LearningObjectiveData;
 import medizin.shared.i18n.BmeConstants;
@@ -108,6 +109,7 @@ public class PartActivityQuestionLearningObjective implements LearningObjectiveV
 	
 	public void fillClassificationTopicSuggestBox(Long mainClassificationId)
 	{
+		AppLoader.setNoLoader();
 		requests.classificationTopicRequest().findClassificationTopicByMainClassification(mainClassificationId).fire(new BMEReceiver<List<ClassificationTopicProxy>>() {
 
 			@Override
@@ -211,6 +213,7 @@ public class PartActivityQuestionLearningObjective implements LearningObjectiveV
 		learningObjectiveData.clear();
 		final Range range = learningObjectiveView.getTable().getVisibleRange();
 		
+		AppLoader.setNoLoader();
 		SkillRequest skillRequest = requests.skillRequest();
 		skillRequest.countSkillBySearchCriteria(mainClassificationId, classificationTopicId, topicId, skillLevelId, applianceId).to(new BMEReceiver<Integer>() {
 
@@ -285,6 +288,7 @@ public class PartActivityQuestionLearningObjective implements LearningObjectiveV
 			MainQuestionSkillProxy mainQuestionSkillProxy = mainQuestionSkillRequest.create(MainQuestionSkillProxy.class);
 			mainQuestionSkillProxy.setQuestion(question);
 			mainQuestionSkillProxy.setSkill(learningObjectiveData.getSkill());
+			AppLoader.setNoLoader();
 			mainQuestionSkillRequest.persist().using(mainQuestionSkillProxy).fire(new BMEReceiver<Void>() {
 
 				@Override
@@ -312,6 +316,7 @@ public class PartActivityQuestionLearningObjective implements LearningObjectiveV
 			MinorQuestionSkillProxy minorQuestionSkillProxy = minorQuestionSkillRequest.create(MinorQuestionSkillProxy.class);
 			minorQuestionSkillProxy.setQuestion(question);
 			minorQuestionSkillProxy.setSkill(learningObjectiveData.getSkill());
+			AppLoader.setNoLoader();
 			minorQuestionSkillRequest.persist().using(minorQuestionSkillProxy).fire(new BMEReceiver<Void>() {
 
 				@Override
@@ -326,6 +331,7 @@ public class PartActivityQuestionLearningObjective implements LearningObjectiveV
 	@Override
 	public void setMainClassiPopUpListBox(final QuestionLearningObjectivePopupView popupView) {
 		popupView.setDelegate(this);
+		AppLoader.setNoLoader();
 		requests.mainClassificationRequest().findAllMainClassifications().fire(new BMEReceiver<List<MainClassificationProxy>>() {
 
 			@Override
@@ -337,6 +343,7 @@ public class PartActivityQuestionLearningObjective implements LearningObjectiveV
 	}
 	@Override
 	public void setSkillLevelPopupListBox(final QuestionLearningObjectivePopupView popupView) {
+		AppLoader.setNoLoader();
 		requests.skillLevelRequest().findAllSkillLevels().fire(new BMEReceiver<List<SkillLevelProxy>>() {
 
 			@Override
@@ -352,7 +359,7 @@ public class PartActivityQuestionLearningObjective implements LearningObjectiveV
 		learningObjectiveView.setDelegate(this);
 		
 		
-		
+		AppLoader.setNoLoader();
 		requests.skillRequest().countSkillBySearchCriteria(mainClassificationId, classificationTopicId, topicId, skillLevelId, applianceId).fire(new BMEReceiver<Integer>() {
 
 			@Override
@@ -412,6 +419,7 @@ public class PartActivityQuestionLearningObjective implements LearningObjectiveV
 		skillLevelId = null;
 		applianceId = null;
 		learningObjectiveView = null;
+		AppLoader.setCurrentLoader(view.getLoadingPopup());
 		initLearningObjectiveView();
 	}
 
@@ -494,7 +502,7 @@ public class PartActivityQuestionLearningObjective implements LearningObjectiveV
 		if (question != null)
 		{
 			final Range range = view.minorTable.getVisibleRange();
-			
+			AppLoader.setNoLoader();
 			requests.minorQuestionSkillRequest().findMinorQuestionSkillByQuestionId(question.getId(), range.getStart(), range.getLength()).with("skill","skill.topic","skill.skillLevel","skill.topic.classificationTopic", "skill.topic.classificationTopic.mainClassification").fire(new BMEReceiver<List<MinorQuestionSkillProxy>>() {
 
 				@Override
@@ -510,6 +518,7 @@ public class PartActivityQuestionLearningObjective implements LearningObjectiveV
 		if (question != null)
 		{
 			final Range range = view.majorTable.getVisibleRange();
+			AppLoader.setNoLoader();
 			requests.mainQuestionSkillRequest().findMainQuestionSkillByQuestionId(question.getId(), range.getStart(), range.getLength()).with("skill","skill.topic","skill.skillLevel","skill.topic.classificationTopic", "skill.topic.classificationTopic.mainClassification").fire(new BMEReceiver<List<MainQuestionSkillProxy>>() {
 
 				@Override
@@ -526,7 +535,7 @@ public class PartActivityQuestionLearningObjective implements LearningObjectiveV
 		if(readOnly == true) {
 			return;
 		}
-		
+		AppLoader.setCurrentLoader(view.getLoadingPopupMinor());
 		requests.minorQuestionSkillRequest().remove().using(minorSkill).fire(new BMEReceiver<Void>() {
 
 			@Override
@@ -540,7 +549,8 @@ public class PartActivityQuestionLearningObjective implements LearningObjectiveV
 	public void majorDeleteClicked(MainQuestionSkillProxy mainSkill) {
 		if(readOnly == true) {
 			return;
-		}
+		}		
+		AppLoader.setCurrentLoader(view.getLoadingPopupMajor());
 		requests.mainQuestionSkillRequest().remove().using(mainSkill).fire(new BMEReceiver<Void>() {
 
 			@Override

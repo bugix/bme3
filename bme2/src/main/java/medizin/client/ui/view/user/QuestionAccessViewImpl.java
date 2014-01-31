@@ -9,6 +9,7 @@ import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.pager.MySimplePager;
+import medizin.client.ui.widget.process.ApplicationLoadingView;
 import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
@@ -58,6 +59,8 @@ public class QuestionAccessViewImpl extends Composite implements QuestionAccessV
 	@UiField
     IconButton newQuestionAccess;
 
+	@UiField
+	ApplicationLoadingView loadingPopup;
 	
 	@UiHandler("newQuestionAccess")
 	void addEventClicked(ClickEvent event) {
@@ -163,31 +166,34 @@ public class QuestionAccessViewImpl extends Composite implements QuestionAccessV
         paths.add("questionText");
         tableEvent.addColumn(new TextColumn<UserAccessRightsProxy>() {
 
-            Renderer<java.lang.String> renderer = new AbstractRenderer<java.lang.String>() {
+            Renderer<UserAccessRightsProxy> renderer = new AbstractRenderer<UserAccessRightsProxy>() {
 
-                public String render(java.lang.String obj) {
-                    return obj == null ? "" : String.valueOf(obj);
+                public String render(UserAccessRightsProxy obj) {
+                	if(obj != null) {
+                		return obj.getQuestion().getQuestionText();
+                	}
+                    return "";
                 }
             };
 
             @Override
             public String getValue(UserAccessRightsProxy object) {
-                return renderer.render(object.getQuestion().getQuestionText());
+                return renderer.render(object);
             }
         }, constants.question());
         paths.add("accRights");
         tableEvent.addColumn(new TextColumn<UserAccessRightsProxy>() {
 
-            Renderer<java.lang.String> renderer = new AbstractRenderer<java.lang.String>() {
+            Renderer<UserAccessRightsProxy> renderer = new AbstractRenderer<UserAccessRightsProxy>() {
 
-                public String render(java.lang.String obj) {
-                    return obj == null ? "" : String.valueOf(obj);
+                public String render(UserAccessRightsProxy obj) {
+                    return obj == null ? "" : String.valueOf(obj.getAccRights());
                 }
             };
 
             @Override
             public String getValue(UserAccessRightsProxy object) {
-                return renderer.render(object.getAccRights().toString());
+                return renderer.render(object);
             }
         }, constants.privilege());
         
@@ -255,9 +261,10 @@ public class QuestionAccessViewImpl extends Composite implements QuestionAccessV
 	  private static interface GetValue<C> {
 	    C getValue(UserAccessRightsProxy contact);
 	  }
+
+	@Override
+	public ApplicationLoadingView getLoadingPopup() {
+		return loadingPopup;
+	}
 	  
-	 
-
-
-
 }

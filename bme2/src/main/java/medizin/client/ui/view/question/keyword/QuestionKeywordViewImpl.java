@@ -13,6 +13,7 @@ import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEvent;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEventHandler;
 import medizin.client.ui.widget.pager.MySimplePager;
+import medizin.client.ui.widget.process.ApplicationLoadingView;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.EventHandlingValueHolderItem;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
 import medizin.shared.i18n.BmeConstants;
@@ -53,6 +54,9 @@ public class QuestionKeywordViewImpl extends Composite implements QuestionKeywor
 	
 	@UiField
 	IconButton keywordAddButton;
+	
+	@UiField
+	ApplicationLoadingView loadingPopup;
 	
 	private List<AbstractEditableCell<?, ?>> editableCells;
 
@@ -189,5 +193,9 @@ public class QuestionKeywordViewImpl extends Composite implements QuestionKeywor
 	public void initKeywordView() {
 		delegate.initKeywordView();
 	}
-
+	
+	@Override
+	public ApplicationLoadingView getLoadingPopup() {
+		return loadingPopup;
+	}
 }

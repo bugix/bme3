@@ -33,6 +33,7 @@ import medizin.client.ui.view.question.MatrixAnswerViewImpl;
 import medizin.client.ui.view.question.QuestionDetailsView;
 import medizin.client.ui.view.question.QuestionDetailsViewImpl;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
+import medizin.client.ui.widget.process.AppLoader;
 import medizin.client.util.AnswerVO;
 import medizin.client.util.ClientUtility;
 import medizin.client.util.MathJaxs;
@@ -82,7 +83,10 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	private PartActivityQuestionLearningObjective partActivityQuestionLearningObjective;
 	private PartActivityQuestionKeyword activityQuestionKeyword;
 	private PartActivityQuestionUsedInMC partactivityQuestionUsedInMC;
-
+	private AnswerDialogbox answerDialogbox;
+	private AnswerDialogboxTabView answerDialogboxTabView;
+	MatrixAnswerView matrixAnswerView;
+	
 	//private BmeConstants constants = GWT.create(BmeConstants.class);
 	
 	public ActivityQuestionDetails(PlaceQuestionDetails place, McAppRequestFactory requests, PlaceController placeController) {
@@ -202,6 +206,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			answerRangeChangeHandler=null;
 		}
 		
+		AppLoader.setCurrentLoader(answerListView.getLoadingPopup());
 		requests.answerRequest().contAnswersByQuestion(question.getId()).fire( new BMEReceiver<Long>(){
 
 
@@ -228,7 +233,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	protected void onAnswerTableRangeChanged() {
 		final Range range = answerTable.getVisibleRange();
 		
-		
+		AppLoader.setNoLoader();
 		requests.answerRequest().findAnswersEntriesByQuestion(question.getId(), range.getStart(), range.getLength()).with("question","question.questionResources","rewiewer","autor","question.questionType").fire( new BMEReceiver<List<AnswerProxy>>(){
 
 
@@ -249,11 +254,12 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 
 	@Override
 	public void deleteClicked() {
+		AppLoader.setNoLoader();
 		requests.questionRequest().deactivatedQuestion().using(question).fire(new BMEReceiver<Void>(reciverMap) {
 
             public void onSuccess(Void ignore) {
             	Log.debug("Sucessfull deleted");
-            	placeController.goTo(new PlaceQuestion(PlaceQuestion.PLACE_QUESTION));
+            	placeController.goTo(new PlaceQuestion(PlaceQuestion.PLACE_QUESTION, questionPlace.getHeight()));
             	
             }
         });
@@ -267,7 +273,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		/*if (questionPlace.getFromPlace().equals("ACCEPT_QUESTION"))
 			placeController.goTo(new PlaceQuestionDetails(question.stableId(), PlaceQuestionDetails.Operation.EDIT, "ACCEPT_QUESTION"));
 		else*/
-			placeController.goTo(new PlaceQuestionDetails(question.stableId(), PlaceQuestionDetails.Operation.EDIT));
+			placeController.goTo(new PlaceQuestionDetails(question.stableId(), PlaceQuestionDetails.Operation.EDIT,questionPlace.getHeight()));
 		
 	}
 
@@ -280,6 +286,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	@Override
 	public void addNewAnswerClicked() {
 		
+		AppLoader.setNoLoader();		
 		if(question.getQuestionType() != null && QuestionTypes.Matrix.equals(question.getQuestionType().getQuestionType()) == true) 
 		{
 			openMatrixAnswerView(null,true, true,true);
@@ -387,10 +394,14 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	private AnswerDialogboxTabView openImageKeyOrShowInInImageAnswerView(final AnswerProxy answer) {
 		
 		final AnswerDialogboxTabView answerDialogboxTabView = new AnswerDialogboxTabViewImpl(question, eventBus, reciverMap,isAdminOrInstitutionalAdmin());
+		answerDialogboxTabView.display(question.getQuestionType().getQuestionType());
+		this.answerDialogboxTabView = answerDialogboxTabView;
+		AppLoader.setCurrentLoader(this.answerDialogboxTabView.getLoadingPopup());
 		answerDialogboxTabView.setDelegate(this);
 		answerDialogboxTabView.setValidityPickerValues(Arrays.asList(Validity.values()));
 		
 		PersonRequest personRequest = requests.personRequest();
+		AppLoader.setNoLoader();
         personRequest.findAllPeople().with(medizin.client.ui.view.roo.PersonProxyRenderer.instance().getPaths()).to(new BMEReceiver<List<PersonProxy>>() {
 
             public void onSuccess(List<PersonProxy> response) {
@@ -403,7 +414,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
                 if(answer != null) {
                 	answerDialogboxTabView.setValues(answer);
 		        }
-                answerDialogboxTabView.display(question.getQuestionType().getQuestionType());
+                //answerDialogboxTabView.display(question.getQuestionType().getQuestionType());
             }
         });
         
@@ -419,7 +430,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 
 	@Override
 	public void deleteAnswerClicked(AnswerProxy answer) {
-
+		AppLoader.setCurrentLoader(answerListView.getLoadingPopup());
 		requests.answerRequest().eliminateAnswer().using(answer).fire(new BMEReceiver<Void>(reciverMap){
 
 			@Override
@@ -571,6 +582,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	@Override
 	public void findAllAnswersPoints(Long questionId,Long currentAnswerId,final Function<List<String>, Void> function) {
 		
+		AppLoader.setNoLoader();
 		requests.answerRequest().findAllAnswersPoints(questionId,currentAnswerId).fire(new BMEReceiver<List<String>>() {
 
 			@Override
@@ -649,6 +661,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			fillAnswerData(answerText, author, rewiewer, submitToReviewComitee, comment, validity, points, mediaPath, additionalKeywords, sequenceNumber, newAnswerProxy,forcedActive);
 					
 			final AnswerProxy finalAnswerProxy = newAnswerProxy;
+			AppLoader.setCurrentLoader(answerDialogbox.getLoadingPopup());
 			answerRequest.persist().using(newAnswerProxy).fire(new BMEReceiver<Void>(reciverMap) {
 
 				@Override
@@ -667,7 +680,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			fillAnswerData(answerText, author, rewiewer, submitToReviewComitee, comment, validity, points, mediaPath, additionalKeywords, sequenceNumber, newAnswerProxy,forcedActive);
 			
 			final AnswerProxy finalAnswerProxy = newAnswerProxy;
-			
+			AppLoader.setCurrentLoader(answerDialogbox.getLoadingPopup());
 			answerRequest.persist().using(finalAnswerProxy).fire(new BMEReceiver<Void>(reciverMap) {
 	
 				@Override
@@ -776,6 +789,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 
 	@Override
 	public void deletedSelectedAnswer(AnswerProxy answerProxy, Boolean isAnswerX,final Function<Boolean, Void> function) {
+		AppLoader.setCurrentLoader(answerListView.getLoadingPopup());
 		requests.MatrixValidityRequest().deleteAnswerAndItsMatrixValidity(answerProxy.getId(),isAnswerX).fire(new BMEReceiver<Boolean>() {
 
 			@Override
@@ -826,8 +840,8 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	
 	@Override
 	public void getQuestionDetails(QuestionProxy previousVersion, final Function<QuestionProxy, Void> function) {
-		
-		
+						
+		AppLoader.setCurrentLoader(view.getLoadingPopup());
 		requests.questionRequest().findQuestion(previousVersion.getId()).with("previousVersion","keywords","questEvent","questionType","mcs", "rewiewer", "autor","questionResources").fire(new BMEReceiver<Object>() {
 
 			@Override
@@ -849,7 +863,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			answerRangeChangeHandler.removeHandler();
 			answerRangeChangeHandler=null;
 		}
-		
+		AppLoader.setCurrentLoader(view.getMatrixAnswerListViewImpl().getLoadingPopup());
 		requests.MatrixValidityRequest().countAllMatrixValidityForQuestion(question.getId()).with("answerX","answerY").fire(new BMEReceiver<Long>() {
 
 			@Override
@@ -870,6 +884,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	
 	private void onMatrixAnswerTableRangeChanged()
 	{
+		AppLoader.setNoLoader();
 		final Range range = view.getMatrixAnswerListViewImpl().getTable().getVisibleRange();
 		requests.MatrixValidityRequest().findAllMatrixValidityForAcceptQuestion(question.getId(), range.getStart(), range.getLength()).with("answerX","answerY").fire(new BMEReceiver<List<MatrixValidityProxy>>() {
 
@@ -931,6 +946,9 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	private AnswerDialogbox openAnswerView(final AnswerProxy answer) {
 		
 		final AnswerDialogbox answerDialogbox = new AnswerDialogboxImpl(question,eventBus,reciverMap,isAdminOrInstitutionalAdmin());
+		this.answerDialogbox = answerDialogbox;
+		AppLoader.setCurrentLoader(answerDialogbox.getLoadingPopup());
+		answerDialogbox.display(question.getQuestionType().getQuestionType());
 		answerDialogbox.setDelegate(this);
 		
 		// because display need to be called after author and reviewer list.  
@@ -967,7 +985,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
                 if(answer != null) {
 		        	answerDialogbox.setValues(answer);
 		        }
-		        answerDialogbox.display(question.getQuestionType().getQuestionType());
+		        //answerDialogbox.display(question.getQuestionType().getQuestionType());
                // sync.apply(null);
             }
         });
@@ -1020,7 +1038,8 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	}
 	
 	@Override
-	public void editAnswerClicked(final AnswerProxy answer) {
+	public void editAnswerClicked(final AnswerProxy answer) {		
+		AppLoader.setNoLoader();
 		requests.answerToAssQuestionRequest().countAnswerToAssQuestionByAnswer(answer.getId()).fire(new BMEReceiver<Long>() {
 
 			@Override
@@ -1041,6 +1060,9 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 
 	private void openMatrixAnswerView(final MatrixValidityProxy matrixValidity, final boolean isNew, final boolean isEdit, final boolean isDelete) {
 		final MatrixAnswerView matrixAnswerView = new MatrixAnswerViewImpl(question,isAdminOrInstitutionalAdmin());
+		matrixAnswerView.display();
+		this.matrixAnswerView =  matrixAnswerView; 
+		AppLoader.setCurrentLoader(this.matrixAnswerView.getLoadingPopup());
 		matrixAnswerView.setDelegate(this);
 				
 		matrixAnswerView.setRewiewerPickerValues(Collections.<PersonProxy>emptyList());
@@ -1074,7 +1096,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			public void onSuccess(List<MatrixValidityProxy> response) {
 									
 		        matrixAnswerView.setValues(response, isNew, isEdit, isDelete);
-		        matrixAnswerView.display();
+		  //      matrixAnswerView.display();
 			}
 		});
         
@@ -1083,6 +1105,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	
 	@Override
 	public void editMatrixValidityClicked(final MatrixValidityProxy matrixValidity) {
+		AppLoader.setNoLoader();
 		requests.answerToAssQuestionRequest().countAnswerToAssQuestionByMatrixValidity(question.getId()).fire(new BMEReceiver<Long>() {
 
 			@Override
@@ -1148,6 +1171,7 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		Map<Integer,AnswerProxy> answerXIndex = Maps.newHashMap();
 		Map<Integer,AnswerProxy> answerYIndex = Maps.newHashMap();
 		
+		AppLoader.setNoLoader();
 		for (Entry<Integer, Map<Integer, MatrixValidityVO>> rowset : matrixList.getAllRows()) {
 			
 			Integer xIndex = rowset.getKey(); 
@@ -1297,11 +1321,13 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 		questionProxy.setDateChanged(new Date());
 		
 		final QuestionProxy questionProxy2 = questionProxy;
+		
+		AppLoader.setCurrentLoader(view.getLoadingPopup());
 		questionRequest.persist().using(questionProxy).fire(new BMEReceiver<Void>(reciverMap) {
 			@Override
 			public void onSuccess(Void response) {
-				placeController.goTo(new PlaceQuestion(PlaceQuestion.PLACE_QUESTION,questionProxy2.stableId()));
-				placeController.goTo(new PlaceQuestionDetails(questionProxy2.stableId()));
+				placeController.goTo(new PlaceQuestion(PlaceQuestion.PLACE_QUESTION,questionProxy2.stableId(),questionPlace.getHeight()));
+				placeController.goTo(new PlaceQuestionDetails(questionProxy2.stableId(),questionPlace.getHeight()));
 			}
 		});
 	}

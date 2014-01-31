@@ -21,6 +21,14 @@ public class PlaceQuestiontypes extends AbstractPlace {
 		super(place,proxyId);
 	}
 
+	public PlaceQuestiontypes(String placeName, boolean reload,Integer height) {
+		super(placeName,reload,height);
+	}
+
+	public PlaceQuestiontypes(String placeQuestiontypes, Integer height) {
+		super(placeQuestiontypes , height);
+	}
+
 	@Prefix(PLACE_QUESTIONTYPES)
 	public static class Tokenizer extends AbstractPlace.AbstractTokenizer<PlaceQuestiontypes> {
 

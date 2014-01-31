@@ -21,6 +21,12 @@ public class PlaceDeactivatedQuestion extends AbstractPlace {
 		super(placeName, proxyId);
 	}
 
+	public PlaceDeactivatedQuestion(String placeDeactivatedQuestion,
+			boolean reload, Integer height) {
+		
+		super(placeDeactivatedQuestion, reload, height);
+	}
+
 	@Prefix(PLACE_DEACTIVATED_QUESTION)
 	public static class Tokenizer extends AbstractPlace.AbstractTokenizer<PlaceDeactivatedQuestion> {
 

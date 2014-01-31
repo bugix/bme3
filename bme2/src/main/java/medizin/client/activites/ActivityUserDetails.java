@@ -24,6 +24,7 @@ import medizin.client.ui.view.user.QuestionAccessView;
 import medizin.client.ui.view.user.UserDetailsView;
 import medizin.client.ui.view.user.UserDetailsViewImpl;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
+import medizin.client.ui.widget.process.AppLoader;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.simple.DefaultSuggestOracle;
 import medizin.shared.AccessRights;
 
@@ -136,7 +137,8 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 			}
 		});*/
 		//init();
-		
+        AppLoader.setCurrentLoader(userDetailsView.getLoadingPopup());
+        
 		view.setDelegate(this);
 		
 		requests.find(userPlace.getProxyId()).fire(new BMEReceiver<Object>() {
@@ -150,7 +152,6 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 					Log.info(((PersonProxy) response).getEmail());
 					
 					person = (PersonProxy) response;
-					
 					requests.personRequest().findPerson(person.getId()).with("doctor").fire(new BMEReceiver<PersonProxy>() {
 
 						@Override
@@ -250,7 +251,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 		
 		Log.debug("Im QuestionEvent.onRangeEventAccessChanged");
 		final Range range = questionEventTable.getVisibleRange();
-
+		AppLoader.setNoLoader();
 		final BMEReceiver<List<UserAccessRightsProxy>> callback = new BMEReceiver<List<UserAccessRightsProxy>>() {
 			@Override
 			public void onSuccess(List<UserAccessRightsProxy> values) {
@@ -385,8 +386,8 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 	///////
 	protected void onRangeQuestionAccessChanged() {
 		
-		final Range range = questionTable.getVisibleRange();
-
+		final Range range = questionTable.getVisibleRange();		
+		AppLoader.setNoLoader();
 		final BMEReceiver<List<UserAccessRightsProxy>> callback = new BMEReceiver<List<UserAccessRightsProxy>>() {
 			@Override
 			public void onSuccess(List<UserAccessRightsProxy> values) {
@@ -459,12 +460,12 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 	 */
 	@Override
 	public void deleteClicked() {
-
+		AppLoader.setNoLoader();
 		requests.personRequest().remove().using(person).fire(new BMEReceiver<Void>() {
 
             public void onSuccess(Void ignore) {
             	Log.debug("Sucessfull deleted");
-            	placeController.goTo(new PlaceUser(PlaceUser.PLACE_USER));
+            	placeController.goTo(new PlaceUser(PlaceUser.PLACE_USER,userPlace.getHeight()));
             	
             }
             /* @Override
@@ -501,20 +502,14 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 	 * Functionality implemented from @see medizin.client.ui.view.user.UserDetailsView.Delegate#editClicked()
 	 */
 	@Override
-	public void editClicked() {
-		placeController.goTo(new PlaceUserDetails(person.stableId(), PlaceUserDetails.Operation.EDIT));
-		
+	public void editClicked() {		
+		placeController.goTo(new PlaceUserDetails(person.stableId(), PlaceUserDetails.Operation.EDIT, userPlace.getHeight()));
 	}
 
-	@Override
-	public void newClicked(String institutionName) {
-		placeController.goTo(new PlaceUserDetails(person.stableId(), PlaceUserDetails.Operation.CREATE));
-		
-	}
 
 	@Override
-	public void deleteEventAccessClicked(UserAccessRightsProxy questionAccess) {
-		
+	public void deleteEventAccessClicked(UserAccessRightsProxy questionAccess) {		
+		AppLoader.setCurrentLoader(eventAccessView.getLoadingPopup());
 		requests.userAccessRightsRequest().remove()
 		.using(questionAccess).fire(new BMEReceiver<Void>() {
 
@@ -667,6 +662,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 	private void initEventAccessDialogbox() {
 		if (person != null)
 		{
+			AppLoader.setNoLoader();
 			requests.userAccessRightsRequest().findQuestionEventAccessByPerson(person.getId()).with("questionEvent").fire(new BMEReceiver<List<UserAccessRightsProxy>>() {
 
 				@Override
@@ -682,7 +678,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 							}
 							Log.debug("Geholte Events aus der Datenbank: " + response);
 							eventAccessTable.setRowCount(response.intValue(), true);
-
+							
 							onRangeEventAccessByInstitutionOrEventnameChanged();
 						}
 					});
@@ -709,6 +705,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 	private void initQuestionAccessDialogbox() {
 		if (person != null)
 		{
+			AppLoader.setNoLoader();
 			requests.userAccessRightsRequest().findQuestionAccessByPerson(person.getId()).with("question").fire(new BMEReceiver<List<UserAccessRightsProxy>>() {
 
 				@Override
@@ -724,8 +721,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 								return;
 							}
 							Log.debug("Geholte Events aus der Datenbank: " + response);
-							questionAccessTable.setRowCount(response.intValue(), true);
-
+							questionAccessTable.setRowCount(response.intValue(), true);							
 							onRangeQuestionAccessCountByInstitutionOrEventOrQuestionNameOrKeywordRequest();
 						}
 					});
@@ -737,7 +733,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 	protected void onRangeQuestionAccessCountByInstitutionOrEventOrQuestionNameOrKeywordRequest() {
 		
 		final Range range = questionAccessTable.getVisibleRange();
-
+		AppLoader.setNoLoader();
 		final BMEReceiver<List<QuestionProxy>> callback = new BMEReceiver<List<QuestionProxy>>() {
 			@Override
 			public void onSuccess(List<QuestionProxy> values) {
@@ -757,7 +753,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 	protected void onRangeEventAccessByInstitutionOrEventnameChanged() {
 		
 		final Range range = eventAccessTable.getVisibleRange();
-
+		AppLoader.setNoLoader();
 		final BMEReceiver<List<QuestionEventProxy>> callback = new BMEReceiver<List<QuestionEventProxy>>() {
 			@Override
 			public void onSuccess(List<QuestionEventProxy> values) {
@@ -856,6 +852,8 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 
 	@Override
 	public void deleteQuestionAccessClicked(UserAccessRightsProxy questionAccess) {
+		//AppLoader.setNoLoader();
+		AppLoader.setCurrentLoader(questionAccessView.getLoadingPopup());
 		requests.userAccessRightsRequest().remove()
 		.using(questionAccess).fire(new BMEReceiver<Void>() {
 
@@ -972,7 +970,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 
 		initQuestionAccessDialogbox();
 		rangeQuestionAccessAllChangeHandler = questionAccessTable.addRangeChangeHandler(new RangeChangeEvent.Handler() {
-			public void onRangeChange(RangeChangeEvent event) {
+			public void onRangeChange(RangeChangeEvent event) {				
 				ActivityUserDetails.this.onRangeQuestionAccessCountByInstitutionOrEventOrQuestionNameOrKeywordRequest();
 			}
 		});
@@ -1007,7 +1005,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 					Log.error(error.getMessage());
 				}
 	      }); */
-		
+		AppLoader.setCurrentLoader(dialogBoxEvent.getLoadingPopup());
 		requests.userAccessRightsRequest().persistQuestionEventAccess(rights, person.getId(), questionEvent.getId()).fire(new BMEReceiver<Boolean>() {
 
 			@Override
@@ -1181,6 +1179,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 					}
 		      }); */
 			
+			AppLoader.setCurrentLoader(dialogBoxQuestion.getLoadingPopup());
 			requests.userAccessRightsRequest().persistQuestionAccess(rights, person.getId(), question.getId()).fire(new BMEReceiver<Boolean>() {
 
 				@Override
@@ -1263,6 +1262,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 		@Override
 		public void addClicked(AccessRights rights, final InstitutionProxy institutionProxy) {
 			
+			AppLoader.setCurrentLoader(dialogBoxInstitute.getLoadingPopup());
 			requests.personRequest().myGetLoggedPerson().fire(new BMEReceiver<PersonProxy>() {
 
 				@Override
@@ -1312,6 +1312,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 				
 				@Override
 				public void onRangeChange(RangeChangeEvent event) {
+					
 					ActivityUserDetails.this.onInstituteAccessRangeChanged();
 				}
 			});
@@ -1319,6 +1320,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 		
 		public void onInstituteAccessRangeChanged()
 		{
+			AppLoader.setNoLoader();
 			requests.userAccessRightsRequest().countInstiuteAccessByPerson(person.getId()).fire(new BMEReceiver<Long>() {
 
 				@Override
@@ -1339,7 +1341,8 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 
 		@Override
 		public void deleteInstituteAccessClicked(UserAccessRightsProxy event) {
-			
+			//AppLoader.setNoLoader();
+			AppLoader.setCurrentLoader(instituteAccessView.getLoadingPopup());
 			requests.userAccessRightsRequest().remove().using(event).fire(new BMEReceiver<Void>() {
 
 				@Override
@@ -1381,7 +1384,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 			dialogBoxInstitute.getTable().addRangeChangeHandler(new RangeChangeEvent.Handler() {
 				
 				@Override
-				public void onRangeChange(RangeChangeEvent event) {
+				public void onRangeChange(RangeChangeEvent event) {					
 					ActivityUserDetails.this.initInstituteAccessDialogBox();
 				}
 			});
@@ -1391,6 +1394,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 		{
 			if (person != null)
 			{
+				AppLoader.setNoLoader();
 				requests.institutionRequest().countInstitutionByName(instituteSearchText, person.getId()).fire(new BMEReceiver<Long>() {
 
 					@Override
@@ -1398,6 +1402,7 @@ public class ActivityUserDetails extends AbstractActivityWrapper implements User
 						dialogBoxInstitute.getTable().setRowCount(response.intValue(), true);
 						
 						final Range range = dialogBoxInstitute.getTable().getVisibleRange();
+						AppLoader.setNoLoader();		
 						requests.institutionRequest().findInstitutionByName(instituteSearchText, person.getId(), range.getStart(), range.getLength()).fire(new BMEReceiver<List<InstitutionProxy>>() {
 
 							@Override

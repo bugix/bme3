@@ -16,14 +16,17 @@ import medizin.client.ui.view.AcceptMatrixAnswerSubViewImpl;
 import medizin.client.ui.view.QuestionInAssessmentDetailsView;
 import medizin.client.ui.view.question.QuestionDetailsView;
 import medizin.client.ui.view.question.QuestionDetailsViewImpl;
+import medizin.client.ui.widget.process.AppLoader;
 import medizin.shared.QuestionTypes;
 
 import com.google.common.base.Function;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.cellview.client.AbstractHasData;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.view.client.Range;
 
 public class ActivityQuestionInAssessmentDetails extends AbstractActivityWrapper implements
@@ -60,6 +63,7 @@ public class ActivityQuestionInAssessmentDetails extends AbstractActivityWrapper
 	
 	public void getQuestionDetails()
 	{
+		AppLoader.setNoLoader();
 		if(userLoggedIn==null) return;
 		
 		requests.find(place.getProxyId()).with("question", "question.keywords", "question.questEvent","question.questionType","question.mcs", "question.rewiewer", "question.autor","question.questionResources","question.answers").fire(new BMEReceiver<Object>() {
@@ -133,7 +137,7 @@ public class ActivityQuestionInAssessmentDetails extends AbstractActivityWrapper
 	public void onRangeChanged(final QuestionProxy questionProxy, final AbstractHasData<AnswerProxy> table) {
 	
 		final Range range = table.getVisibleRange();
-
+		AppLoader.setNoLoader();
 		requests.answerRequest().countAnswerForAcceptQuestion(questionProxy.getId()).with("question", "autor", "rewiewer").fire(new BMEReceiver<Long>() {
 
 			@Override
@@ -149,7 +153,7 @@ public class ActivityQuestionInAssessmentDetails extends AbstractActivityWrapper
 	}
 	
 	void findAnswersEntriesNonAcceptedAdminByQuestion(Long questionId, final Integer start, Integer length, final AbstractHasData<AnswerProxy> table){
-		
+		AppLoader.setNoLoader();
 		requests.answerRequest().findAnswerForAcceptQuestion(questionId, start, length).with("rewiewer","autor", "question", "question.questionType").fire(new BMEReceiver<List<AnswerProxy>>() {
 			@Override
 			public void onSuccess(List<AnswerProxy> response) {
@@ -164,7 +168,7 @@ public class ActivityQuestionInAssessmentDetails extends AbstractActivityWrapper
 	@Override
 	public void onMatrixRangeChanged(final QuestionProxy questionProxy, final AbstractHasData<MatrixValidityProxy> table, final AcceptMatrixAnswerSubView matrixAnswerListView) {
 		final Range range = table.getVisibleRange();
-		
+		AppLoader.setNoLoader();
 		requests.MatrixValidityRequest().countAllMatrixValidityForAcceptQuestion(questionProxy.getId()).fire(new BMEReceiver<Long>() {
 
 			@Override

@@ -28,6 +28,11 @@ public class PlaceNotActivatedQuestionDetails extends AbstractDetailsPlace {
 		Log.debug("PlaceNotActivatedQuestionDetails wird erstellt");
 	}
 
+	public PlaceNotActivatedQuestionDetails(EntityProxyId<?> stableId,
+			Integer height) {
+		super(stableId, height);
+	}
+
 	@Prefix(PLACE_NOT_ACTIVATED_QUESTION_DETAILS)
 	public static class Tokenizer extends AbstractDetailsPlace.AbstractTokenizer<PlaceNotActivatedQuestionDetails> {
 

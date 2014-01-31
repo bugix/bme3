@@ -5,6 +5,7 @@ import java.util.List;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionSumPerPersonProxy;
+import medizin.client.ui.widget.process.ApplicationLoadingView;
 
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -33,6 +34,7 @@ public interface QuestionSumPerPersonDialogbox extends IsWidget {
 	void setResponsiblePersonValues(List<PersonProxy> values);
 	void setQuestionEventValues(List<QuestionEventProxy> values);
 	void setValueInProxy(QuestionSumPerPersonProxy questionSumPerPersonProxy);
+	ApplicationLoadingView getLoadingPopup();
 
 	/*RequestFactoryEditorDriver<QuestionSumPerPersonProxy, QuestionSumPerPersonDialogboxImpl> createEditorDriver();
 	void setQuestionEventPickerValues(Collection<QuestionEventProxy> values);

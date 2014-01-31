@@ -11,6 +11,7 @@ import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.pager.MySimplePager;
+import medizin.client.ui.widget.process.ApplicationLoadingView;
 import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
@@ -27,7 +28,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
@@ -68,6 +68,8 @@ public class InstituteAccessViewImpl extends Composite implements InstituteAcces
 	@UiField
     IconButton newAccess;
 
+	@UiField
+	ApplicationLoadingView loadingPopup;
 	
 	@UiHandler("newAccess")
 	void addEventClicked(ClickEvent event) {
@@ -168,32 +170,32 @@ public class InstituteAccessViewImpl extends Composite implements InstituteAcces
         paths.add("eventName");
         tableEvent.addColumn(new TextColumn<UserAccessRightsProxy>() {
 
-            Renderer<java.lang.String> renderer = new AbstractRenderer<java.lang.String>() {
+            Renderer<UserAccessRightsProxy> renderer = new AbstractRenderer<UserAccessRightsProxy>() {
 
-                public String render(java.lang.String obj) {
-                    return obj == null ? "" : String.valueOf(obj);
+                public String render(UserAccessRightsProxy obj) {
+                    return obj == null ? "" : String.valueOf(obj.getInstitution().getInstitutionName());
                 }
             };
 
             @Override
             public String getValue(UserAccessRightsProxy object) {
-                return renderer.render(object.getInstitution().getInstitutionName());
+                return renderer.render(object);
             }
         }, constants.institutionLbl());
         
         paths.add("accRights");
         tableEvent.addColumn(new TextColumn<UserAccessRightsProxy>() {
 
-            Renderer<java.lang.String> renderer = new AbstractRenderer<java.lang.String>() {
+            Renderer<UserAccessRightsProxy> renderer = new AbstractRenderer<UserAccessRightsProxy>() {
 
-                public String render(java.lang.String obj) {
-                    return obj == null ? "" : String.valueOf(obj);
+                public String render(UserAccessRightsProxy obj) {
+                    return obj == null ? "" : String.valueOf(obj.getAccRights());
                 }
             };
 
             @Override
             public String getValue(UserAccessRightsProxy object) {
-                return renderer.render(object.getAccRights().toString());
+                return renderer.render(object);
             }
         }, constants.accessRights());
         
@@ -263,5 +265,9 @@ public class InstituteAccessViewImpl extends Composite implements InstituteAcces
 	  
 	  private List<AbstractEditableCell<?, ?>> editableCells;
 
+	  @Override
+	  public ApplicationLoadingView getLoadingPopup() {
+	  		return loadingPopup;
+	  	}
 
 }

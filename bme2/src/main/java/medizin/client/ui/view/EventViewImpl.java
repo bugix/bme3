@@ -16,6 +16,7 @@ import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEvent;
 import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEventHandler;
 import medizin.client.ui.widget.pager.MySimplePager;
+import medizin.client.ui.widget.process.ApplicationLoadingView;
 import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
@@ -54,6 +55,8 @@ public class EventViewImpl extends Composite implements EventView  {
     @UiField
     IconButton addEvent;
 
+    @UiField
+	ApplicationLoadingView loadingPopup;
     
     
 	@UiHandler("addEvent")
@@ -314,7 +317,10 @@ public class EventViewImpl extends Composite implements EventView  {
 	  private List<AbstractEditableCell<?, ?>> editableCells;
 
 
-
+	  @Override
+	  public ApplicationLoadingView getLoadingPopup() {
+	  		return loadingPopup;
+	  	}
 	  
 
 

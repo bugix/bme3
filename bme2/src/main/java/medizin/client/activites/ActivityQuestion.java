@@ -32,6 +32,7 @@ import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchTextSearch
 import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchUserTypePopupViewImpl;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.Sorting;
+import medizin.client.ui.widget.process.AppLoader;
 import medizin.client.util.MathJaxs;
 import medizin.shared.criteria.AdvancedSearchCriteria;
 import medizin.shared.criteria.AdvancedSearchCriteriaUtils;
@@ -279,7 +280,7 @@ public class ActivityQuestion extends AbstractActivityWrapper implements Questio
 	protected void showDetails(QuestionProxy question) {
 		Log.debug("Question Stable id: " + question.stableId() + " "
 				+ PlaceQuestionDetails.Operation.DETAILS);
-		placeController.goTo(new PlaceQuestionDetails(question.stableId()));
+		placeController.goTo(new PlaceQuestionDetails(question.stableId(),view.getScrollDetailPanel().getOffsetHeight()));
 	}
 
 	@Override
@@ -340,7 +341,7 @@ public class ActivityQuestion extends AbstractActivityWrapper implements Questio
 		
 		List<String> encodedStringList = new ArrayList<String>();
 		encodedStringList = AdvancedSearchCriteriaUtils.encodeList(advancedSearchCriteriaList);
-		
+		AppLoader.setNoLoader();
 		requests.questionRequest().countQuestionByAdvancedSearchByLoginUserAndInstitute(encodedStringList, view.getSearchValue(), view.getSerachBox().getValue()).fire(new BMEReceiver<Integer>() {
 
 			@Override
@@ -381,7 +382,7 @@ public class ActivityQuestion extends AbstractActivityWrapper implements Questio
 		
 		List<String> encodedStringList = new ArrayList<String>();
 		encodedStringList = AdvancedSearchCriteriaUtils.encodeList(advancedSearchCriteriaList);
-		
+		AppLoader.setNoLoader();
 		requests.questionRequest().findQuestionByAdvancedSearchByLoginUserAndInstitute(sortname,sortorder,encodedStringList, view.getSearchValue(), view.getSerachBox().getValue(), range.getStart(), range.getLength()).with(view.getPaths()).with("autor").fire(new BMEReceiver<List<QuestionProxy>>() {
 
 			@Override
@@ -427,7 +428,7 @@ public class ActivityQuestion extends AbstractActivityWrapper implements Questio
 	@Override
 	public void newClicked() {
 		placeController.goTo(new PlaceQuestionDetails(
-				PlaceQuestionDetails.Operation.CREATE));
+				PlaceQuestionDetails.Operation.CREATE, view.getScrollDetailPanel().getOffsetHeight()));
 
 	}
 
@@ -482,7 +483,8 @@ public class ActivityQuestion extends AbstractActivityWrapper implements Questio
 
 	@Override
 	public void keywordAddClicked(final IconButton addKeyword) {		
-		// Added this to show key word by name as ASC. 
+		// Added this to show key word by name as ASC.
+		AppLoader.setNoLoader();
 		requests.keywordRequest().findAllKeywordsByNameASC().fire(new BMEReceiver<List<KeywordProxy>>() {
 		//requests.keywordRequest().findAllKeywords().fire(new BMEReceiver<List<KeywordProxy>>() {
 
@@ -527,6 +529,7 @@ public class ActivityQuestion extends AbstractActivityWrapper implements Questio
 	public void questionEventAddClicked(final IconButton addKeyword) {
 		if (institutionActive != null)
 		{
+			AppLoader.setNoLoader();
 			requests.questionEventRequest().findQuestionEventByInstitution(institutionActive).fire(new BMEReceiver<List<QuestionEventProxy>>() {
 
 				@Override
@@ -561,6 +564,7 @@ public class ActivityQuestion extends AbstractActivityWrapper implements Questio
 	@Override
 	public void mcAddClicked(final IconButton addMc)
 	{
+		AppLoader.setNoLoader();
 		requests.mcRequest().findAllMcs().fire(new BMEReceiver<List<McProxy>>() {
 
 			@Override
@@ -577,6 +581,7 @@ public class ActivityQuestion extends AbstractActivityWrapper implements Questio
 	@Override
 	public void userTypeAddClicked(final IconButton addUserType)
 	{
+		AppLoader.setNoLoader();
 		requests.personRequest().findAllPeopleByNameASC().fire(new BMEReceiver<List<PersonProxy>>() {
 		//requests.personRequest().findAllPeople().fire(new BMEReceiver<List<PersonProxy>>() {
 

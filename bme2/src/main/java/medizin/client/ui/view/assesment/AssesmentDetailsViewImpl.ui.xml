@@ -5,6 +5,7 @@
 	xmlns:s="urn:import:medizin.client.ui.view.user"
     xmlns:m="urn:import:medizin.client.ui.view.assesment"
     xmlns:a="urn:import:medizin.client.ui.widget"
+	xmlns:loader="urn:import:medizin.client.ui.widget.process"
 	>
 	<ui:with type="medizin.shared.i18n.BmeConstants" field="constants"></ui:with>
 	<ui:style src="../../styles.css" >
@@ -17,6 +18,8 @@
 	
 <g:HTMLPanel>
 		<g:VerticalPanel addStyleNames="{style.tabStyle}">
+		<g:HTMLPanel addStyleNames="{style.applicationLoadingPopupViewStyle}">
+				 <loader:ApplicationLoadingView ui:field="loadingPopup"  visible="false"></loader:ApplicationLoadingView>
 			<g:HTMLPanel addStyleNames="{style.patientControls}">
 				<!-- <g:Image ui:field="arrow" styleName="{style.padleft5}" url="/ApplicationEntry/gwt/unibas/images/arrowdownselect.png"></g:Image> -->
 
@@ -159,20 +162,30 @@
 					<!-- </g:HorizontalPanel> -->
 				</g:Tab>
 			</g:TabPanel>
+			</g:HTMLPanel>
 			
 			<g:DisclosurePanel open="true" width="100%" addStyleNames="{style.marginTop10}" >
 				<g:header></g:header>
-				<m:QuestionTypeCountViewImpl ui:field="questionTypeCountViewImpl"></m:QuestionTypeCountViewImpl>	
+				<g:HTMLPanel addStyleNames="{style.applicationLoadingPopupViewStyle}">
+				<loader:ApplicationLoadingView ui:field="loadingPopupQuestionTypeCount"  visible="false"></loader:ApplicationLoadingView>
+				<m:QuestionTypeCountViewImpl ui:field="questionTypeCountViewImpl"></m:QuestionTypeCountViewImpl>
+				</g:HTMLPanel>	
 			</g:DisclosurePanel>
 			
 			<g:DisclosurePanel open="true" width="100%" addStyleNames="{style.marginTop10}" >
 				<g:header></g:header>
+				<g:HTMLPanel addStyleNames="{style.applicationLoadingPopupViewStyle}">
+				 <loader:ApplicationLoadingView ui:field="loadingPopupSumPerPerson"  visible="false"></loader:ApplicationLoadingView>
       				<m:QuestionSumPerPersonViewImpl ui:field="questionSumPerPersonViewImpl"></m:QuestionSumPerPersonViewImpl>
+      			 </g:HTMLPanel>
 			</g:DisclosurePanel>
 			
 			<g:DisclosurePanel open="true" width="100%" addStyleNames="{style.marginTop10}" ui:field="studentPanel">
 				<g:header></g:header>
-				<m:StudentViewImpl ui:field="studentViewImpl"></m:StudentViewImpl>      				
+				<g:HTMLPanel addStyleNames="{style.applicationLoadingPopupViewStyle}">
+				 <loader:ApplicationLoadingView ui:field="loadingPopupStudent"  visible="false"></loader:ApplicationLoadingView>
+				<m:StudentViewImpl ui:field="studentViewImpl"></m:StudentViewImpl>
+				</g:HTMLPanel>      				
 			</g:DisclosurePanel>
 			
 			</g:VerticalPanel>

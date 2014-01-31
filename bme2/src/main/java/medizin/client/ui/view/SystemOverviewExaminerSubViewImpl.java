@@ -6,6 +6,7 @@ import java.util.Map;
 import medizin.client.proxy.AssesmentProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.ui.widget.IconButton;
+import medizin.client.ui.widget.process.ApplicationLoadingView;
 import medizin.client.ui.widget.sendmail.SendMailPopupViewImpl;
 import medizin.shared.i18n.BmeConstants;
 import medizin.shared.i18n.BmeMessages;
@@ -52,6 +53,9 @@ public class SystemOverviewExaminerSubViewImpl extends Composite implements Syst
 	
 	@UiField
 	DisclosurePanel examinerDisclosurePanel;
+	
+	@UiField
+	ApplicationLoadingView loadingPopup;
 	
 	PersonProxy personProxy = null;
 	
@@ -219,5 +223,10 @@ public class SystemOverviewExaminerSubViewImpl extends Composite implements Syst
 	
 	public IconButton getSendMailBtn() {
 		return sendMailBtn;
+	}
+	
+	@Override
+	public ApplicationLoadingView getLoadingPopup() {
+		return loadingPopup;
 	}
 }

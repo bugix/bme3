@@ -16,6 +16,11 @@ public class PlaceAcceptAnswer extends AbstractPlace {
 		super(placeName, reload);
 	}
 
+	public PlaceAcceptAnswer(String placeAcceptAnswer, boolean reload,
+			Integer height) {
+		super(placeAcceptAnswer,reload,height);
+	}
+
 	@Prefix(PLACE_ACCEPT_ANSWER)
 	public static class Tokenizer extends AbstractPlace.AbstractTokenizer<PlaceAcceptAnswer> {
 

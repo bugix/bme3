@@ -21,6 +21,11 @@ public class PlaceQuestionInAssessment extends AbstractPlace {
 		super(placeName,stableId);
 	}
 
+	public PlaceQuestionInAssessment(String placeQuestionInAssessment,
+			boolean reload, Integer height) {
+		super(placeQuestionInAssessment, reload, height);
+	}
+
 	@Prefix(PLACE_QUESTION_IN_ASSESSMENT)
 	public static class Tokenizer extends AbstractPlace.AbstractTokenizer<PlaceQuestionInAssessment> {
 

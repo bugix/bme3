@@ -83,6 +83,8 @@ public class AsignAssQuestionViewImpl extends Composite implements AsignAssQuest
 	@UiField
 	QuestionPanelImpl questionPanel;
 
+	
+	
 	@UiField
 	QuestionAdvancedSearchSubViewImpl questionAdvancedSearchSubViewImpl;
 
@@ -91,6 +93,9 @@ public class AsignAssQuestionViewImpl extends Composite implements AsignAssQuest
 	
 	@UiField
 	ScrollPanel scrollPanel;
+	
+	@UiField
+	ScrollPanel scrollDetailPanel;
 	
 	@Override
 	public void setPresenter(Presenter presenter) {
@@ -101,6 +106,9 @@ public class AsignAssQuestionViewImpl extends Composite implements AsignAssQuest
 		return questionAdvancedSearchSubViewImpl;
 	}
 
-	
+	@Override
+	public ScrollPanel getScrollDetailPanel() {
+		return scrollDetailPanel;
+	}	
 
 }

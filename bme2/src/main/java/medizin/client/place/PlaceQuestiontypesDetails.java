@@ -29,6 +29,18 @@ public class PlaceQuestiontypesDetails extends AbstractDetailsPlace {
 		Log.debug("PlaceQuestiontypesDetails wird erstellt");
 	}
 
+	public PlaceQuestiontypesDetails(EntityProxyId<?> stableId, Integer height) {
+			super(stableId,height);
+	}
+
+	public PlaceQuestiontypesDetails(Operation operation, Integer height) {
+			super(operation,height);
+	}
+
+	public PlaceQuestiontypesDetails(EntityProxyId<?> stableId, Operation edit, Integer height) {
+		super(stableId,edit,height);
+	}
+
 	@Prefix(PLACE_QUESTIONTYPES_DETAILS)
 	public static class Tokenizer extends AbstractDetailsPlace.AbstractTokenizer<PlaceQuestiontypesDetails> {
 

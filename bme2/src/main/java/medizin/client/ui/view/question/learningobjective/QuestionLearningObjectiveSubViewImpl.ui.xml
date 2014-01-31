@@ -1,14 +1,27 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:m="urn:import:medizin.client.ui.widget" xmlns:c="urn:import:com.google.gwt.user.cellview.client">
-	<ui:style src="../../../styles.css"></ui:style>
-	<g:HTMLPanel addStyleNames="{style.patientDetails}">
-		<m:IconButton ui:field="btnAdd" icon="plusthick" ></m:IconButton>
-		
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:m="urn:import:medizin.client.ui.widget" xmlns:c="urn:import:com.google.gwt.user.cellview.client" xmlns:loader="urn:import:medizin.client.ui.widget.process">
+	<ui:style src="../../../styles.css">
+	.mainLearningObjectivePanel{
+			min-height: 130px !important;
+			overflow: hidden;
+			position: relative;
+		}
+	
+	</ui:style>
+	<g:HTMLPanel styleName="{style.mainLearningObjectivePanel}">
+		<loader:ApplicationLoadingView ui:field="loadingPopup"  visible="false"></loader:ApplicationLoadingView>
+		<m:IconButton ui:field="btnAdd" icon="plusthick" ></m:IconButton>		
+		<g:HTMLPanel styleName="{style.mainLearningObjectivePanel}">
+		<loader:ApplicationLoadingView ui:field="loadingPopupMajor"  visible="false"></loader:ApplicationLoadingView>
 		<c:CellTable ui:field="majorTable" width="100%" addStyleNames="{style.standardTableIcon}"/>					
 		<c:SimplePager display="{majorTable}" ui:field="pagerMajor" />
-				
+		</g:HTMLPanel>
+		
+		<g:HTMLPanel styleName="{style.mainLearningObjectivePanel}">
+		<loader:ApplicationLoadingView ui:field="loadingPopupMinor"  visible="false"></loader:ApplicationLoadingView>	
 		<c:CellTable  ui:field="minorTable" width="100%" addStyleNames="{style.standardTableIcon}"/>
 		<c:SimplePager display="{minorTable}" ui:field="pagerMinor" />
+		</g:HTMLPanel>
 	</g:HTMLPanel>
 </ui:UiBinder> 

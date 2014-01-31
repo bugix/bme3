@@ -3,6 +3,7 @@ package medizin.client.ui.view.user;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.TabPanelHelper;
+import medizin.client.ui.widget.process.ApplicationLoadingView;
 import medizin.shared.i18n.BmeConstants;
 
 import com.google.gwt.core.client.GWT;
@@ -96,6 +97,9 @@ public class UserDetailsViewImpl extends Composite implements UserDetailsView
     	return eventAccessView;
     }
 
+	@UiField
+	ApplicationLoadingView loadingPopup;
+	
     PersonProxy proxy;
     
     @UiHandler("delete")
@@ -175,5 +179,10 @@ public class UserDetailsViewImpl extends Composite implements UserDetailsView
 
 	public void setInstituteAccessView(InstituteAccessViewImpl instituteAccessView) {
 		this.instituteAccessView = instituteAccessView;
+	}
+
+	@Override
+	public ApplicationLoadingView getLoadingPopup() {
+		return loadingPopup;
 	}
 }

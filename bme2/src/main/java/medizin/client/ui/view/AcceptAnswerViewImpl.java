@@ -1,5 +1,7 @@
 package medizin.client.ui.view;
 
+import medizin.client.ui.widget.process.ApplicationLoadingView;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -32,6 +34,9 @@ public class AcceptAnswerViewImpl extends Composite implements AcceptAnswerView 
 		initWidget(uiBinder.createAndBindUi(this));
 
 	}
+	
+	@UiField
+	ApplicationLoadingView loadingPopup;
 
 
 
@@ -41,6 +46,12 @@ public class AcceptAnswerViewImpl extends Composite implements AcceptAnswerView 
 		this.delegate = delegate;
 		
 		
+	}
+		
+
+	@Override
+	public ApplicationLoadingView getLoadingPopup() {
+		return loadingPopup;
 	}
 
 

@@ -889,3 +889,9 @@ body {
     text-align: center;
     font-weight:bold;
 }
+
+.applicationLoadingPopupViewStyle
+{
+	overflow: hidden !important;
+	position: relative !important;	
+}

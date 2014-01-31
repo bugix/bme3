@@ -3,13 +3,16 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:b="urn:import:com.google.gwt.user.cellview.client"
 	xmlns:d="urn:import:com.google.gwt.user.datepicker.client" xmlns:m="urn:import:medizin.client.ui.widget"
 	xmlns:r="urn:import:medizin.client.ui.richtext"
-	xmlns:i="urn:import:medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl">
+	xmlns:i="urn:import:medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl"
+	xmlns:loader="urn:import:medizin.client.ui.widget.process"
+	>
 
 	<ui:style src="../../styles.css" />
 		
 	<ui:with type="medizin.shared.i18n.BmeConstants" field="cc"></ui:with>
 
-	<g:HTMLPanel width="100%">
+	<g:HTMLPanel width="100%" addStyleNames="{style.applicationLoadingPopupViewStyle}">
+		<loader:ApplicationLoadingView ui:field="loadingPopup"  visible="false"></loader:ApplicationLoadingView>
 		<g:TabPanel ui:field="mainTabPanel" width="100%">
 			<g:Tab text="{cc.image}" width="100%">
 				<g:VerticalPanel ui:field="viewContainer" visible="true" height="540px" width="1000px">

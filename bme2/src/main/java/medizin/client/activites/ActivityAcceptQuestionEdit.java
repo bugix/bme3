@@ -26,6 +26,7 @@ import medizin.client.ui.McAppConstant;
 import medizin.client.ui.view.question.QuestionEditView;
 import medizin.client.ui.view.question.QuestionEditViewImpl;
 import medizin.client.ui.widget.dialogbox.ConfirmationCheckboxDialog;
+import medizin.client.ui.widget.process.AppLoader;
 import medizin.client.ui.widget.resource.dndview.vo.QuestionResourceClient;
 import medizin.client.ui.widget.resource.dndview.vo.State;
 import medizin.client.util.ClientUtility;
@@ -107,6 +108,7 @@ public class ActivityAcceptQuestionEdit extends AbstractActivityWrapper implemen
 		view.setQuestEventPickerValues(Collections.<QuestionEventProxy> emptyList());
 
 		QuestionEventRequest questionEventRequest = requests.questionEventRequest();
+		AppLoader.setNoLoader();
 		questionEventRequest.findQuestionEventByInstitutionAndAccRights(isAdminOrInstitutionalAdmin(), userLoggedIn.getId(), institutionActive.getId()).with(medizin.client.ui.view.roo.QuestionEventProxyRenderer.instance().getPaths()).to(new BMEReceiver<List<QuestionEventProxy>>() {
 
 			public void onSuccess(List<QuestionEventProxy> response) {
@@ -119,6 +121,7 @@ public class ActivityAcceptQuestionEdit extends AbstractActivityWrapper implemen
 
 		view.setQuestionTypePickerValues(new ArrayList<QuestionTypeProxy>());
 		QuestionTypeRequest questionTypeRequest = questionEventRequest.append(requests.questionTypeRequest());
+		AppLoader.setNoLoader();
 		questionTypeRequest.findAllQuestionTypesForInstituteInSession().to(new BMEReceiver<List<QuestionTypeProxy>>() {
 
 			public void onSuccess(List<QuestionTypeProxy> response) {
@@ -141,6 +144,7 @@ public class ActivityAcceptQuestionEdit extends AbstractActivityWrapper implemen
 		});
 
 		QuestionRequest questionRequest = mcRequest.append(requests.questionRequest());
+		AppLoader.setNoLoader();
 		questionRequest.find(questionPlace.getProxyId()).with("previousVersion", "keywords", "questEvent", "questionType", "mcs", "rewiewer", "autor", "answers", "answers.autor", "answers.rewiewer", "questionResources").to(new BMEReceiver<Object>() {
 
 			@Override
@@ -156,7 +160,7 @@ public class ActivityAcceptQuestionEdit extends AbstractActivityWrapper implemen
 				}
 			}
 		});
-		
+		AppLoader.setNoLoader();
 		questionRequest.fire();
 	}
 	
@@ -267,15 +271,15 @@ public class ActivityAcceptQuestionEdit extends AbstractActivityWrapper implemen
 							if (checkBoxDialog.getCheckBoxValue())
 								Cookies.setCookie(McAppConstant.RESEND_TO_REVIEW_KEY, String.valueOf(true), ClientUtility.getDateFromOneYear());
 							
-							goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));
-							goTo(new PlaceAcceptQuestionDetails(stableId,Operation.DETAILS));
+							goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION,questionPlace.getHeight()));
+							goTo(new PlaceAcceptQuestionDetails(stableId,Operation.DETAILS,questionPlace.getHeight()));
 						}
 					});
 				}
 				else
 				{
-					goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));
-					goTo(new PlaceAcceptQuestionDetails(stableId,Operation.DETAILS));
+					goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION,questionPlace.getHeight()));
+					goTo(new PlaceAcceptQuestionDetails(stableId,Operation.DETAILS,questionPlace.getHeight()));
 				}
 				return null;
 			}
@@ -288,7 +292,7 @@ public class ActivityAcceptQuestionEdit extends AbstractActivityWrapper implemen
 			
 			@Override
 			public Void apply(EntityProxyId<?> stableId) {
-				goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));
+				goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION,questionPlace.getHeight()));
 				//goTo(new PlaceAcceptQuestionDetails(stableId,Operation.DETAILS));
 				return null;
 			}
@@ -302,7 +306,7 @@ public class ActivityAcceptQuestionEdit extends AbstractActivityWrapper implemen
 			
 			@Override
 			public Void apply(EntityProxyId<?> stableId) {
-				goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));
+				goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION,questionPlace.getHeight()));
 				return null;
 			}
 		};
@@ -401,6 +405,7 @@ public class ActivityAcceptQuestionEdit extends AbstractActivityWrapper implemen
 		addPicturePathToQuestion(questionResourceRequest, questionResourceProxies, questionType,question);
 		
 		final QuestionProxy questionProxy2 = question;
+		AppLoader.setNoLoader();
 		questionRequest.persistQuestion().using(question).fire(new BMEReceiver<Void>(reciverMap) {
 
 			@Override
@@ -439,6 +444,7 @@ public class ActivityAcceptQuestionEdit extends AbstractActivityWrapper implemen
 		addPicturePathToQuestion(questionResourceRequest, this.question.getQuestionResources(), questionType,questionProxy);
 		
 		final QuestionProxy questionProxy2 = questionProxy;
+		AppLoader.setNoLoader();
 		questionRequest.persist().using(questionProxy).fire(new BMEReceiver<Void>(reciverMap) {
 			@Override
 			public void onSuccess(Void response) {
@@ -459,11 +465,13 @@ public class ActivityAcceptQuestionEdit extends AbstractActivityWrapper implemen
 				if (questionResource.getState().equals(State.NEW) || questionResource.getState().equals(State.EDITED)) {
 					QuestionResourceProxy proxy;
 					if(questionResource.getId() == null) {
+						AppLoader.setNoLoader();
 						proxy = questionResourceRequest.create(QuestionResourceProxy.class);
 						questionResourceProxies.add(proxy);		
 					} else {
 						proxy = findQuestionResource(questionResource.getId(),questionResourceProxies);
 						if(proxy != null) {
+							AppLoader.setNoLoader();
 							proxy = questionResourceRequest.edit(proxy);
 						}
 						questionResourceProxies.add(proxy);
@@ -485,7 +493,7 @@ public class ActivityAcceptQuestionEdit extends AbstractActivityWrapper implemen
 						if(toDeleteProxy != null) {
 							questionResourceProxies.remove(toDeleteProxy);	
 						}
-						
+						AppLoader.setNoLoader();
 						questionResourceRequest.removeQuestionResource(questionResource.getId()).to(new BMEReceiver<Void>() {
 
 							@Override
@@ -519,9 +527,11 @@ public class ActivityAcceptQuestionEdit extends AbstractActivityWrapper implemen
 			if(view.isPictureAddedForImgKeyOrShowInImage()) {
 				QuestionResourceProxy questionResourceProxyForPicture; 
 				if(questionResourceProxies.isEmpty() == true) {
+					AppLoader.setNoLoader();
 					questionResourceProxyForPicture = questionResourceRequest.create(QuestionResourceProxy.class);
 					//questionResourceProxies.add(questionResourceProxyForPicture);
 				}else {
+					AppLoader.setNoLoader();
 					questionResourceProxyForPicture = Lists.newArrayList(questionResourceProxies).get(0);
 					questionResourceProxyForPicture = questionResourceRequest.edit(questionResourceProxyForPicture);
 				}
@@ -537,9 +547,9 @@ public class ActivityAcceptQuestionEdit extends AbstractActivityWrapper implemen
 	@Override
 	public void cancelClicked() {
 		if (question != null && question.getId() != null) {
-			goTo(new PlaceAcceptQuestionDetails(question.stableId(),Operation.DETAILS));
+			goTo(new PlaceAcceptQuestionDetails(question.stableId(),Operation.DETAILS, questionPlace.getHeight()));
 		} else {
-			goTo(new PlaceQuestion(PlaceQuestion.PLACE_QUESTION));
+			goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION,questionPlace.getHeight()));
 		}
 		
 	}

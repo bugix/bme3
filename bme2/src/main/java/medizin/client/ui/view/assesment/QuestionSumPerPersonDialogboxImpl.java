@@ -6,6 +6,7 @@ import medizin.client.proxy.PersonProxy;
 import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionSumPerPersonProxy;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
+import medizin.client.ui.widget.process.ApplicationLoadingView;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.EventHandlingValueHolderItem;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.simple.DefaultSuggestOracle;
@@ -59,6 +60,9 @@ public class QuestionSumPerPersonDialogboxImpl extends DialogBox implements Ques
     @UiField
     Button save;
 
+    @UiField
+	ApplicationLoadingView loadingPopup;
+    
     private Delegate delegate;
 		
 	@UiHandler ("closeButton")
@@ -170,4 +174,9 @@ public class QuestionSumPerPersonDialogboxImpl extends DialogBox implements Ques
 		}
 		return true;
 	}
+	
+	@Override
+	public ApplicationLoadingView getLoadingPopup() {
+			return loadingPopup;
+		}	
 }

@@ -12,6 +12,7 @@ import medizin.client.proxy.QuestionProxy;
 import medizin.client.ui.view.AcceptQuestionView;
 import medizin.client.ui.view.AcceptQuestionViewImpl;
 import medizin.client.ui.widget.Sorting;
+import medizin.client.ui.widget.process.AppLoader;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.activity.shared.ActivityManager;
@@ -179,7 +180,7 @@ public class ActivityAcceptQuestion extends AbstractActivityWrapper implements A
 
 	private void showDetails(QuestionProxy question) {
 		Log.debug("Question Stable id: " + question.stableId() + " " + PlaceQuestionDetails.Operation.DETAILS);
-		placeController.goTo(new PlaceAcceptQuestionDetails(question.stableId()));
+		placeController.goTo(new PlaceAcceptQuestionDetails(question.stableId(),view.getScrollDetailPanel().getOffsetHeight()));
 	}
 	
 
@@ -200,7 +201,7 @@ public class ActivityAcceptQuestion extends AbstractActivityWrapper implements A
 			rangeChangeHandler.removeHandler();
 			rangeChangeHandler=null;
 		}
-		
+		AppLoader.setNoLoader();
 		requests.questionRequest().countQuestionsNonAcceptedAdmin().fire(new BMEReceiver<Long>() {
 			@Override
 			public void onSuccess(Long response) {
@@ -224,7 +225,8 @@ public class ActivityAcceptQuestion extends AbstractActivityWrapper implements A
 
 	protected void onRangeChanged() {
 		final Range range = table.getVisibleRange();
-
+		
+		AppLoader.setNoLoader();
 		requests.questionRequest().findQuestionsEntriesNonAcceptedAdmin(sortname,sortorder,range.getStart(), range.getLength()).with(view.getPaths()).fire(new BMEReceiver<List<QuestionProxy>>() {
 			@Override
 			public void onSuccess(List<QuestionProxy> values) {

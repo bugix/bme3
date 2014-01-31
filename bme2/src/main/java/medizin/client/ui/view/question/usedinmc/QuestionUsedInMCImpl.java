@@ -11,6 +11,7 @@ import medizin.client.proxy.AssesmentQuestionProxy;
 import medizin.client.style.resources.MyCellTableResources;
 import medizin.client.style.resources.MySimplePagerResources;
 import medizin.client.ui.McAppConstant;
+import medizin.client.ui.widget.process.ApplicationLoadingView;
 import medizin.shared.i18n.BmeConstants;
 
 import com.google.gwt.core.client.GWT;
@@ -44,7 +45,10 @@ public class QuestionUsedInMCImpl extends Composite implements RecordChangeHandl
 
 	@UiField(provided = true)
 	CellTable<AssesmentQuestionProxy> table;
-
+	
+	@UiField
+	ApplicationLoadingView loadingPopup;
+	
 	private Set<String> paths = new HashSet<String>();
 
 	private Delegate delegate;
@@ -201,5 +205,10 @@ public class QuestionUsedInMCImpl extends Composite implements RecordChangeHandl
 	@Override
 	public void initUsedInMCView() {
 		delegate.initUsedInMCView();
+	}
+	
+	@Override
+	public ApplicationLoadingView getLoadingPopup() {
+		return loadingPopup;
 	}
 }

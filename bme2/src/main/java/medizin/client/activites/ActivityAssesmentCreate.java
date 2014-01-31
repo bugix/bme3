@@ -14,6 +14,7 @@ import medizin.client.request.AssesmentRequest;
 import medizin.client.ui.TopPanel;
 import medizin.client.ui.view.assesment.AssesmentEditView;
 import medizin.client.ui.view.assesment.AssesmentEditViewImpl;
+import medizin.client.ui.widget.process.AppLoader;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.shared.EventBus;
@@ -105,6 +106,7 @@ public class ActivityAssesmentCreate  extends AbstractActivityWrapper  implement
 		view.setDelegate(this);
 		
         view.setMcPickerValues(Collections.<McProxy>emptyList());
+        AppLoader.setNoLoader();
         requests.mcRequest().findAllMcs().with(medizin.client.ui.view.roo.McProxyRenderer.instance().getPaths()).fire(new BMEReceiver<List<McProxy>>() {
 
             public void onSuccess(List<McProxy> response) {
@@ -115,6 +117,7 @@ public class ActivityAssesmentCreate  extends AbstractActivityWrapper  implement
             }
         });
         view.setRepeForPickerValues(Collections.<AssesmentProxy>emptyList());
+        AppLoader.setNoLoader();
         requests.assesmentRequest().findAllAssesmentByInsitute().with(medizin.client.ui.view.roo.AssesmentProxyRenderer.instance().getPaths()).fire(new BMEReceiver<List<AssesmentProxy>>() {
 
             public void onSuccess(List<AssesmentProxy> response) {
@@ -147,6 +150,8 @@ public class ActivityAssesmentCreate  extends AbstractActivityWrapper  implement
 		view.setDelegate(this);
 		if(this.operation==PlaceAssesmentDetails.Operation.EDIT){
 			Log.info("edit");
+		
+		AppLoader.setCurrentLoader(view.getLoadingPopup());			
 		requests.find(assesmentPlace.getProxyId()).with("mc","repeFor","institution").fire(new BMEReceiver<Object>() {
 
 			/*public void onFailure(ServerFailure error){
@@ -188,7 +193,7 @@ public class ActivityAssesmentCreate  extends AbstractActivityWrapper  implement
 		}
 		
 		Log.info("edit");
-	      
+			AppLoader.setNoLoader();
 	       Log.info("persist");
 	        request.persist().using(assesment);
 		editorDriver.edit(assesment, request);
@@ -228,24 +233,26 @@ public class ActivityAssesmentCreate  extends AbstractActivityWrapper  implement
 
 	@Override
 	public void cancelClicked() {
+		
 		if(this.operation==PlaceAssesmentDetails.Operation.EDIT)
-			placeController.goTo(new PlaceAssesmentDetails(assesment.stableId()));
+			placeController.goTo(new PlaceAssesmentDetails(assesment.stableId(), assesmentPlace.getHeight()));
 		else
-			placeController.goTo(new PlaceAssesment("PlaceAssesment!CANCEL"));
+			placeController.goTo(new PlaceAssesment(PlaceAssesment.PLACE_ASSESMENT,assesmentPlace.getHeight()));
 		
 	}
 
 	@Override
 	public void saveClicked() {
-
+		
+		AppLoader.setNoLoader();
 		editorDriver.flush().fire(new BMEReceiver<Void>(reciverMap) {
 			
           @Override
           public void onSuccess(Void response) {
         	  Log.info("PersonSucesfullSaved");
         	  
-        	  	placeController.goTo(new PlaceAssesment(PlaceAssesment.PLACE_ASSESMENT));
-        		placeController.goTo(new PlaceAssesmentDetails(assesment.stableId(), PlaceAssesmentDetails.Operation.DETAILS));
+        	  	placeController.goTo(new PlaceAssesment(PlaceAssesment.PLACE_ASSESMENT,assesmentPlace.getHeight()));
+        		placeController.goTo(new PlaceAssesmentDetails(assesment.stableId(), PlaceAssesmentDetails.Operation.DETAILS, assesmentPlace.getHeight()));
           //	goTo(new PlaceAssesment(person.stableId()));
           }
           

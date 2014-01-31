@@ -14,6 +14,7 @@ import medizin.client.proxy.KeywordProxy;
 import medizin.client.proxy.QuestionProxy;
 import medizin.client.ui.view.question.keyword.QuestionKeywordView;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
+import medizin.client.ui.widget.process.AppLoader;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.simple.DefaultSuggestOracle;
 import medizin.shared.i18n.BmeConstants;
 
@@ -62,6 +63,8 @@ public class PartActivityQuestionKeyword implements QuestionKeywordView.Delegate
 		
 		if (flag == false)
 		{
+			
+			AppLoader.setCurrentLoader(view.getLoadingPopup());
 			requests.keywordRequest().findKeywordByStringOrAddKeyword(text, proxy).with("keywords").fire(new BMEReceiver<QuestionProxy>() {
 
 				@Override
@@ -83,8 +86,8 @@ public class PartActivityQuestionKeyword implements QuestionKeywordView.Delegate
 	public void deleteKeywordClicked(KeywordProxy keyword, QuestionProxy proxy) {
 		if(isReadOnly == true) {
 			return;
-		}
-		
+		}		
+		AppLoader.setCurrentLoader(view.getLoadingPopup());
 		requests.keywordRequest().deleteKeywordFromQuestion(keyword, proxy).with("previousVersion","keywords","questEvent","questionType","mcs", "rewiewer", "autor","questionResources","answers").fire(new BMEReceiver<QuestionProxy>() {
 
 			@Override
@@ -128,7 +131,7 @@ public class PartActivityQuestionKeyword implements QuestionKeywordView.Delegate
 		if (questionProxy != null && questionProxy.getKeywords() != null)
 		{
 			
-			
+			AppLoader.setNoLoader();
 			requests.keywordRequest().countKeywordByQuestion(questionProxy.getId()).fire(new BMEReceiver<Integer>() {
 
 				@Override
@@ -151,7 +154,7 @@ public class PartActivityQuestionKeyword implements QuestionKeywordView.Delegate
 	public void onKeywordTableRangeChanged()
 	{
 		final Range range = view.getKeywordTable().getVisibleRange();
-		
+		AppLoader.setNoLoader();
 		requests.keywordRequest().findKeywordByQuestion(questionProxy.getId(), range.getStart(), range.getLength()).fire(new BMEReceiver<List<KeywordProxy>>() {
 
 			@Override

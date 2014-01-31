@@ -1,6 +1,7 @@
 package medizin.client.ui.view.user;
 
 import medizin.client.proxy.PersonProxy;
+import medizin.client.ui.widget.process.ApplicationLoadingView;
 
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -23,9 +24,7 @@ public interface UserDetailsView extends IsWidget {
 		void deleteClicked();
 
 		void editClicked();
-		
 
-		void newClicked(String institutionName);
 	}
 
 	QuestionAccessViewImpl getQuestionAccessView();
@@ -34,4 +33,6 @@ public interface UserDetailsView extends IsWidget {
 	
 	TabPanel getUserAccessDetailPanel();
 	void setUserAccessDetailPanel(TabPanel userAccessDetailPanel);
+
+	ApplicationLoadingView getLoadingPopup();
 }

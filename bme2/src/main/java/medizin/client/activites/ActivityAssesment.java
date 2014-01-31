@@ -12,6 +12,7 @@ import medizin.client.proxy.PersonProxy;
 import medizin.client.ui.view.assesment.AssesmentView;
 import medizin.client.ui.view.assesment.AssesmentViewImpl;
 import medizin.client.ui.widget.Sorting;
+import medizin.client.ui.widget.process.AppLoader;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.activity.shared.ActivityManager;
@@ -171,6 +172,7 @@ public class ActivityAssesment extends AbstractActivityWrapper implements Assesm
 	
 	    
 		private void init() {
+			AppLoader.setNoLoader();
 			fireCountRequest(new BMEReceiver<Long>() {
 				@Override
 				public void onSuccess(Long response) {
@@ -194,7 +196,7 @@ public class ActivityAssesment extends AbstractActivityWrapper implements Assesm
 	
 		protected void onRangeChanged() {
 			final Range range = table.getVisibleRange();
-
+			AppLoader.setNoLoader();
 			final BMEReceiver<List<AssesmentProxy>> callback = new BMEReceiver<List<AssesmentProxy>>() {
 				@Override
 				public void onSuccess(List<AssesmentProxy> values) {
@@ -215,7 +217,7 @@ public class ActivityAssesment extends AbstractActivityWrapper implements Assesm
 ////						idToProxy.put(proxyId, assesment);
 //					}
 					table.setRowData(range.getStart(), values);
-					
+					AppLoader.setNoLoader();
 					selectRow(range);
 //					finishPendingSelection();
 				if (widget != null) {
@@ -223,7 +225,7 @@ public class ActivityAssesment extends AbstractActivityWrapper implements Assesm
 					}
 				}
 			};
-
+			AppLoader.setNoLoader();
 			fireRangeRequest(range, callback);
 			
 		}
@@ -257,7 +259,7 @@ public class ActivityAssesment extends AbstractActivityWrapper implements Assesm
 			Log.debug("Assesement Stable id: " + assesement.stableId() + " "
 					+ PlaceAssesmentDetails.Operation.DETAILS);
 			placeController.goTo(
-					new PlaceAssesmentDetails(assesement.stableId()));
+					new PlaceAssesmentDetails(assesement.stableId(), view.getScrollDetailPanel().getOffsetHeight()));
 		}
 
 		@Override
@@ -268,7 +270,7 @@ public class ActivityAssesment extends AbstractActivityWrapper implements Assesm
 
 		@Override
 		public void newClicked() {
-			placeController.goTo(new PlaceAssesmentDetails(PlaceAssesmentDetails.Operation.CREATE));
+			placeController.goTo(new PlaceAssesmentDetails(PlaceAssesmentDetails.Operation.CREATE,view.getScrollDetailPanel().getOffsetHeight()));
 			
 		}
 

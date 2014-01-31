@@ -10,6 +10,7 @@ import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.ui.view.renderer.EnumRenderer;
 import medizin.client.ui.view.roo.QuestionTypeSetEditor;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
+import medizin.client.ui.widget.process.ApplicationLoadingView;
 import medizin.shared.BlockingTypes;
 import medizin.shared.i18n.BmeConstants;
 
@@ -46,6 +47,9 @@ public class QuestionTypeCountAddDialogboxImpl extends DialogBox implements Ques
 	
 	@UiField
 	DivElement blockingTypeLbl;
+	
+	@UiField
+	ApplicationLoadingView loadingPopup;
 	
 	@UiField(provided=true)
 	ValueListBox<BlockingTypes> blockingType=new ValueListBox<BlockingTypes>(new EnumRenderer<BlockingTypes>());
@@ -148,10 +152,13 @@ public class QuestionTypeCountAddDialogboxImpl extends DialogBox implements Ques
     		ConfirmationDialogBox.showOkDialogBox(constants.warning(), constants.questionTypeCountSetNotNull());
     		return;
     	}
-        delegate.addClicked();
-        hide();
+        delegate.addClicked();        
     }
 
-
+    
+    @Override
+    public ApplicationLoadingView getLoadingPopup() {
+    		return loadingPopup;
+    	}
 
 }

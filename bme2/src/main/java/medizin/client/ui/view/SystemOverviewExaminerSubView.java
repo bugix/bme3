@@ -5,6 +5,7 @@ import java.util.List;
 import medizin.client.proxy.AssesmentProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.ui.widget.IconButton;
+import medizin.client.ui.widget.process.ApplicationLoadingView;
 
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -42,4 +43,6 @@ public interface SystemOverviewExaminerSubView extends IsWidget {
 	public IconButton getSendMailBtn();
 	
 	public void setExaminerLabel(String examinerName);
+
+	ApplicationLoadingView getLoadingPopup();
 }

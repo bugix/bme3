@@ -32,6 +32,7 @@ import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchTextSearch
 import medizin.client.ui.view.question.criteria.QuestionAdvancedSearchUserTypePopupViewImpl;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.Sorting;
+import medizin.client.ui.widget.process.AppLoader;
 import medizin.shared.criteria.AdvancedSearchCriteria;
 import medizin.shared.criteria.AdvancedSearchCriteriaUtils;
 
@@ -140,6 +141,7 @@ public class ActivityQuestionInAssessment extends AbstractActivityWrapper implem
 	}
 
 	private void initAssessmentSuggestBox() {
+		AppLoader.setNoLoader();
 		requests.assesmentRequest().findAllAssesmentByInstituteDescDateOfAssessment().with("mc").fire(new BMEReceiver<List<AssesmentProxy>>() {
 
 			@Override
@@ -161,7 +163,7 @@ public class ActivityQuestionInAssessment extends AbstractActivityWrapper implem
 	}
 
 	protected void showDetails(AssesmentQuestionProxy selectedObject) {
-		placeController.goTo(new PlaceQuestionInAssessmentDetails(selectedObject.stableId()));
+		placeController.goTo(new PlaceQuestionInAssessmentDetails(selectedObject.stableId(),view.getScrollDetailPanel().getOffsetHeight()));
 	}
 	
 	public void displayQuestionByAssessment(Long assessmentID)
@@ -172,7 +174,7 @@ public class ActivityQuestionInAssessment extends AbstractActivityWrapper implem
 	private void init(final Long assessmentId) {
 		List<String> encodedStringList = new ArrayList<String>();
 		encodedStringList = AdvancedSearchCriteriaUtils.encodeList(advancedSearchCriteriaList);
-		
+		AppLoader.setNoLoader();
 		requests.assesmentQuestionRequest().countAssessmentQuestionByAssessment(assessmentId, encodedStringList).fire(new BMEReceiver<Integer>() {
 
 			@Override
@@ -190,7 +192,7 @@ public class ActivityQuestionInAssessment extends AbstractActivityWrapper implem
 		final Range range = table.getVisibleRange();
 		List<String> encodedStringList = new ArrayList<String>();
 		encodedStringList = AdvancedSearchCriteriaUtils.encodeList(advancedSearchCriteriaList);
-		
+		AppLoader.setNoLoader();
 		requests.assesmentQuestionRequest().findAssessmentQuestionByAssessmentForAdmin(assessmentId, sortname, sortorder, encodedStringList, range.getStart(), range.getLength()).with(view.getPaths()).with("question", "question.questionType", "question.autor").fire(new BMEReceiver<List<AssesmentQuestionProxy>>() {
 
 			@Override
@@ -216,6 +218,7 @@ public class ActivityQuestionInAssessment extends AbstractActivityWrapper implem
 	private void selectRow(final Range range) {
 		if (proxyId != null)
 		{
+			AppLoader.setNoLoader();
 			requests.find(proxyId).fire(new BMEReceiver<Object>() {
 
 				@Override
@@ -249,6 +252,7 @@ public class ActivityQuestionInAssessment extends AbstractActivityWrapper implem
 	@Override
 	public void keywordAddClicked(final IconButton addKeyword) {		
 		// Added this to show key word by name as ASC. 
+		AppLoader.setNoLoader();
 		requests.keywordRequest().findAllKeywordsByNameASC().fire(new BMEReceiver<List<KeywordProxy>>() {
 		//requests.keywordRequest().findAllKeywords().fire(new BMEReceiver<List<KeywordProxy>>() {
 
@@ -285,6 +289,7 @@ public class ActivityQuestionInAssessment extends AbstractActivityWrapper implem
 	
 	public void initSearch()
 	{
+		AppLoader.setNoLoader();
 		criteriaTable.setRowCount(advancedSearchCriteriaList.size());
 		criteriaTable.setRowData(advancedSearchCriteriaList);
 		if (view.getAssessmentSuggestBox().getSelected() != null)
@@ -297,6 +302,7 @@ public class ActivityQuestionInAssessment extends AbstractActivityWrapper implem
 	public void questionEventAddClicked(final IconButton addKeyword) {
 		if (institutionActive != null)
 		{
+			AppLoader.setNoLoader();
 			requests.questionEventRequest().findQuestionEventByInstitution(institutionActive).fire(new BMEReceiver<List<QuestionEventProxy>>() {
 
 				@Override
@@ -331,6 +337,7 @@ public class ActivityQuestionInAssessment extends AbstractActivityWrapper implem
 	@Override
 	public void mcAddClicked(final IconButton addMc)
 	{
+		AppLoader.setNoLoader();
 		requests.mcRequest().findAllMcs().fire(new BMEReceiver<List<McProxy>>() {
 
 			@Override
@@ -347,6 +354,7 @@ public class ActivityQuestionInAssessment extends AbstractActivityWrapper implem
 	@Override
 	public void userTypeAddClicked(final IconButton addUserType)
 	{
+		AppLoader.setNoLoader();
 		requests.personRequest().findAllPeopleByNameASC().fire(new BMEReceiver<List<PersonProxy>>() {
 		//requests.personRequest().findAllPeople().fire(new BMEReceiver<List<PersonProxy>>() {
 

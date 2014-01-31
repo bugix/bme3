@@ -16,6 +16,11 @@ public class PlaceNotActivatedAnswer extends AbstractPlace {
 		super(placeName, reload);
 	}
 
+	public PlaceNotActivatedAnswer(String placeNotActivatedAnswer, boolean reload,
+			Integer height) {
+		super(placeNotActivatedAnswer, reload, height);
+	}
+
 	@Prefix(PLACE_NOT_ACTIVATED_ANSWER)
 	public static class Tokenizer extends AbstractPlace.AbstractTokenizer<PlaceNotActivatedAnswer> {
 

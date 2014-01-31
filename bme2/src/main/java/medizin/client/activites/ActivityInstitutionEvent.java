@@ -13,6 +13,7 @@ import medizin.client.request.QuestionEventRequest;
 import medizin.client.ui.view.EventView;
 import medizin.client.ui.view.EventViewImpl;
 import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
+import medizin.client.ui.widget.process.AppLoader;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.shared.EventBus;
@@ -101,7 +102,7 @@ public class ActivityInstitutionEvent extends AbstractActivityWrapper implements
 			}
 		});*/
 		//init();
-		
+		AppLoader.setNoLoader();
 		requests.find(eventPlace.getProxyId()).fire(new BMEReceiver<Object>() {
 
 			/*public void onFailure(ServerFailure error){
@@ -163,7 +164,7 @@ public class ActivityInstitutionEvent extends AbstractActivityWrapper implements
 	private void init(InstitutionProxy institution) {
 
 		this.institution = institution;
-		
+		AppLoader.setNoLoader();
 		fireCountRequest(new BMEReceiver<Long>() {
 			@Override
 			public void onSuccess(Long response) {
@@ -258,6 +259,7 @@ public class ActivityInstitutionEvent extends AbstractActivityWrapper implements
 	}
 	private void fireRangeRequest(final Range range,
             final BMEReceiver<List<QuestionEventProxy>> callback) {
+			AppLoader.setNoLoader();
 			createRangeRequest(range).with(view.getPaths()).fire(callback);
 }
 	
@@ -290,6 +292,7 @@ public class ActivityInstitutionEvent extends AbstractActivityWrapper implements
                 placeController.goTo(getBackButtonPlace());
             }
         });*/
+		AppLoader.setCurrentLoader(view.getLoadingPopup());
 		requests.questionEventRequest().remove().using(questionEvent).fire(new BMEReceiver<Void>(reciverMap) {
 
             public void onSuccess(Void ignore) {
@@ -314,7 +317,7 @@ public class ActivityInstitutionEvent extends AbstractActivityWrapper implements
 		QuestionEventRequest request = requests.questionEventRequest();
 		proxy = request.edit(proxy);
 		proxy.setEventName(questionEventName);
-		
+		AppLoader.setCurrentLoader(view.getLoadingPopup());
 		request.persist().using(proxy).fire(new BMEReceiver<Void>(reciverMap) {
 
             public void onSuccess(Void ignore) {
@@ -332,7 +335,7 @@ public class ActivityInstitutionEvent extends AbstractActivityWrapper implements
 		questionEvent.setEventName(eventName);
 		questionEvent.setInstitution(institution);
 //		questionEvent.setVersion(0);
-
+		AppLoader.setCurrentLoader(view.getLoadingPopup());
 		request.persist().using(questionEvent).fire(new BMEReceiver<Void>(reciverMap) {
 
             public void onSuccess(Void ignore) {

@@ -1,7 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" 
-	xmlns:b="urn:import:com.google.gwt.user.cellview.client" xmlns:p="urn:import:javax.persistence" xmlns:a="urn:import:medizin.client.ui.widget" xmlns:pager="urn:import:medizin.client.ui.widget.pager" xmlns:r="urn:import:medizin.client.style.resources">
+	xmlns:b="urn:import:com.google.gwt.user.cellview.client" xmlns:p="urn:import:javax.persistence" xmlns:a="urn:import:medizin.client.ui.widget" xmlns:pager="urn:import:medizin.client.ui.widget.pager" xmlns:r="urn:import:medizin.client.style.resources" xmlns:loader="urn:import:medizin.client.ui.widget.process">
 	
 	
 
@@ -80,7 +80,8 @@
 		<!-- <g:west size="500"> -->
 		<g:west size="500"> 
 			<g:ScrollPanel ui:field="scrollPanel">
-				<g:HTMLPanel >
+				<g:HTMLPanel addStyleNames="{style.applicationLoadingPopupViewStyle}" >
+				<loader:ApplicationLoadingView ui:field="loadingPopup"  visible="false"></loader:ApplicationLoadingView>
 						<!-- <div class="{style.controls} {style.controlsleft}"> -->
 						<g:HorizontalPanel spacing="3">
 							<a:QuickSearchBox ui:field="searchBox"></a:QuickSearchBox>
@@ -108,7 +109,7 @@
 			</g:ScrollPanel>
 		</g:west>
 		<g:center>
-			<g:ScrollPanel>
+			<g:ScrollPanel ui:field="scrollDetailPanel">
 				<g:SimplePanel ui:field="slidingPanel">
 
 				</g:SimplePanel>

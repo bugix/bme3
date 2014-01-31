@@ -9,6 +9,7 @@ import medizin.client.proxy.QuestionTypeProxy;
 import medizin.client.ui.view.renderer.EnumRenderer;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.TabPanelHelper;
+import medizin.client.ui.widget.process.ApplicationLoadingView;
 import medizin.shared.QuestionTypes;
 import medizin.shared.i18n.BmeConstants;
 
@@ -255,6 +256,9 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 		 
 		@UiField
 		Label maxBytesValLbl;
+		
+		@UiField
+		ApplicationLoadingView loadingPopup;
 	    
 		
 	    
@@ -567,5 +571,10 @@ public class QuestiontypesDetailsViewImpl extends Composite implements Questiont
 			{
 				Document.get().getElementById(str).getStyle().setDisplay(Display.NONE);
 			}
-		}		
+		}
+		
+		@Override
+		public ApplicationLoadingView getLoadingPopup() {
+				return loadingPopup;
+			}	
 }

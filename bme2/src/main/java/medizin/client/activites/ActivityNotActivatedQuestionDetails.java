@@ -16,6 +16,7 @@ import medizin.client.ui.view.question.MatrixAnswerListView;
 import medizin.client.ui.view.question.MatrixAnswerView;
 import medizin.client.ui.view.question.QuestionDetailsView;
 import medizin.client.ui.view.question.QuestionDetailsViewImpl;
+import medizin.client.ui.widget.process.AppLoader;
 import medizin.client.util.Matrix;
 import medizin.client.util.MatrixValidityVO;
 import medizin.shared.QuestionTypes;
@@ -80,7 +81,7 @@ public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper
 	public void start2(final AcceptsOneWidget panel, final EventBus eventBus) {
 		
 		if(userLoggedIn==null) return;
-		
+		AppLoader.setNoLoader();
 		requests.find(placeNotActivatedQuestionDetails.getProxyId()).with("previousVersion","keywords","questEvent","questionType","mcs", "rewiewer", "autor","questionResources","answers").fire(new BMEReceiver<Object>() {
 
 			@Override
@@ -154,7 +155,7 @@ public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper
 			answerRangeChangeHandler.removeHandler();
 			answerRangeChangeHandler=null;
 		}
-		
+		AppLoader.setNoLoader();
 		requests.answerRequest().contAnswersByQuestion(question.getId()).fire( new BMEReceiver<Long>(){
 
 			@Override
@@ -173,6 +174,7 @@ public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper
 	
 	private void onAnswerTableRangeChanged() {
 		final Range range = view.getAnswerListViewImpl().getTable().getVisibleRange();
+		AppLoader.setNoLoader();
 		requests.answerRequest().findAnswersEntriesByQuestion(question.getId(), range.getStart(), range.getLength()).with("question","rewiewer","autor","question.questionType").fire( new BMEReceiver<List<AnswerProxy>>(){
 			@Override
 			public void onSuccess(List<AnswerProxy> response) {
@@ -186,7 +188,7 @@ public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper
 			answerRangeChangeHandler.removeHandler();
 			answerRangeChangeHandler=null;
 		}
-		
+		AppLoader.setNoLoader();
 		requests.MatrixValidityRequest().countAllMatrixValidityForQuestion(question.getId()).with("answerX","answerY").fire(new BMEReceiver<Long>() {
 
 			@Override
@@ -206,6 +208,7 @@ public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper
 	
 	private void onMatrixAnswerTableRangeChanged() {
 		final Range range = view.getMatrixAnswerListViewImpl().getTable().getVisibleRange();
+		AppLoader.setNoLoader();
 		requests.MatrixValidityRequest().findAllMatrixValidityForAcceptQuestion(question.getId(), range.getStart(), range.getLength()).with("answerX","answerY").fire(new BMEReceiver<List<MatrixValidityProxy>>() {
 
 			@Override
@@ -221,17 +224,20 @@ public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper
 	
 	@Override
 	public void forcedActiveClicked() {
+		AppLoader.setCurrentLoader(view.getLoadingPopup());
 		requests.questionRequest().forcedActiveQuestion(question.getId()).fire(new BMEReceiver<Void>() {
 
 			@Override
 			public void onSuccess(Void response) {
-				goTo(new PlaceNotActivatedQuestion(PlaceNotActivatedQuestion.PLACE_NOT_ACTIVATED_QUESTION));
+				goTo(new PlaceNotActivatedQuestion(PlaceNotActivatedQuestion.PLACE_NOT_ACTIVATED_QUESTION, placeNotActivatedQuestionDetails.getHeight()));
 			}
 		});
 	}
 
 	@Override
 	public void getQuestionDetails(QuestionProxy previousVersion, final Function<QuestionProxy, Void> function) {
+		
+		AppLoader.setCurrentLoader(view.getLoadingPopup());
 		requests.questionRequest().findQuestion(previousVersion.getId()).with("previousVersion","keywords","questEvent","questionType","mcs", "rewiewer", "autor","questionResources").fire(new BMEReceiver<Object>() {
 
 			@Override
@@ -243,6 +249,7 @@ public class ActivityNotActivatedQuestionDetails extends AbstractActivityWrapper
 	
 	@Override
 	public QuestionProxy getLatestQuestionDetails() {
+		AppLoader.setCurrentLoader(view.getLoadingPopup());
 		return question;
 	}
 	

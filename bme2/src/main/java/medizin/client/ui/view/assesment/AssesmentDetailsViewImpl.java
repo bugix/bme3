@@ -5,6 +5,7 @@ import medizin.client.proxy.AssesmentProxy;
 import medizin.client.proxy.PersonProxy;
 import medizin.client.ui.widget.IconButton;
 import medizin.client.ui.widget.TabPanelHelper;
+import medizin.client.ui.widget.process.ApplicationLoadingView;
 import medizin.shared.i18n.BmeConstants;
 
 import com.google.gwt.core.client.GWT;
@@ -115,7 +116,18 @@ public class AssesmentDetailsViewImpl extends Composite implements AssesmentDeta
 //    	return eventAccessView;
 //    }
 
-
+    @UiField
+	ApplicationLoadingView loadingPopup;
+    
+    @UiField
+	ApplicationLoadingView loadingPopupQuestionTypeCount;
+    
+    @UiField
+	ApplicationLoadingView loadingPopupSumPerPerson;
+    
+    @UiField
+	ApplicationLoadingView loadingPopupStudent;
+    
     @UiField
     DisclosurePanel studentPanel;
     
@@ -242,5 +254,25 @@ public class AssesmentDetailsViewImpl extends Composite implements AssesmentDeta
 
 	public void setStudentViewImpl(StudentViewImpl studentViewImpl) {
 		this.studentViewImpl = studentViewImpl;
+	}
+	
+	@Override
+	public ApplicationLoadingView getLoadingPopup() {
+			return loadingPopup;
+	}
+	
+	@Override
+	public ApplicationLoadingView getLoadingPopupQuestionTypeCount() {
+			return loadingPopupQuestionTypeCount;
+	}
+	
+	@Override
+	public ApplicationLoadingView getLoadingPopupSumPerPerson() {
+			return loadingPopupSumPerPerson;
+	}
+	
+	@Override
+	public ApplicationLoadingView getLoadingPopupStudent() {
+			return loadingPopupStudent;
 	}
 }

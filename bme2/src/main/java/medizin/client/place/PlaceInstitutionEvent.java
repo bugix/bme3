@@ -26,6 +26,12 @@ public class PlaceInstitutionEvent extends AbstractDetailsPlace {
 		Log.debug("PlaceInstitutionEvent wird erstellt");
 	}
 
+	public PlaceInstitutionEvent(EntityProxyId<?> stableId, Operation details,
+			Integer height) {
+		this(stableId,details);
+		this.height = height;
+	}
+
 	@Prefix(PLACE_INSTITUTION_EVENT)
 	public static class Tokenizer extends AbstractDetailsPlace.AbstractTokenizer<PlaceInstitutionEvent> {
 

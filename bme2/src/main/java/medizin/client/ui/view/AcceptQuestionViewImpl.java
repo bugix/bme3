@@ -110,6 +110,9 @@ public class AcceptQuestionViewImpl extends Composite implements AcceptQuestionV
 	@UiField
 	SimplePanel detailsPanel;
 	
+	@UiField
+	ScrollPanel scrollDetailPanel;
+	
 	public SimplePanel getDetailsPanel() {
 		return detailsPanel;
 	}
@@ -548,7 +551,10 @@ public class AcceptQuestionViewImpl extends Composite implements AcceptQuestionV
 	}
 	  
 	
-
+	@Override
+	public ScrollPanel getScrollDetailPanel() {
+		return scrollDetailPanel;
+	}
 
 
 }

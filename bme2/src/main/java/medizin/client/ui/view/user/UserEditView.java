@@ -3,6 +3,7 @@ package medizin.client.ui.view.user;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.proxy.DoctorProxy;
 import medizin.client.proxy.PersonProxy;
+import medizin.client.ui.widget.process.ApplicationLoadingView;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.EventHandlingValueHolderItem;
 import medizin.client.ui.widget.widgetsnewcustomsuggestbox.test.client.ui.widget.suggest.impl.DefaultSuggestBox;
 
@@ -48,5 +49,7 @@ public interface UserEditView extends IsWidget {
 		void saveClicked();
 		
 	}
+
+	ApplicationLoadingView getLoadingPopup();
 
 }

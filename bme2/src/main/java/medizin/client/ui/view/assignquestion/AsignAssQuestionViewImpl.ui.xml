@@ -34,7 +34,7 @@
 			</g:ScrollPanel>
 		</g:west>
 		<g:center>
-			<g:ScrollPanel>
+			<g:ScrollPanel ui:field="scrollDetailPanel">
 				<g:VerticalPanel styleName="{style.panelRight}">
 					<c:QuestionAdvancedSearchSubViewImpl ui:field="questionAdvancedSearchSubViewImpl"></c:QuestionAdvancedSearchSubViewImpl>
 					<m:AddQuestionsTabPanelImpl ui:field="addQuestionsTabPanel"></m:AddQuestionsTabPanelImpl>

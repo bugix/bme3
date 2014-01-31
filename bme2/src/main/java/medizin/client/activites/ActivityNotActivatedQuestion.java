@@ -14,6 +14,7 @@ import medizin.client.ui.view.question.QuestionView;
 import medizin.client.ui.view.question.QuestionView.Delegate;
 import medizin.client.ui.view.question.QuestionViewImpl;
 import medizin.client.ui.widget.Sorting;
+import medizin.client.ui.widget.process.AppLoader;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.activity.shared.ActivityManager;
@@ -114,7 +115,7 @@ public class ActivityNotActivatedQuestion extends AbstractActivityWrapper implem
 	}
 	private void showDetails(QuestionProxy question) {
 		Log.debug("Question Stable id: " + question.stableId() + " " + PlaceQuestionDetails.Operation.DETAILS);
-		placeController.goTo(new PlaceNotActivatedQuestionDetails(question.stableId()));
+		placeController.goTo(new PlaceNotActivatedQuestionDetails(question.stableId(),view.getScrollDetailPanel().getOffsetHeight()));
 	}
 
 	private void init() {
@@ -149,7 +150,7 @@ public class ActivityNotActivatedQuestion extends AbstractActivityWrapper implem
 
 	private void onRangeChanged() {
 		final Range range = table.getVisibleRange();
-
+		AppLoader.setNoLoader();
 		requests.questionRequest().findAllNotActivatedQuestionsByPerson(sortname,sortorder,view.getSerachBox().getValue(), view.getSearchValue(), range.getStart(), range.getLength()).with(view.getPaths()).with("autor").fire(new BMEReceiver<List<QuestionProxy>>() {
 			@Override
 			public void onSuccess(List<QuestionProxy> values) {
@@ -193,7 +194,7 @@ public class ActivityNotActivatedQuestion extends AbstractActivityWrapper implem
 
 	@Override
 	public void performSearch(String searchText) {
-		
+		AppLoader.setNoLoader();
 		requests.questionRequest().countNotActivatedQuestionsByPerson(view.getSerachBox().getValue(), view.getSearchValue()).fire(new BMEReceiver<Integer>() {
 			@Override
 			public void onSuccess(Integer response) {
