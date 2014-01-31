@@ -6,6 +6,9 @@ import medizin.client.proxy.QuestionProxy;
 import medizin.client.ui.view.QuestionTextViewDialogBoxImpl;
 import medizin.client.ui.view.roo.CollectionRenderer;
 import medizin.client.ui.widget.IconButton;
+import medizin.client.ui.widget.dialogbox.ConfirmationDialogBox;
+import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEvent;
+import medizin.client.ui.widget.dialogbox.event.ConfirmDialogBoxYesNoButtonEventHandler;
 import medizin.client.util.ClientUtility;
 import medizin.client.util.MathJaxs;
 import medizin.shared.i18n.BmeConstants;
@@ -275,7 +278,18 @@ public class AssesmentQuestionViewImpl extends Composite implements AssesmentQue
 	@UiHandler("deleteFromAssesment")
 	public void deleteAssesmentQuestion(ClickEvent event)
 	{
-		delegate.deleteAssesmentQuestion(this);
+		ConfirmationDialogBox.showYesNoDialogBox(constants.error(), constants.assessmentQueDelMsg(), new ConfirmDialogBoxYesNoButtonEventHandler() {
+			
+			@Override
+			public void onYesButtonClicked(ConfirmDialogBoxYesNoButtonEvent event) {
+				delegate.deleteAssesmentQuestion(AssesmentQuestionViewImpl.this);
+			}
+			
+			@Override
+			public void onNoButtonClicked(ConfirmDialogBoxYesNoButtonEvent event) {
+			}
+		});
+		
 	}
 
 }

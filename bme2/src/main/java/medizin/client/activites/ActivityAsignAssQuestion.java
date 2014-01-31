@@ -146,6 +146,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 	}
 	
 	PickupDragController dragController;
+	
 	private VerticalPanelDropController assesmentQuestionPanelDropController;
 	
 	/*@Override
@@ -784,7 +785,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 					
 					
 					AnswerView answer = new AnswerViewImpl();
-					answer.setProxy(answerProxy, true);
+					answer.setProxy(questionView.getProxy(), answerProxy, true);
 					questionView.addAnswer(answer);
 					
 				} 
@@ -1099,7 +1100,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 				while (iter.hasNext()) {
 					AnswerToAssQuestionProxy answerToAssQuestionProxy = (AnswerToAssQuestionProxy) iter.next();
 					AnswerView answer = new AnswerViewImpl();
-					answer.setProxy(answerToAssQuestionProxy, false);
+					answer.setProxy(questionView.getProxy(), answerToAssQuestionProxy, false);
 					questionView.addAnswer(answer);
 					
 				} 
@@ -1157,7 +1158,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 
 			@Override
 			public void onSuccess(Void response) {
-				assesmentQuestionViewImpl.getDeleteFromAssesment().removeFromParent();
+				//assesmentQuestionViewImpl.getDeleteFromAssesment().removeFromParent();
 				assesmentQuestionViewImpl.getForceAcceptButton().removeFromParent();
 				AppLoader.setNoLoader();
 				requests.assesmentQuestionRequest().findAssesmentQuestion(assesmentQuestionViewImpl.getProxy().getId()).with("question.rewiewer","question.autor","question.keywords","question.questEvent","question.questionType").fire(new BMEReceiver<AssesmentQuestionProxy>() {
@@ -1235,6 +1236,8 @@ QuestionAdvancedSearchPopupView.Delegate {
 			question.getQuestionTable().removeClassName("force-accept");
 			question.getQuestionTable().removeClassName("accept");
 		}
+		
+		changedeleteAssesmentButtonVisiblilty(question);
 	}
 	
 	/*force accept/ accept button access criteria left side */
@@ -1558,6 +1561,12 @@ QuestionAdvancedSearchPopupView.Delegate {
 	/*Accept and force accept Assesment Question cannot be deleted*/
 	public void changedeleteAssesmentButtonVisiblilty(AssesmentQuestionView assesmentQuestionViewAktiv)
 	{
+		if (isAdminOrInstitutionalAdmin())
+		{
+			assesmentQuestionViewAktiv.getDeleteFromAssesment().setVisible(true);
+		}
+		else
+		{
 		if(assesmentQuestionViewAktiv.getProxy().getIsAssQuestionAcceptedAdmin() || assesmentQuestionViewAktiv.getProxy().getIsForcedByAdmin())
 		{
 			assesmentQuestionViewAktiv.getDeleteFromAssesment().setVisible(false);
@@ -1566,6 +1575,7 @@ QuestionAdvancedSearchPopupView.Delegate {
 		{
 			assesmentQuestionViewAktiv.getDeleteFromAssesment().setVisible(true);
 		}
+	}
 	}
 
 	@Override

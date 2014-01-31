@@ -3,6 +3,9 @@ package medizin.client.ui.view.assignquestion;
 import medizin.client.ui.view.assignquestion.QuestionViewImpl.QuestionViewImplUiBinder;
 import medizin.client.proxy.AnswerProxy;
 import medizin.client.proxy.AnswerToAssQuestionProxy;
+import medizin.client.proxy.AssesmentQuestionProxy;
+import medizin.client.proxy.QuestionProxy;
+import medizin.shared.QuestionTypes;
 import medizin.shared.Validity;
 
 import com.google.gwt.core.client.GWT;
@@ -89,11 +92,11 @@ public class AnswerViewImpl extends Composite implements AnswerView {
 	
 
 	@Override
-	public void setProxy(AnswerProxy answer, boolean addCheck) {
+	public void setProxy(QuestionProxy questionProxy, AnswerProxy answer, boolean addCheck) {
 		this.answer = answer;
 	
 
-		 init(addCheck);
+		 init(addCheck, questionProxy);
 		
 	}
 	
@@ -110,12 +113,16 @@ public class AnswerViewImpl extends Composite implements AnswerView {
 		
 	}
 	
-	public void init(boolean addCheck){
+	public void init(boolean addCheck, QuestionProxy questionProxy){
 		this.isInAssesment= addCheck;
 		//this.add(lblIcon);
 		//this.setStyleName("answerDND");	
 		//this.add(lblAnswerText);
-		lblAnswerText.setHTML(answer.getAnswerText());
+		
+		if (questionProxy != null && questionProxy.getQuestionType() != null && QuestionTypes.Imgkey.equals(questionProxy.getQuestionType().getQuestionType()))
+			lblAnswerText.setHTML(answer.getAdditionalKeywords());
+		else
+			lblAnswerText.setHTML(answer.getAnswerText());
 		if(addCheck) {
 			lblCheck.setVisible(true);
 			DOM.setElementAttribute(answerPanel.getElement(), "style", "cursor: pointer;");
@@ -146,9 +153,12 @@ public class AnswerViewImpl extends Composite implements AnswerView {
 	}
 
 	@Override
-	public void setProxy(AnswerToAssQuestionProxy answerToAssQuestionProxy, boolean addCheck) {
+	public void setProxy(AssesmentQuestionProxy assesmentQuestionProxy, AnswerToAssQuestionProxy answerToAssQuestionProxy, boolean addCheck) {
 		this.answer=answerToAssQuestionProxy.getAnswers();
-		 init(addCheck);
+		if (assesmentQuestionProxy != null)
+		{
+			init(addCheck, assesmentQuestionProxy.getQuestion());
+		}
 	}
 
 	private void answerViewClickEvent() {

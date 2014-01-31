@@ -394,10 +394,10 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 	private AnswerDialogboxTabView openImageKeyOrShowInInImageAnswerView(final AnswerProxy answer) {
 		
 		final AnswerDialogboxTabView answerDialogboxTabView = new AnswerDialogboxTabViewImpl(question, eventBus, reciverMap,isAdminOrInstitutionalAdmin());
+		answerDialogboxTabView.setDelegate(this);
 		answerDialogboxTabView.display(question.getQuestionType().getQuestionType());
 		this.answerDialogboxTabView = answerDialogboxTabView;
-		AppLoader.setCurrentLoader(this.answerDialogboxTabView.getLoadingPopup());
-		answerDialogboxTabView.setDelegate(this);
+		AppLoader.setCurrentLoader(this.answerDialogboxTabView.getLoadingPopup());		
 		answerDialogboxTabView.setValidityPickerValues(Arrays.asList(Validity.values()));
 		
 		PersonRequest personRequest = requests.personRequest();
