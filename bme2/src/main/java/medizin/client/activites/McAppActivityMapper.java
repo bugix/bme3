@@ -5,8 +5,6 @@ package medizin.client.activites;
 
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.PlaceAcceptAnswer;
-import medizin.client.place.PlaceAcceptAssQuestion;
-import medizin.client.place.PlaceAcceptPerson;
 import medizin.client.place.PlaceAcceptQuestion;
 import medizin.client.place.PlaceAsignAssQuestion;
 import medizin.client.place.PlaceAssesment;
@@ -15,11 +13,9 @@ import medizin.client.place.PlaceDeactivatedQuestion;
 import medizin.client.place.PlaceInstitution;
 import medizin.client.place.PlaceNotActivatedAnswer;
 import medizin.client.place.PlaceNotActivatedQuestion;
-import medizin.client.place.PlaceOpenDemand;
 import medizin.client.place.PlaceQuestion;
 import medizin.client.place.PlaceQuestionInAssessment;
 import medizin.client.place.PlaceQuestiontypes;
-import medizin.client.place.PlaceStaticContent;
 import medizin.client.place.PlaceSystemOverview;
 import medizin.client.place.PlaceUser;
 
@@ -74,25 +70,7 @@ public class McAppActivityMapper implements AsyncActivityMapper {
 				}
 			});
 		 }
-		// If place is PlaceAcceptPerson initiating ActivityAcceptPerson
-		 if (place instanceof PlaceAcceptPerson){
-	            //return new ActivityAcceptPerson((PlaceAcceptPerson) place, requests, placeController);
-			 Log.debug("is PlaceAcceptPerson");
-				
-				GWT.runAsync(new RunAsyncCallback() {
-					
-					@Override
-					public void onSuccess() {
-						callbackHandler.onRecieveActivity(new ActivityAcceptPerson((PlaceAcceptPerson)place,requests, placeController));	
-					}
-					
-					@Override
-					public void onFailure(Throwable reason) {
-						
-						Window.alert("Not able to provide ActivityAcceptPerson");
-					}
-				});
-		 }
+		
 		// If place is PlaceAcceptAnswer initiating ActivityAcceptAnswer
 		 if (place instanceof PlaceAcceptAnswer){
 	            //return new ActivityAcceptAnswer((PlaceAcceptAnswer) place, requests, placeController);
@@ -112,25 +90,7 @@ public class McAppActivityMapper implements AsyncActivityMapper {
 					}
 				});
 		 }
-		// If place is PlaceAcceptAnswer initiating ActivityAcceptAssQuestion
-		 if (place instanceof PlaceAcceptAssQuestion){
-	            //return new ActivityAcceptAssQuestion((PlaceAcceptAssQuestion) place, requests, placeController);
-			 Log.debug("is PlaceAcceptAssQuestion");
-				
-				GWT.runAsync(new RunAsyncCallback() {
-					
-					@Override
-					public void onSuccess() {
-						callbackHandler.onRecieveActivity(new ActivityAcceptAssQuestion((PlaceAcceptAssQuestion)place,requests, placeController));	
-					}
-					
-					@Override
-					public void onFailure(Throwable reason) {
-						
-						Window.alert("Not able to provide ActivityAcceptAssQuestion");
-					}
-				});
-		 }
+		
 		// If place is PlaceAcceptQuestion initiating ActivityAcceptQuestion
 		 if (place instanceof PlaceAcceptQuestion){
 	            //return new ActivityAcceptQuestion((PlaceAcceptQuestion) place, requests, placeController);
@@ -227,25 +187,7 @@ public class McAppActivityMapper implements AsyncActivityMapper {
 					}
 				});
 		 }
-		// If place is PlaceOpenDemand initiating ActivityOpenDemand
-		 if (place instanceof PlaceOpenDemand){
-	            //return new ActivityOpenDemand((PlaceOpenDemand) place, requests, placeController);
-			 Log.debug("is PlaceOpenDemand");
-				
-				GWT.runAsync(new RunAsyncCallback() {
-					
-					@Override
-					public void onSuccess() {
-						callbackHandler.onRecieveActivity(new ActivityOpenDemand((PlaceOpenDemand)place,requests, placeController));	
-					}
-					
-					@Override
-					public void onFailure(Throwable reason) {
-						
-						Window.alert("Not able to provide ActivityOpenDemand");
-					}
-				});
-		 }
+		
 		// If place is PlaceQuestion initiating ActivityQuestion
 		 if (place instanceof PlaceQuestion){
 	            //return new ActivityQuestion((PlaceQuestion) place, requests, placeController);
@@ -303,25 +245,7 @@ public class McAppActivityMapper implements AsyncActivityMapper {
 					}
 				});
 		 }
-		// If place is PlaceStaticContent initiating ActivityStaticContent
-		 if (place instanceof PlaceStaticContent){
-	           // return new ActivityStaticContent((PlaceStaticContent) place, requests, placeController);
-			 Log.debug("is PlaceStaticContent");
-				
-				GWT.runAsync(new RunAsyncCallback() {
-					
-					@Override
-					public void onSuccess() {
-						callbackHandler.onRecieveActivity(new ActivityStaticContent((PlaceStaticContent)place,requests, placeController));	
-					}
-					
-					@Override
-					public void onFailure(Throwable reason) {
-						
-						Window.alert("Not able to provide ActivityStaticContent");
-					}
-				});
-		 }
+		
 		// If place is PlaceUser initiating ActivityUser
 		 if (place instanceof PlaceUser){
 	           // return new ActivityUser((PlaceUser) place, requests, placeController);

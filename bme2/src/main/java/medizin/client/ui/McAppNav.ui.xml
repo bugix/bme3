@@ -14,55 +14,49 @@
 }
 		
 	</ui:style>
-	<g:HTMLPanel >
-	<g:DisclosurePanel ui:field="systemOweviewPanel" width="100%" open="true" addStyleNames='{style.mainNavPanel}' visible="false">
-	
+	<g:HTMLPanel>
+	<g:DisclosurePanel ui:field="overviewPanel" width="100%" open="true" addStyleNames='{style.mainNavPanel}' visible="false">
 		<g:header></g:header>
 		<g:VerticalPanel addStyleNames='{style.mainNavPanelContent}' width="100%">
 			<g:Anchor ui:field="systemOverview"></g:Anchor>
-			<g:Anchor ui:field="openDemand"></g:Anchor>
 		</g:VerticalPanel>
 	</g:DisclosurePanel>
-	<g:DisclosurePanel ui:field="managementPanel" width="100%" open="true" addStyleNames='{style.mainNavPanel}' visible="false">
-		<g:header ></g:header>
+	<g:DisclosurePanel ui:field="assessmentQuestionsPanel" width="100%" open="true" addStyleNames='{style.mainNavPanel}' visible="false">
+		<g:header></g:header>
 		<g:VerticalPanel addStyleNames='{style.mainNavPanelContent}' width="100%">
-			<g:Anchor ui:field="acceptPerson"></g:Anchor>
-			<g:Anchor ui:field="user"></g:Anchor>
+			<g:Anchor ui:field="question"></g:Anchor>
+			<g:Anchor ui:field="questionInAssessment"></g:Anchor>
+			<g:Anchor ui:field="notActivatedQuestion"></g:Anchor>
+			<g:Anchor ui:field="notActivatedAnswer"></g:Anchor>	
+			<g:Anchor ui:field="deactivatedQuestion"></g:Anchor>
 		</g:VerticalPanel>
 	</g:DisclosurePanel>
 	
-	<g:DisclosurePanel ui:field="questionPanel" width="100%" open="true" addStyleNames='{style.mainNavPanel}' visible="false">
+		<g:DisclosurePanel ui:field="reviewProcessPanel" width="100%" open="true" addStyleNames='{style.mainNavPanel}' visible="false">
 		<g:header></g:header>
-		<g:VerticalPanel addStyleNames='{style.mainNavPanelContent}' width="100%">		
-			<g:Anchor ui:field="questionType"></g:Anchor>
-			<g:Anchor ui:field="question"></g:Anchor>
+		<g:VerticalPanel addStyleNames='{style.mainNavPanelContent}' width="100%">	
 			<g:Anchor ui:field="acceptQuestion"></g:Anchor>
 			<g:Anchor ui:field="acceptAnswer"></g:Anchor>
-			<!-- <g:Anchor ui:field="notActivatedQuestion"></g:Anchor>
-			<g:Anchor ui:field="notActivatedAnswer"></g:Anchor> -->
-			<g:Anchor ui:field="institution"></g:Anchor>
 		</g:VerticalPanel>
 	</g:DisclosurePanel>
 	
-	<g:DisclosurePanel ui:field="extendedQuestionPanel" width="100%" open="true" addStyleNames='{style.mainNavPanel}' visible="false">
-		<g:header></g:header>
-		<g:VerticalPanel addStyleNames='{style.mainNavPanelContent}' width="100%">		
-			<g:Anchor ui:field="deactivatedQuestion"></g:Anchor>
-			<g:Anchor ui:field="notActivatedQuestion"></g:Anchor>
-			<g:Anchor ui:field="notActivatedAnswer"></g:Anchor>			
-		</g:VerticalPanel>
-	</g:DisclosurePanel>
-	
-	<g:DisclosurePanel ui:field="assementPanel" width="100%" open="true" addStyleNames='{style.mainNavPanel}' visible="false">
+	<g:DisclosurePanel ui:field="assesmentsPanel" width="100%" open="true" addStyleNames='{style.mainNavPanel}' visible="false">
 		<g:header></g:header>
 		<g:VerticalPanel addStyleNames='{style.mainNavPanelContent}' width="100%">
 			<g:Anchor ui:field="assesment"></g:Anchor>
 			<g:Anchor ui:field="asignAssQuestion"></g:Anchor>
-			<g:Anchor ui:field="questionInAssessment"></g:Anchor>
-			<g:Anchor ui:field="acceptAssQuestion"></g:Anchor>
 			<g:Anchor ui:field="bookAssesment"></g:Anchor>
-			<g:Anchor ui:field="staticContent"></g:Anchor>
 		</g:VerticalPanel>
 	</g:DisclosurePanel>
+	
+	<g:DisclosurePanel ui:field="administrationPanel" width="100%" open="true" addStyleNames='{style.mainNavPanel}' visible="false">
+		<g:header></g:header>
+		<g:VerticalPanel addStyleNames='{style.mainNavPanelContent}' width="100%">		
+			<g:Anchor ui:field="questionType"></g:Anchor>
+			<g:Anchor ui:field="institution"></g:Anchor>
+			<g:Anchor ui:field="user"></g:Anchor>
+		</g:VerticalPanel>
+	</g:DisclosurePanel>
+	
 	</g:HTMLPanel>
 </ui:UiBinder> 

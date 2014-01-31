@@ -836,5 +836,7 @@ public interface BmeConstants extends Constants {
 	public String acceptAllAnswer();
 	
 	public String assessmentQueDelMsg();
+	
+	public String acceptQuestionBtn();
 }
 

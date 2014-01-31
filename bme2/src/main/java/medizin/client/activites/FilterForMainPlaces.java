@@ -25,8 +25,6 @@ import medizin.client.place.PlaceUserDetails;
 import medizin.client.place.PlaceQuestiontypesDetails;
 */
 import medizin.client.place.PlaceAcceptAnswer;
-import medizin.client.place.PlaceAcceptAssQuestion;
-import medizin.client.place.PlaceAcceptPerson;
 import medizin.client.place.PlaceAcceptQuestion;
 import medizin.client.place.PlaceAcceptQuestionDetails;
 import medizin.client.place.PlaceAsignAssQuestion;
@@ -41,14 +39,12 @@ import medizin.client.place.PlaceInstitutionEvent;
 import medizin.client.place.PlaceNotActivatedAnswer;
 import medizin.client.place.PlaceNotActivatedQuestion;
 import medizin.client.place.PlaceNotActivatedQuestionDetails;
-import medizin.client.place.PlaceOpenDemand;
 import medizin.client.place.PlaceQuestion;
 import medizin.client.place.PlaceQuestionDetails;
 import medizin.client.place.PlaceQuestionInAssessment;
 import medizin.client.place.PlaceQuestionInAssessmentDetails;
 import medizin.client.place.PlaceQuestiontypes;
 import medizin.client.place.PlaceQuestiontypesDetails;
-import medizin.client.place.PlaceStaticContent;
 import medizin.client.place.PlaceSystemOverview;
 import medizin.client.place.PlaceUser;
 import medizin.client.place.PlaceUserDetails;
@@ -71,12 +67,8 @@ public class FilterForMainPlaces implements AsyncFilteredActivityMapper.Filter {
 		Log.debug("im FilterForMainPlaces");
 		 if (place instanceof PlaceSystemOverview)
 	            return (PlaceSystemOverview) place;
-		 if (place instanceof PlaceAcceptPerson)
-	            return (PlaceAcceptPerson) place;		 
 		 if (place instanceof PlaceAcceptAnswer)
 	            return  (PlaceAcceptAnswer) place;		 
-		 if (place instanceof PlaceAcceptAssQuestion)
-	            return  (PlaceAcceptAssQuestion) place;
 		 
 		 if (place instanceof PlaceAcceptQuestion)
 	            return  (PlaceAcceptQuestion) place;
@@ -93,17 +85,9 @@ public class FilterForMainPlaces implements AsyncFilteredActivityMapper.Filter {
 		 if (place instanceof PlaceInstitution)
 	            return  (PlaceInstitution) place;
 		 
-		 if (place instanceof PlaceOpenDemand)
-	            return  (PlaceOpenDemand) place;
-		 
 		 if (place instanceof PlaceQuestion)
 	            return  (PlaceQuestion) place;
 		 
-		 /*if (place instanceof PlaceQuestiontypes)
-	            return  (PlaceQuestiontypes) place;*/
-		 
-		 if (place instanceof PlaceStaticContent)
-	            return  (PlaceStaticContent) place;
 		 
 		 if (place instanceof PlaceUser)
 	            return  (PlaceUser) place;

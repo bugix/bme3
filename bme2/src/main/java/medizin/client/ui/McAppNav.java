@@ -5,8 +5,6 @@ import medizin.client.McAppShell;
 import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.PlaceAcceptAnswer;
-import medizin.client.place.PlaceAcceptAssQuestion;
-import medizin.client.place.PlaceAcceptPerson;
 import medizin.client.place.PlaceAcceptQuestion;
 import medizin.client.place.PlaceAsignAssQuestion;
 import medizin.client.place.PlaceAssesment;
@@ -15,14 +13,11 @@ import medizin.client.place.PlaceDeactivatedQuestion;
 import medizin.client.place.PlaceInstitution;
 import medizin.client.place.PlaceNotActivatedAnswer;
 import medizin.client.place.PlaceNotActivatedQuestion;
-import medizin.client.place.PlaceOpenDemand;
 import medizin.client.place.PlaceQuestion;
 import medizin.client.place.PlaceQuestionInAssessment;
 import medizin.client.place.PlaceQuestiontypes;
-import medizin.client.place.PlaceStaticContent;
 import medizin.client.place.PlaceSystemOverview;
 import medizin.client.place.PlaceUser;
-import medizin.client.ui.widget.process.AppLoader;
 import medizin.client.util.ClientUtility;
 import medizin.shared.i18n.BmeConstants;
 
@@ -55,47 +50,24 @@ public class McAppNav extends Composite {
 	interface McAppNavUiBinder extends UiBinder<Widget, McAppNav> {
 	}
 	
-	private BmeConstants constant = GWT.create(BmeConstants.class);
-	
-	/*private static McAppNavAdminUiBinder uiBinderAdmin = GWT
-			.create(McAppNavAdminUiBinder.class);
-
-	@UiTemplate("McAppNavAdmin.ui.xml")
-	interface McAppNavAdminUiBinder extends UiBinder<Widget, McAppNav> {
-	}
-	
-	private static McAppNavUserUiBinder uiBinderUser = GWT
-	.create(McAppNavUserUiBinder.class);
-	
-	@UiTemplate("McAppNavUser.ui.xml")
-	interface McAppNavUserUiBinder extends UiBinder<Widget, McAppNav> {
-	}*/
-	
-	public BmeConstants constants = GWT.create(BmeConstants.class);
+	private BmeConstants constants = GWT.create(BmeConstants.class);
 	
 	@UiField
-	DisclosurePanel systemOweviewPanel;
+	DisclosurePanel overviewPanel;
 	@UiField
-	DisclosurePanel managementPanel;
+	DisclosurePanel assessmentQuestionsPanel;
 	@UiField
-	DisclosurePanel assementPanel;
+	DisclosurePanel assesmentsPanel;
 	@UiField
-	DisclosurePanel questionPanel;
+	DisclosurePanel administrationPanel;
 	@UiField
-	DisclosurePanel extendedQuestionPanel;	
-	
+	DisclosurePanel reviewProcessPanel;	
 	@UiField
 	Anchor systemOverview;
-	@UiField
-	Anchor acceptPerson;
 	@UiField
 	Anchor acceptQuestion;
 	@UiField
 	Anchor acceptAnswer;
-	@UiField
-	Anchor acceptAssQuestion;
-	@UiField
-	Anchor openDemand;
 	@UiField
 	Anchor user;
 	@UiField
@@ -113,8 +85,6 @@ public class McAppNav extends Composite {
 	@UiField
 	Anchor bookAssesment;
 	@UiField
-	Anchor staticContent;
-	@UiField
 	Anchor deactivatedQuestion;	
 	@UiField
 	Anchor notActivatedAnswer;
@@ -122,105 +92,68 @@ public class McAppNav extends Composite {
 	Anchor questionInAssessment;
 
 	@UiHandler("systemOverview")
-		void systemOverviewClicked(ClickEvent event) {
-			AppLoader.setNoLoader();
-			placeController.goTo(new PlaceSystemOverview(PlaceSystemOverview.PLACE_SYSTEM_OVERVIEW, true,shell.getMasterPanel().getOffsetHeight()));
-		}
-	@UiHandler("acceptPerson")
-	void acceptPersonClicked(ClickEvent event) {
-		AppLoader.setNoLoader();
-		placeController.goTo(new PlaceAcceptPerson(PlaceAcceptPerson.PLACE_ACCEPT_PERSON, true,shell.getMasterPanel().getOffsetHeight()));
+	void systemOverviewClicked(ClickEvent event) {
+		placeController.goTo(new PlaceSystemOverview(PlaceSystemOverview.PLACE_SYSTEM_OVERVIEW, true));
 	}
 	
 	@UiHandler("acceptQuestion")
 	void acceptQuestionClicked(ClickEvent event) {
-		AppLoader.setNoLoader();
-		placeController.goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION, true,shell.getMasterPanel().getOffsetHeight()));
+		placeController.goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION, true));
 	}
 	@UiHandler("acceptAnswer")
 	void PlaceAcceptAnswerClicked(ClickEvent event) {
-		AppLoader.setNoLoader();
-		placeController.goTo(new PlaceAcceptAnswer(PlaceAcceptAnswer.PLACE_ACCEPT_ANSWER, true,shell.getMasterPanel().getOffsetHeight()));
-	}
-	@UiHandler("acceptAssQuestion")
-	void acceptAssQuestionClicked(ClickEvent event) {
-		AppLoader.setNoLoader();
-		placeController.goTo(new PlaceAcceptAssQuestion(PlaceAcceptAssQuestion.PLACE_ACCEPT_ASS_QUESTION, true,shell.getMasterPanel().getOffsetHeight()));
-	}
-	@UiHandler("openDemand")
-	void openDemandClicked(ClickEvent event) {
-		AppLoader.setNoLoader();
-		placeController.goTo(new PlaceOpenDemand(PlaceOpenDemand.PLACE_OPEN_DEMAND, true,shell.getMasterPanel().getOffsetHeight()));
+		placeController.goTo(new PlaceAcceptAnswer(PlaceAcceptAnswer.PLACE_ACCEPT_ANSWER, true));
 	}
 	@UiHandler("user")
 	void userClicked(ClickEvent event) {
-		AppLoader.setNoLoader();
-		placeController.goTo(new PlaceUser(PlaceUser.PLACE_USER, true,shell.getMasterPanel().getOffsetHeight()));
+		placeController.goTo(new PlaceUser(PlaceUser.PLACE_USER, true));
 	}
 	@UiHandler("question")
 	void questionClicked(ClickEvent event) {
-		AppLoader.setNoLoader();
-		placeController.goTo(new PlaceQuestion(PlaceQuestion.PLACE_QUESTION, true,shell.getMasterPanel().getOffsetHeight()));
+		placeController.goTo(new PlaceQuestion(PlaceQuestion.PLACE_QUESTION, true));
 	}
 	@UiHandler("notActivatedQuestion")
 	void notActivatedQuestionClicked(ClickEvent event) {
-		AppLoader.setNoLoader();
-		placeController.goTo(new PlaceNotActivatedQuestion(PlaceNotActivatedQuestion.PLACE_NOT_ACTIVATED_QUESTION, true, shell.getMasterPanel().getOffsetHeight()));
+		placeController.goTo(new PlaceNotActivatedQuestion(PlaceNotActivatedQuestion.PLACE_NOT_ACTIVATED_QUESTION, true));
 	}
 	@UiHandler("questionType")
 	void questionTypeClicked(ClickEvent event) {
-		AppLoader.setNoLoader();
-		placeController.goTo(new PlaceQuestiontypes(PlaceQuestiontypes.PLACE_QUESTIONTYPES, true,shell.getMasterPanel().getOffsetHeight()));
+		placeController.goTo(new PlaceQuestiontypes(PlaceQuestiontypes.PLACE_QUESTIONTYPES, true));
 	}
 	@UiHandler("institution")
 	void institutionClicked(ClickEvent event) {
-		AppLoader.setNoLoader();
-		placeController.goTo(new PlaceInstitution(PlaceInstitution.PLACE_INSTITUTION, true,shell.getMasterPanel().getOffsetHeight()));
+		placeController.goTo(new PlaceInstitution(PlaceInstitution.PLACE_INSTITUTION, true));
 	}
 	@UiHandler("assesment")
 	void assesmentClicked(ClickEvent event) {
-		AppLoader.setNoLoader();
-		placeController.goTo(new PlaceAssesment(PlaceAssesment.PLACE_ASSESMENT, true,shell.getMasterPanel().getOffsetHeight()));
+		placeController.goTo(new PlaceAssesment(PlaceAssesment.PLACE_ASSESMENT, true));
 	}
 	@UiHandler("asignAssQuestion")
 	void asignAssQuestionClicked(ClickEvent event) {
-		AppLoader.setNoLoader();
-		placeController.goTo(new PlaceAsignAssQuestion(PlaceAsignAssQuestion.PLACE_ASIGN_ASS_QUESTION, true,shell.getMasterPanel().getOffsetHeight()));
+		placeController.goTo(new PlaceAsignAssQuestion(PlaceAsignAssQuestion.PLACE_ASIGN_ASS_QUESTION, true));
 	}
 	@UiHandler("bookAssesment")
 	void bookAssesmentClicked(ClickEvent event) {
-		placeController.goTo(new PlaceBookAssesment(PlaceBookAssesment.PLACE_BOOK_ASSESMENT, true,shell.getMasterPanel().getOffsetHeight()));
-	}
-	@UiHandler("staticContent")
-	void staticContentClicked(ClickEvent event) {
-		AppLoader.setNoLoader();
-		placeController.goTo(new PlaceStaticContent(PlaceStaticContent.PLACE_STATIC_CONTENT, true,shell.getMasterPanel().getOffsetHeight()));
+		placeController.goTo(new PlaceBookAssesment(PlaceBookAssesment.PLACE_BOOK_ASSESMENT, true));
 	}
 	@UiHandler("notActivatedAnswer")
 	void notActivatedAnswerClicked(ClickEvent event){
-		AppLoader.setNoLoader();
-		placeController.goTo(new PlaceNotActivatedAnswer(PlaceNotActivatedAnswer.PLACE_NOT_ACTIVATED_ANSWER, true,shell.getMasterPanel().getOffsetHeight()));
+		placeController.goTo(new PlaceNotActivatedAnswer(PlaceNotActivatedAnswer.PLACE_NOT_ACTIVATED_ANSWER, true));
 	}
 	@UiHandler("deactivatedQuestion")
 	void deactivatedQuestionClicked(ClickEvent event){
-		AppLoader.setNoLoader();
-		placeController.goTo(new PlaceDeactivatedQuestion(PlaceDeactivatedQuestion.PLACE_DEACTIVATED_QUESTION, true,shell.getMasterPanel().getOffsetHeight()));
+		placeController.goTo(new PlaceDeactivatedQuestion(PlaceDeactivatedQuestion.PLACE_DEACTIVATED_QUESTION, true));
 	}
-	
 	@UiHandler("questionInAssessment")
 	void questionInAssessmentClicked(ClickEvent event){
-		AppLoader.setNoLoader();
-		placeController.goTo(new PlaceQuestionInAssessment(PlaceQuestionInAssessment.PLACE_QUESTION_IN_ASSESSMENT, true,shell.getMasterPanel().getOffsetHeight()));
+		placeController.goTo(new PlaceQuestionInAssessment(PlaceQuestionInAssessment.PLACE_QUESTION_IN_ASSESSMENT, true));
 	}
-//	public McAppNav() {
-//		initWidget(uiBinderUser.createAndBindUi(this));
-//		
-//	}
-	
+
 	private McAppRequestFactory requests;
 	private PlaceController placeController;
 	private McAppShell shell;
-	public static McAppNav MC_APP_NAV ;  
+	public static McAppNav MC_APP_NAV ;
+	
 	@Inject
 	public McAppNav(McAppRequestFactory requests, PlaceController placeController, McAppShell shell) {
         this.requests = requests;
@@ -234,98 +167,67 @@ public class McAppNav extends Composite {
 		//Checking user cookie and based on showing Discloser panel open or closed.
 		addOpenCloseHandlerToAllDiscloserPanel();
 		checkAndShowDisclosurePanelBasenOnCookie();
-		
-        /*systemOweviewPanel.setOpen(true);
-        managementPanel.setOpen(true);
-        assementPanel.setOpen(true);
-        questionPanel.setOpen(true);*/
-
-    	/*requests.personRequest().myGetLoggedPerson().fire(new Receiver<PersonProxy>(){
-
-			@Override
-			public void onSuccess(PersonProxy response) {
-				if (response == null){
-					Window.alert("the User will be redirected to Shibboleth Loginpage. You should select a user in the User-Box to login and reload the Page. Userinfo is strored in a session.");
-					return;
-				}
-				loggedUser = response;
-				 displayMenue();
-			}});
-        
-        	 requests.institutionRequest().myGetInstitutionToWorkWith().fire(new BMEReceiver<InstitutionProxy>(){
-
-     			@Override
-     			public void onSuccess(InstitutionProxy response) {
-     				if (response == null){
-     					Window.alert("a Institution selectbox will be shown. You should select the institution from the Institution-Pulldown and reload the Page. The institution is storen in Session");
-     					return;
-     				}
-     				//loggedUser = response;
-     				 displayMenue();
-		}});*/
-        
         checkAdminRights(requests,true);
-        
     }
 
 	private void addOpenCloseHandlerToAllDiscloserPanel() {
-		systemOweviewPanel.addOpenHandler(new OpenHandler<DisclosurePanel>() {
+		overviewPanel.addOpenHandler(new OpenHandler<DisclosurePanel>() {
 			@Override
 			public void onOpen(OpenEvent<DisclosurePanel> event) {
 				Cookies.setCookie(McAppConstant.SYSTEMOVERVIEWPANEL,String.valueOf(true),ClientUtility.getDateFromOneYear());
 			}
 		});
-		systemOweviewPanel.addCloseHandler(new CloseHandler<DisclosurePanel>() {
+		overviewPanel.addCloseHandler(new CloseHandler<DisclosurePanel>() {
 			@Override
 			public void onClose(CloseEvent<DisclosurePanel> event) {
 				Cookies.setCookie(McAppConstant.SYSTEMOVERVIEWPANEL,String.valueOf(false),ClientUtility.getDateFromOneYear());
 			}
 		});
 		
-		managementPanel.addOpenHandler(new OpenHandler<DisclosurePanel>() {
+		assessmentQuestionsPanel.addOpenHandler(new OpenHandler<DisclosurePanel>() {
 			@Override
 			public void onOpen(OpenEvent<DisclosurePanel> event) {
 			
 				Cookies.setCookie(McAppConstant.MANAGMENTPANEL,String.valueOf(true),ClientUtility.getDateFromOneYear());
 			}
 		});
-		managementPanel.addCloseHandler(new CloseHandler<DisclosurePanel>() {
+		assessmentQuestionsPanel.addCloseHandler(new CloseHandler<DisclosurePanel>() {
 			@Override
 			public void onClose(CloseEvent<DisclosurePanel> event) {
 				Cookies.setCookie(McAppConstant.MANAGMENTPANEL,String.valueOf(false),ClientUtility.getDateFromOneYear());
 			}
 		});
-		assementPanel.addOpenHandler(new OpenHandler<DisclosurePanel>() {
+		assesmentsPanel.addOpenHandler(new OpenHandler<DisclosurePanel>() {
 			@Override
 			public void onOpen(OpenEvent<DisclosurePanel> event) {
 				Cookies.setCookie(McAppConstant.ASSESMENTPANEL,String.valueOf(true),ClientUtility.getDateFromOneYear());
 			}
 		});
-		assementPanel.addCloseHandler(new CloseHandler<DisclosurePanel>() {
+		assesmentsPanel.addCloseHandler(new CloseHandler<DisclosurePanel>() {
 			@Override
 			public void onClose(CloseEvent<DisclosurePanel> event) {
 				Cookies.setCookie(McAppConstant.ASSESMENTPANEL,String.valueOf(false),ClientUtility.getDateFromOneYear());
 			}
 		});
-		questionPanel.addOpenHandler(new OpenHandler<DisclosurePanel>() {
+		administrationPanel.addOpenHandler(new OpenHandler<DisclosurePanel>() {
 			@Override
 			public void onOpen(OpenEvent<DisclosurePanel> event) {
 				Cookies.setCookie(McAppConstant.QUESTIONPANEL,String.valueOf(true),ClientUtility.getDateFromOneYear());
 			}
 		});
-		questionPanel.addCloseHandler(new CloseHandler<DisclosurePanel>() {
+		administrationPanel.addCloseHandler(new CloseHandler<DisclosurePanel>() {
 			@Override
 			public void onClose(CloseEvent<DisclosurePanel> event) {
 				Cookies.setCookie(McAppConstant.QUESTIONPANEL,String.valueOf(false),ClientUtility.getDateFromOneYear());
 			}
 		});
-		extendedQuestionPanel.addOpenHandler(new OpenHandler<DisclosurePanel>() {
+		reviewProcessPanel.addOpenHandler(new OpenHandler<DisclosurePanel>() {
 			@Override
 			public void onOpen(OpenEvent<DisclosurePanel> event) {
 				Cookies.setCookie(McAppConstant.EXTENDEDQUESTIONPANEL,String.valueOf(true),ClientUtility.getDateFromOneYear());
 			}
 		});
-		extendedQuestionPanel.addCloseHandler(new CloseHandler<DisclosurePanel>() {
+		reviewProcessPanel.addCloseHandler(new CloseHandler<DisclosurePanel>() {
 			@Override
 			public void onClose(CloseEvent<DisclosurePanel> event) {
 				Cookies.setCookie(McAppConstant.EXTENDEDQUESTIONPANEL,String.valueOf(false),ClientUtility.getDateFromOneYear());
@@ -346,9 +248,9 @@ public class McAppNav extends Composite {
 		}else{
 			
 			if(systemOverViewPanlCookie.equals(String.valueOf(true))){
-				systemOweviewPanel.setOpen(true);
+				overviewPanel.setOpen(true);
 			}else{
-				systemOweviewPanel.setOpen(false);
+				overviewPanel.setOpen(false);
 			}
 		}
 		
@@ -357,9 +259,9 @@ public class McAppNav extends Composite {
 		}else{
 			
 			if(managementPanelCookie.equals(String.valueOf(true))){
-				managementPanel.setOpen(true);
+				assessmentQuestionsPanel.setOpen(true);
 			}else{
-				managementPanel.setOpen(false);
+				assessmentQuestionsPanel.setOpen(false);
 			}
 		}
 		
@@ -368,9 +270,9 @@ public class McAppNav extends Composite {
 		}else{
 			
 			if(assementPanelCookie.equals(String.valueOf(true))){
-				assementPanel.setOpen(true);
+				assesmentsPanel.setOpen(true);
 			}else{
-				assementPanel.setOpen(false);
+				assesmentsPanel.setOpen(false);
 			}
 		}
 		
@@ -379,9 +281,9 @@ public class McAppNav extends Composite {
 		}else{
 			
 			if(questionPanelCookie.equals(String.valueOf(true))){
-				questionPanel.setOpen(true);
+				administrationPanel.setOpen(true);
 			}else{
-				questionPanel.setOpen(false);
+				administrationPanel.setOpen(false);
 			}
 		}
 		
@@ -390,9 +292,9 @@ public class McAppNav extends Composite {
 		}else{
 			
 			if(extendedQuestionPanelCookie.equals(String.valueOf(true))){
-				extendedQuestionPanel.setOpen(true);
+				reviewProcessPanel.setOpen(true);
 			}else{
-				extendedQuestionPanel.setOpen(false);
+				reviewProcessPanel.setOpen(false);
 			}
 		}
 		
@@ -403,8 +305,7 @@ public class McAppNav extends Composite {
 		{
 			MC_APP_NAV.hideAllMenu();
 			
-			if(isValiduser){
-			AppLoader.setNoLoader();
+			if(isValiduser)
 			requests.personRequest().checkAdminRightToLoggedPerson().fire(new BMEReceiver<Boolean>() {
 		        
 				@Override
@@ -420,20 +321,9 @@ public class McAppNav extends Composite {
 			});
 		}
 	}
-	}
-	
-	//private PersonProxy loggedUser;
 	
 	private int both = 0;
 	
-	/*@UiField
-	DivElement deletethis;*/
-	/*private boolean isValidUser(){
-		if(shell.getTopPanel2().getLoggedUser().getValue()!=null)
-			return true;
-		else
-			return false;
-	}*/
 	private void displayMenue(Boolean flag){
 		if (both < 1){
 			both++;
@@ -442,98 +332,69 @@ public class McAppNav extends Composite {
 		}
 		both = 0;
 		
-		//if (this.loggedUser.getIsAdmin()){
-		//System.out.println("Flag " + flag);
 		if (flag)
 			showAdminMenu();
 		else
 			showUserMenu();
 		
-		/*if (flag){
-	        //initWidget(uiBinderAdmin.createAndBindUi(this));
-	       // DOM.setElementAttribute(user.getParent().getParent().getElement(), "style", "margin-right: -2px; display: none;");
-		}
-		else if(flag !=null) {
-			//initWidget(uiBinderUser.createAndBindUi(this));
-//			deletethis.setInnerHTML("");
-			//Log.error(Document.get().getElementById("deletethis").getInnerHTML());
-		}*/
-		//DOM.setElementAttribute(systemOverview.getParent().getParent().getElement(), "style", "margin-right: -2px; display: none;");
-		//DOM.setElementAttribute(asignAssQuestion.getParent().getParent().getElement(), "style", "margin-right: -2px; display: none;");
-		//DOM.setElementAttribute(question.getParent().getParent().getElement(), "style", "margin-right: -2px; display: none;");
-		
-
-        
-        /*requests.getEventBus().addHandler(PlaceChangeEvent.TYPE, new PlaceChangeEvent.Handler() {
-			public void onPlaceChange(PlaceChangeEvent event) {
-
-				Place place = event.getNewPlace();
-				changeMenue(place);
-			}
-		});*/
-        
         Place place = placeController.getWhere();
         if(place == null || place.equals(Place.NOWHERE)) {
-        	place =  new PlaceSystemOverview(PlaceSystemOverview.PLACE_SYSTEM_OVERVIEW,shell.getMasterPanel().getOffsetHeight());
+        	place =  new PlaceSystemOverview(PlaceSystemOverview.PLACE_SYSTEM_OVERVIEW);
         }
-        //changeMenue(place);
         setConstantText();
         
-        AppLoader.setNoLoader();
         placeController.goTo(Place.NOWHERE);
         placeController.goTo(place);
 	}
 		
 	public void setConstantText()
 	{
-		systemOweviewPanel.getHeaderTextAccessor().setText(constants.systemOverview());
+		overviewPanel.getHeaderTextAccessor().setText(constants.systemOweviewPanel());
 		systemOverview.setText(constants.systemOverview());
-		acceptPerson.setText(constants.acceptPerson());
+		
 		acceptQuestion.setText(constants.acceptQuestion());
 		acceptAnswer.setText(constants.acceptAnswer());
-		acceptAssQuestion.setText(constants.acceptAssQuestion());
-		openDemand.setText(constants.openDemand());
+	
 		
-		managementPanel.getHeaderTextAccessor().setText(constants.managementPanel());
+		assessmentQuestionsPanel.getHeaderTextAccessor().setText(constants.managementPanel());
 		user.setText(constants.user());
 		
-		//doctor.setText(constants.;)
-		questionPanel.getHeaderTextAccessor().setText(constants.questionPanel());
+		administrationPanel.getHeaderTextAccessor().setText(constants.questionPanel());
 		question.setText(constants.question());
 		questionType.setText(constants.questionTypes());
 		institution.setText(constants.institution());
 		
-		extendedQuestionPanel.getHeaderTextAccessor().setText(constants.extendedQueMgt());
+		reviewProcessPanel.getHeaderTextAccessor().setText(constants.extendedQueMgt());
 		deactivatedQuestion.setText(constants.deactivatedQue());
 		notActivatedQuestion.setText(constants.notActivatedQuestion());
 		notActivatedAnswer.setText(constants.notActivatedAnswer());		
 		
-		assementPanel.getHeaderTextAccessor().setText(constants.assementPanel());
+		assesmentsPanel.getHeaderTextAccessor().setText(constants.assementPanel());
 		assesment.setText(constants.assesment());
 		asignAssQuestion.setText(constants.asignAssQuestion());
-		questionInAssessment.setText(constant.questionInAssessment());
+		questionInAssessment.setText(constants.questionInAssessment());
 		bookAssesment.setText(constants.bookAssesment());
-		staticContent.setText(constants.staticContent());
+		
 	}
 	
 	private void hideAllMenu()
 	{
-		systemOweviewPanel.setVisible(false);
-		managementPanel.setVisible(false);
-		questionPanel.setVisible(false);
-		assementPanel.setVisible(false);
-		extendedQuestionPanel.setVisible(false);
+		overviewPanel.setVisible(false);
+		assessmentQuestionsPanel.setVisible(false);
+		administrationPanel.setVisible(false);
+		assesmentsPanel.setVisible(false);
+		reviewProcessPanel.setVisible(false);
 		
 		shell.getMasterPanel().clear();
 	}
 	
 	private void showAdminMenu()
 	{
-		systemOweviewPanel.setVisible(true);
-		managementPanel.setVisible(true);
-		questionPanel.setVisible(true);
-		assementPanel.setVisible(true);
-		extendedQuestionPanel.setVisible(true);
+		overviewPanel.setVisible(true);
+		assessmentQuestionsPanel.setVisible(true);
+		administrationPanel.setVisible(true);
+		assesmentsPanel.setVisible(true);
+		reviewProcessPanel.setVisible(true);
 		
 		notActivatedQuestion.setVisible(true);
 		notActivatedAnswer.setVisible(true);
@@ -542,26 +403,26 @@ public class McAppNav extends Composite {
 		assesment.setVisible(true);
 		questionInAssessment.setVisible(true);
 		bookAssesment.setVisible(true);
-		staticContent.setVisible(true);
+	
 		deactivatedQuestion.setVisible(true);
 	}
 	
 	private void showUserMenu()
 	{
-		systemOweviewPanel.setVisible(true);
-		managementPanel.setVisible(false);
-		questionPanel.setVisible(true);
-		assementPanel.setVisible(true);
-		extendedQuestionPanel.setVisible(false);
+		overviewPanel.setVisible(true);
+		assessmentQuestionsPanel.setVisible(false);
+		administrationPanel.setVisible(false);
+		assesmentsPanel.setVisible(true);
+		reviewProcessPanel.setVisible(true);
 		
 		notActivatedQuestion.setVisible(false);
 		notActivatedAnswer.setVisible(false);
 		questionType.setVisible(false);
 		institution.setVisible(false);
-		assesment.setVisible(false);
+		assesment.setVisible(true);
 		questionInAssessment.setVisible(false);
 		bookAssesment.setVisible(false);
-		staticContent.setVisible(false);
+	
 		deactivatedQuestion.setVisible(false);
 	}
 

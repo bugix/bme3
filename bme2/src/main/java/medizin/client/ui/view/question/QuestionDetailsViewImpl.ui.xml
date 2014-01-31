@@ -58,7 +58,7 @@
 						<g:HorizontalPanel addStyleNames="{style.rightside}">
 							<medizin:IconButton ui:field="previous" icon="seek-prev" text="{constants.previousVersion}"></medizin:IconButton>
 							<medizin:IconButton ui:field="latest" icon="seek-end" text="{constants.latestVersion}" enabled="false"></medizin:IconButton>
-							<medizin:IconButton ui:field="accept" icon="check" text="{constants.acceptQuestion}" visible="false"></medizin:IconButton>
+							<medizin:IconButton ui:field="accept" icon="check" text="{constants.acceptQuestionBtn}" visible="false"></medizin:IconButton>
 							<medizin:IconButton ui:field="resendToReview" icon="check" text="{constants.resendToReview}" visible="false"></medizin:IconButton>
 							<medizin:IconButton ui:field="forcedActive" icon="check" text="{constants.forcedActive}" visible="false"></medizin:IconButton>
 							<!-- <medizin:IconButton ui:field="acceptQueAnswer" icon="check" text="{constants.acceptQueAnswer}" visible="false"></medizin:IconButton> -->

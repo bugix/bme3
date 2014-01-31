@@ -7,21 +7,16 @@ import com.google.inject.Inject;
 
 public class McPlaceHistoryFactory {
 	
-private final PlaceSystemOverview.Tokenizer placeSystemOverviewTokenizer ; 
-
-private final PlaceAcceptPerson.Tokenizer placeAcceptPersonTokenizer ;
+private final PlaceSystemOverview.Tokenizer placeSystemOverviewTokenizer ;
 private final PlaceAcceptAnswer.Tokenizer placeAcceptAnswerTokenizer ;
-private final PlaceAcceptAssQuestion.Tokenizer placeAcceptAssQuestionTokenizer ;
 private final PlaceAcceptQuestion.Tokenizer placeAcceptQuestionTokenizer ;
 private final PlaceAsignAssQuestion.Tokenizer placeAsignAssQuestionTokenizer ;
 private final PlaceAssesment.Tokenizer placeAssesmentTokenizer ;
 private final PlaceBookAssesment.Tokenizer placeBookAssesmentTokenizer;
-private final PlaceOpenDemand.Tokenizer placeOpenDemandTokenizer;
 private final PlaceQuestion.Tokenizer placeQuestionTokenizer;
 private final PlaceQuestionDetails.Tokenizer placeQuestionDetailsTokenizer;
 private final PlaceQuestiontypes.Tokenizer placeQuestiontypesTokenizer;
 private final PlaceQuestiontypesDetails.Tokenizer placeQuestiontypesDetailsTokenizer;
-private final PlaceStaticContent.Tokenizer placeStaticContentTokenizer;
 private final PlaceUser.Tokenizer placeUserTokenizer;
 private final PlaceUserDetails.Tokenizer placeUserDetailsTokenizer;
 private final PlaceInstitution.Tokenizer placeInstitutionTokenizer;
@@ -49,21 +44,9 @@ public PlaceSystemOverview.Tokenizer getPlaceSystemOverviewTokenizer() {
 	return placeSystemOverviewTokenizer;
 }
 
-
-public PlaceAcceptPerson.Tokenizer getPlaceAcceptPersonTokenizer() {
-	return placeAcceptPersonTokenizer;
-}
-
-
 public PlaceAcceptAnswer.Tokenizer getPlaceAcceptAnswerTokenizer() {
 	return placeAcceptAnswerTokenizer;
 }
-
-
-public PlaceAcceptAssQuestion.Tokenizer getPlaceAcceptAssQuestionTokenizer() {
-	return placeAcceptAssQuestionTokenizer;
-}
-
 
 public PlaceAcceptQuestion.Tokenizer getPlaceAcceptQuestionTokenizer() {
 	return placeAcceptQuestionTokenizer;
@@ -84,12 +67,6 @@ public PlaceBookAssesment.Tokenizer getPlaceBookAssesmentTokenizer() {
 	return placeBookAssesmentTokenizer;
 }
 
-
-public PlaceOpenDemand.Tokenizer getPlaceOpenDemandTokenizer() {
-	return placeOpenDemandTokenizer;
-}
-
-
 public PlaceQuestion.Tokenizer getPlaceQuestionTokenizer() {
 	return placeQuestionTokenizer;
 }
@@ -107,12 +84,6 @@ public PlaceQuestiontypes.Tokenizer getPlaceQuestiontypesTokenizer() {
 public PlaceQuestiontypesDetails.Tokenizer getPlaceQuestiontypesDetailsTokenizer() {
 	return placeQuestiontypesDetailsTokenizer;
 }
-
-
-public PlaceStaticContent.Tokenizer getPlaceStaticContentTokenizer() {
-	return placeStaticContentTokenizer;
-}
-
 
 public PlaceUser.Tokenizer getPlaceUserTokenizer() {
 	return placeUserTokenizer;
@@ -184,19 +155,15 @@ public PlaceQuestionInAssessmentDetails.Tokenizer getPlaceQuestionInAssessmentDe
 	public McPlaceHistoryFactory(McAppRequestFactory requestFactory) {
 		Log.debug("McPlaceHistoryFactory.Konstruktor");
 		this.placeSystemOverviewTokenizer= new PlaceSystemOverview.Tokenizer(requestFactory) ; 
-		this.placeAcceptPersonTokenizer= new PlaceAcceptPerson.Tokenizer(requestFactory) ; 
 		this.placeAcceptAnswerTokenizer= new PlaceAcceptAnswer.Tokenizer(requestFactory) ; 
-		this.placeAcceptAssQuestionTokenizer= new PlaceAcceptAssQuestion.Tokenizer(requestFactory) ; 
 		this.placeAcceptQuestionTokenizer= new PlaceAcceptQuestion.Tokenizer(requestFactory) ; 
 		this.placeAsignAssQuestionTokenizer= new PlaceAsignAssQuestion.Tokenizer(requestFactory) ; 
 		this.placeAssesmentTokenizer= new PlaceAssesment.Tokenizer(requestFactory) ; 
 		this.placeBookAssesmentTokenizer= new PlaceBookAssesment.Tokenizer(requestFactory) ; 
-		this.placeOpenDemandTokenizer= new PlaceOpenDemand.Tokenizer(requestFactory) ; 
 		this.placeQuestionTokenizer= new PlaceQuestion.Tokenizer(requestFactory) ; 
 		this.placeQuestionDetailsTokenizer= new PlaceQuestionDetails.Tokenizer(requestFactory) ; 
 		this.placeQuestiontypesTokenizer= new PlaceQuestiontypes.Tokenizer (requestFactory) ; 
 		this.placeQuestiontypesDetailsTokenizer= new PlaceQuestiontypesDetails.Tokenizer (requestFactory) ; 
-		this.placeStaticContentTokenizer= new PlaceStaticContent.Tokenizer (requestFactory) ; 
 		this.placeUserTokenizer= new PlaceUser.Tokenizer(requestFactory) ; 
 		this.placeUserDetailsTokenizer= new PlaceUserDetails.Tokenizer(requestFactory) ; 
 		this.placeInstitutionTokenizer= new PlaceInstitution.Tokenizer(requestFactory) ; 

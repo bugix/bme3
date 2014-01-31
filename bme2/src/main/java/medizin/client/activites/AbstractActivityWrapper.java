@@ -19,7 +19,6 @@ import medizin.client.place.PlaceNotActivatedQuestion;
 import medizin.client.place.PlaceNotActivatedQuestionDetails;
 import medizin.client.place.PlaceQuestiontypes;
 import medizin.client.place.PlaceQuestiontypesDetails;
-import medizin.client.place.PlaceStaticContent;
 import medizin.client.place.PlaceSystemOverview;
 import medizin.client.place.PlaceUser;
 import medizin.client.place.PlaceUserDetails;
@@ -196,7 +195,7 @@ abstract public class AbstractActivityWrapper extends AbstractActivity {
 						|| place instanceof PlaceInstitution 		 || place instanceof PlaceInstitutionEvent
 						|| place instanceof PlaceAssesment 			 || place instanceof PlaceAssesmentDetails
 						|| place instanceof PlaceBookAssesment		 || place instanceof PlaceBookAssesmentDetails
-						|| place instanceof PlaceStaticContent  	 || place instanceof PlaceNotActivatedAnswer
+						|| place instanceof PlaceNotActivatedAnswer
 						|| place instanceof PlaceUser 				 || place instanceof PlaceUserDetails
 						|| place instanceof PlaceDeactivatedQuestion || place instanceof PlaceDeactivatedQuestionDetails
 				) {
