@@ -392,38 +392,46 @@ public class McAppNav extends Composite {
 	{
 		overviewPanel.setVisible(true);
 		assessmentQuestionsPanel.setVisible(true);
-		administrationPanel.setVisible(true);
-		assesmentsPanel.setVisible(true);
 		reviewProcessPanel.setVisible(true);
+		assesmentsPanel.setVisible(true);
+		administrationPanel.setVisible(true);	
 		
+		questionInAssessment.setVisible(true);		
 		notActivatedQuestion.setVisible(true);
 		notActivatedAnswer.setVisible(true);
+		deactivatedQuestion.setVisible(true);
+		assesment.setVisible(true);
+		
 		questionType.setVisible(true);
 		institution.setVisible(true);
-		assesment.setVisible(true);
-		questionInAssessment.setVisible(true);
 		bookAssesment.setVisible(true);
-	
-		deactivatedQuestion.setVisible(true);
+		
+		questionType.setVisible(true);
+		institution.setVisible(true);
+		user.setVisible(true);
 	}
 	
 	private void showUserMenu()
 	{
 		overviewPanel.setVisible(true);
-		assessmentQuestionsPanel.setVisible(false);
-		administrationPanel.setVisible(false);
-		assesmentsPanel.setVisible(true);
+		assessmentQuestionsPanel.setVisible(true);
 		reviewProcessPanel.setVisible(true);
+		assesmentsPanel.setVisible(true);
+		administrationPanel.setVisible(false);		
 		
+		questionInAssessment.setVisible(false);		
 		notActivatedQuestion.setVisible(false);
 		notActivatedAnswer.setVisible(false);
+		deactivatedQuestion.setVisible(false);
+		assesment.setVisible(false);
+		
 		questionType.setVisible(false);
 		institution.setVisible(false);
-		assesment.setVisible(true);
-		questionInAssessment.setVisible(false);
 		bookAssesment.setVisible(false);
-	
-		deactivatedQuestion.setVisible(false);
+		
+		questionType.setVisible(false);
+		institution.setVisible(false);
+		user.setVisible(false);
 	}
 
 }
