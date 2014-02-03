@@ -1834,8 +1834,9 @@ public class Question {
 	public void deactivatedQuestion() {
 		if(hasQuestionUsedInAssessment()) {
 			this.status = Status.DEACTIVATED;
-			this.persist();	
-		}else {
+			this.persist();
+			inActivePreviousQuestion(this.getPreviousVersion());
+		} else {
 			if(this.getQuestionType().getQuestionType().equals(QuestionTypes.Matrix)) {
 				Question temp = this;
 				while(temp != null) {
@@ -2840,5 +2841,65 @@ public class Question {
 			this.replaceAssessmentQuestionWithNewQue();
 		}
 		
+	}
+	
+	public static Integer findRangeStartForQuestion(Long questionId,String sortname,Sorting sortorder,List<String> criteriaStringList, List<String> searchField, String searchText, Integer length)
+	{
+		Person loggedUser = Person.myGetLoggedPerson();
+		Institution institution = Institution.myGetInstitutionToWorkWith();
+		if (loggedUser == null || institution == null)
+			throw new IllegalArgumentException("The person and institution arguments are required");
+		
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+		Root<Question> from = criteriaQuery.from(Question.class);
+		criteriaQuery.select(from.<Long>get("id"));
+		criteriaQuery.distinct(true);
+		if(sortorder==Sorting.ASC){
+			if(sortname.equals("autor")){
+				criteriaQuery.orderBy(criteriaBuilder.asc(from.get(sortname).get("name")));
+				
+			}else{
+			criteriaQuery.orderBy(criteriaBuilder.asc(from.get(sortname)));
+			}
+		}else{
+			if(sortname.equals("autor")){
+				criteriaQuery.orderBy(criteriaBuilder.desc(from.get(sortname).get("name")));
+		}else{
+			criteriaQuery.orderBy(criteriaBuilder.desc(from.get(sortname)));
+		}
+		}
+		Predicate mainPredicate = findQusetionByAdvancedSearchCriteria(loggedUser,institution, criteriaBuilder, criteriaQuery, from, criteriaStringList, searchField, searchText);
+		criteriaQuery.where(mainPredicate);
+		TypedQuery<Long> query = entityManager().createQuery(criteriaQuery);
+		log.info("ADVANCED QUERY : " + query.unwrap(Query.class).getQueryString());
+		List<Long> list = query.getResultList();
+		return (list.indexOf(questionId) / length) * length;
+	}
+	
+	public static Integer findRangeStartForQuestionNonAcceptedAdmin(Long questionId, String sortname,Sorting sortOrder, Integer length){
+		PersonAccessRight personAccessRights = Person.fetchPersonAccessFromSession();
+		Person loggedUser = Person.myGetLoggedPerson();
+		Institution institution = Institution.myGetInstitutionToWorkWith();
+		if (loggedUser == null || institution == null)
+			throw new IllegalArgumentException("The person and institution arguments are required");
+		
+		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+		Root<Question> from = criteriaQuery.from(Question.class);
+		criteriaQuery.select(from.<Long>get("id"));
+		
+		if(sortOrder==Sorting.ASC){
+			criteriaQuery.orderBy(criteriaBuilder.asc(from.get(sortname)));
+		}else{
+			criteriaQuery.orderBy(criteriaBuilder.desc(from.get(sortname)));
+		}
+		
+		Predicate pre1 = predicateQuestionsNonAcceptedAdmin(personAccessRights, loggedUser, institution, criteriaBuilder, from);
+		criteriaQuery.where(pre1);
+		TypedQuery<Long> q = entityManager().createQuery(criteriaQuery);
+		log.info("~~QUERY : " + q.unwrap(Query.class).getQueryString());
+		List<Long> list = q.getResultList();
+		return (list.indexOf(questionId) / length) * length;
 	}
 }

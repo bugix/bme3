@@ -250,16 +250,12 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 		this.eventBus.fireEvent(new QuestionSaveEvent());
 	}
 
-	// also overriden in subclass 
 	private void cancelClickedGoto(QuestionProxy questionProxy) {
 		goTo(new PlaceQuestionDetails(questionProxy.stableId(), Operation.DETAILS, questionPlace.getHeight()));
 	}
 
 	@Override
-	public void placeChanged(Place place) {
-		// updateSelection(event.getNewPlace());
-		// TODO implement
-	}
+	public void placeChanged(Place place) {}
 	
 	@Override
 	public void saveQuestionWithDetails(boolean isCreativeWork,Boolean forcedActive) {
@@ -268,6 +264,7 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 			@Override
 			public Void apply(EntityProxyId<?> stableId) {
 				showNewDisplay();
+				placeController.goTo(new PlaceQuestion(PlaceQuestion.PLACE_QUESTION,stableId,questionPlace.getHeight()));
 				placeController.goTo(new PlaceQuestionDetails(stableId, PlaceQuestionDetails.Operation.DETAILS, questionPlace.getHeight()));
 				return null;
 			}
@@ -327,15 +324,6 @@ public class ActivityQuestionEdit extends AbstractActivityWrapper implements Que
 						createNewQuestion(question,Status.NEW,isAcceptedByAdmin,isAcceptedByReviewer,isAcceptedByAuthor,isForceActive,gotoShowNewFunction);
 					}else {
 						Status status; 
-						
-												
-						/*final Function<EntityProxyId<?>, Void> gotoDetailsFunction = new Function<EntityProxyId<?>, Void>() {
-							@Override
-							public Void apply(EntityProxyId<?> stableId) {
-								placeController.goTo(new PlaceQuestionDetails(stableId, PlaceQuestionDetails.Operation.DETAILS));
-								return null;
-							}
-						};*/
 						
 						final Function<EntityProxyId<?>, Void> gotoFunction = new Function<EntityProxyId<?>, Void>() {
 							@Override

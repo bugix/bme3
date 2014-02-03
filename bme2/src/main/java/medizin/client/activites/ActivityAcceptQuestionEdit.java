@@ -11,7 +11,6 @@ import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.AbstractDetailsPlace.Operation;
 import medizin.client.place.PlaceAcceptQuestion;
 import medizin.client.place.PlaceAcceptQuestionDetails;
-import medizin.client.place.PlaceQuestion;
 import medizin.client.proxy.McProxy;
 import medizin.client.proxy.QuestionEventProxy;
 import medizin.client.proxy.QuestionProxy;
@@ -233,14 +232,14 @@ public class ActivityAcceptQuestionEdit extends AbstractActivityWrapper implemen
 							if (checkBoxDialog.getCheckBoxValue())
 								Cookies.setCookie(McAppConstant.RESEND_TO_REVIEW_KEY, String.valueOf(true), ClientUtility.getDateFromOneYear());
 							
-							goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));
+							goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION,stableId));
 							goTo(new PlaceAcceptQuestionDetails(stableId,Operation.DETAILS));
 						}
 					});
 				}
 				else
 				{
-					goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION));
+					goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION,stableId));
 					goTo(new PlaceAcceptQuestionDetails(stableId,Operation.DETAILS));
 				}
 				
@@ -271,14 +270,14 @@ public class ActivityAcceptQuestionEdit extends AbstractActivityWrapper implemen
 							if (checkBoxDialog.getCheckBoxValue())
 								Cookies.setCookie(McAppConstant.RESEND_TO_REVIEW_KEY, String.valueOf(true), ClientUtility.getDateFromOneYear());
 							
-							goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION,questionPlace.getHeight()));
+							goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION,stableId,questionPlace.getHeight()));
 							goTo(new PlaceAcceptQuestionDetails(stableId,Operation.DETAILS,questionPlace.getHeight()));
 						}
 					});
 				}
 				else
 				{
-					goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION,questionPlace.getHeight()));
+					goTo(new PlaceAcceptQuestion(PlaceAcceptQuestion.PLACE_ACCEPT_QUESTION,stableId,questionPlace.getHeight()));
 					goTo(new PlaceAcceptQuestionDetails(stableId,Operation.DETAILS,questionPlace.getHeight()));
 				}
 				return null;

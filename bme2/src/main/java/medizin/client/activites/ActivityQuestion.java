@@ -80,10 +80,6 @@ public class ActivityQuestion extends AbstractActivityWrapper implements Questio
 	private AdvanceCellTable<QuestionProxy> table;
 
 	private HandlerRegistration rangeChangeHandler;
-
-	/*private PersonProxy userLoggedIn;
-
-	private InstitutionProxy institutionActive;*/
 	
 	private QuestionAdvancedSearchSubViewImpl advancedSearchSubViewImpl;
 	
@@ -126,19 +122,12 @@ public class ActivityQuestion extends AbstractActivityWrapper implements Questio
 
 	}
 
-	/*@Override
-	public void start(AcceptsOneWidget widget, EventBus eventBus) {
-		super.start(widget, eventBus);
-
-	}*/
-
 	@Override
 	public void start2(AcceptsOneWidget widget, EventBus eventBus) {
 		
 		Log.debug("in Ativity Question");
 		
 		QuestionView questionView = new QuestionViewImpl(eventBus,hasQuestionAddRights(), true);
-		//questionView.setPresenter(this);
 		this.widget = widget;
 		this.view = questionView;
 		widget.setWidget(questionView.asWidget());
@@ -164,107 +153,25 @@ public class ActivityQuestion extends AbstractActivityWrapper implements Questio
 				ActivityQuestion.this.onRangeChanged();
 			}
 		});
-	
-/*		requests.questionEventRequest().findQuestionEventByInstitution(this.institutionActive).fire(new BMEReceiver<List<QuestionEventProxy>>() {
-		
-			@Override
-			public void onSuccess(List<QuestionEventProxy> response) {
-				view.setSpecialisationFilter(response);
-			}
-		});*/
+
 		
 		init();
 		
-		/*requests.personRequest().myGetLoggedPerson()
-				.fire(new BMEReceiver<PersonProxy>() {
-
-					@Override
-					public void onSuccess(PersonProxy response) {
-						userLoggedIn = response;
-						init();
-
-					}
-
-					public void onFailure(ServerFailure error) {
-						ErrorPanel erorPanel = new ErrorPanel();
-						erorPanel.setErrorMessage(error.getMessage());
-						Log.error(error.getMessage());
-						// onStop();
-					}
-
-					@Override
-					public void onViolation(Set<Violation> errors) {
-						Iterator<Violation> iter = errors.iterator();
-						String message = "";
-						while (iter.hasNext()) {
-							message += iter.next().getMessage() + "<br>";
-						}
-						Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION
-								+ " in Antwort löschen -" + message);
-
-						ErrorPanel erorPanel = new ErrorPanel();
-						erorPanel.setErrorMessage(message);
-						// onStop();
-
-					}
-
-				});*/
-		/*requests.institutionRequest().myGetInstitutionToWorkWith()
-				.fire(new BMEReceiver<InstitutionProxy>() {
-
-					@Override
-					public void onSuccess(InstitutionProxy response) {
-						institutionActive = response;
-						init();
-
-					}
-
-					public void onFailure(ServerFailure error) {
-						ErrorPanel erorPanel = new ErrorPanel();
-						erorPanel.setErrorMessage(error.getMessage());
-						Log.error(error.getMessage());
-						// onStop();
-					}
-
-					@Override
-					public void onViolation(Set<Violation> errors) {
-						Iterator<Violation> iter = errors.iterator();
-						String message = "";
-						while (iter.hasNext()) {
-							message += iter.next().getMessage() + "<br>";
-						}
-						Log.warn(McAppConstant.ERROR_WHILE_DELETE_VIOLATION
-								+ " in Antwort löschen -" + message);
-
-						ErrorPanel erorPanel = new ErrorPanel();
-						erorPanel.setErrorMessage(message);
-						// onStop();
-
-					}
-
-				});*/
 		// Inherit the view's key provider
 		
-		ProvidesKey<QuestionProxy> keyProvider = ((AbstractHasData<QuestionProxy>) table)
-				.getKeyProvider();
+		ProvidesKey<QuestionProxy> keyProvider = ((AbstractHasData<QuestionProxy>) table).getKeyProvider();
 		selectionModel = new SingleSelectionModel<QuestionProxy>(keyProvider);
 		
-		
-		
 		table.setSelectionModel(selectionModel);		
-
-		selectionModel
-				.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-					public void onSelectionChange(SelectionChangeEvent event) {
-						QuestionProxy selectedObject = selectionModel
-								.getSelectedObject();
-						if (selectedObject != null) {
-							Log.debug(selectedObject.getQuestionText()
-									+ " selected!");
-							showDetails(selectedObject);
-						}
-					}
-				});
+		selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+			public void onSelectionChange(SelectionChangeEvent event) {
+				QuestionProxy selectedObject = selectionModel.getSelectedObject();
+				if (selectedObject != null) {
+					Log.debug(selectedObject.getQuestionText() + " selected!");
+					showDetails(selectedObject);
+				}
+			}
+		});
 
 		view.setDelegate(this);
 
@@ -278,8 +185,7 @@ public class ActivityQuestion extends AbstractActivityWrapper implements Questio
 	}
 
 	protected void showDetails(QuestionProxy question) {
-		Log.debug("Question Stable id: " + question.stableId() + " "
-				+ PlaceQuestionDetails.Operation.DETAILS);
+		Log.debug("Question Stable id: " + question.stableId() + " " + PlaceQuestionDetails.Operation.DETAILS);
 		placeController.goTo(new PlaceQuestionDetails(question.stableId(),view.getScrollDetailPanel().getOffsetHeight()));
 	}
 
@@ -289,56 +195,6 @@ public class ActivityQuestion extends AbstractActivityWrapper implements Questio
 	}
 
 	private void init() {
-
-		/*if (institutionActive == null || userLoggedIn == null) {
-			// onStop();
-			return;
-		} else {
-			Document.get()
-					.getElementById("userLoggedIn")
-					.setInnerHTML(
-							"Eingeloggt als: " + userLoggedIn.getName() + " "
-									+ userLoggedIn.getPrename());
-			Document.get()
-					.getElementById("institutionActive")
-					.setInnerHTML(
-							"Institution: "
-									+ institutionActive.getInstitutionName());
-
-		}
-
-		if (rangeChangeHandler != null) {
-			rangeChangeHandler.removeHandler();
-			rangeChangeHandler = null;
-		}
-	
-		requests.questionRequest()
-				.countQuestionsByPerson(this.userLoggedIn.getShidId(),
-						this.institutionActive.getId(), view.getSerachBox().getValue(), view.getSearchValue())
-				.fire(new BMEReceiver<Long>() {
-					@Override
-					public void onSuccess(Long response) {
-						if (view == null) {
-							// This activity is dead
-							return;
-						}
-						Log.debug("Geholte Questions (Pr�fungen) aus der Datenbank: "
-								+ response);
-						view.getTable().setRowCount(response.intValue(), true);
-						onRangeChanged();
-					}
-					
-					@Override
-					public void onFailure(ServerFailure error) {
-						System.out.println("ERROR : " + error.getMessage());
-					}
-					
-					@Override
-					public void onViolation(Set<Violation> errors) {
-						System.out.println("ERRORS SIZE : " + errors.size());
-					}
-				});*/
-		
 		List<String> encodedStringList = new ArrayList<String>();
 		encodedStringList = AdvancedSearchCriteriaUtils.encodeList(advancedSearchCriteriaList);
 		AppLoader.setNoLoader();
@@ -357,29 +213,6 @@ public class ActivityQuestion extends AbstractActivityWrapper implements Questio
 
 	protected void onRangeChanged() {
 		final Range range = table.getVisibleRange();
-
-		/*requests.questionRequest()
-				.findQuestionEntriesByPerson(this.userLoggedIn.getShidId(),
-						this.institutionActive.getId(), view.getSerachBox().getValue(), view.getSearchValue(), range.getStart(),
-						range.getLength(),false,"","","").with(view.getPaths())
-				.fire(new BMEReceiver<List<QuestionProxy>>() {
-					@Override
-					public void onSuccess(List<QuestionProxy> values) {
-						if (view == null) {
-							// This activity is dead
-							Log.debug("view ist null");
-							return;
-						}
-
-						table.setRowData(range.getStart(), values);
-
-						if (widget != null) {
-							widget.setWidget(view.asWidget());
-						}
-						MathJaxs.delayRenderLatexResult(RootPanel.getBodyElement());
-					}
-				});*/
-		
 		List<String> encodedStringList = new ArrayList<String>();
 		encodedStringList = AdvancedSearchCriteriaUtils.encodeList(advancedSearchCriteriaList);
 		AppLoader.setNoLoader();
@@ -414,10 +247,17 @@ public class ActivityQuestion extends AbstractActivityWrapper implements Questio
 				public void onSuccess(Object response) {
 					if (response != null && response instanceof QuestionProxy)
 					{
-						QuestionProxy selectedProxy = (QuestionProxy) response;
-						selectionModel.setSelected(selectedProxy, true);
-						int start = table.getRowCount() - range.getLength();
-						table.setPageStart((start < 0 ? 0 : start));
+						final QuestionProxy selectedProxy = (QuestionProxy) response;
+						List<String> encodedStringList = new ArrayList<String>();
+						encodedStringList = AdvancedSearchCriteriaUtils.encodeList(advancedSearchCriteriaList);
+						requests.questionRequest().findRangeStartForQuestion(selectedProxy.getId(),sortname,sortorder,encodedStringList, view.getSearchValue(), view.getSerachBox().getValue(), range.getLength()).fire(new BMEReceiver<Integer>() {
+
+							@Override
+							public void onSuccess(Integer start) {
+								selectionModel.setSelected(selectedProxy, true);
+								table.setPageStart(start < 0 ? 0 : start);	
+							}
+						});
 					}
 					proxyId = null;
 				}
@@ -427,50 +267,16 @@ public class ActivityQuestion extends AbstractActivityWrapper implements Questio
 
 	@Override
 	public void newClicked() {
-		placeController.goTo(new PlaceQuestionDetails(
-				PlaceQuestionDetails.Operation.CREATE, view.getScrollDetailPanel().getOffsetHeight()));
-
+		placeController.goTo(new PlaceQuestionDetails(PlaceQuestionDetails.Operation.CREATE, view.getScrollDetailPanel().getOffsetHeight()));
 	}
 
 	@Override
 	public void performSearch(String searchText) {
-		/*requests.questionRequest()
-		.countQuestionsByPerson(this.userLoggedIn.getShidId(),
-				this.institutionActive.getId(), view.getSerachBox().getValue(), view.getSearchValue())
-		.fire(new BMEReceiver<Long>() {
-			@Override
-			public void onSuccess(Long response) {
-				if (view == null) {
-					// This activity is dead
-					return;
-				}
-				Log.debug("Geholte Questions (Pr�fungen) aus der Datenbank: "
-						+ response);
-				view.getTable().setRowCount(response.intValue(), true);
-				onRangeChanged();
-			}
-			
-			@Override
-			public void onFailure(ServerFailure error) {
-				System.out.println("ERROR : " + error.getMessage());
-			}
-			
-			@Override
-			public void onViolation(Set<Violation> errors) {
-				System.out.println("ERRORS SIZE : " + errors.size());
-			}
-		});*/
-		
 		init();
 	}
 
 	@Override
 	public void placeChanged(Place place) {
-		if (place instanceof PlaceQuestionDetails) {
-			if (((PlaceQuestionDetails)place).getProxyId() != null)
-				proxyId = ((PlaceQuestionDetails)place).getProxyId();			
-		}
-		
 		if (place instanceof PlaceQuestion) {
 			Log.info("in place changed");
 			if(((PlaceQuestion) place).getProxyId() != null) {
@@ -486,7 +292,6 @@ public class ActivityQuestion extends AbstractActivityWrapper implements Questio
 		// Added this to show key word by name as ASC.
 		AppLoader.setNoLoader();
 		requests.keywordRequest().findAllKeywordsByNameASC().fire(new BMEReceiver<List<KeywordProxy>>() {
-		//requests.keywordRequest().findAllKeywords().fire(new BMEReceiver<List<KeywordProxy>>() {
 
 			@Override
 			public void onSuccess(List<KeywordProxy> response) {

@@ -76,4 +76,8 @@ public interface QuestionRequest extends QuestionRequest_Roo_Gwt {
 	Request<Void> findQuestionByAdvancedSearchForPrint(String sortname,Sorting sortorder,List<String> criteriaStringList, List<String> searchField, String searchText);
 
 	InstanceRequest<QuestionProxy, Void> updateQuestion();
+
+	Request<Integer>  findRangeStartForQuestion(Long questionId,String sortnmae,Sorting sortorder,List<String> criteriaStringList, List<String> searchField, String searchText, Integer length);
+
+	Request<Integer> findRangeStartForQuestionNonAcceptedAdmin(Long questionId, String sortname, Sorting sortorder, Integer length);
 }

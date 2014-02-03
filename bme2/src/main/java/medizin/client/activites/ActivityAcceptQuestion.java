@@ -255,10 +255,16 @@ public class ActivityAcceptQuestion extends AbstractActivityWrapper implements A
 				public void onSuccess(Object response) {
 					if (response != null && response instanceof QuestionProxy)
 					{
-						QuestionProxy selectedProxy = (QuestionProxy) response;
-						selectionModel.setSelected(selectedProxy, true);
-						int start = table.getRowCount() - range.getLength();
-						table.setPageStart((start < 0 ? 0 : start));
+						final QuestionProxy selectedProxy = (QuestionProxy) response;
+						requests.questionRequest().findRangeStartForQuestionNonAcceptedAdmin(selectedProxy.getId(),sortname,sortorder, range.getLength()).fire(new BMEReceiver<Integer>() {
+
+							@Override
+							public void onSuccess(Integer start) {
+								selectionModel.setSelected(selectedProxy, true);
+								table.setPageStart((start < 0 ? 0 : start));
+							}
+							
+						});
 					}
 					proxyId = null;
 				}
@@ -269,12 +275,13 @@ public class ActivityAcceptQuestion extends AbstractActivityWrapper implements A
 	@Override
 	public void placeChanged(Place place) {
 		
-		if (place instanceof PlaceAcceptQuestionDetails) {
+		/*if (place instanceof PlaceAcceptQuestionDetails) {
 			if (((PlaceAcceptQuestionDetails)place).getProxyId() != null)
 				proxyId = ((PlaceAcceptQuestionDetails)place).getProxyId();
-		}
+		}*/
 		
 		if (place instanceof PlaceAcceptQuestion) {
+			proxyId = ((PlaceAcceptQuestion)place).getProxyId();
 			init();
 		}
 	}

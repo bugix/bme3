@@ -21,13 +21,16 @@ public class PlaceAcceptQuestion extends AbstractPlace {
 		super(placeName, proxyId);
 	}
 
-	public PlaceAcceptQuestion(String placeAcceptQuestion, boolean reload,
-			Integer height) {
-		super(placeAcceptQuestion,reload,height);
+	public PlaceAcceptQuestion(String placeName, boolean reload, Integer height) {
+		super(placeName,reload,height);
 	}
 
 	public PlaceAcceptQuestion(String placeName, Integer height) {
 		super(placeName, height);
+	}
+
+	public PlaceAcceptQuestion(String placeName, EntityProxyId<?> stableId, Integer height) {
+		super(placeName,stableId, height);
 	}
 
 	@Prefix(PLACE_ACCEPT_QUESTION)
