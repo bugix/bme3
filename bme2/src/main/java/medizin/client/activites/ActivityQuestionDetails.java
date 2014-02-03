@@ -661,7 +661,14 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			fillAnswerData(answerText, author, rewiewer, submitToReviewComitee, comment, validity, points, mediaPath, additionalKeywords, sequenceNumber, newAnswerProxy,forcedActive);
 					
 			final AnswerProxy finalAnswerProxy = newAnswerProxy;
-			AppLoader.setCurrentLoader(answerDialogbox.getLoadingPopup());
+			//AppLoader.setCurrentLoader(answerDialogbox.getLoadingPopup());
+			
+			if(answerDialogbox != null) {
+				AppLoader.setCurrentLoader(answerDialogbox.getLoadingPopup());	
+			} else if(answerDialogboxTabView != null) {
+				AppLoader.setCurrentLoader(answerDialogboxTabView.getLoadingPopup());
+			}
+			
 			answerRequest.persist().using(newAnswerProxy).fire(new BMEReceiver<Void>(reciverMap) {
 
 				@Override
@@ -680,7 +687,15 @@ public class ActivityQuestionDetails extends AbstractActivityWrapper implements
 			fillAnswerData(answerText, author, rewiewer, submitToReviewComitee, comment, validity, points, mediaPath, additionalKeywords, sequenceNumber, newAnswerProxy,forcedActive);
 			
 			final AnswerProxy finalAnswerProxy = newAnswerProxy;
-			AppLoader.setCurrentLoader(answerDialogbox.getLoadingPopup());
+
+			//AppLoader.setCurrentLoader(answerDialogbox.getLoadingPopup());
+			if(answerDialogbox != null) {
+				AppLoader.setCurrentLoader(answerDialogbox.getLoadingPopup());	
+			} else if(answerDialogboxTabView != null) {
+				AppLoader.setCurrentLoader(answerDialogboxTabView.getLoadingPopup());
+			}
+
+			
 			answerRequest.persist().using(finalAnswerProxy).fire(new BMEReceiver<Void>(reciverMap) {
 	
 				@Override
