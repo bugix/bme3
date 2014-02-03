@@ -191,7 +191,7 @@ public class ActivityUser extends AbstractActivityWrapper implements UserView.Pr
 					if (response != null && response instanceof PersonProxy)
 					{
 						final PersonProxy selectedProxy = (PersonProxy) response;
-						requests.personRequest().getRangeStartForPerson(selectedProxy.getId(),sortname,sortorder,searchValue,range.getLength()).fire(new BMEReceiver<Integer>() {
+						requests.personRequest().findRangeStartForPerson(selectedProxy.getId(),sortname,sortorder,searchValue,range.getLength()).fire(new BMEReceiver<Integer>() {
 
 							@Override
 							public void onSuccess(Integer start) {

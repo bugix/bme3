@@ -1,14 +1,12 @@
 package medizin.client.activites;
 
-import java.util.List;
-
 import medizin.client.factory.receiver.BMEReceiver;
 import medizin.client.factory.request.McAppRequestFactory;
 import medizin.client.place.PlaceQuestiontypes;
 import medizin.client.place.PlaceQuestiontypesDetails;
-import medizin.client.place.PlaceUserDetails;
 import medizin.client.proxy.InstitutionProxy;
 import medizin.client.proxy.QuestionTypeProxy;
+import medizin.client.request.InstitutionRequest;
 import medizin.client.request.QuestionTypeRequest;
 import medizin.client.ui.view.QuestiontypesEditView;
 import medizin.client.ui.view.QuestiontypesEditViewImpl;
@@ -17,6 +15,7 @@ import medizin.shared.QuestionTypes;
 import medizin.shared.i18n.BmeConstants;
 
 import com.allen_sauer.gwt.log.client.Log;
+import com.google.common.collect.Lists;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -28,25 +27,17 @@ import com.google.inject.Inject;
 public class ActivityQuestiontypesCreate extends AbstractActivityWrapper implements QuestiontypesEditView.Delegate {
 
 	private PlaceQuestiontypesDetails questiontypePlace;
-
 	private AcceptsOneWidget widget;
 	private QuestiontypesEditView view;
-
 	private PlaceQuestiontypesDetails.Operation operation;
-
 	private HandlerRegistration rangeChangeHandler;
-
 	private QuestionTypeProxy questionType;
-
 	private McAppRequestFactory requests;
 	private PlaceController placeController;
-
 	public BmeConstants constants = GWT.create(BmeConstants.class);
-	//private RequestFactoryEditorDriver<QuestionTypeProxy, QuestiontypesEditViewImpl> editorDriver;
 
 	@Inject
-	public ActivityQuestiontypesCreate(PlaceQuestiontypesDetails place,
-			McAppRequestFactory requests, PlaceController placeController, PlaceQuestiontypesDetails.Operation create) {
+	public ActivityQuestiontypesCreate(PlaceQuestiontypesDetails place, McAppRequestFactory requests, PlaceController placeController, PlaceQuestiontypesDetails.Operation create) {
 		super(place, requests, placeController);
 		this.questiontypePlace = place;
         this.requests = requests;
@@ -55,41 +46,27 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 	}
 
 	@Inject
-	public ActivityQuestiontypesCreate(PlaceQuestiontypesDetails place,
-			McAppRequestFactory requests, PlaceController placeController) {
+	public ActivityQuestiontypesCreate(PlaceQuestiontypesDetails place, McAppRequestFactory requests, PlaceController placeController) {
 		super(place, requests, placeController);
 		this.questiontypePlace = place;
         this.requests = requests;
         this.placeController = placeController;
 	}
 
-
-
 	@Override
 	public String mayStop() {
-
 		return null;
 	}
 
 	@Override
 	public void onCancel() {
 		onStop();
-
 	}
 
 	@Override
 	public void onStop() {
 //		((SlidingPanel)widget).remove(view.asWidget());
-
-
 	}
-
-
-	/*@Override
-	public void start(AcceptsOneWidget widget, EventBus eventBus) {
-		super.start(widget, eventBus);
-
-	}*/
 
 	@Override
 	public void start2(AcceptsOneWidget widget, EventBus eventBus) {
@@ -99,29 +76,26 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 		this.view = questionTypeDetailsView;
         widget.setWidget(questionTypeDetailsView.asWidget());
         
-		/*eventBus.addHandler(PlaceChangeEvent.TYPE, new PlaceChangeEvent.Handler() {
-			public void onPlaceChange(PlaceChangeEvent event) {
-
-			}
-		});*/
-        AppLoader.setNoLoader();
+        /*AppLoader.setNoLoader();
 		requests.institutionRequest().findAllInstitutions().fire(new BMEReceiver<List<InstitutionProxy>>() {
 
 			@Override
 			public void onSuccess(List<InstitutionProxy> response) {
 
-				view.getInstituteListBox().setAcceptableValues(response);
+				view.getInstituteListBox().setAcceptableValues(response);*/
 				AppLoader.setNoLoader();
-				requests.institutionRequest().myGetInstitutionToWorkWith().fire(new BMEReceiver<InstitutionProxy>() {
+				InstitutionRequest institutionRequest = requests.institutionRequest();
+				institutionRequest.myGetInstitutionToWorkWith().to(new BMEReceiver<InstitutionProxy>() {
 
 					@Override
 					public void onSuccess(InstitutionProxy response) {
-
+						// only current institution
+						view.getInstituteListBox().setAcceptableValues(Lists.newArrayList(response));
 						view.getInstituteListBox().setValue(response);
 					}
 				});
-			}
-		});
+			/*}
+		});*/
 
 		view.setDelegate(this);
 		view.showFieldsForQuestionType(QuestionTypes.Textual);
@@ -130,26 +104,23 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 
 			Log.info("edit");			
 			AppLoader.setNoLoader();
-			requests.find(questiontypePlace.getProxyId()).with("institution").fire(new BMEReceiver<Object>() {
-/*
-				public void onFailure(ServerFailure error){
-					Log.error(error.getMessage());
-				}*/
+			QuestionTypeRequest questionTypeRequest = institutionRequest.append(requests.questionTypeRequest());
+			questionTypeRequest.find(questiontypePlace.getProxyId()).with("institution").to(new BMEReceiver<Object>() {
+
 				@Override
 				public void onSuccess(Object response) {
 					if(response instanceof QuestionTypeProxy){
 						questionType=(QuestionTypeProxy)response;
 						AppLoader.setCurrentLoader(view.getLoadingPopup());
 						initEdit(questionType);
-						//System.out.println("ID : " + questionType.getId());
 					}
-
-
 				}
-			    });
+			});
+			
+			questionTypeRequest.fire();
 		}
 		else{
-
+			institutionRequest.fire();
 			Log.info("neues Assement");
 			init();
 		}
@@ -175,7 +146,6 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 		}
 
 		Log.info("edit");
-
 		Log.info("persist");
 
 		AppLoader.setNoLoader();
@@ -319,7 +289,7 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 
 					public void onSuccess(Void response) {
 						view.setNullValue(selectedQuestionType);
-						placeController.goTo(new PlaceQuestiontypes(PlaceQuestiontypes.PLACE_QUESTIONTYPES,questiontypePlace.getHeight()));
+						placeController.goTo(new PlaceQuestiontypes(PlaceQuestiontypes.PLACE_QUESTIONTYPES,questiontypePlace.getHeight(),finalQuestionTypeProxy.stableId()));
 						placeController.goTo(new PlaceQuestiontypesDetails(finalQuestionTypeProxy.stableId(),PlaceQuestiontypesDetails.Operation.DETAILS,questiontypePlace.getHeight()));
 					}
 				});
@@ -331,12 +301,6 @@ public class ActivityQuestiontypesCreate extends AbstractActivityWrapper impleme
 
 	@Override
 	public void placeChanged(Place place) {
-		// TODO add place changed code here
-		
 	}
-
-
-
-
 
 }

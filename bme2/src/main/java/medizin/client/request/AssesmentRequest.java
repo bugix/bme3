@@ -23,4 +23,5 @@ public interface AssesmentRequest extends AssesmentRequest_Roo_Gwt {
 	abstract Request<List<AssesmentProxy>> findAssesmentOfGivenYear(String selectedYear);
 	abstract Request<List<AssesmentProxy>> findAllAssesmentByInsitute();
 	abstract Request<List<AssesmentProxy>> findAllAssesmentByInstituteDescDateOfAssessment();
+	abstract Request<Integer> findRangeStartForInstitution(Long assesmentId, String sortname, Sorting sortorder, Integer length);
 }

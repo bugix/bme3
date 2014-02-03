@@ -26,7 +26,11 @@ public class PlaceAssesment extends AbstractPlace {
 	}
 
 	public PlaceAssesment(String placeName, Integer height) {
-				super(placeName, height);
+		super(placeName, height);
+	}
+
+	public PlaceAssesment(String placeName, Integer height, EntityProxyId<?> stableId) {
+		super(placeName, stableId, height);
 	}
 
 	@Prefix(PLACE_ASSESMENT)

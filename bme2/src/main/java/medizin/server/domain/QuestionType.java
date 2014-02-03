@@ -383,4 +383,35 @@ public class QuestionType {
 		}
 		return null;
 	}
+	
+	public static Integer findRangeStartForQuestionType(Long questionTypeId,Integer length,String sortBy,Sorting sortOrder,String searchValue) {
+		
+		Institution institution = Institution.myGetInstitutionToWorkWith();
+    	
+    	if (institution == null)
+    		return 0;
+    	
+    	CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+ 		CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+ 		Root<QuestionType> from = criteriaQuery.from(QuestionType.class);
+ 		criteriaQuery.select(from.<Long>get("id"));
+ 		if(sortOrder==Sorting.ASC)
+ 		{
+ 			criteriaQuery.orderBy(criteriaBuilder.asc(from.get(sortBy)));
+ 		}
+ 		else
+ 		{
+ 			criteriaQuery.orderBy(criteriaBuilder.desc(from.get(sortBy)));
+ 		}
+ 		
+ 		Expression<String> shortNameExp = from.get("shortName");
+ 		Expression<String> longNameExp = from.get("longName");
+ 		criteriaQuery.where(criteriaBuilder.and(criteriaBuilder.equal(from.get("institution").get("id"), institution.getId()), criteriaBuilder.or(criteriaBuilder.like(shortNameExp, "%" + searchValue + "%"), criteriaBuilder.like(longNameExp, "%" + searchValue + "%"))));
+ 		
+ 		TypedQuery<Long> q = entityManager().createQuery(criteriaQuery);
+		List<Long> list = q.getResultList();
+		log.info("Query String: " + q.unwrap(Query.class).getQueryString());
+		return (list.indexOf(questionTypeId) / length) * length;
+	}
+	
 }

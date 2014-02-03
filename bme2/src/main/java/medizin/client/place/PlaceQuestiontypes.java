@@ -25,8 +25,12 @@ public class PlaceQuestiontypes extends AbstractPlace {
 		super(placeName,reload,height);
 	}
 
-	public PlaceQuestiontypes(String placeQuestiontypes, Integer height) {
-		super(placeQuestiontypes , height);
+	public PlaceQuestiontypes(String placeName, Integer height) {
+		super(placeName , height);
+	}
+
+	public PlaceQuestiontypes(String placeName, Integer height, EntityProxyId<?> stableId) {
+		super(placeName, stableId, height);
 	}
 
 	@Prefix(PLACE_QUESTIONTYPES)

@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EntityManager;
@@ -23,6 +24,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.SetJoin;
@@ -216,8 +218,6 @@ public class Assesment {
     
     public static List<Assesment> findAssesmentByInsitute(String sortname,Sorting sortOrder,int firstResult, int maxResults)
     {
-    	EntityManager em = Assesment.entityManager();
-    	
     	Institution activeInstitute=Institution.myGetInstitutionToWorkWith();
     	
     	if (activeInstitute == null)
@@ -225,14 +225,13 @@ public class Assesment {
     	
     	//create query  	
     	CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
-    	CriteriaQuery<Assesment> criteriaQuery = criteriaBuilder
-				.createQuery(Assesment.class);
+    	CriteriaQuery<Assesment> criteriaQuery = criteriaBuilder.createQuery(Assesment.class);
     	//from
     	Root<Assesment> from = criteriaQuery.from(Assesment.class);
     	if(sortOrder==Sorting.ASC){
-    		criteriaQuery.orderBy(criteriaBuilder.asc(from.get(sortname)));
+    		criteriaQuery.orderBy(criteriaBuilder.asc(getSortName(sortname, from)));
     	}else{
-    		criteriaQuery.orderBy(criteriaBuilder.desc(from.get(sortname)));
+    		criteriaQuery.orderBy(criteriaBuilder.desc(getSortName(sortname, from)));
     	}
     	criteriaQuery.where(criteriaBuilder.equal(from.get("institution"), activeInstitute));
     	TypedQuery<Assesment> q=entityManager().createQuery(criteriaQuery);
@@ -241,6 +240,17 @@ public class Assesment {
     	log.info("findAssesmentByInsitute Query : " + q.unwrap(Query.class).getQueryString());
     	return q.getResultList();
     }
+
+	private static Path<Object> getSortName(String sortname, Root<Assesment> from) {
+		
+		if(sortname.equals("mc")) {
+			return from.get("mc").get("mcName");
+		}
+		if(sortname.equals("repeFor")) {
+			return from.get("repeFor").get("id");
+		}
+		return from.get(sortname);
+	}
     
     public static List<Assesment> findAllAssesmentByInsitute() {
     	
@@ -276,8 +286,6 @@ public class Assesment {
     
     public static Long countAssesmentByInsitute()
     {
-    	EntityManager em = Assesment.entityManager();
-    	
     	Institution activeInstitute=Institution.myGetInstitutionToWorkWith();
     	
     	if (activeInstitute == null)
@@ -285,13 +293,15 @@ public class Assesment {
     	
     	//create query  	
     	CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
-    	CriteriaQuery<Assesment> criteriaQuery = criteriaBuilder
-				.createQuery(Assesment.class);
+    	CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+    	
     	//from
     	Root<Assesment> from = criteriaQuery.from(Assesment.class);
+    	criteriaQuery.select(from.<Long>get("id"));
+    	criteriaQuery.distinct(true);
     	
     	criteriaQuery.where(criteriaBuilder.equal(from.get("institution"), activeInstitute));
-    	TypedQuery<Assesment> q=entityManager().createQuery(criteriaQuery);
+    	TypedQuery<Long> q=entityManager().createQuery(criteriaQuery);
     
     	return new Long(q.getResultList().size());
     }
@@ -541,5 +551,27 @@ public class Assesment {
 	    TypedQuery<Assesment> q = em.createQuery("SELECT distinct Assesment FROM Assesment AS assesment WHERE assesment.dateOfAssesment >='" +selectedYear + "-01-01 00:00:00'  AND assesment.dateOfAssesment <='"+selectedYear + "-12-31 00:00:00' and institution = " + institution.getId() +" order by dateOfAssesment desc, mc asc ,assesment.name asc", Assesment.class);
 	    return q.getResultList();
 		
+	}
+	
+	public static Integer findRangeStartForInstitution(Long assesmentId, String sortname,Sorting sortOrder, Integer length) {
+    	Institution activeInstitute=Institution.myGetInstitutionToWorkWith();
+    	
+    	if (activeInstitute == null)
+    		throw new IllegalArgumentException("The person and institution arguments are required");
+    	
+    	CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+    	CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+    	Root<Assesment> from = criteriaQuery.from(Assesment.class);
+    	criteriaQuery.select(from.<Long>get("id"));
+    	if(sortOrder==Sorting.ASC){
+    		criteriaQuery.orderBy(criteriaBuilder.asc(getSortName(sortname, from)));
+    	}else{
+    		criteriaQuery.orderBy(criteriaBuilder.desc(getSortName(sortname, from)));
+    	}
+    	criteriaQuery.where(criteriaBuilder.equal(from.get("institution"), activeInstitute));
+    	TypedQuery<Long> q=entityManager().createQuery(criteriaQuery);
+    	List<Long> list = q.getResultList();
+		log.info("Query String: " + q.unwrap(Query.class).getQueryString());
+		return (list.indexOf(assesmentId) / length) * length;
 	}
 }

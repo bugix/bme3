@@ -251,7 +251,7 @@ public class ActivityAssesmentCreate  extends AbstractActivityWrapper  implement
           public void onSuccess(Void response) {
         	  Log.info("PersonSucesfullSaved");
         	  
-        	  	placeController.goTo(new PlaceAssesment(PlaceAssesment.PLACE_ASSESMENT,assesmentPlace.getHeight()));
+        	  	placeController.goTo(new PlaceAssesment(PlaceAssesment.PLACE_ASSESMENT,assesmentPlace.getHeight(),assesment.stableId()));
         		placeController.goTo(new PlaceAssesmentDetails(assesment.stableId(), PlaceAssesmentDetails.Operation.DETAILS, assesmentPlace.getHeight()));
           //	goTo(new PlaceAssesment(person.stableId()));
           }

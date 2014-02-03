@@ -647,7 +647,7 @@ public class Person {
 
 	}
 	
-	public static Integer getRangeStartForPerson(Long personId,String sortColumn,Sorting sortOrder,String searchValue,Integer length) {
+	public static Integer findRangeStartForPerson(Long personId,String sortColumn,Sorting sortOrder,String searchValue,Integer length) {
 		CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
 		CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
 		Root<Person> from = criteriaQuery.from(Person.class);

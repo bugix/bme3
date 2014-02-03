@@ -24,7 +24,6 @@ import medizin.shared.i18n.BmeConstants;
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
@@ -51,18 +50,12 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class AssesmentViewImpl extends Composite implements AssesmentView, RecordChangeHandler  {
 
-	private static AssesmentViewImplUiBinder uiBinder = GWT
-			.create(AssesmentViewImplUiBinder.class);
-
-	interface AssesmentViewImplUiBinder extends
-			UiBinder<Widget, AssesmentViewImpl> {
+	private static AssesmentViewImplUiBinder uiBinder = GWT.create(AssesmentViewImplUiBinder.class);
+	
+	interface AssesmentViewImplUiBinder extends UiBinder<Widget, AssesmentViewImpl> {
 	}
 	
 	public BmeConstants constants = GWT.create(BmeConstants.class);
-	
-	private Presenter presenter;
-
-	private String name;
 	
 	@UiField(provided=true)
 	SplitLayoutPanel splitLayoutPanel;
@@ -120,12 +113,6 @@ public class AssesmentViewImpl extends Composite implements AssesmentView, Recor
         }
 	}
 
-	@Override
-	public void setName(String helloName) {
-		// TODO Auto-generated method stub
-		
-	}
-
 	@UiField
 	IconButton newButton;
 	
@@ -135,11 +122,6 @@ public class AssesmentViewImpl extends Composite implements AssesmentView, Recor
 	}
 
 
-	@Override
-	public void setPresenter(Presenter presenter) {
-		this.presenter = presenter;
-		
-	}
     @UiField(provided = true)
     AdvanceCellTable<AssesmentProxy> table;
 	

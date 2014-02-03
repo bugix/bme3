@@ -36,5 +36,5 @@ public interface PersonRequest extends PersonRequest_Roo_Gwt {
 
 	Request<Long> countAllUsersOfGivenSearch(String value);
 
-	Request<Integer> getRangeStartForPerson(Long personId,String sortColumn,Sorting sortOrder,String value, Integer length);
+	Request<Integer> findRangeStartForPerson(Long personId,String sortColumn,Sorting sortOrder,String value, Integer length);
 }
