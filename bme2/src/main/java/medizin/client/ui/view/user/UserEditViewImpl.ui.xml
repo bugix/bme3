@@ -150,6 +150,14 @@
 						<g:TextBox ui:field="phoneNumber" />
 					</td>
 				</tr>
+					<tr id="isAccepted">
+					<td>
+						<div class="{style.label}"><g:Label text="{constants.accessRights}" /></div>
+					</td>
+					<td>
+						<g:CheckBox ui:field="isAccepted" />
+					</td>
+				</tr>
 
 				<tr id="isAdmin">
 					<td>

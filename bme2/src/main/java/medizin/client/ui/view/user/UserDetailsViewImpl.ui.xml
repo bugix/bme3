@@ -78,6 +78,14 @@
 									<g:Label addStyleNames="{style.valueHeight}" ui:field="phoneNumber" />
 								</td>
 							</tr>
+							<tr id="isAccepted">
+								<td>
+									<g:Label styleName="{style.label}" text="{constants.accessRights}"></g:Label>
+								</td>
+								<td>
+									<g:Label addStyleNames="{style.valueHeight}" ui:field="isAccepted" />
+								</td>
+							</tr>
 							<tr id="isAdmin">
 								<td>
 									<g:Label styleName="{style.label}" text="{constants.adminRights}"></g:Label>
@@ -86,6 +94,7 @@
 									<g:Label addStyleNames="{style.valueHeight}" ui:field="isAdmin" />
 								</td>
 							</tr>
+							
 							<tr id="isDoctor">
 								<td>
 									<g:Label styleName="{style.label}" text="{constants.doctorRights}"></g:Label>

@@ -77,6 +77,9 @@ public class UserDetailsViewImpl extends Composite implements UserDetailsView
     Label isAdmin;
   
     @UiField
+    Label isAccepted;
+    
+    @UiField
     Label isDoctor;
     
     @UiField
@@ -126,6 +129,7 @@ public class UserDetailsViewImpl extends Composite implements UserDetailsView
         alternativEmail.setText(proxy.getAlternativEmail() == null ? "" : String.valueOf(proxy.getAlternativEmail()));
         phoneNumber.setText(proxy.getPhoneNumber() == null ? "" : String.valueOf(proxy.getPhoneNumber()));
         isAdmin.setText(proxy.getIsAdmin() == null ? "" : (proxy.getIsAdmin()? "ja" : "nein"));
+        isAccepted.setText(proxy.getIsAccepted() == null ? "" : (proxy.getIsAccepted()? "ja" : "nein"));
         isDoctor.setText(proxy.getIsDoctor() == null ? "" : proxy.getIsDoctor().toString());
         
         if (proxy.getIsDoctor() != null && proxy.getIsDoctor())

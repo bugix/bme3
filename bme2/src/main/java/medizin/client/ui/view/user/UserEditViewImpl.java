@@ -72,6 +72,9 @@ public class UserEditViewImpl extends Composite implements UserEditView  {
     CheckBox isAdmin;
     
     @UiField
+    CheckBox isAccepted;
+    
+    @UiField
     CheckBox isDoctor;    
     
     @UiField
@@ -168,6 +171,7 @@ public class UserEditViewImpl extends Composite implements UserEditView  {
 		alternativEmail.setText(person.getAlternativEmail() == null ? "" : person.getAlternativEmail());
 		phoneNumber.setText(person.getPhoneNumber() == null ? "" : person.getPhoneNumber());
 		isAdmin.setValue(proxy.getIsAdmin() == null ? Boolean.FALSE : person.getIsAdmin());
+		isAccepted.setValue(proxy.getIsAccepted() == null ? Boolean.FALSE : person.getIsAccepted());
 		isDoctor.setValue(proxy.getIsDoctor() == null ? Boolean.FALSE : person.getIsDoctor());
 		
 		if (person.getIsDoctor() != null && person.getIsDoctor())
@@ -211,6 +215,10 @@ public class UserEditViewImpl extends Composite implements UserEditView  {
 	public CheckBox getIsAdmin() {
 		return isAdmin;
 	}
+	
+	public CheckBox getIsAccepted() {
+		return isAccepted;
+	}
 
 	public CheckBox getIsDoctor() {
 		return isDoctor;
@@ -241,6 +249,8 @@ public class UserEditViewImpl extends Composite implements UserEditView  {
 	@Override
 	public ApplicationLoadingView getLoadingPopup() {
 			return loadingPopup;
-		}	
+		}
+
+	
 
 }

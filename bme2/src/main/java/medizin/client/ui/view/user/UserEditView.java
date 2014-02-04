@@ -35,6 +35,8 @@ public interface UserEditView extends IsWidget {
 
 	public CheckBox getIsAdmin();
 	
+	public CheckBox getIsAccepted();
+	
 	public CheckBox getIsDoctor();
 	
 	public DefaultSuggestBox<DoctorProxy, EventHandlingValueHolderItem<DoctorProxy>> getDoctorSuggestBox();
