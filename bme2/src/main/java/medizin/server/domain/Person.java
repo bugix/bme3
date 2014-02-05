@@ -127,13 +127,24 @@ public class Person {
     }
     
     public static medizin.server.domain.Person findPersonByShibId(String shibdId) {
-    	TypedQuery<Person> query =  entityManager().createQuery("select o from Person o WHERE o.shidId LIKE '" + shibdId + "'", Person.class);
+    	//TypedQuery<Person> query =  entityManager().createQuery("select o from Person o WHERE o.shidId LIKE '" + shibdId + "'", Person.class);
+    	
+    	CriteriaBuilder criteriaBuilder = entityManager().getCriteriaBuilder();
+		CriteriaQuery<Person> criteriaQuery = criteriaBuilder.createQuery(Person.class);
+		Root<Person> from = criteriaQuery.from(Person.class);
+		
+		Predicate pre1 = criteriaBuilder.equal(from.get("shidId"), shibdId);
+		Predicate pre2 = criteriaBuilder.equal(from.get("isAccepted"), true);
+		
+		criteriaQuery.where(criteriaBuilder.and(pre1,pre2));
+		
+		TypedQuery<Person> query = entityManager().createQuery(criteriaQuery);
     	
     	List<Person> resultList = query.getResultList();
     	
     	if(resultList == null || resultList.isEmpty()) {
     		return null;
-    	}else {
+    	} else {
     		return resultList.get(0);
     	}
     }
@@ -387,8 +398,9 @@ public class Person {
 		Root<Person> from = criteriaQuery.from(Person.class);
 		
 		Predicate pre1 = criteriaBuilder.equal(from.get("email"), email);
+		Predicate pre2 = criteriaBuilder.equal(from.get("isAccepted"), true);
 		
-		criteriaQuery.where(pre1);
+		criteriaQuery.where(criteriaBuilder.and(pre1,pre2));
 		
 		TypedQuery<Person> query = entityManager().createQuery(criteriaQuery);
 		List<Person> resultList = query.getResultList();
