@@ -41,7 +41,7 @@ public class AnswerViewImpl extends HorizontalPanel implements AnswerView {
 	public void setAnswer(AnswerProxy answer) {
 		this.answer = answer;
 	}
-
+	
 	/**
 	 * Class constructor
 	 */	
@@ -55,10 +55,7 @@ public class AnswerViewImpl extends HorizontalPanel implements AnswerView {
 	 */
 	@Override
 	public void setProxy(AnswerProxy answer) {
-		this.answer = answer;
-		
-		 init();
-		
+		this.answer = answer;						
 	}
 
 
@@ -100,7 +97,7 @@ public class AnswerViewImpl extends HorizontalPanel implements AnswerView {
 		if (lblIcon.getElement().getParentElement() != null) {
 			lblIcon.getElement().getParentElement().getStyle().setVerticalAlign(VerticalAlign.MIDDLE);
 		}
-		lblAnswerText.setWidth("820px");
+		lblAnswerText.setWidth("1020px");
 		/**
 		 * Set icon for Answer via css.
 		 */

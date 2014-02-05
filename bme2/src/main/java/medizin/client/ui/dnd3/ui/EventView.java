@@ -6,7 +6,6 @@ import medizin.client.proxy.QuestionEventProxy;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.web.bindery.requestfactory.shared.EntityProxyId;
 /**
  * Inteface for a draggable event.
  * @author masterthesis
@@ -17,9 +16,8 @@ public interface EventView extends IsWidget {
 	
 	
 	public interface Delegate{
-
-		public void questionDropped(EntityProxyId<?> questionId);
 		
+		public void openEventContainer(QuestionEventProxy questionEvent, EventViewImpl eventView);
 	}
 
 	

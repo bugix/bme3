@@ -1,6 +1,7 @@
 package medizin.client.ui.dnd3.ui;
 
 import medizin.client.proxy.QuestionTypeCountPerExamProxy;
+import medizin.client.ui.widget.process.ApplicationLoadingView;
 
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -20,7 +21,7 @@ public interface QuestionTypeDNDView extends IsWidget {
 
 		 public void onUpInOrderClicked(QuestionTypeCountPerExamProxy proxyUp);
 
-		
+		 public void openQuestionTypeContainer(QuestionTypeCountPerExamProxy proxy, QuestionTypeDNDViewImpl selfReference);
 
 		
 	}
@@ -31,7 +32,7 @@ public interface QuestionTypeDNDView extends IsWidget {
 
 	VerticalPanel getEventsContainer();
 
-	AbsolutePanel getQuestionTypeContent();
+	AbsolutePanel getQuestionTypeContent();	
 	
 
 	

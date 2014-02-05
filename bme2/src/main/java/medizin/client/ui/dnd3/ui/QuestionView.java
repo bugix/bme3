@@ -16,19 +16,17 @@ public interface QuestionView extends IsWidget {
 
 	
 	public interface Delegate{
-
-		public void questionDropped(EntityProxyId<?> questionId);
-
-		public void twistieOpenQuestionClicked(ClickHandler clickHandler);
+			
+		public void openAssesmentQuestionContainer(AssesmentQuestionProxy assQuestionProxy, QuestionViewImpl questionView);
 		
 	}
 
-	VerticalPanel getPanel();
+	VerticalPanel getAnswerVerticalPanel();
 	Integer getOrderAversion();
 	
 
 	void setDelegate(Delegate delegate);
-	void setVerticalPanel(VerticalPanel vertPanel);
+	void setAnswerVerticalPanel(VerticalPanel vertPanel);
 	void setOrderAversion(Integer orderAversion);
 	void setQuestionProxy(AssesmentQuestionProxy questionProxy);
 	AssesmentQuestionProxy getQuestionProxy();

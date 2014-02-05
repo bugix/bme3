@@ -67,7 +67,7 @@
 		<i:DefaultSuggestBox ui:field="assesmentSuggestionBox" width="250px"></i:DefaultSuggestBox>
 		<m:IconButton ui:field="showButton" icon="newwin" text="{constants.show}"></m:IconButton>
 	</g:HorizontalPanel> 
-	 	<g:TabBar ui:field="tabLayout" width="1002px"></g:TabBar>
+	 	<g:TabBar ui:field="tabLayout" width="1202px"></g:TabBar>
 		<!-- <g:HorizontalPanel ui:field="tabs"></g:HorizontalPanel> -->
 
 		<g:SimplePanel ui:field="content"></g:SimplePanel>

@@ -5025,3 +5025,7 @@ background: url("images/colorpicker.png");
 	background: url("images/ipad-sep-q.png") no-repeat scroll 0 0 / 95% auto rgba(0, 0, 0, 0);
 	height: 2px;
 }
+.containerLoadingPopupViewStyle
+{
+	overflow: hidden !important;	
+}

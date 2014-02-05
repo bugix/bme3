@@ -266,7 +266,6 @@ public class BookAssesmentDetailsViewImpl extends Composite implements BookAsses
 
 	@Override
 	public Boolean getDisallowSorting(Boolean disallowSorting) {
-		return getDisallowSorting(disallowSorting,disallowSortingChk);
-	}
+		return getDisallowSorting(disallowSorting,disallowSortingChk);	}
 
 }

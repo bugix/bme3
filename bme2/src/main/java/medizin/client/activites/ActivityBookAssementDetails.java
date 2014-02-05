@@ -28,12 +28,16 @@ import medizin.client.ui.AssesmenBookDialogbox;
 import medizin.client.ui.AssesmenBookDialogboxImpl;
 import medizin.client.ui.dnd3.ui.AnswerView;
 import medizin.client.ui.dnd3.ui.AnswerViewImpl;
+import medizin.client.ui.dnd3.ui.EventView;
 import medizin.client.ui.dnd3.ui.EventViewImpl;
 import medizin.client.ui.dnd3.ui.QuestionTypeDNDView;
 import medizin.client.ui.dnd3.ui.QuestionTypeDNDViewImpl;
+import medizin.client.ui.dnd3.ui.QuestionView;
 import medizin.client.ui.dnd3.ui.QuestionViewImpl;
 import medizin.client.ui.view.BookAssesmentDetailsView;
 import medizin.client.ui.view.BookAssesmentDetailsViewImpl;
+import medizin.client.ui.widget.process.AppLoader;
+import medizin.client.ui.widget.process.ApplicationLoadingView;
 
 import com.allen_sauer.gwt.dnd.client.DragEndEvent;
 import com.allen_sauer.gwt.dnd.client.DragHandler;
@@ -59,7 +63,7 @@ import com.google.web.bindery.requestfactory.shared.EntityProxyId;
  *
  */
 
-public class ActivityBookAssementDetails extends AbstractActivityWrapper implements DragHandler, AssesmenBookDialogbox.Delegate, BookAssesmentDetailsView.Presenter, BookAssesmentDetailsView.Delegate, AnswerView.Delegate, QuestionTypeDNDView.Delegate {
+public class ActivityBookAssementDetails extends AbstractActivityWrapper implements DragHandler, AssesmenBookDialogbox.Delegate, BookAssesmentDetailsView.Presenter, BookAssesmentDetailsView.Delegate, AnswerView.Delegate, QuestionTypeDNDView.Delegate, EventView.Delegate, QuestionView.Delegate {
 
 	private PlaceBookAssesmentDetails bookAssmentPlace;
 	private AcceptsOneWidget widget;
@@ -124,7 +128,7 @@ public class ActivityBookAssementDetails extends AbstractActivityWrapper impleme
 		this.widget = widget;
 		this.view = bookAssesmentViewDetails;
         widget.setWidget(bookAssesmentViewDetails.asWidget());
-        DOM.setElementAttribute(bookAssesmentViewDetails.getScrollContainer().getElement(), "style", "position: absolute; overflow: auto; left: 0px; top: 35px; right: 50px; bottom: 0px;width: 1000px");
+        DOM.setElementAttribute(bookAssesmentViewDetails.getScrollContainer().getElement(), "style", "position: absolute; overflow: auto; left: 0px; top: 35px; right: 50px; bottom: 0px;width: 1200px");
         
         /*eventBus.addHandler(PlaceChangeEvent.TYPE, new PlaceChangeEvent.Handler() {
 			public void onPlaceChange(PlaceChangeEvent event) {
@@ -145,8 +149,7 @@ public class ActivityBookAssementDetails extends AbstractActivityWrapper impleme
 				}
 			}
 		});
-
-		
+				
 	}//End public void start
 		
 		
@@ -156,14 +159,15 @@ public class ActivityBookAssementDetails extends AbstractActivityWrapper impleme
 		 placeController.goTo(place);
 	}
 	
+		
 	/**
 	 * Load all elements for assesementProxy.
 	 */
 	protected void init() {
+		
 		bookAssesmentViewDetails.getWorkingArea().clear();
-		bookAssesmentViewDetails.addButtons(assesment.getDisallowSorting());
-		
-		
+		AppLoader.setNoLoader();
+		bookAssesmentViewDetails.addButtons(assesment.getDisallowSorting());		
 		requests.questionTypeCountPerExamRequest().findQuestionTypesCountSortedByAssesmentNonRoo(assesment.getId()).with("questionTypesAssigned").fire(new BMEReceiver<List<QuestionTypeCountPerExamProxy>>() {
 			
 			@Override
@@ -175,25 +179,22 @@ public class ActivityBookAssementDetails extends AbstractActivityWrapper impleme
 				}
 				
 				Log.debug("Liste QuestionTYpeCountPerExamproxy-Size: "+ values.size());
-				Iterator<QuestionTypeCountPerExamProxy> iterQuestionTypeCount = values.iterator();
-				QuestionEventRequest questionEventRequest = null;
-				while(iterQuestionTypeCount.hasNext()){
-					QuestionTypeCountPerExamProxy questionTypeCount = iterQuestionTypeCount.next();
-					Set<QuestionTypeProxy> questionTypesAssigned = questionTypeCount.getQuestionTypesAssigned();
-					Log.debug("Set QuestionTypeProxy Gr�sse: "+questionTypesAssigned.size());
-					/**
-					 * For each questionTypeCount-object fill design elements.
-					 */
-					if (questionEventRequest == null)
-						questionEventRequest = requests.questionEventRequest();
-					else
-						questionEventRequest = questionEventRequest.append(requests.questionEventRequest());
 				
-					fillQuestiontype(questionTypeCount, questionEventRequest);
+				Iterator<QuestionTypeCountPerExamProxy> iterQuestionTypeCount = values.iterator();							
+				
+				while(iterQuestionTypeCount.hasNext()){
+					
+					QuestionTypeCountPerExamProxy questionTypeCount = iterQuestionTypeCount.next();
+					
+					Set<QuestionTypeProxy> questionTypesAssigned = questionTypeCount.getQuestionTypesAssigned();
+					
+					Log.debug("Set QuestionTypeProxy Gr�sse: "+questionTypesAssigned.size());
+																							
+					fillQuestionType(questionTypeCount);
 				}
 				
-				if (questionEventRequest != null)
-					questionEventRequest.fire();
+//				if (questionEventRequest != null)
+//					questionEventRequest.fire();
 				
 				
 			if (widget != null) {
@@ -270,53 +271,35 @@ public void moveQuestionTypeCountPerExamRequestUp(QuestionTypeCountPerExamProxy 
 	 * @param questionEventRequest 
 	 * 
 	 */
-	protected void fillQuestiontype(QuestionTypeCountPerExamProxy questionTypeCountProxy, QuestionEventRequest questionEventRequest){
-		
-		
-		QuestionTypeCountPerExamProxy questionTypeCountProxyTemp = questionTypeCountProxy;
-		/**
-		 * Top level panel.
-		 */
-		final AbsolutePanel workingArea = bookAssesmentViewDetails.getWorkingArea();
-
-		
+	
+	
+	protected void fillQuestionType(QuestionTypeCountPerExamProxy questionTypeCountProxy){
+						
+		final AbsolutePanel workingArea = bookAssesmentViewDetails.getWorkingArea();		
 		/**
 		 * New QuestionTypeDNDViewImpl is used as container for question-types
 		 */
 
-		final QuestionTypeDNDView questionTypeContainer = new QuestionTypeDNDViewImpl();
-		questionTypeContainer.setDelegate(this);
-		questionTypeContainer.setProxy(questionTypeCountProxy);
-				
-		/**
-		 * Set up container for question events (Themengruppen)
-		 */
-		final VerticalPanel eventsContainer = questionTypeContainer.getEventsContainer();
-		/**
-		 * Set up pickupDragController for QuestionTypeContent-panel.
-		 */
-		//final PickupDragController eventDragController = new PickupDragController(questionTypeContainer.getQuestionTypeContent(),false);
-
-
-		/**
-		 * Set with question types corresponding to a questionTypeCount-object.
-		 */
-		Set <QuestionTypeProxy> questionTypeProxySet = questionTypeCountProxyTemp.getQuestionTypesAssigned();
-		Iterator<QuestionTypeProxy> itr = questionTypeProxySet.iterator();
-		final List<Long> questionTypesId = new ArrayList<Long>() ;
-		while(itr.hasNext()){
-			
-			questionTypesId.add(itr.next().getId());
-			
-		}
-		//final	QuestionTypeProxy questionTypeProxyTemp = (QuestionTypeProxy)itr.next();
+		QuestionTypeDNDViewImpl questionTypeView = new QuestionTypeDNDViewImpl();
+						
+		questionTypeView.setDelegate(this);
+		
+		questionTypeView.setProxy(questionTypeCountProxy);
+		
+		questionTypeView.init();
+		
+		questionTypeView.setEventsContainer(questionTypeView.getEventsContainer());
+		
+		
 		/**
 		 * Request all question Events for each questionTypeProxy
 		 */
-		questionEventRequest.findAllQuestionEventsByQuestionTypeAndAssesmentID(assesment.getId(), questionTypesId  ).to(new BMEReceiver <java.util.List<medizin.client.proxy.QuestionEventProxy>>(){
+		
+		//questionEventRequest.findAllQuestionEventsByQuestionTypeAndAssesmentID(assesment.getId(), questionTypesId  ).to(new BMEReceiver <java.util.List<medizin.client.proxy.QuestionEventProxy>>(){
 
-			@Override
+		/*	@Override
 			public void onSuccess(List<QuestionEventProxy> response) {
+		
 				AssesmentQuestionRequest assesmentQuestionRequest = null;
 				Iterator<QuestionEventProxy> iterQuestionEventProxy = response.iterator();
 				while(iterQuestionEventProxy.hasNext()){
@@ -324,30 +307,249 @@ public void moveQuestionTypeCountPerExamRequestUp(QuestionTypeCountPerExamProxy 
 				
 					/**
 					 * For each questionEvent in callback setup event-area
-					 */
+					 * /
 					
 					if (assesmentQuestionRequest == null)
 						assesmentQuestionRequest = requests.assesmentQuestionRequest();
 					else
 						assesmentQuestionRequest = assesmentQuestionRequest.append(requests.assesmentQuestionRequest());
 					
-					insertQuestionEvents(questionEventProxy,  eventsContainer, /*eventDragController,*/ questionTypesId, assesmentQuestionRequest);
+					insertQuestionEvents(questionEventProxy,  eventsContainer, /*eventDragController,* / questionTypesId, assesmentQuestionRequest);
 				}
 				if (assesmentQuestionRequest != null)
 					assesmentQuestionRequest.fire();
-			}
+			} */
 			
-		}
-		);
+		//}
+	//	);
 		
 		/**
 		 * Add container for question types (Fragetypen) to main panel.
 		 */
-		workingArea.add(questionTypeContainer);
+		workingArea.add(questionTypeView);
 		}//End fillQuestion	
 
+		protected void fillAnswers(VerticalPanel questionVert, AnswerToAssQuestionProxy answerToAssQuest, AnswerProxy answerProxy){
+							
+			AnswerViewImpl answerUi = new AnswerViewImpl();
+		
+			answerUi.setProxy(answerProxy);
+			
+			answerUi.setAnswerToAssQueston(answerToAssQuest);
+			
+			answerUi.init();
+			
+			answerUi.setDelegate(ActivityBookAssementDetails.this);						 
+			
+			questionVert.add(answerUi.asWidget());
+						
+		}
 	
+		
+		
+		
+		/**initialized answer
+		 * */
+		protected void initAnswer(AssesmentQuestionProxy assQuestionProxy, QuestionViewImpl questionView){
+				findAnswerToAssQuestionByAssesmentQuestion(assQuestionProxy, questionView.getAnswerVerticalPanel());	
+		}
+		
+		/**
+		 * 
+		 * */		
+		protected void findAnswerToAssQuestionByAssesmentQuestion(AssesmentQuestionProxy assQuestionProxy, final VerticalPanel questionVert){		
+			
+			AnswerToAssQuestionRequest answerToAssQuestionRequest = requests.answerToAssQuestionRequest();
+			
+			questionVert.clear();
+						
+			/*questionVert.addStyleName("containerLoadingPopupViewStyle");
+			ApplicationLoadingView loadingView = new ApplicationLoadingView();
+			loadingView.setVisible(true);
+			questionVert.add(loadingView);*/
+			AppLoader.setNoLoader();			
+			answerToAssQuestionRequest .findAnswerToAssQuestionByAssesmentQuestion(assQuestionProxy.getId()).with("answers").to(new BMEReceiver<List<AnswerToAssQuestionProxy>>() {
+			    
+				@Override
+				public void onSuccess(List<AnswerToAssQuestionProxy> values) {
+					
+					Iterator<AnswerToAssQuestionProxy> iterAssQuest = values.iterator();
+					
+					/*questionVert.removeStyleName("containerLoadingPopupViewStyle");
+					
+					questionVert.clear();*/
+					/**
+					 * For each AssesmentQuestionProxy get answer and implement view. 
+					 */									
+					
+					while (iterAssQuest.hasNext()){
+						
+						AnswerToAssQuestionProxy answerToAssQuest = iterAssQuest.next();
+						
+						AnswerProxy answerProxy = answerToAssQuest.getAnswers();	
+											
+					    //widgetDragController.makeDraggable(answerUi.asWidget(), answerUi.getLblAnswerText());
+						
+						fillAnswers(questionVert, answerToAssQuest, answerProxy);
+					}			
+				 }
+		      }).fire();	
+		}
+	
+		/** This method is used to add Question in container/Vertical Panel. 
+		 * */
+		protected void fillAssesmentQuestions(VerticalPanel questionsContainer, AssesmentQuestionProxy assQuestionProxy){
+			
+			QuestionViewImpl questionView = new QuestionViewImpl();
+			
+			questionView.setQuestionProxy(assQuestionProxy);
+			
+			questionView.init();
+					    
+			questionView.setDelegate(ActivityBookAssementDetails.this);
+			
+			questionView.setAnswerVerticalPanel(questionView.getAnswerVerticalPanel());
+			
+		    questionsContainer.add(questionView);
+		    
+		    questionsViewContainer.add(questionView);
+		    			
+		}
+	
+		/** Find Assessment Question using Assesment Id, QuestionTypes Id and QuestionEvent Id.  
+		 * 
+		 * 
+		 * */
+		protected void findAssesmentQuestionsByQuestionEventAssIdQuestType(QuestionEventProxy questionEvent, List<Long> questionTypesId, final VerticalPanel assessmentQuesContainer){			
+							
+			/**
+			 * request all Assesmentquestions by QuestinEvent, Assesment and QuestionType
+			 */			
+			AssesmentQuestionRequest assesmentQuestionRequest = requests.assesmentQuestionRequest();
+			
+			assessmentQuesContainer.clear();
 
+			assessmentQuesContainer.addStyleName("containerLoadingPopupViewStyle");
+			ApplicationLoadingView loadingView = new ApplicationLoadingView();
+			loadingView.setVisible(true);
+			assessmentQuesContainer.add(loadingView);
+			AppLoader.setNoLoader();
+			
+			assesmentQuestionRequest.findAssesmentQuestionsByQuestionEventAssIdQuestType(questionEvent.getId(),assesment.getId(),questionTypesId,true,false).with("question","question.questionType").to(new BMEReceiver <java.util.List<medizin.client.proxy.AssesmentQuestionProxy>>(){
+				
+				@Override
+				public void onSuccess(List<AssesmentQuestionProxy> response) {
+					
+					if (view == null) {						
+						// This activity is dead
+						Log.debug("view ist null");					
+						return;
+					}					
+					
+					assessmentQuesContainer.removeStyleName("containerLoadingPopupViewStyle");
+					assessmentQuesContainer.clear();
+					
+					Iterator<AssesmentQuestionProxy> iterAssQuestionProxy = response.iterator();
+														
+					while(iterAssQuestionProxy.hasNext()){						
+						
+						AssesmentQuestionProxy assQuestionProxy = iterAssQuestionProxy.next();
+												
+						fillAssesmentQuestions(assessmentQuesContainer, assQuestionProxy);					
+					}
+			}
+			}).fire();
+	}
+
+		
+		/**
+		 *  Add EventView object to the eventsContainer.
+		 * 
+		 * @param  questionEvent   This is question event proxy.
+		 * @param  eventsContainer This is container in which view will be inserted. 
+		 * @author salim
+		 * 
+		 * */
+		protected void fillQuestionEvent(QuestionEventProxy questionEvent, VerticalPanel eventsContainer, List<Long> questionTypesId){
+													
+			EventViewImpl eventView = new EventViewImpl();
+												
+			eventView.setEventProxy(questionEvent);
+			
+			eventView.setQuestionTypesId(questionTypesId);
+			
+			eventView.setDelegate(this);
+						
+			eventView.init();
+			
+			eventView.setQuestionsContainer(eventView.getQuestionsContainer());
+									
+			eventsContainer.add(eventView);					
+														
+		}
+
+		/**
+		 * Find Question Event using assessment Id and Question type Id.
+		 * 
+		 * @param  questionEventRequest   QuestionEvent Request object.
+		 * @param  questionTypesId        List of Question Types. 
+		 * @param  eventsContainer        represent a container of type VerticalPanel
+		 * 
+		 * @author salim 			
+		 * */
+		protected void findAllQuestionEventsByQuestionTypeAndAssesmentID(QuestionEventRequest questionEventRequest, final List<Long> questionTypesId, final VerticalPanel eventsContainer){
+			
+			eventsContainer.clear();
+			eventsContainer.addStyleName("containerLoadingPopupViewStyle");
+			ApplicationLoadingView loadingView = new ApplicationLoadingView();			
+			loadingView.setVisible(true);					
+			eventsContainer.add(loadingView);
+			AppLoader.setNoLoader();
+			questionEventRequest.findAllQuestionEventsByQuestionTypeAndAssesmentID(assesment.getId(),questionTypesId).to(new BMEReceiver<java.util.List<medizin.client.proxy.QuestionEventProxy>>(){
+
+				@Override
+				public void onSuccess(List<QuestionEventProxy> response) {
+									
+					eventsContainer.removeStyleName("containerLoadingPopupViewStyle");
+					eventsContainer.clear();
+					Iterator<QuestionEventProxy> iterQuestionEventProxy = response.iterator();
+															
+					while(iterQuestionEventProxy.hasNext()){
+					
+						QuestionEventProxy questionEventProxy = iterQuestionEventProxy.next();
+														
+						fillQuestionEvent(questionEventProxy, eventsContainer, questionTypesId);
+					}
+				}
+			}).fire();
+		}
+		
+		protected void initAssesmentQuestion(QuestionEventProxy questionEvent, EventViewImpl eventView){
+								
+			findAssesmentQuestionsByQuestionEventAssIdQuestType(questionEvent, eventView.getQuestionTypesId(), eventView.getQuestionsContainer());
+		}
+		
+		
+		protected void initQuestionEvent(QuestionTypeCountPerExamProxy proxy, QuestionTypeDNDViewImpl questionTypeView){
+						
+			VerticalPanel eventsContainer = questionTypeView.getEventsContainer();
+											
+			Set <QuestionTypeProxy> questionTypeProxySet = proxy.getQuestionTypesAssigned();
+			
+			Iterator<QuestionTypeProxy> itr = questionTypeProxySet.iterator();
+			
+			List<Long> questionTypesId = new ArrayList<Long>() ;
+			
+			while(itr.hasNext()){
+				
+				questionTypesId.add(itr.next().getId());
+				
+			}
+			
+			QuestionEventRequest questionEventRequest = requests.questionEventRequest();
+									
+			findAllQuestionEventsByQuestionTypeAndAssesmentID(questionEventRequest, questionTypesId, eventsContainer);				
+	}
 	
 	/**
 	 * Add QuestionEvent to the eventsContainer of Questiontype.
@@ -473,8 +675,6 @@ public void moveQuestionTypeCountPerExamRequestUp(QuestionTypeCountPerExamProxy 
 			}
 			
 		});
-
-
 		
 	}//End InsertQuestionEvents
 	
@@ -512,7 +712,7 @@ public void moveQuestionTypeCountPerExamRequestUp(QuestionTypeCountPerExamProxy 
 			}
 		    });
 		
-	}
+	}	
 	
 	/**
 	 * Hash Maps are used to store objects in sorted order.
@@ -840,6 +1040,7 @@ public void moveQuestionTypeCountPerExamRequestUp(QuestionTypeCountPerExamProxy 
 	    Log.debug("onPreviewDragStart: " + event);
 	  }
 
+	  
 	@Override
 	public void createAssementBook(boolean createAVesion) {
 		AssesmenBookDialogbox assementDialog=new AssesmenBookDialogboxImpl();
@@ -977,7 +1178,7 @@ public void moveQuestionTypeCountPerExamRequestUp(QuestionTypeCountPerExamProxy 
 			Log.error("Assesment is null");
 			return;
 		}
-		
+		AppLoader.setNoLoader();
 		requests.assesmentQuestionRequest().shuffleQuestionsAnswers(assesment.getId(),disallowSorting).fire(new BMEReceiver<Void>() {
 
 			@Override
@@ -995,6 +1196,7 @@ public void moveQuestionTypeCountPerExamRequestUp(QuestionTypeCountPerExamProxy 
 			Boolean disallowSorting = view.getDisallowSorting(assesment.getDisallowSorting());
 			AssesmentProxy edit = assesmentRequest.edit(assesment);
 			edit.setDisallowSorting(disallowSorting);
+			AppLoader.setNoLoader();
 			assesmentRequest.persist().using(assesment).to(new BMEReceiver<Void>() {
 
 				@Override
@@ -1024,6 +1226,24 @@ public void moveQuestionTypeCountPerExamRequestUp(QuestionTypeCountPerExamProxy 
 			}
 		}
 		assesmentQuestionRequest.fire();
+	}
+
+	@Override
+	public void openQuestionTypeContainer(QuestionTypeCountPerExamProxy proxy,QuestionTypeDNDViewImpl questionTypeView) {
+		
+			initQuestionEvent(proxy, questionTypeView);
+	}
+
+	@Override
+	public void openEventContainer(QuestionEventProxy questionEvent, EventViewImpl eventView){
+			
+			initAssesmentQuestion(questionEvent, eventView);					
+	}
+	
+	@Override
+	public void openAssesmentQuestionContainer(AssesmentQuestionProxy assQuestionProxy, QuestionViewImpl questionView){
+			
+			initAnswer(assQuestionProxy, questionView);
 	}
 
 }

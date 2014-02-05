@@ -1,6 +1,8 @@
 package medizin.client.ui.dnd3.ui;
 
+import java.util.List;
 import medizin.client.proxy.QuestionEventProxy;
+import medizin.client.ui.widget.process.ApplicationLoadingView;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -25,11 +27,26 @@ public class EventViewImpl extends VerticalPanel implements EventView {
 	
 	private AbsolutePanel questionEventContent = new AbsolutePanel();
 	
-	
-	
+	private EventViewImpl eventView;
+		
+	public EventViewImpl getEventView() {
+		return eventView;
+	}
+
+	public void setEventView(EventViewImpl eventView) {
+		this.eventView = eventView;
+	}
+	private List<Long> questionTypesId;
+
 	//Getters and Setters
 	
+	public List<Long> getQuestionTypesId() {
+		return questionTypesId;
+	}
 	
+	public void setQuestionTypesId(List<Long> questionTypesId) {
+		this.questionTypesId = questionTypesId;
+	}
 	
 	public AbsolutePanel getQuestionEventContent() {
 		return questionEventContent;
@@ -58,8 +75,7 @@ public class EventViewImpl extends VerticalPanel implements EventView {
 	private Integer orderAversion;
 
 	public EventViewImpl() {
-
-		
+		this.eventView = this;		
 	}
 
 	public QuestionEventProxy getEventProxy() {
@@ -69,35 +85,37 @@ public class EventViewImpl extends VerticalPanel implements EventView {
 	@Override
 	public void  setEventProxy(QuestionEventProxy eventProxy)
 	 {
-		this.eventProxy = eventProxy;
-		/**
-		 * Sets up all design elements after proxy is set.
-		 */
-		init();
+		this.eventProxy = eventProxy;		
 	}
 
-
-
-	public void questionDropped(EntityProxyId<?> questionId) {
-		delegate.questionDropped(questionId);
-		
-	}
 	private Delegate delegate;
 	
 	
 	@Override
 	public void setDelegate(Delegate delegate) {
 	
-		
+		this.delegate = delegate;
 	}
 	@Override
 	public void setVerticalPanel(VerticalPanel vertPanel){
 		this.verticalPanel = vertPanel;
 	}
 
+	ApplicationLoadingView loadingView;
+	public ApplicationLoadingView getLoadingView() {
+		return loadingView;
+	}
+
+	public void setLoadingView(ApplicationLoadingView loadingView) {
+		this.loadingView = loadingView;
+	}
+
 	public void init(){
 		
-
+		addStyleName("applicationLoadingPopupViewStyle");
+		loadingView = new ApplicationLoadingView();
+		loadingView.setVisible(false);
+		add(loadingView);
 		/**
 		 *Set up buttons and clickable labels
 		 */
@@ -117,17 +135,17 @@ public class EventViewImpl extends VerticalPanel implements EventView {
 		
 		AbsolutePanel eventHeader = new AbsolutePanel();
 
-		eventHeader.setPixelSize(940, 25);
+		eventHeader.setPixelSize(1140, 25);
 		eventHeader.setStyleName("eventHeader");
 		
 		headerNamelbl.setText(eventProxy.getEventName());
 		headerNamelbl.setWidth("910px");
 		
-		eventHeader.add(twistieOpenQuestionEvent, 2,3);
+		eventHeader.add(twistieOpenQuestionEvent, 2,8);
 		twistieCloseQuestionEvent.setVisible(false);
-		eventHeader.add(twistieCloseQuestionEvent,2,3);
+		eventHeader.add(twistieCloseQuestionEvent,2,8);
 		
-		eventHeader.add(headerNamelbl,19,3);
+		eventHeader.add(headerNamelbl,19,5);
 		
 		//eventHeader.add(tagLabelQuestionEvent,740,3);
 		
@@ -148,7 +166,9 @@ public class EventViewImpl extends VerticalPanel implements EventView {
 				twistieCloseQuestionEvent.setVisible(true);
 
 				tagLabelQuestionEvent.setVisible(false);
-				questionEventContent.setVisible(true);
+				questionEventContent.setVisible(true);					
+				delegate.openEventContainer(eventView.getEventProxy(), eventView);
+				
 			}
 
 		});

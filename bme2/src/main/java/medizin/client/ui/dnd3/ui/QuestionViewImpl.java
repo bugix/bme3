@@ -34,15 +34,16 @@ public class QuestionViewImpl extends VerticalPanel implements QuestionView {
 
 	public QuestionViewImpl() {
 		//initWidget(uiBinder.createAndBindUi(this));
-		
+		this.questionView = this;
 	}
 
 	private AssesmentQuestionProxy questionProxy;
-	private VerticalPanel verticalPanel;
+	private VerticalPanel answerVerticalPanel = new VerticalPanel();
 	private Integer orderAversion;
 	//private Label questionTextLbl = new Label();
 	private HorizontalPanel questionTextLbl = new HorizontalPanel();
 
+	private QuestionViewImpl questionView;
 	
 	
 	
@@ -64,21 +65,10 @@ public class QuestionViewImpl extends VerticalPanel implements QuestionView {
 	}
 	@Override
 	public void setQuestionProxy(AssesmentQuestionProxy questionProxy) {
-		this.questionProxy = questionProxy;
-		init();
+		this.questionProxy = questionProxy;		
 	}
-	@Override
-	public VerticalPanel getPanel() {
-		
-		return verticalPanel;
-	}
-
-
-
-	public void questionDropped(EntityProxyId<?> questionId) {
-		delegate.questionDropped(questionId);
-		
-	}
+	
+	
 	private Delegate delegate;
 	private TextBox percentTxt;
 	private TextBox pointsTxt;
@@ -86,14 +76,22 @@ public class QuestionViewImpl extends VerticalPanel implements QuestionView {
 	
 	
 	@Override
+	public VerticalPanel getAnswerVerticalPanel() {
+		return answerVerticalPanel;
+	}
+
+	@Override
+	public void setAnswerVerticalPanel(VerticalPanel answerVerticalPanel) {
+		this.answerVerticalPanel = answerVerticalPanel;
+	}
+
+	@Override
 	public void setDelegate(Delegate delegate) {
-		// TODO Auto-generated method stub
+		this.delegate = delegate;
 		
 	}
-	@Override
-	public void setVerticalPanel(VerticalPanel vertPanel){
-		this.verticalPanel = vertPanel;
-	}
+
+	
 	@Override
 	public void setOrderAversion(Integer orderAversion) {
 		this.orderAversion = orderAversion;
@@ -116,11 +114,12 @@ public class QuestionViewImpl extends VerticalPanel implements QuestionView {
 	    
 	  
 		//set up labels
+		questionTextLbl.setVerticalAlignment(ALIGN_MIDDLE);
 		questionTextLbl.add(new HTML(questionProxy.getQuestion().getQuestionText()));
 		questionTextLbl.setHeight("auto");
 		//questionTextLbl.setWidth("860px");
-		questionTextLbl.setWidth("520px");
-	    
+		questionTextLbl.setWidth("720px");
+		
 	   	final Label twistieOpenQuestion = new Label();
 		twistieOpenQuestion.addStyleName("ui-icon ui-icon-triangle-1-e");
 		
@@ -128,16 +127,22 @@ public class QuestionViewImpl extends VerticalPanel implements QuestionView {
 		twistieCloseQuestion.addStyleName("ui-icon ui-icon-triangle-1-s");
 		
 		HorizontalPanel headerPanel = new HorizontalPanel();
+		
 		headerPanel.add(twistieOpenQuestion);
+		headerPanel.setCellVerticalAlignment(twistieOpenQuestion, HasVerticalAlignment.ALIGN_MIDDLE);
+		
 		headerPanel.add(twistieCloseQuestion);
+		headerPanel.setCellVerticalAlignment(twistieCloseQuestion, HasVerticalAlignment.ALIGN_MIDDLE);		
 		twistieCloseQuestion.setVisible(false);
+		
 		headerPanel.add(questionTextLbl);
+		headerPanel.setCellVerticalAlignment(questionTextLbl, HasVerticalAlignment.ALIGN_MIDDLE);
 		headerPanel.add(getInputPanel());
 		headerPanel.setStyleName("questionHeader");
 		headerPanel.setHeight("auto");
 		
 	    this.add(headerPanel);
-	   
+	    this.add(answerVerticalPanel);
 
 		twistieOpenQuestion.addClickHandler(new ClickHandler() {
 
@@ -147,7 +152,8 @@ public class QuestionViewImpl extends VerticalPanel implements QuestionView {
 		public	void onClick(ClickEvent event) {
 				Log.debug("Twistie Frage anzeigen geklickt!");
 				twistieOpenQuestion.setVisible(false);
-				twistieCloseQuestion.setVisible(true);
+				twistieCloseQuestion.setVisible(true);								
+				delegate.openAssesmentQuestionContainer(questionProxy, questionView);				
 				showQuestions();
 			}
 
@@ -160,8 +166,7 @@ public class QuestionViewImpl extends VerticalPanel implements QuestionView {
 				Log.debug("Twistie Frage schliessen geklickt!");
 				twistieOpenQuestion.setVisible(true);
 				twistieCloseQuestion.setVisible(false);
-				hideQuestions();
-
+				hideQuestions();				
 			}
 
 		});
@@ -191,7 +196,7 @@ public class QuestionViewImpl extends VerticalPanel implements QuestionView {
 			panel.setCellVerticalAlignment(percentTxt, HasVerticalAlignment.ALIGN_MIDDLE);
 			panel.setCellHorizontalAlignment(percentTxt, HasHorizontalAlignment.ALIGN_RIGHT);
 		} else {
-			questionTextLbl.setWidth("625px");
+			questionTextLbl.setWidth("825px");
 		}
 		Label pointsLbl = new Label("points");
 		panel.add(pointsLbl);

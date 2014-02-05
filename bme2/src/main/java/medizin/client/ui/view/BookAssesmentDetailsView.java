@@ -41,6 +41,6 @@ public interface BookAssesmentDetailsView extends IsWidget {
 
 	void addButtons(Boolean disallowSorting);
 
-	Boolean getDisallowSorting(Boolean disallowSorting);
+	Boolean getDisallowSorting(Boolean disallowSorting);	
     
 }

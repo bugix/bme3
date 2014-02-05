@@ -5,6 +5,7 @@ import java.util.Set;
 
 import medizin.client.proxy.QuestionTypeCountPerExamProxy;
 import medizin.client.proxy.QuestionTypeProxy;
+import medizin.client.ui.widget.process.ApplicationLoadingView;
 
 import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -18,9 +19,9 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  * @author masterthesis
  *
  */
-public class QuestionTypeDNDViewImpl extends VerticalPanel implements
-		QuestionTypeDNDView {
-	private  QuestionTypeCountPerExamProxy proxy;
+public class QuestionTypeDNDViewImpl extends VerticalPanel implements QuestionTypeDNDView {
+	
+	private QuestionTypeCountPerExamProxy proxy;
 	private AbsolutePanel questionTypeContent = new AbsolutePanel();
 	private AbsolutePanel typeHeader = new AbsolutePanel();
 	private VerticalPanel eventsContainer = new VerticalPanel();
@@ -32,8 +33,9 @@ public class QuestionTypeDNDViewImpl extends VerticalPanel implements
 	private Label downInOrder = new Label();
 	private Label tagLabel = new Label();
 	private Delegate delegate;
-	
-	//Getters and setters
+	QuestionTypeDNDViewImpl  questionTypeView;
+			
+	//Getters and setters		
 	
 	@Override
 	public AbsolutePanel getQuestionTypeContent() {
@@ -44,8 +46,7 @@ public class QuestionTypeDNDViewImpl extends VerticalPanel implements
 	}
 	@Override
 	public void setProxy(QuestionTypeCountPerExamProxy proxy) {
-		this.proxy = proxy;
-		init();
+		this.proxy = proxy;		
 	}
 	public void setQuestionTypeContent(AbsolutePanel questionTypeContent) {
 		this.questionTypeContent = questionTypeContent;
@@ -116,12 +117,11 @@ public class QuestionTypeDNDViewImpl extends VerticalPanel implements
 		this.eventsContainer = eventsContainer;
 	}
 	public QuestionTypeDNDViewImpl(){
-		
-	}
-	
+		this.questionTypeView = this;	
+	}	
 	/**
 	 * Sets up view for QuestionType
-	 */
+	 */	
 	public void init(){
 		
 		twistieOpen.addStyleName("ui-icon ui-icon-triangle-1-e");
@@ -132,11 +132,11 @@ public class QuestionTypeDNDViewImpl extends VerticalPanel implements
 		tagLabel.addStyleName("ui-icon ui-icon-tag");
 		this.add(typeHeader);
 		this.add(questionTypeContent);
-		typeHeader.setPixelSize(980, 25);
+		typeHeader.setPixelSize(1180, 40);
 		typeHeader.setStyleName("questionTypeHeader");
-		typeHeader.add(twistieClose, 1, 3);
-		typeHeader.add(twistieOpen, 1, 3);
-		typeHeader.add(questionTypeNamelbl, 19, 3);
+		typeHeader.add(twistieClose, 1, 10);
+		typeHeader.add(twistieOpen, 1, 10);
+		typeHeader.add(questionTypeNamelbl, 19, 8);
 		/*typeHeader.add(upInOrder,740,3);
 		typeHeader.add(downInOrder,760,3);
 		typeHeader.add(tagLabel,780,3);*/
@@ -158,7 +158,7 @@ public class QuestionTypeDNDViewImpl extends VerticalPanel implements
 				downInOrder.setVisible(false);
 				tagLabel.setVisible(false);
 				questionTypeContent.setVisible(true);
-
+				delegate.openQuestionTypeContainer(proxy,questionTypeView);
 			}
 
 		});
@@ -224,11 +224,6 @@ public class QuestionTypeDNDViewImpl extends VerticalPanel implements
 				delegate.downInOrderClicked(proxy);
 			}
 		});
-	}//End init
-	
-	
-
-	
-	
+	}//End init	
 	
 }
