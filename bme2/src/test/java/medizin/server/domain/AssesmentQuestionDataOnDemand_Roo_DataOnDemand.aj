@@ -45,6 +45,7 @@ privileged aspect AssesmentQuestionDataOnDemand_Roo_DataOnDemand {
         setAutor(obj, index);
         setDateAdded(obj, index);
         setDateChanged(obj, index);
+        setEliminateQuestion(obj, index);
         setIsAssQuestionAcceptedAdmin(obj, index);
         setIsAssQuestionAcceptedAutor(obj, index);
         setIsAssQuestionAcceptedRewiever(obj, index);
@@ -52,8 +53,9 @@ privileged aspect AssesmentQuestionDataOnDemand_Roo_DataOnDemand {
         setIsForcedByAdmin(obj, index);
         setOrderAversion(obj, index);
         setOrderBversion(obj, index);
+        setPercent(obj, index);
+        setPoints(obj, index);
         setQuestion(obj, index);
-        setRewiewer(obj, index);
         setSchwierigkeit(obj, index);
         setTrenschaerfe(obj, index);
         return obj;
@@ -72,6 +74,11 @@ privileged aspect AssesmentQuestionDataOnDemand_Roo_DataOnDemand {
     public void AssesmentQuestionDataOnDemand.setDateChanged(AssesmentQuestion obj, int index) {
         Date dateChanged = new GregorianCalendar(Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.MONTH), Calendar.getInstance().get(Calendar.DAY_OF_MONTH), Calendar.getInstance().get(Calendar.HOUR_OF_DAY), Calendar.getInstance().get(Calendar.MINUTE), Calendar.getInstance().get(Calendar.SECOND) + new Double(Math.random() * 1000).intValue()).getTime();
         obj.setDateChanged(dateChanged);
+    }
+    
+    public void AssesmentQuestionDataOnDemand.setEliminateQuestion(AssesmentQuestion obj, int index) {
+        Boolean eliminateQuestion = Boolean.TRUE;
+        obj.setEliminateQuestion(eliminateQuestion);
     }
     
     public void AssesmentQuestionDataOnDemand.setIsAssQuestionAcceptedAdmin(AssesmentQuestion obj, int index) {
@@ -109,14 +116,19 @@ privileged aspect AssesmentQuestionDataOnDemand_Roo_DataOnDemand {
         obj.setOrderBversion(orderBversion);
     }
     
+    public void AssesmentQuestionDataOnDemand.setPercent(AssesmentQuestion obj, int index) {
+        String percent = "percent_" + index;
+        obj.setPercent(percent);
+    }
+    
+    public void AssesmentQuestionDataOnDemand.setPoints(AssesmentQuestion obj, int index) {
+        String points = "points_" + index;
+        obj.setPoints(points);
+    }
+    
     public void AssesmentQuestionDataOnDemand.setQuestion(AssesmentQuestion obj, int index) {
         Question question = questionDataOnDemand.getRandomQuestion();
         obj.setQuestion(question);
-    }
-    
-    public void AssesmentQuestionDataOnDemand.setRewiewer(AssesmentQuestion obj, int index) {
-        Person rewiewer = personDataOnDemand.getRandomPerson();
-        obj.setRewiewer(rewiewer);
     }
     
     public void AssesmentQuestionDataOnDemand.setSchwierigkeit(AssesmentQuestion obj, int index) {

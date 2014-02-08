@@ -141,4 +141,28 @@ privileged aspect AssesmentQuestion_Roo_JavaBean {
         this.autor = autor;
     }
     
+    public String AssesmentQuestion.getPercent() {
+        return this.percent;
+    }
+    
+    public void AssesmentQuestion.setPercent(String percent) {
+        this.percent = percent;
+    }
+    
+    public String AssesmentQuestion.getPoints() {
+        return this.points;
+    }
+    
+    public void AssesmentQuestion.setPoints(String points) {
+        this.points = points;
+    }
+    
+    public Boolean AssesmentQuestion.getEliminateQuestion() {
+        return this.eliminateQuestion;
+    }
+    
+    public void AssesmentQuestion.setEliminateQuestion(Boolean eliminateQuestion) {
+        this.eliminateQuestion = eliminateQuestion;
+    }
+    
 }

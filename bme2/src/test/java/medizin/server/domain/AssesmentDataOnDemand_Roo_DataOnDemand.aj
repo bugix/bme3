@@ -42,6 +42,7 @@ privileged aspect AssesmentDataOnDemand_Roo_DataOnDemand {
         setDateClosed(obj, index);
         setDateOfAssesment(obj, index);
         setDateOpen(obj, index);
+        setDisallowSorting(obj, index);
         setInstitution(obj, index);
         setIsClosed(obj, index);
         setLogo(obj, index);
@@ -72,6 +73,11 @@ privileged aspect AssesmentDataOnDemand_Roo_DataOnDemand {
     public void AssesmentDataOnDemand.setDateOpen(Assesment obj, int index) {
         Date dateOpen = new GregorianCalendar(Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.MONTH), Calendar.getInstance().get(Calendar.DAY_OF_MONTH), Calendar.getInstance().get(Calendar.HOUR_OF_DAY), Calendar.getInstance().get(Calendar.MINUTE), Calendar.getInstance().get(Calendar.SECOND) + new Double(Math.random() * 1000).intValue()).getTime();
         obj.setDateOpen(dateOpen);
+    }
+    
+    public void AssesmentDataOnDemand.setDisallowSorting(Assesment obj, int index) {
+        Boolean disallowSorting = Boolean.TRUE;
+        obj.setDisallowSorting(disallowSorting);
     }
     
     public void AssesmentDataOnDemand.setInstitution(Assesment obj, int index) {

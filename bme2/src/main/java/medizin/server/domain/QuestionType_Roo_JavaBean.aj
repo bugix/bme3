@@ -339,4 +339,12 @@ privileged aspect QuestionType_Roo_JavaBean {
         this.maxWordCount = maxWordCount;
     }
     
+    public Boolean QuestionType.getShowFilterDialog() {
+        return this.showFilterDialog;
+    }
+    
+    public void QuestionType.setShowFilterDialog(Boolean showFilterDialog) {
+        this.showFilterDialog = showFilterDialog;
+    }
+    
 }

@@ -67,6 +67,7 @@ privileged aspect QuestionTypeDataOnDemand_Roo_DataOnDemand {
         setSelectionType(obj, index);
         setShortName(obj, index);
         setShowAutocomplete(obj, index);
+        setShowFilterDialog(obj, index);
         setSumAnswer(obj, index);
         setSumFalseAnswer(obj, index);
         setSumTrueAnswer(obj, index);
@@ -248,6 +249,11 @@ privileged aspect QuestionTypeDataOnDemand_Roo_DataOnDemand {
     public void QuestionTypeDataOnDemand.setShowAutocomplete(QuestionType obj, int index) {
         Boolean showAutocomplete = Boolean.TRUE;
         obj.setShowAutocomplete(showAutocomplete);
+    }
+    
+    public void QuestionTypeDataOnDemand.setShowFilterDialog(QuestionType obj, int index) {
+        Boolean showFilterDialog = Boolean.TRUE;
+        obj.setShowFilterDialog(showFilterDialog);
     }
     
     public void QuestionTypeDataOnDemand.setSumAnswer(QuestionType obj, int index) {

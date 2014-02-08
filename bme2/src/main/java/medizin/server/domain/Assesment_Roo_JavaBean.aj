@@ -143,4 +143,12 @@ privileged aspect Assesment_Roo_JavaBean {
         this.questionTypeCountPerExams = questionTypeCountPerExams;
     }
     
+    public Boolean Assesment.getDisallowSorting() {
+        return this.disallowSorting;
+    }
+    
+    public void Assesment.setDisallowSorting(Boolean disallowSorting) {
+        this.disallowSorting = disallowSorting;
+    }
+    
 }
