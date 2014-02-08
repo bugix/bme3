@@ -9,3 +9,7 @@ log.roo
 *.ipr
 *.iws
 .settings/
+war
+.gradle
+build
+gwt-unitCache
