@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import javax.imageio.ImageIO;
+import javax.xml.bind.DatatypeConverter;
 
 import medizin.server.domain.AnswerToAssQuestion;
 import medizin.server.domain.Assesment;
@@ -31,8 +32,6 @@ import org.scilab.forge.jlatexmath.TeXConstants;
 import org.scilab.forge.jlatexmath.TeXFormula;
 import org.scilab.forge.jlatexmath.TeXIcon;
 
-import sun.misc.BASE64Encoder;
-
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Predicates;
@@ -40,7 +39,6 @@ import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-@SuppressWarnings("restriction")
 public final class PaperUtils {
 
 	private static final Logger log = Logger.getLogger(PaperUtils.class);
@@ -130,8 +128,7 @@ public final class PaperUtils {
             ImageIO.write(image, type, bos);
             byte[] imageBytes = bos.toByteArray();
 
-            BASE64Encoder encoder = new BASE64Encoder();
-            imageString = encoder.encode(imageBytes);
+            imageString = DatatypeConverter.printBase64Binary(imageBytes);
 
             bos.close();
         } catch (IOException e) {
