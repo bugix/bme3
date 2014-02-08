@@ -9,6 +9,3 @@ log.roo
 *.ipr
 *.iws
 .settings/
-src/main/java/medizin/client/managed/
-src/main/java/medizin/server/domain/*.aj
-src/test/java/medizin/server/domain/*.aj
